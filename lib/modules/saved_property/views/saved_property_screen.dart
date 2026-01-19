@@ -209,6 +209,7 @@ import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_h
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
 import 'package:housing_flutter_app/modules/builder/view/project_detail/project_detail.dart';
+import 'package:housing_flutter_app/modules/history/controller/search_history_controller.dart';
 import 'package:housing_flutter_app/modules/property/views/property_detail_screen.dart';
 import 'package:housing_flutter_app/modules/property/views/widgets/property_list_screen_card.dart';
 import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
@@ -218,6 +219,7 @@ import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/img_res.dart';
 import '../../../app/constants/size_manager.dart';
 import '../../../data/network/property/models/property_model.dart';
+import '../../../data/network/property/models/viewed_item_model.dart';
 import '../../feedback/views/feedback_and_report.dart';
 import '../../propert_detail/view/property_details.dart';
 import '../../propert_detail/view/widget/property_card_widget.dart';
@@ -255,6 +257,9 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
   final PropertyContactedController contactedController = Get.put(
     PropertyContactedController(),
   );
+  final SearchHistoryController searchHistoryController = Get.put(
+    SearchHistoryController(),
+  );
 
   @override
   void initState() {
@@ -262,6 +267,7 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
     // Load seen properties once
     viewController.fetchViewedProperties();
     contactedController.fetchContactedProperties();
+    searchHistoryController.fetchSearchHistory();
   }
 
   @override
@@ -292,13 +298,13 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
                 final seenCount = viewController.viewedProperties.length;
                 final contactedCount =
                     contactedController.contactedPropertyIds.length;
-                final recentCount = 0; // TODO: link with recent searches
+                final recentCount = searchHistoryController.searchHistoryResponse.value?.data.item.length; // TODO: link with recent searches
 
                 final List<int> tabsCount = [
                   savedCount,
                   seenCount,
                   contactedCount,
-                  recentCount,
+                  recentCount??0,
                 ];
 
                 return Row(
@@ -396,7 +402,18 @@ class SeenPropertiesTab extends StatefulWidget {
 
 class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
   final PropertyViewController controller = Get.put(PropertyViewController());
+  final propertyController = Get.find<PropertyController>();
+  final manager = Get.find<PropertyFavoriteController>();
 
+  // final RxList<Items> favoriteProperties = <Items>[].obs;
+
+  @override
+  void initState() {
+    super.initState();
+   manager.loadViews(controller.viewedProperties);
+    // Listen to favorite changes globally
+    // ever(manager.favorites, (_) => loadFavorite());
+  }
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -427,7 +444,8 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
             return false;
           },
           child: RefreshIndicator(
-            onRefresh: controller.fetchViewedProperties,
+            onRefresh:
+              controller.fetchViewedProperties,
             color: ColorRes.primary,
             child: ListView.builder(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -511,6 +529,7 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
                     return HorizontalPropertyCard(
                       // Image
                       imageUrl: property.details?.images ?? '',
+                      propertyId: property.details?.id??'',
 
                       // Basic info
                       isForRent: property.details?.listingType == 'Rent',
@@ -555,7 +574,13 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
                         );
                       },
                       onContactPressed: () async {
-                        generateInquiry(property.details?.id ?? '');
+                        generateInquiry(
+                          property.details?.id ?? '',
+                          favoriteController,
+                        );
+                        await favoriteController.getAllInQuireData(property.details?.id ?? '');
+
+                        await favoriteController.getHasInQuireData(property.details?.id ?? '');
                       },
                     );
                   });
@@ -593,15 +618,14 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
     super.initState();
     // loadFavorite();
     manager.loadData();
+
+
     // Listen to favorite changes globally
     // ever(manager.favorites, (_) => loadFavorite());
   }
 
-  // Future<void> loadFavorite() async {
-  //   favoriteProperties.assignAll(
-  //     manager.items.where((item) => manager.favorites.contains(item.id)),
-  //   );
-  // }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -709,11 +733,13 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
                   return HorizontalPropertyCard(
                     // Image
                     imageUrl: property.details.images ?? '',
+                    propertyId: property.details?.id??'',
 
                     // Basic info
                     isForRent: property.details.listingType == 'Rent',
                     location: property.details.location ?? '',
                     price: formattedPrice,
+
 
                     // Entity type and names
                     entityType: property.entityType,
@@ -750,7 +776,10 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
                       favoriteController.toggleFavorite(property.details.id);
                     },
                     onContactPressed: () async {
-                      generateInquiry(property.details.id);
+                      generateInquiry(property.details.id, favoriteController);
+                      await favoriteController.getAllInQuireData(property.details?.id ?? '');
+
+                      await favoriteController.getHasInQuireData(property.details?.id ?? '');
                     },
                   );
                 }),
@@ -950,7 +979,7 @@ class _ContactedPropertiesTabState extends State<ContactedPropertiesTab> {
                     return HorizontalPropertyCard(
                       // Image
                       imageUrl: property.details?.images ?? '',
-
+                      propertyId: property.details?.id??'',
                       // Basic info
                       isForRent: property.details?.listingType == 'Rent',
                       location: property.details?.location ?? '',
@@ -1021,16 +1050,260 @@ class _ContactedPropertiesTabState extends State<ContactedPropertiesTab> {
   }
 }
 
-class RecentSearchesTab extends StatelessWidget {
+class RecentSearchesTab extends StatefulWidget {
   const RecentSearchesTab({super.key});
 
   @override
+  State<RecentSearchesTab> createState() => _RecentSearchesTabState();
+}
+
+class _RecentSearchesTabState extends State<RecentSearchesTab> {
+  final SearchHistoryController controller = Get.find<
+    SearchHistoryController>();
+  @override
+  initState() {
+    super.initState();
+    controller.fetchSearchHistory();
+  }
+  @override
   Widget build(BuildContext context) {
-    return const Center(child: Text("Recent Searches will appear here"));
+    return SafeArea(
+      top: false,
+      child: Obx(() {
+        if (controller.isLoading.value &&
+            (controller.searchHistoryResponse.value?.data.item.isEmpty ?? false)) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (controller.searchHistoryResponse.value?.data.item.isEmpty ?? false) {
+          return const Center(
+            child: Text(
+              "No viewed properties yet",
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+          );
+        }
+
+        final items = controller.searchHistoryResponse.value?.data.item ?? [];
+
+        return RefreshIndicator(
+          onRefresh: controller.fetchSearchHistory,
+          color: ColorRes.primary,
+          child: Column(
+            children: [
+              // 🔹 "Clear All" button section
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Recent Searches",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    TextButton.icon(
+                      onPressed: () {
+                        controller.deleteAllHistory(); // 🧹 add this function
+                      },
+                      icon: const Icon(Icons.delete_outline, size: 18, color: Colors.red),
+                      label: const Text(
+                        "Clear All",
+                        style: TextStyle(color: Colors.red, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // 🔹 List section
+              Expanded(
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: (scrollInfo) {
+                    if (scrollInfo.metrics.pixels >=
+                        scrollInfo.metrics.maxScrollExtent - 100 &&
+                        !controller.isLoadingMore.value &&
+                        controller.currentIndex <
+                            controller.searchHistoryResponse.value!.data.item.length) {
+                      // controller.loadNextBatch();
+                    }
+                    return false;
+                  },
+                  child: ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    itemCount: items.length +
+                        (controller.isLoadingMore.value ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (index >= items.length) {
+                        return const Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      }
+
+                      final property = items[index];
+                      final keywords = (property.keywords != null &&
+                          property.keywords.isNotEmpty)
+                          ? property.keywords.join(', ')
+                          : 'No keywords found';
+
+                      return Card(
+                        color: ColorRes.white,
+                        elevation: 2,
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          side: BorderSide(
+                              color: Colors.grey.shade300, width: 1),
+                        ),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          leading: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: const EdgeInsets.all(8),
+                            child:
+                            const Icon(Icons.search, color: Colors.grey),
+                          ),
+                          title: Text(
+                            keywords,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          trailing: const Icon(Icons.arrow_forward_ios,
+                              size: 14, color: Colors.grey),
+                          onTap: () {
+                            // handle tap
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
+    );
+
+    // return  SafeArea(
+    //   top: false,
+    //   child: Obx(() {
+    //     if (controller.isLoading.value && (controller.searchHistoryResponse.value?.data.item.isEmpty??false)) {
+    //       return const Center(child: CircularProgressIndicator());
+    //     }
+    //
+    //     if (controller.searchHistoryResponse.value?.data.item.isEmpty??false) {
+    //       return const Center(
+    //         child: Text(
+    //           "No viewed properties yet",
+    //           style: TextStyle(fontSize: 16, color: Colors.grey),
+    //         ),
+    //       );
+    //     }
+    //
+    //     return NotificationListener<ScrollNotification>(
+    //       onNotification: (ScrollNotification scrollInfo) {
+    //         // detect when user reaches near the bottom
+    //         if (scrollInfo.metrics.pixels >=
+    //             scrollInfo.metrics.maxScrollExtent - 100 &&
+    //             !controller.isLoadingMore.value &&
+    //             controller.currentIndex < controller.searchHistoryResponse.value!.data.item.length) {
+    //           // controller.loadNextBatch();
+    //         }
+    //         return false;
+    //       },
+    //       child: RefreshIndicator(
+    //         onRefresh:
+    //         controller.fetchSearchHistory,
+    //         color: ColorRes.primary,
+    //         child: ListView.builder(
+    //           physics: const AlwaysScrollableScrollPhysics(),
+    //           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+    //           itemCount:
+    //           controller.searchHistoryResponse.value?.data.item.length??0 +
+    //               (controller.isLoadingMore.value ? 1 : 0),
+    //           itemBuilder: (context, index) {
+    //             final items = controller.searchHistoryResponse.value?.data.item ?? [];
+    //
+    //             // Show loader if still fetching data
+    //             if (index >= items.length) {
+    //               return const Padding(
+    //                 padding: EdgeInsets.all(16.0),
+    //                 child: Center(child: CircularProgressIndicator()),
+    //               );
+    //             }
+    //
+    //             final property = items[index];
+    //             final keywords = (property.keywords != null && property.keywords.isNotEmpty)
+    //                 ? property.keywords.join(', ') // ✅ clean keyword display
+    //                 : 'No keywords found';
+    //
+    //             return Card(
+    //               color: ColorRes.white,
+    //               elevation: 2,
+    //               margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+    //               shape: RoundedRectangleBorder(
+    //                 borderRadius: BorderRadius.circular(10),
+    //                 side: BorderSide(color: Colors.grey.shade300,width: 1)
+    //               ),
+    //               child: ListTile(
+    //                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    //                 leading: Container(
+    //                   decoration: BoxDecoration(
+    //                     color: Colors.grey.shade100,
+    //                     borderRadius: BorderRadius.circular(8),
+    //                   ),
+    //                   padding: const EdgeInsets.all(8),
+    //                   child: const Icon(Icons.search, color: Colors.grey),
+    //                 ),
+    //                 title: Text(
+    //                   keywords,
+    //                   style: const TextStyle(
+    //                     fontSize: 14,
+    //                     fontWeight: FontWeight.w600,
+    //                     color: Colors.black87,
+    //                   ),
+    //                   maxLines: 1,
+    //                   overflow: TextOverflow.ellipsis,
+    //                 ),
+    //                 trailing: const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
+    //                 onTap: () {
+    //                   // handle tap if needed
+    //                 },
+    //               ),
+    //             );
+    //
+    //
+    //           },
+    //
+    //         ),
+    //       ),
+    //     );
+    //   }),
+    // );
   }
 }
 
-Future<void> generateInquiry(String propertyId) async {
+
+Future<void> generateInquiry(
+  String propertyId,
+  PropertyFavoriteController controller,
+) async {
   if (UserHelper.isGuest) {
     Get.to(() => LoginScreen());
   } else {
@@ -1045,5 +1318,6 @@ Future<void> generateInquiry(String propertyId) async {
             ? Get.find<PropertyContactedController>()
             : Get.put(PropertyContactedController());
     contactedCtrl.addInquiry(inquiry, propertyId);
+
   }
 }

@@ -1469,6 +1469,7 @@ import 'package:housing_flutter_app/modules/search_property/view/search_screen.d
 import '../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../data/network/auth/model/user_model.dart';
 import '../../auth/controllers/auth_controller.dart';
+import '../../search_property/controller/search_controller.dart';
 
 class CreatePropertyScreen extends StatelessWidget {
   // final SellerType sellerType;
@@ -1487,11 +1488,16 @@ class CreatePropertyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(CreatePropertyController());
+    final GoogleMapSearchController controllerCity =
+    Get.put(GoogleMapSearchController(),tag: 'city');
 
     if (isEdit) {
+
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final editController = Get.put(LoadEditPropertyPayload());
         if (property != null) {
+          controller.isEdited.value=isEdit;
+          log('Editing value : ${controller.isEdited.value}');
           editController.onLoad(controller, property!);
         }
       });
@@ -2379,6 +2385,7 @@ class CreatePropertyScreen extends StatelessWidget {
                                                   selectedCity.description
                                                       ?.split(',')[0] ??
                                                   '';
+
                                               print(
                                                 "city ${controller.cityController.text}",
                                               );

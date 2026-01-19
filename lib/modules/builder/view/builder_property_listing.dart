@@ -166,48 +166,69 @@ class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
                 }
 
                 if (!isLoading && items.isEmpty) {
-                  return const Center(
-                    child: Text(
-                      'No projects found',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: ColorRes.textSecondary,
-                        fontWeight: FontWeight.w500,
+                  return RefreshIndicator(
+                    onRefresh: controller.refreshLead,
+                    child: Center(
+                      child: Text(
+                        'No projects found',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: ColorRes.textSecondary,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   );
                 }
 
-                return ListView.separated(
-                  padding: const EdgeInsets.all(12),
-                  itemCount: items.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 8),
-                  itemBuilder: (context, index) {
-                    final data = items[index];
+                return RefreshIndicator(
+                  onRefresh: controller.refreshLead,
+                  child:(items.isNotEmpty)? ListView.separated(
+                    padding: const EdgeInsets.all(12),
+                    itemCount: items.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (context, index) {
+                      final data = items[index];
 
-                    return GestureDetector(
-                      onTap: () {
-                        log("Project Item Tapped: ${data.toJson()}");
-                        Get.to(() => ProjectDetailsScreen(projectItem: data,isBuilder: true,));
-                      },
-                      child: BuilderProjectCard(
-                        project: data,
-                        developersName: data.projectContactInfo?.name ?? 'Unknown',
-                        imageUrl: (data.mediaGallery?.images?.isNotEmpty ?? false)
-                            ? data.mediaGallery!.images.first
-                            : IMGRes.home3,
-                        projectName: (data.projectName ?? '').isNotEmpty
-                            ? data.projectName!
-                            : 'N/A',
-                        location: (data.address ?? '').isNotEmpty
-                            ? data.address!
-                            : 'Not specified',
-                        price: data.getPriceRange(),
-                        propertySize:
-                        data.projectSize?.totalBuildings?.toString() ?? '',
+                      return GestureDetector(
+                        onTap: () {
+                          log("Project Item Tapped: ${data.toJson()}");
+                          Get.to(() => ProjectDetailsScreen(projectItem: data,isBuilder: true,));
+                        },
+                        child: BuilderProjectCard(
+                          project: data,
+                          developersName: data.projectContactInfo?.name ?? 'Unknown',
+                          imageUrl: (data.mediaGallery?.images?.isNotEmpty ?? false)
+                              ? data.mediaGallery!.images.first
+                              : IMGRes.home3,
+                          projectName: (data.projectName ?? '').isNotEmpty
+                              ? data.projectName!
+                              : 'N/A',
+                          location: (data.address ?? '').isNotEmpty
+                              ? data.address!
+                              : 'Not specified',
+                          price: data.getPriceRange(),
+                          propertySize:
+                          data.projectSize?.totalBuildings?.toString() ?? '',
+                        ),
+                      );
+                    },
+                  ):SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.7,
+                      child: Center(
+                        child: Text(
+                          "No projects Data found",
+                          style: TextStyle(
+                            fontSize: AppFontSizes.body,
+                            color: ColorRes.textSecondary,
+                            fontWeight: AppFontWeights.medium,
+                          ),
+                        ),
                       ),
-                    );
-                  },
+                    ),
+                  )
                 );
               }),
             ),

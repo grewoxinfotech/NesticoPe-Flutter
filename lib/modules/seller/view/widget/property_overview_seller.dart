@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/manager/icon_manager.dart';
 import 'package:housing_flutter_app/app/manager/property/property_name_manager.dart';
+import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 import 'package:housing_flutter_app/modules/seller/view/widget/seller_property_approval_history.dart';
 import 'package:housing_flutter_app/utils/property_mapper/property_mapper.dart';
 import 'package:housing_flutter_app/widgets/dialog/delete_confirmation_dialog.dart';
@@ -139,6 +140,7 @@ class _PropertyOverviewSellerScreenState
   final LeadVisitController leadVisitController=Get.put(LeadVisitController());
   final LeadPropertyNegotiablePriceController leadPropertyNegotiablePriceController=Get.put(LeadPropertyNegotiablePriceController());
   final Rxn<Items> _property = Rxn<Items>();
+
   final RxBool _isLoading = true.obs;
 
   @override
@@ -241,6 +243,7 @@ class _PropertyOverviewSellerScreenState
         if (_property.value == null) {
           return const Center(child: Text("Property not found"));
         }
+        log('Rendering property overview for ID: ${_property.value!.toJson()}');
 
         final property = _property.value!;
 
@@ -815,12 +818,12 @@ class _PropertyOverviewSellerScreenState
   Widget _buildPropertyDetailsSection(BuildContext context, bool isCompact) {
     final property = _property.value!;
 
-    return Padding(
-      padding: EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+          child: Text(
             'Property Details',
             style: TextStyle(
               fontSize: AppFontSizes.body,
@@ -828,38 +831,38 @@ class _PropertyOverviewSellerScreenState
               color: ColorRes.leadGreyColor[800],
             ),
           ),
-          SizedBox(height: 16),
+        ),
+        SizedBox(height: 16),
 
-          // if (property.builderName != null)
-          //   _buildDetailRow('Builder', property.builderName!),
-          // if (property.projectName != null)
-          //   _buildDetailRow('Project', property.projectName!),
-          // _buildDetailRow(
-          //   'Property Type',
-          //   property.propertyType?.toUpperCase() ?? 'N/A',
-          // ),
-          // if (propertyDetails?.zoneType != null)
-          //   _buildDetailRow('Zone Type', propertyDetails!.zoneType!),
-          // if (propertyDetails?.propertyFacing != null)
-          //   _buildDetailRow('Facing', propertyDetails!.propertyFacing!),
-          // if (propertyDetails?.floorInfo != null)
-          //   _buildDetailRow(
-          //     'Floor',
-          //     '${propertyDetails!.floorInfo!.floorNumber ?? 'N/A'} of ${propertyDetails.floorInfo!.totalFloors ?? 'N/A'}',
-          //   ),
-          // if (propertyDetails?.furnishInfo?.furnishType != null)
-          //   _buildDetailRow(
-          //     'Furnishing',
-          //     propertyDetails!.furnishInfo!.furnishType!.toUpperCase(),
-          //   ),
-          // if (propertyDetails?.parkingInfo != null)
-          //   _buildDetailRow(
-          //     'Parking',
-          //     _formatParking(propertyDetails!.parkingInfo!),
-          //   ),
-          Details(property: property),
-        ],
-      ),
+        // if (property.builderName != null)
+        //   _buildDetailRow('Builder', property.builderName!),
+        // if (property.projectName != null)
+        //   _buildDetailRow('Project', property.projectName!),
+        // _buildDetailRow(
+        //   'Property Type',
+        //   property.propertyType?.toUpperCase() ?? 'N/A',
+        // ),
+        // if (propertyDetails?.zoneType != null)
+        //   _buildDetailRow('Zone Type', propertyDetails!.zoneType!),
+        // if (propertyDetails?.propertyFacing != null)
+        //   _buildDetailRow('Facing', propertyDetails!.propertyFacing!),
+        // if (propertyDetails?.floorInfo != null)
+        //   _buildDetailRow(
+        //     'Floor',
+        //     '${propertyDetails!.floorInfo!.floorNumber ?? 'N/A'} of ${propertyDetails.floorInfo!.totalFloors ?? 'N/A'}',
+        //   ),
+        // if (propertyDetails?.furnishInfo?.furnishType != null)
+        //   _buildDetailRow(
+        //     'Furnishing',
+        //     propertyDetails!.furnishInfo!.furnishType!.toUpperCase(),
+        //   ),
+        // if (propertyDetails?.parkingInfo != null)
+        //   _buildDetailRow(
+        //     'Parking',
+        //     _formatParking(propertyDetails!.parkingInfo!),
+        //   ),
+        Details(property: property),
+      ],
     );
   }
 
@@ -898,6 +901,8 @@ class _PropertyOverviewSellerScreenState
   Widget _buildAmenitiesSection(BuildContext context, bool isCompact) {
     final property = _property.value!;
     final amenities = property.propertyDetails?.amenities ?? [];
+    log("Amenities: ${amenities.map((e) => e,).toList()}");
+    
 
     return Padding(
       padding: EdgeInsets.all(16),
@@ -938,7 +943,7 @@ class _PropertyOverviewSellerScreenState
                         ),
                         SizedBox(width: 4),
                         Text(
-                          amenity,
+                          capitalizeEachWord(amenity),
                           style: TextStyle(
                             fontSize: AppFontSizes.small,
                             color: ColorRes.blueColor.shade700,
@@ -1135,6 +1140,7 @@ class _PropertyOverviewSellerScreenState
             Expanded(
               child: ElevatedButton.icon(
                 onPressed: () {
+
                   Get.to(
                     () => CreatePropertyScreen(
                       isLogin: true,

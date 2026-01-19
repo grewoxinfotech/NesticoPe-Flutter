@@ -215,7 +215,7 @@ class Inquiry {
 
   factory Inquiry.fromJson(Map<String, dynamic> json) {
     return Inquiry(
-      id: json['id'] ?? "0",
+      id: json['id']?.toString() ?? "0",
       propertyId: json['propertyId'] ?? '',
       userId: json['userId'] ?? '',
       name: json['name'] ?? '',
@@ -258,12 +258,13 @@ class Inquiry {
 }
 
 class Meta {
-  final String? negotiablePrice;
+  final int? negotiablePrice;
   final bool? isNegotiable;
   final String? timePeriod;
   final String? inquiryType;
   final String? visitDate;
   final String? visitTime;
+  final SelectedVariant? selectedVariant;
 
   Meta({
     this.negotiablePrice,
@@ -272,6 +273,7 @@ class Meta {
     this.inquiryType,
     this.visitDate,
     this.visitTime,
+    this.selectedVariant,
   });
 
   factory Meta.fromJson(Map<String, dynamic> json) {
@@ -281,13 +283,16 @@ class Meta {
       negotiablePrice: price == null
           ? null
           : price is int
-          ? price.toString()
-          : price.toString(),
+          ? price
+          : int.tryParse(price.toString()),
       isNegotiable: json['isNegotiable'] ?? false,
       timePeriod: json['timePeriod'] ?? '',
       inquiryType: json['inquiryType'] ?? '',
       visitDate: json['visitDate'] ?? '',
       visitTime: json['visitTime'] ?? '',
+      selectedVariant: json['selectedVariant'] != null
+          ? SelectedVariant.fromJson(json['selectedVariant'])
+          : null,
     );
   }
 
@@ -298,8 +303,83 @@ class Meta {
     'inquiryType': inquiryType,
     'visitDate': visitDate,
     'visitTime': visitTime,
+    'selectedVariant': selectedVariant?.toJson(),
   };
 }
+
+class SelectedVariant {
+  final String id;
+  final String name;
+  final int bhk;
+  final num price;
+
+  SelectedVariant({
+    required this.id,
+    required this.name,
+    required this.bhk,
+    required this.price,
+  });
+
+  factory SelectedVariant.fromJson(Map<String, dynamic> json) {
+    return SelectedVariant(
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      bhk: json['bhk'] ?? 0,
+      price: json['price'] ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'bhk': bhk,
+    'price': price,
+  };
+}
+
+// class Meta {
+//   final String? negotiablePrice;
+//   final bool? isNegotiable;
+//   final String? timePeriod;
+//   final String? inquiryType;
+//   final String? visitDate;
+//   final String? visitTime;
+//
+//   Meta({
+//     this.negotiablePrice,
+//     this.isNegotiable,
+//     this.timePeriod,
+//     this.inquiryType,
+//     this.visitDate,
+//     this.visitTime,
+//   });
+//
+//   factory Meta.fromJson(Map<String, dynamic> json) {
+//     final dynamic price = json['negotiablePrice'];
+//
+//     return Meta(
+//       negotiablePrice: price == null
+//           ? null
+//           : price is int
+//           ? price.toString()
+//           : price.toString(),
+//       isNegotiable: json['isNegotiable'] ?? false,
+//       timePeriod: json['timePeriod'] ?? '',
+//       inquiryType: json['inquiryType'] ?? '',
+//       visitDate: json['visitDate'] ?? '',
+//       visitTime: json['visitTime'] ?? '',
+//     );
+//   }
+//
+//   Map<String, dynamic> toJson() => {
+//     'negotiablePrice': negotiablePrice,
+//     'isNegotiable': isNegotiable,
+//     'timePeriod': timePeriod,
+//     'inquiryType': inquiryType,
+//     'visitDate': visitDate,
+//     'visitTime': visitTime,
+//   };
+// }
 
 
 

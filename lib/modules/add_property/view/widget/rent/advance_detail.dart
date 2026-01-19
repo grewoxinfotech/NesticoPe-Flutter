@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
@@ -100,6 +102,8 @@ class RentAdvanceDetail extends StatelessWidget {
       "South-West",
     ];
     final rent_Parking_Charges = ['Included in rent', 'Separate'];
+    final isEdit = controller.isEdited.value;
+    log("Is Edit advanced detail $isEdit");
     return Obx(() {
       print(
         "Propwerty type${controller.rent_propertyType.value}  ${((controller.rent_propertyType.value != 'Independent House' && controller.rent_propertyType.value != 'Duplex') && controller.rent_propertyType.value != 'Farmhouse')}",
@@ -304,66 +308,66 @@ class RentAdvanceDetail extends StatelessWidget {
                     ),
                   ),
                 ],
-                SizedBox(height: 16),
-                buildSectionTitle("Do you charge brokerage"),
 
-                SizedBox(height: 8),
-                Obx(
-                  () => Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
-                    children:
-                        charge_brokerage.map((option) {
-                          return buildChoice(
-                            title: option,
-                            selected:
-                                controller.doYouWantBrokerage.value == option,
-                            onTap: () {
-                              controller.setValue(
-                                controller.doYouWantBrokerage,
-                                option,
-                              );
-                            },
-                          );
-                        }).toList(),
-                  ),
-                ),
-                if (controller.doYouWantBrokerage.value == "Yes") ...[
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 16),
-                      buildSectionTitle("Brokerage Negotiable"),
-                      SizedBox(height: 12),
-
-                      Obx(
-                        () => Wrap(
-                          spacing: 12,
-                          runSpacing: 12,
-                          children:
-                              charge_brokerage_negotiable.map((option) {
-                                return buildChoice(
-                                  title: option,
-                                  selected:
-                                      controller
-                                          .brokerageChargeNegotiable
-                                          .value ==
-                                      option,
-                                  onTap: () {
-                                    controller.setValue(
-                                      controller.brokerageChargeNegotiable,
-                                      option,
-                                    );
-                                  },
-                                );
-                              }).toList(),
-                        ),
-                      ),
-
-                      SizedBox(height: 12),
-                    ],
-                  ),
-                ],
+                // buildSectionTitle("Do you charge brokerage"),
+                //
+                // SizedBox(height: 8),
+                // Obx(
+                //   () => Wrap(
+                //     spacing: 12,
+                //     runSpacing: 12,
+                //     children:
+                //         charge_brokerage.map((option) {
+                //           return buildChoice(
+                //             title: option,
+                //             selected:
+                //                 controller.doYouWantBrokerage.value == option,
+                //             onTap: () {
+                //               controller.setValue(
+                //                 controller.doYouWantBrokerage,
+                //                 option,
+                //               );
+                //             },
+                //           );
+                //         }).toList(),
+                //   ),
+                // ),
+                // if (controller.doYouWantBrokerage.value == "Yes") ...[
+                //   Column(
+                //     crossAxisAlignment: CrossAxisAlignment.start,
+                //     children: [
+                //       SizedBox(height: 16),
+                //       buildSectionTitle("Brokerage Negotiable"),
+                //       SizedBox(height: 12),
+                //
+                //       Obx(
+                //         () => Wrap(
+                //           spacing: 12,
+                //           runSpacing: 12,
+                //           children:
+                //               charge_brokerage_negotiable.map((option) {
+                //                 return buildChoice(
+                //                   title: option,
+                //                   selected:
+                //                       controller
+                //                           .brokerageChargeNegotiable
+                //                           .value ==
+                //                       option,
+                //                   onTap: () {
+                //                     controller.setValue(
+                //                       controller.brokerageChargeNegotiable,
+                //                       option,
+                //                     );
+                //                   },
+                //                 );
+                //               }).toList(),
+                //         ),
+                //       ),
+                //
+                //       SizedBox(height: 12),
+                //     ],
+                //   ),
+                // ],
                 // SizedBox(height: 16),
                 // buildSectionTitle("Flat No."),
                 // SizedBox(height: 8),
@@ -431,6 +435,7 @@ class RentAdvanceDetail extends StatelessWidget {
                   Obx(
                     () => Wrap(
                       spacing: 12,
+
                       runSpacing: 12,
                       children:
                           rent_maintenanceChargeType.map((option) {
@@ -461,15 +466,115 @@ class RentAdvanceDetail extends StatelessWidget {
                       isPhoneKey: true,
                     ),
                   ],
-                ] else if (controller.lookingTo.value == "Sell") ...[
-                  Text("Maintenance Charges"),
-                  SizedBox(height: 8),
-                  buildTextField(
-                    "Enter Maintenance Charges",
-                    Icons.currency_rupee_outlined,
-                    controller.sell_rent_Maintenance_Charges,
-                    isPhoneKey: true,
-                  ),
+                ]
+                // else if (controller.lookingTo.value == "Sell") ...[
+                //   buildSectionTitle("Maintenance Charges"),
+                //   SizedBox(height: 8),
+                //   Obx(
+                //         () => Wrap(
+                //       spacing: 12,
+                //
+                //       runSpacing: 12,
+                //       children:
+                //       rent_maintenanceChargeType.map((option) {
+                //         return buildChoice(
+                //           title: option,
+                //           selected:
+                //           controller.rent_maintenanceChargeType.value ==
+                //               option,
+                //           onTap: () {
+                //             controller.setValue(
+                //               controller.rent_maintenanceChargeType,
+                //               option,
+                //             );
+                //           },
+                //         );
+                //       }).toList(),
+                //     ),
+                //   ),
+                //   if(controller.rent_maintenanceChargeType.value ==
+                //       "Separate")...[
+                //     Text("Maintenance Charges"),
+                //     SizedBox(height: 8),
+                //     buildTextField(
+                //       "Enter Maintenance Charges",
+                //       Icons.currency_rupee_outlined,
+                //       controller.sell_rent_Maintenance_Charges,
+                //       isPhoneKey: true,
+                //     ),
+                //   ]
+                // ],
+                else if (controller.lookingTo.value == "Sell") ...[
+                  buildSectionTitle("Maintenance Charges"),
+                  const SizedBox(height: 8),
+
+                  if (isEdit) ...[
+                    Obx(() {
+                      final hasMaintenance =
+                          controller.sell_rent_Maintenance_Charges.text
+                              .trim()
+                              .isNotEmpty;
+                      final selectedType =
+                          controller.rent_maintenanceChargeType.value;
+
+                      // Auto-default logic on edit
+                      if (hasMaintenance &&
+                          controller.rent_maintenanceChargeType.value.isEmpty) {
+                        controller.rent_maintenanceChargeType.value =
+                            "Separate";
+                      } else if (!hasMaintenance &&
+                          controller.rent_maintenanceChargeType.value.isEmpty) {
+                        controller.rent_maintenanceChargeType.value =
+                            "Included in rent";
+                      }
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // 🔹 Choice buttons
+                          Wrap(
+                            spacing: 12,
+                            runSpacing: 12,
+                            children:
+                                rent_maintenanceChargeType.map((option) {
+                                  return buildChoice(
+                                    title: option,
+                                    selected: selectedType == option,
+                                    onTap: () {
+                                      controller.setValue(
+                                        controller.rent_maintenanceChargeType,
+                                        option,
+                                      );
+                                    },
+                                  );
+                                }).toList(),
+                          ),
+
+                          // 🔹 Show text field only when “Separate” is selected
+                          if (selectedType == "Separate") ...[
+                            const SizedBox(height: 8),
+                            Text("Maintenance Charges"),
+                            const SizedBox(height: 8),
+                            buildTextField(
+                              "Enter Maintenance Charges",
+                              Icons.currency_rupee_outlined,
+                              controller.sell_rent_Maintenance_Charges,
+                              isPhoneKey: true,
+                            ),
+                          ],
+                        ],
+                      );
+                    }),
+                  ] else ...[
+                    Text("Maintenance Charges"),
+                    const SizedBox(height: 8),
+                    buildTextField(
+                      "Enter Maintenance Charges",
+                      Icons.currency_rupee_outlined,
+                      controller.sell_rent_Maintenance_Charges,
+                      isPhoneKey: true,
+                    ),
+                  ],
                 ],
 
                 if (controller.lookingTo.value == 'Rent') ...[
@@ -597,8 +702,6 @@ class RentAdvanceDetail extends StatelessWidget {
                         }).toList(),
                   ),
                 ),
-
-
               ],
               SizedBox(height: 16),
               buildSectionTitle('RERA ID'),

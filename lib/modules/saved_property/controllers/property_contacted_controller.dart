@@ -60,36 +60,6 @@ class PropertyContactedController extends GetxController {
     }
   }
 
-  /// Load next batch of contacted properties (lazy loading)
-  // Future<void> loadNextBatch() async {
-  //   if (isLoadingMore.value) return;
-  //   if (currentIndex >= contactedPropertyIds.length) return;
-  //
-  //   try {
-  //     isLoadingMore.value = true;
-  //
-  //     final endIndex = (currentIndex + batchSize).clamp(
-  //       0,
-  //       contactedPropertyIds.length,
-  //     );
-  //     final batch = contactedPropertyIds.sublist(currentIndex, endIndex);
-  //
-  //     for (final id in batch) {
-  //       final property = await _propertyController.getPropertyById(id);
-  //       if (property != null) {
-  //         // properties.add(property);
-  //       }
-  //     }
-  //
-  //     // properties.refresh();
-  //     currentIndex = endIndex;
-  //   } catch (e) {
-  //     print('Error loading next batch in PropertyContactedController: $e');
-  //   } finally {
-  //     isLoadingMore.value = false;
-  //   }
-  // }
-
   /// Check if a property has been contacted
   bool isPropertyContacted(String propertyId) {
     return contactedPropertyIds.contains(propertyId);
@@ -105,6 +75,13 @@ class PropertyContactedController extends GetxController {
 
   Future<bool> addInquiry(Map<String, dynamic> data, String id) async {
     final success = await _service.addInquiry(data, id);
+    if (success) {
+      contactedPropertyIds.add(id);
+      inquiries.refresh();
+      fetchContactedProperties();
+      // Optionally, you could also fetch and add the full Inquiry object
+      // after a successful addition.
+    }
     return success;
   }
 }

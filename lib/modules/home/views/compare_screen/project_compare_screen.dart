@@ -9,13 +9,21 @@ import 'package:housing_flutter_app/app/manager/project_compare_manager.dart';
 import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
 import 'package:housing_flutter_app/modules/new_project/view/latest_project.dart';
 
+import '../../../../app/utils/helper_function/user_helper/user_helper.dart';
+import '../../../../app/widgets/snack_bar/custom_snackbar.dart';
+import '../../../../data/database/secure_storage_service.dart';
+import '../../../../widgets/New folder/inputs/text_field.dart';
+import '../../../auth/views/login_screen.dart';
+import '../../../builder/controller/project_controller.dart';
 import '../../../property_rating/view/widget/read_more_or_less.dart';
+import 'comapre_screen.dart';
 
 class ProjectCompareScreen extends StatelessWidget {
   const ProjectCompareScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: ColorRes.leadGreyColor[50],
       appBar: AppBar(
@@ -187,8 +195,10 @@ class ProjectCardForCompare extends StatelessWidget {
     return i.getPriceRange();
   }
 
+
   @override
   Widget build(BuildContext context) {
+    final projectController = Get.find<ProjectController>();
     return Material(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(12),
@@ -307,22 +317,85 @@ class ProjectCardForCompare extends StatelessWidget {
                             ),
                             SizedBox(width: 10),
                             GestureDetector(
-                              onTap: () {
-                                // Get.to(
-                                //   () => ProjectDetailsScreen(projectItem: item),
-                                // );
+                              onTap:(UserHelper.isGuest)?()=>Get.to(()=>LoginScreen()) :() async {
+                                try {
+                                  final user =
+                                  await SecureStorage.getUserData();
+
+                                  if (user == null) {
+                                    Get.snackbar(
+                                      'Error',
+                                      'No user data found. Please log in.',
+                                      snackPosition: SnackPosition.BOTTOM,
+                                      backgroundColor: ColorRes.error
+                                          .withOpacity(0.1),
+                                      colorText: ColorRes.error,
+                                    );
+                                    return;
+                                  }
+
+                                  final fullName =
+                                      user.user?.fullName ?? '';
+                                  final firstName =
+                                      user.user?.firstName ?? '';
+                                  final username =
+                                      user.user?.username ?? '';
+                                  final email = user.user?.email ?? '';
+                                  final phone = user.user?.phone ?? '';
+
+                                  final displayName =
+                                  (firstName.isEmpty
+                                      ? username
+                                      : fullName)
+                                      .trim();
+
+                                  if (Get.context == null) {
+                                    Get.snackbar(
+                                      'Error',
+                                      'UI not ready to show dialog.',
+                                      snackPosition: SnackPosition.BOTTOM,
+                                      backgroundColor: ColorRes.error
+                                          .withOpacity(0.1),
+                                      colorText: ColorRes.error,
+                                    );
+                                    return;
+                                  }
+
+                                  addInquiryFromProject(
+                                      displayName,
+                                      email,
+                                      phone,
+                                  item.id,
+                                      'sell',
+                                      "project",
+
+                                  );
+                                } catch (e, s) {
+                                  debugPrint(
+                                    '❌ Error in Get Offer button: $e',
+                                  );
+                                  debugPrint('$s');
+                                  Get.snackbar(
+                                    'Error',
+                                    'Something went wrong. Please try again.',
+                                    snackPosition: SnackPosition.BOTTOM,
+                                    backgroundColor: ColorRes.error
+                                        .withOpacity(0.1),
+                                    colorText: ColorRes.error,
+                                  );
+                                }
                               },
                               child: Container(
-                                padding: const EdgeInsets.symmetric(
+                                padding: EdgeInsets.symmetric(
                                   horizontal: 14,
-                                  vertical: 4,
+                                  vertical: 8,
                                 ),
                                 decoration: BoxDecoration(
                                   color: ColorRes.primary,
                                   borderRadius: BorderRadius.circular(6),
                                 ),
-                                child: const Text(
-                                  'Visit',
+                                child: Text(
+                                  'Contact Now',
                                   style: TextStyle(
                                     fontWeight: AppFontWeights.semiBold,
                                     fontSize: AppFontSizes.small,
@@ -357,6 +430,257 @@ class ProjectCardForCompare extends StatelessWidget {
         ),
       ),
     );
+
+  }
+  void addInquiryFromProject(
+      String name,
+      String email,
+      String phone,
+      String propertyID,
+      String propertyType,
+      String type,
+      ) {
+    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+    final controller = Get.find<ProjectController>();
+
+    final _nameController = TextEditingController(text: name);
+    final _emailController = TextEditingController(text: email);
+    final _phoneController = TextEditingController(text: phone);
+
+    Get.dialog(
+      Dialog(
+        backgroundColor: ColorRes.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 600, maxHeight: 700),
+          decoration: BoxDecoration(
+            color: ColorRes.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: ColorRes.primary,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          "Get Offer Price",
+                          style: TextStyle(
+                            fontSize: AppFontSizes.body,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.white,
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () => Get.back(),
+                        borderRadius: BorderRadius.circular(50),
+                        child: const Icon(
+                          Icons.close_rounded,
+                          color: ColorRes.white,
+                          size: 20,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Body
+                Flexible(
+                  flex: 1,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        NesticoPeTextField(
+                          controller: _nameController,
+                          title: "Name",
+                          hintText: 'Enter your name',
+                          prefixIcon: Icons.person_outline,
+                          isRequired: true,
+                          validator:
+                              (value) =>
+                          value == null || value.trim().isEmpty
+                              ? 'Name is required'
+                              : null,
+                        ),
+                        const SizedBox(height: 16),
+
+                        NesticoPeTextField(
+                          controller: _emailController,
+                          hintText: 'Enter your email',
+                          prefixIcon: Icons.email_outlined,
+                          title: "Email",
+                          keyboardType: TextInputType.emailAddress,
+                          isRequired: true,
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Email is required';
+                            }
+                            if (!GetUtils.isEmail(value.trim())) {
+                              return 'Enter a valid email';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+
+                        NesticoPeTextField(
+                          controller: _phoneController,
+                          hintText: 'Enter your phone number',
+                          title: "Phone",
+                          prefixIcon: Icons.phone_outlined,
+                          keyboardType: TextInputType.phone,
+                          isRequired: true,
+                          maxLength: 10,
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Phone is required';
+                            }
+                            if (!GetUtils.isPhoneNumber(value.trim())) {
+                              return 'Enter a valid phone number';
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Footer Buttons
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: ColorRes.white,
+                    border: Border(
+                      top: BorderSide(
+                        color: ColorRes.grey.withOpacity(0.2),
+                        width: 1,
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Get.back(),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            side: const BorderSide(color: ColorRes.primary),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(
+                              fontSize: AppFontSizes.medium,
+                              fontWeight: AppFontWeights.semiBold,
+                              color: ColorRes.primary,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        flex: 2,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              // perform your submission logic here
+                              final inquiry = {
+                                "name": name ?? "",
+                                "phone": phone ?? "",
+                                "email": email ?? "",
+                                "agreeToContact": true,
+                                "meta": {
+                                  "inquiryType": "$propertyType",
+                                  "type": "$type",
+                                },
+                              };
+
+                              print('Submitting inquiry: ${inquiry}');
+
+                              final success = await controller.addInquiry(
+                                inquiry,
+                                propertyID ?? '',
+                              );
+
+                              if (success) {
+                                controller.hasSubmittedInquiry.value = true;
+                                CustomSnackBar.show(
+                                  Get.overlayContext!,
+                                  message: "Inquiry Added Successfully",
+                                  type: SnackBarType.success,
+                                );
+                                Get.back();
+                                await controller.getAllInQuireData(
+                                  item.id ?? '',
+                                );  await controller.getHasInQuireData(
+                                  item.id ?? '',
+                                );
+                              } else {
+                                Get.back();
+                                CustomSnackBar.show(
+                                  Get.overlayContext!,
+                                  message: "Failed to Submit Inquiry",
+                                  type: SnackBarType.error,
+                                );
+                              }
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: ColorRes.primary,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.send, size: 20),
+                              SizedBox(width: 8),
+                              Text(
+                                'Request Offer Price',
+
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.medium,
+                                  fontWeight: AppFontWeights.semiBold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      barrierDismissible: true,
+    );
   }
 
   Color _getStatusColor(String status) {
@@ -374,6 +698,7 @@ class ProjectCardForCompare extends StatelessWidget {
     }
   }
 }
+
 
 class _ProjectComparisonTable extends StatelessWidget {
   final ProjectItem a;

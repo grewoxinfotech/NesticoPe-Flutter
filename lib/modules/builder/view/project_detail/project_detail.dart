@@ -8,6 +8,7 @@ import 'package:housing_flutter_app/app/manager/compare_manager.dart';
 import 'package:housing_flutter_app/app/manager/data_masker.dart';
 import 'package:housing_flutter_app/app/manager/icon_manager.dart';
 import 'package:housing_flutter_app/app/manager/project_compare_manager.dart';
+import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
 import 'package:housing_flutter_app/modules/builder/view/project_detail/widgets/model_render_screen.dart';
@@ -322,7 +323,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                       title: 'Get Offer',
                                       backgroundColor: ColorRes.error,
                                       height: 36,
-                                      onTap: () async {
+                                      onTap:(UserHelper.isGuest)?()=>Get.to(()=>LoginScreen()) :() async {
                                         try {
                                           final user =
                                           await SecureStorage.getUserData();
@@ -366,7 +367,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                             return;
                                           }
 
-                                          addInquiryFromApp(
+                                          addInquiryFromProject(
                                               displayName,
                                               email,
                                               phone,
@@ -622,7 +623,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       }),
     );
   }
-  void addInquiryFromApp(
+  void addInquiryFromProject(
       String name,
       String email,
       String phone,
@@ -965,6 +966,14 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                   const SizedBox(height: 4),
                   Text(
                     'RERA ID: ${project.reraId}',
+                    style: const TextStyle(
+                      color: ColorRes.white,
+                      fontSize: AppFontSizes.small,
+                    ),
+                  ),
+                  Text(
+                    'Last Updated : ${Formatter.formatDate(project.updatedAt)}',
+
                     style: const TextStyle(
                       color: ColorRes.white,
                       fontSize: AppFontSizes.small,
@@ -1410,8 +1419,8 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                         children: [
                           Text(
                             controller.showAllConfigurations.value
-                                ? 'See Less'
-                                : 'See More',
+                                ? 'See Less Variants'
+                                : 'See More Variants',
                             style: TextStyle(
                               fontSize: AppFontSizes.bodySmall,
                               fontWeight: AppFontWeights.semiBold,
@@ -1561,30 +1570,33 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                     ),
                   ],
                 ),
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'View 3D',
-                        style: TextStyle(
-                          fontSize: AppFontSizes.small,
-                          fontWeight: AppFontWeights.semiBold,
-                          color: ColorRes.white,
+                if (
+                    variant.models.isNotEmpty &&
+                    variant.models.first.toString().trim().isNotEmpty)
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'View 3D',
+                          style: TextStyle(
+                            fontSize: AppFontSizes.small,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.white,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Get.to(
+                                    () => ModelRenderScreen(
+                                  modelUrl: variant.models.first,
+                                  iosModelUrl: variant.models.first,
+                                ),
+                              );
+                            },
                         ),
-                        recognizer:
-                            TapGestureRecognizer()
-                              ..onTap = () {
-                                Get.to(
-                                  () => ModelRenderScreen(
-                                    modelUrl: variant.models.first,
-                                    iosModelUrl: variant.models.first,
-                                  ),
-                                );
-                              },
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
+
               ],
             ),
           ),
@@ -1722,19 +1734,19 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
   Widget _buildPlaceholderImage() {
     return Container(
+      width: double.infinity, // 👈 fixed width
+      height: 150, // optional — adjust based on layout
       decoration: BoxDecoration(
         color: ColorRes.leadGreyColor[100],
         borderRadius: BorderRadius.circular(8),
-      ),
-      child: const Center(
-        child: Icon(
-          Icons.image_outlined,
-          size: 48,
-          color: ColorRes.textSecondary,
+        image: const DecorationImage(
+          image: AssetImage('assets/images/not_available_image.png'),
+          fit: BoxFit.cover, // 👈 makes image fill the entire box
         ),
       ),
     );
   }
+
 
   Widget _buildAmenities(ProjectItem project) {
     return Container(

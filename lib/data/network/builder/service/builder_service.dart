@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:housing_flutter_app/app/constants/api_constants.dart';
@@ -42,7 +43,7 @@ class BuilderService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print("✅ Top Project API Response: $data");
+        AppLogger.structured("✅ Top Project API Response: ", data);
 
         return PaginationResponse<ProjectItem>.fromJson(
           data,

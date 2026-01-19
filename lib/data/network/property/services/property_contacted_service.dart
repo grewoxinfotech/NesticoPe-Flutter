@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 import 'package:http/http.dart' as http;
 import '../../../../app/constants/api_constants.dart';
 import '../models/inquiry_model.dart';
@@ -20,6 +21,9 @@ class PropertyContactedService {
       final response = await http.get(uri, headers: await headers());
 
       if (response.statusCode == 200 || response.statusCode == 201) {
+        AppLogger.structured(
+            'Fetched contacted inquiries successfully',
+             jsonDecode(response.body));
         final data = jsonDecode(response.body);
         if (data['success'] == true && data['data'] != null) {
           final inquiryResponse = InquiryResponse.fromJson(data);

@@ -69,7 +69,9 @@ class ContractorCard extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                contractor.username,
+                                (contractor.firstName.isEmpty || contractor.lastName.isEmpty)
+                                    ? contractor.username
+                                    : "${contractor.firstName} ${contractor.lastName}",
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
@@ -78,6 +80,7 @@ class ContractorCard extends StatelessWidget {
                                   color: ColorRes.textColor,
                                 ),
                               ),
+
                               SizedBox(height: 6),
                               Text(
                                 "${contractor.totalExperience}+ years experience",

@@ -1,8 +1,10 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/manager/icon_manager.dart';
 import 'package:housing_flutter_app/modules/add_property/model/add_property_model.dart';
 import 'package:housing_flutter_app/modules/add_property/model/furnishing_,model.dart';
+import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../utils/logger/app_logger.dart';
@@ -139,10 +141,8 @@ class LoadEditPropertyPayload extends GetxController {
     controller.transactionType.value =
         (property.propertyDetails?.transactionType != null &&
                 property.propertyDetails!.transactionType!.isNotEmpty)
-            ? property.propertyDetails!.transactionType!
-                .replaceAll("_", " ")
-                .capitalize!
-                .toString()
+            ? capitalizeEachWord(property.propertyDetails!.transactionType!
+            .replaceAll("_", " "))
             : "Resale";
 
     controller.lift_info.value =
@@ -488,6 +488,7 @@ class LoadEditPropertyPayload extends GetxController {
             ? property.propertyDetails!.financialInfo!.maintenanceCharges!
                 .toStringAsFixed(0)
             : '0';
+    log('Maintenance Charge: ${controller.sell_rent_Maintenance_Charges.text}');
 
     // broker charges
     controller.doYouWantBrokerage.value =
@@ -592,6 +593,7 @@ class LoadEditPropertyPayload extends GetxController {
                   ? 'Ready to move'
                   : 'Under Construction'
               : " ";
+
     } else {
       controller.ageOfPropertyController.text =
           (property.propertyDetails?.possessionInfo?.propertyAgeInYear !=
@@ -638,18 +640,16 @@ class LoadEditPropertyPayload extends GetxController {
                 : '0';
       }
 
+      final possessionStatus = property.propertyDetails?.possessionInfo?.possessionStatus;
+
       controller.sell_constructionStatus.value =
-          (property.propertyDetails?.possessionInfo?.possessionStatus != null &&
-                  property
-                      .propertyDetails!
-                      .possessionInfo!
-                      .possessionStatus!
-                      .isNotEmpty)
-              ? property.propertyDetails!.possessionInfo!.possessionStatus!
-                  .replaceAll("_", " ")
-                  .capitalize
-                  .toString()
-              : " ";
+      (possessionStatus != null && possessionStatus.trim().isNotEmpty)
+          ? capitalizeEachWord(possessionStatus.replaceAll("_", " "))
+          : "";
+
+      log('possession status: ${controller.sell_constructionStatus.value}');
+
+
     }
   }
 

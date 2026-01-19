@@ -358,6 +358,8 @@ class _BuilderLeadsState extends State<BuilderLeads> {
     isLoadingLead.value = false;
   }
 
+
+
   /// Load more for property view
   Future<void> _loadMorePropertyLeads() async {
     if (!leadController.isLoadingPropertyLeads.value &&
@@ -460,6 +462,7 @@ class _BuilderLeadsState extends State<BuilderLeads> {
                       )
                       : RefreshIndicator(
                         onRefresh: () async {
+                          controller.refreshLead();
                           setState(() => isLoading = true);
                           await _loadData();
                           setState(() => isLoading = false);

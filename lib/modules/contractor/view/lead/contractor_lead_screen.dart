@@ -102,6 +102,7 @@ class ContractorLeadScreen extends StatelessWidget {
                         fontSize: AppFontSizes.body,
                       ),
                     ),
+
                   );
                 }
 

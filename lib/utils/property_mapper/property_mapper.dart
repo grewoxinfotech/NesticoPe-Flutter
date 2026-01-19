@@ -211,7 +211,7 @@ extension ItemsMapper on Items.Items {
       lockInPeriod: source.lockInPeriod,
       noticePeriod: source.noticePeriod,
       negotiable: source.negotiable,
-      maintenanceCharges: source.maintenance,
+      maintenanceCharges: source.maintenanceCharges,
       // parkingCharges: source.parkingCharges,
     );
   }

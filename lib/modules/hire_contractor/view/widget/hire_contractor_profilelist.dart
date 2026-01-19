@@ -6,11 +6,13 @@ import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/contractor/model/contractor_compare_model/contractor_compare_model.dart';
 import 'package:housing_flutter_app/data/network/contractor/model/contractor_profile_model/contractor_profile_model.dart';
 import 'package:housing_flutter_app/modules/hire_contractor/view/widget/hire_contractor_filter.dart';
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../data/network/contractor/model/contractot_service_model/contractor_service_model.dart';
 import '../../../../data/network/contractor/model/hire-contractor_service_model.dart';
+import '../../../../data/network/contractor/model/new_hire_contractor.dart';
 import '../../../../widgets/bar/filter_bar/filter_chip_bar.dart';
 import '../../../contractor/controller/contractor_my_service_controller.dart';
 import '../../../contractor/view/profile/contractot_profile.dart';
@@ -22,6 +24,7 @@ import '../../../home/widgets/unified_comparison_floating_button.dart';
 import '../../controller/hire_contractor_controller.dart';
 import '../../controller/hire_contractor_filter_controller.dart';
 import '../../controller/hire_contractor_list_of_profile_controller.dart';
+import '../../controller/hire_contractor_new_controller.dart';
 
 class HireContractorProfileList extends StatelessWidget {
   const HireContractorProfileList({super.key});
@@ -29,6 +32,7 @@ class HireContractorProfileList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<HireContractorController>();
+    final controllerNew = Get.find<HireContractorNewController>();
     final controllerProfileData =
         Get.find<HireContractorListOfProfileController>();
     final controllerFilter = Get.find<HireContractorFilterProfileController>();
@@ -88,11 +92,12 @@ class HireContractorProfileList extends StatelessWidget {
 
               if (!hasFilters) {
                 // Show all contractors (combined list)
-                if (controller.isLoading.value && controller.items.isEmpty) {
+                if (controllerNew.isLoading.value &&
+                    controllerNew.items.isEmpty) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                if (controllerProfileData.items.isEmpty) {
+                if (controllerNew.items.isEmpty) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -115,15 +120,18 @@ class HireContractorProfileList extends StatelessWidget {
                     ),
                   );
                 }
-
+                AppLogger.structured(
+                  'Check any thing missing ',
+                  controllerNew.items.map((e) => e.toMap()),
+                );
                 return RefreshIndicator(
-                  onRefresh: () => controllerProfileData.refreshService(),
+                  onRefresh: () => controllerNew.refreshService(),
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: ListView.builder(
-                      itemCount: controllerProfileData.combinedList.length,
+                      itemCount: controllerNew.items.length,
                       itemBuilder: (context, index) {
-                        final item = controllerProfileData.combinedList[index];
+                        final item = controllerNew.items[index];
                         return AllContractorCard(
                           data: item,
                           contractor: contractor,
@@ -175,7 +183,11 @@ class HireContractorProfileList extends StatelessWidget {
                             ),
                           );
                         }
+                        AppLogger.structured(
+                          'Check any thing missing form selected category ',
 
+                          contractors.map((e) => e.toMap()),
+                        );
                         return RefreshIndicator(
                           onRefresh: () async {
                             await controllerFilter
@@ -490,7 +502,7 @@ class _HireContractorCardState extends State<HireContractorCard> {
 }
 
 class AllContractorCard extends StatefulWidget {
-  final HireContractorUserWithProfile data;
+  final OverAllContractorItem data;
   final TopContractorsController contractor;
 
   AllContractorCard({super.key, required this.data, required this.contractor});
@@ -510,7 +522,7 @@ class _AllContractorCardState extends State<AllContractorCard> {
   }
 
   void _fetchUserByID() async {
-    final userId = widget.data.profile.userId;
+    final userId = widget.data.userId;
 
     contractorProfile = await widget.contractor.getContractorById(userId);
   }
@@ -520,30 +532,25 @@ class _AllContractorCardState extends State<AllContractorCard> {
     final compare = Get.put(ContractorCompareManager(), permanent: true);
     final contractor = widget.contractor;
 
-    final user = widget.data.user;
-    final profile = widget.data.profile;
+    final user = widget.data;
 
     return GestureDetector(
       onTap: () async {
-        log("User Data From Api ${user.id}    ${profile.userId}");
-        final contractorProfile = await contractor.getContractorById(
-          profile.userId,
-        );
         log("Tapped Contractor Profile Data: ${contractorProfile?.toJson()}");
 
-        contractorProfile?.username = widget.data.user.username ?? '';
-        contractorProfile?.firstName = widget.data.user.firstName ?? '';
-        contractorProfile?.lastName = widget.data.user.lastName ?? '';
-        contractorProfile?.totalExperience =
-            widget.data.user.totalExperience ?? 0;
+        contractorProfile?.username = widget.data.username ?? '';
+        contractorProfile?.firstName = widget.data.firstName ?? '';
+        contractorProfile?.lastName = widget.data.lastName ?? '';
+        contractorProfile?.totalExperience = widget.data.totalExperience ?? 0;
         // contractorProfile?.projectStats.totalProjects = data.profile.??  0;
 
         if (contractorProfile != null) {
           Get.to(
-            () => ContractorProfileDetailsScreen(contractor: contractorProfile),
+            () => ContractorProfileDetailsScreen(
+              contractor: contractorProfile ?? Contractor.fromJson({}),
+            ),
           );
         } else {
-          log('No contractor found for userId: $profile.userId');
           Get.snackbar(
             'Not Found',
             'Contractor profile could not be loaded.',
@@ -663,7 +670,7 @@ class _AllContractorCardState extends State<AllContractorCard> {
                     Row(
                       children: List.generate(5, (index) {
                         final rating =
-                            double.tryParse(profile.overallRating) ?? 0;
+                            double.tryParse(widget.data.overallRating) ?? 0;
                         if (index < rating.floor()) {
                           return const Icon(
                             Icons.star,
@@ -688,7 +695,7 @@ class _AllContractorCardState extends State<AllContractorCard> {
                     const SizedBox(width: 6),
                     Text(
                       (double.tryParse(
-                            profile.overallRating,
+                            widget.data.overallRating,
                           )?.toStringAsFixed(1)) ??
                           '0.0',
                       style: const TextStyle(
@@ -699,7 +706,7 @@ class _AllContractorCardState extends State<AllContractorCard> {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      "(${profile.totalReviews} review${profile.totalReviews == 1 ? '' : 's'})",
+                      "(${widget.data.totalReviews} review${widget.data.totalReviews == 1 ? '' : 's'})",
                       style: const TextStyle(
                         fontSize: AppFontSizes.caption,
                         color: ColorRes.textSecondary,
@@ -707,8 +714,8 @@ class _AllContractorCardState extends State<AllContractorCard> {
                     ),
                   ],
                 ),
-                if (profile.contractorType != null &&
-                    profile.contractorType!.isNotEmpty) ...[
+                if (widget.data.contractorType != null &&
+                    widget.data.contractorType!.isNotEmpty) ...[
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8,
@@ -722,7 +729,7 @@ class _AllContractorCardState extends State<AllContractorCard> {
                       ),
                     ),
                     child: Text(
-                      profile.contractorType!,
+                      widget.data.contractorType!,
                       style: TextStyle(
                         fontSize: AppFontSizes.caption,
                         fontWeight: AppFontWeights.medium,
@@ -744,21 +751,21 @@ class _AllContractorCardState extends State<AllContractorCard> {
                 Expanded(
                   child: _buildStatContainer(
                     title: 'Total Services',
-                    value: profile.totalServices.toString(),
+                    value: widget.data.totalServices.toString(),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: _buildStatContainer(
                     title: 'Active Services',
-                    value: profile.activeServices.toString(),
+                    value: widget.data.activeServices.toString(),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: _buildStatContainer(
                     title: 'Total Reviews',
-                    value: profile.totalReviews.toString(),
+                    value: widget.data.totalReviews.toString(),
                   ),
                 ),
               ],

@@ -317,7 +317,7 @@ class StepReview extends GetView<ProjectWizardController> {
                           child: _buildCompactInfo(
                             Icons.pin_drop,
                             'ZIP',
-                            p.zipCode,
+                            p?.zipCode??'',
                           ),
                         ),
                         const SizedBox(width: 12),

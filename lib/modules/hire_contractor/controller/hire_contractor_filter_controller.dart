@@ -91,13 +91,13 @@ class HireContractorFilterProfileController extends GetxController {
       selectedCategoryId.value = categoryId;
       selectedCategoryName.value = categoryName;
 
-      // final filters = {
-      //   'isActive': 'true',
-      //   if (selectedContractorRating.value > 0)
-      //     'contractorMinRating': selectedContractorRating.value.toInt().toString(),
-      //   if (selectedServiceRating.value > 0)
-      //     'serviceMinRating': selectedServiceRating.value.toInt().toString(),
-      // };
+      final filters = {
+        'isActive': 'true',
+        if (selectedContractorRating.value > 0)
+          'contractorMinRating': selectedContractorRating.value.toInt().toString(),
+        if (selectedServiceRating.value > 0)
+          'serviceMinRating': selectedServiceRating.value.toInt().toString(),
+      };
 
       final response = await HireContractorService.contractorMyService
           .fetchHireContractorService(categoryId: categoryId, filter: filters);

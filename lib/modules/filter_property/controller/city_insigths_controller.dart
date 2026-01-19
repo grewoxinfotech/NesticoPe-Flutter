@@ -10,7 +10,8 @@ class CityController extends GetxController {
 
   // Unique states
   RxList<String> uniqueStates = <String>[].obs;
-
+ RxString selectedCity = ''.obs;
+RxBool isFromLoginSide= false.obs;
   // State-wise city map
   RxMap<String, List<CityData>> stateCityMap = <String, List<CityData>>{}.obs;
 

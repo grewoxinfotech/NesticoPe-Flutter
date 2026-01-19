@@ -16,6 +16,8 @@ class CommonTextField extends StatelessWidget {
   final int maxLine;
 
   final Widget? prefixIcon;
+  final ValueChanged<String>? onChanged;
+
   final Widget? suffixIcon;
   final String? suffixText;
   final FormFieldValidator<String>? validator;
@@ -31,6 +33,7 @@ class CommonTextField extends StatelessWidget {
     required this.label,
     this.hint,
     this.controller,
+    this.onChanged,
     this.initialValue,
     this.keyboardType = TextInputType.text,
     this.textCapitalization = TextCapitalization.none,

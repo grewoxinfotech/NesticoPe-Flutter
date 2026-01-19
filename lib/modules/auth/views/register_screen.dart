@@ -315,12 +315,14 @@ import '../../../app/constants/color_res.dart';
 import '../../../app/widgets/snackbar/snackbar.dart';
 import '../../../data/network/auth/model/user_model.dart';
 import '../../../widgets/New folder/inputs/text_field.dart';
+import '../../../widgets/input/city_selection_widget.dart';
 import '../../../widgets/messages/snack_bar.dart';
 
 UserRole? selectedRole;
 
 class RegisterScreen extends StatefulWidget {
   final UserRole role;
+
   const RegisterScreen({Key? key, required this.role}) : super(key: key);
 
   @override
@@ -688,6 +690,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   title: "Username",
                   controller: _usernameController,
                   hintText: 'Enter Username',
+                  style: TextStyle(
+                    fontSize: AppFontSizes.medium,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.textPrimary,
+                  ),
                   prefixIcon: Icons.person_outline,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (value) {
@@ -707,6 +714,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       Expanded(
                         child: NesticoPeTextField(
                           title: "First Name",
+                          style: TextStyle(
+                            fontSize: AppFontSizes.medium,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.textPrimary,
+                          ),
                           controller: _firstNameController,
                           hintText: 'Enter First Name',
                           prefixIcon: Icons.person_outline,
@@ -723,6 +735,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       Expanded(
                         child: NesticoPeTextField(
                           title: "Last Name",
+                          style: TextStyle(
+                            fontSize: AppFontSizes.medium,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.textPrimary,
+                          ),
+
                           controller: _lastNameController,
                           hintText: 'Enter Last Name',
                           autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -742,6 +760,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 NesticoPeTextField(
                   title: "Email Address",
+                  style: TextStyle(
+                    fontSize: AppFontSizes.medium,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.textPrimary,
+                  ),
                   controller: _emailController,
                   hintText: 'Enter Email Address',
                   keyboardType: TextInputType.emailAddress,
@@ -764,6 +787,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 NesticoPeTextField(
                   hintText: 'Enter Phone Number',
                   title: "Phone Number",
+                  style: TextStyle(
+                    fontSize: AppFontSizes.medium,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.textPrimary,
+                  ),
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
                   prefixIcon: Icons.phone_outlined,
@@ -806,42 +834,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 // const SizedBox(height: 10),
                 if (_selectedRole == UserRole.contractor) ...[
-                  Row(
-                    children: [
-                      Expanded(
-                        child: NesticoPeTextField(
-                          hintText: 'Enter City',
-                          title: "City",
-                          controller: _cityController,
-                          prefixIcon: Icons.location_city_outlined,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
 
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter city';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      // const SizedBox(width: 10),
-                      // Expanded(
-                      //   child: NesticoPeTextField(
-                      //     hintText: 'Enter State',
-                      //     title: "State",
-                      //     controller: _stateController,
-                      //     prefixIcon: Icons.map_outlined,
-                      //     autovalidateMode: AutovalidateMode.onUserInteraction,
-                      //
-                      //     validator: (value) {
-                      //       if (value == null || value.isEmpty) {
-                      //         return 'Please enter state';
-                      //       }
-                      //       return null;
-                      //     },
-                      //   ),
-                      // ),
-                    ],
+                  CitySelectionWidget(
+                    isEditing: true,
+                    controller: _cityController,
+                    isRequired: true,
+
+                    color: ColorRes.primary,
+                    fillColor: ColorRes.white,
+                    onCitySelected: (selectedCity) {
+                      debugPrint(
+                        "✅ Selected city: ${selectedCity.description}",
+                      );
+                      _cityController.text =
+                          selectedCity.description ?? '';
+                    },
                   ),
 
                   // const SizedBox(height: 10),
@@ -865,6 +872,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 NesticoPeTextField(
                   hintText: 'Enter Password',
                   title: "Password",
+                  style: TextStyle(
+                    fontSize: AppFontSizes.medium,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.textPrimary,
+                  ),
                   controller: _passwordController,
                   obscureText: !_isPasswordVisible,
                   prefixIcon: Icons.lock_outline,
@@ -895,6 +907,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 NesticoPeTextField(
                   hintText: 'Enter Confirm Password',
                   title: "Confirm Password",
+                  style: TextStyle(
+                    fontSize: AppFontSizes.medium,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.textPrimary,
+                  ),
                   controller: _confirmPasswordController,
                   obscureText: !_isConfirmPasswordVisible,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -923,7 +940,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 10),
                 NesticoPeTextField(
                   hintText: 'Enter Referral Code (Optional)',
-                  title: "Referral Code",
+                  title: "Referral Code",style: TextStyle(  fontSize: AppFontSizes.medium,
+                  fontWeight: AppFontWeights.semiBold,
+                  color: ColorRes.textPrimary,),
+
                   controller: _referralCodeController,
                   textCapitalization: TextCapitalization.characters,
                   prefixIcon: Icons.numbers_outlined,
@@ -1056,6 +1076,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ],
     );
   }
+}
+Widget _buildFieldLabel(String label) {
+  return Text(
+    label,
+    style: const TextStyle(
+      fontSize: AppFontSizes.medium,
+      fontWeight: AppFontWeights.semiBold,
+      color: ColorRes.textPrimary,
+    ),
+  );
 }
 
 class CommonRadioGroup<T> extends StatelessWidget {

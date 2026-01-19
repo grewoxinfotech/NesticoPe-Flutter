@@ -1,12 +1,19 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:lottie/lottie.dart';
 
 import '../../../data/network/contractor/model/contractot_service_model/contractor_service_category_model.dart';
+import '../../../utils/global.dart';
 import '../../hire_contractor/controller/hire_contractor_controller.dart';
 import '../../hire_contractor/controller/hire_contractor_filter_controller.dart';
 import '../../hire_contractor/controller/hire_contractor_list_of_profile_controller.dart';
+import '../../hire_contractor/controller/hire_contractor_new_controller.dart';
 import '../../hire_contractor/view/widget/hire_contractor_profilelist.dart';
+
+
 
 class TopCategoriesSection extends StatelessWidget {
   final List<TopCategoryItem> categories;
@@ -19,12 +26,13 @@ class TopCategoriesSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 150,
+      height: 200,
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         scrollDirection: Axis.horizontal,
         itemCount: categories.length,
         separatorBuilder: (_, __) => const SizedBox(width: 16),
+
         itemBuilder: (context, index) {
           return _CategoryCard(item: categories[index]);
         },
@@ -40,7 +48,20 @@ class _CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var imageUrl='';
+   try{
+    imageUrl = services.firstWhere(
+           (e) => e['name']?.toUpperCase() == item.name.toUpperCase(),
+       orElse: () => {'lottieUrl': ''},
+     )['lottieUrl']??'';
+log("Found lottieUrl for ${item.name}: $imageUrl");
+   }catch(e){
+      debugPrint("Error finding lottieUrl for ${item.name}: $e");
+   }
+
+
     final controller = Get.put(HireContractorController());
+    final controllerNew = Get.put(HireContractorNewController());
     final controllerProfileData = Get.put(HireContractorListOfProfileController());
     final controllerFilterData = Get.put(HireContractorFilterProfileController());
     return GestureDetector(
@@ -60,30 +81,33 @@ class _CategoryCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// Top Blue Line
-            // Container(
-            //   height: 4,
-            //   width: 60,
-            //   decoration: BoxDecoration(
-            //     color: ColorRes.primary,
-            //     borderRadius: BorderRadius.circular(8),
-            //   ),
-            // ),
-            //
-            // const SizedBox(height: 16),
+          Row(
+            children: [
+              if (imageUrl != null && imageUrl.isNotEmpty)
+                SizedBox(
+                  height: 80,
+                  width: 80,
+                  child: Image.network(imageUrl),
+                ),
 
-            /// Title
-            Text(
-              item.name.toUpperCase(),
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: ColorRes.primary,
+              const SizedBox(width: 12),
+
+              Expanded(
+                child: Text(
+                  item.name.toUpperCase(),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: ColorRes.primary,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
 
-            const SizedBox(height: 12),
+              const SizedBox(height: 12),
+            ],
+          ),
 
             /// Description
             Text(

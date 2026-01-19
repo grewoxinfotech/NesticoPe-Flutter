@@ -3095,6 +3095,7 @@ import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 import 'package:intl/intl.dart';
 
 // Import your models
@@ -3281,6 +3282,9 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
   @override
   Widget build(BuildContext context) {
     final financialInfo = widget.currentProperty.propertyDetails?.financialInfo;
+
+    AppLogger.structured('Financial Info Check Have data ', widget.currentProperty.propertyDetails?.financialInfo);
+
 
     // if (financialInfo == null || financialInfo.propertyPriceTrend.isEmpty) {
     //   return const Center(

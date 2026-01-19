@@ -571,6 +571,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../../app/constants/color_res.dart';
 import '../../../data/network/builder/model/builder_model.dart';
 import '../../../data/network/property/services/property_service.dart';
 import '../view/builder_main_screen.dart';
@@ -586,7 +587,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   final showAllAmenities = false.obs;
   RxString builderPropertyType = ''.obs;
   RxList<String> propertyStatusList =
-      <String>['Ongoing', 'Launch', 'Completed'].obs;
+      <String>['Ongoing', 'Upcoming', 'Completed'].obs;
   RxString selectedPropertyStatus = ''.obs;
 
   RxString uploadBrocherName = ''.obs;
@@ -615,6 +616,8 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
                 builtUpArea: 0,
                 carpetArea: 0,
                 price: 0,
+                platformFees: 0,
+                brokerCommission: 0,
                 pricePerSqFt: 0,
                 totalUnits: 1,
                 availableUnits: 1,
@@ -625,7 +628,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
         ],
         reraId: '',
         propertyTypes: 'apartment',
-        status: 'upcoming',
+        status: '',
         address: '',
         city: '',
         state: '',
@@ -651,6 +654,8 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   late TextEditingController stateController;
   late TextEditingController zipCodeController;
   late TextEditingController locationController;
+  late TextEditingController brokerRageCommission;
+  late TextEditingController platformFees;
   final bool isBuilderView;
 
   ProjectWizardController({required this.isBuilderView});
@@ -690,6 +695,15 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     stateController = TextEditingController(text: project.value.state);
     zipCodeController = TextEditingController(text: project.value.zipCode);
     locationController = TextEditingController(text: project.value.location);
+    brokerRageCommission = TextEditingController(
+      text: project.value.configurations.first.variants.first.brokerCommission
+          .toString(),
+    );
+    selectedPropertyStatus.value=project.value.status;
+    platformFees = TextEditingController(
+      text: project.value.configurations.first.variants.first.platformFees
+          .toString(),
+    );
     await fetchUserData();
   }
 
@@ -752,6 +766,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     } else if (key == 'city') {
       // When changing city, REMOVE propertyType & listingType
       filters = {'city': val};
+
       selectedCity.value = val;
       print("🏙️ City changed → Reset filters. city=$val");
       // Reload top properties when city changes
@@ -832,7 +847,24 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   void clearPropertyTypeFilter() {
     clearFilter('propertyType');
   }
+  Future<void> refreshLead() async {
+    try {
+      isRefreshing.value = true;
+      refreshList();
+      await Future.delayed(const Duration(seconds: 1));
 
+      // Update metrics with new values
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to refresh ',
+        backgroundColor: Colors.red,
+        colorText: ColorRes.white,
+      );
+    } finally {
+      isRefreshing.value = false;
+    }
+  }
   Future<PaginationResponse<ProjectItem>> fetchTopItems(int page) async {
     try {
       final response = await _builderService.fetchProjects(
@@ -1261,7 +1293,9 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
           carpetArea: 0,
           price: 0,
           totalUnits: 0,
-          availableUnits: 0,
+          availableUnits: 0,brokerCommission: 0,platformFees: 0,
+
+
         ),
       );
     });
@@ -1689,3 +1723,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     print('✅ Form has been reset successfully');
   }
 }
+
+
+

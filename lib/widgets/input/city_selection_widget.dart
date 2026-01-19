@@ -453,6 +453,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/modules/search_property/model/search_model.dart';
+import 'package:housing_flutter_app/widgets/New%20folder/inputs/text_field.dart' hide tile;
 
 import '../../app/constants/app_font_sizes.dart';
 import '../../app/constants/color_res.dart';
@@ -465,6 +466,7 @@ class CitySelectionWidget extends StatelessWidget {
   final bool isEditing;
   final Function(Prediction)? onCitySelected;
   final InputDecoration? decoration;
+  final bool isRequired;
   final Color? color;
   final Color? fillColor;
 
@@ -472,6 +474,7 @@ class CitySelectionWidget extends StatelessWidget {
     super.key,
     required this.controller,
     this.onCitySelected,
+    this.isRequired= false,
     this.isEditing = true,
     this.decoration,
     this.color,
@@ -489,72 +492,97 @@ class CitySelectionWidget extends StatelessWidget {
     return Column(
       children: [
         // 🔹 Custom TextField
-        TextFormField(
+        // TextFormField(
+        //   controller: controller,
+        //   enabled: isEditing,
+        //   style: TextStyle(
+        //     fontSize: AppFontSizes.small,
+        //     color: ColorRes.homeBlackFade,
+        //   ),
+        //   decoration:
+        //       decoration ??
+        //       InputDecoration(
+        //         labelText: "Select City",
+        //         labelStyle: TextStyle(
+        //           fontSize: AppFontSizes.small,
+        //           color: ColorRes.leadGreyColor[500],
+        //         ),
+        //         prefixIcon: Icon(
+        //           Icons.apartment_outlined,
+        //           size: 20,
+        //           color: color ?? ColorRes.leadGreyColor[600],
+        //         ),
+        //         border: OutlineInputBorder(
+        //           borderRadius: BorderRadius.circular(12),
+        //           borderSide: BorderSide(
+        //             color: ColorRes.leadGreyColor.withOpacity(0.3),
+        //           ),
+        //         ),
+        //         enabledBorder: OutlineInputBorder(
+        //           borderRadius: BorderRadius.circular(12),
+        //           borderSide: BorderSide(
+        //             color: ColorRes.leadGreyColor.withOpacity(0.3),
+        //           ),
+        //         ),
+        //         focusedBorder: OutlineInputBorder(
+        //           borderRadius: BorderRadius.circular(12),
+        //           borderSide: const BorderSide(
+        //             color: ColorRes.blueColor,
+        //             width: 1.5,
+        //           ),
+        //         ),
+        //         disabledBorder: OutlineInputBorder(
+        //           borderRadius: BorderRadius.circular(12),
+        //           borderSide: BorderSide(
+        //             color: ColorRes.leadGreyColor.withOpacity(0.2),
+        //           ),
+        //         ),
+        //         errorBorder: OutlineInputBorder(
+        //           borderRadius: BorderRadius.circular(12),
+        //           borderSide: const BorderSide(color: ColorRes.error, width: 1),
+        //         ),
+        //         focusedErrorBorder: OutlineInputBorder(
+        //           borderRadius: BorderRadius.circular(12),
+        //           borderSide: const BorderSide(
+        //             color: ColorRes.error,
+        //             width: 1.5,
+        //           ),
+        //         ),
+        //         filled: true,
+        //         fillColor: fillColor ?? ColorRes.leadGreyColor[50],
+        //         contentPadding: const EdgeInsets.symmetric(
+        //           horizontal: 16,
+        //           vertical: 14,
+        //         ),
+        //       ),
+        //   onChanged: (value) async {
+        //     if (value.isNotEmpty) {
+        //       // ✅ Only search for cities, not general places
+        //       await googleMapController.fetchGooglePlaces(value);
+        //       log("City input: $value");
+        //     } else {
+        //       googleMapController.predictions.clear();
+        //       googleMapController.cityStateList.clear();
+        //     }
+        //   },
+        // ),
+        NesticoPeTextField(
+          hintText: 'Select City',
+          title: "City",
+          style: TextStyle(
+            fontSize: AppFontSizes.medium,
+            fontWeight: AppFontWeights.semiBold,
+            color: ColorRes.textPrimary,
+          ),
           controller: controller,
           enabled: isEditing,
-          style: TextStyle(
-            fontSize: AppFontSizes.small,
-            color: ColorRes.homeBlackFade,
-          ),
-          decoration:
-              decoration ??
-              InputDecoration(
-                labelText: "Select City",
-                labelStyle: TextStyle(
-                  fontSize: AppFontSizes.small,
-                  color: ColorRes.leadGreyColor[500],
-                ),
-                prefixIcon: Icon(
-                  Icons.apartment_outlined,
-                  size: 20,
-                  color: color ?? ColorRes.leadGreyColor[600],
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: ColorRes.leadGreyColor.withOpacity(0.3),
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: ColorRes.leadGreyColor.withOpacity(0.3),
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(
-                    color: ColorRes.blueColor,
-                    width: 1.5,
-                  ),
-                ),
-                disabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: ColorRes.leadGreyColor.withOpacity(0.2),
-                  ),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: ColorRes.error, width: 1),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(
-                    color: ColorRes.error,
-                    width: 1.5,
-                  ),
-                ),
-                filled: true,
-                fillColor: fillColor ?? ColorRes.leadGreyColor[50],
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 14,
-                ),
-              ),
+          prefixIcon: Icons.apartment_outlined,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+
+
+          // ✅ City input handler
           onChanged: (value) async {
             if (value.isNotEmpty) {
-              // ✅ Only search for cities, not general places
               await googleMapController.fetchGooglePlaces(value);
               log("City input: $value");
             } else {
@@ -562,7 +590,15 @@ class CitySelectionWidget extends StatelessWidget {
               googleMapController.cityStateList.clear();
             }
           },
+
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please select a city';
+            }
+            return null;
+          },
         ),
+
 
         const SizedBox(height: 8),
 

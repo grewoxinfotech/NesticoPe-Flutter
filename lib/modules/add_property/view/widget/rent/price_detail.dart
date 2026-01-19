@@ -539,26 +539,31 @@ class RentPriceDetail extends StatelessWidget {
                SizedBox(height: 16),
                buildSectionTitle("Construction status"),
                SizedBox(height: 8),
-               Wrap(
-                 spacing: 12,
-                 runSpacing: 12,
-                 children:
-                 ["Ready to move", "Under Construction"]
-                     .map(
-                       (type) => buildChoice(
-                     title: type,
-                     selected:
-                     controller.sell_constructionStatus.value ==
-                         type,
-                     onTap: () {
-                       controller.setValue(
-                         controller.sell_constructionStatus,
-                         type,
-                       );
-                     },
-                   ),
-                 )
-                     .toList(),
+               Obx(
+                 () =>  Wrap(
+                   spacing: 12,
+                   runSpacing: 12,
+                   children:
+                   ["Ready To Move", "Under Construction"]
+                       .map(
+                         (type) => buildChoice(
+                       title: type,
+                       selected:
+                       controller.sell_constructionStatus.value ==
+                           type,
+                       onTap: () {
+
+                         controller.setValue(
+                           controller.sell_constructionStatus,
+                           type,
+                         );
+                         log('Tapped on ${controller.sell_constructionStatus
+                             .value}');
+                       },
+                     ),
+                   )
+                       .toList(),
+                 ),
                ),
              ],
 
@@ -614,7 +619,7 @@ class RentPriceDetail extends StatelessWidget {
                 ),
               ],
               if (controller.sell_constructionStatus.value ==
-                  "Ready to move") ...[
+                  "Ready To Move") ...[
                 SizedBox(height: 16),
                 Text("Age of property"),
 

@@ -148,6 +148,10 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
                         // What happens next section
                         buildContentContainer("What happens next?", options),
                         SizedBox(height: 10),
+
+
+                        buildContractorTypeSelector(controller),
+                        const SizedBox(height: 16),
                         CitySelectionWidget(
                           isEditing: true,
                           controller: controller.selectedCityZ,
@@ -171,7 +175,7 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
                           width: double.infinity,
                           child: Obx(
                             () =>
-                                (controller.city.value.isNotEmpty)
+                                (controller.city.value.isNotEmpty && controller.contractorType.value.isNotEmpty)
                                     ? ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor:
@@ -203,6 +207,7 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
                                                       controller
                                                           .selectedCityZ
                                                           .text,
+                                                  controller.contractorType.value
                                                     );
                                               },
                                       child:
@@ -367,6 +372,61 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget buildContractorTypeSelector(AuthController controller) {
+  return Container(
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(
+        color: ColorRes.leadGreyColor.shade300.withOpacity(0.5),
+      ),
+    ),
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Contractor Type",
+          style: TextStyle(
+            fontFamily: 'Exo',
+            fontSize: AppFontSizes.small,
+            fontWeight: FontWeight.w500,
+            color: ColorRes.blackShade87,
+          ),
+        ),
+        const SizedBox(height: 12),
+
+        Obx(
+              () => Column(
+            children: [
+              RadioListTile<String>(
+                value: "Labour",
+                groupValue: controller.contractorType.value,
+                activeColor: ColorRes.primary,
+                contentPadding: EdgeInsets.zero,
+
+                title: const Text("Labour"),
+                onChanged: (value) {
+                  controller.setContractorType(value!);
+                },
+              ),
+              RadioListTile<String>(
+                value: "Company",
+                groupValue: controller.contractorType.value,
+                activeColor: ColorRes.primary,
+                contentPadding: EdgeInsets.zero,
+                title: const Text("Company"),
+                onChanged: (value) {
+                  controller.setContractorType(value!);
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 Container buildContentContainer(String title, List<String> textList) {

@@ -1019,6 +1019,7 @@ class FinancialInfo {
 
   /// Optional monthly rent (PG / alternate use)
   final double? monthlyRent;
+  final double? maintenanceCharges;
 
   /// Maintenance charge
   double? maintenance;
@@ -1053,6 +1054,7 @@ class FinancialInfo {
   FinancialInfo({
     this.price = 0,
     this.propertyRentPerMonth = 0,
+    this.maintenanceCharges,
     this.monthlyRent,
     this.maintenance,
     this.pricePerSqft = 0,
@@ -1085,6 +1087,7 @@ class FinancialInfo {
       brokerCommission:
           TypeConverter.parseDouble(json['broker_commission']) ?? 0,
       plateFromFees:TypeConverter.parseDouble(json['platform_fees']) ?? 0 ,
+      maintenanceCharges: (json['maintenance_charges'] as num?)?.toDouble(),
       propertySecurityDeposit:
           TypeConverter.parseDouble(json['property_security_deposit']) ?? 0,
       negotiable: json['negotiable'] ?? false,
@@ -1113,6 +1116,8 @@ class FinancialInfo {
       "property_security_deposit": propertySecurityDeposit,
       "negotiable": negotiable,
       "notice_period": noticePeriod,
+      "maintenance_charges": maintenanceCharges,
+
       "lock_in_period": lockInPeriod,
       "is_for_sellorrent": isForSellOrRent,
       "property_price_trend":

@@ -3296,6 +3296,7 @@ import 'package:housing_flutter_app/modules/property/views/recommended_property.
 import 'package:housing_flutter_app/modules/property/views/widgets/investment_insigths_graph.dart';
 import 'package:housing_flutter_app/modules/property/views/widgets/overall_rating_widget.dart';
 import 'package:housing_flutter_app/modules/property_rating/view/widget/read_more_or_less.dart';
+import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 import 'package:housing_flutter_app/modules/review/controllers/review_controller.dart';
 import 'package:housing_flutter_app/modules/review/views/widget/add_property_review.dart';
 import 'package:housing_flutter_app/modules/review/views/widget/property_review_card.dart';
@@ -4300,7 +4301,11 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                             null &&
                         currentProperty.investmentInsightModel != null &&
                         currentProperty.listingType!.toLowerCase() ==
-                            "sell") ...[
+                            "sell" ) ...[
+                    if(currentProperty
+                        .propertyDetails
+                        ?.financialInfo
+                        ?.propertyPriceTrend.isNotEmpty??false)...[
                       const SizedBox(height: 12),
                       const TitleWithViewAll(title: 'Investment Insight'),
                       const SizedBox(height: 8),
@@ -4320,6 +4325,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                         },
                       ),
                       const SizedBox(height: 12),
+                    ]
                     ],
 
                     if (currentProperty.location?.isNotEmpty ?? false) ...[
@@ -4512,7 +4518,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                     title: 'Get Offer',
                                     backgroundColor: ColorRes.error,
                                     height: 36,
-                                    onTap: () async {
+                                    onTap:(UserHelper.isGuest)?()=> Get.to(() => LoginScreen()) :() async {
                                       try {
                                         final user =
                                             await SecureStorage.getUserData();
@@ -5871,6 +5877,34 @@ class Details extends StatelessWidget {
                   }).toList(),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Last Updated',
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: AppFontSizes.caption,
+                    fontWeight: AppFontWeights.medium,
+                    color: ColorRes.leadGreyColor[700],
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  Formatter.formatDate(property.updatedAt) ?? '-',
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: const TextStyle(
+                    fontSize: AppFontSizes.small,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.blackShade87,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       );
     });
@@ -5915,7 +5949,7 @@ class AmenitiesSection extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      StringManager.formatLabel(item) ?? ' -',
+                      capitalizeEachWord(item) ?? ' -',
                       style: const TextStyle(
                         fontSize: AppFontSizes.small,
                         fontWeight: AppFontWeights.medium,

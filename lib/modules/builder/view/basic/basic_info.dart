@@ -79,72 +79,75 @@ class StepBasicInfo extends GetView<ProjectWizardController> {
 
               const SizedBox(height: 12),
 
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CommonTextField(
-                          label: 'Total Building',
-                          controller: controller.totalBuildingsController,
-                          initialValue: p.projectSize.totalBuildings.toString(),
-                          keyboardType: TextInputType.number,
-                          prefixIcon: Icon(
-                            Icons.domain_outlined,
-                            size: 20,
-                            color: ColorRes.primary,
+              IntrinsicHeight(
+                
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CommonTextField(
+                            label: 'Total Building',
+                            controller: controller.totalBuildingsController,
+                            initialValue: p.projectSize.totalBuildings.toString(),
+                            keyboardType: TextInputType.number,
+                            prefixIcon: Icon(
+                              Icons.domain_outlined,
+                              size: 20,
+                              color: ColorRes.primary,
+                            ),
+                            textInputAction: TextInputAction.next,
+                            validator:
+                                (v) => ProjectValidators.minNumber(
+                                  num.tryParse(v ?? ''),
+                                  1,
+                                  field: 'Total Buildings',
+                                ),
+                            onSaved:
+                                (v) => controller.project.update(
+                                  (x) =>
+                                      x!.projectSize.totalBuildings =
+                                          int.tryParse(v ?? '') ?? 1,
+                                ),
                           ),
-                          textInputAction: TextInputAction.next,
-                          validator:
-                              (v) => ProjectValidators.minNumber(
-                                num.tryParse(v ?? ''),
-                                1,
-                                field: 'Total Buildings',
-                              ),
-                          onSaved:
-                              (v) => controller.project.update(
-                                (x) =>
-                                    x!.projectSize.totalBuildings =
-                                        int.tryParse(v ?? '') ?? 1,
-                              ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CommonTextField(
-                          label: 'Total Units',
-                          controller: controller.totalUnitsController,
-                          initialValue: p.projectSize.totalUnits.toString(),
-                          keyboardType: TextInputType.number,
-                          prefixIcon: Icon(
-                            Icons.apartment_rounded,
-                            size: 20,
-                            color: ColorRes.primary,
-                          ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CommonTextField(
+                            label: 'Total Units',
+                            controller: controller.totalUnitsController,
+                            initialValue: p.projectSize.totalUnits.toString(),
+                            keyboardType: TextInputType.number,
+                            prefixIcon: Icon(
+                              Icons.apartment_rounded,
+                              size: 20,
+                              color: ColorRes.primary,
+                            ),
 
-                          validator:
-                              (v) => ProjectValidators.minNumber(
-                                num.tryParse(v ?? ''),
-                                1,
-                                field: 'Total Units',
-                              ),
-                          onSaved:
-                              (v) => controller.project.update(
-                                (x) =>
-                                    x!.projectSize.totalUnits =
-                                        int.tryParse(v ?? '') ?? 1,
-                              ),
-                        ),
-                      ],
+                            validator:
+                                (v) => ProjectValidators.minNumber(
+                                  num.tryParse(v ?? ''),
+                                  1,
+                                  field: 'Total Units',
+                                ),
+                            onSaved:
+                                (v) => controller.project.update(
+                                  (x) =>
+                                      x!.projectSize.totalUnits =
+                                          int.tryParse(v ?? '') ?? 1,
+                                ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               const SizedBox(height: 12),
 

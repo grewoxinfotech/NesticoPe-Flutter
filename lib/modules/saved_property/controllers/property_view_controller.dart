@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
+import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
 import '../../../data/network/property/models/viewed_item_model.dart';
 import '../../../data/network/property/services/property_view_service.dart';
 import '../../property/controllers/property_controller.dart';
@@ -8,6 +9,7 @@ import '../../property/controllers/property_controller.dart';
 class PropertyViewController extends GetxController {
   final PropertyViewService _service = PropertyViewService();
   final PropertyController _propertyController = Get.find<PropertyController>();
+  final PropertyFavoriteController favouriteController=Get.find<PropertyFavoriteController>();
 
   /// Reactive list of viewed property IDs
   RxList<PropertyView> viewedProperties = <PropertyView>[].obs;
@@ -41,7 +43,9 @@ class PropertyViewController extends GetxController {
         viewedProperties.assignAll(
           data.data!.property.where((element) => element.details != null),
         );
+        await favouriteController.loadViews(viewedProperties);
       }
+
       properties.clear();
       currentIndex = 0;
 

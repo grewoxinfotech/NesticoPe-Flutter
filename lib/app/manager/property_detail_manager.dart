@@ -171,6 +171,8 @@
 //   }
 // }
 
+import 'dart:developer';
+
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 
@@ -184,6 +186,7 @@ class PropertyDetailManager {
   List<Map<String, String>> getDetails() {
     final details = <Map<String, String>>[];
 
+    // if (property.propertyDetails == null) return details;
     if (property.propertyDetails == null) return details;
     final pd = property.propertyDetails!;
 
@@ -408,12 +411,21 @@ class PropertyDetailManager {
                 .toString(),
       });
     }
-    if (pd.possessionInfo?.propertyAgeInYear != null) {
-      details.add({
-        "Age of Property": "${pd.possessionInfo!.propertyAgeInYear} years",
-      });
+    final age = pd.possessionInfo?.propertyAgeInYear;
+
+    if (age != null &&
+        age.toString().trim().isNotEmpty &&
+        age.toString().toLowerCase() != 'null' &&
+        age != 0) {
+      log("Adding property age: $age");
+      details.add({"Age of Property": "$age years"});
     }
 
     return details;
   }
+}
+bool isValidField(dynamic value) {
+  if (value == null) return false;
+  final str = value.toString().trim().toLowerCase();
+  return str.isNotEmpty && str != 'null' && str != '0';
 }

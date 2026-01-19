@@ -720,6 +720,8 @@
 //   );
 // }
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
@@ -922,8 +924,12 @@ class StepAdditional extends GetView<ProjectWizardController> {
                       children:
                       controller.propertyStatusList
                           .map(
-                            (e) =>
-                            buildChoice(
+                            (e) {
+                              controller.selectedPropertyStatus.value=controller.project.value.status?.capitalize??'';
+                              log("Selected Property Status ${controller.selectedPropertyStatus.value}");
+                              log("Project Status ${controller.project.value.status}");
+
+                            return buildChoice(
                               title: e.capitalize.toString(),
                               selected:
                               controller.selectedPropertyStatus.value == e,
@@ -932,8 +938,13 @@ class StepAdditional extends GetView<ProjectWizardController> {
                                   controller.selectedPropertyStatus,
                                   e,
                                 );
+                                controller.project.update((x) {
+                                 x?.status= e.toLowerCase();
+
+                                });
                               },
-                            ),
+                            );
+                            }
                       )
                           .toList(),
                     ),

@@ -257,6 +257,8 @@
 //   }
 // }
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
@@ -265,11 +267,13 @@ import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
 
 import '../../../data/database/secure_storage_service.dart';
 import '../../dashboard/views/dashboard_screen.dart';
+import '../../history/controller/search_history_controller.dart';
 import '../../home/views/select_city_screen/select_city_screen.dart';
 
 // Controller for managing state
 class OnboardingController extends GetxController {
   var selectedOption = ''.obs;
+  final searchHistoryController = Get.put(SearchHistoryController());
   var isProcessing = false.obs; // ✅ Prevent double-taps
 
   void selectOption(String option) async {
@@ -306,10 +310,17 @@ class OnboardingController extends GetxController {
     print('Navigating to Buy Home screen');
 
     // ✅ Get city selection
-    final city = await Get.to(() => SelectCityScreen());
+    final city = await Get.to(() => SelectCityScreen(
+      isFromLogin: true,
+      title: 'Find or Buy Property in Your Location',
+    ));
 
     if (city != null) {
       // ✅ Save city and mark onboarding complete
+      log("city login chage $city");
+      await searchHistoryController.addSearchHistory({
+        'keywords': ['$city'],
+      });
       await SecureStorage.saveSelectedCity(city);
       await SecureStorage.setAppLaunched(); // ✅ Mark as not first time
 
@@ -332,10 +343,16 @@ class OnboardingController extends GetxController {
     print('Navigating to Rent Home screen');
 
     // ✅ Get city selection
-    final city = await Get.to(() => SelectCityScreen());
+    final city = await Get.to(() => SelectCityScreen(
+      isFromLogin: true,
+      title: 'Find or Rent Property in Your Location',
+    ));
 
     if (city != null) {
       // ✅ Save city and mark onboarding complete
+     await searchHistoryController.addSearchHistory({
+        'keywords': ["$city"],
+      });
       await SecureStorage.saveSelectedCity(city);
       await SecureStorage.setAppLaunched(); // ✅ Mark as not first time
 
@@ -403,6 +420,9 @@ class OnboardingScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: SingleChildScrollView(
+
+          scrollDirection: Axis.vertical,
+
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

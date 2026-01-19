@@ -33,6 +33,7 @@
         "image_picker",
         "internet_connection_checker_plus",
         "intl",
+        "lottie",
         "mime",
         "model_viewer_plus",
         "multi_image_picker_view",
@@ -615,6 +616,17 @@
         "flutter",
         "flutter_cache_manager",
         "octo_image"
+      ]
+    },
+    {
+      "name": "lottie",
+      "version": "3.3.2",
+      "dependencies": [
+        "archive",
+        "flutter",
+        "http",
+        "path",
+        "vector_math"
       ]
     },
     {
@@ -1370,17 +1382,6 @@
         "collection",
         "path",
         "term_glyph"
-      ]
-    },
-    {
-      "name": "lottie",
-      "version": "3.3.2",
-      "dependencies": [
-        "archive",
-        "flutter",
-        "http",
-        "path",
-        "vector_math"
       ]
     },
     {

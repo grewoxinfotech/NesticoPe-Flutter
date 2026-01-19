@@ -279,13 +279,13 @@ class AuthService {
     }
   }
 
-  Future<bool> convertBuyerToContractor(String city) async {
+  Future<bool> convertBuyerToContractor(String city,String type) async {
     final user = await SecureStorage.getUserData();
     final userId = user?.user?.id ?? '';
     final response = await http.post(
       Uri.parse('${ApiConstants.convertToContractor}/$userId'),
       headers: await headers(),
-      body: jsonEncode({'city': city}),
+      body: jsonEncode({'city': city,"contractorType": type}),
     );
     print(
       "Convert to Url Contractor ${Uri.parse('${ApiConstants.convertToContractor}/$userId')}",

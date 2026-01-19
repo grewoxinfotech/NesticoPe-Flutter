@@ -114,6 +114,8 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
                               _buildSellerDetailsSection(profileController),
 
                               const SizedBox(height: 16),
+                              _buildAccountInfoSection(profileController),
+                              const SizedBox(height: 16),
 
                               RequestDeleteAccount(),
                             ],
@@ -651,6 +653,32 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
             icon: Icons.location_city_outlined,
             enabled: controller.isEditing.value,
           ),
+          const SizedBox(height: 14),
+          _buildFormField(
+            controller: controller.totalExperience,
+            label: 'Total Experience',
+            keyboardType: TextInputType.number,
+            icon: Icons.work_history_outlined,
+            enabled: controller.isEditing.value,
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return 'Total experience is required';
+              }
+
+              final number = int.tryParse(value);
+
+              if (number == null) {
+                return 'Please enter a valid number';
+              }
+
+              if (number > 60) {
+                return 'Experience cannot be more than 60 years';
+              }
+
+              return null; // valid
+            },
+          ),
+
           if (controller.isEditing.value && UserHelper.isSellerOwner) ...[
             const SizedBox(height: 24),
             Row(
@@ -1025,8 +1053,8 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
           ),
           const SizedBox(height: 12),
           _buildDetailRow(
-            'USER ID',
-            controller.resellerProfile.value?.id ?? 'N/A',
+            'STATUS',
+            (controller.profileData.value?.user?.isVerified??false)?'Verified':'Unverified',
           ),
         ],
       ),

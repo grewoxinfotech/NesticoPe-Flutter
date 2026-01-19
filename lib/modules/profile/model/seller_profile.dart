@@ -90,11 +90,13 @@ class UserUpdateProfile {
   final String address;
   final String email;
   final String city;
+  final String totalExperience;
   final String state;
   final SellerProfileData profileData;
 
   UserUpdateProfile({
     required this.firstName,
+    required this.totalExperience,
     required this.lastName,
     required this.phone,
     required this.address,
@@ -108,6 +110,7 @@ class UserUpdateProfile {
   factory UserUpdateProfile.fromMap(Map<String, dynamic> map) {
     return UserUpdateProfile(
       firstName: map['firstName'] ?? '',
+      totalExperience: map['totalExperience'] ?? '',
       lastName: map['lastName'] ?? '',
       phone: map['phone'] ?? '',
       email: map['email'] ?? '',
@@ -125,6 +128,7 @@ class UserUpdateProfile {
       'phone': phone,
       'email': email,
       'city': city,
+      'totalExperience': totalExperience,
       'state': state,
       'address':address,
       'profilePic':image??"",

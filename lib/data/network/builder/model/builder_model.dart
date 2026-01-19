@@ -486,7 +486,7 @@ class AddProjectModel {
   String address;
   String city;
   String state;
-  String zipCode;
+  String? zipCode;
   String location;
   List<Map<String, dynamic>> nearbyLocations;
   List<String> amenities;

@@ -68,6 +68,7 @@ class SellerProfileController extends GetxController {
   final positionController = TextEditingController(); // City
   final companyController = TextEditingController(); // State
   final addressController = TextEditingController();
+  final totalExperience=TextEditingController();
   final zipController = TextEditingController();
 
   // Form controllers - Business Details
@@ -182,13 +183,14 @@ class SellerProfileController extends GetxController {
     addressController.text = profileData.value?.user?.address ?? "";
     zipController.text = profileData.value?.user?.zipCode ?? "";
 
-
+    totalExperience.text=profileData.value?.user?.totalExperience.toString()??"";
     // Business Details fields from seller profile
     contactPersonController.text = resellerProfile.value?.contactName ?? "";
     contactPhoneController.text = resellerProfile.value?.contactPhone ?? "";
     companyNameController.text = resellerProfile.value?.companyName ?? "";
     reraNumberController.text = resellerProfile.value?.reraNumber ?? "";
     gstNumberController.text = resellerProfile.value?.gstNumber ?? "";
+
   }
 
   void toggleEdit() {
@@ -451,10 +453,12 @@ class SellerProfileController extends GetxController {
         city: positionController.text,
         state: companyController.text,
         email: emailController.text,
+        totalExperience: totalExperience.text,
         firstName: nameController.text,
         lastName: lastNameController.text,
         phone: phoneController.text,
         address: addressController.text,
+
         profileData: SellerProfileData(
           contactName: contactPersonController.text,
           contactPhone: contactPhoneController.text,

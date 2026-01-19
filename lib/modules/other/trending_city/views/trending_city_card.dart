@@ -23,7 +23,7 @@ class TrendingCityCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: AppSpacing.large * 6,
-        height: cardHeight ?? AppSpacing.large * 2.7,
+        // height: cardHeight ?? AppSpacing.extraLarge * 2.7,
         margin: const EdgeInsets.symmetric(vertical: AppPadding.small),
         // padding: const EdgeInsets.symmetric(
         //   horizontal: AppPadding.small,
@@ -78,21 +78,40 @@ class TrendingCityCard extends StatelessWidget {
                   const SizedBox(height: 6),
 
                   // Property count
+                 if(city.propertyCount>0)...[
+                   Row(
+                     children: [
+                       Icon(
+                         Icons.home_outlined,
+                         size: 16,
+                         color: ColorRes.blueGrey,
+                       ),
+                       const SizedBox(width: 6),
+                       Text(
+                         '${city.propertyCount} properties',
+                         style: TextStyle(color: ColorRes.leadGreyColor[700], fontSize: AppFontSizes.caption),
+                       ),
+                     ],
+                   ),
+                 ],
+                  const SizedBox(height: 4),
+                if(city.projectCount>0)...[
                   Row(
                     children: [
-                       Icon(
-                        Icons.home_outlined,
+                      Icon(
+                        Icons.apartment_outlined,
                         size: 16,
                         color: ColorRes.blueGrey,
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        '${city.propertyCount} properties',
+                        '${city.projectCount} projects',
                         style: TextStyle(color: ColorRes.leadGreyColor[700], fontSize: AppFontSizes.caption),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                ],
+
 
                   // // Total views
                   // Row(

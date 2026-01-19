@@ -1262,9 +1262,10 @@ class _VariantMediaUploadWidgetState extends State<VariantMediaUploadWidget> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    // _controller.dispose();
     super.dispose();
   }
+
 
   void _showMessage(String message, {bool isError = false}) {
     if (mounted) {

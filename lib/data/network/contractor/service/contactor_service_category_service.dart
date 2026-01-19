@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/api_constants.dart';
 import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 import 'package:http/http.dart' as http;
 
 import '../model/contractot_service_model/contractor_service_category_model.dart';
@@ -39,6 +40,7 @@ class TopCategoryService {
         final jsonData = jsonDecode(response.body);
 
         final model = TopCategoryResponse.fromJson(jsonData);
+        AppLogger.structured('Top Categorise of full ',model.toJson() );
 
         return model.data?.items ?? [];
       } else {

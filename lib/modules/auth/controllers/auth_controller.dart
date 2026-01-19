@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
@@ -25,7 +27,13 @@ class AuthController extends GetxController {
 
   var selectedCityZ = TextEditingController();
   RxString city = ''.obs;
+  RxString contractorType = ''.obs;
 
+  void setContractorType(String type) {
+    contractorType.value = type;
+    log("Contractor type set to: $type");
+
+  }
   final authState = AuthState.initial.obs;
   final errorMessage = ''.obs;
   final verificationId = ''.obs;
@@ -495,10 +503,10 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> convertBuyerToContractor(String city) async {
+  Future<void> convertBuyerToContractor(String city,String type ) async {
     try {
       isLoading.value = true;
-      final user = await authService.convertBuyerToContractor(city);
+      final user = await authService.convertBuyerToContractor(city,type);
       if (user) {
         Get.offAll(() => LoginScreen());
       } else {

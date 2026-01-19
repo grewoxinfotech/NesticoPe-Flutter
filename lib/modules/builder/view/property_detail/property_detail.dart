@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -337,13 +338,6 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                       onPressed:
                                           () =>
                                               controller.removeVariant(ci, vi),
-                                      child: Text(
-                                        'Remove',
-                                        style: TextStyle(
-                                          color: ColorRes.redAccentColor,
-                                          fontSize: AppFontSizes.small,
-                                        ),
-                                      ),
 
                                       // color: Colors.red.shade600,
                                       // tooltip: 'Remove Configuration',
@@ -352,6 +346,13 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                         minimumSize: const Size(36, 36),
                                         tapTargetSize:
                                             MaterialTapTargetSize.shrinkWrap,
+                                      ),
+                                      child: Text(
+                                        'Remove',
+                                        style: TextStyle(
+                                          color: ColorRes.redAccentColor,
+                                          fontSize: AppFontSizes.small,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -467,6 +468,7 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                       ],
                                     ),
                                     const SizedBox(height: 12),
+
                                     Row(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -484,12 +486,30 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                                     ? ''
                                                     : v.price.toString(),
                                             keyboardType: TextInputType.number,
-                                            validator:
-                                                (n) =>
-                                                    ProjectValidators.positiveNumber(
-                                                      num.tryParse(n ?? ''),
-                                                      field: 'Price',
-                                                    ),
+                                            validator: (value) {
+                                              if (value == null || value.isEmpty) {
+                                                return 'Please enter monthly rent';
+                                              }
+
+                                              final rent = int.tryParse(value) ?? 0;
+
+                                              if (rent > 0) {
+                                                final platformFee = rent * 0.05;
+                                                final brokerCommission = platformFee * 0.02;
+
+                                                v.platformFees = double.tryParse(platformFee.toStringAsFixed(2));
+                                                v.brokerCommission = double.tryParse(brokerCommission.toStringAsFixed(2));
+
+                                                // ✅ Add these lines to update the text fields
+                                                controller.platformFees.text = platformFee.toStringAsFixed(2);
+                                                controller.brokerRageCommission.text = brokerCommission.toStringAsFixed(2);
+
+                                                log('Platform Fees: ${v.platformFees}, Broker Commission: ${v.brokerCommission}');
+                                                return null;
+                                              }
+
+                                              return null;
+                                            },
                                             onSaved:
                                                 (
                                                   n,
@@ -536,6 +556,91 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                         ),
                                       ],
                                     ),
+                                    const SizedBox(height: 12),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: CommonTextField(
+                                            label: 'Platform Fees (5% of Price)',
+                                            controller: controller.platformFees,
+                                            hint: 'Platform Fees',
+                                            prefixIcon: const Icon(
+                                              Icons.aspect_ratio_outlined,
+                                              size: 16,
+                                            ),
+
+
+                                            // initialValue:
+                                            //     v.platformFees == 0
+                                            //         ? ''
+                                            //         : v.platformFees.toString(),
+                                            keyboardType: TextInputType.number,
+                                            validator:
+                                                (n) =>
+                                                    ProjectValidators.positiveNumber(
+                                                      num.tryParse(n ?? ''),
+                                                      field: 'Platform fees',
+                                                    ),
+                                            onSaved:
+                                                (
+                                                  n,
+                                                ) => controller.project.update(
+                                                  (x) =>
+                                                      x!
+                                                              .configurations[ci]
+                                                              .variants[vi]
+                                                              .platformFees =
+                                                          double.tryParse(
+                                                            n ?? '',
+                                                          ) ??
+                                                          0,
+                                                ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: CommonTextField(
+                                            label: 'Broker Commission (2% of Platform  Fees)',
+                                            hint: 'Broker Commission',
+                                            controller:
+                                                controller.brokerRageCommission,
+                                            prefixIcon: const Icon(
+                                              Icons.straighten,
+                                              size: 16,
+                                            ),
+                                            // initialValue:
+                                            //     v.brokerCommission == 0
+                                            //         ? ''
+                                            //         : v.brokerCommission.toString(),
+                                            keyboardType: TextInputType.number,
+                                            validator:
+                                                (n) =>
+                                                    ProjectValidators.positiveNumber(
+                                                      num.tryParse(n ?? ''),
+                                                      field:
+                                                          'Broker Commission',
+                                                    ),
+                                            onSaved:
+                                                (
+                                                  n,
+                                                ) => controller.project.update(
+                                                  (x) =>
+                                                      x!
+                                                              .configurations[ci]
+                                                              .variants[vi]
+                                                              .brokerCommission =
+                                                          double.tryParse(
+                                                            n ?? '',
+                                                          ) ??
+                                                          0,
+                                                ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
                                     const SizedBox(height: 12),
                                     Row(
                                       crossAxisAlignment:

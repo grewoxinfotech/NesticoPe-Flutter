@@ -25,13 +25,13 @@ import '../../../../reseller/view/listing/property_listing.dart';
 import '../../../../reseller/widget/reseller_filter/resseller_property_filter.dart';
 
 class PropertyOverviewScreen extends StatefulWidget {
-  final List<Items> properties;
-  final Function() onDelete;
+  // final List<Items> properties;
+  // final Function() onDelete;
 
   const PropertyOverviewScreen({
     super.key,
-    required this.properties,
-    required this.onDelete,
+    // required this.properties,
+    // required this.onDelete,
   });
 
   @override
@@ -43,6 +43,16 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
   PropertyController propertyController = Get.find<PropertyController>();
   final RxList<String> selectedPropertyIds = <String>[].obs;
   final RxMap<String, String> selectedFilters = <String, String>{}.obs;
+  Future<void> refreshPropertyBySeller() async {
+    final user = await SecureStorage.getUserData();
+    if (user != null) {
+      propertyController.applyFilter(
+        "created_by",
+        user.user?.id.toString() ?? "",
+        includeCity: false,
+      );
+    }
+  }
 
   // @override
   // void initState() {
@@ -81,7 +91,7 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    /*return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         elevation: 0,
@@ -157,19 +167,130 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
             );
           }),
 
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: widget.properties.length,
-              itemBuilder: (context, index) {
-                final property = widget.properties[index];
-                return _buildPropertyCard(property, widget.onDelete);
-              },
+          RefreshIndicator(
+            onRefresh: refreshPropertyBySeller,
+            child: Expanded(
+              child:(widget.properties.isEmpty)? Center(child: Text('Property Non Found'),) :ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: widget.properties.length,
+                itemBuilder: (context, index) {
+                  final property = widget.properties[index];
+                  return _buildPropertyCard(property, widget.onDelete);
+                },
+              ),
             ),
           ),
         ],
       ),
+    );*/
+    return Scaffold(
+      backgroundColor: Colors.grey[50],
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: ColorRes.white,
+        foregroundColor: ColorRes.textPrimary,
+        automaticallyImplyLeading: false,
+        title: const Text(
+          "Property Overview",
+          style: TextStyle(fontWeight: AppFontWeights.semiBold),
+        ),
+        actions: [
+          GestureDetector(
+            onTap: () async {
+              final result = await Get.to(() => ResellerPropertyFilter());
+
+              if (result != null) {
+                final newFilter = convertFiltersToString(result);
+                final user = await SecureStorage.getUserData();
+                final userId = user?.user?.id;
+
+                if (userId != null && userId.isNotEmpty) {
+                  newFilter["created_by"] = userId;
+                  selectedFilters
+                    ..clear()
+                    ..addAll(newFilter);
+
+                  propertyController.applyFilters(
+                    Map<String, String>.from(selectedFilters),
+                  );
+                }
+              }
+            },
+            child: const Icon(Icons.filter_list),
+          ),
+          const SizedBox(width: 16),
+        ],
+      ),
+
+      body: Column(
+        children: [
+          /// 🔹 Filter chips
+          Obx(() {
+            return FilterChipsBar(
+              filters: selectedFilters.value,
+              onClearAll: () {
+                selectedFilters.clear();
+                propertyController.applyFilters(<String, String>{});
+              },
+              onRemoveFilter: (key) {
+                selectedFilters.remove(key);
+                propertyController.applyFilters(
+                  Map<String, String>.from(selectedFilters),
+                );
+              },
+              priceRangeFormatter: (min, max) => formatPriceRange(min, max),
+            );
+          }),
+
+          /// 🔹 Property List + Loading + Pagination
+          Expanded(
+            child: Obx(() {
+              // Initial loading
+              if (propertyController.isLoading.value && propertyController.items.isEmpty) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              // Empty state
+              if (!propertyController.isLoading.value && propertyController.items.isEmpty) {
+                return const Center(child: Text("No Property found."));
+              }
+
+              return NotificationListener<ScrollEndNotification>(
+                onNotification: (notification) {
+                  final metrics = notification.metrics;
+                  if (metrics.pixels >= metrics.maxScrollExtent) {
+                    propertyController.loadMore();
+                  }
+                  return false;
+                },
+                child: RefreshIndicator(
+                  onRefresh: refreshPropertyBySeller,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: propertyController.items.length +
+                        (propertyController.isLoading.value ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (index == propertyController.items.length) {
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      }
+
+                      final property = propertyController.items[index];
+                      return _buildPropertyCard(property, () {
+                        refreshPropertyBySeller();
+                      });
+                    },
+                  ),
+                ),
+              );
+            }),
+          ),
+        ],
+      ),
     );
+
   }
 
   Widget _buildPropertyCard(Items property, Function() onDelete) {
@@ -191,6 +312,7 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
                 onDelete: onDelete,
               ),
             );
+            log("Tapped on property ID: ${property.toJson()}");
           },
           child: Container(
             margin: const EdgeInsets.only(bottom: 20),

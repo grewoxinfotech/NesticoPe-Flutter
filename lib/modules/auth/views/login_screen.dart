@@ -261,6 +261,7 @@ import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
 import 'package:housing_flutter_app/modules/auth/views/forgot_password_screen.dart';
+import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
 import 'package:housing_flutter_app/modules/auth/views/select_account_type_screen.dart';
 import 'package:housing_flutter_app/modules/auth/views/otp_login_screen.dart';
 import 'package:get/get.dart';
@@ -270,6 +271,7 @@ import '../../../app/constants/color_res.dart';
 import '../../../app/constants/font_res.dart';
 import '../../../app/constants/ic_res.dart';
 import '../../../app/utils/validation.dart';
+import '../../../data/network/auth/model/user_model.dart';
 import '../../../widgets/New folder/inputs/text_field.dart';
 import '../../../widgets/bar/app_bar/common_bar.dart';
 import '../../../widgets/button/button.dart';
@@ -511,7 +513,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         TextButton(
                           onPressed:
                               () =>
-                                  Get.to(() => const SelectAccountTypeScreen()),
+                                  // Get.to(() => const SelectAccountTypeScreen()),
+                              Get.to(
+                                    () =>
+                                    RegisterScreen(role: UserRole.buyer),
+                              ),
                           child: Text(
                             'Sign Up here',
                             style: TextStyle(

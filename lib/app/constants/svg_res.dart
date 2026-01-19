@@ -84,7 +84,7 @@ static const String meditation_area="meditation-area";
 static const String multi_purpose_hall="multi-purpose-hall";
 static const String solar_panel="solar-panel";
 static const String visitor_parking="visitor-parking";
-static const String waste_disposal="waste_disposal";
+static const String waste_disposal="waste-disposal";
 
 
 

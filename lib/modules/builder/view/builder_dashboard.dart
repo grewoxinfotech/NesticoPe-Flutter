@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
+import 'package:housing_flutter_app/modules/builder/view/widget/project_widget_binding.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/widget/dashboard_layout.dart';
 import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
 
@@ -69,7 +70,7 @@ class _BuilderDashboardState extends State<BuilderDashboard> {
               tag: "builder",
             );
             controller.resetForm();
-            Get.to(CreateProjectScreen());
+            Get.to(()=>CreateProjectScreen(),binding: ProjectWizardBinding() );
           }
         },
         label: Text(
@@ -556,7 +557,7 @@ class OverBuilderViewCard extends StatelessWidget {
           childAspectRatio: 1.5,
           children: [
             buildMetricCard(
-              'Total Projects',
+              'Total Listed Projects',
               data?.propertyMetrics?.totalProperties.toString() ?? '',
               Icons.home_work,
               ColorRes.blueColor,
@@ -568,11 +569,11 @@ class OverBuilderViewCard extends StatelessWidget {
                     .map((e) => e.views)
                     .fold<int>(0, (sum, item) => sum + item) ?? 0,
               ),
-              Icons.currency_rupee_outlined,
+              Icons.remove_red_eye_outlined,
               ColorRes.green,
             ),
             buildMetricCard(
-              'Total Leads',
+              'Active Leads',
               '${data?.leadAnalytics?.totalLeads}',
               Icons.person_add_alt_1,
               ColorRes.orangeColor,

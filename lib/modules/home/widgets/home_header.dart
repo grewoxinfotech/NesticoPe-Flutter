@@ -17,6 +17,7 @@ import 'package:housing_flutter_app/modules/auth/views/role_convert/convert_to_s
 import 'package:housing_flutter_app/modules/builder/view/builder_dashboard.dart';
 import 'package:housing_flutter_app/modules/contractor/view/dashboard/contractor_dashboard.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/seller_dashboard_screen.dart';
+import 'package:housing_flutter_app/modules/history/controller/search_history_controller.dart';
 import 'package:housing_flutter_app/modules/profile/views/profile_screen.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 
@@ -61,6 +62,7 @@ class HomeHeader extends StatefulWidget {
 class _HomeHeaderState extends State<HomeHeader> {
   final propertyController = Get.find<PropertyController>();
   final projectController = Get.find<ProjectWizardController>();
+  final searchHistoryController = Get.find<SearchHistoryController>();
 
   int selectedIndex = 0;
 
@@ -148,6 +150,10 @@ class _HomeHeaderState extends State<HomeHeader> {
                                       city,
                                     );
                                     projectController.applyFilter('city', city);
+                                    log('Selected city updated to for search history $city');
+                                await  searchHistoryController.addSearchHistory({
+                                      'keywords': [city],
+                                    });
                                     // Reload top properties for the new city
                                     await propertyController
                                         .loadTopProperties();

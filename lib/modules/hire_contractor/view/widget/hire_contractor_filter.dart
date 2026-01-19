@@ -35,8 +35,8 @@ class _HireContractorFilterState extends State<HireContractorFilter> {
 
     // ✅ Add category filter if selected
 
-      filters['isActive'] = true.toString();
-      filters['category_ui'] = controllerProfileData.selectedCategoryName.value;
+      // filters['isActive'] = true.toString();
+      // filters['category_ui'] = controllerProfileData.selectedCategoryName.value;
 
 
     // ✅ Add contractor rating filter if > 0

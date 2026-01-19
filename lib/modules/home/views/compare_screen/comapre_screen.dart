@@ -43,6 +43,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:housing_flutter_app/modules/property/views/property_detail_screen.dart';
 import 'package:housing_flutter_app/modules/property_rating/view/widget/read_more_or_less.dart';
 
@@ -56,6 +57,7 @@ import '../../../../data/database/secure_storage_service.dart';
 import '../../../../data/network/property/models/property_model.dart';
 import '../../../../app/manager/property/property_pricemanager.dart';
 import '../../../../widgets/New folder/inputs/text_field.dart';
+import '../../../auth/views/login_screen.dart';
 import '../../../propert_detail/view/property_details.dart';
 import '../../../property/controllers/property_controller.dart';
 
@@ -321,7 +323,7 @@ class PropertyCardForCompare extends StatelessWidget {
                               ),
                               SizedBox(width: 10),
                               GestureDetector(
-                                onTap: () async {
+                                onTap:(UserHelper.isGuest)?() => Get.to(() => LoginScreen()): () async {
                                     try {
                                       final user =
                                           await SecureStorage.getUserData();

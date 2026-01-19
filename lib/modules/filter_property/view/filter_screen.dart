@@ -565,32 +565,37 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
               children: [
                 // Results count
                 Expanded(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      buildCommonText(
-                        '1,234 Properties',
-                        AppFontSizes.small,
-                        AppFontWeights.medium,
-                        ColorRes.textColor.withOpacity(0.6),
-                        1,
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: ColorRes.primary, width: 1.5),
+                      foregroundColor: ColorRes.primary,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      const SizedBox(height: 2),
-                      buildCommonText(
-                        'Available',
-                        AppFontSizes.extraSmall,
-                        AppFontWeights.regular,
-                        ColorRes.textColor.withOpacity(0.5),
-                        1,
-                      ),
-                    ],
+                    ),
+                    onPressed: () {
+                      Get.back();
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        buildCommonText(
+                          'Cancel',
+                          AppFontSizes.body,
+                          AppFontWeights.semiBold,
+                          ColorRes.primary, // text color matches border
+                          1,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(width: 16),
+
                 // Apply Button
+                SizedBox(width: 12,),
                 Expanded(
-                  flex: 2,
+flex: 2,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorRes.primary,
@@ -632,6 +637,7 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
                     ),
                   ),
                 ),
+
               ],
             ),
           ),

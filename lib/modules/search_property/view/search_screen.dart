@@ -8,6 +8,7 @@ import 'package:housing_flutter_app/app/constants/size_manager.dart';
 import 'package:housing_flutter_app/app/widgets/mic_search/search_mic.dart';
 import 'package:housing_flutter_app/data/network/city/tending_city/trending_city_model.dart';
 import 'package:housing_flutter_app/modules/filter_property/view/filter_screen.dart';
+import 'package:housing_flutter_app/modules/history/controller/search_history_controller.dart';
 
 //import 'package:housing_flutter_app/modules/home/controllers/home_controller/home_controller.dart';
 import 'package:housing_flutter_app/modules/other/trending_city/controllers/trending_city_controller.dart';
@@ -587,8 +588,11 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
   Widget build(BuildContext context) {
     Get.lazyPut(() => CityController());
     Get.lazyPut(() => TrendingCityController());
+    Get.lazyPut(() => SearchHistoryController());
     final cityController = Get.find<CityController>();
     final trendingCityController = Get.find<TrendingCityController>();
+    final searchHistoryController = Get.find<SearchHistoryController>();
+
     final PropertyController propertyController =
         Get.find<PropertyController>();
 
@@ -659,6 +663,9 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                                 r'(\d+)',
                               ).firstMatch(upperSearchText);
                               final bhkNumber = bhkMatch?.group(1) ?? '';
+                              searchHistoryController.addSearchHistory({
+                                'keywords': [ propertyController.selectedCity.value],
+                              });
 
                               Get.to(
                                 () => PropertyDetail(
@@ -960,6 +967,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                               : () {
                                 // Check if this is a BHK property search result
                                 if (item.items != null) {
+
                                   Get.to(
                                     () => PropertyDetailScreen(
                                       propertyId: item.items!.id ?? '',
@@ -985,6 +993,11 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                                   if (widget.onCitySelected != null) {
                                     widget.onCitySelected!(item);
                                   }
+                                  searchHistoryController.addSearchHistory({
+                                    'keywords': [item.description!
+                                        .split(',')
+                                        .first],
+                                  });
 
                                   Get.to(
                                     () => PropertyDetail(
@@ -1023,6 +1036,11 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                                   controller.predictions
                                       .clear(); // Clear predictions
                                   micController.searchText.value.clear();
+                                    searchHistoryController.addSearchHistory({
+                                    'keywords': [item.description!
+                                        .split(',')
+                                        .first],
+                                  });
                                   Get.to(
                                     () => PropertyDetail(
                                       filters: [
@@ -1130,9 +1148,12 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                           if (cityController.allCities.isEmpty) {
                             return Center(child: CircularProgressIndicator());
                           }
-                          return buildSection(
-                            "Popular Locations",
-                            cityController.allCities,
+                          return Padding(
+                            padding:  EdgeInsets.symmetric(horizontal: 16),
+                            child: buildSection(
+                              "Popular Locations",
+                              cityController.allCities,
+                            ),
                           );
                         }),
                         Obx(() {
@@ -1308,28 +1329,26 @@ Widget highlightText(
 //   );
 // }
 
-Widget buildSection(String title, List<CityData> data) {
+Widget buildSection(String title, List<CityData> data,{bool isFromLoginSide=false}) {
+  final searchHistoryController = Get.find<SearchHistoryController>();
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     mainAxisSize: MainAxisSize.min,
     children: [
       SizedBox(height: AppSpacing.verticalSmall.height),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppPadding.medium),
-        child: buildCommonText(
-          title,
-          AppFontSizes.small,
-          AppFontWeights.semiBold,
-          ColorRes.textColor,
-          1,
-        ),
+      buildCommonText(
+        title,
+        AppFontSizes.small,
+        AppFontWeights.semiBold,
+        ColorRes.textColor,
+        1,
       ),
 
       SizedBox(
         height: 100,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: AppPadding.medium),
+          padding: EdgeInsets.zero,
           itemCount: data.length,
           separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.small),
           itemBuilder: (context, index) {
@@ -1340,10 +1359,20 @@ Widget buildSection(String title, List<CityData> data) {
               propertyType: city.listingTypes.join(", "),
               cardHeight: 65,
               onTap: () {
-                final filters = {"city": city.city};
-                print("Applied Filters: $filters");
 
-                Get.back(result: filters);
+               if(!isFromLoginSide){
+                  final filters = {"city": city.city};
+
+                  print("Applied Filters: $filters");
+                  searchHistoryController.addSearchHistory({
+                    'keywords': ["${city.city}"],
+                  });
+
+                  Get.back(result: filters);
+               }else{
+                 final selectedCity = city.city.trim();
+                 Get.back(result: selectedCity);
+               }
               },
             );
           },
@@ -1354,6 +1383,7 @@ Widget buildSection(String title, List<CityData> data) {
 }
 
 Widget buildSectionTrending(String title, List<TrendingCityData> data) {
+  final searchHistoryController = Get.find<SearchHistoryController>();
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     mainAxisSize: MainAxisSize.min,
@@ -1371,7 +1401,7 @@ Widget buildSectionTrending(String title, List<TrendingCityData> data) {
       ),
 
       SizedBox(
-        height: 90,
+        height: 110,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: AppPadding.medium),
@@ -1385,6 +1415,9 @@ Widget buildSectionTrending(String title, List<TrendingCityData> data) {
                 final filters = {"city": city.city};
 
                 print("Applied Filters: $filters");
+                searchHistoryController.addSearchHistory({
+                  'keywords': ['${city.city}'],
+                });
 
                 Get.back(result: filters);
               },

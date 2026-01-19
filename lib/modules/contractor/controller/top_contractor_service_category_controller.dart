@@ -26,7 +26,7 @@ class TopCategoryController extends GetxController {
       isLoading.value = true;
       errorMessage.value = '';
 
-      final result = await _service.fetchTopCategories();
+      final result = await _service.fetchTopCategories(limit: 12);
       categories.assignAll(result);
     } catch (e) {
       debugPrint("TopCategoryController error: $e");

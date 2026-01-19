@@ -165,10 +165,13 @@
 // }
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
+
+import '../../controllers/property_favorite_controller.dart';
 
 // class HorizontalPropertyCard extends StatelessWidget {
 //   final String imageUrl;
@@ -601,6 +604,7 @@ class HorizontalPropertyCard extends StatelessWidget {
   final int? postedDaysAgo;
   final bool isFavorite;
   final bool ifFeedbackEnable;
+  final String propertyId;
   final VoidCallback? onContactPressed;
   final VoidCallback? onFeedbackPressed;
   final VoidCallback? onFavoritePressed;
@@ -616,6 +620,7 @@ class HorizontalPropertyCard extends StatelessWidget {
     this.projectName,
     this.listingType,
     this.priceType,
+
     this.status,
     this.city,
     this.entityType,
@@ -627,10 +632,13 @@ class HorizontalPropertyCard extends StatelessWidget {
     this.onFeedbackPressed,
     this.onTap,
     this.ifFeedbackEnable = false,
+    required this.propertyId,
   });
 
   @override
   Widget build(BuildContext context) {
+    final PropertyFavoriteController favoriteController =
+        Get.find<PropertyFavoriteController>();
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -950,7 +958,7 @@ class HorizontalPropertyCard extends StatelessWidget {
                       ),
                       SizedBox(height: 8),
                     ] else ...[
-                      SizedBox(
+                      /*SizedBox(
                         width: double.infinity,
                         height: 36,
                         child: ElevatedButton(
@@ -980,7 +988,65 @@ class HorizontalPropertyCard extends StatelessWidget {
                             ],
                           ),
                         ),
-                      ),
+                      ),*/
+                      Obx(() {
+                        final isInquirySubmitted =
+                            favoriteController
+                                .hasSubmittedInquiryMap[propertyId] ??
+                            false;
+                        return SizedBox(
+                          width: double.infinity,
+                          height: 36,
+                          child: ElevatedButton(
+                            onPressed:
+                                isInquirySubmitted
+                                    ? null
+                                    : (onContactPressed ?? () {}),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  isInquirySubmitted
+                                      ? Colors
+                                          .grey
+                                          .shade400 // Disabled color
+                                      : ColorRes.primary,
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child:
+                                (isInquirySubmitted)
+                                    ? Text(
+                                      'Already Contacted',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 0.1,
+                                      ),
+                                    )
+                                    : Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: const [
+                                        Icon(Icons.phone_outlined, size: 14),
+                                        SizedBox(width: 6),
+                                        Text(
+                                          'Contact Agent',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                            letterSpacing: 0.1,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                          ),
+                        );
+                      }),
                       SizedBox(height: 8),
                     ],
                   ],

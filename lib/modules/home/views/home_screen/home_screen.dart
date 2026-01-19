@@ -58,11 +58,13 @@ import '../../../../app/widgets/shimmer/shimmer_widget.dart';
 import '../../../../widgets/New folder/inputs/text_field.dart';
 import '../../../../widgets/input/city_selection_widget.dart';
 import '../../../add_property/view/create_property.dart';
+import '../../../history/controller/search_history_controller.dart';
 import '../../../profile/controllers/buyer_profiledata.dart';
 import '../../../property/controllers/share_property_controller.dart';
 import '../../../search_property/controller/search_controller.dart';
 import '../../../search_property/model/search_model.dart';
 import '../../controllers/contractor_profile_controller/contractor_profile_controller.dart';
+import '../../widgets/all_categories_section.dart';
 import '../../widgets/top_categories_section.dart';
 import '../../widgets/unified_comparison_floating_button.dart';
 import '../../../../data/network/builder/model/builder_model.dart';
@@ -2422,6 +2424,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late final TopSellerController topSellerController;
   late final CompareManager compareManager;
   late final TopCategoryController topCategoryController;
+  final searchHistoryController = Get.put(SearchHistoryController());
 
   int selectedIndex = -1;
 
@@ -2755,7 +2758,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             const SizedBox(height: 12),
             const TitleWithViewAll(title: "Recommended Properties"),
-            const SizedBox(height: 4),
+            const SizedBox(height: 10),
             const HorizontalPropertyListShimmer(), // ✅ Shimmer
           ],
         );
@@ -2770,7 +2773,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           const SizedBox(height: 12),
           const TitleWithViewAll(title: "Recommended Properties"),
-          const SizedBox(height: 4),
+          const SizedBox(height: 10),
           _buildHorizontalPropertyList(
             propertyController.recommendedProperties,
           ),
@@ -2860,8 +2863,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 20),
           TitleWithViewAll(
             title: "City",
-            showViewAll: true,
-            onViewAll: () => Get.to(() => const MumbaiProjectsScreen()),
+            showViewAll: false,
           ),
           const SizedBox(height: 12),
           const CityFilterList(),
@@ -3373,7 +3375,8 @@ class _HomeScreenState extends State<HomeScreen> {
         return Column(
           children: [
             const SizedBox(height: 20),
-            const TitleWithViewAll(title: "Top Categories", showViewAll: false),
+            const TitleWithViewAll(title: "Top Service Categories", showViewAll: true),
+
             const SizedBox(height: 12),
             const TopCategoriesShimmer(), // ✅ Shimmer
           ],
@@ -3387,7 +3390,9 @@ class _HomeScreenState extends State<HomeScreen> {
       return Column(
         children: [
           const SizedBox(height: 20),
-          const TitleWithViewAll(title: "Top Categories", showViewAll: false),
+          TitleWithViewAll(title: "Top Service Categories", showViewAll: true,onViewAll: () => Get.to(()=>AllCategoriesSection(categories: topCategoryController.categories??[],)),),
+
+
           const SizedBox(height: 12),
           TopCategoriesSection(categories: topCategoryController.categories),
         ],
@@ -3546,7 +3551,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildFindPropertyButton() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      child: ElevatedButton(
+      child: ElevatedButton.icon(
+        icon: const Icon(
+          Icons.search, // 🏠 choose any icon you like
+          size: 22,
+        ),
         onPressed:
             () => showFindPropertyDialog(
               propertyController,
@@ -3559,7 +3568,7 @@ class _HomeScreenState extends State<HomeScreen> {
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-        child: const Text("Find Your Property"),
+        label: const Text("Find Your Property"),
       ),
     );
   }
@@ -3628,6 +3637,7 @@ Widget _buildDialogHeader() {
         const Expanded(
           child: Text(
             "Find Your Dream Property",
+
             style: TextStyle(
               fontSize: AppFontSizes.body,
               fontWeight: AppFontWeights.semiBold,
@@ -3660,10 +3670,9 @@ Widget _buildDialogContent(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildFieldLabel("City"),
-          const SizedBox(height: 10),
           CitySelectionWidget(
             isEditing: true,
+            isRequired: true,
             controller: controller.selectedCityZ,
             color: ColorRes.primary,
             fillColor: ColorRes.white,
@@ -4062,17 +4071,25 @@ class ReviewsAndTestimonials extends StatelessWidget {
                     ),
                     alignment: Alignment.center,
                     child: Text(
-                      (review?.entityUser?.username?.isNotEmpty ?? false)
-                          ? review!.entityUser!.username![1]
-                              .toUpperCase() // ensure uppercase letter
-                          : '?', // fallback if username is null/empty
+                      (() {
+                        final user = review?.entityUser;
+
+                        if (user == null) return '?';
+                        final username = user.username?.trim() ?? '';
+
+                       if (username.isNotEmpty) {
+                          return username[0].toUpperCase(); // fallback to username
+                        } else {
+                          return '?'; // fallback if all empty
+                        }
+                      })(),
                       style: TextStyle(
                         fontSize: AppFontSizes.large,
                         fontWeight: AppFontWeights.semiBold,
-                        color:
-                            ColorRes.homeGreenDarkFade, // contrast text color
+                        color: ColorRes.homeGreenDarkFade,
                       ),
                     ),
+
                   ),
 
                   const SizedBox(width: 12),

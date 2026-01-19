@@ -321,6 +321,7 @@ import 'package:housing_flutter_app/app/care/pagination/models/pagination_models
 import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
 
+import '../../../../../app/constants/color_res.dart';
 import '../../../../../data/database/secure_storage_service.dart';
 import '../../../../../data/network/lead/lead_service.dart';
 import '../../../../../data/network/property/services/property_service.dart';
@@ -504,7 +505,24 @@ class LeadController extends PaginatedController<LeadItem> {
       rethrow;
     }
   }
+  Future<void> refreshLead() async {
+    try {
+      isRefreshing.value = true;
+      refreshList();
+      await Future.delayed(const Duration(seconds: 1));
 
+      // Update metrics with new values
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to refresh ',
+        backgroundColor: Colors.red,
+        colorText: ColorRes.white,
+      );
+    } finally {
+      isRefreshing.value = false;
+    }
+  }
   // --- CRUD Methods ---
   Future<bool> createLead(LeadItem lead) async {
     try {

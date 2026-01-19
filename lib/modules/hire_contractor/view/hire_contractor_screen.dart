@@ -7,6 +7,7 @@ import '../../../../data/network/contractor/model/contractot_service_model/contr
 import '../controller/hire_contractor_controller.dart';
 import '../controller/hire_contractor_filter_controller.dart';
 import '../controller/hire_contractor_list_of_profile_controller.dart';
+import '../controller/hire_contractor_new_controller.dart';
 
 class HireContractorScreen extends StatelessWidget {
   const HireContractorScreen({super.key});
@@ -14,6 +15,7 @@ class HireContractorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(HireContractorController());
+    final controllerNew = Get.put(HireContractorNewController());
     final controllerProfileData = Get.put(HireContractorListOfProfileController());
     final controllerFilterData = Get.put(HireContractorFilterProfileController());
 

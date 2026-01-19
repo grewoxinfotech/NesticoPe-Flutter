@@ -332,62 +332,62 @@ class SellerCard extends StatelessWidget {
                     //   ),
                     // ],
                     const SizedBox(height: 6),
-
-                    // 🏅 Badges
-                    Row(
-                      children: [
-                        if (isPremium)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 3,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.amber.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: const Row(
-                              children: [
-                                Icon(Icons.star, size: 14, color: Colors.amber),
-                                SizedBox(width: 3),
-                                Text(
-                                  "Premium",
-                                  style: TextStyle(
-                                    fontSize: AppFontSizes.caption,
-                                    fontWeight: AppFontWeights.medium,
-                                    color: Colors.amber,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        if (isPremium) const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 3,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.green.withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Row(
-                            children: [
-                              Icon(Icons.circle, size: 8, color: Colors.green),
-                              SizedBox(width: 4),
-                              Text(
-                                "Active",
-                                style: TextStyle(
-                                  fontSize: AppFontSizes.caption,
-                                  fontWeight: AppFontWeights.medium,
-                                  color: Colors.green,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                    //
+                    // // 🏅 Badges
+                    // Row(
+                    //   children: [
+                    //     if (isPremium)
+                    //       Container(
+                    //         padding: const EdgeInsets.symmetric(
+                    //           horizontal: 8,
+                    //           vertical: 3,
+                    //         ),
+                    //         decoration: BoxDecoration(
+                    //           color: Colors.amber.withOpacity(0.2),
+                    //           borderRadius: BorderRadius.circular(12),
+                    //         ),
+                    //         child: const Row(
+                    //           children: [
+                    //             Icon(Icons.star, size: 14, color: Colors.amber),
+                    //             SizedBox(width: 3),
+                    //             Text(
+                    //               "Premium",
+                    //               style: TextStyle(
+                    //                 fontSize: AppFontSizes.caption,
+                    //                 fontWeight: AppFontWeights.medium,
+                    //                 color: Colors.amber,
+                    //               ),
+                    //             ),
+                    //           ],
+                    //         ),
+                    //       ),
+                    //     if (isPremium) const SizedBox(width: 8),
+                    //     Container(
+                    //       padding: const EdgeInsets.symmetric(
+                    //         horizontal: 8,
+                    //         vertical: 3,
+                    //       ),
+                    //       decoration: BoxDecoration(
+                    //         color: Colors.green.withOpacity(0.15),
+                    //         borderRadius: BorderRadius.circular(12),
+                    //       ),
+                    //       child: const Row(
+                    //         children: [
+                    //           Icon(Icons.circle, size: 8, color: Colors.green),
+                    //           SizedBox(width: 4),
+                    //           Text(
+                    //             "Active",
+                    //             style: TextStyle(
+                    //               fontSize: AppFontSizes.caption,
+                    //               fontWeight: AppFontWeights.medium,
+                    //               color: Colors.green,
+                    //             ),
+                    //           ),
+                    //         ],
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                   ],
                 ),
               ),
@@ -397,45 +397,37 @@ class SellerCard extends StatelessWidget {
           const SizedBox(height: 14),
 
           // 🏘️ Inventory Section
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: ColorRes.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.home_work_outlined,
-                  color: ColorRes.primary,
-                  size: 22,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // const Text(
-                      //   "Inventory",
-                      //   style: TextStyle(
-                      //     fontSize: AppFontSizes.caption,
-                      //     color: ColorRes.textSecondary,
-                      //   ),
-                      // ),
-                      Text(
-                        inventoryText,
-                        style: const TextStyle(
-                          fontSize: AppFontSizes.bodySmall,
-                          fontWeight: AppFontWeights.semiBold,
-                          color: ColorRes.textPrimary,
-                        ),
+          Row(
+            children: [
+              const Icon(
+                Icons.home_work_outlined,
+                color: ColorRes.primary,
+                size: 22,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // const Text(
+                    //   "Inventory",
+                    //   style: TextStyle(
+                    //     fontSize: AppFontSizes.caption,
+                    //     color: ColorRes.textSecondary,
+                    //   ),
+                    // ),
+                    Text(
+                      inventoryText,
+                      style: const TextStyle(
+                        fontSize: AppFontSizes.bodySmall,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.textPrimary,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),

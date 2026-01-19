@@ -32,6 +32,8 @@ class CreateProjectScreen extends GetView<ProjectWizardController> {
 
   @override
   Widget build(BuildContext context) {
+    // final ProjectWizardController controller = Get.put(ProjectWizardController(isBuilderView: false));
+
     if (isFromEdit) {
       projectId = Get.arguments;
     }

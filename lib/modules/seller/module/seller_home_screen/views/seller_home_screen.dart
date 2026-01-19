@@ -84,7 +84,6 @@ final List<Map<String, dynamic>> addonData = [
   },
 ];
 
-
 final List<Map<String, dynamic>> propertiesOverview = [
   {
     'id': '1',
@@ -235,14 +234,14 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
         ),
       ),
       child: Obx(() {
-        log('UI Obx rebuilding - isLoading: ${overviewController.isLoading.value}, overviewData: ${overviewController.overviewData.value != null ? "HAS DATA" : "NULL"}');
+        log(
+          'UI Obx rebuilding - isLoading: ${overviewController.isLoading.value}, overviewData: ${overviewController.overviewData.value != null ? "HAS DATA" : "NULL"}',
+        );
 
         // Show loading indicator
         if (overviewController.isLoading.value) {
           log('Showing loading indicator');
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const Center(child: CircularProgressIndicator());
         }
         // Get overview data
         final overview = overviewController.overviewData.value;
@@ -290,7 +289,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
 
         log('Showing main content');
 
-        if(overview == null){
+        if (overview == null) {
           return SizedBox.shrink();
         }
 
@@ -318,10 +317,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                   ],
                 ),
                 const SizedBox(height: 10),
-                OverViewCard(
-                  property: controller.items,
-                  overview: overview,
-                ),
+                OverViewCard(property: controller.items, overview: overview),
                 const SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 12),
@@ -346,7 +342,6 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
           ),
         );
       }),
-
     );
   }
 
@@ -354,12 +349,13 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
     final baseYear = overviewController.createdUserYear.value;
     final currentYear = DateTime.now().year;
 
-    final List<int> years = (baseYear == currentYear)
-        ? [currentYear]
-        : List.generate(
-      currentYear - baseYear + 1,
-          (index) => baseYear + index,
-    ).reversed.toList();
+    final List<int> years =
+        (baseYear == currentYear)
+            ? [currentYear]
+            : List.generate(
+              currentYear - baseYear + 1,
+              (index) => baseYear + index,
+            ).reversed.toList();
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -380,12 +376,10 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
             fontSize: AppFontSizes.medium,
             fontWeight: AppFontWeights.medium,
           ),
-          items: years.map((year) {
-            return DropdownMenuItem<int>(
-              value: year,
-              child: Text("$year"),
-            );
-          }).toList(),
+          items:
+              years.map((year) {
+                return DropdownMenuItem<int>(value: year, child: Text("$year"));
+              }).toList(),
           onChanged: (value) {
             if (value != null) {
               log('Dropdown changed to: $value');
@@ -396,6 +390,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
       ),
     );
   }
+
   //
   // const CustomerSupportCard(
   //   email: "abc@support.com",
@@ -651,7 +646,8 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                       .value
                       ?.data
                       ?.leadAnalytics
-                      ?.stageBreakdown.toMap(),
+                      ?.stageBreakdown
+                      .toMap(),
             ),
           ),
         ],
@@ -729,7 +725,8 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                       .value
                       ?.data
                       ?.leadAnalytics
-                      ?.sourceDistribution.toMap() ??
+                      ?.sourceDistribution
+                      .toMap() ??
                   {},
             ),
           ),
@@ -765,19 +762,27 @@ class OverViewCard extends StatelessWidget {
           childAspectRatio: 1.5,
           children: [
             buildMetricCard(
-              'Total Properties',
+              'Total Listed Properties',
               data?.propertyMetrics?.totalProperties.toString() ?? '',
               Icons.home_work,
               ColorRes.blueColor,
             ),
             buildMetricCard(
-              'Total Revenue',
-              '${Formatter.formatPrice(data?.financialMetrics?.totalRevenue??0)}',
-              Icons.currency_rupee_outlined,
+              'Total Property Views',
+              Formatter.formatNumber(
+                data?.propertyMetrics?.viewsHistory
+                        .map((e) => e.views)
+                        .fold<int>(
+                          0,
+                          (previousValue, element) => previousValue + element,
+                        ) ??
+                    0,
+              ),
+              Icons.remove_red_eye_outlined,
               ColorRes.green,
             ),
             buildMetricCard(
-              'Total Leads',
+              'Active Leads',
               '${data?.leadAnalytics?.totalLeads}',
               Icons.person_add_alt_1,
               ColorRes.orangeColor,
@@ -1770,4 +1775,3 @@ Widget buildSellerCommissionGraph(SellerOverviewController overviewController) {
     ),
   );
 }
-

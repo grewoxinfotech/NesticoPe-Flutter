@@ -7,6 +7,7 @@ import 'package:housing_flutter_app/modules/search_property/model/search_model.d
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 
 import '../../../../app/constants/color_res.dart';
+import '../../../search_property/controller/search_controller.dart';
 
 class BasicDetail extends StatelessWidget {
   final CreatePropertyController controller;
@@ -16,6 +17,7 @@ class BasicDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Obx(() {
       return Form(
         key: formKey,

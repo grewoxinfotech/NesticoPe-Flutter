@@ -462,6 +462,8 @@
 //     );
 //   }
 // }
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
@@ -521,7 +523,6 @@ class ProjectFilterScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -850,76 +851,79 @@ class ProjectFilterScreen extends StatelessWidget {
               const SizedBox(height: 30),
 
               // BUTTONS
-              Row(
-                children: [
-                  // RESET
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: controller.resetFilters,
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text(
-                        "Reset",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-
-                  // APPLY
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        final filterData = {
-                          "propertyTypes":
-                              controller.selectedPropertyType.value.toString(),
-                          "city": controller.selectedCity.value.toString(),
-                          "location": controller.selectedLocality.value.toString(),
-                          'reraId': controller.isRERAVerified.value.toString(),
-                          'hasPhotos': controller.isPropertyHaveImage.value.toString(),
-                          'hasVideos': controller.isPropertyHaveVideo.value.toString(),
-                          'hasBrochure': controller.isPropertyHaveBroucher.value.toString(),
-                          'minPrice': controller.min.value.toString(),
-                          'maxPrice':controller.max.value.toString(),
-                          'bhk':controller.bhkType.value.toString(),
-                         if(controller.amenities.isNotEmpty)
-                           'amenities': controller.amenities.value.map(
-                                 (e) => e.toLowerCase().replaceAll(" ", "_"),
-                           ).toString(),
-                        };
-
-                        final nonNullFilters = Map.fromEntries(
-                          filterData.entries.where(
-                            (e) =>
-                                e.value != null &&
-                                e.value.toString().trim().isNotEmpty,
+              SafeArea(
+                child: Row(
+                  children: [
+                    // RESET
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: controller.resetFilters,
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                        );
-
-                        onApply(nonNullFilters);
-                        Get.back();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
                         ),
-                      ),
-                      child: const Text(
-                        "Apply",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                        child: const Text(
+                          "Reset",
+                          style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 12),
+                
+                    // APPLY
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          final filterData = {
+                            "propertyTypes":
+                                controller.selectedPropertyType.value.toString(),
+                            "city": controller.selectedCity.value.toString(),
+                            "location": controller.selectedLocality.value.toString(),
+                            'reraId': controller.isRERAVerified.value.toString(),
+                            'hasPhotos': controller.isPropertyHaveImage.value.toString(),
+                            'hasVideos': controller.isPropertyHaveVideo.value.toString(),
+                            'hasBrochure': controller.isPropertyHaveBroucher.value.toString(),
+                            'minPrice': controller.min.value.toString(),
+                            'maxPrice':controller.max.value.toString(),
+                            'bhk':controller.bhkType.value.toString(),
+                           if(controller.amenities.isNotEmpty)
+                             'amenities': controller.amenities.value.map(
+                                   (e) => e.toLowerCase().replaceAll(" ", "_"),
+                             ).toString(),
+                          };
+                
+                          final nonNullFilters = Map.fromEntries(
+                            filterData.entries.where(
+                              (e) =>
+                                  e.value != null &&
+                                  e.value.toString().trim().isNotEmpty,
+                            ),
+                          );
+                
+                          onApply(nonNullFilters);
+                          log('Applied Filters: $nonNullFilters');
+                          // Get.back();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          "Apply",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

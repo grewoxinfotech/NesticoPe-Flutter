@@ -24,6 +24,7 @@ class ApiConstants {
 
   static String get loginEndpoint => "$auth/login";
 
+
   static String get registerEndpoint => "$auth/signup";
 
   static String get verifyOtpEndpoint => "$auth/verify-otp";
@@ -57,6 +58,8 @@ class ApiConstants {
   static String get recommmendedPorperties => "$baseURL/property/recommended";
 
   static String get subscriptionPlan => "$baseURL/subscriptionPlan";
+  static String get searchHistory => "$baseURL/searchHistory";
+
 
   static String get subscription => "$baseURL/subscription";
   static String get subscriptionPlanInquiry => "$baseURL/subscriptionPlanInquiry";
@@ -126,6 +129,8 @@ class ApiConstants {
   static String get contractorService => "$baseURL/contractorService";
 
   static String get contractorServiceCategory => "$baseURL/contractorServiceCategory";
+
+  static String get contractorServiceByCategory => "$baseURL/contractorService/by-category";
 
   static String get contractorInquiry => "$baseURL/contractorInquiry";
   static String get contractorInquiryQuotation => "$baseURL/contractorquotation";

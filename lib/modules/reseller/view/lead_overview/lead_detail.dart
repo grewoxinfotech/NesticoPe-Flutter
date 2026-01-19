@@ -1251,7 +1251,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                         ),
                         SizedBox(width: 6),
                         Text(
-                          amenity,
+                          capitalizeEachWord(amenity),
                           style: TextStyle(
                             fontSize: AppFontSizes.extraSmall,
                             color: ColorRes.primary,

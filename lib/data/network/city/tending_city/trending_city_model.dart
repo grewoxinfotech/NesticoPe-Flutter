@@ -35,6 +35,8 @@ class TrendingCityData {
   final String city;
   final String cityImage;
   final int propertyCount;
+  final int projectCount;
+  final int totalCount;
   final int totalViews;
   final int totalInquiries;
 
@@ -42,6 +44,8 @@ class TrendingCityData {
     required this.city,
     required this.cityImage,
     required this.propertyCount,
+    required this.projectCount,
+    required this.totalCount,
     required this.totalViews,
     required this.totalInquiries,
   });
@@ -51,18 +55,20 @@ class TrendingCityData {
       city: json['city'] ?? '',
       cityImage: json['cityImage'] ?? '',
       propertyCount: json['propertyCount'] ?? 0,
+      projectCount: json['projectCount'] ?? 0,
+      totalCount: json['totalCount'] ?? 0,
       totalViews: json['totalViews'] ?? 0,
       totalInquiries: json['totalInquiries'] ?? 0,
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'city': city,
-      'cityImage': cityImage,
-      'propertyCount': propertyCount,
-      'totalViews': totalViews,
-      'totalInquiries': totalInquiries,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+    'city': city,
+    'cityImage': cityImage,
+    'propertyCount': propertyCount,
+    'projectCount': projectCount,
+    'totalCount': totalCount,
+    'totalViews': totalViews,
+    'totalInquiries': totalInquiries,
+  };
 }

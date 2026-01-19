@@ -210,7 +210,8 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
       //     ),
       //   );
       // }),
-      SellerPropertyScreen(),
+      // SellerPropertyScreen(),
+      PropertyOverviewScreen(),
       SellerSubscriptionPlanScreen(),
       SellerProfileScreen(),
     ];
