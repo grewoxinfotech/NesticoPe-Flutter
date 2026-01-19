@@ -62,6 +62,7 @@ dependencies:
   syncfusion_flutter_pdfviewer:
   device_info_plus:
   model_viewer_plus:
+  excel:
 
 
 dev_dependencies:
