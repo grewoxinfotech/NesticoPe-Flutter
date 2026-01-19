@@ -32,8 +32,8 @@ class AuthController extends GetxController {
   void setContractorType(String type) {
     contractorType.value = type;
     log("Contractor type set to: $type");
-
   }
+
   final authState = AuthState.initial.obs;
   final errorMessage = ''.obs;
   final verificationId = ''.obs;
@@ -211,6 +211,52 @@ class AuthController extends GetxController {
         // phone: phone,
         // referCode: referralCode,
         // contractorType: contractorType,
+      );
+
+      if (response['success'] == true && response['data']['token'] != null) {
+        final token = response['data']['token'];
+        await SecureStorage.saveToken(token);
+
+        Get.to(
+          () => OtpVerificationScreen(
+            phone: phone,
+            token: token,
+            verifyOTPFor: VerifyOTPFor.registration,
+            data: data,
+            redirectAfterOtp: LoginScreen(),
+          ),
+        );
+
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: 'Registration successful. Please verify OTP sent to $phone.',
+          contentType: ContentType.success,
+        );
+      } else {
+        throw Exception(
+          response['message'] ?? 'Registration failed - no token received',
+        );
+      }
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> resellerRegister({
+    required Map<String, dynamic> data,
+    required String phone,
+    String? referralCode,
+  }) async {
+    try {
+      isLoading.value = true;
+
+      final response = await authService.resellerRegister(
+        userType: "reseller",
+        data: data,
+        // phone: phone,
+        // referCode: referralCode,
       );
 
       if (response['success'] == true && response['data']['token'] != null) {
@@ -477,10 +523,16 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> convertBuyerToReseller() async {
+  Future<void> convertBuyerToReseller({
+    required String city,
+    required String zipCode,
+  }) async {
     try {
       isLoading.value = true;
-      final user = await authService.convertBuyerToReseller();
+      final user = await authService.convertBuyerToReseller(
+        city: city,
+        zipCode: zipCode,
+      );
       if (user) {
         Get.offAll(() => LoginScreen());
       } else {
@@ -503,10 +555,10 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> convertBuyerToContractor(String city,String type ) async {
+  Future<void> convertBuyerToContractor(String city, String type) async {
     try {
       isLoading.value = true;
-      final user = await authService.convertBuyerToContractor(city,type);
+      final user = await authService.convertBuyerToContractor(city, type);
       if (user) {
         Get.offAll(() => LoginScreen());
       } else {

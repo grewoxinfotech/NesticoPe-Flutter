@@ -15,7 +15,8 @@ import '../model/user_subscription_model.dart';
 class SubscriptionPlanService {
   final String baseUrl = ApiConstants.subscriptionPlan; // <-- Your endpoint
   final String subscription = ApiConstants.subscription; // <-- Your endpoint
-  final String subscriptionInquiry = ApiConstants.subscriptionPlanInquiry; // <-- Your endpoint
+  final String subscriptionInquiry =
+      ApiConstants.subscriptionPlanInquiry; // <-- Your endpoint
 
   ///==================== Common Headers ====================
   static Future<Map<String, String>> headers() async {
@@ -130,7 +131,8 @@ class SubscriptionPlanService {
       return false;
     }
   }
-  Future<bool> subscriptionInquiryPlan(Map<String,dynamic> payload) async {
+
+  Future<bool> subscriptionInquiryPlan(Map<String, dynamic> payload) async {
     try {
       final uri = subscriptionInquiry;
       print("Buy plan payload: $payload");
@@ -165,20 +167,24 @@ class SubscriptionPlanService {
       return false;
     }
   }
-  Future<PaginationResponse<CurrentUserSubscriptionItem>> fetchUserSubscriptionData({
+
+  Future<PaginationResponse<CurrentUserSubscriptionItem>>
+  fetchUserSubscriptionData({
     int page = 1,
     Map<String, String>? filters,
-    required String userId
+    required String userId,
   }) async {
     try {
       final queryParameters = {
         'page': page.toString(),
         'limit': "all",
         if (filters != null) ...filters,
-        'userId':userId
+        'userId': userId,
       };
 
-      final uri = Uri.parse(subscription).replace(queryParameters: queryParameters);
+      final uri = Uri.parse(
+        subscription,
+      ).replace(queryParameters: queryParameters);
       debugPrint("Fetching Plans from: $uri");
 
       final response = await http.get(uri, headers: await headers());
@@ -190,7 +196,7 @@ class SubscriptionPlanService {
 
         return PaginationResponse<CurrentUserSubscriptionItem>.fromJson(
           data,
-              (json) => CurrentUserSubscriptionItem.fromJson(json),
+          (json) => CurrentUserSubscriptionItem.fromJson(json),
         );
       } else {
         debugPrint("Failed to fetch plans: ${response.statusCode}");
@@ -209,5 +215,4 @@ class SubscriptionPlanService {
       rethrow;
     }
   }
-
 }

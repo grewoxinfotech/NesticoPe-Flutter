@@ -163,7 +163,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             return InsightsScreen();
           case 4:
             return HireContractorScreen();
-
           default:
             return const SizedBox();
         }

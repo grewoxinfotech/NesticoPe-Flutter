@@ -8,7 +8,7 @@ class SellerSubscriptionPlanScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SubscriptionPlansScreen(role: Roles.seller.name);
+    return SubscriptionPlansScreen(role: Roles.sellerOwner.name);
   }
 }
 

@@ -519,4 +519,99 @@ class GoogleMapApi {
       return {'propertyCoords': null, 'places': <Map<String, dynamic>>[]};
     }
   }
+
+  Future<List<Map<String, String>>> searchZipcodes(String cityName) async {
+    try {
+      // Search for postal codes in the specific city
+      final uri = Uri.parse(
+        '$baseUrl?input=$cityName&types=postal_code&components=country:in&key=${ApiConfig.mapkey}',
+      );
+
+      final response = await http.get(uri);
+
+      if (response.statusCode == 200) {
+        print('Zipcode API Response: ${response.body}');
+        final data = json.decode(response.body);
+
+        if (data['status'] == 'OK') {
+          final predictions = data['predictions'] as List;
+
+          // Extract unique zipcodes
+          final zipcodes = <Map<String, String>>[];
+          final seenZipcodes = <String>{};
+
+          for (var prediction in predictions) {
+            final description = prediction['description'] as String;
+            // Extract zipcode using regex (6 digits for India)
+            final zipMatch = RegExp(r'\b(\d{6})\b').firstMatch(description);
+
+            if (zipMatch != null) {
+              final zipcode = zipMatch.group(1)!;
+
+              // Avoid duplicates
+              if (!seenZipcodes.contains(zipcode)) {
+                seenZipcodes.add(zipcode);
+                zipcodes.add({
+                  'zipcode': zipcode,
+                  'description': description,
+                  'place_id': prediction['place_id'] as String,
+                });
+              }
+            }
+          }
+
+          print('✅ Found ${zipcodes.length} zipcodes for $cityName');
+          return zipcodes;
+        } else {
+          print('⚠️ Zipcode API Status: ${data['status']}');
+          return [];
+        }
+      } else {
+        throw Exception('Failed to fetch zipcodes');
+      }
+    } catch (e) {
+      print('❌ Error fetching zipcodes: $e');
+      return [];
+    }
+  }
+
+  /// Get detailed location info including zipcode from place_id
+  Future<Map<String, String>?> getLocationDetails(String placeId) async {
+    try {
+      final uri = Uri.parse(
+        'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&fields=address_components&key=${ApiConfig.mapkey}',
+      );
+
+      final response = await http.get(uri);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        if (data['status'] == 'OK') {
+          final addressComponents =
+              data['result']['address_components'] as List;
+
+          String? zipcode;
+          String? city;
+
+          for (var component in addressComponents) {
+            final types = component['types'] as List;
+
+            if (types.contains('postal_code')) {
+              zipcode = component['long_name'] as String;
+            }
+            if (types.contains('locality')) {
+              city = component['long_name'] as String;
+            }
+          }
+
+          return {'zipcode': zipcode ?? '', 'city': city ?? ''};
+        }
+      }
+      return null;
+    } catch (e) {
+      print('❌ Error getting location details: $e');
+      return null;
+    }
+  }
 }

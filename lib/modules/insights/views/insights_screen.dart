@@ -17,28 +17,180 @@ class InsightsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 🔹 Check user type via UserHelper
+    // 🔹 Logged-in users flow
     if (UserHelper.isContractor) {
-      return SubscriptionPlansScreen(role: Roles.contractor.name);
-    } else if (UserHelper.isSeller) {
-      return SubscriptionPlansScreen(role: Roles.seller.name);
+      return SubscriptionPlansScreen(
+        role: Roles.contractor.name,
+        isShowCurrentPlan: true,
+      );
+    } else if (UserHelper.isSellerOwner) {
+      return SubscriptionPlansScreen(
+        role: Roles.sellerOwner.name,
+        isShowCurrentPlan: true,
+      );
+    } else if (UserHelper.isSellerBuilder) {
+      return SubscriptionPlansScreen(
+        role: Roles.sellerBuilder.name,
+        isShowCurrentPlan: true,
+      );
     } else if (UserHelper.isReseller) {
-      return SubscriptionPlansScreen(role: Roles.reseller.name);
-    }else if (UserHelper.isBuyer) {
-  return BuyerConversionScreen();
-  } else {
-      return const Center(
-        child: Text(
-          'Insights not available for this user type.',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.grey,
-          ),
-        ),
+      return SubscriptionPlansScreen(
+        role: Roles.reseller.name,
+        isShowCurrentPlan: true,
       );
     }
+    // else if (UserHelper.isBuyer) {
+    //   return BuyerConversionScreen();
+    // }
+
+    // 🔹 Guest user flow → Show role selection tiles
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Choose your role\nto continue',
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  height: 1.2,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Select a role to view subscription plans\nand get started.',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                  height: 1.5,
+                ),
+              ),
+              SizedBox(height: 32),
+
+              _buildGuestRoleTile(
+                title: "Seller (Owner) Plans",
+                subtitle: "List and sell your property",
+                icon: Icons.home_work_outlined,
+                iconColor: ColorRes.primary,
+                iconBgColor: ColorRes.primary.withOpacity(0.05),
+                onTap: () {
+                  Get.to(
+                    () => SubscriptionPlansScreen(role: Roles.sellerOwner.name),
+                  );
+                },
+              ),
+              SizedBox(height: 16),
+
+              _buildGuestRoleTile(
+                title: "Seller (Builder) Plans",
+                subtitle: "Showcase your projects",
+                icon: Icons.apartment_outlined,
+                iconColor: ColorRes.primary,
+                iconBgColor: ColorRes.primary.withOpacity(0.05),
+                onTap: () {
+                  Get.to(
+                    () =>
+                        SubscriptionPlansScreen(role: Roles.sellerBuilder.name),
+                  );
+                },
+              ),
+              SizedBox(height: 16),
+
+              _buildGuestRoleTile(
+                title: "Reseller Plans",
+                subtitle: "Join our partners program",
+                icon: Icons.handshake_outlined,
+                iconColor: ColorRes.primary,
+                iconBgColor: ColorRes.primary.withOpacity(0.05),
+                onTap: () {
+                  Get.to(
+                    () => SubscriptionPlansScreen(role: Roles.reseller.name),
+                  );
+                },
+              ),
+              SizedBox(height: 16),
+
+              _buildGuestRoleTile(
+                title: "Contractor Plans",
+                subtitle: "Provide renovation services",
+                icon: Icons.engineering_outlined,
+                iconColor: ColorRes.primary,
+                iconBgColor: ColorRes.primary.withOpacity(0.05),
+                onTap: () {
+                  Get.to(
+                    () => SubscriptionPlansScreen(role: Roles.contractor.name),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGuestRoleTile({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color iconColor,
+    required Color iconBgColor,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.grey[50],
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.transparent, width: 2),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: iconBgColor,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, color: iconColor, size: 24),
+            ),
+            SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey[400]),
+          ],
+        ),
+      ),
+    );
   }
 }
+
 class BuyerConversionScreen extends StatelessWidget {
   const BuyerConversionScreen({Key? key}) : super(key: key);
 
@@ -55,11 +207,7 @@ class BuyerConversionScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Icon(
-              Icons.trending_up,
-              size: 60,
-              color: ColorRes.primary,
-            ),
+            Icon(Icons.trending_up, size: 60, color: ColorRes.primary),
             const SizedBox(height: 16),
             Text(
               'Unlock More Features',
@@ -122,18 +270,16 @@ class BuyerConversionScreen extends StatelessWidget {
   }
 
   Widget _buildConversionButton(
-      BuildContext context, {
-        required IconData icon,
-        required String title,
-        required String description,
-        required Color color,
-        required VoidCallback onTap,
-      }) {
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String description,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
@@ -147,11 +293,7 @@ class BuyerConversionScreen extends StatelessWidget {
                   color: color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(
-                  icon,
-                  size: 28,
-                  color: color,
-                ),
+                child: Icon(icon, size: 28, color: color),
               ),
               const SizedBox(width: 14),
               Expanded(

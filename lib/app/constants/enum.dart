@@ -41,4 +41,4 @@ extension PricingKeyLabel on PricingKey {
   }
 }
 
-enum Roles { buyer, seller, reseller, contractor }
+enum Roles { buyer, sellerOwner, sellerBuilder, reseller, contractor }

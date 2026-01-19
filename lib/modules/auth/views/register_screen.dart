@@ -307,6 +307,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/utils/validation.dart';
+import 'package:housing_flutter_app/modules/auth/views/widget/city_zip_code_selector.dart';
 import 'package:housing_flutter_app/widgets/bar/app_bar/common_bar.dart';
 import 'package:housing_flutter_app/widgets/button/button.dart';
 import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
@@ -492,20 +493,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
       setState(() => _isLoading = true);
 
       try {
-        final success = await authController.register(
-          context: context,
-          username: _usernameController.text.trim(),
-          firstName: _firstNameController.text.trim(),
-          lastName: _lastNameController.text.trim(),
-          address: _addressController.text.trim(),
-          city: _cityController.text.trim(),
-          state: _stateController.text.trim(),
-          zipCode: _zipCodeController.text.trim(),
+        final data = {
+          "username": _usernameController.text.trim(),
+          "email": _emailController.text.trim(),
+          "phone": _phoneController.text.trim(),
+          "city": _cityController.text.trim(),
+          "password": _passwordController.text.trim(),
+          // "firstName": _firstNameController.text.trim(),
+          // "lastName": _lastNameController.text.trim(),
+          // "address": _addressController.text.trim(),
+          // "state": _stateController.text.trim(),
+          "zip_code": _zipCodeController.text.trim(),
+          "referralCode": _referralCodeController.text.trim(),
+        };
+
+        final success = await authController.resellerRegister(
+          data: data,
           phone: _phoneController.text.trim(),
           referralCode: _referralCodeController.text.trim(),
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim(),
-          userType: _roleToString(_selectedRole),
         );
 
         // if (!success) {
@@ -834,7 +839,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 // const SizedBox(height: 10),
                 if (_selectedRole == UserRole.contractor) ...[
-
                   CitySelectionWidget(
                     isEditing: true,
                     controller: _cityController,
@@ -846,8 +850,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       debugPrint(
                         "✅ Selected city: ${selectedCity.description}",
                       );
-                      _cityController.text =
-                          selectedCity.description ?? '';
+                      _cityController.text = selectedCity.description ?? '';
                     },
                   ),
 
@@ -869,6 +872,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const SizedBox(height: 10),
                 ],
 
+                if (_selectedRole == UserRole.reseller) ...[
+                  CityZipcodeSelector(
+                    onSelected: (city, zipcode) {
+                      _cityController.text = city ?? '';
+                      _zipCodeController.text = zipcode ?? '';
+                      print('City: $city, Zipcode: $zipcode');
+                    },
+                  ),
+                  SizedBox(height: 10),
+                ],
                 NesticoPeTextField(
                   hintText: 'Enter Password',
                   title: "Password",
@@ -940,9 +953,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 10),
                 NesticoPeTextField(
                   hintText: 'Enter Referral Code (Optional)',
-                  title: "Referral Code",style: TextStyle(  fontSize: AppFontSizes.medium,
-                  fontWeight: AppFontWeights.semiBold,
-                  color: ColorRes.textPrimary,),
+                  title: "Referral Code",
+                  style: TextStyle(
+                    fontSize: AppFontSizes.medium,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.textPrimary,
+                  ),
 
                   controller: _referralCodeController,
                   textCapitalization: TextCapitalization.characters,
@@ -1077,6 +1093,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 }
+
 Widget _buildFieldLabel(String label) {
   return Text(
     label,

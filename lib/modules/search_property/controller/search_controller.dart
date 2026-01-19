@@ -17,6 +17,58 @@ class GoogleMapSearchController extends GetxController {
 
   RxList<Map<String, String?>> cityStateList = <Map<String, String?>>[].obs;
 
+  // Zipcode related observables
+  var zipcodes = <Map<String, String>>[].obs;
+  var isLoadingZipcodes = false.obs;
+  var selectedCity = ''.obs;
+
+  /// Fetch zipcodes for selected city
+  Future<void> fetchZipcodesForCity(String cityName) async {
+    if (cityName.trim().isEmpty) {
+      zipcodes.clear();
+      return;
+    }
+
+    try {
+      isLoadingZipcodes.value = true;
+      selectedCity.value = cityName;
+
+      print('🔍 Fetching zipcodes for city: $cityName');
+
+      final response = await GoogleMapApi.instance.searchZipcodes(cityName);
+
+      if (response.isNotEmpty) {
+        zipcodes.value = response;
+        print('✅ Found ${response.length} zipcodes for $cityName');
+      } else {
+        zipcodes.clear();
+        print('⚠️ No zipcodes found for $cityName');
+      }
+    } catch (e) {
+      print('❌ Error fetching zipcodes: $e');
+      zipcodes.clear();
+    } finally {
+      isLoadingZipcodes.value = false;
+    }
+  }
+
+  /// Clear zipcodes when city changes
+  void clearZipcodes() {
+    zipcodes.clear();
+    selectedCity.value = '';
+  }
+
+  /// Get zipcode details from place_id
+  Future<Map<String, String>?> getZipcodeDetails(String placeId) async {
+    try {
+      final details = await GoogleMapApi.instance.getLocationDetails(placeId);
+      return details;
+    } catch (e) {
+      print('❌ Error getting zipcode details: $e');
+      return null;
+    }
+  }
+
   Future<void> fetchPredictionsCity(String city) async {
     if (city.trim().isEmpty) {
       predictions.clear();
@@ -177,8 +229,12 @@ class GoogleMapSearchController extends GetxController {
 
         predictions.value = predictionsList;
         cityStateList.assignAll(parsedList);
-        log("city List from apo ${cityStateList.map((element) => element.toString(),).toList()}");
-        log("prediction List from apo ${predictions.map((element) => element.items?.toJson(),).toList()}");
+        log(
+          "city List from apo ${cityStateList.map((element) => element.toString()).toList()}",
+        );
+        log(
+          "prediction List from apo ${predictions.map((element) => element.items?.toJson()).toList()}",
+        );
       } else {
         predictions.clear();
       }
@@ -302,9 +358,9 @@ class GoogleMapSearchController extends GetxController {
       }
 
       // ✅ Some APIs return 'results', others return 'predictions'
-      final List<dynamic> results = (response['results'] ??
-          response['predictions'] ??
-          []) as List<dynamic>;
+      final List<dynamic> results =
+          (response['results'] ?? response['predictions'] ?? [])
+              as List<dynamic>;
 
       if (results.isEmpty) {
         print("⚠️ No buildings found for '$locality' in $city");
@@ -313,18 +369,18 @@ class GoogleMapSearchController extends GetxController {
       }
 
       // ✅ Map results safely
-      predictions.value = results.map((place) {
-        return Prediction(
-          description: place['name'] ?? '',
-          placeId: place['place_id'] ?? '',
-          structuredFormatting: StructuredFormatting(
-            mainText: place['name'] ?? '',
-            secondaryText: place['formatted_address'] ??
-                place['description'] ??
-                '',
-          ),
-        );
-      }).toList();
+      predictions.value =
+          results.map((place) {
+            return Prediction(
+              description: place['name'] ?? '',
+              placeId: place['place_id'] ?? '',
+              structuredFormatting: StructuredFormatting(
+                mainText: place['name'] ?? '',
+                secondaryText:
+                    place['formatted_address'] ?? place['description'] ?? '',
+              ),
+            );
+          }).toList();
 
       print("✅ Found ${predictions.length} buildings/societies in $city");
     } catch (e, st) {
@@ -335,8 +391,6 @@ class GoogleMapSearchController extends GetxController {
       isLoading.value = false;
     }
   }
-
-
 
   /// Fetch nearby places by category
   var categoryPlaces = <Map<String, dynamic>>[].obs;

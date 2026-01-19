@@ -79,7 +79,9 @@ class SubscriptionPlansWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildHeader(plan),
-              if (!UserHelper.isSellerBuilder) ...[_buildPriceSection(plan)],
+              if (plan.plansFor != "sellerBuilder") ...[
+                _buildPriceSection(plan),
+              ],
               const SizedBox(height: 8),
               _buildFeaturePreview(plan),
               _buildShowMore(plan, index),
@@ -376,7 +378,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildHeader(plan),
-            if (!UserHelper.isSellerBuilder) ...[_buildPriceSection(plan)],
+            if (plan.plansFor != "sellerBuilder") ...[_buildPriceSection(plan)],
             const SizedBox(height: 12),
 
             // Full feature list

@@ -1,17 +1,22 @@
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
+import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
 
 import '../../../../../app/constants/color_res.dart';
 import '../../../controllers/auth_controller.dart';
 import '../../login_screen.dart';
+import '../../widget/city_zip_code_selector.dart';
 
 class ResellerConversionScreen extends StatelessWidget {
   const ResellerConversionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _cityController = TextEditingController();
+    final _zipcodeController = TextEditingController();
     Get.lazyPut(() => AuthController());
     final controller = Get.find<AuthController>();
     final List<String> options = [
@@ -34,7 +39,9 @@ class ResellerConversionScreen extends StatelessWidget {
         children: [
           SingleChildScrollView(
             child: Container(
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -142,6 +149,14 @@ class ResellerConversionScreen extends StatelessWidget {
                         buildContentContainer("What happens next?", options),
                         const SizedBox(height: 32),
 
+                        CityZipcodeSelector(
+                          onSelected: (city, zipcode) {
+                            _cityController.text = city;
+                            _zipcodeController.text = zipcode;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+
                         // Convert Button
                         SizedBox(
                           width: double.infinity,
@@ -158,18 +173,35 @@ class ResellerConversionScreen extends StatelessWidget {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                padding: const EdgeInsets.symmetric(vertical: 18),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 18,
+                                ),
                               ),
                               onPressed:
                                   controller.isLoading.value
                                       ? null
                                       : () {
-                                        controller.convertBuyerToReseller();
+                                        if (_cityController.text.isEmpty ||
+                                            _zipcodeController.text.isEmpty) {
+                                          controller.convertBuyerToReseller(
+                                            city: _cityController.text.trim(),
+                                            zipCode:
+                                                _zipcodeController.text.trim(),
+                                          );
+                                        } else {
+                                          NesticoPeSnackBar.showAwesomeSnackbar(
+                                            title: 'Error',
+                                            message:
+                                                'Please select a city and zipcode',
+                                            contentType: ContentType.failure,
+                                          );
+                                        }
                                       },
                               child:
                                   controller.isLoading.value
                                       ? Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           SizedBox(
                                             width: 20,
@@ -178,7 +210,9 @@ class ResellerConversionScreen extends StatelessWidget {
                                               strokeWidth: 2.5,
                                               valueColor:
                                                   AlwaysStoppedAnimation<Color>(
-                                                    ColorRes.white.withOpacity(0.7),
+                                                    ColorRes.white.withOpacity(
+                                                      0.7,
+                                                    ),
                                                   ),
                                             ),
                                           ),
@@ -195,7 +229,8 @@ class ResellerConversionScreen extends StatelessWidget {
                                         ],
                                       )
                                       : Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           Text(
                                             "Confirm - Convert to Reseller",
@@ -251,8 +286,6 @@ class ResellerConversionScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-
-
                 ],
               ),
             ),
