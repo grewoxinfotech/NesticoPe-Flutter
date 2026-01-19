@@ -104,6 +104,7 @@ class Items {
   String? state;
   String? zipCode;
   String? location;
+
   // Location? location;
   List<NearbyLocations>? nearbyLocations;
   String? reraId;
@@ -127,7 +128,7 @@ class Items {
   int? totalVisits;
   int? totalSales;
   String? totalCommissions;
-  String? assignedTo;
+  List<AssignToInfo>? assignedTo;
   String? assignmentDate;
   String? assignmentExpiryDate;
   String? potentialEarnings;
@@ -147,6 +148,7 @@ class Items {
   double? oneYearGrowth;
   double? threeYearGrowth;
   double? fiveYearGrowth;
+
   Items({
     this.propertyMedia,
     this.id,
@@ -160,6 +162,7 @@ class Items {
     this.keywords,
     this.propertyImages,
     this.propertyDetails,
+
     this.address,
     this.city,
     this.state,
@@ -276,7 +279,10 @@ class Items {
     totalVisits = TypeConverter.parseInt(json['totalVisits']);
     totalSales = TypeConverter.parseInt(json['totalSales']);
     totalCommissions = json['totalCommissions'] as String?;
-    assignedTo = json['assignedTo'] as String?;
+    assignedTo =
+        (json['assignedTo'] as List<dynamic>?)
+            ?.map((e) => AssignToInfo.fromJson(e))
+            .toList();
     assignmentDate = json['assignmentDate'] as String?;
     assignmentExpiryDate = json['assignmentExpiryDate'] as String?;
     potentialEarnings = json['potentialEarnings'] as String?;
@@ -362,7 +368,10 @@ class Items {
     data['totalVisits'] = totalVisits ?? 0;
     data['totalSales'] = totalSales ?? 0;
     data['totalCommissions'] = totalCommissions ?? "0.00";
-    data['assignedTo'] = assignedTo;
+    if((assignedTo?.isNotEmpty??false)&& assignedTo != null)
+      {
+        data['assignedTo'] = assignedTo?.map((e) => e.toMap()).toList();
+      }
     data['assignmentDate'] = assignmentDate;
     data['assignmentExpiryDate'] = assignmentExpiryDate;
     data['potentialEarnings'] = potentialEarnings;
@@ -393,6 +402,48 @@ class Items {
     if (fiveYearGrowth != null) data['fiveYearGrowth'] = fiveYearGrowth;
 
     return data;
+  }
+}
+
+class AssignToInfo {
+  final String id;
+  final String username;
+  final DateTime? assignedAt;
+  final DateTime? expiryDate;
+  final num commissionRate;
+
+  AssignToInfo({
+    required this.id,
+    required this.username,
+    this.assignedAt,
+    this.expiryDate,
+    required this.commissionRate,
+  });
+
+  factory AssignToInfo.fromJson(Map<String, dynamic> json) {
+    return AssignToInfo(
+      id: json['id'] ?? '',
+      username: json['username'] ?? '',
+      assignedAt:
+          json['assignedAt'] != null
+              ? DateTime.tryParse(json['assignedAt'])
+              : null,
+      expiryDate:
+          json['expiryDate'] != null
+              ? DateTime.tryParse(json['expiryDate'])
+              : null,
+      commissionRate: json['commissionRate'] ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'username': username,
+      'assignedAt': assignedAt?.toIso8601String(),
+      'expiryDate': expiryDate?.toIso8601String(),
+      'commissionRate': commissionRate,
+    };
   }
 }
 
@@ -1043,8 +1094,6 @@ class FinancialInfo {
 
   /// Sell or Rent flag
 
-
-
   /// Property price trend (past + future combined)
   final List<PropertyPriceYear> propertyPriceTrend;
 
@@ -1059,7 +1108,7 @@ class FinancialInfo {
     this.maintenance,
     this.pricePerSqft = 0,
     this.brokerCommission = 0,
-    this.plateFromFees=0,
+    this.plateFromFees = 0,
     this.propertySecurityDeposit = 0,
     this.negotiable = false,
     this.noticePeriod,
@@ -1069,7 +1118,6 @@ class FinancialInfo {
     this.propertyPriceTrend = const [],
 
     this.is_for_sellorrent,
-
   });
 
   factory FinancialInfo.fromJson(Map<String, dynamic> json) {
@@ -1086,7 +1134,7 @@ class FinancialInfo {
       pricePerSqft: TypeConverter.parseDouble(json['price_per_sqft']) ?? 0,
       brokerCommission:
           TypeConverter.parseDouble(json['broker_commission']) ?? 0,
-      plateFromFees:TypeConverter.parseDouble(json['platform_fees']) ?? 0 ,
+      plateFromFees: TypeConverter.parseDouble(json['platform_fees']) ?? 0,
       maintenanceCharges: (json['maintenance_charges'] as num?)?.toDouble(),
       propertySecurityDeposit:
           TypeConverter.parseDouble(json['property_security_deposit']) ?? 0,
@@ -1097,7 +1145,6 @@ class FinancialInfo {
       isForSellOrRent: json['is_for_sellorrent'] ?? false,
       propertyPriceTrend:
           (json['property_price_trend'] as List<dynamic>?)
-
               ?.map((e) => PropertyPriceYear.fromJson(e))
               .toList() ??
           [],
@@ -1112,7 +1159,7 @@ class FinancialInfo {
       "maintenance": maintenance,
       "price_per_sqft": pricePerSqft,
       "broker_commission": brokerCommission,
-      "platform_fees":plateFromFees,
+      "platform_fees": plateFromFees,
       "property_security_deposit": propertySecurityDeposit,
       "negotiable": negotiable,
       "notice_period": noticePeriod,

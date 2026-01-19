@@ -67,7 +67,8 @@ class _AllCategoryCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        controllerFilterData.fetchHireContractorByCategoryID(item.id, item.name);
+        // controllerFilterData.fetchHireContractorByCategoryID(item.id, item.name);
+        controllerFilterData. fetchHireContractorCategories(item.id,item.name);
         Get.to(() => HireContractorProfileList());
       },
       child: Container(

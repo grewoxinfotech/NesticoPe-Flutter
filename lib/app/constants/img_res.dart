@@ -1,3 +1,5 @@
+import '../../utils/global.dart';
+
 class IMGRes {
   /// App Logo
   static const String appLogo = "assets/logo/nesticope.png";
@@ -5,7 +7,7 @@ class IMGRes {
   static const String banner1 = "assets/images/banner_1.jpg";
   static const String banner2 = "assets/images/banner_2.jpg";
   static const String banner3 = "assets/images/banner_3.jpg";
-  static const String home1 = "assets/images/home_1.jpg";
+  static const String home1 = "assets/images/not_available_image.png";
   static const String home2 = "assets/images/home_2.jpg";
   static const String home3 = "assets/images/home_3.jpg";
   static const String home4 = "assets/images/home_4.jpg";

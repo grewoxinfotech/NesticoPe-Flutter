@@ -10,21 +10,18 @@ import '../../controller/hire_contractor_controller.dart';
 import '../../controller/hire_contractor_filter_controller.dart';
 import '../../controller/hire_contractor_list_of_profile_controller.dart';
 
-
-
 class HireContractorFilter extends StatefulWidget {
   const HireContractorFilter({super.key});
 
   @override
-  State<HireContractorFilter> createState() =>
-      _HireContractorFilterState();
+  State<HireContractorFilter> createState() => _HireContractorFilterState();
 }
 
 class _HireContractorFilterState extends State<HireContractorFilter> {
-
   final HireContractorController controller =
-  Get.find<HireContractorController>();
-  final controllerProfileData = Get.find<HireContractorFilterProfileController>();
+      Get.find<HireContractorController>();
+  final controllerProfileData =
+      Get.find<HireContractorFilterProfileController>();
 
   final _formKey = GlobalKey<FormState>();
   DateTime? startDate;
@@ -35,25 +32,26 @@ class _HireContractorFilterState extends State<HireContractorFilter> {
 
     // ✅ Add category filter if selected
 
-      // filters['isActive'] = true.toString();
-      // filters['category_ui'] = controllerProfileData.selectedCategoryName.value;
+    filters['city'] = controllerProfileData.selectedCity.value;
 
+    filters['category_ui'] = controllerProfileData.selectedCategoryName.value;
 
     // ✅ Add contractor rating filter if > 0
     if (controllerProfileData.selectedContractorRating.value > 0) {
-      filters['contractorMinRating'] = controllerProfileData.selectedContractorRating.value.toInt().toString();
+      filters['contractorMinRating'] =
+          controllerProfileData.selectedContractorRating.value
+              .toInt()
+              .toString();
     }
 
     // ✅ Add service rating filter if > 0
     if (controllerProfileData.selectedServiceRating.value > 0) {
-      filters['serviceMinRating'] = controllerProfileData.selectedServiceRating.value.toInt().toString();
+      filters['serviceMinRating'] =
+          controllerProfileData.selectedServiceRating.value.toInt().toString();
     }
-
-
 
     return filters;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -74,8 +72,10 @@ class _HireContractorFilterState extends State<HireContractorFilter> {
             children: [
               // 🔹 Header
               Container(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 decoration: const BoxDecoration(
                   color: ColorRes.primary,
                   borderRadius: BorderRadius.only(
@@ -96,7 +96,10 @@ class _HireContractorFilterState extends State<HireContractorFilter> {
                       ),
                     ),
                     InkWell(
-                      onTap: () { Get.back();controllerProfileData.resetFilters();},
+                      onTap: () {
+                        Get.back();
+                        controllerProfileData.resetFilters();
+                      },
                       borderRadius: BorderRadius.circular(50),
                       child: const Icon(
                         Icons.close_rounded,
@@ -112,8 +115,10 @@ class _HireContractorFilterState extends State<HireContractorFilter> {
               Flexible(
                 flex: 1,
                 child: SingleChildScrollView(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 16,
+                  ),
                   child: Obx(() {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,24 +129,60 @@ class _HireContractorFilterState extends State<HireContractorFilter> {
                           value: controllerProfileData.selectedCategoryId.value,
                           hintText: "Select category",
                           prefixIcon: Icons.category,
-                          items: controller.items
-                              .map((e) => DropdownMenuItem(
-                            value: e.id,
-                            child: Text(e.name ?? 'Unknown Category'),
-                          ))
-                              .toList(),
+                          items:
+                              controller.items
+                                  .map(
+                                    (e) => DropdownMenuItem(
+                                      value: e.id,
+                                      child: Text(e.name ?? 'Unknown Category'),
+                                    ),
+                                  )
+                                  .toList(),
                           onChanged: (val) {
-                            controllerProfileData.setValue(controllerProfileData.selectedCategoryId, val ?? '');
+                            controllerProfileData.setValue(
+                              controllerProfileData.selectedCategoryId,
+                              val ?? '',
+                            );
 
                             // Assign name where id matches
-                            final selectedItem = controller.items.firstWhereOrNull((e) => e.id == val);
+                            final selectedItem = controller.items
+                                .firstWhereOrNull((e) => e.id == val);
                             if (selectedItem != null) {
-                              controllerProfileData.selectedCategoryName.value = selectedItem.name ?? '';
+                              controllerProfileData.selectedCategoryName.value =
+                                  selectedItem.name ?? '';
                             }
                           },
                           darkText: true,
                         ),
-
+                        buildSectionTitle('City'),
+                        const SizedBox(height: 8),
+                        NesticoPeDropdownField<String>(
+                          value:
+                              controllerProfileData.selectedCity.value.isEmpty
+                                  ? null
+                                  : controllerProfileData.selectedCity.value,
+                          hintText: "Select City",
+                          prefixIcon: Icons.location_city,
+                          items:
+                              controllerProfileData.contractorCity.value?.data
+                                  ?.map(
+                                    (e) => DropdownMenuItem<String>(
+                                      value: e.city, // String
+                                      child: Text("${e.city} (${e.count})"),
+                                    ),
+                                  )
+                                  .toList() ??
+                              [],
+                          onChanged: (val) {
+                            if (val != null) {
+                              controllerProfileData.setValue(
+                                controllerProfileData.selectedCity,
+                                val, // ✅ val is already the city string
+                              );
+                            }
+                          },
+                          darkText: true,
+                        ),
                         const SizedBox(height: 20),
                         buildSectionTitle('Contractor Rating'),
                         const SizedBox(height: 8),
@@ -149,19 +190,25 @@ class _HireContractorFilterState extends State<HireContractorFilter> {
                           min: 0,
                           max: 5,
                           divisions: 5,
-                          value: controllerProfileData.selectedContractorRating.value,
-                          label: controllerProfileData.selectedContractorRating.value.toStringAsFixed(1),
+                          value:
+                              controllerProfileData
+                                  .selectedContractorRating
+                                  .value,
+                          label: controllerProfileData
+                              .selectedContractorRating
+                              .value
+                              .toStringAsFixed(1),
                           activeColor: ColorRes.primary,
                           onChanged: (val) {
-                            controllerProfileData.setValue(controllerProfileData.selectedContractorRating, val);
+                            controllerProfileData.setValue(
+                              controllerProfileData.selectedContractorRating,
+                              val,
+                            );
                           },
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const [
-                            Text('0.0'),
-                            Text('5.0'),
-                          ],
+                          children: const [Text('0.0'), Text('5.0')],
                         ),
 
                         const SizedBox(height: 20),
@@ -171,32 +218,36 @@ class _HireContractorFilterState extends State<HireContractorFilter> {
                           min: 0,
                           max: 5,
                           divisions: 5,
-                          value: controllerProfileData.selectedServiceRating.value,
-                          label: controllerProfileData.selectedServiceRating.value.toStringAsFixed(1),
+                          value:
+                              controllerProfileData.selectedServiceRating.value,
+                          label: controllerProfileData
+                              .selectedServiceRating
+                              .value
+                              .toStringAsFixed(1),
                           activeColor: ColorRes.primary,
                           onChanged: (val) {
-                            controllerProfileData.setValue(controllerProfileData.selectedServiceRating, val);
-
+                            controllerProfileData.setValue(
+                              controllerProfileData.selectedServiceRating,
+                              val,
+                            );
                           },
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const [
-                            Text('0.0'),
-                            Text('5.0'),
-                          ],
+                          children: const [Text('0.0'), Text('5.0')],
                         ),
                       ],
                     );
                   }),
-
                 ),
               ),
 
               // 🔹 Footer Buttons
               Container(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
                 decoration: BoxDecoration(
                   color: ColorRes.white,
                   border: Border(
@@ -211,10 +262,8 @@ class _HireContractorFilterState extends State<HireContractorFilter> {
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () {
-
                           Get.back();
                           controllerProfileData.resetFilters();
-
                         },
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
@@ -241,11 +290,11 @@ class _HireContractorFilterState extends State<HireContractorFilter> {
                         onPressed: () {
                           final filters = _buildFilterResult();
 
-                          // Call the method and wait for it
-                          controllerProfileData.fetchHireContractorByCategoryID(
-                            controllerProfileData.selectedCategoryId.value,
-                            controllerProfileData.selectedCategoryName.value,
-                          );
+                          // // Call the method and wait for it
+                          // controllerProfileData.fetchUserByID(
+                          //   controllerProfileData.selectedCategoryId.value,
+                          //   // controllerProfileData.selectedCategoryName.value,
+                          // );
 
                           log("Applied Filters: $filters");
                           Get.back(result: filters);
@@ -284,5 +333,4 @@ class _HireContractorFilterState extends State<HireContractorFilter> {
       ),
     );
   }
-
 }

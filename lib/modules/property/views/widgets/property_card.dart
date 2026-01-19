@@ -11,6 +11,7 @@ import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import 'package:housing_flutter_app/modules/property/views/property_detail_screen.dart';
+import 'package:housing_flutter_app/utils/global.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/manager/compare_manager.dart';
 import '../../../../app/widgets/snack_bar/custom_snackbar.dart';
@@ -98,7 +99,8 @@ class _PropertyCardState extends State<PropertyCard> {
                         (widget.property.propertyMedia?.images?.isNotEmpty ??
                                 false)
                             ? widget.property.propertyMedia!.images!.first
-                            : IMGRes.home1,
+                            : imageOfNotAvailable,
+
                     fit: BoxFit.cover,
                     height: 170,
                     width: double.infinity,

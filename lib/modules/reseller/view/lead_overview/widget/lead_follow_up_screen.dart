@@ -224,7 +224,7 @@ class _LeadFollowUpScreenState extends State<LeadFollowUpScreen> {
                                 ),
                               ),
                               SizedBox(width: 8),
-                              GestureDetector(
+                              /*                              GestureDetector(
                                 onTap: () {
                                   Get.dialog(
                                     Dialog(
@@ -407,7 +407,7 @@ class _LeadFollowUpScreenState extends State<LeadFollowUpScreen> {
                                   child: Icon(Icons.remove_red_eye ,color: ColorRes.primary,size: 14,),
                                 ),
                               ),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: 8),*/
                               _buildStatusChip(item.status ?? ''),
                             ],
                           ),

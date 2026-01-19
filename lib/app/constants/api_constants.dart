@@ -131,6 +131,7 @@ class ApiConstants {
   static String get contractorServiceCategory => "$baseURL/contractorServiceCategory";
 
   static String get contractorServiceByCategory => "$baseURL/contractorService/by-category";
+  static String get contractorServicesCity => "$baseURL/cityInsights/contractor-cities";
 
   static String get contractorInquiry => "$baseURL/contractorInquiry";
   static String get contractorInquiryQuotation => "$baseURL/contractorquotation";

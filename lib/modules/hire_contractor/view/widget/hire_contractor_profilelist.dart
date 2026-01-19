@@ -164,16 +164,13 @@ class HireContractorProfileList extends StatelessWidget {
                     }),
                     Expanded(
                       child: Obx(() {
-                        final filteredResponse =
-                            controllerFilter.filteredData.value;
+                        final contractors = controllerFilter.items;
 
-                        if (filteredResponse == null) {
+                        if (controllerFilter.isLoading.value) {
                           return const Center(
                             child: CircularProgressIndicator(),
                           );
                         }
-
-                        final contractors = filteredResponse.data.contractors;
 
                         if (contractors.isEmpty) {
                           return const Center(
@@ -183,19 +180,21 @@ class HireContractorProfileList extends StatelessWidget {
                             ),
                           );
                         }
+
                         AppLogger.structured(
                           'Check any thing missing form selected category ',
 
                           contractors.map((e) => e.toMap()),
                         );
                         return RefreshIndicator(
-                          onRefresh: () async {
-                            await controllerFilter
-                                .fetchHireContractorByCategoryID(
-                                  controllerFilter.selectedCategoryId.value,
-                                  controllerFilter.selectedCategoryName.value,
-                                );
-                          },
+                          onRefresh: ()
+                            // await controllerFilter
+                            //     .fetchHireContractorByCategoryID(
+                            //       controllerFilter.selectedCategoryId.value,
+                            //       controllerFilter.selectedCategoryName.value,
+                            //     );
+                            =>controllerFilter. fetchHireContractorCategories(controllerFilter.selectedCategoryId.value,controllerFilter.selectedCategoryName.value)
+                          ,
                           child: ListView.builder(
                             padding: const EdgeInsets.all(16),
                             itemCount: contractors.length,
@@ -223,7 +222,7 @@ class HireContractorProfileList extends StatelessWidget {
 }
 
 class HireContractorCard extends StatefulWidget {
-  final HireContractorServiceContractor data;
+  final OverAllContractorItem data;
   final TopContractorsController contractor;
 
   HireContractorCard({super.key, required this.data, required this.contractor});
@@ -243,7 +242,7 @@ class _HireContractorCardState extends State<HireContractorCard> {
   }
 
   void _fetchUserByID() async {
-    final userId = widget.data.contractorId;
+    final userId = widget.data.userId;
 
     contractorProfile = await widget.contractor.getContractorById(userId);
   }
@@ -251,34 +250,22 @@ class _HireContractorCardState extends State<HireContractorCard> {
   @override
   Widget build(BuildContext context) {
     final compare = Get.put(ContractorCompareManager(), permanent: true);
+    final user = widget.data;
 
-    ContractorMyServiceController contractorData = Get.put(
-      ContractorMyServiceController(),
-    );
-    final controllerFilter = Get.find<HireContractorFilterProfileController>();
 
     return GestureDetector(
       onTap: () async {
-        final id = widget.data.contractorId;
 
-        final userData = await controllerFilter.fetchUserByID(id ?? '');
-
-        final contractorProfile = await widget.contractor.getContractorById(
-          id ?? '',
-        );
-
-        log("Tapped Contractor Profile Data: ${contractorProfile?.toJson()}");
-        contractorProfile?.totalExperience =
-            userData.value?.totalExperience ?? 0;
-
-        contractorProfile?.username = widget.data.username;
-
+        contractorProfile?.username = widget.data.username ?? '';
+        contractorProfile?.firstName = widget.data.firstName ?? '';
+        contractorProfile?.lastName = widget.data.lastName ?? '';
+        contractorProfile?.totalExperience = widget.data.totalExperience ?? 0;
         if (contractorProfile != null) {
           Get.to(
-            () => ContractorProfileDetailsScreen(contractor: contractorProfile),
+            () => ContractorProfileDetailsScreen(contractor: contractorProfile??Contractor.fromJson({})),
           );
         } else {
-          log('No contractor found for userId: $id');
+
           Get.snackbar(
             'Not Found',
             'Contractor profile could not be loaded.',
@@ -340,7 +327,7 @@ class _HireContractorCardState extends State<HireContractorCard> {
                         ),
                       ),
                       Text(
-                        'Total Service ${widget.data.contractorProfile.activeServices.toString()}' ??
+                        'Total Service ${widget.data.activeServices.toString()}' ??
                             'Unknown Contractor',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -368,7 +355,7 @@ class _HireContractorCardState extends State<HireContractorCard> {
                   },
                   child: Obx(() {
                     final selected = compare.isSelected(
-                      widget.data.contractorId ?? '',
+                      user.id ?? '',
                     );
                     return Container(
                       height: 32,
@@ -401,7 +388,7 @@ class _HireContractorCardState extends State<HireContractorCard> {
                   children: List.generate(5, (index) {
                     final rating =
                         double.tryParse(
-                          widget.data.contractorProfile.overallRating,
+                          widget.data.overallRating,
                         ) ??
                         0;
                     if (index < rating.floor()) {
@@ -428,7 +415,7 @@ class _HireContractorCardState extends State<HireContractorCard> {
                 const SizedBox(width: 6),
                 Text(
                   (double.tryParse(
-                        widget.data.contractorProfile.overallRating,
+                        widget.data.overallRating,
                       )?.toStringAsFixed(1)) ??
                       '0.0',
                   style: const TextStyle(
@@ -439,7 +426,7 @@ class _HireContractorCardState extends State<HireContractorCard> {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  "(${widget.data.contractorProfile.totalReviews} review${widget.data.contractorProfile.totalReviews == 1 ? '' : 's'})",
+                  "(${widget.data.totalReviews} review${widget.data.totalReviews == 1 ? '' : 's'})",
                   style: const TextStyle(
                     fontSize: AppFontSizes.caption,
                     color: ColorRes.textSecondary,

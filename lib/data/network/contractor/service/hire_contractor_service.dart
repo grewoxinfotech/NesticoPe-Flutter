@@ -29,6 +29,7 @@ class HireContractorService {
   final _baseUserProfile = ApiConstants.contractorUserProfile;
   final _baseUserProfileData = ApiConstants.getUserProfile;
   final _baseContractorService = ApiConstants.contractorService;
+  final _baseContractorCity = ApiConstants.contractorServicesCity;
 
   final _baseUrlForByCategory = ApiConstants.contractorServiceByCategory;
 
@@ -44,8 +45,9 @@ class HireContractorService {
         if (limit != null) 'limit': limit.toString(),
       };
 
-      final uri = Uri.parse(_baseUrlForByCategory)
-          .replace(queryParameters: queryParameters);
+      final uri = Uri.parse(
+        _baseUrlForByCategory,
+      ).replace(queryParameters: queryParameters);
 
       log("📡 Fetch All Contractor By Category URL: $uri");
 
@@ -53,8 +55,9 @@ class HireContractorService {
       log("✅ Response Status Code: ${response.statusCode}");
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData =
-        Map<String, dynamic>.from(jsonDecode(response.body));
+        final Map<String, dynamic> responseData = Map<String, dynamic>.from(
+          jsonDecode(response.body),
+        );
 
         final data = Map<String, dynamic>.from(responseData['data'] ?? {});
         final contractorsList = (data['contractors'] as List<dynamic>? ?? []);
@@ -62,16 +65,20 @@ class HireContractorService {
         log("📄 Contractors list length: ${contractorsList.length}");
 
         return PaginationResponse<OverAllContractorItem>(
-
-          items: contractorsList
-              .map((e) =>
-              OverAllContractorItem.fromJson(Map<String, dynamic>.from(e)))
-              .toList(), meta:PaginationMeta.fromJson({}) ,
-
+          items:
+              contractorsList
+                  .map(
+                    (e) => OverAllContractorItem.fromJson(
+                      Map<String, dynamic>.from(e),
+                    ),
+                  )
+                  .toList(),
+          meta: PaginationMeta.fromJson({}),
         );
-      }
-      else {
-        log("❌ Failed to fetch contractors. Status Code: ${response.statusCode}");
+      } else {
+        log(
+          "❌ Failed to fetch contractors. Status Code: ${response.statusCode}",
+        );
         throw Exception("Failed to load contractors (${response.statusCode})");
       }
     } catch (e, stack) {
@@ -81,9 +88,13 @@ class HireContractorService {
     }
   }
 
-
   Future<PaginationResponse<OverAllContractorItem>>
-  fetchHireContractorByCategory({int? page, int? limit,required String id,Map<String,String>? filter}) async {
+  fetchHireContractorByCategory({
+    int? page,
+    int? limit,
+    required String id,
+    Map<String, String>? filter,
+  }) async {
     try {
       final queryParameters = {
         if (page != null) 'page': page.toString(),
@@ -91,8 +102,9 @@ class HireContractorService {
         if (filter != null) ...filter,
       };
 
-      final uri = Uri.parse('$_baseUrlForByCategory/$id')
-          .replace(queryParameters: queryParameters);
+      final uri = Uri.parse(
+        '$_baseUrlForByCategory/$id',
+      ).replace(queryParameters: queryParameters);
 
       log("📡 Fetch Hire Contractor By Category URL: $uri");
 
@@ -100,8 +112,9 @@ class HireContractorService {
       log("✅ Response Status Code: ${response.statusCode}");
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData =
-        Map<String, dynamic>.from(jsonDecode(response.body));
+        final Map<String, dynamic> responseData = Map<String, dynamic>.from(
+          jsonDecode(response.body),
+        );
 
         final data = Map<String, dynamic>.from(responseData['data'] ?? {});
         final contractorsList = (data['contractors'] as List<dynamic>? ?? []);
@@ -109,16 +122,20 @@ class HireContractorService {
         log("📄 Contractors list length: ${contractorsList.length}");
 
         return PaginationResponse<OverAllContractorItem>(
-
-          items: contractorsList
-              .map((e) =>
-              OverAllContractorItem.fromJson(Map<String, dynamic>.from(e)))
-              .toList(), meta:PaginationMeta.fromJson({}) ,
-
+          items:
+              contractorsList
+                  .map(
+                    (e) => OverAllContractorItem.fromJson(
+                      Map<String, dynamic>.from(e),
+                    ),
+                  )
+                  .toList(),
+          meta: PaginationMeta.fromJson({}),
         );
-      }
-      else {
-        log("❌ Failed to fetch contractors. Status Code: ${response.statusCode}");
+      } else {
+        log(
+          "❌ Failed to fetch contractors. Status Code: ${response.statusCode}",
+        );
         throw Exception("Failed to load contractors (${response.statusCode})");
       }
     } catch (e, stack) {
@@ -128,6 +145,23 @@ class HireContractorService {
     }
   }
 
+  Future<Map<String, dynamic>> fetchContractorCity() async {
+    try {
+      final response = await http.get(
+        Uri.parse("$_baseContractorCity"),
+        headers: await headers(),
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        log("Fetch Contractor city Data : ${data}");
+        return data;
+      }
+      return {};
+    } catch (e) {
+      log("Error in Fetch Contractor city : $e");
+      rethrow;
+    }
+  }
 
   // 1️⃣ Fetch User by ID
   Future<User?> fetchUserById(String userId) async {

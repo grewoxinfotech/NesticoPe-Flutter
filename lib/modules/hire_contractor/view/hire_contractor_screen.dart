@@ -76,7 +76,8 @@ class HireContractorScreen extends StatelessWidget {
                 return GestureDetector(
                   onTap: () {
                     // _showCategoryDialog(context, category);
-                    controllerFilterData.fetchHireContractorByCategoryID(category.id, category.name);
+                    // controllerFilterData.fetchHireContractorByCategoryID(category.id, category.name);
+                    controllerFilterData.fetchHireContractorCategories(category.id,category.name);
                     Get.to(()=>HireContractorProfileList());
 
                   },

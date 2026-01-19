@@ -26,7 +26,7 @@ class TopCategoriesSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 200,
+      height: 120,
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         scrollDirection: Axis.horizontal,
@@ -66,7 +66,8 @@ log("Found lottieUrl for ${item.name}: $imageUrl");
     final controllerFilterData = Get.put(HireContractorFilterProfileController());
     return GestureDetector(
       onTap: () {
-        controllerFilterData.fetchHireContractorByCategoryID(item.id, item.name);
+        // controllerFilterData.fetchHireContractorByCategoryID(item.id, item.name);
+        controllerFilterData. fetchHireContractorCategories(item.id,item.name);
         Get.to(()=>HireContractorProfileList());
       },
       child: Container(
@@ -83,14 +84,14 @@ log("Found lottieUrl for ${item.name}: $imageUrl");
             /// Top Blue Line
           Row(
             children: [
-              if (imageUrl != null && imageUrl.isNotEmpty)
-                SizedBox(
-                  height: 80,
-                  width: 80,
-                  child: Image.network(imageUrl),
-                ),
-
-              const SizedBox(width: 12),
+              // if (imageUrl != null && imageUrl.isNotEmpty)
+              //   // SizedBox(
+              //   //   height: 80,
+              //   //   width: 80,
+              //   //   child: Image.network(imageUrl),
+              //   // ),
+              //
+              // const SizedBox(width: 12),
 
               Expanded(
                 child: Text(
@@ -105,7 +106,7 @@ log("Found lottieUrl for ${item.name}: $imageUrl");
                 ),
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 15),
             ],
           ),
 
@@ -113,7 +114,7 @@ log("Found lottieUrl for ${item.name}: $imageUrl");
             Text(
               item.description,
               style: TextStyle(
-                fontSize: 13,
+                fontSize: 11,
                 color: ColorRes.leadGreyColor.shade600,
                 height: 1.4,
               ),

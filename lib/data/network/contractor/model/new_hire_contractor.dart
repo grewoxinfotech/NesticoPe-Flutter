@@ -222,3 +222,62 @@ class OverAllServiceInCategory {
     'rating': rating,
   };
 }
+
+
+class ContractorCityInsightsResponse {
+  final bool success;
+  final String message;
+  final List<ContractorCityInsight> data;
+
+  ContractorCityInsightsResponse({
+    required this.success,
+    required this.message,
+    required this.data,
+  });
+
+  factory ContractorCityInsightsResponse.fromJson(Map<String, dynamic> json) {
+    return ContractorCityInsightsResponse(
+      success: json['success'] ?? false,
+      message: json['message'] ?? '',
+      data: (json['data'] as List<dynamic>? ?? [])
+          .map((e) => ContractorCityInsight.fromJson(
+        Map<String, dynamic>.from(e),
+      ))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'success': success,
+      'message': message,
+      'data': data.map((e) => e.toMap()).toList(),
+    };
+  }
+
+  String toJson() => json.encode(toMap());
+}
+
+class ContractorCityInsight {
+  final String city;
+  final int count;
+
+  ContractorCityInsight({
+    required this.city,
+    required this.count,
+  });
+
+  factory ContractorCityInsight.fromJson(Map<String, dynamic> json) {
+    return ContractorCityInsight(
+      city: json['city'] ?? '',
+      count: json['count'] ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'city': city,
+      'count': count,
+    };
+  }
+}

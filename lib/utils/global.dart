@@ -846,3 +846,5 @@ final List<String> months = [
   'Nov',
   'Dec',
 ];
+
+String imageOfNotAvailable="assets/images/not_available_image.png";
