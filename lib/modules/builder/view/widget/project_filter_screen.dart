@@ -526,6 +526,98 @@ class ProjectFilterScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Obx(() {
+                final chips = <Widget>[];
+
+                void addChip(String label, VoidCallback onRemove) {
+                  chips.add(
+                    Chip(
+                      label: Text(label),
+                      deleteIcon: const Icon(Icons.close, size: 18),
+                      onDeleted: onRemove,
+                      // backgroundColor: ColorRes.primary.withOpacity(0.08),
+                      // labelStyle: TextStyle(
+                      //   color: ColorRes.primary,
+                      //   fontWeight: FontWeight.w500,
+                      // ),
+                      // shape: RoundedRectangleBorder(
+                      //   borderRadius: BorderRadius.circular(20),
+                      //   side: BorderSide(
+                      //     color: ColorRes.primary.withOpacity(0.4),
+                      //   ),
+                      // ),
+                    ),
+                  );
+                }
+
+                // Property Type
+                if (controller.selectedPropertyType.value.isNotEmpty) {
+                  addChip(
+                    controller.selectedPropertyType.value,
+                    () => controller.selectedPropertyType.value = "",
+                  );
+                }
+
+                // City
+                if (controller.selectedCity.value.isNotEmpty &&
+                    controller.selectedCity.value != "All Cities") {
+                  addChip(controller.selectedCity.value, () {
+                    controller.selectedCity.value = "";
+                    controller.selectedLocality.value = "";
+                  });
+                }
+
+                // Locality
+                if (controller.selectedLocality.value.isNotEmpty) {
+                  addChip(
+                    controller.selectedLocality.value,
+                    () => controller.selectedLocality.value = "",
+                  );
+                }
+
+                // BHK
+                if (controller.bhkType.value.isNotEmpty) {
+                  addChip(
+                    controller.bhkType.value,
+                    () => controller.bhkType.value = "",
+                  );
+                }
+
+                // Budget
+                if (controller.min.value != 0 || controller.max.value != 0) {
+                  addChip(
+                    "₹${controller.min.value} - ₹${controller.max.value}",
+                    () {
+                      controller.min.value = 0;
+                      controller.max.value = 1000000;
+                    },
+                  );
+                }
+
+                // Amenities
+                for (final amenity in controller.amenities) {
+                  addChip(amenity, () => controller.amenities.remove(amenity));
+                }
+
+                if (chips.isEmpty) return const SizedBox.shrink();
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Selected Filters",
+                      style: TextStyle(
+                        fontSize: AppFontSizes.medium,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.textColor,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Wrap(spacing: 8, runSpacing: 8, children: chips),
+                    const SizedBox(height: 16),
+                  ],
+                );
+              }),
               // PROPERTY TYPE
               Obx(
                 () => _dropdown(
@@ -565,12 +657,12 @@ class ProjectFilterScreen extends StatelessWidget {
                     buildToggle("Verify RERA ID", controller.isRERAVerified),
                     SizedBox(height: 10),
                     buildToggle(
-                      "Property Has Photos",
+                      "Project Has Photos",
                       controller.isPropertyHaveImage,
                     ),
                     SizedBox(height: 10),
                     buildToggle(
-                      "Property Has Videos",
+                      "Project Has Videos",
                       controller.isPropertyHaveVideo,
                     ),
                     SizedBox(height: 10),
@@ -625,7 +717,6 @@ class ProjectFilterScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Amenities Grid
-
                           Wrap(
                             spacing: 10,
                             runSpacing: 10,
@@ -657,9 +748,7 @@ class ProjectFilterScreen extends StatelessWidget {
                                                 ? theme.primaryColor
                                                     .withOpacity(0.1)
                                                 : ColorRes.white,
-                                        borderRadius: BorderRadius.circular(
-                                          12,
-                                        ),
+                                        borderRadius: BorderRadius.circular(12),
                                         border: Border.all(
                                           color:
                                               isSelected
@@ -707,8 +796,7 @@ class ProjectFilterScreen extends StatelessWidget {
                                                   isSelected
                                                       ? FontWeight.w600
                                                       : FontWeight.w400,
-                                              fontSize:
-                                                  AppFontSizes.extraSmall,
+                                              fontSize: AppFontSizes.extraSmall,
                                               height: 1.3,
                                             ),
                                           ),
@@ -871,29 +959,42 @@ class ProjectFilterScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 12),
-                
+
                     // APPLY
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
                           final filterData = {
                             "propertyTypes":
-                                controller.selectedPropertyType.value.toString(),
+                                controller.selectedPropertyType.value
+                                    .toString(),
                             "city": controller.selectedCity.value.toString(),
-                            "location": controller.selectedLocality.value.toString(),
-                            'reraId': controller.isRERAVerified.value.toString(),
-                            'hasPhotos': controller.isPropertyHaveImage.value.toString(),
-                            'hasVideos': controller.isPropertyHaveVideo.value.toString(),
-                            'hasBrochure': controller.isPropertyHaveBroucher.value.toString(),
+                            "location":
+                                controller.selectedLocality.value.toString(),
+                            'reraId':
+                                controller.isRERAVerified.value.toString(),
+                            'hasPhotos':
+                                controller.isPropertyHaveImage.value.toString(),
+                            'hasVideos':
+                                controller.isPropertyHaveVideo.value.toString(),
+                            'hasBrochure':
+                                controller.isPropertyHaveBroucher.value
+                                    .toString(),
                             'minPrice': controller.min.value.toString(),
-                            'maxPrice':controller.max.value.toString(),
-                            'bhk':controller.bhkType.value.toString(),
-                           if(controller.amenities.isNotEmpty)
-                             'amenities': controller.amenities.value.map(
-                                   (e) => e.toLowerCase().replaceAll(" ", "_"),
-                             ).toString(),
+                            'maxPrice': controller.max.value.toString(),
+                            'bhk': controller.bhkType.value.toString(),
+                            if (controller.amenities.isNotEmpty)
+                              'amenities':
+                                  controller.amenities.value
+                                      .map(
+                                        (e) => e.toLowerCase().replaceAll(
+                                          " ",
+                                          "_",
+                                        ),
+                                      )
+                                      .toString(),
                           };
-                
+
                           final nonNullFilters = Map.fromEntries(
                             filterData.entries.where(
                               (e) =>
@@ -901,18 +1002,12 @@ class ProjectFilterScreen extends StatelessWidget {
                                   e.value.toString().trim().isNotEmpty,
                             ),
                           );
-                
+
                           onApply(nonNullFilters);
                           log('Applied Filters: $nonNullFilters');
                           // Get.back();
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
+
                         child: const Text(
                           "Apply",
                           style: TextStyle(

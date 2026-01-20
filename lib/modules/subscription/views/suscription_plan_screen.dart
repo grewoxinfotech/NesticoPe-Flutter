@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
+import 'package:housing_flutter_app/modules/auth/views/role_convert/convert_to_seller/convert_to_seller.dart';
+import 'package:housing_flutter_app/modules/subscription/views/widgets/sign_up_subscription_card.dart';
 
 import '../../../app/constants/color_res.dart';
 import '../../../app/utils/formater/formater.dart';
+import '../../../data/network/auth/model/user_model.dart';
+import '../../auth/views/role_convert/covert_to_reseller/convert_to_reseller.dart';
+import '../../contractor/view/widget/convert_to_contractor.dart';
 import '../../reseller/view/property_reseller.dart';
 import '../controller/subscription_controller.dart';
 import '../controller/user_subscription_controller.dart';
@@ -233,10 +240,76 @@ class SubscriptionPlansScreen extends StatelessWidget {
                 );
               }),
             ],
+            if (UserHelper.isBuyer || UserHelper.isGuest) ...[
+              SignUpSubscriptionScreen(
+                title: _mapRoleToTitle(role),
+                onTap: UserHelper.isGuest ? onGuestTap : onBuyerTap,
+              ),
+            ],
             SubscriptionPlansWidget(controller: controller),
           ],
         ),
       ),
     );
+  }
+
+  String _mapRoleToTitle(String role) {
+    switch (role) {
+      case 'sellerOwner':
+        return 'Become a Seller';
+      case 'sellerBuilder':
+        return 'Become a Seller';
+      case 'reseller':
+        return 'Become a Reseller';
+      case 'contractor':
+        return 'Become a Contractor';
+      default:
+        return '';
+    }
+  }
+
+  VoidCallback get onBuyerTap {
+    switch (role) {
+      case 'sellerOwner':
+        return () => Get.to(() => SellerConversionScreen());
+      case 'sellerBuilder':
+        return () => Get.to(() => SellerConversionScreen());
+      case 'reseller':
+        return () => Get.to(() => ResellerConversionScreen());
+      case 'contractor':
+        return () => Get.to(() => ConvertToContractorConversionScreen());
+      default:
+        return () {};
+    }
+  }
+
+  VoidCallback get onGuestTap {
+    switch (role) {
+      case 'sellerOwner':
+        return () => Get.to(() => RegisterScreen(role: userRole));
+      case 'sellerBuilder':
+        return () => Get.to(() => RegisterScreen(role: userRole));
+      case 'reseller':
+        return () => Get.to(() => RegisterScreen(role: userRole));
+      case 'contractor':
+        return () => Get.to(() => RegisterScreen(role: userRole));
+      default:
+        return () {};
+    }
+  }
+
+  UserRole get userRole {
+    switch (role) {
+      case 'sellerOwner':
+        return UserRole.seller;
+      case 'sellerBuilder':
+        return UserRole.seller;
+      case 'reseller':
+        return UserRole.reseller;
+      case 'contractor':
+        return UserRole.contractor;
+      default:
+        return UserRole.buyer;
+    }
   }
 }

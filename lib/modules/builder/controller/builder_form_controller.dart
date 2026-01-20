@@ -578,7 +578,6 @@ import '../view/builder_main_screen.dart';
 
 class ProjectWizardController extends PaginatedController<ProjectItem> {
   final BuilderService _builderService = BuilderService();
-  final PropertyService _propertyService = PropertyService();
   final currentStep = 0.obs;
   final RxString selectedCity = ''.obs;
   ImagePicker picker = ImagePicker();
@@ -696,13 +695,15 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     zipCodeController = TextEditingController(text: project.value.zipCode);
     locationController = TextEditingController(text: project.value.location);
     brokerRageCommission = TextEditingController(
-      text: project.value.configurations.first.variants.first.brokerCommission
-          .toString(),
+      text:
+          project.value.configurations.first.variants.first.brokerCommission
+              .toString(),
     );
-    selectedPropertyStatus.value=project.value.status;
+    selectedPropertyStatus.value = project.value.status;
     platformFees = TextEditingController(
-      text: project.value.configurations.first.variants.first.platformFees
-          .toString(),
+      text:
+          project.value.configurations.first.variants.first.platformFees
+              .toString(),
     );
     await fetchUserData();
   }
@@ -847,6 +848,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   void clearPropertyTypeFilter() {
     clearFilter('propertyType');
   }
+
   Future<void> refreshLead() async {
     try {
       isRefreshing.value = true;
@@ -865,6 +867,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       isRefreshing.value = false;
     }
   }
+
   Future<PaginationResponse<ProjectItem>> fetchTopItems(int page) async {
     try {
       final response = await _builderService.fetchProjects(
@@ -1293,9 +1296,9 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
           carpetArea: 0,
           price: 0,
           totalUnits: 0,
-          availableUnits: 0,brokerCommission: 0,platformFees: 0,
-
-
+          availableUnits: 0,
+          brokerCommission: 0,
+          platformFees: 0,
         ),
       );
     });
@@ -1723,6 +1726,3 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     print('✅ Form has been reset successfully');
   }
 }
-
-
-

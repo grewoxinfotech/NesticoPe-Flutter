@@ -23,18 +23,16 @@ import 'package:housing_flutter_app/modules/search_property/view/search_screen.d
 
 import '../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../data/network/auth/model/user_model.dart';
-import '../../aadhar_auth/screens/aadhar_auth_screen.dart';
 import '../../builder/controller/builder_form_controller.dart';
-import '../../builder/view/builder_form_screen.dart';
 import '../../builder/view/builder_main_screen.dart';
 import '../../contractor/view/contractor_main.dart';
-import '../../profile/controllers/buyer_profiledata.dart';
 import '../../property/controllers/property_controller.dart';
 
 class HomeHeader extends StatefulWidget {
   final List<String> propertyTypes;
   final String backgroundImage;
   final String image;
+  final Function(String city) onCityChanged;
 
   const HomeHeader({
     super.key,
@@ -42,17 +40,8 @@ class HomeHeader extends StatefulWidget {
         "https://sitasurat.in/assets/images/about/surat-city.jpg",
     this.image =
         "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
-    this.propertyTypes = const [
-      "Buy",
-      "Sell",
-      "Rent",
-      // "Commercial",
-      "PG",
-      // "Shop",
-      // "Office",
-      // "Studio",
-      // "Warehouse",
-    ],
+    this.propertyTypes = const ["Buy", "Sell", "Rent", "PG"],
+    required this.onCityChanged,
   });
 
   @override
@@ -83,24 +72,6 @@ class _HomeHeaderState extends State<HomeHeader> {
                   children: [
                     Row(
                       children: [
-                        // Container(
-                        //   width: 45,
-                        //   height: 45,
-                        //   decoration: BoxDecoration(
-                        //     color: ColorRes.white,
-                        //     border: Border.all(
-                        //       color: ColorRes.grey.withOpacity(0.2),
-                        //     ),
-                        //     borderRadius: BorderRadius.circular(12),
-                        //   ),
-                        //   padding: const EdgeInsets.all(8),
-                        //   child: const Icon(
-                        //     Icons.notes_outlined,
-                        //     color: ColorRes.black,
-                        //     size: 22,
-                        //   ),
-                        // ),
-                        // const SizedBox(width: 8),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -150,10 +121,14 @@ class _HomeHeaderState extends State<HomeHeader> {
                                       city,
                                     );
                                     projectController.applyFilter('city', city);
-                                    log('Selected city updated to for search history $city');
-                                await  searchHistoryController.addSearchHistory({
-                                      'keywords': [city],
-                                    });
+                                    widget.onCityChanged(city);
+                                    log(
+                                      'Selected city updated to for search history $city',
+                                    );
+                                    await searchHistoryController
+                                        .addSearchHistory({
+                                          'keywords': [city],
+                                        });
                                     // Reload top properties for the new city
                                     await propertyController
                                         .loadTopProperties();
@@ -281,83 +256,6 @@ class _HomeHeaderState extends State<HomeHeader> {
                   UserHelper.isBuyer) ...[
                 SizedBox(width: 8),
                 GestureDetector(
-                  // onTap: () async {
-                  //   print("Mic tapped");
-                  //
-                  //   try {
-                  //     /// 1️⃣ Ensure UserType is initialized
-                  //     var userType = UserHelper.userType;
-                  //
-                  //     if (userType == null) {
-                  //       final user = await SecureStorage.getUserData();
-                  //       final role = user?.user?.userType?.toLowerCase() ?? '';
-                  //       UserHelper.setUserType(role);
-                  //     }
-                  //
-                  //     print(
-                  //       "DEBUG >> Current UserType: ${UserHelper.userType}",
-                  //     );
-                  //
-                  //     /// 2️⃣ Guest → Register
-                  //     if (UserHelper.isGuest) {
-                  //       if (!Get.isRegistered<AuthController>()) {
-                  //         Get.put(AuthController());
-                  //       }
-                  //       Get.to(
-                  //         () => const RegisterScreen(role: UserRole.seller),
-                  //       );
-                  //       return;
-                  //     }
-                  //
-                  //     /// 3️⃣ Buyer → Seller conversion
-                  //     if (UserHelper.isBuyer) {
-                  //       Get.to(() => const SellerConversionScreen());
-                  //       return;
-                  //     }
-                  //
-                  //     /// 4️⃣ Seller flow
-                  //     if (UserHelper.isSeller) {
-                  //       /// Aadhar check (common for all sellers)
-                  //       if (!UserHelper.isAadharVerified) {
-                  //         Get.to(() => AadharAuthScreen());
-                  //         return;
-                  //       }
-                  //
-                  //       /// 4A️⃣ Seller → Owner
-                  //       if (UserHelper.isSellerOwner) {
-                  //         Get.to(
-                  //           () => const CreatePropertyScreen(isLogin: true),
-                  //         );
-                  //         return;
-                  //       }
-                  //
-                  //       /// 4B️⃣ Seller → Builder
-                  //       if (UserHelper.isSellerBuilder) {
-                  //         if (!Get.isRegistered<ProjectWizardController>(
-                  //           tag: "builder",
-                  //         )) {
-                  //           Get.lazyPut(
-                  //             () =>
-                  //                 ProjectWizardController(isBuilderView: true),
-                  //             tag: "builder",
-                  //           );
-                  //         }
-                  //
-                  //         Get.to(() => CreateProjectScreen());
-                  //         return;
-                  //       }
-                  //     }
-                  //   } catch (e, s) {
-                  //     print("Error checking user type: $e");
-                  //     print(s);
-                  //
-                  //     Get.snackbar(
-                  //       "Error",
-                  //       "Something went wrong. Please try again.",
-                  //       snackPosition: SnackPosition.BOTTOM,
-                  //     );
-                  //   }
-                  // },
                   onTap: () async {
                     print("Mic tapped");
 

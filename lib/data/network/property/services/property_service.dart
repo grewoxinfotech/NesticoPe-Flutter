@@ -83,7 +83,7 @@ class PropertyService {
       final uri = Uri.parse(
         topPropertyUrl,
       ).replace(queryParameters: queryParameters);
-      print("uri: $uri");
+      print("top property uri: $uri");
       final response = await http.get(uri, headers: await headers());
 
       print("response: ${response.body}");

@@ -19,20 +19,17 @@ class TopContractorsController extends PaginatedController<Contractor> {
     loadInitial(); // auto-load page 1
   }
 
-  Future<Contractor?> getContractorById(String id)
-  async {
+  Future<Contractor?> getContractorById(String id) async {
     print("Contactor Id : ${id}");
-      final data=await _service.fetchContractorById(id);
+    final data = await _service.fetchContractorById(id);
     print("Contactor Data : ${data?.toJson()}");
 
-      if(data!=null){
-        items.removeWhere((element) => element.id == id,);
-        items.add(data);
-        return data;
-
+    if (data != null) {
+      items.removeWhere((element) => element.id == id);
+      // items.add(data);
+      return data;
     }
     return null;
-
   }
 
   /// =====================================================

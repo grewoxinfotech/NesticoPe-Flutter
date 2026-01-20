@@ -57,7 +57,6 @@ class PropertyController extends PaginatedController<Items> {
   void onInit() {
     super.onInit();
     getCity();
-    loadTopProperties();
 
     fetchTradingArea(selectedCity.value);
   }
@@ -91,16 +90,14 @@ class PropertyController extends PaginatedController<Items> {
 
   Future<void> loadTopProperties({int page = 1}) async {
     try {
-      print("Loading top properties, page $page...");
-      final response = await fetchTopProperty(page);
       if (page == 1) {
-        topProperties.assignAll(response.items);
-      } else {
-        topProperties.addAll(response.items);
+        topProperties.clear(); // ✅ CRITICAL FIX
       }
-      print(
-        "Loaded ${response.items.length} top properties ${topProperties.value.map((e) => e.toJson())}",
-      );
+
+      final response = await fetchTopProperty(page);
+      topProperties.assignAll(response.items);
+
+      print("Loaded ${topProperties.length} top properties");
     } catch (e) {
       print("Error loading top properties:fdvbfdbgbg $e");
     }
@@ -345,9 +342,8 @@ class PropertyController extends PaginatedController<Items> {
         page: page,
         filters: filters,
       );
-      print("Top Properry sdfhgu filter ${filters}");
 
-      print("Fetched items: ${response.items.length}");
+      print("Fetched Top Properties: ${response.items.length}");
       return response; // contains items + meta (page/total)
     } catch (e) {
       print("Exception in fetchItemsdsfsgdvfdv: $e");
@@ -399,7 +395,6 @@ class PropertyController extends PaginatedController<Items> {
     }
   }
 
-
   Future<void> getAllInQuireData(String propertyId) async {
     log('Property Id For Inquiry $propertyId');
 
@@ -420,14 +415,17 @@ class PropertyController extends PaginatedController<Items> {
       print("Error fetching inquiries: $e");
     }
   }
+
   Future<void> getHasInQuireData(String propertyId) async {
     log('Property Id For Inquiry $propertyId');
 
     try {
       final UserModel user = await SecureStorage.getUserData() ?? UserModel();
       final userId = user.user?.id ?? '';
-      final inquiries = await _contactedService.fetchHasInquiries(userId,itemId: propertyId);
-
+      final inquiries = await _contactedService.fetchHasInquiries(
+        userId,
+        itemId: propertyId,
+      );
 
       hasSubmittedInquiry.value = inquiries;
       print(
@@ -438,8 +436,6 @@ class PropertyController extends PaginatedController<Items> {
       print("Error fetching inquiries: $e");
     }
   }
-
-
 
   /// Delete property
   Future<bool> deleteProperty(String id) async {

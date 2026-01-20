@@ -155,7 +155,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           case 1:
             return PropertyDetail(
               isFromSeeAll: true,
-              filters: widget.propertyFilter,
+              // filters: widget.propertyFilter,
             );
           case 2:
             return AllProjectListScreen(isFromSeeAll: true, isbuilder: false);

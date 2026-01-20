@@ -187,14 +187,17 @@ class HireContractorProfileList extends StatelessWidget {
                           contractors.map((e) => e.toMap()),
                         );
                         return RefreshIndicator(
-                          onRefresh: ()
-                            // await controllerFilter
-                            //     .fetchHireContractorByCategoryID(
-                            //       controllerFilter.selectedCategoryId.value,
-                            //       controllerFilter.selectedCategoryName.value,
-                            //     );
-                            =>controllerFilter. fetchHireContractorCategories(controllerFilter.selectedCategoryId.value,controllerFilter.selectedCategoryName.value)
-                          ,
+                          onRefresh:
+                              ()
+                              // await controllerFilter
+                              //     .fetchHireContractorByCategoryID(
+                              //       controllerFilter.selectedCategoryId.value,
+                              //       controllerFilter.selectedCategoryName.value,
+                              //     );
+                              => controllerFilter.fetchHireContractorCategories(
+                                controllerFilter.selectedCategoryId.value,
+                                controllerFilter.selectedCategoryName.value,
+                              ),
                           child: ListView.builder(
                             padding: const EdgeInsets.all(16),
                             itemCount: contractors.length,
@@ -252,20 +255,19 @@ class _HireContractorCardState extends State<HireContractorCard> {
     final compare = Get.put(ContractorCompareManager(), permanent: true);
     final user = widget.data;
 
-
     return GestureDetector(
       onTap: () async {
-
         contractorProfile?.username = widget.data.username ?? '';
         contractorProfile?.firstName = widget.data.firstName ?? '';
         contractorProfile?.lastName = widget.data.lastName ?? '';
         contractorProfile?.totalExperience = widget.data.totalExperience ?? 0;
         if (contractorProfile != null) {
           Get.to(
-            () => ContractorProfileDetailsScreen(contractor: contractorProfile??Contractor.fromJson({})),
+            () => ContractorProfileDetailsScreen(
+              contractor: contractorProfile ?? Contractor.fromJson({}),
+            ),
           );
         } else {
-
           Get.snackbar(
             'Not Found',
             'Contractor profile could not be loaded.',
@@ -354,9 +356,7 @@ class _HireContractorCardState extends State<HireContractorCard> {
                     }
                   },
                   child: Obx(() {
-                    final selected = compare.isSelected(
-                      user.id ?? '',
-                    );
+                    final selected = compare.isSelected(user.id ?? '');
                     return Container(
                       height: 32,
                       width: 32,
@@ -387,10 +387,7 @@ class _HireContractorCardState extends State<HireContractorCard> {
                 Row(
                   children: List.generate(5, (index) {
                     final rating =
-                        double.tryParse(
-                          widget.data.overallRating,
-                        ) ??
-                        0;
+                        double.tryParse(widget.data.overallRating) ?? 0;
                     if (index < rating.floor()) {
                       return const Icon(
                         Icons.star,
@@ -517,7 +514,6 @@ class _AllContractorCardState extends State<AllContractorCard> {
   @override
   Widget build(BuildContext context) {
     final compare = Get.put(ContractorCompareManager(), permanent: true);
-    final contractor = widget.contractor;
 
     final user = widget.data;
 
