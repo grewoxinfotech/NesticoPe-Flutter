@@ -26,6 +26,7 @@ class ContractorMainScreen extends StatelessWidget {
 
     final screens = [
       ContractorDashboard(),
+
       ContractorProjectScreen(),
       // ContractorService(),
       ContractorLeadScreen(),

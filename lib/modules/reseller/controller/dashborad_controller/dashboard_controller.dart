@@ -616,11 +616,13 @@ import 'package:housing_flutter_app/modules/property/controllers/property_contro
 
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../app/constants/color_res.dart';
 import '../../../../data/network/property/models/property_model.dart';
 import '../../../../data/network/referral/model/referrel_model.dart';
 import '../../../../data/network/referral/service/referrel_service.dart';
+import '../../../../data/network/reseller/reseller_dashboard/model/reseller_citywise_leaderboard-model.dart';
 import '../../../../data/network/reseller/reseller_dashboard/model/reseller_dashboard_model.dart';
 import '../../../../data/network/reseller/reseller_dashboard/service/reseller_dashboard_service.dart';
 import '../../../../data/network/reseller/reseller_success_stories/reseller_success_stories_service.dart';
@@ -631,31 +633,38 @@ import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 class DashboardController extends GetxController {
   Rxn<ResellerInsightsModel> resellerInsightsModel =
       Rxn<ResellerInsightsModel>();
+  Rxn<ResellerLeaderboardCitywise> resellerCityWiseLeaderBoard =
+      Rxn<ResellerLeaderboardCitywise>();
+  Rxn<ResellerCityLeaderBoardAllCities> resellerAllCity =
+      Rxn<ResellerCityLeaderBoardAllCities>();
   RxList<Items> itemData = <Items>[].obs;
   PropertyController propertyController = PropertyController();
   Rxn<ReferralModel> dummyReferral = Rxn<ReferralModel>();
   PropertyService _propertyService = PropertyService();
+  var selectedCity = "".obs;
   Rxn<UserModel> userModel = Rxn<UserModel>();
-  RxList<double> budgetValues = <double>[
-    0,
-    500000,
-    1000000,
-    1500000,
-    2000000,
-    2500000,
-    3000000,
-    3500000,
-    4000000,
-    4500000,
-    5000000,
-    6000000,
-    7000000,
-    8000000,
-    9000000,
-    10000000,
-    20000000,
-    50000000
-  ].obs;
+  final RxInt selectedGraphYear = DateTime.now().year.obs;
+  RxList<double> budgetValues =
+      <double>[
+        0,
+        500000,
+        1000000,
+        1500000,
+        2000000,
+        2500000,
+        3000000,
+        3500000,
+        4000000,
+        4500000,
+        5000000,
+        6000000,
+        7000000,
+        8000000,
+        9000000,
+        10000000,
+        20000000,
+        50000000,
+      ].obs;
   RxBool deleteSuccessStory = false.obs;
 
   final ResellerSuccessStoryService _service = ResellerSuccessStoryService();
@@ -702,8 +711,8 @@ class DashboardController extends GetxController {
   final txtStartDate = TextEditingController();
   final txtEndDate = TextEditingController();
   RxString resellerApprovalStatus = ''.obs;
-  DateTime startDate=DateTime.now();
-  DateTime endDate=DateTime.now();
+  DateTime startDate = DateTime.now();
+  DateTime endDate = DateTime.now();
   RxDouble resellerMinPrice = 0.0.obs;
   RxDouble resellerMaxPrice = 100000000.0.obs;
   RxString resellerPropertyCategory = "".obs;
@@ -725,10 +734,9 @@ class DashboardController extends GetxController {
   RxList<String> propertyTypeList = <String>[].obs;
 
   ///////===Builder -===.
-  RxString builderProjectStatus="".obs;
+  RxString builderProjectStatus = "".obs;
   final txtBuilderProjectName = TextEditingController();
   final txtBuilderRERAID = TextEditingController();
-
 
   /////////////====================================================
 
@@ -757,7 +765,7 @@ class DashboardController extends GetxController {
   var selectedMonth = Rx<DateTime?>(null);
   var selectedStatus = 'Published'.obs;
 
-
+  final RxInt createdUserYear = DateTime.now().year.obs;
   var rating = 5.0.obs;
   var imageFile = Rx<File?>(null);
 
@@ -765,18 +773,21 @@ class DashboardController extends GetxController {
 
   final picker = ImagePicker();
 
+
   @override
   void onInit() {
     super.onInit();
     itemData.clear();
+    generateDateRanges(); // generate on startup
     loadProducts();
     getCurrentUserData();
     fetchDashboardData();
     fetchReferralService();
-
-    fetchResellerDashboardDataFromApi();
+    getCreatedYearOfUser();
+    fetchResellerDashboardDataFromApi(leadsYear: selectedGraphYear.value);
     Get.lazyPut(() => LeadController(), tag: "reseller");
     // Simulate real-time updates every 30 seconds
+
     _startRealTimeUpdates();
     ever(searchQuery, (_) => applyFilters());
     ever(selectedCategory, (_) => applyFilters());
@@ -785,32 +796,201 @@ class DashboardController extends GetxController {
     ever(sortOption, (_) => applySorting());
   }
 
+  final RxString selectedMode = 'Monthly'.obs; // "Weekly" or "Monthly"
+  final RxString selectedPeriod = ''.obs; // Dropdown selection text
+  final RxList<String> weeklyRanges = <String>[].obs;
+  final RxList<String> monthlyRanges = <String>[].obs;
+  final RxString selectedWeek = "".obs;
+
+
+  /// 📅 Generate dynamic weekly & monthly ranges
+  void generateDateRanges() {
+    weeklyRanges.clear();
+    monthlyRanges.clear();
+
+    final now = DateTime.now();
+    final dateFormat = DateFormat('dd/MM');
+
+    // --- Generate last 4 rolling 7-day ranges ending today ---
+    for (int i = 0; i < 4; i++) {
+      final end = now.subtract(Duration(days: 7 * i)); // end of the week
+      final start = end.subtract(const Duration(days: 6)); // 7 days back
+      weeklyRanges.add("${dateFormat.format(start)} - ${dateFormat.format(end)}");
+    }
+
+    // --- Add current month only ---
+    final currentMonth = DateFormat('MMMM yyyy').format(now);
+    monthlyRanges.add(currentMonth);
+
+    // Default selection
+    selectedPeriod.value = weeklyRanges.first;
+  }
+
+
+  /// 🧩 Builds the correct payload for API based on user selection
+  Map<String, String> get leaderboardFilterPayload {
+    final now = DateTime.now();
+    final dfMonth = DateFormat('yyyy-MM');
+
+    if (selectedMode.value == 'Monthly') {
+      return {
+        "city": selectedCity.value,
+        "period": "monthly",
+        "month": dfMonth.format(now), // e.g. "2026-01"
+        "week": "",
+      };
+    } else {
+      // Weekly mode — extract start date from selectedPeriod
+      if (selectedPeriod.value.isEmpty) {
+        return {
+          "city": selectedCity.value,
+          "period": "weekly",
+          "week": "",
+          "month": "",
+        };
+      }
+
+      try {
+        final startStr = selectedPeriod.value.split('-').first.trim();
+        final startDate = DateFormat('dd/MM').parse(startStr);
+        final adjusted = DateTime(now.year, startDate.month, startDate.day);
+        return {
+          "city": selectedCity.value,
+          "period": "weekly",
+          "week": DateFormat('yyyy-MM-dd').format(adjusted),
+          "month": "",
+        };
+      } catch (e) {
+        return {
+          "city": selectedCity.value,
+          "period": "weekly",
+          "week": "",
+          "month": "",
+        };
+      }
+    }
+  }
+  /// ========================  PERIOD INFO UPDATER ========================
+  /// Updates derived fields like week/month when dropdown changes
+  void updatePeriodInfo() {
+    final now = DateTime.now();
+    final dfMonth = DateFormat('yyyy-MM');
+
+    String? week;
+    String? month;
+
+    if (selectedMode.value == 'Monthly') {
+      // Monthly mode
+      selectedWeek.value = "";
+      month = dfMonth.format(now);
+      log("📅 Period Info → Mode: Monthly | Month: $month");
+    } else {
+      // Weekly mode
+      if (selectedPeriod.value.isNotEmpty) {
+        try {
+          final startStr = selectedPeriod.value.split('-').first.trim();
+          final startDate = DateFormat('dd/MM').parse(startStr);
+          final adjusted = DateTime(now.year, startDate.month, startDate.day);
+          selectedWeek.value = DateFormat('yyyy-MM-dd').format(adjusted);
+          week = selectedWeek.value;
+          log("📅 Period Info → Mode: Weekly | Week: $week");
+        } catch (e) {
+          selectedWeek.value = "";
+          week = "";
+          log("⚠️ Error parsing week range: $e");
+        }
+      } else {
+        selectedWeek.value = "";
+        week = "";
+      }
+    }
+
+    // ✅ Call API immediately after updating period
+    fetchCityWiseLeaderboardColor(
+      city: selectedCity.value,
+      period: selectedMode.value.toLowerCase(),
+      week: week,
+      month: month,
+    );
+  }
+
+
   Future<void> pickImage() async {
     final picked = await picker.pickImage(source: ImageSource.gallery);
     if (picked != null) {
       imageFile.value = File(picked.path);
     }
   }
+
+  void updateTheCity(String update) {
+    selectedCity.value = update;
+    fetchCityWiseLeaderboardColor(city: update);
+  }
+
+  Future<void> fetchCityWiseLeaderboardColor({
+    String? city,
+    String? period,
+    String? week,
+    String? month,
+  }) async {
+    final data = await ResellerDashboardService.resellerDashboardService
+        .fetchCityWiseLeaderBoard(
+      city: city ?? selectedCity.value,
+      period: period ?? selectedMode.value.toLowerCase(),
+      week: week,
+      month: month,
+    );
+
+    log("🏙 API Call → city=${city ?? selectedCity.value}, period=$period, week=$week, month=$month");
+
+    resellerCityWiseLeaderBoard.value =
+        ResellerLeaderboardCitywise.fromJson(data);
+  }
+
+  // Future<void> fetchCityFromApi() async {
+  //   final data =
+  //   await ResellerDashboardService.resellerDashboardService.fetchCityOfReseller();
+  //   log("🏙 Fetched cities → ${data}");
+  //   resellerAllCity.value = ResellerCityLeaderBoardAllCities.fromJson(data);
+  // }
+
+
+
+
+
+
+
+
+  Future<void> fetchCityFromApi() async {
+    final data =
+        await ResellerDashboardService.resellerDashboardService
+            .fetchCityOfReseller();
+    log("Controller Side to fetch from api ${data} ");
+    resellerAllCity.value = ResellerCityLeaderBoardAllCities.fromJson(data);
+  }
+
   RxMap<String, dynamic> priceRangeSeller = <String, dynamic>{}.obs;
-
-
-
 
   void buyerPriceRange(RangeValues value) {
     // Ensure valid range — prevent lowerBound > upperBound
-    final lower = resellerMinPrice.value < resellerMaxPrice.value
-        ? resellerMinPrice.value
-        : resellerMaxPrice.value;
-    final upper = resellerMaxPrice.value > resellerMinPrice.value
-        ? resellerMaxPrice.value
-        : resellerMinPrice.value;
+    final lower =
+        resellerMinPrice.value < resellerMaxPrice.value
+            ? resellerMinPrice.value
+            : resellerMaxPrice.value;
+    final upper =
+        resellerMaxPrice.value > resellerMinPrice.value
+            ? resellerMaxPrice.value
+            : resellerMinPrice.value;
 
     final clampedStart = value.start.clamp(lower, upper);
     final clampedEnd = value.end.clamp(lower, upper);
     _rangeValues.value = RangeValues(clampedStart, clampedEnd);
 
     // Update observable map
-    priceRangeSeller.value = priceRange(resellerMinPrice.value, resellerMaxPrice.value);
+    priceRangeSeller.value = priceRange(
+      resellerMinPrice.value,
+      resellerMaxPrice.value,
+    );
 
     // 🧩 Log for debugging
     log('📊 buyerPriceRange called');
@@ -820,12 +1000,8 @@ class DashboardController extends GetxController {
     log('   ▶ priceRangeSeller: ${priceRangeSeller.value}');
   }
 
-
   Map<String, dynamic> priceRange(double min, double max) {
-    final rangeMap = {
-      'min': min.toInt(),
-      'max': max.toInt(),
-    };
+    final rangeMap = {'min': min.toInt(), 'max': max.toInt()};
 
     // 🧩 Log the computed range
     log('💰 priceRange() → $rangeMap');
@@ -833,22 +1009,54 @@ class DashboardController extends GetxController {
     return rangeMap;
   }
 
-
-
   void setValue<T>(Rx<T> target, T value) {
     target.value = value;
-
   }
 
-  Future<Rxn<ResellerInsightsModel>> fetchResellerDashboardDataFromApi() async {
+  Future<Rxn<ResellerInsightsModel>> fetchResellerDashboardDataFromApi({
+    int? leadsYear,
+  }) async {
     final user = await SecureStorage.getUserData();
     final userId = user?.user?.id;
     final data = await ResellerDashboardService.resellerDashboardService
-        .fetchResellerDashboard(userId ?? '');
+        .fetchResellerDashboard(
+          userId ?? '',
+          leadsYear: leadsYear ?? selectedGraphYear.value,
+        );
+    fetchCityWiseLeaderboardColor();
+    fetchCityFromApi();
     resellerInsightsModel.value = ResellerInsightsModel.fromJson(data ?? {});
     print("Reseller Dashboard controller${resellerInsightsModel.toJson()}");
 
     return resellerInsightsModel;
+  }
+
+  void updateLeadsYear(int year) {
+    selectedGraphYear.value = year;
+    fetchResellerDashboardDataFromApi(leadsYear: year);
+  }
+
+  // Method to get last 3 years
+  List<int> getLastThreeYears() {
+    final currentYear = DateTime.now().year;
+    return [currentYear, currentYear - 1, currentYear - 2];
+  }
+
+  Future<void> getCreatedYearOfUser() async {
+    final user = await SecureStorage.getUserData();
+    final createdDate = user?.user?.createdAt ?? '';
+
+    if (createdDate.isNotEmpty) {
+      try {
+        final parsedDate = DateTime.parse(createdDate);
+        createdUserYear.value = parsedDate.year;
+        log('Created year of user: ${createdUserYear.value}');
+      } catch (e) {
+        log('Error parsing createdAt date: $e');
+      }
+    } else {
+      log('User createdAt date is empty or null');
+    }
   }
 
   Future<void> deleteStory(String id) async {
@@ -905,6 +1113,7 @@ class DashboardController extends GetxController {
       // getPropertyState('');
     }
   }
+
   void getPropertyType() {
     print('🔍 Running getPropertyType...');
     print('======================================');
@@ -917,16 +1126,12 @@ class DashboardController extends GetxController {
     print('  • State: "${resellerSelectedState.value}"');
     print('  • City: "${resellerSelectedCity.value}"');
     print('======================================\n');
-    final matchFurnishing =
-        matchFurnishType(
-          resellerFurnishingType.value
-        );
+    final matchFurnishing = matchFurnishType(resellerFurnishingType.value);
 
     print('  • City: "${matchFurnishing}"');
   }
+
   String matchFurnishType(String filterValue) {
-
-
     // Map UI display values to API expected values
     const furnishMap = {
       'Fully': 'fully-furnished',
@@ -1038,137 +1243,135 @@ class DashboardController extends GetxController {
     print('----------------------------------------------');
   }*/
 
-
-
   //////////////////////////////////////////////////////////////////////////
-//
-//   void getPropertyType() {
-//     print('🔍 Running getPropertyType...');
-//     print('----------------------------------------------');
-//     print('🧩 Current filter values:');
-//     print('  • resellerPropertyCategory: ${resellerPropertyCategory.value}');
-//     print('  • resellerListingType: ${resellerListingType.value}');
-//     print('  • resellerPropertyType: ${resellerPropertyType.value}');
-//     print('  • resellerFurnishingType: ${resellerFurnishingType.value}');
-//     print('  • resellerVerified: ${resellerVerified.value}');
-//     print('  • resellerPossessionStatus: ${resellerPossessionStatus.value}');
-//     print('  • resellerStatePropertyList: ${resellerStatePropertyList}');
-//     print('  • resellerCityPropertyList: ${resellerCityPropertyList}');
-//     print('----------------------------------------------');
-//     final filteredItems =
-//         propertyController.items.where((e) {
-//           final matchCategory =
-//               resellerPropertyCategory.value.isEmpty ||
-//               e.type?.toLowerCase() ==
-//                   resellerPropertyCategory.value.toLowerCase();
-//
-//           final matchListingType =
-//               resellerListingType.value.isEmpty ||
-//               e.listingType == resellerListingType.value;
-//
-//           // final matchPropertyType = resellerPropertyType.value.isEmpty ||
-//           //     e.propertyType == resellerPropertyType.value;
-//
-//           final matchFurnishing =
-//               resellerFurnishingType.value.isEmpty ||
-//               e.propertyDetails?.furnishInfo?.furnishType ==
-//                   resellerFurnishingType.value;
-//
-//           final bool isVerified = resellerVerified.value == 'Verified';
-//           final matchVerified =
-//               resellerVerified.value.isEmpty || e.isVerified == isVerified;
-//
-//           // final matchPossession = resellerPossessionStatus.value.isEmpty ||
-//           //     e.propertyDetails?.possessionInfo?.possessionDate ==
-//           //         resellerPossessionStatus.value;
-//
-//           final matchState =
-//               resellerStatePropertyList.isEmpty ||
-//               resellerStatePropertyList.contains(e.state);
-//
-//           final matchCity =
-//               resellerCityPropertyList.isEmpty ||
-//               resellerCityPropertyList.contains(e.city);
-//
-//           final matches =
-//               matchCategory &&
-//               matchListingType &&
-//               // matchPropertyType &&
-//               matchFurnishing &&
-//               matchVerified &&
-//               // matchPossession &&
-//               matchState &&
-//               matchCity;
-//           print('''
-// ----------------------------------------------
-// 🏠 Property Debug Info:
-// • ID: ${e.id}
-// • Type: ${e.type}
-// • ListingType: ${e.listingType}
-// • PropertyType: ${e.propertyType}
-// • Furnishing: ${e.propertyDetails?.furnishInfo?.furnishType}
-// • Verified: ${e.isVerified}
-// • State: ${e.state}
-// • City: ${e.city}
-//
-// 🔎 Match Results:
-//   - matchCategory: $matchCategory
-//   - matchListingType: $matchListingType
-//   - matchFurnishing: $matchFurnishing
-//   - matchVerified: $matchVerified
-//   - matchState: $matchState
-//   - matchCity: $matchCity
-//   - ✅ Final matches: $matches
-// ----------------------------------------------
-// ''');
-//           // Detailed per-item debug log
-//           print('-------------------------------------------------');
-//           print('🏠 Item:');
-//           print('  • ID: ${e.id}');
-//           print('  • Type: ${e.type}');
-//           print('  • ListingType: ${e.listingType}');
-//           print('  • PropertyType: ${e.propertyType}');
-//           print(
-//             '  • Furnishing: ${e.propertyDetails?.furnishInfo?.furnishType}',
-//           );
-//           print('  • Verified: ${e.isVerified}');
-//           print(
-//             '  • PossessionDate: ${e.propertyDetails?.possessionInfo?.possessionDate}',
-//           );
-//           print('  • State: ${e.state}');
-//           print('  • City: ${e.city}');
-//           print('  • Matches filters: $matches');
-//
-//           if (matches) {
-//             print('✅ MATCHED ✅');
-//           } else {
-//             print('🚫 SKIPPED 🚫');
-//           }
-//
-//           return matches;
-//         }).toList();
-//
-//     print('----------------------------------------------');
-//     print('📊 Filtered items count: ${filteredItems.length}');
-//
-//     // Step 2: Extract property types
-//     final types =
-//         filteredItems
-//             .map((e) => e.propertyType)
-//             .where((type) => type != null && type!.isNotEmpty)
-//             .map((type) => type!)
-//             .toSet()
-//             .toList();
-//
-//     // Step 3: Assign to observable list
-//     propertyTypeList.value = types;
-//
-//     // Step 4: Print final debug summary
-//     print('----------------------------------------------');
-//     print('🏷️ Extracted property types: $types');
-//     print('✅ propertyTypeList updated with ${propertyTypeList.length} types');
-//     print('----------------------------------------------');
-//   }
+  //
+  //   void getPropertyType() {
+  //     print('🔍 Running getPropertyType...');
+  //     print('----------------------------------------------');
+  //     print('🧩 Current filter values:');
+  //     print('  • resellerPropertyCategory: ${resellerPropertyCategory.value}');
+  //     print('  • resellerListingType: ${resellerListingType.value}');
+  //     print('  • resellerPropertyType: ${resellerPropertyType.value}');
+  //     print('  • resellerFurnishingType: ${resellerFurnishingType.value}');
+  //     print('  • resellerVerified: ${resellerVerified.value}');
+  //     print('  • resellerPossessionStatus: ${resellerPossessionStatus.value}');
+  //     print('  • resellerStatePropertyList: ${resellerStatePropertyList}');
+  //     print('  • resellerCityPropertyList: ${resellerCityPropertyList}');
+  //     print('----------------------------------------------');
+  //     final filteredItems =
+  //         propertyController.items.where((e) {
+  //           final matchCategory =
+  //               resellerPropertyCategory.value.isEmpty ||
+  //               e.type?.toLowerCase() ==
+  //                   resellerPropertyCategory.value.toLowerCase();
+  //
+  //           final matchListingType =
+  //               resellerListingType.value.isEmpty ||
+  //               e.listingType == resellerListingType.value;
+  //
+  //           // final matchPropertyType = resellerPropertyType.value.isEmpty ||
+  //           //     e.propertyType == resellerPropertyType.value;
+  //
+  //           final matchFurnishing =
+  //               resellerFurnishingType.value.isEmpty ||
+  //               e.propertyDetails?.furnishInfo?.furnishType ==
+  //                   resellerFurnishingType.value;
+  //
+  //           final bool isVerified = resellerVerified.value == 'Verified';
+  //           final matchVerified =
+  //               resellerVerified.value.isEmpty || e.isVerified == isVerified;
+  //
+  //           // final matchPossession = resellerPossessionStatus.value.isEmpty ||
+  //           //     e.propertyDetails?.possessionInfo?.possessionDate ==
+  //           //         resellerPossessionStatus.value;
+  //
+  //           final matchState =
+  //               resellerStatePropertyList.isEmpty ||
+  //               resellerStatePropertyList.contains(e.state);
+  //
+  //           final matchCity =
+  //               resellerCityPropertyList.isEmpty ||
+  //               resellerCityPropertyList.contains(e.city);
+  //
+  //           final matches =
+  //               matchCategory &&
+  //               matchListingType &&
+  //               // matchPropertyType &&
+  //               matchFurnishing &&
+  //               matchVerified &&
+  //               // matchPossession &&
+  //               matchState &&
+  //               matchCity;
+  //           print('''
+  // ----------------------------------------------
+  // 🏠 Property Debug Info:
+  // • ID: ${e.id}
+  // • Type: ${e.type}
+  // • ListingType: ${e.listingType}
+  // • PropertyType: ${e.propertyType}
+  // • Furnishing: ${e.propertyDetails?.furnishInfo?.furnishType}
+  // • Verified: ${e.isVerified}
+  // • State: ${e.state}
+  // • City: ${e.city}
+  //
+  // 🔎 Match Results:
+  //   - matchCategory: $matchCategory
+  //   - matchListingType: $matchListingType
+  //   - matchFurnishing: $matchFurnishing
+  //   - matchVerified: $matchVerified
+  //   - matchState: $matchState
+  //   - matchCity: $matchCity
+  //   - ✅ Final matches: $matches
+  // ----------------------------------------------
+  // ''');
+  //           // Detailed per-item debug log
+  //           print('-------------------------------------------------');
+  //           print('🏠 Item:');
+  //           print('  • ID: ${e.id}');
+  //           print('  • Type: ${e.type}');
+  //           print('  • ListingType: ${e.listingType}');
+  //           print('  • PropertyType: ${e.propertyType}');
+  //           print(
+  //             '  • Furnishing: ${e.propertyDetails?.furnishInfo?.furnishType}',
+  //           );
+  //           print('  • Verified: ${e.isVerified}');
+  //           print(
+  //             '  • PossessionDate: ${e.propertyDetails?.possessionInfo?.possessionDate}',
+  //           );
+  //           print('  • State: ${e.state}');
+  //           print('  • City: ${e.city}');
+  //           print('  • Matches filters: $matches');
+  //
+  //           if (matches) {
+  //             print('✅ MATCHED ✅');
+  //           } else {
+  //             print('🚫 SKIPPED 🚫');
+  //           }
+  //
+  //           return matches;
+  //         }).toList();
+  //
+  //     print('----------------------------------------------');
+  //     print('📊 Filtered items count: ${filteredItems.length}');
+  //
+  //     // Step 2: Extract property types
+  //     final types =
+  //         filteredItems
+  //             .map((e) => e.propertyType)
+  //             .where((type) => type != null && type!.isNotEmpty)
+  //             .map((type) => type!)
+  //             .toSet()
+  //             .toList();
+  //
+  //     // Step 3: Assign to observable list
+  //     propertyTypeList.value = types;
+  //
+  //     // Step 4: Print final debug summary
+  //     print('----------------------------------------------');
+  //     print('🏷️ Extracted property types: $types');
+  //     print('✅ propertyTypeList updated with ${propertyTypeList.length} types');
+  //     print('----------------------------------------------');
+  //   }
 
   Future<void> getCurrentUserData() async {
     userModel.value = await SecureStorage.getUserData();

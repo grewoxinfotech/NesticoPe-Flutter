@@ -20,7 +20,7 @@ class SellerListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     print("[TopSeller] topSeller : ${topSeller.map((e) => e.firstName)}");
     return SizedBox(
-      height: 163,
+      height: 140,
       // smaller height
       child: ListView.builder(
         scrollDirection: Axis.horizontal,

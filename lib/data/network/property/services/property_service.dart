@@ -53,7 +53,7 @@ class PropertyService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
-        print("data: $data");
+        AppLogger.structured("Fetch Properties from Api and Store in Items", data);
 
         return PaginationResponse<Items>.fromJson(
           data,
@@ -91,7 +91,7 @@ class PropertyService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
-        print("data: $data");
+
 
         return PaginationResponse<Items>.fromJson(
           data,

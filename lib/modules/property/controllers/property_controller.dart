@@ -102,7 +102,7 @@ class PropertyController extends PaginatedController<Items> {
         "Loaded ${response.items.length} top properties ${topProperties.value.map((e) => e.toJson())}",
       );
     } catch (e) {
-      print("Error loading top properties: $e");
+      print("Error loading top properties:fdvbfdbgbg $e");
     }
   }
 
@@ -350,7 +350,7 @@ class PropertyController extends PaginatedController<Items> {
       print("Fetched items: ${response.items.length}");
       return response; // contains items + meta (page/total)
     } catch (e) {
-      print("Exception in fetchItems: $e");
+      print("Exception in fetchItemsdsfsgdvfdv: $e");
       rethrow;
     }
   }

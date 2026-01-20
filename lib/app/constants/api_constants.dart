@@ -81,6 +81,10 @@ class ApiConstants {
 
   static String get resellerSuccessStory => "$baseURL/resellerSuccessStory";
 
+  static String get resellerCityWiseReseller=>"$baseURL/insight/citywise-leaderboard";
+
+  static String get resellerGetAllCity=>"$baseURL/cityInsights/reseller-cities";
+
   static String get locationPriceMetrics => "$baseURL/locationPriceMetrics";
 
   static String get review => "$baseURL/review";
@@ -132,6 +136,8 @@ class ApiConstants {
 
   static String get contractorServiceByCategory => "$baseURL/contractorService/by-category";
   static String get contractorServicesCity => "$baseURL/cityInsights/contractor-cities";
+
+  static String get resellerPropertyShare=>"$baseURL/propertyShare/reference";
 
   static String get contractorInquiry => "$baseURL/contractorInquiry";
   static String get contractorInquiryQuotation => "$baseURL/contractorquotation";

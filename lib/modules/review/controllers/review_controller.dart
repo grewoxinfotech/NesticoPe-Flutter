@@ -237,23 +237,29 @@ class ReviewController extends PaginatedController<ReviewItem> {
         return null;
       }
 
-      // Call review service with filters (entityType + reviewerId)
       final response = await _service.fetchReviews(
         page: 1,
         filters: {
-          'entity_type': 'seller', // App review type
-          'reviewer_id': userId, // Fetch only this user’s app reviews
+          'entity_type': 'seller',
+          'reviewer_id': userId,
         },
       );
 
       print("Fetched app reviews: ${response.items.length}");
 
-      return response.items.first;
+      // ✅ Check if the list is not empty
+      if (response.items.isNotEmpty) {
+        return response.items.first;
+      } else {
+        print("❌ No app reviews found for this user");
+        return null;
+      }
     } catch (e) {
       print("❌ Error fetching app reviews: $e");
       return null;
     }
   }
+
 
   Future<void> getAppReview() async {
     try {

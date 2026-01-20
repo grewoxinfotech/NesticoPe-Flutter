@@ -7,6 +7,7 @@ import 'package:housing_flutter_app/app/care/pagination/models/pagination_models
 import 'package:housing_flutter_app/app/constants/api_constants.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/lead/model/lead_visit_model.dart';
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../modules/seller/module/lead_screen/model/lead_model.dart';
@@ -47,7 +48,7 @@ class LeadService {
         // First page: include all filters including property_id
         queryParameters = {
           'page': page.toString(),
-          if (userId != null) 'created_by': userId,
+          if (userId != null) 'reseller_id': userId,
           if (filters != null) ...filters,
         };
       } else {
@@ -72,6 +73,7 @@ class LeadService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        AppLogger.structured("Lead from the ", data);
 
         return PaginationResponse<LeadItem>.fromJson(
           data,

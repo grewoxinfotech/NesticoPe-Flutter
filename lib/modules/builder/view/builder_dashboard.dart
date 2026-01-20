@@ -14,6 +14,7 @@ import '../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../app/widgets/texts/headline_text.dart';
 import '../../../data/database/secure_storage_service.dart';
 import '../../../data/network/seller_dashboard/model/seller_dashboardmodel.dart';
+import '../../../utils/excel/generate_excel.dart';
 import '../../aadhar_auth/screens/aadhar_auth_screen.dart';
 import '../../dashboard/views/dashboard_screen.dart';
 import '../../property/controllers/property_controller.dart';
@@ -159,6 +160,30 @@ class _BuilderDashboardState extends State<BuilderDashboard> {
                         fontSize: AppFontSizes.medium,
                         fontWeight: AppFontWeights.semiBold,
                         color: ColorRes.textColor,
+                      ),
+                    ),
+                    Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: IconButton(
+                        onPressed: () async {
+                          // await exportContractorInsightsToExcel(contractorInsightsJson);
+                          await exportBuilderInsightsToExcel(overview.toMap());
+
+                        },
+                        icon: const Icon(Icons.download, size: 18),
+
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.green.shade600,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
                       ),
                     ),
                     _buildYearDropdown(overviewController),

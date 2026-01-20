@@ -11,6 +11,7 @@ import '../../../../app/constants/color_res.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../../../../app/utils/formater/formater.dart';
 import '../../../../data/network/contractor/model/dashboard/contractor_dashboard_model.dart';
+import '../../../../utils/excel/generate_excel.dart';
 import '../../../dashboard/views/dashboard_screen.dart';
 import '../../../reseller/view/property_reseller.dart';
 import '../../../reseller/widget/graph/linear_graph.dart';
@@ -95,6 +96,30 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
                             color: ColorRes.textColor,
                           ),
                         ),
+                        Spacer(),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 12),
+                          child: IconButton(
+                            onPressed: () async {
+                              // await exportContractorInsightsToExcel(contractorInsightsJson);
+                               await exportContractorInsightsToExcel(contractorDashboardController.contractorInsights.value?.toMap()??{});
+                            },
+                            icon: const Icon(Icons.download, size: 18),
+
+                            style: IconButton.styleFrom(
+                              backgroundColor: Colors.green.shade600,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                          ),
+                        ),
+
                         Obx(() {
                           final baseYear =
                               contractorDashboardController

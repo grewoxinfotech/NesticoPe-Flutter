@@ -10,6 +10,7 @@ import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
+import 'package:housing_flutter_app/modules/property/controllers/share_property_controller.dart';
 import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
 import 'package:housing_flutter_app/modules/reseller/controller/property_share/reseller_property_share_controller.dart';
 import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
@@ -38,6 +39,8 @@ class ProductListingScreen extends StatefulWidget {
 
 class _ProductListingScreenState extends State<ProductListingScreen> {
   final DashboardController controller = Get.put(DashboardController());
+  final SharePropertyController sharePropertyController =
+      Get.put(SharePropertyController());
 
   final PropertyController propertyController = Get.put(
     PropertyController(),
@@ -84,7 +87,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
     }
   }
 
-  void toggleSelectionMode() {
+/*  void toggleSelectionMode() {
     isSelectionMode.value = !isSelectionMode.value;
     if (!isSelectionMode.value) {
       selectedPropertyIds.clear();
@@ -102,9 +105,9 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
     if (selectedPropertyIds.isEmpty) {
       isSelectionMode.value = false;
     }
-  }
+  }*/
 
-  Future<void> shareSelectedProperties() async {
+/*  Future<void> shareSelectedProperties() async {
     if (selectedPropertyIds.isEmpty) {
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: "Error",
@@ -136,7 +139,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
     // Exit selection mode and clear selections
     isSelectionMode.value = false;
     selectedPropertyIds.clear();
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -145,22 +148,22 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
 
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: Obx(
-          () => AppBar(
+        child:
+          AppBar(
             backgroundColor: ColorRes.white,
             elevation: 0,
             automaticallyImplyLeading: false,
-            leading:
+           /* leading:
                 isSelectionMode.value
                     ? IconButton(
                       icon: Icon(Icons.close, color: ColorRes.textColor),
                       onPressed: toggleSelectionMode,
                     )
-                    : null,
+                    : null,*/
             title: Text(
-              isSelectionMode.value
-                  ? '${selectedPropertyIds.length} Selected'
-                  : 'Property Listing',
+           /*   isSelectionMode.value
+                  ? '${selectedPropertyIds.length} Selected'*/
+              'Property Listing',
               style: TextStyle(
                 color: ColorRes.textColor,
                 fontWeight: AppFontWeights.bold,
@@ -176,7 +179,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
               child: Container(color: ColorRes.leadGreyColor[200], height: 1),
             ),
             actions: [
-              if (isSelectionMode.value) ...[
+            /*  if (isSelectionMode.value) ...[
                 TextButton(
                   onPressed: () {
                     if (selectedPropertyIds.length ==
@@ -205,7 +208,8 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                   ),
                 ),
                 const SizedBox(width: 8),
-              ] else ...[
+              ]
+              else ...[
                 GestureDetector(
                   onTap: () async {
                     // FocusScope.of(context).unfocus();
@@ -248,79 +252,60 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                   },
                   child: Icon(Icons.filter_list),
                 ),
-
-                // Sort Button
-                // Container(
-                //   height: 35,
-                //   margin: EdgeInsets.only(right: 12),
-                //   padding: EdgeInsets.symmetric(horizontal: 16),
-                //   decoration: BoxDecoration(
-                //     color: ColorRes.leadGreyColor[100],
-                //     borderRadius: BorderRadius.circular(12),
-                //     border: Border.all(
-                //       color: ColorRes.leadGreyColor[300]!,
-                //       width: 1,
-                //     ),
-                //   ),
-                //   child: PopupMenuButton<SortOption>(
-                //     icon: Text(
-                //       'Sort',
-                //       style: TextStyle(
-                //         color: ColorRes.leadGreyColor[700],
-                //         fontSize: AppFontSizes.bodySmall,
-                //         fontWeight: AppFontWeights.semiBold,
-                //       ),
-                //     ),
-                //     onSelected: controller.updateSortOption,
-                //     offset: Offset(0, 40),
-                //     shape: RoundedRectangleBorder(
-                //       borderRadius: BorderRadius.circular(16),
-                //       side: BorderSide(
-                //         color: ColorRes.leadGreyColor.shade300,
-                //         width: 0.7,
-                //       ),
-                //     ),
-                //     elevation: 8,
-                //     itemBuilder:
-                //         (context) => [
-                //           _buildSortMenuItem(
-                //             Icons.sort_by_alpha_rounded,
-                //             'Name',
-                //             SortOption.name,
-                //             ColorRes.primary,
-                //           ),
-                //           _buildSortMenuItem(
-                //             Icons.arrow_upward_rounded,
-                //             'Price: Low to High',
-                //             SortOption.priceAsc,
-                //             ColorRes.green,
-                //           ),
-                //           _buildSortMenuItem(
-                //             Icons.arrow_downward_rounded,
-                //             'Price: High to Low',
-                //             SortOption.priceDesc,
-                //             ColorRes.error,
-                //           ),
-                //           _buildSortMenuItem(
-                //             Icons.star_rounded,
-                //             'Rating',
-                //             SortOption.rating,
-                //             ColorRes.homeAmber,
-                //           ),
-                //         ],
-                //   ),
-                // ),
                 const SizedBox(width: 8),
-                IconButton(
+                *//*IconButton(
                   onPressed: toggleSelectionMode,
                   icon: const Icon(Icons.share_outlined),
                   color: ColorRes.primary,
                   iconSize: 22,
-                ),
-              ],
+                ),*//*
+              ],*/
+              GestureDetector(
+                onTap: () async {
+                  // FocusScope.of(context).unfocus();
+                  // showModalBottomSheet(
+                  //   context: context,
+                  //   isScrollControlled: true,
+                  //   backgroundColor: ColorRes.transparentColor,
+                  //   builder: (_) => FilterPanel(),
+                  // );
+
+                  // When navigating to the filter screen
+                  final result = await Get.to(() => ResellerPropertyFilter());
+
+                  if (result != null) {
+                    // Use the filter result
+                    final newFilter = convertFiltersToString(result);
+                    log(
+                      "skfjudfh ${newFilter['priceRange']} ${newFilter['createdAtFrom']}",
+                    );
+                    final user = await SecureStorage.getUserData();
+                    final userId = user?.user?.id;
+
+                    if (userId != null && userId.isNotEmpty) {
+                      newFilter["assignedTo"] = userId;
+                      log("New Filter ${newFilter}");
+                      await propertyController.applyFilters(newFilter);
+                      selectedFilters
+                        ..clear()
+                        ..addAll(newFilter);
+
+                      propertyController.applyFilters(
+                        Map<String, String>.from(selectedFilters),
+                      );
+                      print(
+                        "Filter applied: $result   t   ${selectedFilters.value}",
+                      );
+                      // Example: {'bhk': 5, 'city': 'Surat', 'state': 'Gujarat'}
+                    }
+                  }
+                },
+                child: Icon(Icons.filter_list),
+              ),
+              const SizedBox(width: 8),
             ],
           ),
-        ),
+
       ),
 
       body: Column(
@@ -590,7 +575,6 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                   child: ProductsGrid(
                     isSelectionMode: isSelectionMode,
                     selectedPropertyIds: selectedPropertyIds,
-                    onPropertyTap: togglePropertySelection,
                   ),
                 ),
               );
@@ -599,7 +583,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
         ],
       ),
       // Floating Action Button for Share (when in selection mode)
-      floatingActionButton: Obx(
+/*      floatingActionButton: Obx(
         () =>
             isSelectionMode.value && selectedPropertyIds.isNotEmpty
                 ? FloatingActionButton.extended(
@@ -615,11 +599,11 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                   ),
                 )
                 : SizedBox.shrink(),
-      ),
+      ),*/
     );
   }
 
-  PopupMenuItem<SortOption> _buildSortMenuItem(
+  /*PopupMenuItem<SortOption> _buildSortMenuItem(
     IconData icon,
     String text,
     SortOption value,
@@ -643,7 +627,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
         ],
       ),
     );
-  }
+  }*/
 }
 
 // Update FilterPanel (no changes needed, keeping for completeness)
@@ -977,7 +961,7 @@ class _FilterPanelState extends State<FilterPanel> {
 class ProductsGrid extends StatelessWidget {
   final RxBool isSelectionMode;
   final RxList<String> selectedPropertyIds;
-  final Function(String) onPropertyTap;
+
 
   final DashboardController controller = Get.find();
   final PropertyController propertyController = Get.find(
@@ -988,7 +972,7 @@ class ProductsGrid extends StatelessWidget {
     Key? key,
     required this.isSelectionMode,
     required this.selectedPropertyIds,
-    required this.onPropertyTap,
+
   }) : super(key: key);
 
   @override
@@ -1037,11 +1021,10 @@ class ProductsGrid extends StatelessWidget {
             return Obx(
               () => ProductCard(
                 product: displayProducts[index],
-                isSelectionMode: isSelectionMode,
                 isSelected: selectedPropertyIds.contains(
                   displayProducts[index].id ?? '',
                 ),
-                onSelectionTap: onPropertyTap,
+
               ),
             );
           },
@@ -1054,29 +1037,30 @@ class ProductsGrid extends StatelessWidget {
 // Updated ProductCard with selection support
 class ProductCard extends StatelessWidget {
   final Items product;
-  final RxBool isSelectionMode;
+
   final bool isSelected;
-  final Function(String) onSelectionTap;
+
 
   const ProductCard({
     Key? key,
     required this.product,
-    required this.isSelectionMode,
+
     required this.isSelected,
-    required this.onSelectionTap,
+
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     Get.lazyPut(() => ReSellerPropertyShareController());
     final propertyShareController = Get.find<ReSellerPropertyShareController>();
+    final SharePropertyController controller=Get.find<SharePropertyController>();
     final manager = PropertyNameManager(product);
     final priceManager = PropertyPriceManager(
       listingType: product.listingType ?? 'sale',
       financialInfo: product.propertyDetails?.financialInfo,
     );
 
-    return Obx(() {
+
       return Material(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(14),
@@ -1088,20 +1072,8 @@ class ProductCard extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
           onTap: () {
-            if (isSelectionMode.value) {
-              // Handle selection
-              onSelectionTap(product.id ?? '');
-            } else {
-              // Normal navigation
+
               Get.to(() => LeadDetailScreen(property: product));
-            }
-          },
-          onLongPress: () {
-            // Enable selection mode on long press
-            if (!isSelectionMode.value) {
-              isSelectionMode.value = true;
-              onSelectionTap(product.id ?? '');
-            }
           },
           child: Container(
             height: 120,
@@ -1136,7 +1108,7 @@ class ProductCard extends StatelessWidget {
                       ),
                     ),
                     // Selection Checkbox Overlay
-                    if (isSelectionMode.value)
+                  /*  if (isSelectionMode.value)
                       Positioned(
                         top: 8,
                         left: 8,
@@ -1164,7 +1136,7 @@ class ProductCard extends StatelessWidget {
                                   )
                                   : null,
                         ),
-                      ),
+                      ),*/
                   ],
                 ),
 
@@ -1195,10 +1167,11 @@ class ProductCard extends StatelessWidget {
                             ),
                             Spacer(),
                             // Only show share icon in normal mode
-                            if (!isSelectionMode.value)
+                           /* if (!isSelectionMode.value)*/
                               GestureDetector(
                                 onTap: () async {
-                                  final user =
+                                 await controller.getPropertyLinkByIdInReseller(product.id??'');
+                                /*  final user =
                                       await SecureStorage.getUserData();
                                   final resellerId = user?.user?.id ?? '';
                                   final propertyId = product.id ?? '';
@@ -1216,7 +1189,7 @@ class ProductCard extends StatelessWidget {
                                       .handleShareButtonTap(
                                         propertyId: propertyId,
                                         resellerId: resellerId,
-                                      );
+                                      );*/
                                 },
                                 child: const Icon(Icons.share, size: 16),
                               ),
@@ -1267,7 +1240,7 @@ class ProductCard extends StatelessWidget {
                               ),
                             ),
                             SizedBox(width: 8),
-                            if (!isSelectionMode.value)
+                           /* if (!isSelectionMode.value)*/
                               Container(
                                 padding: EdgeInsets.symmetric(
                                   horizontal: 14,
@@ -1297,7 +1270,7 @@ class ProductCard extends StatelessWidget {
           ),
         ),
       );
-    });
+
   }
 }
 

@@ -113,6 +113,7 @@ class SecureStorage {
 
   static Future<void> saveSelectedCity(String city) async {
     final storage = FlutterSecureStorage();
+    log('Save city work or not $city');
     await storage.write(key: _selectedCityKey, value: city);
   }
 
