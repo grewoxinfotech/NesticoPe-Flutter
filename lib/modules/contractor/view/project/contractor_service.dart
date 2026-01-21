@@ -317,7 +317,9 @@ class ContractorService extends StatelessWidget {
       backgroundColor: ColorRes.background,
       appBar: AppBar(
         backgroundColor: ColorRes.surface,
-        automaticallyImplyLeading: false,
+        leading: IconButton(onPressed: () {
+          Get.back();
+        }, icon: Icon(Icons.arrow_back)),
         elevation: 0,
         title: Text(
           'My Services',

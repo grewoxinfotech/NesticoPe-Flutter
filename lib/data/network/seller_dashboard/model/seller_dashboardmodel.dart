@@ -644,12 +644,14 @@ class PropertyMetrics {
   final int rejectedListings;
   final int selectedYear;
   final List<ViewHistory> viewsHistory;
+  final List<PropertyTimeline> propertyTimeline;
   final Map<String, dynamic> statusDistribution;
 
   PropertyMetrics({
     required this.totalProperties,
     required this.activeListings,
     required this.pendingListings,
+    required this.propertyTimeline,
     required this.rejectedListings,
     required this.selectedYear,
     required this.viewsHistory,
@@ -667,6 +669,10 @@ class PropertyMetrics {
           ?.map((e) => ViewHistory.fromJson(e))
           .toList() ??
           [],
+      propertyTimeline: (json['propertyTimeline'] as List?)
+          ?.map((e) => PropertyTimeline.fromJson(e))
+          .toList() ??
+          [],
       statusDistribution: json['statusDistribution'] ?? {},
     );
   }
@@ -679,6 +685,7 @@ class PropertyMetrics {
       'rejectedListings': rejectedListings,
       'selectedYear': selectedYear,
       'viewsHistory': viewsHistory.map((e) => e.toMap()).toList(),
+      'propertyTimeline': propertyTimeline.map((e) => e.toMap()).toList(),
       'statusDistribution': statusDistribution,
     };
   }
@@ -698,6 +705,21 @@ class ViewHistory {
   }
 
   Map<String, dynamic> toMap() => {'month': month, 'views': views};
+}
+class PropertyTimeline {
+  final String month;
+  final int count;
+
+  PropertyTimeline({required this.month, required this.count});
+
+  factory PropertyTimeline.fromJson(Map<String, dynamic> json) {
+    return PropertyTimeline(
+      month: json['month'] ?? '',
+      count: json['count'] ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toMap() => {'month': month, 'count': count};
 }
 
 class LeadAnalytics {

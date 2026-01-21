@@ -350,13 +350,15 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                     children: [
                       buildSellerLeadGraph(overviewController),
                       const SizedBox(height: 12),
-                      buildSellerCommissionGraph(overviewController),
+                      buildSellerCommissionGraph(overviewController,'Properties Views'),
                       const SizedBox(height: 12),
                       buildPropertyDistributionGraph(overviewController),
                       const SizedBox(height: 12),
                       buildLeadSourceDistributionGraph(overviewController),
                       const SizedBox(height: 12),
                       buildPropertyGrowthGraph(overviewController),
+                      const SizedBox(height: 12),
+                      buildSellerPropertyCreatedGraph(overviewController,'Properties Created'),
                       const SizedBox(height: 12),
                       leadLifecycleFunnel(overviewController),
                     ],
@@ -1692,7 +1694,7 @@ Widget buildSellerLeadGraph(SellerOverviewController overviewController) {
   );
 }
 
-Widget buildSellerCommissionGraph(SellerOverviewController overviewController) {
+Widget buildSellerCommissionGraph(SellerOverviewController overviewController,String title) {
   final leadsTrend =
       overviewController.overviewData.value?.data?.propertyMetrics?.viewsHistory
           .map<Map<String, dynamic>>(
@@ -1762,7 +1764,115 @@ Widget buildSellerCommissionGraph(SellerOverviewController overviewController) {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Project Views',
+                    '$title',
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: TextStyle(
+                      color: ColorRes.reportCardblue,
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
+                    ),
+                  ),
+
+                  Text(
+                    'Monthly Overview',
+                    style: TextStyle(
+                      color: ColorRes.textColor,
+                      fontSize: AppFontSizes.extraSmall,
+                      fontWeight: AppFontWeights.medium,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        SizedBox(
+          height: 200,
+          width: double.infinity,
+          child: MonthlyBarChart(
+            monthlyData: monthlyData,
+            months: months,
+            color: ColorRes.reportCardblue,
+            isAmount: false,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+Widget buildSellerPropertyCreatedGraph(SellerOverviewController overviewController,String title) {
+  final leadsTrend =
+      overviewController.overviewData.value?.data?.propertyMetrics?.propertyTimeline
+          .map<Map<String, dynamic>>(
+            (e) => {"month": e.month ?? '', "count": e.count ?? 0},
+          )
+          .toList() ??
+      [];
+
+  // --- Step 1: Extract all years present in data ---
+  final Set<String> yearsInData =
+      leadsTrend.map((e) => e['month'].toString().split('-').first).toSet();
+
+  // --- Step 2: Determine which year to display ---
+  // Prefer latest available year; fallback to current year
+  final String displayYear =
+      yearsInData.isNotEmpty
+          ? (yearsInData.toList()..sort()).last
+          : DateTime.now().year.toString();
+
+  // --- Step 3: Collect month data for that year ---
+  final Map<String, double> monthDataForYear = {};
+  for (var e in leadsTrend) {
+    final parts = e['month'].toString().split('-');
+    if (parts.length == 2 && parts[0] == displayYear) {
+      monthDataForYear[parts[1]] = (e['count'] as num).toDouble();
+    }
+  }
+
+  // --- Step 4: Fill missing months (1–12) with zero ---
+  final mergedData = List.generate(12, (i) {
+    final month = (i + 1).toString().padLeft(2, '0');
+    return {
+      "month": "$displayYear-$month",
+      "count": monthDataForYear[month] ?? 0,
+    };
+  });
+
+  // --- Step 5: Extract for chart ---
+  final List<String> months =
+      mergedData.map((e) => e['month'] as String).toList();
+
+  final List<double> monthlyData =
+      mergedData.map((e) => (e['count'] as num).toDouble()).toList();
+
+  return Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: ColorRes.white,
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(
+        color: ColorRes.leadGreyColor.withOpacity(0.3),
+        width: 1,
+      ),
+    ),
+    child: Column(
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.home_work,
+              color: ColorRes.reportCardblue,
+              size: 24,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '$title',
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     style: TextStyle(

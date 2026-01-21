@@ -80,6 +80,7 @@ class ContractorProjectScreen extends StatelessWidget {
                 filters: selectedFilters.value,
                 onClearAll: () {
                   selectedFilters.clear();
+                  controller.resetFilters();
                   controller.applyFilters(<String, String>{});
                 },
                 onRemoveFilter: (key) {

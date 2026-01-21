@@ -1,4 +1,3 @@
-// followup_model.dart
 class ContractorLeadFollowupModel {
   final bool success;
   final String message;
@@ -16,6 +15,15 @@ class ContractorLeadFollowupModel {
       message: json['message'],
       data: ContractorLeadFollowUpData.fromJson(json['data']),
     );
+  }
+
+  /// Convert model to Map
+  Map<String, dynamic> toMap() {
+    return {
+      'success': success,
+      'message': message,
+      'data': data.toMap(),
+    };
   }
 }
 
@@ -47,6 +55,18 @@ class ContractorLeadFollowUpData {
       hasMore: json['hasMore'],
       fetchedAll: json['fetchedAll'],
     );
+  }
+
+  /// Convert to Map
+  Map<String, dynamic> toMap() {
+    return {
+      'items': items.map((item) => item.toMap()).toList(),
+      'total': total,
+      'currentPage': currentPage,
+      'totalPages': totalPages,
+      'hasMore': hasMore,
+      'fetchedAll': fetchedAll,
+    };
   }
 }
 
@@ -86,10 +106,19 @@ class ContractorLeadFollowUpItem {
       createdAt: json['createdAt'],
     );
   }
+
+  /// Convert to Map
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'type': type,
+      'date': date,
+      'time': time,
+      'notes': notes,
+      'status': status,
+      'reminder': reminder,
+      'location': location,
+      'createdAt': createdAt,
+    };
+  }
 }
-
-
-// followup_controller.dart
-
-
-// followup_screen.dart

@@ -117,7 +117,8 @@ class FilterChipsBar extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      "${capitalizeEachWord(key)}: $displayValue",
+                      "${capitalizeEachWord(key)}: ${capitalizeEachWord(displayValue)}",
+
                       style: const TextStyle(
                         fontSize: AppFontSizes.small,
                         color: ColorRes.primary,

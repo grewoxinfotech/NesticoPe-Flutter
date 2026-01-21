@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/modules/contractor/view/project/widget/add_milestone_screen.dart';
+import 'package:housing_flutter_app/modules/property_rating/view/widget/read_more_or_less.dart';
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/constants/color_res.dart';
 import '../../../../../data/network/contractor/model/contractor_project_model/contractor_project_milestone_model.dart';
@@ -48,12 +50,11 @@ class _ContactorProjectMileStoneScreenState
       backgroundColor: ColorRes.background,
       appBar: AppBar(
         title: Text(
-          'Project Milestone',
+          'Milestone',
           style: TextStyle(
             fontWeight: AppFontWeights.semiBold,
             color: ColorRes.textColor,
           ),
-
         ),
 
         backgroundColor: ColorRes.surface,
@@ -62,8 +63,8 @@ class _ContactorProjectMileStoneScreenState
           Padding(
             padding: const EdgeInsets.only(right: 12),
             child: IconButton(
-              onPressed: () async{
-               final success = await Get.to(
+              onPressed: () async {
+                final success = await Get.to(
                   () => AddMilestoneScreen(
                     tag: tag, // Controller tag
                     milestone: null, // null = Add mode
@@ -71,9 +72,9 @@ class _ContactorProjectMileStoneScreenState
                   ),
                 );
 
-               if(success){
-                 controller.loadInitial();
-               }
+                if (success) {
+                  controller.loadInitial();
+                }
               },
               icon: Icon(
                 Icons.add_circle_outline_rounded,
@@ -107,8 +108,8 @@ class _ContactorProjectMileStoneScreenState
                 onDelete: () {
                   controller.deleteMilestone(controller.items[index].id!);
                 },
-                onEdit: () async{
-                 final success = await Get.to(
+                onEdit: () async {
+                  final success = await Get.to(
                     () => AddMilestoneScreen(
                       tag: tag,
                       milestone: controller.items[index],
@@ -116,7 +117,7 @@ class _ContactorProjectMileStoneScreenState
                     ),
                   );
 
-                  if(success){
+                  if (success) {
                     controller.loadInitial();
                   }
                 },
@@ -144,7 +145,10 @@ class _MilestoneCard extends StatelessWidget {
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: ColorRes.leadGreyColor.shade300, width: 1),
+      ),
       elevation: 2,
       child: Padding(
         padding: const EdgeInsets.all(14),
@@ -152,7 +156,7 @@ class _MilestoneCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// Title + Status + Actions
-            Row(
+            /*  Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
@@ -163,6 +167,7 @@ class _MilestoneCard extends StatelessWidget {
                         milestone.title ?? '',
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
+                            color: ColorRes.textPrimary
                         ),
                       ),
                       const SizedBox(width: 4),
@@ -193,28 +198,139 @@ class _MilestoneCard extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: 8),
-
-            Text(milestone.description ?? '', style: theme.textTheme.bodySmall),
-
-            const SizedBox(height: 12),
-
-            /// Amounts
+            const SizedBox(height: 8),*/
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _AmountTile(label: 'Total', value: milestone.milestoneAmount!),
-                _AmountTile(label: 'Paid', value: milestone.paidAmount!),
-                _AmountTile(
-                  label: 'Remaining',
-                  value: milestone.remainingAmount!,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          "MILESTONE",
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            fontSize: 11,
+                            color: Colors.blue.shade700,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        _StatusChip(
+                          label: milestone.paymentStatus ?? '',
+                          color: _paymentStatusColor(milestone.paymentStatus!),
+                        ),
+                        SizedBox(width: 8),
+                        _StatusChip(
+                          label: (milestone.workStatus ?? '').toUpperCase(),
+                          color: _paymentStatusColor(
+                            milestone.paymentStatus ?? '',
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      milestone.title ?? '',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+                // --- Circular progress indicator
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      height: 36,
+                      width: 36,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 3,
+                        value: (milestone.percentage ?? 0) / 100,
+                        backgroundColor: Colors.grey.shade200,
+                        valueColor: AlwaysStoppedAnimation(Colors.blue),
+                      ),
+                    ),
+                    Text(
+                      "${milestone.percentage ?? 0}%",
+                      style: const TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
 
-            const SizedBox(height: 10),
+            const SizedBox(height: 4),
+
+            ReadMoreClass(
+              description: milestone.description ?? '',
+              trimLines: 3,
+              size: 13,
+              colorClickableText: ColorRes.primary,
+            ),
+
+            // Text(milestone.description ?? '', style: theme.textTheme.bodySmall),
+            const SizedBox(height: 6),
+            Divider(color: ColorRes.leadGreyColor.shade300),
+            const SizedBox(height: 6),
+
+            /// Amounts
+            Row(
+              children: [
+                Expanded(
+                  child: _AmountTile(
+                    label: 'Total',
+                    value: Formatter.formatPrice(
+                      num.tryParse(milestone.milestoneAmount ?? '') ?? 0,
+                    ),
+                  ),
+                ),
+
+                Container(
+                  width: 1,
+                  height: 32,
+                  color: Colors.grey.shade300,
+                  margin: const EdgeInsets.symmetric(horizontal: 12),
+                ),
+
+                Expanded(
+                  child: _AmountTile(
+                    label: 'Paid',
+                    value: Formatter.formatPrice(
+                      num.tryParse(milestone.paidAmount ?? '') ?? 0,
+                    ),
+                    // value: milestone.paidAmount!,
+                  ),
+                ),
+
+                Container(
+                  width: 1,
+                  height: 32,
+                  color: Colors.grey.shade300,
+                  margin: const EdgeInsets.symmetric(horizontal: 12),
+                ),
+
+                Expanded(
+                  child: _AmountTile(
+                    label: 'Remaining',
+                    // value: milestone.remainingAmount!,
+                    value: Formatter.formatPrice(
+                      num.tryParse(milestone.remainingAmount ?? '') ?? 0,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 16),
 
             /// Type + Payment Status
-            Row(
+            /*  Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
@@ -226,6 +342,50 @@ class _MilestoneCard extends StatelessWidget {
                 _StatusChip(
                   label: milestone.paymentStatus ?? '',
                   color: _paymentStatusColor(milestone.paymentStatus!),
+                ),
+              ],
+            ),*/
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.calendar_today,
+                      size: 14,
+                      color: Colors.grey,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      Formatter.formatDate(
+                        milestone.startDate?.toIso8601String(),
+                      ),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    const Icon(
+                      Icons.arrow_forward,
+                      size: 14,
+                      color: Colors.grey,
+                    ),
+                    const SizedBox(width: 8),
+                    const Icon(
+                      Icons.calendar_today,
+                      size: 14,
+                      color: Colors.grey,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      Formatter.formatDate(
+                        milestone.endDate?.toIso8601String(),
+                      ),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -277,7 +437,7 @@ class _AmountTile extends StatelessWidget {
           Text(label, style: const TextStyle(fontSize: 11, color: Colors.grey)),
           const SizedBox(height: 2),
           Text(
-            '₹$value',
+            '$value',
             style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
           ),
         ],

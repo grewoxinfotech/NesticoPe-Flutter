@@ -25,6 +25,7 @@ class ApiConstants {
   static String get loginEndpoint => "$auth/login";
 
 
+
   static String get registerEndpoint => "$auth/signup";
 
   static String get verifyOtpEndpoint => "$auth/verify-otp";
@@ -44,6 +45,8 @@ class ApiConstants {
   static String get aadharVerifyOtp => "$auth/verify-aadhaar-otp";
 
   static String get referralGet => "$baseURL/referral/my-stats";
+
+  static String get generateResellerCertificate=>"$baseURL/certificate/generate-and-save-certificate";
 
   static String get generateReferCode => "$baseURL/referral/generate-code";
 
@@ -218,3 +221,33 @@ class ApiConstants {
     return {contentType: applicationJson};
   }
 }
+
+
+
+
+
+///http://192.168.1.5:19725/api/v1/certificate/generate-and-save-certificate
+///
+/// payload
+///{
+//     "userId": "1lH7F520ZTMd9ZZ9ihxCU0i",
+//     "certificateData": {
+//         "firstName": "",
+//         "lastName": "",
+//         "username": "rs1",
+//         "email": "rs1@yopmail.com",
+//         "phone": "2548796542"
+//     }
+// }
+
+///response
+///
+/// {
+//     "success": true,
+//     "message": "Certificate generated and saved successfully",
+//     "data": {
+//         "certificateId": "BzjmgaqQ1ANANEGRBRzcSUM",
+//         "certificateUrl": "https://crmmediabucket.s3.amazonaws.com/RealEstate/superadmin/reseller/common/1lH7F520ZTMd9ZZ9ihxCU0i/certificate/2026-01/reseller_certificate_1768967368494_rs1.pdf.pdf"
+//     }
+// }
+

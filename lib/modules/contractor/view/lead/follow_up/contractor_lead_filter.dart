@@ -335,7 +335,7 @@ class _ContractorLeadFilterState extends State<ContractorLeadFilter> {
                       child: OutlinedButton(
                         onPressed: () {
 
-                          Get.back(result: {});
+                          Get.back(result: <String, String>{});
                           controller.resetFilters();
 
                         },
@@ -365,7 +365,7 @@ class _ContractorLeadFilterState extends State<ContractorLeadFilter> {
 
                           log("Applied Filters: $filters");
                           Get.back(result: filters);
-                          controller.resetFilters();
+                          // controller.resetFilters();   // controller.resetFilters();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: ColorRes.primary,

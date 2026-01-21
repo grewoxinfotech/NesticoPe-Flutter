@@ -2693,14 +2693,17 @@ Widget buildTopPropertyForGoodCommission(
                               decoration: BoxDecoration(
                                 image: DecorationImage(
                                   image: NetworkImage(
-                                    property.propertyMedia?.images?.first ??
-                                        'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg',
+                                    (property.propertyMedia?.images != null &&
+                                        property.propertyMedia!.images!.isNotEmpty)
+                                        ? property.propertyMedia!.images!.first
+                                        : 'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg',
                                   ),
                                   fit: BoxFit.cover,
                                 ),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
+
                           ],
                         ),
                         const SizedBox(width: 12),

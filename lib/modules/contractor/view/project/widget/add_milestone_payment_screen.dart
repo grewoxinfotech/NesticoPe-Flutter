@@ -67,6 +67,7 @@ class AddMilestonePaymentScreen extends StatelessWidget {
               /// 🔹 Milestone
               buildSectionTitle("Milestone *"),
               const SizedBox(height: 8),
+
               Obx(
                     () => NesticoPeDropdownField<String>(
                   isRequired: true,
@@ -86,7 +87,9 @@ class AddMilestonePaymentScreen extends StatelessWidget {
                   )
                       .toList(),
                   onChanged: (val) {
+                    print('kkmkoowoqoiopqoplopkmmpmsoqomppPPM');
                     if (val != null) {
+                      print('jibidjdjinkjinkjnjndjjndjino');
                       controller.selectedMilestoneId.value = val;
 
                       // Auto-fill amount from milestone
@@ -240,43 +243,45 @@ class AddMilestonePaymentScreen extends StatelessWidget {
               const SizedBox(height: 24),
 
               /// 🔹 Submit Button
-              SizedBox(
-                width: double.infinity,
-                child: Obx(
-                      () => ElevatedButton(
-                    onPressed: controller.isLoading.value
-                        ? null
-                        : () {
-                      if (controller.formKey.currentState?.validate() ??
-                          false) {
-                        controller.saveMilestone();
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+              SafeArea(
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Obx(
+                        () => ElevatedButton(
+                      onPressed: controller.isLoading.value
+                          ? null
+                          : () {
+                        if (controller.formKey.currentState?.validate() ??
+                            false) {
+                          controller.saveMilestone();
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        backgroundColor: ColorRes.primary,
+                        disabledBackgroundColor: Colors.grey.shade300,
                       ),
-                      backgroundColor: ColorRes.primary,
-                      disabledBackgroundColor: Colors.grey.shade300,
-                    ),
-                    child: controller.isLoading.value
-                        ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                        : Text(
-                      controller.isEditMode.value
-                          ? "Update Payment"
-                          : "Add Payment",
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                      child: controller.isLoading.value
+                          ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                          : Text(
+                        controller.isEditMode.value
+                            ? "Update Payment"
+                            : "Add Payment",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),

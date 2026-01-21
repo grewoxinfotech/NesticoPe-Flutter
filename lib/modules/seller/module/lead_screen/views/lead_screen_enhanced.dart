@@ -3895,9 +3895,11 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
     tag: "seller",
   );
 
-  final LeadPropertyNegotiablePriceController leadPropertyNegotiablePriceController=Get.put(LeadPropertyNegotiablePriceController(
-
-  ),tag: "seller");
+  final LeadPropertyNegotiablePriceController
+  leadPropertyNegotiablePriceController = Get.put(
+    LeadPropertyNegotiablePriceController(),
+    tag: "seller",
+  );
   RxBool isLoadingLead = false.obs;
 
   @override
@@ -4061,7 +4063,7 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
 
                           try {
                             log('Fetching lead details for ${lead.id}');
-leadVisitController.getLeadId(lead.id);
+                            leadVisitController.getLeadId(lead.id);
                             // Fetch full lead detail
                             await leadController.getLeadDetailByID(
                               lead.id ?? '',
@@ -4087,7 +4089,8 @@ leadVisitController.getLeadId(lead.id);
                                 leadPropertyInquiryController:
                                     propertyInquiryController,
                                 leadVisitController: leadVisitController,
-                                leadPropertyNegotiablePriceController: leadPropertyNegotiablePriceController,
+                                leadPropertyNegotiablePriceController:
+                                    leadPropertyNegotiablePriceController,
                               ),
                             );
                           } catch (e, st) {

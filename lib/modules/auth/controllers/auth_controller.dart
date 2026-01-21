@@ -1,16 +1,19 @@
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart'
     show UserModel, UserRole, User;
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:housing_flutter_app/data/network/auth/service/auth_service.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
 import 'package:housing_flutter_app/modules/auth/views/ResetPasswordScreen.dart';
 import 'package:housing_flutter_app/modules/auth/views/seller_registration_complete.dart';
 import 'package:housing_flutter_app/modules/profile/views/profile_screen.dart';
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import '../../add_property/view/create_property.dart';
@@ -290,6 +293,54 @@ class AuthController extends GetxController {
     }
   }
 
+/*  Future<void> generateResellerApi(Map<String,dynamic> user) async {
+
+    AppLogger.structured("Fetch User Data After otp verification", user);
+
+      try {
+        final Map<String, dynamic> userData = {
+         *//* 'userId': user?.id,
+          "certificateData": {
+            "firstName": "",
+            "lastName": "",
+            "username": user?.user?.username,
+            "email": user?.user?.email,
+            "phone": user?.user?.phone,
+          },*//*
+        };
+
+        final result = await authService.generateResellerCertificate(userData);
+
+        // ✅ Check success based on your API response
+        if (result != null && result == true) {
+          Fluttertoast.showToast(
+            msg: "🎉 Certificate generated successfully!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+          );
+        } else {
+          Fluttertoast.showToast(
+            msg: "⚠️ Failed to generate certificate",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+          );
+        }
+      } catch (e) {
+        // Handle unexpected errors
+        Fluttertoast.showToast(
+          msg: "❌ Error: $e",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
+    }
+  }*/
+
   Future<void> sellerRegister({
     required BuildContext context,
     required Map<String, dynamic>? data,
@@ -406,6 +457,8 @@ class AuthController extends GetxController {
       await SecureStorage.saveLoggedIn(true);
 
       currentUser.value = user;
+      AppLogger.structured("VerifyOtp method current user value ", user.toJson());
+
       authState.value = AuthState.authenticated;
     } catch (e) {
       errorMessage.value = e.toString();

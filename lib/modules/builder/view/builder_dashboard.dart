@@ -201,12 +201,15 @@ class _BuilderDashboardState extends State<BuilderDashboard> {
                     children: [
                       Obx(() => buildSellerLeadGraph(overviewController)),
                       const SizedBox(height: 12),
-                      Obx(() => buildSellerCommissionGraph(overviewController)),
+                      Obx(() => buildSellerCommissionGraph(overviewController,'Projects Views')),
                       // const SizedBox(height: 20),
                       const SizedBox(height: 12),
                       Obx(() =>  buildProjectDistributionGraph(overviewController)),
                       const SizedBox(height: 12),
                       Obx(() =>  buildProjectLeadSourceDistributionGraph(overviewController)),
+                      const SizedBox(height: 12),
+
+                      buildSellerPropertyCreatedGraph(overviewController,'Projects Created'),
                       const SizedBox(height: 12),
                       // const SizedBox(height: 12),
                       leadBuilderLifecycleFunnel(overviewController),

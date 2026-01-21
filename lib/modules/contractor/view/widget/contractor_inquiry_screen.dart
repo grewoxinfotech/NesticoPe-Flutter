@@ -438,6 +438,7 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
                 filters: selectedFilters.value,
                 onClearAll: () {
                   selectedFilters.clear();
+                  controller.resetFilters();
                   controller.applyFilters(<String, String>{});
                 },
                 onRemoveFilter: (key) {

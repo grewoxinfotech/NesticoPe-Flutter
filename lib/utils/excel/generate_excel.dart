@@ -6,109 +6,157 @@ import 'package:open_filex/open_filex.dart';
 Future<void> exportSellerInsightsToExcel(Map<String, dynamic> jsonData) async {
   try {
     final excel = Excel.createExcel();
-    final sheet = excel['Seller Insights'];
+    final sheet = excel['Seller Export Data'];
     final data = Map<String, dynamic>.from(jsonData['data'] ?? {});
 
-    // 🔹 Helper: add section header
-    void addSection(String title) {
-      sheet.appendRow([TextCellValue(''), TextCellValue('')]);
-      sheet.appendRow([TextCellValue('📊 $title'), TextCellValue('')]);
-      sheet.appendRow([TextCellValue('Metric'), TextCellValue('Value')]);
+    // 🔹 Helper: Blank Row
+    void gap() => sheet.appendRow([TextCellValue('')]);
+
+    // 🔹 Helper: Section Header
+    void header(String title) {
+      gap();
+      sheet.appendRow([TextCellValue('📊 $title')]);
+      gap();
     }
 
-    // 🔹 Helper: recursively add map data
-    void addMapData(Map<String, dynamic> map, {String? parent}) {
-      map.forEach((key, value) {
-        if (value is Map) {
-          sheet.appendRow([
-            TextCellValue('📂 ${parent != null ? "$parent > " : ""}$key'),
-            TextCellValue(''),
-          ]);
-          sheet.appendRow([TextCellValue('Metric'), TextCellValue('Value')]);
-          addMapData(Map<String, dynamic>.from(value), parent: key);
-        } else if (value is List) {
-          sheet.appendRow([
-            TextCellValue('📂 ${parent != null ? "$parent > " : ""}$key'),
-            TextCellValue(''),
-          ]);
-          for (var i = 0; i < value.length; i++) {
-            final item = value[i];
-            if (item is Map) {
-              sheet.appendRow([TextCellValue(''), TextCellValue('')]);
-              sheet.appendRow([
-                TextCellValue('🔸 $key [${i + 1}]'),
-                TextCellValue(''),
-              ]);
-              sheet.appendRow([
-                TextCellValue('Metric'),
-                TextCellValue('Value'),
-              ]);
-              addMapData(Map<String, dynamic>.from(item), parent: key);
-            } else {
-              sheet.appendRow([
-                TextCellValue('$key [$i]'),
-                TextCellValue(item.toString()),
-              ]);
-            }
-          }
-        } else {
-          sheet.appendRow([
-            TextCellValue(key.toString()),
-            TextCellValue(value.toString()),
-          ]);
-        }
+    // 🔹 Helper: format key name like "totalRevenue" → "Total Revenue"
+    String _formatKey(String key) {
+      return key
+          .replaceAllMapped(RegExp(r'([a-z])([A-Z])'), (m) => '${m[1]} ${m[2]}')
+          .split('_')
+          .map((w) => '${w[0].toUpperCase()}${w.substring(1)}')
+          .join(' ');
+    }
+
+    // 🏠 1️⃣ PROPERTY METRICS
+    header('Property Metrics');
+    final propertyMetrics = Map<String, dynamic>.from(data['propertyMetrics'] ?? {});
+    propertyMetrics.forEach((key, value) {
+      if (value is! List && value is! Map) {
+        sheet.appendRow([TextCellValue(_formatKey(key)), TextCellValue(value.toString())]);
+      }
+    });
+
+    // 🔸 Views History
+    final viewsHistory = List<Map<String, dynamic>>.from(propertyMetrics['viewsHistory'] ?? []);
+    if (viewsHistory.isNotEmpty) {
+      gap();
+      sheet.appendRow([TextCellValue('Views History')]);
+      sheet.appendRow([TextCellValue('Month'), TextCellValue('Views')]);
+      for (var v in viewsHistory) {
+        sheet.appendRow([
+          TextCellValue(v['month']?.toString() ?? ''),
+          TextCellValue(v['views']?.toString() ?? ''),
+        ]);
+      }
+    }
+
+    // 🔸 Property Timeline
+    final propertyTimeline = List<Map<String, dynamic>>.from(propertyMetrics['propertyTimeline'] ?? []);
+    if (propertyTimeline.isNotEmpty) {
+      gap();
+      sheet.appendRow([TextCellValue('Properties Created')]);
+      sheet.appendRow([TextCellValue('Month'), TextCellValue('Count')]);
+      for (var v in propertyTimeline) {
+        sheet.appendRow([
+          TextCellValue(v['month']?.toString() ?? ''),
+          TextCellValue(v['count']?.toString() ?? ''),
+        ]);
+      }
+    }
+
+    // 🧭 2️⃣ LEAD ANALYTICS
+    header('Lead Analytics');
+    final leadAnalytics = Map<String, dynamic>.from(data['leadAnalytics'] ?? {});
+    leadAnalytics.forEach((key, value) {
+      if (value is! List && value is! Map) {
+        sheet.appendRow([TextCellValue(_formatKey(key)), TextCellValue(value.toString())]);
+      }
+    });
+
+    // 🔸 Status Breakdown
+    final statusBreakdown = Map<String, dynamic>.from(leadAnalytics['statusBreakdown'] ?? {});
+    if (statusBreakdown.isNotEmpty) {
+      gap();
+      sheet.appendRow([TextCellValue('Status Breakdown')]);
+      sheet.appendRow([TextCellValue('Status'), TextCellValue('Count')]);
+      statusBreakdown.forEach((k, v) {
+        sheet.appendRow([TextCellValue(_formatKey(k)), TextCellValue(v.toString())]);
       });
     }
 
-    // 🏠 PROPERTY METRICS
-    addSection('Property Metrics');
-    addMapData(Map<String, dynamic>.from(data['propertyMetrics'] ?? {}));
+    // 🔸 Source Distribution
+    final sourceDistribution = Map<String, dynamic>.from(leadAnalytics['sourceDistribution'] ?? {});
+    if (sourceDistribution.isNotEmpty) {
+      gap();
+      sheet.appendRow([TextCellValue('Source Distribution')]);
+      sheet.appendRow([TextCellValue('Source'), TextCellValue('Count')]);
+      sourceDistribution.forEach((k, v) {
+        sheet.appendRow([TextCellValue(_formatKey(k)), TextCellValue(v.toString())]);
+      });
+    }
 
-    // 📈 LEAD ANALYTICS
-    addSection('Lead Analytics');
-    addMapData(Map<String, dynamic>.from(data['leadAnalytics'] ?? {}));
+    // 🔸 Leads Timeline
+    final leadsTimeline = List<Map<String, dynamic>>.from(leadAnalytics['leadsTimeline'] ?? []);
+    if (leadsTimeline.isNotEmpty) {
+      gap();
+      sheet.appendRow([TextCellValue('Leads Timeline')]);
+      sheet.appendRow([TextCellValue('Month'), TextCellValue('Count')]);
+      for (var item in leadsTimeline) {
+        sheet.appendRow([
+          TextCellValue(item['month']?.toString() ?? ''),
+          TextCellValue(item['count']?.toString() ?? ''),
+        ]);
+      }
+    }
 
-    // 💰 FINANCIAL METRICS
-    addSection('Financial Metrics');
-    addMapData(Map<String, dynamic>.from(data['financialMetrics'] ?? {}));
+    // 💰 3️⃣ FINANCIAL METRICS
+    header('Financial Metrics');
+    final financialMetrics = Map<String, dynamic>.from(data['financialMetrics'] ?? {});
+    financialMetrics.forEach((key, value) {
+      if (value is! List && value is! Map) {
+        sheet.appendRow([TextCellValue(_formatKey(key)), TextCellValue(value.toString())]);
+      }
+    });
 
-    // 🤝 ENGAGEMENT METRICS
-    addSection('Engagement Metrics');
-    addMapData(Map<String, dynamic>.from(data['engagementMetrics'] ?? {}));
+    // 🔸 Revenue History
+    final revenueHistory = List<Map<String, dynamic>>.from(financialMetrics['revenueHistory'] ?? []);
+    if (revenueHistory.isNotEmpty) {
+      gap();
+      sheet.appendRow([TextCellValue('Revenue History')]);
+      sheet.appendRow([TextCellValue('Month'), TextCellValue('Revenue')]);
+      for (var r in revenueHistory) {
+        sheet.appendRow([
+          TextCellValue(r['month']?.toString() ?? ''),
+          TextCellValue(r['revenue']?.toString() ?? ''),
+        ]);
+      }
+    }
 
-    // 🎟️ SUBSCRIPTION INFO
-    // addSection('Subscription Info');
-    // addMapData(Map<String, dynamic>.from(data['subscriptionInfo'] ?? {}));
-    //
-    // // 🧾 OTHER DETAILS
-    // addSection('Other Details');
-    // sheet.appendRow([
-    //   TextCellValue('Seller Type'),
-    //   TextCellValue(data['sellerType']?.toString() ?? ''),
-    // ]);
-    // sheet.appendRow([
-    //   TextCellValue('Last Updated'),
-    //   TextCellValue(data['lastUpdated']?.toString() ?? ''),
-    // ]);
+    // 🤝 4️⃣ ENGAGEMENT METRICS
+    header('Engagement Metrics');
+    final engagement = Map<String, dynamic>.from(data['engagementMetrics'] ?? {});
+    engagement.forEach((key, value) {
+      sheet.appendRow([TextCellValue(_formatKey(key)), TextCellValue(value.toString())]);
+    });
 
     // ✅ SAVE FILE
     final bytes = excel.encode();
-    Directory directory;
+    if (bytes == null) throw Exception('Failed to encode Excel file');
+
+    Directory dir;
     if (Platform.isAndroid) {
-      directory = Directory('/storage/emulated/0/Download');
-      if (!directory.existsSync()) {
-        directory = await getApplicationDocumentsDirectory();
-      }
+      dir = Directory('/storage/emulated/0/Download');
+      if (!dir.existsSync()) dir = await getApplicationDocumentsDirectory();
     } else {
-      directory = await getApplicationDocumentsDirectory();
+      dir = await getApplicationDocumentsDirectory();
     }
 
     final filePath =
-        '${directory.path}/seller_insights_${DateTime.now().millisecondsSinceEpoch}.xlsx';
-    final file =
-        File(filePath)
-          ..createSync(recursive: true)
-          ..writeAsBytesSync(bytes!);
+        '${dir.path}/seller_insights_${DateTime.now().millisecondsSinceEpoch}.xlsx';
+    final file = File(filePath)
+      ..createSync(recursive: true)
+      ..writeAsBytesSync(bytes);
 
     print('✅ Seller Insights Excel exported successfully: $filePath');
     await OpenFilex.open(filePath);
@@ -311,6 +359,18 @@ Future<void> exportBuilderInsightsToExcel(Map<String, dynamic> jsonData) async {
         sheet.appendRow([
           TextCellValue(v['month']?.toString() ?? ''),
           TextCellValue(v['views']?.toString() ?? ''),
+        ]);
+      }
+    }
+final propertyTimeline = List<Map<String, dynamic>>.from(propertyMetrics['propertyTimeline'] ?? []);
+    if (propertyTimeline.isNotEmpty) {
+      gap();
+      sheet.appendRow([TextCellValue('Properties Created')]);
+      sheet.appendRow([TextCellValue('Month'), TextCellValue('Count')]);
+      for (var v in propertyTimeline) {
+        sheet.appendRow([
+          TextCellValue(v['month']?.toString() ?? ''),
+          TextCellValue(v['count']?.toString() ?? ''),
         ]);
       }
     }

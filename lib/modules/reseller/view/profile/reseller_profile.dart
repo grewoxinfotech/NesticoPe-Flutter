@@ -84,8 +84,8 @@ class ResellerProfileScreen extends StatelessWidget {
                         const SizedBox(height: 16),
 
                         // Statistics Cards
-                        _buildStatisticsCards(profileController),
-                        const SizedBox(height: 16),
+                        // _buildStatisticsCards(profileController),
+                        // const SizedBox(height: 16),
 
                         _buildLeadOverView(),
                         const SizedBox(height: 16),
@@ -96,7 +96,7 @@ class ResellerProfileScreen extends StatelessWidget {
 
                         // Profile Options
                         if (!profileController.isEditing.value) ...[
-                          // _buildProfileOptionsSection(),
+                          _buildSellerDetailsSection(profileController),
                           const SizedBox(height: 16),
                           RequestDeleteAccount(),
                         ],
@@ -109,131 +109,92 @@ class ResellerProfileScreen extends StatelessWidget {
     );
   }
 
-  // Widget _buildProfileHeader(ProfileController controller) {
-  //   return Container(
-  //     padding: const EdgeInsets.all(24),
-  //     decoration: BoxDecoration(
-  //       color: ColorRes.white,
-  //       borderRadius: BorderRadius.circular(16),
-  //       border: Border.all(
-  //         color: ColorRes.leadGreyColor.withOpacity(0.3),
-  //         width: 1,
-  //       ),
-  //     ),
-  //     child: Column(
-  //       children: [
-  //         Stack(
-  //           children: [
-  //             Obx(() {
-  //               ImageProvider? imageProvider;
-  //
-  //               // Priority: selectedImage > avatarUrl > null
-  //               if (controller.selectedImage.value != null) {
-  //                 imageProvider = FileImage(controller.selectedImage.value!);
-  //               } else if (controller.profile.value.avatarUrl.isNotEmpty) {
-  //                 imageProvider = NetworkImage(controller.profile.value.avatarUrl);
-  //               }
-  //
-  //               return Container(
-  //                 decoration: BoxDecoration(
-  //                   shape: BoxShape.circle,
-  //                   border: Border.all(
-  //                     color: ColorRes.primary.withOpacity(0.2),
-  //                     width: 3,
-  //                   ),
-  //                 ),
-  //                 child: CircleAvatar(
-  //                   radius: 35,
-  //                   backgroundColor: ColorRes.primary.withOpacity(0.1),
-  //                   backgroundImage: imageProvider,
-  //                   child: imageProvider == null
-  //                       ? Icon(
-  //                     Icons.person,
-  //                     size: 25,
-  //                     color: ColorRes.primary.withOpacity(0.8),
-  //                   )
-  //                       : null,
-  //                 ),
-  //               );
-  //             }),
-  //             if (controller.isEditing.value)
-  //               Positioned(
-  //
-  //                 bottom:-2,
-  //                 right: 0,
-  //                 child: GestureDetector(
-  //                   onTap: () {
-  //                     controller.showImagePickerOptions(Get.context!);
-  //                   },
-  //                   child: Container(
-  //                     padding: const EdgeInsets.all(8),
-  //                     decoration: BoxDecoration(
-  //                       color: ColorRes.primary,
-  //                       shape: BoxShape.circle,
-  //                       border: Border.all(color: ColorRes.white, width: 3),
-  //                     ),
-  //                     child: const Icon(
-  //                       Icons.camera_alt,
-  //                       color: ColorRes.white,
-  //                       size: 14,
-  //                     ),
-  //                   ),
-  //                 ),
-  //               ),
-  //           ],
-  //         ),
-  //         const SizedBox(height: 16),
-  //         Text(
-  //           controller.profile.value.name,
-  //           style: const TextStyle(
-  //             fontSize: 22,
-  //             fontWeight: FontWeight.bold,
-  //             color: Color(0xFF1A1A1A),
-  //           ),
-  //           textAlign: TextAlign.center,
-  //         ),
-  //         const SizedBox(height: 6),
-  //         Container(
-  //           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-  //           decoration: BoxDecoration(
-  //             color: ColorRes.primary.withOpacity(0.1),
-  //             borderRadius: BorderRadius.circular(20),
-  //             border: Border.all(
-  //               color: ColorRes.primary.withOpacity(0.3),
-  //               width: 1,
-  //             ),
-  //           ),
-  //           child: Text(
-  //             controller.profile.value.position,
-  //             style: TextStyle(
-  //               fontSize: 14,
-  //               color:ColorRes.primary.withOpacity(0.8),
-  //               fontWeight: AppFontWeights.medium,
-  //             ),
-  //             textAlign: TextAlign.center,
-  //           ),
-  //         ),
-  //         const SizedBox(height: 8),
-  //         Row(
-  //           mainAxisAlignment: MainAxisAlignment.center,
-  //           children: [
-  //             Icon(Icons.business_outlined, size: 14, color: ColorRes.leadGreyColor[600]),
-  //             const SizedBox(width: 4),
-  //             Text(
-  //               controller.profile.value.company,
-  //               style: TextStyle(
-  //                 fontSize: 14,
-  //                 color: ColorRes.leadGreyColor[600],
-  //               ),
-  //               textAlign: TextAlign.center,
-  //             ),
-  //           ],
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
+  Widget _buildSellerDetailsSection(ProfileController controller) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: ColorRes.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: ColorRes.leadGreyColor.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Performance Overview',
+            style: TextStyle(
+              fontSize: AppFontSizes.bodyMedium,
+              fontWeight: AppFontWeights.bold,
+              color: ColorRes.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox(height: 16),
+              _buildDetailRow(
+                'Total Commission',
+                '${Formatter.formatPrice(num.tryParse(controller.resellerProfile.value?.data.totalCommissions ?? '') ?? 0) ?? ''}',
+              ),
+              const SizedBox(height: 12),
+              Spacer(),
+              _buildDetailRow(
+                'Performance Levels',
+                controller.resellerProfile.value?.data.performanceLevel??'',
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox(height: 16),
+              _buildDetailRow(
+                'Success Rate',
+                '${controller.resellerProfile.value?.data.successRate} %',
+              ),
+              const SizedBox(height: 12),
+              Spacer(),
+              _buildDetailRow(
+                'Total Sales',
+                '${Formatter.formatNumber(num.tryParse(controller.resellerProfile.value?.data.totalSales.toString() ?? '') ?? 0) ?? ''}',
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+  Widget _buildDetailRow(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: AppFontSizes.extraSmall,
+            color: ColorRes.leadGreyColor[600],
+            fontWeight: AppFontWeights.medium,
+            letterSpacing: 0.5,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: AppFontSizes.small,
+            color: ColorRes.textPrimary,
+            fontWeight: AppFontWeights.semiBold,
+          ),
+        ),
+      ],
+    );
+  }
   Widget _buildProfileHeader(ProfileController controller) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -947,7 +908,7 @@ class ResellerProfileScreen extends StatelessWidget {
           const SizedBox(height: 8),
           Row(
             children: [
-              Container(
+             /* Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
                   vertical: 4,
@@ -966,7 +927,7 @@ class ResellerProfileScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 8),*/
               Text(
                 '($remainingWarnings more to block)',
                 style: TextStyle(fontSize: 12, color: Colors.grey[600]),
@@ -1018,7 +979,7 @@ class ResellerProfileScreen extends StatelessWidget {
         Expanded(
           child: _buildStatCard(
             'Total Commission',
-            '${Formatter.formatPrice(int.tryParse(controller.resellerProfile.value?.data.totalCommissions ?? '') ?? 0) ?? ''}',
+            '${Formatter.formatPrice(num.tryParse(controller.resellerProfile.value?.data.totalCommissions ?? '') ?? 0) ?? ''}',
             Icons.trending_up,
             ColorRes.success,
           ),
@@ -1200,6 +1161,8 @@ class ResellerProfileScreen extends StatelessWidget {
             CitySelectionWidget(
               isEditing: controller.isEditing.value,
               controller: controller.positionController,
+              isRequiredTitle: false,
+              iconColor: ColorRes.leadGreyColor.shade600,
               onCitySelected: (selectedCity) {
                 print("✅ Selected city: ${selectedCity.description}");
                 controller.positionController.text =

@@ -349,7 +349,7 @@ class _ContractorInquiryFilterState extends State<ContractorInquiryFilter> {
                       child: OutlinedButton(
                         onPressed: () {
 
-                          Get.back(result: {});
+                          Get.back(result: <String, String>{});
                           controller.resetFilters();
 
                         },
@@ -379,7 +379,7 @@ class _ContractorInquiryFilterState extends State<ContractorInquiryFilter> {
 
                           log("Applied Filters: $filters");
                           Get.back(result: filters);
-                          controller.resetFilters();
+
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: ColorRes.primary,

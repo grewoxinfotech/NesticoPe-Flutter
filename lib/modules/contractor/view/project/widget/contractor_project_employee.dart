@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+  import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../app/constants/app_font_sizes.dart';
@@ -220,42 +220,61 @@ Widget _buildEmployeeCard(
           const SizedBox(height: 12),
 
           // Phone
-          Row(
-            children: [
-              const Icon(Icons.phone, size: 16, color: Colors.grey),
-              const SizedBox(width: 6),
-              Text(
-                employee.phone.isEmpty ? "-" : employee.phone,
-                style: TextStyle(
-                  color: ColorRes.leadGreyColor.shade700,
-                  fontSize: AppFontSizes.caption,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-
-          // Experience
-          Row(
-            children: [
-              const Icon(Icons.work_outline, size: 16, color: Colors.grey),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  employee.experience.isEmpty
-                      ? "No experience info"
-                      : '${employee.experience}',
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 6,horizontal: 8),
+            decoration: BoxDecoration(
+              color: ColorRes.leadGreyColor.shade200,
+              borderRadius: BorderRadius.circular(16)
+            ),
+            child: Row(
+              children: [
+                 Icon(Icons.phone, size: 16, color: ColorRes.primary),
+                const SizedBox(width: 6),
+                Text(
+                  employee.phone.isEmpty ? "-" : employee.phone,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    color: ColorRes.leadGreyColor.shade700,
-                    fontSize: AppFontSizes.caption,
+                    color: ColorRes.textPrimary,
+                    fontSize: AppFontSizes.small,
+                    fontWeight: AppFontWeights.medium
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
+
+          // Experience
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 6,horizontal: 8),
+            decoration: BoxDecoration(
+                color: ColorRes.leadGreyColor.shade200,
+                borderRadius: BorderRadius.circular(16)
+            ),
+            child: Row(
+              children: [
+                 Icon(Icons.work_outline, size: 16, color: ColorRes.primary),
+
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    employee.experience.isEmpty
+                        ? "No experience info"
+                        : '${employee.experience}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        color: ColorRes.textPrimary,
+                        fontSize: AppFontSizes.small,
+                        fontWeight: AppFontWeights.medium
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
 
         ],
       ),

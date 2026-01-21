@@ -32,7 +32,7 @@ class ContractorLeadFollowupController
     super.onInit();
     ever(filters, (_) => refreshList());
 
-    loadInitial();
+   /* loadInitial();*/
   }
   // Add inside ContractorLeadFollowupController
 //---------------------------------------Add followUp variable ------------------------------------------------//
@@ -541,6 +541,8 @@ class ContractorLeadFollowupController
 
   void initFollowups(String id) {
     leadId.value = id;
+    log("Initialise for leader ${leadId.value}==============${id}");
+
     loadInitial(); // this will call fetchItems internally
   }
 
@@ -611,6 +613,7 @@ class ContractorLeadFollowupController
     final response = await ContractorLeadFollowUpService
         .contractorInquiryService
         .fetchContractorLeadFollowUp(id: leadId.value,filters: filters.value);
+    log("Follow up section response from api ${response.items.map((e) => e.toMap(),)}");
     return response;
   }
 }

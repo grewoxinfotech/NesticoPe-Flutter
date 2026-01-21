@@ -186,7 +186,7 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
                           "New Status",
                           style: TextStyle(
                             color: ColorRes.leadGreyColor.shade600,
-                            fontSize: AppFontSizes.small,
+                            fontSize: AppFontSizes.caption,
                             fontWeight: AppFontWeights.medium,
                           ),
                         ),
@@ -202,7 +202,7 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
                                   fontWeight: AppFontWeights.semiBold,
-                                  fontSize: AppFontSizes.bodySmall,
+                                  fontSize: AppFontSizes.small,
                                   color: ColorRes.textColor,
                                 ),
                               ),
@@ -218,7 +218,7 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
                           "Old Status",
                           style: TextStyle(
                             color: ColorRes.leadGreyColor.shade600,
-                            fontSize: AppFontSizes.small,
+                            fontSize: AppFontSizes.caption,
                             fontWeight: AppFontWeights.medium,
                           ),
                         ),
@@ -234,7 +234,7 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
                                   fontWeight: AppFontWeights.semiBold,
-                                  fontSize: AppFontSizes.bodySmall,
+                                  fontSize: AppFontSizes.small,
                                   color: ColorRes.textColor,
                                 ),
                               ),
@@ -249,7 +249,7 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
             ],
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 12),
 
           // -------------------- PRICE SECTION --------------------
 
@@ -261,7 +261,7 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
                 style: TextStyle(
                   color: ColorRes.leadGreyColor.shade600,
                   fontWeight: AppFontWeights.medium,
-                  fontSize: AppFontSizes.small,
+                  fontSize: AppFontSizes.caption,
                 ),
               ),
               Text(
@@ -269,7 +269,7 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
                 style: TextStyle(
                   color: ColorRes.leadGreyColor.shade600,
                   fontWeight: AppFontWeights.medium,
-                  fontSize: AppFontSizes.small,
+                  fontSize: AppFontSizes.caption,
                 ),
               ),
 
@@ -282,7 +282,7 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
                 child: Text(
       item.negotiablePrice.toString(),
                   style:  TextStyle(
-                    fontSize: AppFontSizes.body,
+                    fontSize: AppFontSizes.bodySmall,
                     fontWeight: AppFontWeights.semiBold,
                     color: ColorRes.textColor,
                   ),
@@ -295,7 +295,7 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
                 style: TextStyle(
                   color: ColorRes.textColor,
                   fontWeight: AppFontWeights.medium,
-                  fontSize: AppFontSizes.body,
+                  fontSize: AppFontSizes.bodySmall,
                 ),
               ),
             ],
@@ -305,7 +305,7 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
 
           // -------------------- BUTTONS --------------------
           if(item.newStatus?.toLowerCase()=="pending")...[
-            const SizedBox(height: 24),
+            const SizedBox(height: 12),
             Row(
               children: [
                 Expanded(
@@ -328,7 +328,7 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
                     ),
                   ),
                 ),
@@ -351,7 +351,7 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
                     ),
                   ),
                 ),

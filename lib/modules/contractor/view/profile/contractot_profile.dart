@@ -680,6 +680,8 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
           CitySelectionWidget(
             isEditing: controller.isEditing.value,
             controller: controller.positionController,
+            iconColor: ColorRes.leadGreyColor.shade600,
+            isRequiredTitle: false,
             onCitySelected: (selectedCity) {
               print("✅ Selected city: ${selectedCity.description}");
               controller.positionController.text =
@@ -1120,6 +1122,23 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                     ? 'Inactive'
                     : 'Active',
               ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildDetailRow(
+                'Contractor Type',
+
+                controller.resellerProfile.value?.contractorType ?? 'Not Provided',
+              ),
+              // _buildDetailRow(
+              //   'Account Status',
+              //   (controller.resellerProfile.value?.isBlocked ?? false)
+              //       ? 'Inactive'
+              //       : 'Active',
+              // ),
             ],
           ),
         ],

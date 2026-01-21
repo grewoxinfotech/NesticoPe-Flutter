@@ -2,8 +2,11 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 import 'package:http/http.dart' as http;
 import '../../../../app/constants/api_constants.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
@@ -19,6 +22,81 @@ class AuthService {
 
   static Future<Map<String, String>> headers() async {
     return await ApiConstants.getHeaders();
+  }
+
+  Future<bool> generateResellerCertificate(
+      Map<String, dynamic> userData,
+      ) async {
+    try {
+      AppLogger.structured("Fetch The Certificate Data from API", userData);
+
+      final user={
+        "userId": userData['userId'],
+        "certificateData":{
+          "firstName": "",
+          "lastName": "",
+          "username": userData['username'],
+          "email": userData['email'],
+          "phone": userData['phone']
+        }
+      };
+      AppLogger.structured("Fetch The Certificate Data from API", user);
+      final response = await http.post(
+        Uri.parse(ApiConstants.generateResellerCertificate),
+        headers: await ApiConstants.getHeadersWithoutToken(),
+        body: jsonEncode(user),
+      );
+      debugPrint("Generate Reseller Certificate Done ${response.statusCode}");
+      debugPrint("Response of api : ${response.body}");
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        debugPrint("✅ Generate Reseller Certificate Done ${response.statusCode}");
+        debugPrint("Response : ${response.body}");
+
+        final data = jsonDecode(response.body);
+        final success = data['success'] == true;
+
+        // ✅ Show success/failure toast
+        if (success) {
+          Fluttertoast.showToast(
+            msg: "🎉 Certificate generated successfully!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+          );
+        } else {
+          Fluttertoast.showToast(
+            msg: "⚠️ Failed to generate certificate. Please try again.",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.orange,
+            textColor: Colors.white,
+          );
+        }
+
+        return success;
+      } else {
+        debugPrint("Generate Reseller Certificate Failed ${response.statusCode}");
+        Fluttertoast.showToast(
+          msg: "❌ Server Error: ${response.statusCode}",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
+        return false;
+      }
+    } catch (e) {
+      debugPrint("Generate Reseller Certificate Failed $e");
+      Fluttertoast.showToast(
+        msg: "🚫 Error: $e",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+      return false;
+    }
   }
 
   // Login
@@ -244,8 +322,15 @@ class AuthService {
 
     final data = jsonDecode(response.body);
     if (response.statusCode == 200 && data['success'] == true) {
+      if(data['data']['user']['userType']=="reseller")
+        {
+          generateResellerCertificate(data['data']['certificateData']);
+          return UserModel.fromJson(data['data']['user'])
+            ..token = data['data']['token'] ?? token;
+        }
       return UserModel.fromJson(data['data']['user'])
         ..token = data['data']['token'] ?? token;
+
     }
     throw Exception(data['message'] ?? 'OTP verification failed');
   }

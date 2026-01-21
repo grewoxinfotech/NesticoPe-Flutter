@@ -468,7 +468,9 @@ class CitySelectionWidget extends StatelessWidget {
   final InputDecoration? decoration;
   final bool isRequired;
   final Color? color;
+  final Color? iconColor;
   final Color? fillColor;
+  final bool isRequiredTitle;
 
   const CitySelectionWidget({
     super.key,
@@ -477,6 +479,8 @@ class CitySelectionWidget extends StatelessWidget {
     this.isRequired= false,
     this.isEditing = true,
     this.decoration,
+    this.iconColor=ColorRes.primary,
+    this.isRequiredTitle=true,
     this.color,
     this.fillColor,
   });
@@ -566,38 +570,79 @@ class CitySelectionWidget extends StatelessWidget {
         //     }
         //   },
         // ),
-        NesticoPeTextField(
-          hintText: 'Select City',
-          title: "City",
-          style: TextStyle(
-            fontSize: AppFontSizes.medium,
-            fontWeight: AppFontWeights.semiBold,
-            color: ColorRes.textPrimary,
-          ),
-          controller: controller,
-          enabled: isEditing,
-          prefixIcon: Icons.apartment_outlined,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
+       if(isRequiredTitle)...[
+         NesticoPeTextField(
+           hintText: 'Select City',
+           title: "City",
+           style: TextStyle(
+             fontSize: AppFontSizes.medium,
+             fontWeight: AppFontWeights.semiBold,
+             color: ColorRes.textPrimary,
+           ),
+           controller: controller,
+           iconColor: iconColor,
+           enabled: isEditing,
+
+           prefixIcon: Icons.apartment_outlined,
 
 
-          // ✅ City input handler
-          onChanged: (value) async {
-            if (value.isNotEmpty) {
-              await googleMapController.fetchGooglePlaces(value);
-              log("City input: $value");
-            } else {
-              googleMapController.predictions.clear();
-              googleMapController.cityStateList.clear();
-            }
-          },
+           autovalidateMode: AutovalidateMode.onUserInteraction,
 
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please select a city';
-            }
-            return null;
-          },
-        ),
+
+           // ✅ City input handler
+           onChanged: (value) async {
+             if (value.isNotEmpty) {
+               await googleMapController.fetchGooglePlaces(value);
+               log("City input: $value");
+             } else {
+               googleMapController.predictions.clear();
+               googleMapController.cityStateList.clear();
+             }
+           },
+
+           validator: (value) {
+             if (value == null || value.isEmpty) {
+               return 'Please select a city';
+             }
+             return null;
+           },
+         ),
+       ]else...[
+         NesticoPeTextField(
+           hintText: 'Select City',
+           iconColor: iconColor,
+           style: TextStyle(
+             fontSize: AppFontSizes.medium,
+             fontWeight: AppFontWeights.semiBold,
+             color: ColorRes.textPrimary,
+           ),
+           controller: controller,
+           enabled: isEditing,
+
+           prefixIcon: Icons.apartment_outlined,
+
+           autovalidateMode: AutovalidateMode.onUserInteraction,
+
+
+           // ✅ City input handler
+           onChanged: (value) async {
+             if (value.isNotEmpty) {
+               await googleMapController.fetchGooglePlaces(value);
+               log("City input: $value");
+             } else {
+               googleMapController.predictions.clear();
+               googleMapController.cityStateList.clear();
+             }
+           },
+
+           validator: (value) {
+             if (value == null || value.isEmpty) {
+               return 'Please select a city';
+             }
+             return null;
+           },
+         ),
+       ],
 
 
         const SizedBox(height: 8),

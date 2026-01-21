@@ -132,7 +132,7 @@ import '../../home/views/home_screen/home_screen.dart';
 import '../../profile/views/seller_profile_detail.dart';
 import '../../property/controllers/property_controller.dart';
 import '../../saved_property/views/saved_property_screen.dart';
-import '../../seller/module/lead_screen/views/lead_screen.dart';
+
 
 import '../../seller/module/lead_screen/views/lead_screen_enhanced.dart';
 import '../../seller/module/package_screen/views/package_screen.dart';

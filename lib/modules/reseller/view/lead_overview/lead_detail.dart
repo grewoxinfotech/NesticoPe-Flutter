@@ -439,9 +439,9 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
             // final propertyId=propertyInquiryController?.selectedInquiry.value?.propertyId;
 
             log(
-              "Buyer Data ${propertyInquiryController?.selectedInquiry.value?.userId}    ============== ${propertyInquiryController?.selectedInquiry.value?.propertyId}",
+              "Buyer Data ${property.id}    ============== ${propertyInquiryController?.selectedInquiry.value?.propertyId}",
             );
-
+log("Buyer Id from api ${propertyInquiryController?.selectedInquiry.value?.userId}");
             Get.to(
               () => LeadVisit(
                 leadVisitController: leadVisitController,
@@ -454,7 +454,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                     propertyInquiryController
                         ?.selectedInquiry
                         .value
-                        ?.propertyId,
+                        ?.propertyId??property.id,
               ),
             );
           },
@@ -474,19 +474,19 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
           onTap: () {
             final selectedInquiry =
                 propertyInquiryController?.selectedInquiry.value;
-            if (selectedInquiry != null) {
+
               // Set visit id
               log(
-                'Setting visit ID for user ${selectedInquiry.userId} and property ${selectedInquiry.propertyId}',
+                'Setting visit ID for user ${selectedInquiry?.userId} and property ${selectedInquiry?.propertyId}',
               );
               leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
-                selectedInquiry.propertyId ?? '',
-               buyerID:  selectedInquiry.userId??'',
+                selectedInquiry?.propertyId ?? property.id??'',
+               buyerID:  selectedInquiry?.userId??'',
               );
               log(
                 'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
               );
-            }
+
 
             Get.to(
               () => LeadNegotiablePriceScreen(
@@ -510,19 +510,21 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
           onTap: () {
             final selectedInquiry =
                 propertyInquiryController?.selectedInquiry.value;
-            if (selectedInquiry != null) {
+
               // Set visit id
               log(
-                'Setting visit ID for user ${selectedInquiry.userId} and property ${selectedInquiry.propertyId}',
+                'Setting visit ID for user ${selectedInquiry?.userId} and property ${selectedInquiry?.propertyId}',
               );
               leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
-                selectedInquiry.propertyId ?? '',
-              buyerID:   selectedInquiry.userId??'',
+                selectedInquiry?.propertyId ?? property.id??'',
+              buyerID:   selectedInquiry?.userId??'',
               );
               log(
                 'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
               );
-            }
+
+            log("Set the lead user ${widget.lead?.toJson()}");
+            leadVisitController.getLeadId(widget.lead?.id??'');
             Get.to(() => LeadFollowUpScreen(controller: leadVisitController));
           },
         ),

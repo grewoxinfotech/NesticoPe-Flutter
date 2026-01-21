@@ -1,4 +1,3 @@
-
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -27,15 +26,15 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
   RxString status = ''.obs;
   RxString leadVisitId = ''.obs;
 
-
   RxMap<String, String> filters = <String, String>{}.obs;
   UserService userService = UserService();
   Rxn<User> selectedVisit = Rxn<User>();
   var txtReason = TextEditingController();
   var txtDate = TextEditingController();
   var txtTime = TextEditingController();
-  RxString leadIdFollowUp=''.obs;
+  RxString leadIdFollowUp = ''.obs;
   Rxn<GlobalKey> formKey = Rxn<GlobalKey>();
+
   // final payload = {
   //   "property_id": "XBaFK4a5znQSIBw68ZztTRw",
   //   "buyer_id": "QdKzQ3VAeZCgjrD6Rfu73ZT",
@@ -68,7 +67,7 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
   void populatePayloadData(LeadVisitItem payload) {
     buyerPayload_Id.value = payload.buyerId ?? '';
     propertyPayload_Id.value = payload.propertyId ?? '';
-    leadVisitId.value=payload.id??'';
+    leadVisitId.value = payload.id ?? '';
     seller_Id.value = payload.sellerId ?? '';
     status.value = payload.status ?? '';
     txtReason.text = payload.cancellationReason ?? '';
@@ -82,6 +81,7 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
     txtTime.text = payload.timeSlot ?? '';
     log("Populated payload data: ${payload.toMap()}");
   }
+
   void clearPayloadData() {
     buyerPayload_Id.value = '';
     propertyPayload_Id.value = '';
@@ -94,9 +94,6 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
 
     log("Cleared all payload data");
   }
-
-
-
 
   final LeadService _leadService = LeadService();
 
@@ -128,30 +125,29 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
     log("Setting Lead Visit Buyer ID to: $buyerId");
     log("Setting Lead Visit Property ID to: $propertyId");
 
-
-    buyer_Id.value = buyerId??'';
-    property_Id.value = propertyId??'';
+    buyer_Id.value = buyerId ?? '';
+    property_Id.value = propertyId ?? '';
     log("Loading initial data for Lead Visit");
     log("Buyer ID: ${buyer_Id.value}, Property ID: ${property_Id.value}");
     // leadInquiryId.value = id;
     loadInitial();
     refreshLead();
-
   }
+
   void getLeadId(String? leadId) {
     log("Setting Lead Visit leadId ID to: $leadId");
 
-    leadIdFollowUp.value=leadId??'';
+    leadIdFollowUp.value = leadId ?? '';
 
-    log("Loading initial data for Lead Visit");
+    log("Loading initial data for Lead Visit  ${leadIdFollowUp.value}");
+
     // leadInquiryId.value = id;
     leadIdFollowUp.refresh();
     // loadInitial();
     // refreshLead();
-
   }
 
-// Instead of a single user:
+  // Instead of a single user:
   RxMap<String, User> userProfiles = <String, User>{}.obs;
 
   Future<void> getTheVisitersProfile(String visiterId) async {
@@ -192,7 +188,10 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
             children: [
               // Header
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 decoration: const BoxDecoration(
                   color: ColorRes.primary,
                   borderRadius: BorderRadius.only(
@@ -213,13 +212,16 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
                       ),
                     ),
                     InkWell(
-                      onTap: ()  {
+                      onTap: () {
                         Get.back();
-                      clearPayloadData();
+                        clearPayloadData();
                       },
                       borderRadius: BorderRadius.circular(50),
-                      child: const Icon(Icons.close_rounded,
-                          color: ColorRes.white, size: 20),
+                      child: const Icon(
+                        Icons.close_rounded,
+                        color: ColorRes.white,
+                        size: 20,
+                      ),
                     ),
                   ],
                 ),
@@ -227,8 +229,10 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
 
               Flexible(
                 child: SingleChildScrollView(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 16,
+                  ),
                   child: Form(
                     key: formKey.value,
                     child: Column(
@@ -248,7 +252,7 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
                           isRequired: true,
                           maxLines: 3,
                         ),
-                        SizedBox(height: 16,),
+                        SizedBox(height: 16),
                         // Row(
                         //   children: [
                         //     buildSectionTitle('(Reschedule) Date & Time'),
@@ -360,15 +364,16 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
                                     !(formKey.value?.currentState as FormState)
                                         .validate()) {
                                   Get.back();
-                                  log("Form is invalid. Please correct the errors.");
-                                }else{
-
+                                  log(
+                                    "Form is invalid. Please correct the errors.",
+                                  );
+                                } else {
                                   updateRejectVisit(leadVisitId.value);
                                   Get.back();
-                                  log("Form is valid. Proceeding with submission.");
+                                  log(
+                                    "Form is valid. Proceeding with submission.",
+                                  );
                                 }
-
-
                               },
                               child: Text('Submit'),
                             ),
@@ -393,12 +398,13 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
       "buyer_id": buyerPayload_Id.value,
       "seller_id": seller_Id.value,
       "status": 'rescheduled',
-      "action":"reject",
+      "action": "reject",
       "cancellationReason": txtReason.text,
       "visitDate": txtDate.text.isNotEmpty ? "${txtDate.text}" : "",
       "timeSlot": txtTime.text,
     };
   }
+
   Map<String, String> buildRejectPayload() {
     return {
       "property_id": propertyPayload_Id.value,
@@ -406,17 +412,17 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
       "seller_id": seller_Id.value,
       "status": 'cancelled',
       "cancellationReason": txtReason.text,
-      "action":"reject",
-
+      "action": "reject",
     };
   }
+
   void updateRejectVisit(String visitId) async {
     log("Reject visit with ID: $visitId");
     Map<String, String> payload = buildRejectPayload();
     log("Payload for Reject: $payload");
 
     try {
-      await _leadService.updateTheVisitedData(payload,visitId);
+      await _leadService.updateTheVisitedData(payload, visitId);
       log("Visit Reject successfully for ID: $visitId");
       refreshList();
       clearPayloadData();
@@ -431,7 +437,7 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
     log("Payload for update: $payload");
 
     try {
-      await _leadService.updateTheVisitedData(payload,visitId);
+      await _leadService.updateTheVisitedData(payload, visitId);
       log("Visit updated successfully for ID: $visitId");
       // Optionally, refresh the list or perform other actions after update
       refreshList();
@@ -440,13 +446,14 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
       log("Error updating visit for ID $visitId: $e");
     }
   }
+
   void approvedVisite(String visitId) async {
     log("Updating visit with ID: $visitId");
-    Map<String, String> payload = {'status':"confirmed"};
+    Map<String, String> payload = {'status': "confirmed"};
     log("Payload for update: $payload");
 
     try {
-      await _leadService.updateTheVisitedData(payload,visitId);
+      await _leadService.updateTheVisitedData(payload, visitId);
       log("Visit updated successfully for ID: $visitId");
       // Optionally, refresh the list or perform other actions after update
       refreshList();
@@ -455,6 +462,7 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
       log("Error updating visit for ID $visitId: $e");
     }
   }
+
   void openAddFollowUpDialog() {
     Get.dialog(
       Dialog(
@@ -472,7 +480,10 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
             children: [
               // Header
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 decoration: const BoxDecoration(
                   color: ColorRes.primary,
                   borderRadius: BorderRadius.only(
@@ -493,12 +504,16 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
                       ),
                     ),
                     InkWell(
-                      onTap: ()  {Get.back();
-                      clearPayloadData();
+                      onTap: () {
+                        Get.back();
+                        clearPayloadData();
                       },
                       borderRadius: BorderRadius.circular(50),
-                      child: const Icon(Icons.close_rounded,
-                          color: ColorRes.white, size: 20),
+                      child: const Icon(
+                        Icons.close_rounded,
+                        color: ColorRes.white,
+                        size: 20,
+                      ),
                     ),
                   ],
                 ),
@@ -506,8 +521,10 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
 
               Flexible(
                 child: SingleChildScrollView(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 16,
+                  ),
                   child: Form(
                     key: formKey.value,
                     child: Column(
@@ -527,13 +544,13 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
                           isRequired: true,
                           maxLines: 3,
                         ),
-                        SizedBox(height: 16,),
+                        SizedBox(height: 16),
                         Row(
                           children: [
-                          buildSectionTitle('(Reschedule) Date & Time'),
+                            buildSectionTitle('(Reschedule) Date & Time'),
                           ],
                         ),
-                        SizedBox(height: 8,),
+                        SizedBox(height: 8),
                         Row(
                           children: [
                             Expanded(
@@ -549,10 +566,9 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
                                 },
                                 isEnable: false,
                                 onTap: () async {
-
                                   DateTime? picked = await showDatePicker(
                                     context: Get.context!,
-                                    initialDate:  DateTime.now(),
+                                    initialDate: DateTime.now(),
                                     firstDate: DateTime(2000),
                                     lastDate: DateTime(2100),
                                     builder: (context, child) {
@@ -574,7 +590,7 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
                                     },
                                   );
                                   if (picked != null) {
-                                    txtDate.text =picked.toUtc().toString();
+                                    txtDate.text = picked.toUtc().toString();
                                   }
                                 },
                                 isPhoneKey: true,
@@ -601,8 +617,16 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
                                   if (picked != null) {
                                     // Convert TimeOfDay to 24-hour formatted string (HH:mm)
                                     final now = DateTime.now();
-                                    final formattedTime = DateFormat('HH:mm').format(
-                                      DateTime(now.year, now.month, now.day, picked.hour, picked.minute),
+                                    final formattedTime = DateFormat(
+                                      'HH:mm',
+                                    ).format(
+                                      DateTime(
+                                        now.year,
+                                        now.month,
+                                        now.day,
+                                        picked.hour,
+                                        picked.minute,
+                                      ),
                                     );
 
                                     txtTime.text = formattedTime;
@@ -610,8 +634,7 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
                                   }
                                 },
                               ),
-                            )
-
+                            ),
                           ],
                         ),
                         const SizedBox(height: 16),
@@ -639,15 +662,16 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
                                     !(formKey.value?.currentState as FormState)
                                         .validate()) {
                                   Get.back();
-                                  log("Form is invalid. Please correct the errors.");
-                                }else{
-
+                                  log(
+                                    "Form is invalid. Please correct the errors.",
+                                  );
+                                } else {
                                   updateVisit(leadVisitId.value);
                                   Get.back();
-                                  log("Form is valid. Proceeding with submission.");
+                                  log(
+                                    "Form is valid. Proceeding with submission.",
+                                  );
                                 }
-
-
                               },
                               child: Text('Submit'),
                             ),

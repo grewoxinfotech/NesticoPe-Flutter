@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/constants/color_res.dart';
@@ -41,7 +42,7 @@ class _ContractorProjectMileStonePaymentScreenState
       backgroundColor: ColorRes.background,
       appBar: AppBar(
         title: Text(
-          'Milestone Payments',
+          'Payments',
           style: TextStyle(
             fontWeight: AppFontWeights.semiBold,
             color: ColorRes.textColor,
@@ -164,10 +165,12 @@ class _PaymentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
+    final formattedAmount =
+    Formatter.formatPrice(num.tryParse(payment.amount??'')??0);
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),side: BorderSide(color: ColorRes.leadGreyColor.shade300)),
+
       elevation: 2,
       child: Padding(
         padding: const EdgeInsets.all(14),
@@ -182,6 +185,7 @@ class _PaymentCard extends StatelessWidget {
                     payment.milestone.title,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
+                      color: ColorRes.textPrimary
                     ),
                   ),
                 ),
@@ -209,7 +213,8 @@ class _PaymentCard extends StatelessWidget {
 
             /// Amount
             Text(
-              '₹${payment.amount}',
+              '${Formatter.formatPrice(num.tryParse(payment.amount.toString())??0)}',
+
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -217,10 +222,9 @@ class _PaymentCard extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 8),
 
             /// Payment Mode & Reference
-            Row(
+          /*  Row(
               children: [
                 _InfoTile(
                   label: 'Mode',
@@ -249,7 +253,77 @@ class _PaymentCard extends StatelessWidget {
                   ),
                 ),
               ],
+            ),*/
+            const SizedBox(height: 5),
+            Divider(color: ColorRes.leadGreyColor.shade300,),
+            const SizedBox(height: 5),
+            Row(
+              children: [
+                const CircleAvatar(
+                  radius: 14,
+                  backgroundColor: Color(0xFFE7F2FF),
+                  child: Icon(Icons.account_balance_wallet_outlined,
+                      size: 16, color: Colors.blue),
+                ),
+                const SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "PAYMENT MODE",
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color:ColorRes.leadGreyColor.shade600,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      _capitalizeFirst(payment.paymentMode ?? ''),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: ColorRes.textPrimary
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
+            const SizedBox(height: 10),
+
+            Row(
+              children: [
+                const CircleAvatar(
+                  radius: 14,
+                  backgroundColor: Color(0xFFE7F2FF),
+                  child: Icon(Icons.calendar_today_outlined,
+                      size: 15, color: Colors.blue),
+                ),
+                const SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "PAID ON",
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: ColorRes.leadGreyColor.shade600,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      Formatter.formatDate(payment.paidOn?.toIso8601String()),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                          color: ColorRes.textPrimary
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+
           ],
         ),
       ),

@@ -620,6 +620,8 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
           CitySelectionWidget(
             isEditing: controller.isEditing.value,
             controller: controller.positionController,
+            iconColor:ColorRes.leadGreyColor.shade600 ,
+isRequiredTitle: false,
             onCitySelected: (selectedCity) {
               print("✅ Selected city: ${selectedCity.description}");
               controller.positionController.text =

@@ -709,26 +709,29 @@ class AddMilestoneScreen extends StatelessWidget {
 
               /// Button
               Obx(
-                () => SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed:
-                        controller.isLoading.value
-                            ? null
-                            : () {
-                              if (controller.formKey.currentState?.validate() ??
-                                  false) {
-                                controller.saveMilestone(projectPrice);
-                              }
-                            },
-                    child:
-                        controller.isLoading.value
-                            ? const CircularProgressIndicator()
-                            : Text(
-                              controller.isEditMode.value
-                                  ? "Update Milestone"
-                                  : "Add Milestone",
-                            ),
+                () => SafeArea(
+
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed:
+                          controller.isLoading.value
+                              ? null
+                              : () {
+                                if (controller.formKey.currentState?.validate() ??
+                                    false) {
+                                  controller.saveMilestone(projectPrice);
+                                }
+                              },
+                      child:
+                          controller.isLoading.value
+                              ? const CircularProgressIndicator()
+                              : Text(
+                                controller.isEditMode.value
+                                    ? "Update Milestone"
+                                    : "Add Milestone",
+                              ),
+                    ),
                   ),
                 ),
               ),

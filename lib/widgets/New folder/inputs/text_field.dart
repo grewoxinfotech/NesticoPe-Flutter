@@ -26,6 +26,7 @@ class NesticoPeTextField extends StatelessWidget {
   final VoidCallback? onTap;
   final TextCapitalization textCapitalization;
   final int? maxLength;
+  final Color? iconColor;
   final TextStyle style;
   final List<TextInputFormatter>? formatter;
 
@@ -36,6 +37,7 @@ class NesticoPeTextField extends StatelessWidget {
     this.title,
     this.validator,
     this.hintText,
+    this.iconColor=ColorRes.primary,
     this.obscureText = false,
     this.style = const TextStyle(
       fontSize: AppFontSizes.medium,
@@ -120,7 +122,7 @@ class NesticoPeTextField extends StatelessWidget {
                       child: Icon(
                         prefixIcon,
                         size: 20,
-                        color: Get.theme.colorScheme.primary,
+                        color:iconColor ,
                       ),
                     )
                     : null,

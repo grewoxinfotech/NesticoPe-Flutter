@@ -4,7 +4,7 @@
 // import '../../../../app/constants/app_font_sizes.dart';
 // import '../../../../app/constants/color_res.dart';
 // import '../../controller/report/report_controller.dart';
-// import '../lead/lead_screen.dart';
+
 //
 // class ReportPropertyScreen extends StatelessWidget {
 //   const ReportPropertyScreen({Key? key}) : super(key: key);

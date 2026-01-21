@@ -39,6 +39,7 @@ class ContractorProfileData {
   final int totalServices;
   final bool isBlocked;
   final String? blockReason;
+  final String? contractorType;
   final String? blockedAt;
   final int activeServices;
   final DateTime? createdAt;
@@ -49,6 +50,7 @@ class ContractorProfileData {
     required this.id,
     this.createdBy,
     this.updatedBy,
+    this.contractorType,
     required this.userId,
     required this.totalReviews,
     required this.overallRating,
@@ -77,6 +79,7 @@ class ContractorProfileData {
       blockReason: json['blockReason'],
       blockedAt: json['blockedAt'],
       activeServices: json['activeServices'],
+      contractorType: json['contractorType'],
       createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'])
           : null,
@@ -99,6 +102,7 @@ class ContractorProfileData {
       'totalServices': totalServices,
       'isBlocked': isBlocked,
       'blockReason': blockReason,
+      'contractorType':contractorType,
       'blockedAt': blockedAt,
       'activeServices': activeServices,
       'createdAt': createdAt?.toIso8601String(),

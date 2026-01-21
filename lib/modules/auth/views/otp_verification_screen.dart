@@ -355,9 +355,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
+import 'package:housing_flutter_app/data/network/auth/service/auth_service.dart';
 
 import '../../../app/constants/color_res.dart';
 import '../../../data/database/secure_storage_service.dart';
+import '../../../utils/logger/app_logger.dart';
 import '../../../widgets/button/button.dart';
 import '../../../widgets/messages/snack_bar.dart';
 import '../../auth/controllers/auth_controller.dart';
@@ -365,7 +367,7 @@ import '../../dashboard/views/dashboard_screen.dart';
 import 'ResetPasswordScreen.dart';
 
 /// Enum to decide OTP verification flow
-enum VerifyOTPFor { registration, passwordReset, sellerRegister ,}
+enum VerifyOTPFor { registration, passwordReset, sellerRegister }
 
 class OtpVerificationScreen extends StatefulWidget {
   final String phone;
@@ -441,7 +443,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           break;
 
         case VerifyOTPFor.registration:
-          await _handleRegistrationFlow(tokenToUse);
+          await _handleRegistrationFlow(tokenToUse,);
           break;
       }
     } catch (e) {
@@ -544,10 +546,14 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   }
 
   /// ✅ Normal Registration Flow
-  Future<void> _handleRegistrationFlow(String token) async {
+  Future<void> _handleRegistrationFlow(
+    String token) async {
     final authController = Get.find<AuthController>();
 
     await authController.verifyOtp(_otpController.text, token);
+
+
+
 
     NesticoPeSnackBar.showAwesomeSnackbar(
       title: 'Success',

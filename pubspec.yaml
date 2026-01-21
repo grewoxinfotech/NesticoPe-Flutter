@@ -40,7 +40,6 @@ dependencies:
   share_plus: ^12.0.0
   url_launcher:
   readmore:
-  excel:
   clipboard:
   speech_to_text: 
   fl_chart:
@@ -53,6 +52,7 @@ dependencies:
   printing: ^5.12.0
   mime:
   google_maps_flutter:
+  fluttertoast:
   
   file_picker:
   pdfx:

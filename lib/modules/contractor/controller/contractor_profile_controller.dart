@@ -167,6 +167,7 @@ class ContractorProfileController extends GetxController {
     experienceController.text = profileData.value?.user?.totalExperience.toString() ?? "";
     zipController.text = profileData.value?.user?.zipCode ?? "";
 
+
     //
     // // Business Details fields from seller profile
     // contactPersonController.text = resellerProfile.value?. ?? "";
