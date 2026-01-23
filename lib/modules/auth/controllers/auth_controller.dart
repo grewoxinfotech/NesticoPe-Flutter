@@ -89,8 +89,8 @@ class AuthController extends GetxController {
     // emailController.text = "admin11@example.com";
     // passwordController.text = "CRM_GrewoxAdmin@123";
     /// Seller
-    emailController.text = "s1@yopmail.com";
-    passwordController.text = "s1@yopmail.com";
+    emailController.text = "sb1@yopmail.com";
+    passwordController.text = "sb1@yopmail.com";
   }
 
   void setCity(String value) {

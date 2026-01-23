@@ -10,10 +10,8 @@ import 'package:housing_flutter_app/app/manager/compare_manager.dart';
 import 'package:housing_flutter_app/app/manager/project_compare_manager.dart';
 import 'package:housing_flutter_app/modules/home/controllers/contractor_profile_controller/contractor_compare_manager.dart';
 import 'package:housing_flutter_app/modules/no_internet/no_internet_screen.dart';
-
 import 'app/theme/themes.dart' as AppTheme;
 import 'app/utils/helper_function/user_helper/user_helper.dart';
-import 'modules/builder/controller/builder_form_controller.dart';
 
 void main() async {
   debugProfileBuildsEnabled = true;

@@ -45,7 +45,7 @@ class PropertyService {
       };
 
       final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
-      print("uri: $uri");
+      print("Reseller uri: $uri");
       final response = await http.get(uri, headers: await headers());
 
       print("response: ${response.body}");
@@ -53,7 +53,10 @@ class PropertyService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
-        AppLogger.structured("Fetch Properties from Api and Store in Items", data);
+        AppLogger.structured(
+          "Fetch Properties from Api and Store in Items",
+          data,
+        );
 
         return PaginationResponse<Items>.fromJson(
           data,
@@ -90,8 +93,6 @@ class PropertyService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-
-
 
         return PaginationResponse<Items>.fromJson(
           data,

@@ -575,15 +575,32 @@ class _PropertyDetailState extends State<PropertyDetail> {
   }
 }
 
+// String formatPriceRange(dynamic min, dynamic max) {
+//   double minVal =
+//       (min is num) ? min.toDouble() : double.tryParse(min.toString()) ?? 0;
+//   double maxVal =
+//       (max is num) ? max.toDouble() : double.tryParse(max.toString()) ?? 0;
+//
+//   if (minVal == 0 && maxVal == 0) return "₹0";
+//   if (minVal == 0) return "Up to ${Formatter.formatPrice(maxVal)}";
+//   if (maxVal == 0) return "From ${Formatter.formatPrice(minVal)}";
+//
+//   return "${Formatter.formatPrice(minVal)} - ${Formatter.formatPrice(maxVal)}";
+// }
+
 String formatPriceRange(dynamic min, dynamic max) {
-  double minVal =
-      (min is num) ? min.toDouble() : double.tryParse(min.toString()) ?? 0;
-  double maxVal =
-      (max is num) ? max.toDouble() : double.tryParse(max.toString()) ?? 0;
+  final double minVal = _parseToDouble(min);
+  final double maxVal = _parseToDouble(max);
 
   if (minVal == 0 && maxVal == 0) return "₹0";
   if (minVal == 0) return "Up to ${Formatter.formatPrice(maxVal)}";
   if (maxVal == 0) return "From ${Formatter.formatPrice(minVal)}";
 
   return "${Formatter.formatPrice(minVal)} - ${Formatter.formatPrice(maxVal)}";
+}
+
+double _parseToDouble(dynamic value) {
+  if (value == null) return 0;
+  if (value is num) return value.toDouble();
+  return double.tryParse(value.toString()) ?? 0;
 }

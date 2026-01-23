@@ -32,7 +32,6 @@ void showFilterBottomSheet(
               ),
               child: Column(
                 children: [
-
                   // Handle bar
                   Container(
                     width: 40,
@@ -95,7 +94,8 @@ void showFilterBottomSheet(
                                   context: context,
                                   title: 'Start Date',
                                   icon: Icons.calendar_month_outlined,
-                                  filterType: 'start_date',
+                                  filterType: 'createdAtFrom',
+                                  // filterType: 'start_date',
                                   type: 'date',
                                   tempFilters: tempFilters,
                                   setState: setState,
@@ -113,7 +113,8 @@ void showFilterBottomSheet(
                                   context: context,
                                   title: 'End Date',
                                   icon: Icons.calendar_month_outlined,
-                                  filterType: '',
+                                  // filterType: 'end_date',
+                                  filterType: 'createdAtTo',
                                   type: 'date',
                                   tempFilters: tempFilters,
                                   setState: setState,
@@ -125,10 +126,9 @@ void showFilterBottomSheet(
                                   },
                                 ),
                               ),
-
                             ],
                           ),
-                          SizedBox(height: 10,),
+                          SizedBox(height: 10),
                           // Stage Section
                           buildFilterSection(
                             context: context,
@@ -193,6 +193,8 @@ void showFilterBottomSheet(
                                 Map<String, String>.from(tempFilters),
                               );
                             }
+
+                            print('tempFilters: $tempFilters');
 
                             Get.back();
                           },
@@ -292,7 +294,7 @@ Widget buildFilterSection({
             if (picked != null) {
               setState(() {
                 tempFilters[filterType] =
-                "${picked.year}-${picked.month}-${picked.day}";
+                    "${picked.year}-${picked.month}-${picked.day}";
               });
               if (onDatePicked != null) onDatePicked(picked);
             }
@@ -309,9 +311,10 @@ Widget buildFilterSection({
               tempFilters[filterType] ?? 'Select $title',
               style: TextStyle(
                 fontSize: AppFontSizes.small,
-                color: tempFilters[filterType] != null
-                    ? ColorRes.black
-                    : ColorRes.leadGreyColor[600],
+                color:
+                    tempFilters[filterType] != null
+                        ? ColorRes.black
+                        : ColorRes.leadGreyColor[600],
               ),
             ),
           ),
@@ -320,52 +323,56 @@ Widget buildFilterSection({
         Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: options!
-              .map((option) {
-            final isSelected =
-                tempFilters[filterType] ==
+          children:
+              options!.map((option) {
+                final isSelected =
+                    tempFilters[filterType] ==
                     option.toLowerCase().replaceAll(" ", "_");
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  if (isSelected) {
-                    tempFilters.remove(filterType);
-                  } else {
-                    tempFilters[filterType] =
-                        option.toLowerCase().replaceAll(" ", "_");
-                  }
-                });
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? ColorRes.primary.withOpacity(0.1)
-                      : ColorRes.white,
-                  border: Border.all(
-                    color: isSelected
-                        ? ColorRes.primary
-                        : ColorRes.leadGreyColor[300]!,
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (isSelected) {
+                        tempFilters.remove(filterType);
+                      } else {
+                        tempFilters[filterType] = option
+                            .toLowerCase()
+                            .replaceAll(" ", "_");
+                      }
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color:
+                          isSelected
+                              ? ColorRes.primary.withOpacity(0.1)
+                              : ColorRes.white,
+                      border: Border.all(
+                        color:
+                            isSelected
+                                ? ColorRes.primary
+                                : ColorRes.leadGreyColor[300]!,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      option,
+                      style: TextStyle(
+                        fontSize: AppFontSizes.small,
+                        color:
+                            isSelected
+                                ? ColorRes.primary
+                                : ColorRes.leadGreyColor[700],
+                        fontWeight: AppFontWeights.medium,
+                      ),
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  option,
-                  style: TextStyle(
-                    fontSize: AppFontSizes.small,
-                    color: isSelected
-                        ? ColorRes.primary
-                        : ColorRes.leadGreyColor[700],
-                    fontWeight: AppFontWeights.medium,
-                  ),
-                ),
-              ),
-            );
-          })
-              .toList(),
+                );
+              }).toList(),
         ),
     ],
   );
 }
-

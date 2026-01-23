@@ -338,7 +338,7 @@ class _HomeHeaderState extends State<HomeHeader> {
                       border: Border.all(color: ColorRes.grey.withOpacity(0.2)),
                     ),
                     child: const Icon(
-                      Icons.dashboard_outlined,
+                      Icons.add_rounded,
                       color: ColorRes.primary,
                       size: 24,
                     ),

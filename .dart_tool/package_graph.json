@@ -25,6 +25,7 @@
         "flutter_secure_storage",
         "flutter_svg",
         "flutter_tts",
+        "fluttertoast",
         "font_awesome_flutter",
         "get",
         "google_fonts",
@@ -2178,6 +2179,15 @@
         "path",
         "sqflite_common",
         "sqflite_platform_interface"
+      ]
+    },
+    {
+      "name": "fluttertoast",
+      "version": "9.0.0",
+      "dependencies": [
+        "flutter",
+        "flutter_web_plugins",
+        "web"
       ]
     }
   ],

@@ -602,13 +602,15 @@ class ResellerPropertyFilter extends StatefulWidget {
 }
 
 class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
-
   final DashboardController controller = Get.put(DashboardController());
   final PropertyController propertyController = Get.find();
-  late final ProjectWizardController   controllerProject;
+  late final ProjectWizardController controllerProject;
 
   double tempMinPrice = 0.0;
-  double tempMaxPrice = 0.0;
+  double tempMaxPrice = 100000000;
+
+  double DEFAULT_MIN_PRICE = 0;
+  double DEFAULT_MAX_PRICE = 100000000; // 10 Cr
 
   // Focus nodes for state and city fields
   final FocusNode stateFocusNode = FocusNode();
@@ -624,7 +626,10 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
   @override
   void initState() {
     super.initState();
-    Get.lazyPut(() => ProjectWizardController(isBuilderView: true), tag: "builder");
+    Get.lazyPut(
+      () => ProjectWizardController(isBuilderView: true),
+      tag: "builder",
+    );
     controllerProject = Get.find<ProjectWizardController>(tag: "builder");
     if (tempMinPrice < controller.resellerMinPrice.value ||
         tempMaxPrice > controller.resellerMaxPrice.value ||
@@ -677,9 +682,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
           cityFocusNode.hasFocus &&
           controller.resellerCityPropertyList.isNotEmpty;
     });
-    setState(() {
-
-    });
+    setState(() {});
     _initializeUserData();
   }
 
@@ -692,11 +695,18 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
     if (!UserHelper.isSellerBuilder) {
       // ✅ Filter property list based on user ID
       log("USer ID ${userId}");
-      final userProperties =(UserHelper.isReseller)? propertyController.items.value
-          .where((e) => e.assignedTo == userId) // adjust field name as per your model
-          .toList():propertyController.items.value
-          .where((e) => e.createdBy == userId) // adjust field name as per your model
-          .toList();
+      final userProperties =
+          (UserHelper.isReseller)
+              ? propertyController.items.value
+                  .where(
+                    (e) => e.assignedTo == userId,
+                  ) // adjust field name as per your model
+                  .toList()
+              : propertyController.items.value
+                  .where(
+                    (e) => e.createdBy == userId,
+                  ) // adjust field name as per your model
+                  .toList();
 
       controller.resellerStatePropertyList.value =
           userProperties.map((e) => e.state ?? '').toSet().toList();
@@ -704,15 +714,19 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
       controller.propertyTypeList.value =
           userProperties.map((e) => e.propertyType ?? '').toSet().toList();
       print(" Filtered States: ${controller.resellerStatePropertyList}");
-
     } else {
       log("USer ID ${userId}");
-      log("USer IDdkjgfdi ${controllerProject.items.value.map((e) => e.toJson(),)}");
-      log("USer IDdkjgfdi ${controllerProject.items.value.map((e) => e.createdBy,)}");
-      final userProjects = controllerProject.items.value
-          .where((e) => e.createdBy == userId)
-          .toList();
-      print("fdjdfgh ${userProjects.map((e) => e.toJson(),)}");
+      log(
+        "USer IDdkjgfdi ${controllerProject.items.value.map((e) => e.toJson())}",
+      );
+      log(
+        "USer IDdkjgfdi ${controllerProject.items.value.map((e) => e.createdBy)}",
+      );
+      final userProjects =
+          controllerProject.items.value
+              .where((e) => e.createdBy == userId)
+              .toList();
+      print("fdjdfgh ${userProjects.map((e) => e.toJson())}");
 
       controller.resellerStatePropertyList.value =
           userProjects.map((e) => e.state ?? '').toSet().toList();
@@ -730,6 +744,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
     cityFocusNode.dispose();
     super.dispose();
   }
+
   Future<void> _updateStateList(String searchValue) async {
     final user = await SecureStorage.getUserData();
     final userId = user?.user?.id;
@@ -738,25 +753,38 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
 
     setState(() {
       if (!UserHelper.isSellerBuilder) {
-        controller.resellerStatePropertyList.value = propertyController.items.value
-            .where((element) =>
-        (UserHelper.isReseller ? element.assignedTo == userId : element.createdBy == userId))
-            .map((e) => e.state ?? '')
-            .where((state) => state.toLowerCase().contains(searchValue.toLowerCase()))
-            .toSet()
-            .toList();
+        controller.resellerStatePropertyList.value =
+            propertyController.items.value
+                .where(
+                  (element) =>
+                      (UserHelper.isReseller
+                          ? element.assignedTo == userId
+                          : element.createdBy == userId),
+                )
+                .map((e) => e.state ?? '')
+                .where(
+                  (state) =>
+                      state.toLowerCase().contains(searchValue.toLowerCase()),
+                )
+                .toSet()
+                .toList();
       } else {
-        controller.resellerStatePropertyList.value = controllerProject.items.value
-            .where((element) => element.createdBy == userId)
-            .map((e) => e.state ?? '')
-            .where((state) => state.toLowerCase().contains(searchValue.toLowerCase()))
-            .toSet()
-            .toList();
+        controller.resellerStatePropertyList.value =
+            controllerProject.items.value
+                .where((element) => element.createdBy == userId)
+                .map((e) => e.state ?? '')
+                .where(
+                  (state) =>
+                      state.toLowerCase().contains(searchValue.toLowerCase()),
+                )
+                .toSet()
+                .toList();
       }
 
       showStateDropdown.value = controller.resellerStatePropertyList.isNotEmpty;
     });
   }
+
   Future<void> _updateCitiesForSelectedState(String state) async {
     final user = await SecureStorage.getUserData();
     final userId = user?.user?.id;
@@ -765,20 +793,30 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
 
     setState(() {
       if (!UserHelper.isSellerBuilder) {
-        controller.resellerCityPropertyList.value = propertyController.items.value
-            .where((element) =>
-        (UserHelper.isReseller ? element.assignedTo == userId : element.createdBy == userId))
-            .where((e) => (e.state ?? '').toLowerCase() == state.toLowerCase())
-            .map((e) => e.city ?? '')
-            .toSet()
-            .toList();
+        controller.resellerCityPropertyList.value =
+            propertyController.items.value
+                .where(
+                  (element) =>
+                      (UserHelper.isReseller
+                          ? element.assignedTo == userId
+                          : element.createdBy == userId),
+                )
+                .where(
+                  (e) => (e.state ?? '').toLowerCase() == state.toLowerCase(),
+                )
+                .map((e) => e.city ?? '')
+                .toSet()
+                .toList();
       } else {
-        controller.resellerCityPropertyList.value = controllerProject.items.value
-            .where((element) => element.createdBy == userId)
-            .where((e) => (e.state ?? '').toLowerCase() == state.toLowerCase())
-            .map((e) => e.city ?? '')
-            .toSet()
-            .toList();
+        controller.resellerCityPropertyList.value =
+            controllerProject.items.value
+                .where((element) => element.createdBy == userId)
+                .where(
+                  (e) => (e.state ?? '').toLowerCase() == state.toLowerCase(),
+                )
+                .map((e) => e.city ?? '')
+                .toSet()
+                .toList();
       }
     });
   }
@@ -791,35 +829,56 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
 
     setState(() {
       if (!UserHelper.isSellerBuilder) {
-        final userProperties = propertyController.items.value
-            .where((element) =>
-        (UserHelper.isReseller ? element.assignedTo == userId : element.createdBy == userId))
-            .where((e) =>
-        (e.state ?? '').toLowerCase() == controller.resellerSelectedState.value.toLowerCase())
-            .toList();
+        final userProperties =
+            propertyController.items.value
+                .where(
+                  (element) =>
+                      (UserHelper.isReseller
+                          ? element.assignedTo == userId
+                          : element.createdBy == userId),
+                )
+                .where(
+                  (e) =>
+                      (e.state ?? '').toLowerCase() ==
+                      controller.resellerSelectedState.value.toLowerCase(),
+                )
+                .toList();
 
-        controller.resellerCityPropertyList.value = userProperties
-            .map((e) => e.city ?? '')
-            .where((city) => city.toLowerCase().contains(searchValue.toLowerCase()))
-            .toSet()
-            .toList();
+        controller.resellerCityPropertyList.value =
+            userProperties
+                .map((e) => e.city ?? '')
+                .where(
+                  (city) =>
+                      city.toLowerCase().contains(searchValue.toLowerCase()),
+                )
+                .toSet()
+                .toList();
       } else {
-        final userProjects = controllerProject.items.value
-            .where((element) => element.createdBy == userId)
-            .where((e) =>
-        (e.state ?? '').toLowerCase() == controller.resellerSelectedState.value.toLowerCase())
-            .toList();
+        final userProjects =
+            controllerProject.items.value
+                .where((element) => element.createdBy == userId)
+                .where(
+                  (e) =>
+                      (e.state ?? '').toLowerCase() ==
+                      controller.resellerSelectedState.value.toLowerCase(),
+                )
+                .toList();
 
-        controller.resellerCityPropertyList.value = userProjects
-            .map((e) => e.city ?? '')
-            .where((city) => city.toLowerCase().contains(searchValue.toLowerCase()))
-            .toSet()
-            .toList();
+        controller.resellerCityPropertyList.value =
+            userProjects
+                .map((e) => e.city ?? '')
+                .where(
+                  (city) =>
+                      city.toLowerCase().contains(searchValue.toLowerCase()),
+                )
+                .toSet()
+                .toList();
       }
 
       showCityDropdown.value = controller.resellerCityPropertyList.isNotEmpty;
     });
   }
+
   Map<String, dynamic> _buildFilterResult() {
     log('Price Range ${jsonEncode(controller.priceRangeSeller)}');
     log('Min Price → ${controller.priceRangeSeller['min']}');
@@ -870,11 +929,26 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
         }(),
 
       // Price Range
+      // if (!UserHelper.isSellerBuilder) ...{
+      //   if ((controller.resellerMinPrice.value != 0.0) ||
+      //       (controller.resellerMaxPrice.value != 0.0)) ...{
+      //     'priceRange': jsonEncode(controller.priceRangeSeller),
+      //   },
+      // },
+      // Price Range
       if (!UserHelper.isSellerBuilder) ...{
-        if ((controller.resellerMinPrice.value != 0.0) ||
-            (controller.resellerMaxPrice.value != 0.0)) ...{
-          'priceRange': jsonEncode(controller.priceRangeSeller),
-        },
+        'priceRange': jsonEncode({
+          'min':
+              controller.resellerMinPrice.value == 0.0 &&
+                      controller.resellerMaxPrice.value == 0.0
+                  ? DEFAULT_MIN_PRICE
+                  : controller.resellerMinPrice.value,
+          'max':
+              controller.resellerMinPrice.value == 0.0 &&
+                      controller.resellerMaxPrice.value == 0.0
+                  ? DEFAULT_MAX_PRICE
+                  : controller.resellerMaxPrice.value,
+        }),
       },
 
       // Verification Status
@@ -892,6 +966,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
         ),
     };
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -903,7 +978,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
           icon: Icon(Icons.arrow_back),
         ),
         title: Text(
-          "${UserHelper.isSellerBuilder?"Project Filter":"Property Filter"}",
+          "${UserHelper.isSellerBuilder ? "Project Filter" : "Property Filter"}",
           style: TextStyle(
             color: ColorRes.textColor,
             fontWeight: AppFontWeights.bold,
@@ -1199,7 +1274,9 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                             controller.txtCitySearch.clear();
 
                             log("Selected state: $state");
-                            log("Available cities: ${controller.resellerCityPropertyList.value}");
+                            log(
+                              "Available cities: ${controller.resellerCityPropertyList.value}",
+                            );
                           },
 
                           // onTap: () async {
@@ -1289,7 +1366,8 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                 );
               }),
               Obx(() {
-                final isStateSelected = controller.resellerSelectedState.value.isNotEmpty;
+                final isStateSelected =
+                    controller.resellerSelectedState.value.isNotEmpty;
 
                 return SizedBox(
                   height: 85,
@@ -1299,11 +1377,16 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                     style: TextStyle(
                       fontSize: AppFontSizes.small,
                       fontWeight: AppFontWeights.semiBold,
-                      color: isStateSelected ? ColorRes.textSecondary : ColorRes.grey,
+                      color:
+                          isStateSelected
+                              ? ColorRes.textSecondary
+                              : ColorRes.grey,
                     ),
-                    enabled: isStateSelected, // ✅ Only enable when state is selected
+                    enabled:
+                        isStateSelected, // ✅ Only enable when state is selected
                     prefixIcon: Icons.location_city_outlined,
-                    hintText: isStateSelected ? "Select City" : "Select State First",
+                    hintText:
+                        isStateSelected ? "Select City" : "Select State First",
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     focusNode: cityFocusNode,
                     onChanged: (value) {
@@ -1785,7 +1868,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                 //   );
                 // }),
                 Obx(
-                      () => BudgetFilterChange(
+                  () => BudgetFilterChange(
                     minSelected: controller.resellerMinPrice.value,
                     maxSelected: controller.resellerMaxPrice.value,
                     budgetList: controller.budgetValues.value,
@@ -1800,7 +1883,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                       if (val != null) {
                         controller.resellerMaxPrice.value = val;
                         controller.buyerPriceRange(
-                          RangeValues(controller.resellerMinPrice.value, val)
+                          RangeValues(controller.resellerMinPrice.value, val),
                         );
 
                         print("mxa ${controller.resellerMaxPrice.value}");
@@ -2049,7 +2132,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                           controller.txtStateSearch.clear();
                           controller.txtCitySearch.clear();
                           controller.txtSearchPropertyByID.clear();
-                
+
                           controller.resellerApprovalStatus.value = '';
                           controller.resellerBHKType.value = '';
                           controller.resellerFurnishingType.value = '';
@@ -2058,15 +2141,15 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                           controller.resellerPropertyCategory.value = '';
                           controller.resellerPropertyType.value = '';
                           controller.resellerVerified.value = '';
-                
+
                           // ✅ Clear the dropdown lists
-                
+
                           controller.resellerStatePropertyList.value =
                               propertyController.items.value
                                   .map((e) => e.state ?? '')
                                   .toSet()
                                   .toList();
-                
+
                           // ✅ Repopulate the property type list
                           controller.propertyTypeList.value =
                               propertyController.items.value
@@ -2076,16 +2159,16 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                           // ✅ Clear the selected values
                           controller.resellerSelectedState.value = '';
                           controller.resellerSelectedCity.value = '';
-                
+
                           setState(() {
                             startDate = null;
                             endDate = null;
                             tempMinPrice = controller.resellerMinPrice.value;
                             tempMaxPrice = controller.resellerMaxPrice.value;
                           });
-                
+
                           // controller.getPropertyType(propertyController.items);
-                
+
                           Get.snackbar(
                             'Filters Cleared',
                             'All filters have been reset successfully',
@@ -2115,22 +2198,22 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                       child: ElevatedButton(
                         onPressed: () {
                           controller.getPropertyType();
-                
+
                           // Build filter result and return it
                           Map<String, dynamic> filterResult =
                               _buildFilterResult();
-                
+
                           Get.back(
                             result: filterResult,
                           ); // ✅ Return the filter result
-                
-                          Get.snackbar(
-                            'Filters Applied',
-                            'Your filters have been applied successfully',
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: ColorRes.primary,
-                            colorText: ColorRes.white,
-                          );
+
+                          // Get.snackbar(
+                          //   'Filters Applied',
+                          //   'Your filters have been applied successfully',
+                          //   snackPosition: SnackPosition.BOTTOM,
+                          //   backgroundColor: ColorRes.primary,
+                          //   colorText: ColorRes.white,
+                          // );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: ColorRes.primary,

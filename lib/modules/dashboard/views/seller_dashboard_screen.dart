@@ -183,7 +183,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
 
     final screens = [
       const SellerHomeScreen(),
-      const SellerLeadScreen(),
+      const SellerLeadScreen(isViewAll: true),
       // Obx(() {
       //   if (controller.isLoading.value && controller.items.isEmpty) {
       //     return const Center(child: CircularProgressIndicator());
@@ -289,5 +289,3 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
     );
   }
 }
-
-

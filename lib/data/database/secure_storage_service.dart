@@ -144,7 +144,12 @@ class SecureStorage {
 
   // Clear everything
   static Future<void> clearAll() async {
+    final city = await SecureStorage.getSelectedCity();
+
     await _storage.deleteAll();
+    if (city != null && city.isNotEmpty) {
+      await SecureStorage.saveSelectedCity(city);
+    }
     await _storage.write(key: _keyHasLaunched, value: 'true');
   }
 

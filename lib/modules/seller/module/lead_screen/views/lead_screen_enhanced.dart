@@ -3919,12 +3919,12 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
     isLoadingLead.value = true;
     leadController.items.clear();
     leadController.leadPropertiesList.clear();
-
+    leadController.currentPropertyFilterId.value = widget.propertyId;
     // Re-fetch fresh leads from API
     await leadController.refreshList();
-    if (widget.propertyId != null) {
-      _applyPropertyFilter(leadController);
-    }
+    // if (widget.propertyId != null) {
+    //   _applyPropertyFilter(leadController);
+    // }
     isLoadingLead.value = false;
   }
 
@@ -3952,7 +3952,7 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
       backgroundColor: ColorRes.white,
       appBar: AppBar(
         leading:
-            widget.isViewAll
+            !widget.isViewAll
                 ? IconButton(
                   onPressed: () => Navigator.of(context).pop(),
                   icon: const Icon(Icons.arrow_back),
@@ -3968,7 +3968,14 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.filter_list, color: ColorRes.primary),
-            onPressed: () => showFilterBottomSheet(context, leadController),
+            onPressed: () {
+              showFilterBottomSheet(
+                context,
+                leadController,
+                propertyId:
+                    widget.propertyId != null ? widget.propertyId : null,
+              );
+            },
           ),
         ],
       ),
@@ -4006,21 +4013,27 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
                 onNotification: (notification) {
                   final metrics = notification.metrics;
                   if (metrics.pixels >= metrics.maxScrollExtent) {
-                    leadController.loadMore();
+                    if (widget.propertyId != null &&
+                        widget.propertyId!.isNotEmpty) {
+                      leadController.loadMorePropertyLeads(widget.propertyId!);
+                    } else {
+                      leadController.loadMore();
+                    }
                   }
                   return true;
                 },
                 child: RefreshIndicator(
-                  onRefresh: () async {
-                    // Same logic on pull-to-refresh
-                    leadController.items.clear();
-                    leadController.leadPropertiesList.clear();
-
-                    await leadController.refreshList();
-                    if (widget.propertyId != null) {
-                      _applyPropertyFilter(leadController);
-                    }
-                  },
+                  // onRefresh: () async {
+                  //   // Same logic on pull-to-refresh
+                  //   leadController.items.clear();
+                  //   leadController.leadPropertiesList.clear();
+                  //
+                  //   await leadController.refreshList();
+                  //   if (widget.propertyId != null) {
+                  //     _applyPropertyFilter(leadController);
+                  //   }
+                  // },
+                  onRefresh: _loadData,
                   child: ListView.separated(
                     padding: EdgeInsets.all(getResponsivePadding(context)),
                     itemCount: leads.length,

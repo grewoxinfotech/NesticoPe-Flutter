@@ -20,7 +20,8 @@ class LeadService {
   final String baseGetByIdInquiryUrl = "${ApiConstants.propertyByIDInquiry}";
 
   final String baseLeadVisitUrl = "${ApiConstants.leadVisit}";
-  final String baseLeadNegotiablePriceUrl = "${ApiConstants.leadNegotiablePrice}";
+  final String baseLeadNegotiablePriceUrl =
+      "${ApiConstants.leadNegotiablePrice}";
 
   var isInitialLoaded = false.obs;
 
@@ -44,17 +45,20 @@ class LeadService {
     try {
       Map<String, String> queryParameters = {};
 
-      if (page == 1) {
-        // First page: include all filters including property_id
-        queryParameters = {
-          'page': page.toString(),
-          if (userId != null) 'reseller_id': userId,
-          if (filters != null) ...filters,
-        };
-      } else {
-        // Subsequent pages: include all filters including property_id
-        queryParameters = {if (filters != null) ...filters, 'limit': 'all'};
-      }
+      // if (page == 1) {
+      // First page: include all filters including property_id
+      queryParameters = {
+        'page': page.toString(),
+        if (userId != null) 'reseller_id': userId,
+        if (filters != null) ...filters,
+      };
+      // } else {
+      //   // Subsequent pages: include all filters including property_id
+      //   queryParameters = {
+      //     if (filters != null) ...filters,
+      //     // 'limit': 'all'
+      //   };
+      // }
 
       // Build the base URL
       final baseUri =
@@ -95,12 +99,11 @@ class LeadService {
     Map<String, String>? filters,
   }) async {
     final user = await SecureStorage.getUserData();
-    final username=user?.user?.username??'';
+    final username = user?.user?.username ?? '';
     try {
       Map<String, String> queryParameters = {};
 
       if (page == 1) {
-
         // First page: include all filters including property_id
         queryParameters = {
           'page': page.toString(),
@@ -115,14 +118,15 @@ class LeadService {
       // Build the base URL
       final baseUri = baseUrl;
 
-
       final uri = Uri.parse(baseUri).replace(queryParameters: queryParameters);
 
       print("My Contractor Profile API URL: $uri");
       print("Query Parameters: $queryParameters");
 
       final response = await http.get(uri, headers: await headers());
-      print("My Contractor Profile API response status: ${response.statusCode}");
+      print(
+        "My Contractor Profile API response status: ${response.statusCode}",
+      );
       print("My Contractor Profile API response body: ${response.body}");
 
       if (response.statusCode == 200) {
@@ -130,7 +134,7 @@ class LeadService {
 
         return PaginationResponse<NewUpdatedLeadModel>.fromJson(
           data,
-              (json) => NewUpdatedLeadModel.fromJson(json),
+          (json) => NewUpdatedLeadModel.fromJson(json),
         );
       } else {
         print("My Contractor Profile to load leads: ${response.statusCode}");
@@ -143,15 +147,11 @@ class LeadService {
     }
   }
 
-
-
   Future<PaginationResponse<PropertyInquireItem>> fetchInquiry({
     int page = 1,
     int? userId,
     Map<String, String>? filters,
-
   }) async {
-
     try {
       Map<String, String> queryParameters = {};
 
@@ -185,7 +185,7 @@ class LeadService {
 
         return PaginationResponse<PropertyInquireItem>.fromJson(
           data,
-              (json) => PropertyInquireItem.fromMap(json),
+          (json) => PropertyInquireItem.fromMap(json),
         );
       } else {
         print("Failed to load Property Inquiry: ${response.statusCode}");
@@ -226,23 +226,27 @@ class LeadService {
     }
   }
 
-
-
-
-  Future<bool> updateStatusOfNegotiable(Map<String,dynamic> data,String id) async {
+  Future<bool> updateStatusOfNegotiable(
+    Map<String, dynamic> data,
+    String id,
+  ) async {
     try {
       final response = await http.put(
-          Uri.parse("$baseLeadNegotiablePriceUrl/$id"),
-          headers: await headers(),
-    body: jsonEncode(data),
-    );
-    return response.statusCode == 200;
+        Uri.parse("$baseLeadNegotiablePriceUrl/$id"),
+        headers: await headers(),
+        body: jsonEncode(data),
+      );
+      return response.statusCode == 200;
     } catch (e) {
-    print("Update lead exception: $e");
-    return false;
+      print("Update lead exception: $e");
+      return false;
     }
   }
-  Future<bool> updateRejectOfNegotiable(Map<String, dynamic> data, String id) async {
+
+  Future<bool> updateRejectOfNegotiable(
+    Map<String, dynamic> data,
+    String id,
+  ) async {
     try {
       final url = Uri.parse("$baseLeadNegotiablePriceUrl");
       final headerData = await headers();
@@ -262,7 +266,9 @@ class LeadService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return true;
       } else {
-        print("❌ Failed to update negotiable price. Status: ${response.statusCode}");
+        print(
+          "❌ Failed to update negotiable price. Status: ${response.statusCode}",
+        );
         return false;
       }
     } on SocketException catch (e) {
@@ -283,9 +289,7 @@ class LeadService {
     String? userId,
     String? buyerId,
     Map<String, String>? filters,
-
   }) async {
-
     try {
       Map<String, String> queryParameters = {};
 
@@ -312,7 +316,9 @@ class LeadService {
       print("Query Parameters: $queryParameters");
 
       final response = await http.get(uri, headers: await headers());
-      print("Property Negotiable Price API response status: ${response.statusCode}");
+      print(
+        "Property Negotiable Price API response status: ${response.statusCode}",
+      );
       print("Property Negotiable Price API response body: ${response.body}");
 
       if (response.statusCode == 200) {
@@ -320,10 +326,12 @@ class LeadService {
 
         return PaginationResponse<NegotiableItem>.fromJson(
           data,
-              (json) => NegotiableItem.fromMap(json),
+          (json) => NegotiableItem.fromMap(json),
         );
       } else {
-        print("Failed to load Property Negotiable Price: ${response.statusCode}");
+        print(
+          "Failed to load Property Negotiable Price: ${response.statusCode}",
+        );
         print("Response body: ${response.body}");
         throw Exception("Failed to load Property Negotiable Price");
       }
@@ -413,11 +421,9 @@ class LeadService {
     }
   }
 
-
   Future<NewUpdatedLeadModel> getLeadDataByID(String id) async {
-
     print("Get lead data by ID: $id");
-    try{
+    try {
       final uri = Uri.parse("$baseUrl/$id");
       print("Lead Data URI: $uri");
       final response = await http.get(uri, headers: await headers());
@@ -425,20 +431,18 @@ class LeadService {
       print("Lead Data response body: ${response.body}");
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return NewUpdatedLeadModel .fromJson(data['data']);
-
-
+        return NewUpdatedLeadModel.fromJson(data['data']);
       } else {
         print("Failed to load lead data: ${response.statusCode}");
         print("Response body: ${response.body}");
         throw Exception("Failed to load lead data");
       }
+    } catch (e) {
+      print("Exception in getLeadDataByID: $e");
+      rethrow;
+    }
   }
-  catch(e){
-    print("Exception in getLeadDataByID: $e");
-    rethrow;
-  }
-  }
+
   Future<PaginationResponse<LeadVisitItem>> fetchLeadVisitData({
     int page = 1,
     String? buyerId,
@@ -453,15 +457,13 @@ class LeadService {
         queryParameters = {
           'page': page.toString(),
           if (buyerId != null && buyerId.isNotEmpty) 'buyer_id': buyerId,
-          if (propertyId != null && propertyId.isNotEmpty) 'property_id': propertyId,
+          if (propertyId != null && propertyId.isNotEmpty)
+            'property_id': propertyId,
           if (filters != null) ...filters,
         };
       } else {
         // Subsequent pages: include filters only, with limit
-        queryParameters = {
-          if (filters != null) ...filters,
-          'limit': 'all',
-        };
+        queryParameters = {if (filters != null) ...filters, 'limit': 'all'};
       }
 
       log("Selected QueryParameter: $queryParameters");
@@ -475,7 +477,9 @@ class LeadService {
 
       final response = await http.get(uri, headers: await headers());
 
-      print("Property LeadVisitData API response status: ${response.statusCode}");
+      print(
+        "Property LeadVisitData API response status: ${response.statusCode}",
+      );
       print("Property LeadVisitData API response body: ${response.body}");
 
       if (response.statusCode == 200) {
@@ -483,7 +487,7 @@ class LeadService {
 
         return PaginationResponse<LeadVisitItem>.fromJson(
           data,
-              (json) => LeadVisitItem.fromMap(json),
+          (json) => LeadVisitItem.fromMap(json),
         );
       } else {
         print("Failed to load Property LeadVisitData: ${response.statusCode}");
@@ -496,8 +500,10 @@ class LeadService {
     }
   }
 
-
-  Future<bool> updateTheVisitedData(Map<String,dynamic> user,String id) async {
+  Future<bool> updateTheVisitedData(
+    Map<String, dynamic> user,
+    String id,
+  ) async {
     try {
       log("Chnage datae ${user}");
       final response = await http.put(

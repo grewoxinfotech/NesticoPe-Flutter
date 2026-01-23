@@ -71,6 +71,8 @@ class FilterChipsBar extends StatelessWidget {
 
             // FILTER CHIPS
             ...filters.entries.map((entry) {
+              if (entry.key == 'assignedTo') return const SizedBox.shrink();
+
               final key = entry.key;
               final value = entry.value;
 

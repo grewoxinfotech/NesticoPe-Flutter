@@ -1,188 +1,40 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/img_res.dart';
 import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
-import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 import 'package:housing_flutter_app/modules/seller/view/widget/property_overview_seller.dart';
 import 'package:housing_flutter_app/utils/property_mapper/property_mapper.dart';
 
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/manager/property/property_pricemanager.dart';
-import '../../../../../app/manager/property_highlight_manager.dart';
-import '../../../../../app/utils/svg_widget.dart';
-import '../../../../../data/database/secure_storage_service.dart';
-import '../../../../../data/network/auth/model/user_model.dart';
 import '../../../../../data/network/property/models/property_model.dart';
 import '../../../../../widgets/bar/filter_bar/filter_chip_bar.dart';
-import '../../../../add_property/view/create_property.dart';
 import '../../../../propert_detail/view/property_details.dart';
-import '../../../../reseller/view/lead_overview/lead_detail.dart';
+import '../../../../propert_detail/view/widget/property_card_widget.dart';
 import '../../../../reseller/view/listing/property_listing.dart';
 import '../../../../reseller/widget/reseller_filter/resseller_property_filter.dart';
+import '../../../controllers/seller_property_controller.dart';
 
 class PropertyOverviewScreen extends StatefulWidget {
-  // final List<Items> properties;
-  // final Function() onDelete;
-
-  const PropertyOverviewScreen({
-    super.key,
-    // required this.properties,
-    // required this.onDelete,
-  });
+  const PropertyOverviewScreen({super.key});
 
   @override
   State<PropertyOverviewScreen> createState() => _PropertyOverviewScreenState();
 }
 
 class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
-  final RxBool isSelectionMode = false.obs;
-  PropertyController propertyController = Get.find<PropertyController>();
-  final RxList<String> selectedPropertyIds = <String>[].obs;
-  final RxMap<String, String> selectedFilters = <String, String>{}.obs;
-  Future<void> refreshPropertyBySeller() async {
-    final user = await SecureStorage.getUserData();
-    if (user != null) {
-      propertyController.applyFilter(
-        "created_by",
-        user.user?.id.toString() ?? "",
-        includeCity: false,
-      );
-    }
-  }
+  // Inject the controller
+  final SellerListedPropertyController propertyController = Get.put(
+    SellerListedPropertyController(),
+  );
 
-  // @override
-  // void initState() {
-  //   WidgetsBinding.instance.addPostFrameCallback((_) async {
-  //     await fetchResellerAssignProperty();
-  //   });
-  //   // controller.resellerPropertyList.value = propertyController.items.value
-  //   //     .map((e) => e.state ?? '')
-  //   //     .toSet()
-  //   //     .toList();
-  //
-  //   super.initState();
-  // }
-  //
-  // Future<void> fetchResellerAssignProperty() async {
-  //   try {
-  //     final user = await SecureStorage.getUserData();
-  //     final userId = user?.user?.id;
-  //
-  //     if (userId != null && userId.isNotEmpty) {
-  //       final filter = {"created_by": userId};
-  //
-  //       await propertyController.applyFilters(filter);
-  //
-  //       // Then load initial data
-  //       log("=============$filter");
-  //       await propertyController.loadInitial();
-  //       log("=======Apply======$filter");
-  //     } else {
-  //       print("Warning: User ID is null or empty");
-  //     }
-  //   } catch (e) {
-  //     print("Error fetching reseller properties: $e");
-  //   }
-  // }
+  final RxMap<String, String> selectedFilters = <String, String>{}.obs;
 
   @override
   Widget build(BuildContext context) {
-    /*return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: ColorRes.white,
-        foregroundColor: ColorRes.textPrimary,
-        automaticallyImplyLeading: false,
-        title: Text(
-          "Property Overview",
-          style: TextStyle(
-            fontWeight: AppFontWeights.semiBold,
-
-          ),
-        ),
-        actions: [
-          GestureDetector(
-            onTap: () async {
-              // FocusScope.of(context).unfocus();
-              // showModalBottomSheet(
-              //   context: context,
-              //   isScrollControlled: true,
-              //   backgroundColor: ColorRes.transparentColor,
-              //   builder: (_) => FilterPanel(),
-              // );
-
-              // When navigating to the filter screen
-              final result = await Get.to(() => ResellerPropertyFilter());
-
-              if (result != null) {
-                // Use the filter result
-                final newFilter = convertFiltersToString(result);
-                final user = await SecureStorage.getUserData();
-                final userId = user?.user?.id;
-
-                if (userId != null && userId.isNotEmpty) {
-                  newFilter["created_by"] = userId;
-                  log("New Filter ${newFilter}");
-                  await propertyController.applyFilters(newFilter);
-                  selectedFilters
-                    ..clear()
-                    ..addAll(newFilter);
-
-                  propertyController.applyFilters(
-                    Map<String, String>.from(selectedFilters),
-                  );
-                  print(
-                    "Filter Project applied: $result   t   ${selectedFilters.value}",
-                  );
-                  // Example: {'bhk': 5, 'city': 'Surat', 'state': 'Gujarat'}
-                }
-              }
-            },
-            child: Icon(Icons.filter_list),
-          ),
-          SizedBox(width: 16),
-        ],
-      ),
-      body: Column(
-        children: [
-          Obx(() {
-            return FilterChipsBar(
-              filters: selectedFilters.value,
-              onClearAll: () {
-                selectedFilters.clear();
-                propertyController.applyFilters(<String, String>{});
-              },
-              onRemoveFilter: (key) {
-                selectedFilters.remove(key);
-                propertyController.applyFilters(
-                  Map<String, String>.from(selectedFilters),
-                );
-              },
-              priceRangeFormatter: (min, max) => formatPriceRange(min, max),
-            );
-          }),
-
-          RefreshIndicator(
-            onRefresh: refreshPropertyBySeller,
-            child: Expanded(
-              child:(widget.properties.isEmpty)? Center(child: Text('Property Non Found'),) :ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: widget.properties.length,
-                itemBuilder: (context, index) {
-                  final property = widget.properties[index];
-                  return _buildPropertyCard(property, widget.onDelete);
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-    );*/
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
@@ -200,37 +52,33 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
               final result = await Get.to(() => ResellerPropertyFilter());
 
               if (result != null) {
+                // convertFiltersToString is assumed to be a utility you have
                 final newFilter = convertFiltersToString(result);
-                final user = await SecureStorage.getUserData();
-                final userId = user?.user?.id;
 
-                if (userId != null && userId.isNotEmpty) {
-                  newFilter["created_by"] = userId;
-                  selectedFilters
-                    ..clear()
-                    ..addAll(newFilter);
-
-                  propertyController.applyFilters(
-                    Map<String, String>.from(selectedFilters),
-                  );
-                }
+                selectedFilters.assignAll(newFilter);
+                // The controller handles adding 'createdBy' internally
+                propertyController.applyFilters(
+                  Map<String, String>.from(selectedFilters),
+                );
               }
             },
-            child: const Icon(Icons.filter_list),
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Icon(Icons.filter_list),
+            ),
           ),
-          const SizedBox(width: 16),
         ],
       ),
-
       body: Column(
         children: [
-          /// 🔹 Filter chips
+          /// 🔹 Filter chips UI
           Obx(() {
+            if (selectedFilters.isEmpty) return const SizedBox.shrink();
             return FilterChipsBar(
-              filters: selectedFilters.value,
+              filters: selectedFilters,
               onClearAll: () {
                 selectedFilters.clear();
-                propertyController.applyFilters(<String, String>{});
+                propertyController.clearAllFilters();
               },
               onRemoveFilter: (key) {
                 selectedFilters.remove(key);
@@ -242,44 +90,60 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
             );
           }),
 
-          /// 🔹 Property List + Loading + Pagination
+          /// 🔹 Property List with Pagination
           Expanded(
             child: Obx(() {
-              // Initial loading
-              if (propertyController.isLoading.value && propertyController.items.isEmpty) {
+              // Initial Loading State
+              if (propertyController.isLoading.value &&
+                  propertyController.items.isEmpty) {
                 return const Center(child: CircularProgressIndicator());
               }
 
-              // Empty state
-              if (!propertyController.isLoading.value && propertyController.items.isEmpty) {
-                return const Center(child: Text("No Property found."));
+              // Empty State
+              if (propertyController.items.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text("No Property found."),
+                      TextButton(
+                        onPressed: () {
+                          selectedFilters.clear();
+                          propertyController.clearAllFilters();
+                        },
+                        child: const Text("Clear Filters"),
+                      ),
+                    ],
+                  ),
+                );
               }
 
-              return NotificationListener<ScrollEndNotification>(
-                onNotification: (notification) {
-                  final metrics = notification.metrics;
-                  if (metrics.pixels >= metrics.maxScrollExtent) {
-                    propertyController.loadMore();
-                  }
-                  return false;
-                },
-                child: RefreshIndicator(
-                  onRefresh: refreshPropertyBySeller,
+              return RefreshIndicator(
+                onRefresh: () => propertyController.refreshList(),
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: (ScrollNotification scrollInfo) {
+                    if (scrollInfo.metrics.pixels ==
+                        scrollInfo.metrics.maxScrollExtent) {
+                      propertyController.loadMore();
+                    }
+                    return false;
+                  },
                   child: ListView.builder(
                     padding: const EdgeInsets.all(16),
-                    itemCount: propertyController.items.length +
-                        (propertyController.isLoading.value ? 1 : 0),
+                    itemCount:
+                        propertyController.items.length +
+                        (propertyController.hasMore.value ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index == propertyController.items.length) {
                         return const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16),
+                          padding: EdgeInsets.all(16.0),
                           child: Center(child: CircularProgressIndicator()),
                         );
                       }
 
                       final property = propertyController.items[index];
                       return _buildPropertyCard(property, () {
-                        refreshPropertyBySeller();
+                        propertyController.refreshList();
                       });
                     },
                   ),
@@ -290,7 +154,6 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
         ],
       ),
     );
-
   }
 
   Widget _buildPropertyCard(Items property, Function() onDelete) {
@@ -546,30 +409,64 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
     );
   }
 
-  Widget _buildFeatureChip(IconData icon, String label) {
+  Widget _buildBadge(String label, Color bg, Color text) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: ColorRes.leadGreyColor[100],
+        color: bg,
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: ColorRes.leadGreyColor[600]),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: AppFontSizes.small,
-              color: ColorRes.leadGreyColor[700],
-              fontWeight: AppFontWeights.medium,
-            ),
-          ),
-        ],
+      child: Text(
+        label,
+        style: TextStyle(color: text, fontSize: AppFontSizes.small),
       ),
     );
   }
+
+  Widget _buildAnalyticsRow(Items property) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        _buildAnalyticsItem(
+          Icons.visibility,
+          _formatNumber(property.totalViews ?? 0),
+          'Views',
+          ColorRes.primary,
+        ),
+        _buildAnalyticsItem(
+          Icons.favorite,
+          _formatNumber(property.totalFavorites ?? 0),
+          'Likes',
+          ColorRes.primary,
+        ),
+        _buildAnalyticsItem(
+          Icons.people,
+          _formatNumber(property.totalVisits ?? 0),
+          'Visits',
+          ColorRes.primary,
+        ),
+      ],
+    );
+  }
+
+  // Widget _buildAnalyticsItem(IconData icon, String value, String label) {
+  //   return Column(
+  //     children: [
+  //       Icon(icon, size: 16, color: ColorRes.primary),
+  //       Text(
+  //         value,
+  //         style: const TextStyle(fontWeight: AppFontWeights.semiBold),
+  //       ),
+  //       Text(
+  //         label,
+  //         style: const TextStyle(
+  //           fontSize: AppFontSizes.caption,
+  //           color: Colors.grey,
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget _buildAnalyticsItem(
     IconData icon,
@@ -610,75 +507,7 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
   }
 
   String _formatNumber(int number) {
-    if (number >= 1000000) {
-      return '${(number / 1000000).toStringAsFixed(1)}M';
-    } else if (number >= 1000) {
-      return '${(number / 1000).toStringAsFixed(1)}K';
-    }
+    if (number >= 1000) return '${(number / 1000).toStringAsFixed(1)}K';
     return number.toString();
-  }
-}
-
-class Facilities extends StatelessWidget {
-  final Items property;
-
-  const Facilities({super.key, required this.property});
-
-  @override
-  Widget build(BuildContext context) {
-    final highlights = PropertyHighlightManager(property).getHighlights();
-
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: List.generate(highlights.length > 3 ? 3 : highlights.length, (
-          index,
-        ) {
-          final item = highlights[index];
-
-          return Row(
-            children: [
-              if (index != 0) ...[
-                const Text('  •', style: TextStyle(fontSize: 10)),
-                const SizedBox(width: 6),
-              ],
-              _buildChip(item.value, 16, icon: item.icon),
-            ],
-          );
-        }),
-      ),
-    );
-  }
-
-  Widget _buildChip(
-    String text,
-    double size, {
-    String? svgIcon,
-    IconData? icon,
-  }) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: ColorRes.leadGreyColor[200],
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          svgIcon == null
-              ? Icon(icon, size: size, color: ColorRes.primary)
-              : AppSvgIcon(assetName: svgIcon, size: size),
-          const SizedBox(width: 4),
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: AppFontSizes.small,
-              fontWeight: AppFontWeights.medium,
-              color: ColorRes.grey,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

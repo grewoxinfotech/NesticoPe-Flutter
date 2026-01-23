@@ -28,12 +28,14 @@ import '../../../seller/module/lead_screen/controllers/lead_visit_controller.dar
 import '../../../seller/view/widget/seller_property_approval_history.dart';
 import '../../controller/dashborad_controller/dashboard_controller.dart';
 import '../../model/reseller_lead_model/reseller_lead_overview.dart';
+import '../lead/lead_screen.dart';
 import '../report/report_screen.dart';
 
 class LeadDetailScreen extends StatefulWidget {
   final LeadItem? lead;
   final Items? property;
   final bool isFromLead;
+  final bool isReseller;
   final LeadPropertyInquiryController? leadPropertyInquiryController;
   final LeadVisitController? leadVisitController;
   final LeadPropertyNegotiablePriceController?
@@ -47,6 +49,7 @@ class LeadDetailScreen extends StatefulWidget {
     this.leadPropertyInquiryController,
     this.leadVisitController,
     this.leadPropertyNegotiablePriceController,
+    this.isReseller = false,
   }) : assert(
          (lead != null) != (property != null),
          'You must provide either lead OR property, not both.',
@@ -257,22 +260,22 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                             // 4. Property Details
                             _buildPropertyDetailsSection(context, isCompact),
 
-                         if(propertyDetails?.amenities?.isNotEmpty??false)...[
-                           Divider(
-                             thickness: 8,
-                             color: ColorRes.leadGreyColor[100],
-                           ),
+                            if (propertyDetails?.amenities?.isNotEmpty ??
+                                false) ...[
+                              Divider(
+                                thickness: 8,
+                                color: ColorRes.leadGreyColor[100],
+                              ),
 
-                           // 5. Amenities
-                           _buildAmenitiesSection(context, isCompact),
-                         ],
+                              // 5. Amenities
+                              _buildAmenitiesSection(context, isCompact),
+                            ],
 
                             Obx(() => _buildExpandButton(context)),
                           ],
                         )
                         : Obx(() => _buildExpandButton(context)),
               ),
-
 
               // 6. Financial Information
               if (widget.isFromLead)
@@ -289,7 +292,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                 })
               else
                 Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-                _buildFinancialSection(context, isCompact),
+              _buildFinancialSection(context, isCompact),
 
               // if (widget.isFromLead) ...[
               //   Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
@@ -418,7 +421,12 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
             leading: Icon(Icons.leaderboard_outlined, color: ColorRes.primary),
             trailing: Icon(Icons.arrow_forward_ios_rounded),
             onTap: () {
-              Get.to(() => BuilderLeads(projectId: property.id ?? ''));
+              Get.to(
+                () =>
+                    widget.isReseller
+                        ? ResellerLeadScreen(propertyId: property.id ?? '')
+                        : BuilderLeads(projectId: property.id ?? ''),
+              );
             },
           ),
         ],
@@ -518,6 +526,7 @@ log("Buyer Id from api ${propertyInquiryController?.selectedInquiry.value?.userI
               leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
                 selectedInquiry?.propertyId ?? property.id??'',
               buyerID:   selectedInquiry?.userId??'',
+
               );
               log(
                 'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',

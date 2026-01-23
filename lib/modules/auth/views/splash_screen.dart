@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/seller_dashboard_screen.dart';
+import 'package:housing_flutter_app/modules/reseller/view/property_reseller.dart';
 import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
 import '../../../app/constants/color_res.dart';
 import '../../../app/utils/helper_function/user_helper/user_helper.dart';
@@ -255,6 +256,10 @@ class _SplashScreenState extends State<SplashScreen>
       }
       if (UserHelper.isSellerBuilder) {
         await Get.offAll(() => const BuilderMainScreen());
+        return;
+      }
+      if (UserHelper.isReseller) {
+        await Get.offAll(() => MainNavigationScreen());
         return;
       }
       if (UserHelper.isContractor) {

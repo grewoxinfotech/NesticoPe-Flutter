@@ -1503,7 +1503,7 @@ class SuccessStoryCard extends StatelessWidget {
           color: ColorRes.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: ColorRes.leadGreyColor.shade300)
+            side: BorderSide(color: ColorRes.leadGreyColor.shade300),
           ),
           margin: const EdgeInsets.symmetric(vertical: 10),
           elevation: 3,
@@ -3769,10 +3769,14 @@ Widget buildLeaderBoardRanking({
                   value: controller.selectedMode.value,
                   isExpanded: true,
                   decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     filled: true,
-                    fillColor: ColorRes.orangeColor.withOpacity(0.1), // background color
-
+                    fillColor: ColorRes.orangeColor.withOpacity(
+                      0.1,
+                    ), // background color
                     // ✅ Borders for different states
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -3790,7 +3794,10 @@ Widget buildLeaderBoardRanking({
                     ),
                     errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
-                      borderSide: const BorderSide(color: Colors.red, width: 1.5),
+                      borderSide: const BorderSide(
+                        color: Colors.red,
+                        width: 1.5,
+                      ),
                     ),
                     focusedErrorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -3802,10 +3809,13 @@ Widget buildLeaderBoardRanking({
                           .map(
                             (mode) => DropdownMenuItem<String>(
                               value: mode,
-                              child: Text(mode,style: TextStyle(
-                                fontSize: 13,
-                                color: ColorRes.textColor,
-                              ),),
+                              child: Text(
+                                mode,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: ColorRes.textColor,
+                                ),
+                              ),
                             ),
                           )
                           .toList(),
@@ -3818,8 +3828,6 @@ Widget buildLeaderBoardRanking({
             ),
 
             const SizedBox(width: 12),
-
-
 
             Expanded(
               flex: 2,
@@ -3845,10 +3853,14 @@ Widget buildLeaderBoardRanking({
                   isExpanded: true,
 
                   decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     filled: true,
-                    fillColor: ColorRes.orangeColor.withOpacity(0.1), // background color
-
+                    fillColor: ColorRes.orangeColor.withOpacity(
+                      0.1,
+                    ), // background color
                     // ✅ Borders for different states
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -3866,7 +3878,10 @@ Widget buildLeaderBoardRanking({
                     ),
                     errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
-                      borderSide: const BorderSide(color: Colors.red, width: 1.5),
+                      borderSide: const BorderSide(
+                        color: Colors.red,
+                        width: 1.5,
+                      ),
                     ),
                     focusedErrorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -3912,7 +3927,9 @@ Widget buildLeaderBoardRanking({
                   // ✅ On change update selected value
                   onChanged: (value) {
                     controller.selectedCity.value = value ?? 'All City';
-                    controller.updateTheCity(value=="All City"?"":value??'');
+                    controller.updateTheCity(
+                      value == "All City" ? "" : value ?? '',
+                    );
                   },
                 );
               }),
@@ -3925,21 +3942,26 @@ Widget buildLeaderBoardRanking({
         Obx(() {
           final isWeekly = controller.selectedMode.value == 'Weekly';
           final List<String> options =
-          isWeekly ? controller.weeklyRanges : controller.monthlyRanges;
+              isWeekly ? controller.weeklyRanges : controller.monthlyRanges;
 
           // ✅ Prevent Flutter dropdown crash if value not in list
-          final validValue = options.contains(controller.selectedPeriod.value)
-              ? controller.selectedPeriod.value
-              : null;
+          final validValue =
+              options.contains(controller.selectedPeriod.value)
+                  ? controller.selectedPeriod.value
+                  : null;
 
           return DropdownButtonFormField<String>(
             value: validValue,
             isExpanded: true,
             decoration: InputDecoration(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 8,
+              ),
               filled: true,
-              fillColor: ColorRes.orangeColor.withOpacity(0.1), // background color
-
+              fillColor: ColorRes.orangeColor.withOpacity(
+                0.1,
+              ), // background color
               // ✅ Borders for different states
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -3950,10 +3972,7 @@ Widget buildLeaderBoardRanking({
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(
-                  color: ColorRes.orangeColor,
-                  width: 2,
-                ),
+                borderSide: BorderSide(color: ColorRes.orangeColor, width: 2),
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -3966,29 +3985,29 @@ Widget buildLeaderBoardRanking({
             ),
             hint: Text(
               isWeekly ? 'Select Week Range' : 'Select Month',
-              style:  TextStyle(
-                fontSize: 13,
-                color: ColorRes.textColor,
-              ),
+              style: TextStyle(fontSize: 13, color: ColorRes.textColor),
             ),
-            items: options
-                .map(
-                  (period) => DropdownMenuItem<String>(
-                value: period,
-                child: Text(period,style: TextStyle(
-                  fontSize: 13,
-                  color: ColorRes.textColor,
-                ),),
-              ),
-            )
-                .toList(),
+            items:
+                options
+                    .map(
+                      (period) => DropdownMenuItem<String>(
+                        value: period,
+                        child: Text(
+                          period,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: ColorRes.textColor,
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
             onChanged: (value) {
               controller.selectedPeriod.value = value ?? '';
               controller.updatePeriodInfo(); // <-- Important
             },
           );
         }),
-
 
         const SizedBox(height: 16),
 
@@ -5488,7 +5507,11 @@ Widget buildLeadCard(
                   color: ColorRes.blueColor,
                   onPressed: () {
                     Get.to(
-                      () => LeadDetailScreen(lead: lead, isFromLead: true),
+                      () => LeadDetailScreen(
+                        lead: lead,
+                        isFromLead: true,
+                        isReseller: true,
+                      ),
                     );
                   },
                   tooltip: 'View Details',
