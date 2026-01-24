@@ -827,6 +827,7 @@ import '../../../../../app/constants/color_res.dart';
 import '../../../../../data/database/secure_storage_service.dart';
 import '../../../../../data/network/lead/lead_service.dart';
 import '../../../../../data/network/property/services/property_service.dart';
+import '../../../../../widgets/messages/snack_bar.dart';
 import '../../../../property/controllers/property_controller.dart';
 
 import '../model/lead_model.dart';
@@ -1032,11 +1033,10 @@ class LeadController extends PaginatedController<LeadItem> {
       refreshList();
       await Future.delayed(const Duration(seconds: 1));
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to refresh ',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to refresh ',
+        contentType: ContentType.failure,
       );
     } finally {
       isRefreshing.value = false;

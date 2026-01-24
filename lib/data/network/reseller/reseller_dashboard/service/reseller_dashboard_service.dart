@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/api_constants.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/utils/logger/app_logger.dart';
@@ -16,7 +17,6 @@ class ResellerDashboardService {
   final String _userId = '';
   final String cityWiseLeaderBoard = ApiConstants.resellerCityWiseReseller;
   final String getCityWise = ApiConstants.resellerGetAllCity;
-
 
   static Future<Map<String, String>> header() async {
     return await ApiConstants.getHeaders();
@@ -79,9 +79,9 @@ class ResellerDashboardService {
       }
 
       // ✅ Construct final URL safely
-      final uri = Uri.parse(cityWiseLeaderBoard).replace(
-        queryParameters: query.isNotEmpty ? query : null,
-      );
+      final uri = Uri.parse(
+        cityWiseLeaderBoard,
+      ).replace(queryParameters: query.isNotEmpty ? query : null);
 
       log("📡 Fetch City Wise Leaderboard → $uri");
 
@@ -104,7 +104,6 @@ class ResellerDashboardService {
 
   Future<Map<String, dynamic>> fetchCityOfReseller() async {
     try {
-
       var url = Uri.parse(getCityWise);
       final response = await http.get(url, headers: await header());
       log("fetch City wise data from api Url $url");
@@ -124,6 +123,4 @@ class ResellerDashboardService {
       rethrow;
     }
   }
-
-
 }

@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -9,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../../data/network/reseller/reseller_success_stories/reseller_success_stories_model.dart';
 import '../../../../data/network/reseller/reseller_success_stories/reseller_success_stories_service.dart';
+import '../../../../widgets/messages/snack_bar.dart';
 
 class ResellerSuccessStoryController
     extends PaginatedController<ResellerSuccessItem> {
@@ -54,6 +54,7 @@ class ResellerSuccessStoryController
     monthYearController.dispose();
     super.onClose();
   }
+
   @override
   Future<PaginationResponse<ResellerSuccessItem>> fetchItems(int page) async {
     try {
@@ -127,17 +128,12 @@ class ResellerSuccessStoryController
   Future<void> deleteStory(String id) async {
     try {
       final success = await _service.deleteSuccessStory(id);
-     if(success)
-       {
-         items.removeWhere((item) => item.id == id);
-         items.refresh();
-
-       }
-
-
+      if (success) {
+        items.removeWhere((item) => item.id == id);
+        items.refresh();
+      }
     } catch (e) {
       debugPrint("❌ Delete story error: $e");
-
     }
   }
 
@@ -288,12 +284,11 @@ class ResellerSuccessStoryController
         imagePath.value = File(files.path);
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to pick images: $e',
-        snackPosition: SnackPosition.BOTTOM,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to pick images: $e',
+        contentType: ContentType.failure,
       );
     }
   }
-
 }

@@ -5,6 +5,7 @@ import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
 
+import '../../../../../widgets/messages/snack_bar.dart';
 import '../../login_screen.dart';
 import '../covert_to_reseller/convert_to_reseller.dart';
 
@@ -184,13 +185,11 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                                       ? null
                                       : () {
                                         if (_selectedSellerType == null) {
-                                          Get.snackbar(
-                                            "Select Seller Type",
-                                            "Please choose whether you are an Owner or a Builder",
-                                            snackPosition: SnackPosition.BOTTOM,
-                                            backgroundColor:
-                                                ColorRes.redAccentColor,
-                                            colorText: ColorRes.white,
+                                          NesticoPeSnackBar.showAwesomeSnackbar(
+                                            title: "Error",
+                                            message:
+                                                "Please choose whether you are an Owner or a Builder",
+                                            contentType: ContentType.failure,
                                           );
                                         } else {
                                           controller.covertBuyerToSeller(

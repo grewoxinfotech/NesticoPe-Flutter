@@ -145,15 +145,10 @@ class AadharVerifyOTPScreen extends StatelessWidget {
                                             .join();
 
                                     if (otp.length != 6) {
-                                      Get.snackbar(
-                                        'Invalid OTP',
-                                        'Please enter all 6 digits',
-                                        snackPosition: SnackPosition.BOTTOM,
-                                        backgroundColor:
-                                            Get
-                                                .theme
-                                                .colorScheme
-                                                .errorContainer,
+                                      NesticoPeSnackBar.showAwesomeSnackbar(
+                                        title: 'Invalid OTP',
+                                        message: 'Please enter all 6 digits',
+                                        contentType: ContentType.failure,
                                       );
                                       return;
                                     }

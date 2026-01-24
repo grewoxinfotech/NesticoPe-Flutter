@@ -11,16 +11,18 @@ import '../../../../../data/network/lead/model/lead_property_inquiry_model.dart'
 import '../../../../../data/network/lead/model/lead_property_price_negotiable.dart';
 import '../../../../../data/network/user/service/user_service.dart';
 import '../../../../../widgets/New folder/inputs/text_field.dart';
+import '../../../../../widgets/messages/snack_bar.dart';
 import '../../../../add_property/view/create_property.dart';
 
-class LeadPropertyNegotiablePriceController extends PaginatedController<NegotiableItem> {
+class LeadPropertyNegotiablePriceController
+    extends PaginatedController<NegotiableItem> {
   RxString leadInquiryId = ''.obs;
   RxString leadBuyerId = ''.obs;
 
   RxMap<String, String> filters = <String, String>{}.obs;
   Rxn<PropertyInquireItem> selectedInquiry = Rxn<PropertyInquireItem>();
-  var txtReason=TextEditingController();
-  var txtPrice=TextEditingController();
+  var txtReason = TextEditingController();
+  var txtPrice = TextEditingController();
   Rxn<GlobalKey> formKey = Rxn<GlobalKey>();
   final propertyId = "".obs;
   final buyerId = "".obs;
@@ -31,7 +33,7 @@ class LeadPropertyNegotiablePriceController extends PaginatedController<Negotiab
   final newStatus = "rejected".obs;
   final status = "approved".obs;
 
-final leadId=''.obs;
+  final leadId = ''.obs;
   final LeadService _leadService = LeadService();
   Rxn<User> selectedVisit = Rxn<User>();
   UserService userService = UserService();
@@ -40,6 +42,7 @@ final leadId=''.obs;
     super.onInit();
     loadInitial();
   }
+
   void populatedContainData(NegotiableItem data) {
     log("Data of Negotiable Item: ${data.toMap()}");
 
@@ -51,14 +54,13 @@ final leadId=''.obs;
     previousAction.value = 'N/A';
 
     // ✅ Fixed conversion
-    previousNegotiablePrice.value = data.previousNegotiablePrice??'';
+    previousNegotiablePrice.value = data.previousNegotiablePrice ?? '';
 
     newStatus.value = data.newStatus ?? 'rejected';
     status.value = data.oldStatus ?? 'approved';
     txtPrice.text = (data.negotiablePrice ?? 0).toString();
     txtReason.text = data.rejectionReason ?? '';
   }
-
 
   Map<String, dynamic> getPayload() {
     // Clean the price text and parse it
@@ -92,6 +94,7 @@ final leadId=''.obs;
       "rejectionReason": txtReason.text.trim(),
     };
   }
+
   void openAddFollowUpDialog() {
     Get.dialog(
       Dialog(
@@ -109,7 +112,10 @@ final leadId=''.obs;
             children: [
               // Header
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 decoration: const BoxDecoration(
                   color: ColorRes.primary,
                   borderRadius: BorderRadius.only(
@@ -130,12 +136,16 @@ final leadId=''.obs;
                       ),
                     ),
                     InkWell(
-                      onTap: ()  {Get.back();
-                      clearValues();
+                      onTap: () {
+                        Get.back();
+                        clearValues();
                       },
                       borderRadius: BorderRadius.circular(50),
-                      child: const Icon(Icons.close_rounded,
-                          color: ColorRes.white, size: 20),
+                      child: const Icon(
+                        Icons.close_rounded,
+                        color: ColorRes.white,
+                        size: 20,
+                      ),
                     ),
                   ],
                 ),
@@ -143,8 +153,10 @@ final leadId=''.obs;
 
               Flexible(
                 child: SingleChildScrollView(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 16,
+                  ),
                   child: Form(
                     key: formKey.value,
                     child: Column(
@@ -164,7 +176,7 @@ final leadId=''.obs;
                           isRequired: true,
                           maxLines: 3,
                         ),
-                        SizedBox(height: 16,),
+                        SizedBox(height: 16),
                         NesticoPeTextField(
                           controller: txtPrice,
                           title: 'Price',
@@ -174,11 +186,13 @@ final leadId=''.obs;
                             fontWeight: AppFontWeights.semiBold,
                             color: ColorRes.textSecondary,
                           ),
-                          prefixIcon: Icons.currency_rupee, // or appropriate icon
+                          prefixIcon:
+                              Icons.currency_rupee, // or appropriate icon
                           isRequired: true,
                           keyboardType: TextInputType.number, // Add this
 
-                          validator: (value) { // Add validation
+                          validator: (value) {
+                            // Add validation
                             if (value == null || value.trim().isEmpty) {
                               return 'Please enter a price';
                             }
@@ -214,15 +228,16 @@ final leadId=''.obs;
                                     !(formKey.value?.currentState as FormState)
                                         .validate()) {
                                   Get.back();
-                                  log("Form is invalid. Please correct the errors.");
-                                }else{
-
-                                  rejectUpdateData(leadId.value??'');
+                                  log(
+                                    "Form is invalid. Please correct the errors.",
+                                  );
+                                } else {
+                                  rejectUpdateData(leadId.value ?? '');
                                   Get.back();
-                                  log("Form is valid. Proceeding with submission.");
+                                  log(
+                                    "Form is valid. Proceeding with submission.",
+                                  );
                                 }
-
-
                               },
                               child: Text('Submit'),
                             ),
@@ -240,14 +255,14 @@ final leadId=''.obs;
       barrierDismissible: true,
     );
   }
-  Future<void> rejectUpdateData(String id)
-  async {
+
+  Future<void> rejectUpdateData(String id) async {
     log("Updating visit with ID: $id");
     Map<String, dynamic> payload = getPayload();
     log("Payload for update: $payload");
 
     try {
-      await _leadService.updateRejectOfNegotiable(payload,id);
+      await _leadService.updateRejectOfNegotiable(payload, id);
       log("Visit updated successfully for ID: $id");
       // Optionally, refresh the list or perform other actions after update
       refreshList();
@@ -256,6 +271,7 @@ final leadId=''.obs;
       log("Error updating visit for ID $id: $e");
     }
   }
+
   void clearValues() {
     propertyId.value = '';
     buyerId.value = '';
@@ -274,7 +290,9 @@ final leadId=''.obs;
 
   @override
   Future<PaginationResponse<NegotiableItem>> fetchItems(int page) async {
-    log("Fetching Negotiable Price for Lead ID: ${leadInquiryId.value}======= and Buyer ID: ${leadBuyerId.value}");
+    log(
+      "Fetching Negotiable Price for Lead ID: ${leadInquiryId.value}======= and Buyer ID: ${leadBuyerId.value}",
+    );
 
     log("Filters applied: ${filters.toString()}");
     log("Page number: $page");
@@ -282,43 +300,39 @@ final leadId=''.obs;
     final response = await _leadService.fetchLeadPrice(
       page: page,
       filters: filters,
-      userId: leadInquiryId.value,buyerId: leadBuyerId.value,
-
+      userId: leadInquiryId.value,
+      buyerId: leadBuyerId.value,
     );
 
     log("Response received: ${response.toString()}");
     return response;
   }
+
   Future<void> getTheVisitersProfile(String visiterId) async {
     log("Fetching visiter profile for ID: $visiterId");
     final user = await userService.getUserById(visiterId);
-    buyerProfiles[visiterId] = user??User.fromJson({});
+    buyerProfiles[visiterId] = user ?? User.fromJson({});
     // Store by ID
     buyerProfiles.refresh(); // Trigger UI update
     log('✅ Loaded profile for ${user?.firstName}');
-
   }
 
   /// Set the currently active inquiry ID, then refresh the list.
   void setLeadNegotiablePriceId(String id, {String? buyerID}) {
     log("Setting Lead Negotiable Price ID to: $id");
     leadInquiryId.value = id;
-    leadBuyerId.value=buyerID??'';
+    leadBuyerId.value = buyerID ?? '';
 
     loadInitial();
   }
 
-  Future<void> updateTheDataApproved(String id)
-  async {
-    var data={
-      "newStatus": "approved",
-    };
+  Future<void> updateTheDataApproved(String id) async {
+    var data = {"newStatus": "approved"};
     log("Approved payload : $data");
-    final response=await _leadService.updateStatusOfNegotiable(data, id);
-    if(response){
+    final response = await _leadService.updateStatusOfNegotiable(data, id);
+    if (response) {
       refreshList();
     }
-
   }
 
   Future<void> refreshLead() async {
@@ -330,15 +344,13 @@ final leadId=''.obs;
 
       // Update metrics with new values
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to refresh ',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to refresh ',
+        contentType: ContentType.failure,
       );
     } finally {
       isRefreshing.value = false;
     }
   }
-
 }

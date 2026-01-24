@@ -553,10 +553,10 @@ class CreatePropertyController extends GetxController {
 
       if (files.isNotEmpty) {
         if (imageList.value.length + files.length > 5) {
-          Get.snackbar(
-            'Limit Exceeded',
-            'You can only select up to 5 images in total',
-            snackPosition: SnackPosition.BOTTOM,
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Limit Exceeded',
+            message: 'You can only select up to 5 images in total',
+            contentType: ContentType.failure,
           );
           return;
         }
@@ -574,10 +574,10 @@ class CreatePropertyController extends GetxController {
         );
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to pick images: $e',
-        snackPosition: SnackPosition.BOTTOM,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to pick images: $e',
+        contentType: ContentType.failure,
       );
     }
   }
@@ -605,10 +605,10 @@ class CreatePropertyController extends GetxController {
 
       if (videos.isNotEmpty) {
         if (videoList.value.length + videos.length > 5) {
-          Get.snackbar(
-            'Limit Exceeded',
-            'You can only select up to 5 videos in total',
-            snackPosition: SnackPosition.BOTTOM,
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Limit Exceeded',
+            message: 'You can only select up to 5 videos in total',
+            contentType: ContentType.failure,
           );
           return;
         }
@@ -626,17 +626,17 @@ class CreatePropertyController extends GetxController {
         }
         videoList.refresh();
 
-        Get.snackbar(
-          'Success',
-          '${videos.length} video(s) added',
-          snackPosition: SnackPosition.BOTTOM,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: '${videos.length} video(s) added',
+          contentType: ContentType.success,
         );
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to pick videos: $e',
-        snackPosition: SnackPosition.BOTTOM,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to pick videos: $e',
+        contentType: ContentType.failure,
       );
     }
   }
@@ -652,10 +652,10 @@ class CreatePropertyController extends GetxController {
       if (result != null && result.files.isNotEmpty) {
         // Check total limit
         if (documentList.value.length + result.files.length > 2) {
-          Get.snackbar(
-            'Limit Exceeded',
-            'You can only select up to 2 documents in total',
-            snackPosition: SnackPosition.BOTTOM,
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Limit Exceeded',
+            message: 'You can only select up to 2 documents in total',
+            contentType: ContentType.failure,
           );
           return;
         }
@@ -669,18 +669,19 @@ class CreatePropertyController extends GetxController {
 
         documentList.refresh();
 
-        Get.snackbar(
-          'Success',
-          '${result.files.length} document(s) added',
-          snackPosition: SnackPosition.BOTTOM,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: '${result.files.length} document(s) added',
+          contentType: ContentType.success,
         );
       }
     } catch (e) {
       print('Failed to pick documents: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to pick documents: $e',
-        snackPosition: SnackPosition.BOTTOM,
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to pick documents: $e',
+        contentType: ContentType.failure,
       );
     }
   }
@@ -900,12 +901,11 @@ class CreatePropertyController extends GetxController {
       debugPrint("Review Model Added.");
     } catch (e) {
       debugPrint("Error preparing review data: $e");
-      Get.snackbar(
-        "Error",
-        "Failed to prepare review data. Please try again.",
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red.withOpacity(0.8),
-        colorText: ColorRes.white,
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Failed to prepare review data. Please try again.",
+        contentType: ContentType.failure,
       );
     }
   }
@@ -1104,12 +1104,11 @@ class CreatePropertyController extends GetxController {
       }
     } catch (e) {
       debugPrint("Error picking image from camera: $e");
-      Get.snackbar(
-        "Error",
-        "Failed to pick image: ${e.toString()}",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.redAccent.withOpacity(0.8),
-        colorText: ColorRes.white,
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Failed to pick image: ${e.toString()}",
+        contentType: ContentType.failure,
       );
     } finally {
       isProcessing.value = false;
@@ -1156,12 +1155,11 @@ class CreatePropertyController extends GetxController {
       }
     } catch (e) {
       debugPrint("Error picking images: $e");
-      Get.snackbar(
-        "Error",
-        "Failed to pick images: ${e.toString()}",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.redAccent.withOpacity(0.8),
-        colorText: ColorRes.white,
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Failed to pick images: ${e.toString()}",
+        contentType: ContentType.failure,
       );
     } finally {
       isProcessing.value = false;
@@ -1169,14 +1167,10 @@ class CreatePropertyController extends GetxController {
   }
 
   void _showImageLimitSnackbar(String message) {
-    Get.snackbar(
-      "Limit Reached",
-      message,
-      snackPosition: SnackPosition.TOP,
-      borderColor: Colors.redAccent,
-      backgroundColor: ColorRes.white,
-      colorText: Colors.black,
-      duration: const Duration(seconds: 3),
+    NesticoPeSnackBar.showAwesomeSnackbar(
+      title: 'Limit Reached',
+      message: message,
+      contentType: ContentType.failure,
     );
   }
 

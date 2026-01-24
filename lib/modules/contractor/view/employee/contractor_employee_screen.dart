@@ -5,6 +5,7 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractot_employee_controller.dart';
 import '../../../../data/network/contractor/model/employee/contractor_employee_model.dart';
 import '../../../../widgets/New folder/inputs/text_field.dart';
+import '../../../../widgets/messages/snack_bar.dart';
 // import '../../../data/network/contractor/model/employee/contractor_employee_model.dart';
 
 class ContractorEmployeeScreen extends StatelessWidget {
@@ -68,10 +69,12 @@ class ContractorEmployeeScreen extends StatelessWidget {
                     itemCount: controller.items.length,
                     itemBuilder: (context, index) {
                       final employee = controller.items[index];
-                      return GestureDetector(onTap: () {
-                        _showServiceDialog(context,employee);
-
-                      },child: _buildEmployeeCard(employee, controller));
+                      return GestureDetector(
+                        onTap: () {
+                          _showServiceDialog(context, employee);
+                        },
+                        child: _buildEmployeeCard(employee, controller),
+                      );
                     },
                   ),
         );
@@ -80,7 +83,7 @@ class ContractorEmployeeScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // TODO: Add new employee
-          controller.isEditing.value=false;
+          controller.isEditing.value = false;
           showAddEmployeeDialog(context, controller);
         },
         backgroundColor: ColorRes.primary,
@@ -88,15 +91,23 @@ class ContractorEmployeeScreen extends StatelessWidget {
       ),
     );
   }
-  void _showServiceDialog(BuildContext context, ContractorEmployeeItem service) {
+
+  void _showServiceDialog(
+    BuildContext context,
+    ContractorEmployeeItem service,
+  ) {
     showDialog(
       context: context,
       builder: (context) {
         return Dialog(
           backgroundColor: ColorRes.white,
-          shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 24,
+            vertical: 24,
+          ),
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -261,7 +272,7 @@ class ContractorEmployeeScreen extends StatelessWidget {
                   child: ElevatedButton.icon(
                     onPressed: () {
                       // TODO: Delete employee
-                      deleteLead(employee.id, controller,employee.name);
+                      deleteLead(employee.id, controller, employee.name);
                     },
                     icon: const Icon(
                       Icons.delete,
@@ -352,7 +363,7 @@ void showAddEmployeeDialog(
                 children: [
                   Expanded(
                     child: Text(
-                      "${controller.isEditing.value?'Update':"Add"} Employee",
+                      "${controller.isEditing.value ? 'Update' : "Add"} Employee",
                       style: const TextStyle(
                         fontSize: AppFontSizes.body,
                         fontWeight: AppFontWeights.semiBold,
@@ -485,19 +496,22 @@ void showAddEmployeeDialog(
                   const SizedBox(width: 12),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed:(controller.isEditing.value)?(){
-                        if (controller.addEmployeeFormKey.currentState!
-                            .validate()) {
-                          Get.back();
-                          controller.updateEmployee();
-                        }
-                      }: () {
-                        if (controller.addEmployeeFormKey.currentState!
-                            .validate()) {
-                          Get.back();
-                          controller.addEmployee();
-                        }
-                      },
+                      onPressed:
+                          (controller.isEditing.value)
+                              ? () {
+                                if (controller.addEmployeeFormKey.currentState!
+                                    .validate()) {
+                                  Get.back();
+                                  controller.updateEmployee();
+                                }
+                              }
+                              : () {
+                                if (controller.addEmployeeFormKey.currentState!
+                                    .validate()) {
+                                  Get.back();
+                                  controller.addEmployee();
+                                }
+                              },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: ColorRes.primary,
                         padding: const EdgeInsets.symmetric(vertical: 14),
@@ -505,8 +519,8 @@ void showAddEmployeeDialog(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child:  Text(
-                        '${controller.isEditing.value?"Update":"Add"} Employee',
+                      child: Text(
+                        '${controller.isEditing.value ? "Update" : "Add"} Employee',
                         style: TextStyle(
                           fontSize: AppFontSizes.medium,
                           fontWeight: AppFontWeights.semiBold,
@@ -525,7 +539,12 @@ void showAddEmployeeDialog(
     barrierDismissible: true,
   );
 }
-void deleteLead(String id, ContractorEmployeeController controller,String name) {
+
+void deleteLead(
+  String id,
+  ContractorEmployeeController controller,
+  String name,
+) {
   Get.dialog(
     AlertDialog(
       backgroundColor: ColorRes.white,
@@ -546,12 +565,11 @@ void deleteLead(String id, ContractorEmployeeController controller,String name) 
             Get.back();
             controller.deletedContractorEmployeeData(id);
             // deletedContractorLead(id);
-            Get.snackbar(
-              'Deleted',
-              'Lead deleted successfully',
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: ColorRes.error,
-              colorText: ColorRes.white,
+
+            NesticoPeSnackBar.showAwesomeSnackbar(
+              title: 'Deleted',
+              message: 'Lead deleted successfully',
+              contentType: ContentType.success,
             );
           },
           child: const Text("Delete"),

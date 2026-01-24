@@ -589,6 +589,7 @@ import '../../../../app/utils/formater/formater.dart';
 import '../../../../app/utils/validation.dart';
 import '../../../../data/database/secure_storage_service.dart';
 import '../../../../widgets/New folder/inputs/text_field.dart';
+import '../../../../widgets/messages/snack_bar.dart';
 import '../../../add_property/view/create_property.dart';
 import '../../../builder/controller/builder_form_controller.dart';
 import '../../../filter_property/view/widget/common_component/budget_filter.dart';
@@ -1077,12 +1078,10 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                       isEnable: false,
                       onTap: () async {
                         if (startDate == null) {
-                          Get.snackbar(
-                            'Date Required',
-                            'Please select start date first',
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: ColorRes.primary.withOpacity(0.8),
-                            colorText: ColorRes.white,
+                          NesticoPeSnackBar.showAwesomeSnackbar(
+                            title: 'Date Required',
+                            message: 'Please select start date first',
+                            contentType: ContentType.failure,
                           );
                           return;
                         }
@@ -2169,12 +2168,10 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
 
                           // controller.getPropertyType(propertyController.items);
 
-                          Get.snackbar(
-                            'Filters Cleared',
-                            'All filters have been reset successfully',
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: ColorRes.primary.withOpacity(0.8),
-                            colorText: ColorRes.white,
+                          NesticoPeSnackBar.showAwesomeSnackbar(
+                            title: 'Filters Cleared',
+                            message: 'All filters have been reset successfully',
+                            contentType: ContentType.help,
                           );
                         },
                         style: ElevatedButton.styleFrom(

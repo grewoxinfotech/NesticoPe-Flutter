@@ -90,16 +90,16 @@ class ProjectController extends GetxController {
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Document',
         message: 'Loading...',
-        contentType: ContentType.success,
+        contentType: ContentType.help,
       );
     }
   }
 
   void contactSales(String type) {
-    Get.snackbar(
-      'Contact',
-      'Opening $type...',
-      snackPosition: SnackPosition.BOTTOM,
+    NesticoPeSnackBar.showAwesomeSnackbar(
+      title: 'Contact',
+      message: 'Opening $type...',
+      contentType: ContentType.help,
     );
   }
 
@@ -133,14 +133,15 @@ class ProjectController extends GetxController {
       print("Error fetching inquiries: $e");
     }
   }
+
   Future<void> getHasInQuireData(String propertyId) async {
     try {
       final UserModel user = await SecureStorage.getUserData() ?? UserModel();
       final userId = user.user?.id ?? '';
-      final inquiries = await _contactedService.fetchHasInquiries(userId,itemId:
-      propertyId);
-
-
+      final inquiries = await _contactedService.fetchHasInquiries(
+        userId,
+        itemId: propertyId,
+      );
 
       hasSubmittedInquiry.value = inquiries;
       print(

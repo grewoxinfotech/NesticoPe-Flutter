@@ -38,7 +38,7 @@ class StepConfigurations extends GetView<ProjectWizardController> {
       final p = controller.project.value;
       return Form(
         key: formKey,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
+        // autovalidateMode: AutovalidateMode.onUserInteraction,
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -487,24 +487,43 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                                     : v.price.toString(),
                                             keyboardType: TextInputType.number,
                                             validator: (value) {
-                                              if (value == null || value.isEmpty) {
+                                              if (value == null ||
+                                                  value.isEmpty) {
                                                 return 'Please enter monthly rent';
                                               }
 
-                                              final rent = int.tryParse(value) ?? 0;
+                                              final rent =
+                                                  int.tryParse(value) ?? 0;
 
                                               if (rent > 0) {
                                                 final platformFee = rent * 0.05;
-                                                final brokerCommission = platformFee * 0.02;
+                                                final brokerCommission =
+                                                    platformFee * 0.02;
 
-                                                v.platformFees = double.tryParse(platformFee.toStringAsFixed(2));
-                                                v.brokerCommission = double.tryParse(brokerCommission.toStringAsFixed(2));
+                                                v.platformFees =
+                                                    double.tryParse(
+                                                      platformFee
+                                                          .toStringAsFixed(2),
+                                                    );
+                                                v.brokerCommission =
+                                                    double.tryParse(
+                                                      brokerCommission
+                                                          .toStringAsFixed(2),
+                                                    );
 
                                                 // ✅ Add these lines to update the text fields
-                                                controller.platformFees.text = platformFee.toStringAsFixed(2);
-                                                controller.brokerRageCommission.text = brokerCommission.toStringAsFixed(2);
+                                                controller
+                                                    .platformFees
+                                                    .text = platformFee
+                                                    .toStringAsFixed(2);
+                                                controller
+                                                    .brokerRageCommission
+                                                    .text = brokerCommission
+                                                    .toStringAsFixed(2);
 
-                                                log('Platform Fees: ${v.platformFees}, Broker Commission: ${v.brokerCommission}');
+                                                log(
+                                                  'Platform Fees: ${v.platformFees}, Broker Commission: ${v.brokerCommission}',
+                                                );
                                                 return null;
                                               }
 
@@ -563,14 +582,14 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                       children: [
                                         Expanded(
                                           child: CommonTextField(
-                                            label: 'Platform Fees (5% of Price)',
+                                            label:
+                                                'Platform Fees (5% of Price)',
                                             controller: controller.platformFees,
                                             hint: 'Platform Fees',
                                             prefixIcon: const Icon(
                                               Icons.aspect_ratio_outlined,
                                               size: 16,
                                             ),
-
 
                                             // initialValue:
                                             //     v.platformFees == 0
@@ -602,7 +621,8 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                         const SizedBox(width: 12),
                                         Expanded(
                                           child: CommonTextField(
-                                            label: 'Broker Commission (2% of Platform  Fees)',
+                                            label:
+                                                'Broker Commission (2% of Platform  Fees)',
                                             hint: 'Broker Commission',
                                             controller:
                                                 controller.brokerRageCommission,

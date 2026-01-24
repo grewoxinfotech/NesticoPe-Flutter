@@ -3324,6 +3324,7 @@ import '../../../widgets/New folder/inputs/text_field.dart';
 import '../../../widgets/button/property_action_button.dart';
 import '../../../widgets/map/address_and_map_detail.dart';
 import '../../../widgets/map/near_by_location_map_section.dart';
+import '../../../widgets/messages/snack_bar.dart';
 import '../../../widgets/property/furnishing_details.dart';
 import '../../home/widgets/unified_comparison_floating_button.dart';
 import '../../location_price_matrix/controllers/location_price_matrix_controller.dart';
@@ -3417,10 +3418,10 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
         _isLoading.value = false;
 
         if (mounted) {
-          Get.snackbar(
-            'Error',
-            'Property not found',
-            snackPosition: SnackPosition.BOTTOM,
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: "Error",
+            message: 'Property not found',
+            contentType: ContentType.failure,
           );
           Get.back();
         }
@@ -4301,31 +4302,33 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                             null &&
                         currentProperty.investmentInsightModel != null &&
                         currentProperty.listingType!.toLowerCase() ==
-                            "sell" ) ...[
-                    if(currentProperty
-                        .propertyDetails
-                        ?.financialInfo
-                        ?.propertyPriceTrend.isNotEmpty??false)...[
-                      const SizedBox(height: 12),
-                      const TitleWithViewAll(title: 'Investment Insight'),
-                      const SizedBox(height: 8),
-                      Builder(
-                        builder: (context) {
-                          // ✅ Check if controller exists before building chart
-                          if (Get.isRegistered<LocationPriceMatrixController>(
-                            tag: 'matrix_${currentProperty.id}',
-                          )) {
-                            return InvestmentInsightChart(
-                              currentProperty: currentProperty,
+                            "sell") ...[
+                      if (currentProperty
+                              .propertyDetails
+                              ?.financialInfo
+                              ?.propertyPriceTrend
+                              .isNotEmpty ??
+                          false) ...[
+                        const SizedBox(height: 12),
+                        const TitleWithViewAll(title: 'Investment Insight'),
+                        const SizedBox(height: 8),
+                        Builder(
+                          builder: (context) {
+                            // ✅ Check if controller exists before building chart
+                            if (Get.isRegistered<LocationPriceMatrixController>(
+                              tag: 'matrix_${currentProperty.id}',
+                            )) {
+                              return InvestmentInsightChart(
+                                currentProperty: currentProperty,
+                              );
+                            }
+                            return const Center(
+                              child: CircularProgressIndicator(),
                             );
-                          }
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 12),
-                    ]
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                      ],
                     ],
 
                     if (currentProperty.location?.isNotEmpty ?? false) ...[
@@ -4518,76 +4521,82 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                     title: 'Get Offer',
                                     backgroundColor: ColorRes.error,
                                     height: 36,
-                                    onTap:(UserHelper.isGuest)?()=> Get.to(() => LoginScreen()) :() async {
-                                      try {
-                                        final user =
-                                            await SecureStorage.getUserData();
+                                    onTap:
+                                        (UserHelper.isGuest)
+                                            ? () => Get.to(() => LoginScreen())
+                                            : () async {
+                                              try {
+                                                final user =
+                                                    await SecureStorage.getUserData();
 
-                                        if (user == null) {
-                                          Get.snackbar(
-                                            'Error',
-                                            'No user data found. Please log in.',
-                                            snackPosition: SnackPosition.BOTTOM,
-                                            backgroundColor: ColorRes.error
-                                                .withOpacity(0.1),
-                                            colorText: ColorRes.error,
-                                          );
-                                          return;
-                                        }
+                                                if (user == null) {
+                                                  NesticoPeSnackBar.showAwesomeSnackbar(
+                                                    title: "Error",
+                                                    message:
+                                                        'No user data found. Please log in.',
+                                                    contentType:
+                                                        ContentType.failure,
+                                                  );
+                                                  return;
+                                                }
 
-                                        final fullName =
-                                            user.user?.fullName ?? '';
-                                        final firstName =
-                                            user.user?.firstName ?? '';
-                                        final username =
-                                            user.user?.username ?? '';
-                                        final email = user.user?.email ?? '';
-                                        final phone = user.user?.phone ?? '';
+                                                final fullName =
+                                                    user.user?.fullName ?? '';
+                                                final firstName =
+                                                    user.user?.firstName ?? '';
+                                                final username =
+                                                    user.user?.username ?? '';
+                                                final email =
+                                                    user.user?.email ?? '';
+                                                final phone =
+                                                    user.user?.phone ?? '';
 
-                                        final displayName =
-                                            (firstName.isEmpty
-                                                    ? username
-                                                    : fullName)
-                                                .trim();
+                                                final displayName =
+                                                    (firstName.isEmpty
+                                                            ? username
+                                                            : fullName)
+                                                        .trim();
 
-                                        if (Get.context == null) {
-                                          Get.snackbar(
-                                            'Error',
-                                            'UI not ready to show dialog.',
-                                            snackPosition: SnackPosition.BOTTOM,
-                                            backgroundColor: ColorRes.error
-                                                .withOpacity(0.1),
-                                            colorText: ColorRes.error,
-                                          );
-                                          return;
-                                        }
+                                                if (Get.context == null) {
+                                                  NesticoPeSnackBar.showAwesomeSnackbar(
+                                                    title: "Error",
+                                                    message:
+                                                        'UI not ready to show dialog.',
+                                                    contentType:
+                                                        ContentType.failure,
+                                                  );
+                                                  return;
+                                                }
 
-                                        addInquiryFromApp(
-                                          displayName,
-                                          email,
-                                          phone,
-                                          currentProperty.id ?? '',
-                                          currentProperty.listingType
-                                                  ?.toLowerCase()
-                                                  .replaceAll(" ", "_") ??
-                                              '',
-                                          "property",
-                                        );
-                                      } catch (e, s) {
-                                        debugPrint(
-                                          '❌ Error in Get Offer button: $e',
-                                        );
-                                        debugPrint('$s');
-                                        Get.snackbar(
-                                          'Error',
-                                          'Something went wrong. Please try again.',
-                                          snackPosition: SnackPosition.BOTTOM,
-                                          backgroundColor: ColorRes.error
-                                              .withOpacity(0.1),
-                                          colorText: ColorRes.error,
-                                        );
-                                      }
-                                    },
+                                                addInquiryFromApp(
+                                                  displayName,
+                                                  email,
+                                                  phone,
+                                                  currentProperty.id ?? '',
+                                                  currentProperty.listingType
+                                                          ?.toLowerCase()
+                                                          .replaceAll(
+                                                            " ",
+                                                            "_",
+                                                          ) ??
+                                                      '',
+                                                  "property",
+                                                );
+                                              } catch (e, s) {
+                                                debugPrint(
+                                                  '❌ Error in Get Offer button: $e',
+                                                );
+                                                debugPrint('$s');
+
+                                                NesticoPeSnackBar.showAwesomeSnackbar(
+                                                  title: "Error",
+                                                  message:
+                                                      'Something went wrong. Please try again.',
+                                                  contentType:
+                                                      ContentType.failure,
+                                                );
+                                              }
+                                            },
                                   );
                                 }
                               }),
@@ -5878,7 +5887,7 @@ class Details extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

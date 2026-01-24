@@ -8,12 +8,13 @@ import '../../../data/network/property/models/inquiry_model.dart';
 import '../../../data/network/property/models/viewed_item_model.dart';
 import '../../../data/network/property/services/propertry_favorite_service.dart';
 import '../../../data/network/property/services/property_contacted_service.dart';
+import '../../../widgets/messages/snack_bar.dart';
 
 class PropertyFavoriteController extends GetxController {
   final PropertyFavoriteService _favoriteService = PropertyFavoriteService();
 
   /// Observables
-    final PropertyContactedService _contactedService = PropertyContactedService();
+  final PropertyContactedService _contactedService = PropertyContactedService();
   final RxBool isLoading = false.obs;
   final Rx<FavoriteResponseModel?> favoriteResponse =
       Rx<FavoriteResponseModel?>(null);
@@ -36,6 +37,7 @@ class PropertyFavoriteController extends GetxController {
 
     await loadFavorite();
   }
+
   Future<void> loadFavorite() async {
     final favorites = favoriteResponse.value?.data?.favorite ?? [];
 
@@ -51,8 +53,9 @@ class PropertyFavoriteController extends GetxController {
       }
     }
   }
-  Future<void> loadViews(List<PropertyView> viewedProperties ) async {
-    List<PropertyView> favorites =viewedProperties;
+
+  Future<void> loadViews(List<PropertyView> viewedProperties) async {
+    List<PropertyView> favorites = viewedProperties;
 
     for (final item in favorites) {
       final propertyId = item.details?.id ?? item.details?.id ?? '';
@@ -66,6 +69,7 @@ class PropertyFavoriteController extends GetxController {
       }
     }
   }
+
   /// --- API CALLS ---
 
   /// Fetch favorites from API and update local set
@@ -92,7 +96,11 @@ class PropertyFavoriteController extends GetxController {
       }
     } catch (e) {
       print("❌ Exception in getFavorite: $e");
-      Get.snackbar('Error', 'Something went wrong');
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Error",
+        message: 'Something went wrong',
+        contentType: ContentType.failure,
+      );
     } finally {
       isLoading.value = false;
     }
@@ -138,6 +146,7 @@ class PropertyFavoriteController extends GetxController {
       print("❌ Exception in toggleFavorite: $e");
     }
   }
+
   Future<void> getAllInQuireData(String propertyId) async {
     log('Property Id For Inquiry $propertyId');
 
@@ -159,14 +168,17 @@ class PropertyFavoriteController extends GetxController {
       print("Error fetching inquiries: $e");
     }
   }
+
   Future<bool> getHasInQuireData(String propertyId) async {
     log('Property Id For Inquiry $propertyId');
 
     try {
       final UserModel user = await SecureStorage.getUserData() ?? UserModel();
       final userId = user.user?.id ?? '';
-      final inquiries = await _contactedService.fetchHasInquiries(userId,itemId: propertyId);
-
+      final inquiries = await _contactedService.fetchHasInquiries(
+        userId,
+        itemId: propertyId,
+      );
 
       hasSubmittedInquiryMap[propertyId] = inquiries;
       hasSubmittedInquiryMap.refresh();
@@ -180,6 +192,7 @@ class PropertyFavoriteController extends GetxController {
       rethrow;
     }
   }
+
   /// --- UTILITY ---
 
   Future<void> refreshFavorites(String userId) async {

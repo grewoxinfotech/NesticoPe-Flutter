@@ -412,7 +412,11 @@ class ContractorServiceController
       }
     } catch (e) {
       print('❌ Error creating inquiry: $e');
-      Get.snackbar("Error", e.toString());
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: e.toString(),
+        contentType: ContentType.failure,
+      );
     } finally {
       isLoading.value = false;
     }

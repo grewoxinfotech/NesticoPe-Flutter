@@ -1,4 +1,3 @@
-
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,9 +5,9 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_inquiry_controller.dart';
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../widgets/New folder/inputs/dropdown_field.dart';
+import '../../../../../widgets/messages/snack_bar.dart';
 import '../../../../add_property/view/create_property.dart';
 import '../../../controller/contractor_project_controller.dart';
-
 
 class ContractorProjectFilter extends StatefulWidget {
   const ContractorProjectFilter({super.key});
@@ -20,7 +19,7 @@ class ContractorProjectFilter extends StatefulWidget {
 
 class _ContractorProjectFilterState extends State<ContractorProjectFilter> {
   final ContractorProjectController controller =
-  Get.find<ContractorProjectController>();
+      Get.find<ContractorProjectController>();
 
   final _formKey = GlobalKey<FormState>();
   DateTime? startDate;
@@ -34,7 +33,10 @@ class _ContractorProjectFilterState extends State<ContractorProjectFilter> {
       if (controller.txtEndDate.text.isNotEmpty && controller.endDate != null)
         'endDate': controller.txtEndDate.text,
       if (controller.statusChange.value.isNotEmpty)
-        'status': controller.statusChange.value.toLowerCase().replaceAll(" ", "_"),
+        'status': controller.statusChange.value.toLowerCase().replaceAll(
+          " ",
+          "_",
+        ),
     };
   }
 
@@ -57,8 +59,10 @@ class _ContractorProjectFilterState extends State<ContractorProjectFilter> {
             children: [
               // 🔹 Header
               Container(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 decoration: const BoxDecoration(
                   color: ColorRes.primary,
                   borderRadius: BorderRadius.only(
@@ -79,7 +83,10 @@ class _ContractorProjectFilterState extends State<ContractorProjectFilter> {
                       ),
                     ),
                     InkWell(
-                      onTap: () { Get.back();controller.resetFilters();},
+                      onTap: () {
+                        Get.back();
+                        controller.resetFilters();
+                      },
                       borderRadius: BorderRadius.circular(50),
                       child: const Icon(
                         Icons.close_rounded,
@@ -95,8 +102,10 @@ class _ContractorProjectFilterState extends State<ContractorProjectFilter> {
               Flexible(
                 flex: 1,
                 child: SingleChildScrollView(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 16,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -121,7 +130,8 @@ class _ContractorProjectFilterState extends State<ContractorProjectFilter> {
                                 FocusScope.of(context).unfocus();
                                 DateTime? picked = await showDatePicker(
                                   context: context,
-                                  initialDate: controller.startDate ?? DateTime.now(),
+                                  initialDate:
+                                      controller.startDate ?? DateTime.now(),
                                   firstDate: DateTime(2000),
                                   lastDate: DateTime(2100),
                                   builder: (context, child) {
@@ -154,7 +164,7 @@ class _ContractorProjectFilterState extends State<ContractorProjectFilter> {
                                     }
                                   });
                                   controller.txtStartDate.text =
-                                  "${picked.year}-${picked.month}-${picked.day}";
+                                      "${picked.year}-${picked.month}-${picked.day}";
                                   // controller.getPropertyType(propertyController.items);
                                 }
                               },
@@ -180,12 +190,10 @@ class _ContractorProjectFilterState extends State<ContractorProjectFilter> {
                               isEnable: false,
                               onTap: () async {
                                 if (startDate == null) {
-                                  Get.snackbar(
-                                    'Date Required',
-                                    'Please select start date first',
-                                    snackPosition: SnackPosition.BOTTOM,
-                                    backgroundColor: ColorRes.primary.withOpacity(0.8),
-                                    colorText: ColorRes.white,
+                                  NesticoPeSnackBar.showAwesomeSnackbar(
+                                    title: 'Date Required',
+                                    message: 'Please select start date first',
+                                    contentType: ContentType.failure,
                                   );
                                   return;
                                 }
@@ -194,7 +202,7 @@ class _ContractorProjectFilterState extends State<ContractorProjectFilter> {
                                 DateTime? picked = await showDatePicker(
                                   context: context,
                                   initialDate:
-                                  endDate ??
+                                      endDate ??
                                       (startDate!.isAfter(DateTime.now())
                                           ? startDate!
                                           : DateTime.now()),
@@ -225,7 +233,7 @@ class _ContractorProjectFilterState extends State<ContractorProjectFilter> {
                                     controller.endDate = picked;
                                   });
                                   controller.txtEndDate.text =
-                                  "${picked.year}-${picked.month}-${picked.day}";
+                                      "${picked.year}-${picked.month}-${picked.day}";
                                   // controller.getPropertyType(propertyController.items);
                                 }
                               },
@@ -267,17 +275,25 @@ class _ContractorProjectFilterState extends State<ContractorProjectFilter> {
                           hintText: "Select availability",
                           prefixIcon: Icons.schedule,
                           items:
-                          [  'Pending',
-                            'Completed',
-                            'In Progress',
-                            'Cancelled',]
-                              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                              .toList(),
-                          onChanged: (val){
-                            controller.setValue(
-                                controller.statusChange, val);
-                            log("Contractor_status ${controller.statusChange.value}");
-                          } ,
+                              [
+                                    'Pending',
+                                    'Completed',
+                                    'In Progress',
+                                    'Cancelled',
+                                  ]
+                                  .map(
+                                    (e) => DropdownMenuItem(
+                                      value: e,
+                                      child: Text(e),
+                                    ),
+                                  )
+                                  .toList(),
+                          onChanged: (val) {
+                            controller.setValue(controller.statusChange, val);
+                            log(
+                              "Contractor_status ${controller.statusChange.value}",
+                            );
+                          },
                           darkText: true,
                         );
                       }),
@@ -288,8 +304,10 @@ class _ContractorProjectFilterState extends State<ContractorProjectFilter> {
 
               // 🔹 Footer Buttons
               Container(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
                 decoration: BoxDecoration(
                   color: ColorRes.white,
                   border: Border(
@@ -304,10 +322,8 @@ class _ContractorProjectFilterState extends State<ContractorProjectFilter> {
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () {
-
                           Get.back(result: <String, String>{});
                           controller.resetFilters();
-
                         },
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
@@ -335,7 +351,6 @@ class _ContractorProjectFilterState extends State<ContractorProjectFilter> {
 
                           log("Applied Filters: $filters");
                           Get.back(result: filters);
-
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: ColorRes.primary,
@@ -369,10 +384,7 @@ class _ContractorProjectFilterState extends State<ContractorProjectFilter> {
       ),
     );
   }
-
 }
-
-
 
 // class ContractorInquiryFilter extends StatefulWidget {
 //   const ContractorInquiryFilter({super.key});
@@ -626,7 +638,6 @@ class _ContractorProjectFilterState extends State<ContractorProjectFilter> {
 //     );
 //   }
 // }
-
 
 // page
 // 1

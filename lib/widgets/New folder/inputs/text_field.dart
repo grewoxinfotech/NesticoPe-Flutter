@@ -30,14 +30,13 @@ class NesticoPeTextField extends StatelessWidget {
   final TextStyle style;
   final List<TextInputFormatter>? formatter;
 
-
   const NesticoPeTextField({
     super.key,
     this.controller,
     this.title,
     this.validator,
     this.hintText,
-    this.iconColor=ColorRes.primary,
+    this.iconColor = ColorRes.primary,
     this.obscureText = false,
     this.style = const TextStyle(
       fontSize: AppFontSizes.medium,
@@ -66,77 +65,103 @@ class NesticoPeTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            if (title != null) Text(title!, style: style),
-            if (isRequired)
-              Text(
-                ' *',
-                style: TextStyle(
-                  color: Get.theme.colorScheme.error,
-                  fontSize: AppFontSizes.medium,
-                  fontWeight: AppFontWeights.bold,
+        // Row(
+        //   children: [
+        //     if (title != null) Text(title!, style: style),
+        //     if (isRequired)
+        //       Text(
+        //         ' *',
+        //         style: TextStyle(
+        //           color: Get.theme.colorScheme.error,
+        //           fontSize: AppFontSizes.medium,
+        //           fontWeight: AppFontWeights.bold,
+        //         ),
+        //       ),
+        //   ],
+        // ),
+        if (title != null)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Flexible(
+                child: Tooltip(
+                  message: title!,
+                  waitDuration: const Duration(milliseconds: 500),
+                  child: Text(
+                    title!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: style,
+                  ),
                 ),
               ),
-          ],
-        ),
-        AppSpacing.verticalSmall,
-        TextFormField(
-          controller: controller,
-          validator: validator,
-          obscureText: obscureText,
-          keyboardType: keyboardType,
-          maxLength: maxLength,
-          maxLines: maxLines,
-          enabled: enabled,
-          readOnly: readOnly,
-          focusNode: focusNode,
-          textInputAction: textInputAction,
-          onChanged: onChanged,
-          textCapitalization: textCapitalization,
-          autovalidateMode: autovalidateMode ?? AutovalidateMode.disabled,
-          onTap: onTap,
-          inputFormatters: formatter,
-          style: TextStyle(
-            fontSize: AppFontSizes.bodySmall,
-            color: Get.theme.colorScheme.onSurface,
-            fontWeight: AppFontWeights.medium,
+              if (isRequired)
+                Text(
+                  ' *',
+                  style: TextStyle(
+                    color: Get.theme.colorScheme.error,
+                    fontSize: AppFontSizes.medium,
+                    fontWeight: AppFontWeights.bold,
+                  ),
+                ),
+            ],
           ),
-          decoration: InputDecoration(
-            contentPadding: const EdgeInsets.all(AppPadding.small),
-            filled: true,
-            fillColor:
-                enabled
-                    ? Get.theme.colorScheme.surface
-                    : Get.theme.colorScheme.surface.withAlpha(128),
-            hintText: hintText,
-            hintStyle: TextStyle(
-              color: Get.theme.colorScheme.onSurface.withAlpha(128),
-              fontSize: AppFontSizes.bodyMedium,
-              fontWeight: AppFontWeights.regular,
+        AppSpacing.verticalSmall,
+        GestureDetector(
+          onTap: onTap,
+          child: TextFormField(
+            controller: controller,
+            validator: validator,
+            obscureText: obscureText,
+            keyboardType: keyboardType,
+            maxLength: maxLength,
+            maxLines: maxLines,
+            enabled: enabled,
+            readOnly: readOnly,
+            focusNode: focusNode,
+            textInputAction: textInputAction,
+            onChanged: onChanged,
+            textCapitalization: textCapitalization,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            // autovalidateMode: autovalidateMode ?? AutovalidateMode.disabled,
+            inputFormatters: formatter,
+            style: TextStyle(
+              fontSize: AppFontSizes.bodySmall,
+              color: Get.theme.colorScheme.onSurface,
+              fontWeight: AppFontWeights.medium,
             ),
-            prefixIcon:
-                prefixIcon != null
-                    ? Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Icon(
-                        prefixIcon,
-                        size: 20,
-                        color:iconColor ,
-                      ),
-                    )
-                    : null,
-            prefixIconConstraints: const BoxConstraints(minWidth: 40),
-            suffixIcon: suffixIcon,
-            enabledBorder: tile(Get.theme.dividerColor),
-            focusedBorder: tile(Get.theme.colorScheme.primary),
-            errorBorder: tile(Get.theme.colorScheme.error),
-            focusedErrorBorder: tile(Get.theme.colorScheme.error),
-            disabledBorder: tile(Get.theme.dividerColor),
-            errorStyle: TextStyle(
-              color: Get.theme.colorScheme.error,
-              fontSize: AppFontSizes.small,
-              fontWeight: AppFontWeights.semiBold,
+            decoration: InputDecoration(
+              contentPadding: const EdgeInsets.all(AppPadding.small),
+              filled: true,
+              fillColor:
+                  enabled
+                      ? Get.theme.colorScheme.surface
+                      : Get.theme.colorScheme.surface.withAlpha(128),
+              hintText: hintText,
+              hintStyle: TextStyle(
+                color: Get.theme.colorScheme.onSurface.withAlpha(128),
+                fontSize: AppFontSizes.bodyMedium,
+                fontWeight: AppFontWeights.regular,
+              ),
+              prefixIcon:
+                  prefixIcon != null
+                      ? Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Icon(prefixIcon, size: 20, color: iconColor),
+                      )
+                      : null,
+              prefixIconConstraints: const BoxConstraints(minWidth: 40),
+              suffixIcon: suffixIcon,
+              enabledBorder: tile(Get.theme.dividerColor),
+              focusedBorder: tile(Get.theme.colorScheme.primary),
+              errorBorder: tile(Get.theme.colorScheme.error),
+              focusedErrorBorder: tile(Get.theme.colorScheme.error),
+              disabledBorder: tile(Get.theme.dividerColor),
+              errorStyle: TextStyle(
+                color: Get.theme.colorScheme.error,
+                fontSize: AppFontSizes.small,
+                fontWeight: AppFontWeights.semiBold,
+              ),
             ),
           ),
         ),

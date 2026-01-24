@@ -3102,6 +3102,7 @@ import 'package:intl/intl.dart';
 import '../../../../app/manager/property/property_pricemanager.dart';
 import '../../../../data/network/property/models/property_model.dart';
 import '../../../../data/network/location_price_matrix/model/location_price_matrix_model.dart';
+import '../../../../widgets/messages/snack_bar.dart';
 import '../../../location_price_matrix/controllers/location_price_matrix_controller.dart';
 import '../../controllers/insights_property_controller.dart';
 
@@ -3283,8 +3284,10 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
   Widget build(BuildContext context) {
     final financialInfo = widget.currentProperty.propertyDetails?.financialInfo;
 
-    AppLogger.structured('Financial Info Check Have data ', widget.currentProperty.propertyDetails?.financialInfo);
-
+    AppLogger.structured(
+      'Financial Info Check Have data ',
+      widget.currentProperty.propertyDetails?.financialInfo,
+    );
 
     // if (financialInfo == null || financialInfo.propertyPriceTrend.isEmpty) {
     //   return const Center(
@@ -4371,10 +4374,11 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
                         }
                       } catch (e) {
                         print('Error converting properties: $e');
-                        Get.snackbar(
-                          'Error',
-                          'Failed to load some properties',
-                          snackPosition: SnackPosition.BOTTOM,
+
+                        NesticoPeSnackBar.showAwesomeSnackbar(
+                          title: 'Error',
+                          message: 'Failed to load some properties',
+                          contentType: ContentType.failure,
                         );
                       }
 

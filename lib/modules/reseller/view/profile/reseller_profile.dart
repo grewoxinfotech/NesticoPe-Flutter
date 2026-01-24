@@ -11,6 +11,7 @@ import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../widgets/input/city_selection_widget.dart';
+import '../../../../widgets/messages/snack_bar.dart';
 import '../../../auth/views/delete_account.dart';
 import '../../../home/views/home_screen/home_screen.dart';
 import '../../controller/fack_lead_controller/fack_lead_controller.dart';
@@ -171,6 +172,7 @@ class ResellerProfileScreen extends StatelessWidget {
       ),
     );
   }
+
   Widget _buildSellerAccountSection(ProfileController controller) {
     return Container(
       width: double.infinity,
@@ -232,6 +234,7 @@ class ResellerProfileScreen extends StatelessWidget {
       ),
     );
   }
+
 
   Widget _buildDetailRow(String label, String value) {
     return Column(
@@ -1565,14 +1568,11 @@ class ResellerProfileScreen extends StatelessWidget {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                Get.snackbar(
-                  'Success',
-                  'Logged out successfully',
-                  backgroundColor: ColorRes.success,
-                  colorText: ColorRes.white,
-                  snackPosition: SnackPosition.BOTTOM,
-                  margin: const EdgeInsets.all(16),
-                  borderRadius: 12,
+
+                NesticoPeSnackBar.showAwesomeSnackbar(
+                  title: 'Success',
+                  message: 'Logged out successfully',
+                  contentType: ContentType.failure,
                 );
               },
               child: Text(

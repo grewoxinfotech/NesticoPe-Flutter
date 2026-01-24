@@ -627,6 +627,7 @@ import '../../../../data/network/reseller/reseller_dashboard/model/reseller_dash
 import '../../../../data/network/reseller/reseller_dashboard/service/reseller_dashboard_service.dart';
 import '../../../../data/network/reseller/reseller_success_stories/reseller_success_stories_service.dart';
 import '../../../../utils/global.dart';
+import '../../../../widgets/messages/snack_bar.dart';
 import '../../model/dashboard/dashboard_model.dart';
 import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 
@@ -773,7 +774,6 @@ class DashboardController extends GetxController {
 
   final picker = ImagePicker();
 
-
   @override
   void onInit() {
     super.onInit();
@@ -802,7 +802,6 @@ class DashboardController extends GetxController {
   final RxList<String> monthlyRanges = <String>[].obs;
   final RxString selectedWeek = "".obs;
 
-
   /// 📅 Generate dynamic weekly & monthly ranges
   void generateDateRanges() {
     weeklyRanges.clear();
@@ -815,7 +814,9 @@ class DashboardController extends GetxController {
     for (int i = 0; i < 4; i++) {
       final end = now.subtract(Duration(days: 7 * i)); // end of the week
       final start = end.subtract(const Duration(days: 6)); // 7 days back
-      weeklyRanges.add("${dateFormat.format(start)} - ${dateFormat.format(end)}");
+      weeklyRanges.add(
+        "${dateFormat.format(start)} - ${dateFormat.format(end)}",
+      );
     }
 
     // --- Add current month only ---
@@ -825,7 +826,6 @@ class DashboardController extends GetxController {
     // Default selection
     selectedPeriod.value = weeklyRanges.first;
   }
-
 
   /// 🧩 Builds the correct payload for API based on user selection
   Map<String, String> get leaderboardFilterPayload {
@@ -870,6 +870,7 @@ class DashboardController extends GetxController {
       }
     }
   }
+
   /// ========================  PERIOD INFO UPDATER ========================
   /// Updates derived fields like week/month when dropdown changes
   void updatePeriodInfo() {
@@ -914,7 +915,6 @@ class DashboardController extends GetxController {
     );
   }
 
-
   Future<void> pickImage() async {
     final picked = await picker.pickImage(source: ImageSource.gallery);
     if (picked != null) {
@@ -935,16 +935,19 @@ class DashboardController extends GetxController {
   }) async {
     final data = await ResellerDashboardService.resellerDashboardService
         .fetchCityWiseLeaderBoard(
-      city: city ?? selectedCity.value,
-      period: period ?? selectedMode.value.toLowerCase(),
-      week: week,
-      month: month,
+          city: city ?? selectedCity.value,
+          period: period ?? selectedMode.value.toLowerCase(),
+          week: week,
+          month: month,
+        );
+
+    log(
+      "🏙 API Call → city=${city ?? selectedCity.value}, period=$period, week=$week, month=$month",
     );
 
-    log("🏙 API Call → city=${city ?? selectedCity.value}, period=$period, week=$week, month=$month");
-
-    resellerCityWiseLeaderBoard.value =
-        ResellerLeaderboardCitywise.fromJson(data);
+    resellerCityWiseLeaderBoard.value = ResellerLeaderboardCitywise.fromJson(
+      data,
+    );
   }
 
   // Future<void> fetchCityFromApi() async {
@@ -953,13 +956,6 @@ class DashboardController extends GetxController {
   //   log("🏙 Fetched cities → ${data}");
   //   resellerAllCity.value = ResellerCityLeaderBoardAllCities.fromJson(data);
   // }
-
-
-
-
-
-
-
 
   Future<void> fetchCityFromApi() async {
     final data =
@@ -1732,11 +1728,10 @@ class DashboardController extends GetxController {
         ),
       ];
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to load dashboard data',
-        backgroundColor: ColorRes.error,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to load dashboard data',
+        contentType: ContentType.failure,
       );
     } finally {
       isLoading.value = false;
@@ -2374,11 +2369,10 @@ class DashboardController extends GetxController {
             ((DateTime.now().millisecond % 100 - 50) / 100),
       );
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to refresh dashboard',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to refresh dashboard',
+        contentType: ContentType.failure,
       );
     } finally {
       isRefreshing.value = false;
@@ -2444,12 +2438,10 @@ class DashboardController extends GetxController {
 
   void submitForm() {
     if (formKey.currentState!.validate()) {
-      Get.snackbar(
-        'Success',
-        'Story added successfully!',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Success',
+        message: 'Story added successfully!',
+        contentType: ContentType.success,
       );
       Get.back();
     }

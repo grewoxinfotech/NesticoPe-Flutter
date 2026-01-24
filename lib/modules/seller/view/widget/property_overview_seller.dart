@@ -13,6 +13,7 @@ import 'package:housing_flutter_app/widgets/dialog/delete_confirmation_dialog.da
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/manager/property/property_pricemanager.dart';
 import '../../../../data/network/property/models/property_model.dart';
+import '../../../../widgets/messages/snack_bar.dart';
 import '../../../add_property/view/create_property.dart';
 import '../../../performance_score/views/performance_score_screen.dart';
 import '../../../property/controllers/property_controller.dart';
@@ -136,9 +137,16 @@ class PropertyOverviewSellerScreen extends StatefulWidget {
 class _PropertyOverviewSellerScreenState
     extends State<PropertyOverviewSellerScreen> {
   late final PropertyController controller;
-  final LeadPropertyInquiryController leadPropertyInquiryController=Get.put(LeadPropertyInquiryController());
-  final LeadVisitController leadVisitController=Get.put(LeadVisitController());
-  final LeadPropertyNegotiablePriceController leadPropertyNegotiablePriceController=Get.put(LeadPropertyNegotiablePriceController());
+  final LeadPropertyInquiryController leadPropertyInquiryController = Get.put(
+    LeadPropertyInquiryController(),
+  );
+  final LeadVisitController leadVisitController = Get.put(
+    LeadVisitController(),
+  );
+  final LeadPropertyNegotiablePriceController
+  leadPropertyNegotiablePriceController = Get.put(
+    LeadPropertyNegotiablePriceController(),
+  );
   final Rxn<Items> _property = Rxn<Items>();
 
   final RxBool _isLoading = true.obs;
@@ -173,10 +181,10 @@ class _PropertyOverviewSellerScreenState
       if (fetchedProperty == null) {
         // Show error and go back
         if (mounted) {
-          Get.snackbar(
-            'Error',
-            'Property not found',
-            snackPosition: SnackPosition.BOTTOM,
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Error',
+            message: 'Property not found',
+            contentType: ContentType.failure,
           );
           Get.back();
         }
@@ -248,7 +256,6 @@ class _PropertyOverviewSellerScreenState
         final property = _property.value!;
 
         return SingleChildScrollView(
-
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -311,40 +318,29 @@ class _PropertyOverviewSellerScreenState
                 },
               ),
               SizedBox(height: 10),
-              _buildMenuItem(
-                "Visit",
-                Icons.history,
-                    () {
-                      Get.to(
-                            () => LeadVisit(
-                          leadVisitController: leadVisitController,
-                          propertyInquiryController:
-                          leadPropertyInquiryController,
-                          propertyId:
-                          property.id,
-                        ),
-                      );
-
-                },
-              ), SizedBox(height: 10),
-              _buildMenuItem(
-                "Negotiable",
-                Icons.currency_rupee_outlined,
-                    () {
-                      leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
-                        property.id ?? '',
-                      );
-                      log(
-                        'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
-                      );
-                      Get.to(
-                            () => LeadNegotiablePriceScreen(
-                          controller: leadPropertyNegotiablePriceController,
-                        ),
-                      );
-
-                },
-              ),
+              _buildMenuItem("Visit", Icons.history, () {
+                Get.to(
+                  () => LeadVisit(
+                    leadVisitController: leadVisitController,
+                    propertyInquiryController: leadPropertyInquiryController,
+                    propertyId: property.id,
+                  ),
+                );
+              }),
+              SizedBox(height: 10),
+              _buildMenuItem("Negotiable", Icons.currency_rupee_outlined, () {
+                leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
+                  property.id ?? '',
+                );
+                log(
+                  'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
+                );
+                Get.to(
+                  () => LeadNegotiablePriceScreen(
+                    controller: leadPropertyNegotiablePriceController,
+                  ),
+                );
+              }),
 
               _buildActionButtons(
                 context,
@@ -901,8 +897,7 @@ class _PropertyOverviewSellerScreenState
   Widget _buildAmenitiesSection(BuildContext context, bool isCompact) {
     final property = _property.value!;
     final amenities = property.propertyDetails?.amenities ?? [];
-    log("Amenities: ${amenities.map((e) => e,).toList()}");
-    
+    log("Amenities: ${amenities.map((e) => e).toList()}");
 
     return Padding(
       padding: EdgeInsets.all(16),
@@ -1140,7 +1135,6 @@ class _PropertyOverviewSellerScreenState
             Expanded(
               child: ElevatedButton.icon(
                 onPressed: () {
-
                   Get.to(
                     () => CreatePropertyScreen(
                       isLogin: true,

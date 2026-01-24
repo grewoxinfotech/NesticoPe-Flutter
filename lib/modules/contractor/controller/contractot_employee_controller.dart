@@ -7,6 +7,7 @@ import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import '../../../app/constants/color_res.dart';
 import '../../../data/network/contractor/model/employee/contractor_employee_model.dart';
 import '../../../data/network/contractor/service/employee/contractor_employee_services.dart';
+import '../../../widgets/messages/snack_bar.dart';
 
 class ContractorEmployeeController
     extends PaginatedController<ContractorEmployeeItem> {
@@ -57,11 +58,10 @@ class ContractorEmployeeController
 
       // Update metrics with new values
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to refresh',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to refresh',
+        contentType: ContentType.failure,
       );
     } finally {
       isRefreshing.value = false;
@@ -88,29 +88,27 @@ class ContractorEmployeeController
       final success = await ContractorEmployeeServices.instance
           .updateContractorEmployee(employeeData, employeeId.value);
       if (success) {
-        Get.snackbar(
-          'Success',
-          'Employee updated successfully',
-          backgroundColor: Colors.green,
-          colorText: ColorRes.white,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: 'Employee updated successfully',
+          contentType: ContentType.success,
         );
         clearControllers();
         refreshList();
       } else {
         clearControllers();
-        Get.snackbar(
-          'Error',
-          'Failed to update employee',
-          backgroundColor: Colors.red,
-          colorText: ColorRes.white,
+
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: 'Failed to update employee',
+          contentType: ContentType.failure,
         );
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'An error occurred',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'An error occurred',
+        contentType: ContentType.failure,
       );
     }
   }
@@ -127,29 +125,27 @@ class ContractorEmployeeController
       final success = await ContractorEmployeeServices.instance
           .addContractorEmployee(employeeData);
       if (success) {
-        Get.snackbar(
-          'Success',
-          'Employee added successfully',
-          backgroundColor: Colors.green,
-          colorText: ColorRes.white,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: 'Employee added successfully',
+          contentType: ContentType.success,
         );
         clearControllers();
         refreshList();
       } else {
         clearControllers();
-        Get.snackbar(
-          'Error',
-          'Failed to add employee',
-          backgroundColor: Colors.red,
-          colorText: ColorRes.white,
+
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: 'Failed to add employee',
+          contentType: ContentType.failure,
         );
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'An error occurred',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'An error occurred',
+        contentType: ContentType.failure,
       );
     }
   }

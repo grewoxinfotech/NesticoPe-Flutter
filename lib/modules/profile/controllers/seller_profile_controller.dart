@@ -15,13 +15,14 @@ import '../../../../data/network/getProfile/model/getProfile_model.dart';
 import '../../../../data/network/profile/reseller_profile/model/reseller_update_profile_model.dart';
 import '../../../data/network/profile/seller/service/seller_service.dart';
 import '../../../data/network/user/service/user_service.dart';
+import '../../../widgets/messages/snack_bar.dart';
 import '../../reseller/model/user/user_model.dart';
 import '../model/seller_profile.dart';
 
 class SellerProfileController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool isEditing = false.obs;
-  final RxBool isLoadingIMage=false.obs;
+  final RxBool isLoadingIMage = false.obs;
   final RxBool isSaving = false.obs;
   final RxBool isUploadingImage = false.obs;
   UserService _userService = UserService();
@@ -68,7 +69,7 @@ class SellerProfileController extends GetxController {
   final positionController = TextEditingController(); // City
   final companyController = TextEditingController(); // State
   final addressController = TextEditingController();
-  final totalExperience=TextEditingController();
+  final totalExperience = TextEditingController();
   final zipController = TextEditingController();
 
   // Form controllers - Business Details
@@ -131,22 +132,20 @@ class SellerProfileController extends GetxController {
     _populateControllers();
     print("Lok ${resellerProfile.value?.id}");
   }
+
   Future<void> refreshProfile() async {
     try {
-     await getUserProfileData();
+      await getUserProfileData();
       await Future.delayed(const Duration(seconds: 1));
 
       // Update metrics with new values
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to refresh ',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Failed to refresh ",
+        contentType: ContentType.failure,
       );
-    } finally {
-
-    }
+    } finally {}
   }
 
   Future<Map<String, dynamic>> updateResellerProfile(
@@ -164,7 +163,7 @@ class SellerProfileController extends GetxController {
           .updateSellerProfileDetails(
             userProfile,
             profileData.value?.user?.id ?? '',
-            profileImageFile:selectedImage.value
+            profileImageFile: selectedImage.value,
           );
 
       return data;
@@ -183,14 +182,14 @@ class SellerProfileController extends GetxController {
     addressController.text = profileData.value?.user?.address ?? "";
     zipController.text = profileData.value?.user?.zipCode ?? "";
 
-    totalExperience.text=profileData.value?.user?.totalExperience.toString()??"";
+    totalExperience.text =
+        profileData.value?.user?.totalExperience.toString() ?? "";
     // Business Details fields from seller profile
     contactPersonController.text = resellerProfile.value?.contactName ?? "";
     contactPhoneController.text = resellerProfile.value?.contactPhone ?? "";
     companyNameController.text = resellerProfile.value?.companyName ?? "";
     reraNumberController.text = resellerProfile.value?.reraNumber ?? "";
     gstNumberController.text = resellerProfile.value?.gstNumber ?? "";
-
   }
 
   void toggleEdit() {
@@ -209,7 +208,7 @@ class SellerProfileController extends GetxController {
   // Image picker methods
   Future<void> pickImageFromGallery() async {
     try {
-      isLoadingIMage.value=true;
+      isLoadingIMage.value = true;
       final XFile? image = await _picker.pickImage(
         source: ImageSource.gallery,
         maxWidth: 1024,
@@ -220,37 +219,26 @@ class SellerProfileController extends GetxController {
       if (image != null) {
         selectedImage.value = File(image.path);
 
-        Get.snackbar(
-          'Success',
-          'Image selected successfully',
-          backgroundColor: Colors.green.withOpacity(0.8),
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
-          duration: const Duration(seconds: 2),
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: "Image selected successfully",
+          contentType: ContentType.success,
         );
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to pick image: ${e.toString()}',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Failed to pick image: ${e.toString()}",
+        contentType: ContentType.failure,
       );
+    } finally {
+      isLoadingIMage.value = false;
     }
-    finally{
-      isLoadingIMage.value=false;
-    }
-
   }
 
   Future<void> pickImageFromCamera() async {
     try {
-      isLoadingIMage.value=true;
+      isLoadingIMage.value = true;
       final XFile? image = await _picker.pickImage(
         source: ImageSource.camera,
         maxWidth: 1024,
@@ -260,30 +248,20 @@ class SellerProfileController extends GetxController {
 
       if (image != null) {
         selectedImage.value = File(image.path);
-        Get.snackbar(
-          'Success',
-          'Image captured successfully',
-          backgroundColor: Colors.green.withOpacity(0.8),
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
-          duration: const Duration(seconds: 2),
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: "Image captured successfully",
+          contentType: ContentType.success,
         );
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to capture image: ${e.toString()}',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to capture image: ${e.toString()}',
+        contentType: ContentType.failure,
       );
-    }
-    finally{
-      isLoadingIMage.value=false;
+    } finally {
+      isLoadingIMage.value = false;
     }
   }
 
@@ -356,7 +334,7 @@ class SellerProfileController extends GetxController {
                   },
                 ),
                 if (selectedImage.value != null ||
-                    (profile.value.avatarUrl.isNotEmpty?? false))
+                    (profile.value.avatarUrl.isNotEmpty ?? false))
                   ListTile(
                     leading: Container(
                       padding: const EdgeInsets.all(8),
@@ -389,15 +367,11 @@ class SellerProfileController extends GetxController {
     profile.value = profile.value.copyWith(avatarUrl: '');
     // Note: Removing profile pic from server would require an API call
     // For now, just clear the local selection
-    Get.snackbar(
-      'Success',
-      'Profile photo removed. Save changes to update.',
-      backgroundColor: Colors.orange.withOpacity(0.8),
-      colorText: ColorRes.white,
-      snackPosition: SnackPosition.BOTTOM,
-      margin: const EdgeInsets.all(16),
-      borderRadius: 12,
-      duration: const Duration(seconds: 2),
+
+    NesticoPeSnackBar.showAwesomeSnackbar(
+      title: 'Success',
+      message: "Profile photo removed. Save changes to update.",
+      contentType: ContentType.success,
     );
   }
 
@@ -409,15 +383,12 @@ class SellerProfileController extends GetxController {
 
       return imageFile.path;
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to upload image: ${e.toString()}',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Failed to upload image: ${e.toString()}",
+        contentType: ContentType.failure,
       );
+
       return null;
     } finally {
       isUploadingImage.value = false;
@@ -441,7 +412,12 @@ class SellerProfileController extends GetxController {
         image = await _uploadImage(selectedImage.value!);
         if (image == null) {
           // Upload failed, stop here
-          Get.snackbar('Error', 'Failed to upload image');
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Error',
+            message: "Failed to upload image",
+            contentType: ContentType.failure,
+          );
+
           isSaving.value = false;
           return;
         }
@@ -486,7 +462,8 @@ class SellerProfileController extends GetxController {
           response['otpRequired'] == true ||
           response['otpRequired'] == 'true' ||
           (response['success'] == false &&
-              response['message']?.toString().toLowerCase().contains('otp') == true);
+              response['message']?.toString().toLowerCase().contains('otp') ==
+                  true);
 
       if (isOtpRequired) {
         print('🔵 OTP Required detected!');
@@ -574,37 +551,26 @@ class SellerProfileController extends GetxController {
         selectedImage.value = null;
         isEditing.value = false;
 
-        Get.snackbar(
-          'Success',
-          response['message'] ?? 'Profile updated successfully',
-          backgroundColor: Colors.green,
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: response['message'] ?? 'Profile updated successfully',
+          contentType: ContentType.success,
         );
       } else {
         // API returned error
-        Get.snackbar(
-          'Error',
-          response['message'] ?? 'Failed to update profile',
-          backgroundColor: Colors.red,
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: response['message'] ?? 'Failed to update profile',
+          contentType: ContentType.failure,
         );
       }
     } catch (e) {
       print('Error saving profile: $e');
-      Get.snackbar(
-        'Error',
-        'An error occurred while updating profile',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'An error occurred while updating profile',
+        contentType: ContentType.failure,
       );
     } finally {
       isSaving.value = false;
@@ -613,12 +579,10 @@ class SellerProfileController extends GetxController {
 
   Future<void> verifyPhoneUpdateOtp(String otp) async {
     if (pendingUserData == null) {
-      Get.snackbar(
-        'Error',
-        'No pending update found',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
-        snackPosition: SnackPosition.BOTTOM,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'No pending update found',
+        contentType: ContentType.failure,
       );
       return;
     }
@@ -634,7 +598,7 @@ class SellerProfileController extends GetxController {
       'address': pendingUserData?.address,
       "totalExperience":pendingUserData?.totalExperience,
       'profiledata': {
-        'contactName':contactPersonController.text ,
+        'contactName': contactPersonController.text,
         'contactPhone': contactPhoneController.text,
         'companyName': companyNameController.text,
         'gstNumber': gstNumberController.text,
@@ -642,12 +606,11 @@ class SellerProfileController extends GetxController {
       },
     };
 
-
     try {
       final response = await SellerProfileUpdate.profileUpdate
           .verifyOtpForSellerNumber(
             otp,
-        userDataMap!,
+            userDataMap!,
             profileData.value?.user?.id ?? '',
           );
 
@@ -693,36 +656,25 @@ class SellerProfileController extends GetxController {
         // Close dialog
         Get.back();
 
-        Get.snackbar(
-          'Success',
-          response['message'] ?? 'Phone number updated successfully',
-          backgroundColor: Colors.green,
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: response['message'] ?? 'Phone number updated successfully',
+          contentType: ContentType.success,
         );
       } else {
-        Get.snackbar(
-          'Error',
-          response['message'] ?? 'Invalid OTP',
-          backgroundColor: Colors.red,
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: response['message'] ?? 'Invalid OTP',
+          contentType: ContentType.failure,
         );
       }
     } catch (e) {
       print('Error verifying OTP: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to verify OTP',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to verify OTP',
+        contentType: ContentType.failure,
       );
     } finally {
       isVerifyingOtp.value = false;
@@ -731,11 +683,10 @@ class SellerProfileController extends GetxController {
 
   Future<void> resendOtpForPhoneUpdate() async {
     if (pendingPhone.value.isEmpty) {
-      Get.snackbar(
-        'Error',
-        'No pending phone number',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'No pending phone number',
+        contentType: ContentType.failure,
       );
       return;
     }
@@ -754,37 +705,25 @@ class SellerProfileController extends GetxController {
         _startResendTimer();
         isVerifyButtonEnabled.value = true;
 
-        Get.snackbar(
-          'Success',
-          response['message'] ?? 'OTP sent successfully',
-          backgroundColor: Colors.green,
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
-          duration: const Duration(seconds: 2),
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: response['message'] ?? 'OTP sent successfully',
+          contentType: ContentType.success,
         );
       } else {
-        Get.snackbar(
-          'Error',
-          response['message'] ?? 'Failed to resend OTP',
-          backgroundColor: Colors.red,
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: response['message'] ?? 'Failed to resend OTP',
+          contentType: ContentType.failure,
         );
       }
     } catch (e) {
       print('Error resending OTP: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to resend OTP',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to resend OTP',
+        contentType: ContentType.failure,
       );
     } finally {
       isResendingOtp.value = false;
@@ -928,12 +867,10 @@ class SellerProfileController extends GetxController {
                         if (otpController.text.length == 6) {
                           verifyPhoneUpdateOtp(otpController.text);
                         } else {
-                          Get.snackbar(
-                            'Error',
-                            'Please enter 6-digit OTP',
-                            backgroundColor: Colors.red,
-                            colorText: ColorRes.white,
-                            snackPosition: SnackPosition.BOTTOM,
+                          NesticoPeSnackBar.showAwesomeSnackbar(
+                            title: 'Error',
+                            message: 'Please enter 6-digit OTP',
+                            contentType: ContentType.failure,
                           );
                         }
                       },

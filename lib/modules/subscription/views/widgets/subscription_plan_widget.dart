@@ -277,12 +277,10 @@ class SubscriptionPlansWidget extends StatelessWidget {
                         final user = await SecureStorage.getUserData();
 
                         if (user == null) {
-                          Get.snackbar(
-                            'Error',
-                            'No user data found. Please log in.',
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: ColorRes.error.withOpacity(0.1),
-                            colorText: ColorRes.error,
+                          NesticoPeSnackBar.showAwesomeSnackbar(
+                            title: 'Error',
+                            message: 'No user data found. Please log in.',
+                            contentType: ContentType.failure,
                           );
                           return;
                         }
@@ -297,12 +295,10 @@ class SubscriptionPlansWidget extends StatelessWidget {
                             (firstName.isEmpty ? username : fullName).trim();
 
                         if (Get.context == null) {
-                          Get.snackbar(
-                            'Error',
-                            'UI not ready to show dialog.',
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: ColorRes.error.withOpacity(0.1),
-                            colorText: ColorRes.error,
+                          NesticoPeSnackBar.showAwesomeSnackbar(
+                            title: "Error",
+                            message: 'UI not ready to show dialog.',
+                            contentType: ContentType.failure,
                           );
                           return;
                         }
@@ -318,12 +314,11 @@ class SubscriptionPlansWidget extends StatelessWidget {
                       } catch (e, s) {
                         debugPrint('❌ Error in Get Offer button: $e');
                         debugPrint('$s');
-                        Get.snackbar(
-                          'Error',
-                          'Something went wrong. Please try again.',
-                          snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: ColorRes.error.withOpacity(0.1),
-                          colorText: ColorRes.error,
+
+                        NesticoPeSnackBar.showAwesomeSnackbar(
+                          title: "Error",
+                          message: 'Something went wrong. Please try again.',
+                          contentType: ContentType.failure,
                         );
                       }
                     } else {

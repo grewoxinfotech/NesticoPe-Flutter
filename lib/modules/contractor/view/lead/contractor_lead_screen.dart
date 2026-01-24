@@ -15,6 +15,7 @@ import '../../../../app/utils/formater/formater.dart';
 import '../../../../data/network/contractor/model/contractot_service_model/contractor_service_model.dart';
 import '../../../../widgets/New folder/inputs/dropdown_field.dart';
 import '../../../../widgets/bar/filter_bar/filter_chip_bar.dart';
+import '../../../../widgets/messages/snack_bar.dart';
 import '../../../add_property/view/create_property.dart';
 import '../../controller/contractor_my_service_controller.dart';
 import '../../controller/contractot_employee_controller.dart';
@@ -103,7 +104,6 @@ class ContractorLeadScreen extends StatelessWidget {
                         fontSize: AppFontSizes.body,
                       ),
                     ),
-
                   );
                 }
 
@@ -135,7 +135,7 @@ class ContractorLeadScreen extends StatelessWidget {
                             itemCount: controller.items.length,
                             itemBuilder: (context, index) {
                               final item = controller.items[index];
-                           /*   if (item.customFields?.isConvertedToProject ?? false) {
+                              /*   if (item.customFields?.isConvertedToProject ?? false) {
                                 return SizedBox(
                                   height: MediaQuery.of(context).size.height * 0.7,
                                   child: Center(
@@ -190,7 +190,9 @@ class ContractorLeadScreen extends StatelessWidget {
                                           controller.toggleCard(item.id ?? ""),
                                   onConvert:
                                       () => Get.to(
-                                        () => AddOrEditProjectScreen(leadItem:  item),
+                                        () => AddOrEditProjectScreen(
+                                          leadItem: item,
+                                        ),
                                       ),
                                   onOverview:
                                       () => Get.to(
@@ -301,7 +303,16 @@ class ContractorLeadCard extends StatelessWidget {
               const SizedBox(height: 8),
               _buildInfoRow(Icons.email, item.email ?? ''),
               const SizedBox(height: 8),
-              _buildInfoRow(Icons.currency_rupee_outlined, Formatter.formatNumber(num.tryParse(item.customFields?.quotationPrice.toString()??'')??0) ?? ''),
+              _buildInfoRow(
+                Icons.currency_rupee_outlined,
+                Formatter.formatNumber(
+                      num.tryParse(
+                            item.customFields?.quotationPrice.toString() ?? '',
+                          ) ??
+                          0,
+                    ) ??
+                    '',
+              ),
 
               if (isExpanded) ...[
                 const SizedBox(height: 12),
@@ -309,41 +320,40 @@ class ContractorLeadCard extends StatelessWidget {
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                  if(item.customFields?.isConvertedToProject??false)...[
-
-SizedBox.shrink(),
-                  ]else...[
-                    Expanded(
-                      child: GestureDetector(
-                        onTap:
-                            (item.customFields?.isConvertedToProject ?? false)
-                                ? null // 👈 Disable tap when converted
-                                : onEdit,
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color:
-                                (item.customFields?.isConvertedToProject ??
-                                        false)
-                                    ? ColorRes.leadGreyColor.withOpacity(0.15)
-                                    : ColorRes.blueColor.withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Icon(
-                            Icons.edit,
-                            color:
-                                (item.customFields?.isConvertedToProject ??
-                                        false)
-                                    ? ColorRes.grey
-                                    : ColorRes.blueColor,
-                            size: 20,
+                    if (item.customFields?.isConvertedToProject ?? false) ...[
+                      SizedBox.shrink(),
+                    ] else ...[
+                      Expanded(
+                        child: GestureDetector(
+                          onTap:
+                              (item.customFields?.isConvertedToProject ?? false)
+                                  ? null // 👈 Disable tap when converted
+                                  : onEdit,
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color:
+                                  (item.customFields?.isConvertedToProject ??
+                                          false)
+                                      ? ColorRes.leadGreyColor.withOpacity(0.15)
+                                      : ColorRes.blueColor.withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(
+                              Icons.edit,
+                              color:
+                                  (item.customFields?.isConvertedToProject ??
+                                          false)
+                                      ? ColorRes.grey
+                                      : ColorRes.blueColor,
+                              size: 20,
+                            ),
                           ),
                         ),
                       ),
-                    ),
 
-                    const SizedBox(width: 8),
-                  ],
+                      const SizedBox(width: 8),
+                    ],
                     // Delete Icon
                     Expanded(
                       child: GestureDetector(
@@ -444,13 +454,10 @@ SizedBox.shrink(),
                 else
                   GestureDetector(
                     onTap: () {
-                      Get.snackbar(
-                        'Already Convert',
-                        colorText: ColorRes.white,
-                        backgroundColor: ColorRes.error,
-                        'One time convert into project',
-                        snackPosition: SnackPosition.BOTTOM,
-                        duration: const Duration(seconds: 2),
+                      NesticoPeSnackBar.showAwesomeSnackbar(
+                        title: 'Already Convert',
+                        message: 'One time convert into project',
+                        contentType: ContentType.failure,
                       );
                     },
                     child: Container(
@@ -901,11 +908,10 @@ void _showStatusDialog(
                         final stage = controller.changeStage.value;
 
                         if (status.isEmpty && stage.isEmpty) {
-                          Get.snackbar(
-                            "Error",
-                            "Please select at least one value",
-                            backgroundColor: ColorRes.error.shade100,
-                            colorText: ColorRes.error.shade700,
+                          NesticoPeSnackBar.showAwesomeSnackbar(
+                            title: 'Error',
+                            message: "Please select at least one value",
+                            contentType: ContentType.failure,
                           );
                           return;
                         }

@@ -13,6 +13,7 @@ import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../widgets/New folder/inputs/dropdown_field.dart';
 import '../../../../widgets/bar/filter_bar/filter_chip_bar.dart';
+import '../../../../widgets/messages/snack_bar.dart';
 import '../../../add_property/view/create_property.dart';
 import '../../../reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 import '../../controller/contractor_project_controller.dart';
@@ -291,7 +292,7 @@ class ProjectCard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: AppFontSizes.caption,
                     color: ColorRes.textSecondary,
-                      fontWeight: AppFontWeights.medium
+                    fontWeight: AppFontWeights.medium,
                   ),
                 ),
               ],
@@ -310,18 +311,17 @@ class ProjectCard extends StatelessWidget {
                 /// print formated price by comma separator
                 Text(
                   Formatter.formatNumber(double.parse(p.projectPrice)),
-                  style:  TextStyle(
+                  style: TextStyle(
                     fontSize: AppFontSizes.caption,
                     color: ColorRes.textSecondary,
-                    fontWeight: AppFontWeights.medium
+                    fontWeight: AppFontWeights.medium,
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 8),
 
-
-// ----------- PROGRESS INDICATOR -----------
+            // ----------- PROGRESS INDICATOR -----------
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -365,8 +365,6 @@ class ProjectCard extends StatelessWidget {
                 ),
               ],
             ),
-
-
 
             /// ---------------- EXPANDED DETAILS ----------------
             // if (isExpanded) ...[
@@ -818,11 +816,10 @@ void showStatusDialog(
 
                         if (status.isEmpty &&
                             (controller.selectedDate == null)) {
-                          Get.snackbar(
-                            "Error",
-                            "Please select at least one value",
-                            backgroundColor: ColorRes.error.shade100,
-                            colorText: ColorRes.error.shade700,
+                          NesticoPeSnackBar.showAwesomeSnackbar(
+                            title: 'Error',
+                            message: "Please select at least one value",
+                            contentType: ContentType.failure,
                           );
                           return;
                         }

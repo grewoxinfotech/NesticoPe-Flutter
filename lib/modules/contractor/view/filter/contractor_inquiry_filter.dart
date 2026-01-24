@@ -5,6 +5,7 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_inquiry_controller.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../widgets/New folder/inputs/dropdown_field.dart';
+import '../../../../widgets/messages/snack_bar.dart';
 import '../../../add_property/view/create_property.dart';
 import '../../../search_property/view/search_screen.dart';
 
@@ -18,7 +19,7 @@ class ContractorInquiryFilter extends StatefulWidget {
 
 class _ContractorInquiryFilterState extends State<ContractorInquiryFilter> {
   final ContractorInquiryController controller =
-  Get.find<ContractorInquiryController>();
+      Get.find<ContractorInquiryController>();
 
   final _formKey = GlobalKey<FormState>();
   DateTime? startDate;
@@ -32,10 +33,15 @@ class _ContractorInquiryFilterState extends State<ContractorInquiryFilter> {
       if (controller.txtEndDate.text.isNotEmpty && controller.endDate != null)
         'endDate': controller.txtEndDate.text,
       if (controller.inquiryStatus.value.isNotEmpty)
-        'status': controller.inquiryStatus.value.toLowerCase().replaceAll(" ", "_"),
+        'status': controller.inquiryStatus.value.toLowerCase().replaceAll(
+          " ",
+          "_",
+        ),
       if (controller.conversionStatus.value.isNotEmpty)
         'isConvertedToLead':
-        controller.conversionStatus.value == "Converted" ? true.toString() : false.toString(),
+            controller.conversionStatus.value == "Converted"
+                ? true.toString()
+                : false.toString(),
     };
   }
 
@@ -58,8 +64,10 @@ class _ContractorInquiryFilterState extends State<ContractorInquiryFilter> {
             children: [
               // 🔹 Header
               Container(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 decoration: const BoxDecoration(
                   color: ColorRes.primary,
                   borderRadius: BorderRadius.only(
@@ -80,7 +88,10 @@ class _ContractorInquiryFilterState extends State<ContractorInquiryFilter> {
                       ),
                     ),
                     InkWell(
-                      onTap: () { Get.back();controller.resetFilters();},
+                      onTap: () {
+                        Get.back();
+                        controller.resetFilters();
+                      },
                       borderRadius: BorderRadius.circular(50),
                       child: const Icon(
                         Icons.close_rounded,
@@ -96,8 +107,10 @@ class _ContractorInquiryFilterState extends State<ContractorInquiryFilter> {
               Flexible(
                 flex: 1,
                 child: SingleChildScrollView(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 16,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -122,7 +135,8 @@ class _ContractorInquiryFilterState extends State<ContractorInquiryFilter> {
                                 FocusScope.of(context).unfocus();
                                 DateTime? picked = await showDatePicker(
                                   context: context,
-                                  initialDate: controller.startDate ?? DateTime.now(),
+                                  initialDate:
+                                      controller.startDate ?? DateTime.now(),
                                   firstDate: DateTime(2000),
                                   lastDate: DateTime(2100),
                                   builder: (context, child) {
@@ -155,7 +169,7 @@ class _ContractorInquiryFilterState extends State<ContractorInquiryFilter> {
                                     }
                                   });
                                   controller.txtStartDate.text =
-                                  "${picked.year}-${picked.month}-${picked.day}";
+                                      "${picked.year}-${picked.month}-${picked.day}";
                                   // controller.getPropertyType(propertyController.items);
                                 }
                               },
@@ -181,12 +195,10 @@ class _ContractorInquiryFilterState extends State<ContractorInquiryFilter> {
                               isEnable: false,
                               onTap: () async {
                                 if (startDate == null) {
-                                  Get.snackbar(
-                                    'Date Required',
-                                    'Please select start date first',
-                                    snackPosition: SnackPosition.BOTTOM,
-                                    backgroundColor: ColorRes.primary.withOpacity(0.8),
-                                    colorText: ColorRes.white,
+                                  NesticoPeSnackBar.showAwesomeSnackbar(
+                                    title: 'Date Required',
+                                    message: 'Please select start date first',
+                                    contentType: ContentType.failure,
                                   );
                                   return;
                                 }
@@ -195,7 +207,7 @@ class _ContractorInquiryFilterState extends State<ContractorInquiryFilter> {
                                 DateTime? picked = await showDatePicker(
                                   context: context,
                                   initialDate:
-                                  endDate ??
+                                      endDate ??
                                       (startDate!.isAfter(DateTime.now())
                                           ? startDate!
                                           : DateTime.now()),
@@ -226,7 +238,7 @@ class _ContractorInquiryFilterState extends State<ContractorInquiryFilter> {
                                     controller.endDate = picked;
                                   });
                                   controller.txtEndDate.text =
-                                  "${picked.year}-${picked.month}-${picked.day}";
+                                      "${picked.year}-${picked.month}-${picked.day}";
                                   // controller.getPropertyType(propertyController.items);
                                 }
                               },
@@ -268,19 +280,27 @@ class _ContractorInquiryFilterState extends State<ContractorInquiryFilter> {
                           hintText: "Select availability",
                           prefixIcon: Icons.schedule,
                           items:
-                          [  'Pending',
-                            'Contacted',
-                            'In Progress',
-                            'Converted',
-                            'Rejected',
-                            'Closed',]
-                              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                              .toList(),
-                          onChanged: (val){
-                            controller.setValue(
-                                controller.inquiryStatus, val);
-                            log("Contractor_status ${controller.inquiryStatus.value}");
-                          } ,
+                              [
+                                    'Pending',
+                                    'Contacted',
+                                    'In Progress',
+                                    'Converted',
+                                    'Rejected',
+                                    'Closed',
+                                  ]
+                                  .map(
+                                    (e) => DropdownMenuItem(
+                                      value: e,
+                                      child: Text(e),
+                                    ),
+                                  )
+                                  .toList(),
+                          onChanged: (val) {
+                            controller.setValue(controller.inquiryStatus, val);
+                            log(
+                              "Contractor_status ${controller.inquiryStatus.value}",
+                            );
+                          },
                           darkText: true,
                         );
                       }),
@@ -311,17 +331,23 @@ class _ContractorInquiryFilterState extends State<ContractorInquiryFilter> {
                           hintText: "Select availability",
                           prefixIcon: Icons.schedule,
                           items:
-                          [
-                            'Converted',
-                            'Not Converted',
-                          ]
-                              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                              .toList(),
-                          onChanged: (val){
+                              ['Converted', 'Not Converted']
+                                  .map(
+                                    (e) => DropdownMenuItem(
+                                      value: e,
+                                      child: Text(e),
+                                    ),
+                                  )
+                                  .toList(),
+                          onChanged: (val) {
                             controller.setValue(
-                                controller.conversionStatus, val);
-                            log("Contractor_stvjbhfjatus ${controller.conversionStatus.value}");
-                          } ,
+                              controller.conversionStatus,
+                              val,
+                            );
+                            log(
+                              "Contractor_stvjbhfjatus ${controller.conversionStatus.value}",
+                            );
+                          },
                           darkText: true,
                         );
                       }),
@@ -332,8 +358,10 @@ class _ContractorInquiryFilterState extends State<ContractorInquiryFilter> {
 
               // 🔹 Footer Buttons
               Container(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
                 decoration: BoxDecoration(
                   color: ColorRes.white,
                   border: Border(
@@ -348,10 +376,8 @@ class _ContractorInquiryFilterState extends State<ContractorInquiryFilter> {
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () {
-
                           Get.back(result: <String, String>{});
                           controller.resetFilters();
-
                         },
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
@@ -379,7 +405,6 @@ class _ContractorInquiryFilterState extends State<ContractorInquiryFilter> {
 
                           log("Applied Filters: $filters");
                           Get.back(result: filters);
-
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: ColorRes.primary,
@@ -413,10 +438,7 @@ class _ContractorInquiryFilterState extends State<ContractorInquiryFilter> {
       ),
     );
   }
-
 }
-
-
 
 // class ContractorInquiryFilter extends StatefulWidget {
 //   const ContractorInquiryFilter({super.key});
@@ -670,7 +692,6 @@ class _ContractorInquiryFilterState extends State<ContractorInquiryFilter> {
 //     );
 //   }
 // }
-
 
 // page
 // 1

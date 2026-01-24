@@ -13,6 +13,7 @@ import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/color_res.dart';
 import '../../../data/network/contractor/model/contractor_lead_model/contractor_lead_followup_model.dart';
 import '../../../widgets/New folder/inputs/dropdown_field.dart';
+import '../../../widgets/messages/snack_bar.dart';
 import '../../add_property/view/create_property.dart';
 import '../../reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 import '../view/widget/cotractor_active_switch.dart';
@@ -26,35 +27,32 @@ class ContractorLeadFollowupController
   final RxMap<String, bool> expandedItems = <String, bool>{}.obs;
   RxString leadId = ''.obs;
 
-
   @override
   void onInit() {
     super.onInit();
     ever(filters, (_) => refreshList());
 
-   /* loadInitial();*/
+    /* loadInitial();*/
   }
+
   // Add inside ContractorLeadFollowupController
-//---------------------------------------Add followUp variable ------------------------------------------------//
+  //---------------------------------------Add followUp variable ------------------------------------------------//
   final RxString selectedType = ''.obs;
-  final RxString followUpId=''.obs;
+  final RxString followUpId = ''.obs;
   final TextEditingController txtDate = TextEditingController();
   final TextEditingController txtLocation = TextEditingController();
   final TextEditingController txtTime = TextEditingController();
   final RxBool reminder = false.obs;
   final TextEditingController txtNotes = TextEditingController();
-  final RxString statusFollow=''.obs;
-  final RxList<String> statusFollowList=<String>[
-    'Pending',
-    'Completed',
-    'Cancelled'
-  ].obs;
-  RxBool isEditModel=false.obs;
-//---------------------------------------Add followUp variable ------------------------------------------------//
-// Sample follow-up types
+  final RxString statusFollow = ''.obs;
+  final RxList<String> statusFollowList =
+      <String>['Pending', 'Completed', 'Cancelled'].obs;
+  RxBool isEditModel = false.obs;
+  //---------------------------------------Add followUp variable ------------------------------------------------//
+  // Sample follow-up types
   final List<String> followUpTypes = ['Call', 'Meeting', 'Email', 'Visit'];
 
-// Method to reset fields
+  // Method to reset fields
   void resetFollowUpForm() {
     selectedType.value = '';
     txtDate.clear();
@@ -63,29 +61,26 @@ class ContractorLeadFollowupController
     txtNotes.clear();
   }
 
-  void changeTheStatus(bool value,){
-    isEditModel.value=value;
+  void changeTheStatus(bool value) {
+    isEditModel.value = value;
     log(" is EditModel ${isEditModel.value}");
   }
 
-  void populatedFollowUpData(ContractorLeadFollowUpItem item)
-  {
+  void populatedFollowUpData(ContractorLeadFollowUpItem item) {
+    if (isEditModel.value) {
+      followUpId.value = item.id;
+      selectedType.value = capitalizeEachWord(item.type);
+      txtTime.text = item.time ?? '';
 
-   if(isEditModel.value){
-     followUpId.value=item.id;
-     selectedType.value=capitalizeEachWord(item.type);
-     txtTime.text=item.time??'';
-
-     txtDate.text=item.date??'';
-     reminder.value=item.reminder;
-     statusFollow.value=capitalizeEachWord(item.status);
-     txtLocation.text=item.location??'';
-     txtNotes.text=item.notes??'';
-   }
+      txtDate.text = item.date ?? '';
+      reminder.value = item.reminder;
+      statusFollow.value = capitalizeEachWord(item.status);
+      txtLocation.text = item.location ?? '';
+      txtNotes.text = item.notes ?? '';
+    }
   }
 
-  Future<void> payloadMethod()
-  async {
+  Future<void> payloadMethod() async {
     Map<String, dynamic> payload = {
       "isEditMode": isEditModel.value,
       "related_id": leadId.value, // from your model or controller
@@ -100,14 +95,18 @@ class ContractorLeadFollowupController
     };
     print("Follow Up Data ${payload}");
 
-    final response= await ContractorLeadFollowUpService.contractorInquiryService.createFollowUp(payload);
-    if(response)
-      {
+    final response = await ContractorLeadFollowUpService
+        .contractorInquiryService
+        .createFollowUp(payload);
+    if (response) {
+      refreshList();
 
-        refreshList();
-        Get.snackbar('Success',
-            'Follow-up added successfully!');
-      }
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Success',
+        message: 'Follow-up added successfully!',
+        contentType: ContentType.success,
+      );
+    }
   }
 
   Future<void> payloadEditMethod() async {
@@ -129,8 +128,7 @@ class ContractorLeadFollowupController
       // Add location only for meetings
       if (type == 'meeting') {
         payload["location"] = txtLocation.text.trim();
-      }
-      else{
+      } else {
         // payload["location"] = null;
       }
 
@@ -142,21 +140,33 @@ class ContractorLeadFollowupController
 
       if (response) {
         refreshList();
-        Get.snackbar('Success', 'Follow-up updated successfully!');
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: 'Follow-up updated successfully!',
+          contentType: ContentType.success,
+        );
       } else {
-        Get.snackbar('Error', 'Failed to update follow-up. Please try again.');
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: 'Failed to update follow-up. Please try again.',
+          contentType: ContentType.failure,
+        );
       }
     } catch (e) {
       print("Error in payloadEditMethod: $e");
-      Get.snackbar('Error', 'Something went wrong. Please try again.');
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Something went wrong. Please try again.',
+        contentType: ContentType.failure,
+      );
     }
   }
 
-
-
   Future<void> deleteFollowUpByID(String id) async {
-    final response=await ContractorLeadFollowUpService.contractorInquiryService.deleteFollowUp(id);
-    if(response){
+    final response = await ContractorLeadFollowUpService
+        .contractorInquiryService
+        .deleteFollowUp(id);
+    if (response) {
       refreshList();
     }
   }
@@ -181,12 +191,11 @@ class ContractorLeadFollowupController
             onPressed: () {
               Get.back();
               deleteFollowUpByID(id);
-              Get.snackbar(
-                'Deleted',
-                'Follow Up deleted successfully',
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: ColorRes.error,
-                colorText: ColorRes.white,
+
+              NesticoPeSnackBar.showAwesomeSnackbar(
+                title: 'Deleted',
+                message: 'Follow Up deleted successfully',
+                contentType: ContentType.success,
               );
             },
             child: const Text("Delete"),
@@ -195,6 +204,7 @@ class ContractorLeadFollowupController
       ),
     );
   }
+
   Future<void> refreshFollowUp() async {
     try {
       isRefreshing.value = true;
@@ -203,18 +213,17 @@ class ContractorLeadFollowupController
 
       // Update metrics with new values
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to refresh ',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to refresh ',
+        contentType: ContentType.failure,
       );
     } finally {
       isRefreshing.value = false;
     }
   }
 
-// Open dialog
+  // Open dialog
   void openAddFollowUpDialog() {
     Get.dialog(
       Dialog(
@@ -232,7 +241,10 @@ class ContractorLeadFollowupController
             children: [
               // Header
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 decoration: const BoxDecoration(
                   color: ColorRes.primary,
                   borderRadius: BorderRadius.only(
@@ -244,7 +256,7 @@ class ContractorLeadFollowupController
                   children: [
                     Expanded(
                       child: Text(
-                        "${isEditModel.value?'Edit Follow-up':'Add Follow-up'}",
+                        "${isEditModel.value ? 'Edit Follow-up' : 'Add Follow-up'}",
                         style: const TextStyle(
                           fontSize: AppFontSizes.body,
                           fontWeight: AppFontWeights.semiBold,
@@ -253,11 +265,16 @@ class ContractorLeadFollowupController
                       ),
                     ),
                     InkWell(
-                      onTap: ()  {Get.back();
-                        resetFollowUpForm();},
+                      onTap: () {
+                        Get.back();
+                        resetFollowUpForm();
+                      },
                       borderRadius: BorderRadius.circular(50),
-                      child: const Icon(Icons.close_rounded,
-                          color: ColorRes.white, size: 20),
+                      child: const Icon(
+                        Icons.close_rounded,
+                        color: ColorRes.white,
+                        size: 20,
+                      ),
                     ),
                   ],
                 ),
@@ -265,8 +282,10 @@ class ContractorLeadFollowupController
 
               Flexible(
                 child: SingleChildScrollView(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 16,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -297,21 +316,27 @@ class ContractorLeadFollowupController
                           hintText: "Select availability",
                           prefixIcon: Icons.schedule,
                           items:
-                          [  'Call',
-                            'Meeting',
-                            // 'In Progress',
-                            // 'Converted',
-                            // 'Rejected',
-                            ]
-                              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                              .toList(),
-                          onChanged: (val){
-                           selectedType.value=val;
-                           log("Message ${selectedType.value}");
-                          } ,
+                              [
+                                    'Call',
+                                    'Meeting',
+                                    // 'In Progress',
+                                    // 'Converted',
+                                    // 'Rejected',
+                                  ]
+                                  .map(
+                                    (e) => DropdownMenuItem(
+                                      value: e,
+                                      child: Text(e),
+                                    ),
+                                  )
+                                  .toList(),
+                          onChanged: (val) {
+                            selectedType.value = val;
+                            log("Message ${selectedType.value}");
+                          },
                           darkText: true,
                         );
-                      },),
+                      }),
                       const SizedBox(height: 16),
 
                       // Date & Time
@@ -330,10 +355,9 @@ class ContractorLeadFollowupController
                               },
                               isEnable: false,
                               onTap: () async {
-
                                 DateTime? picked = await showDatePicker(
                                   context: Get.context!,
-                                  initialDate:  DateTime.now(),
+                                  initialDate: DateTime.now(),
                                   firstDate: DateTime(2000),
                                   lastDate: DateTime(2100),
                                   builder: (context, child) {
@@ -356,7 +380,7 @@ class ContractorLeadFollowupController
                                 );
                                 if (picked != null) {
                                   txtDate.text =
-                                  '${picked.year}-${picked.month}-${picked.day}';
+                                      '${picked.year}-${picked.month}-${picked.day}';
                                 }
                               },
                               isPhoneKey: true,
@@ -383,8 +407,16 @@ class ContractorLeadFollowupController
                                 if (picked != null) {
                                   // Convert TimeOfDay to 24-hour formatted string (HH:mm)
                                   final now = DateTime.now();
-                                  final formattedTime = DateFormat('HH:mm').format(
-                                    DateTime(now.year, now.month, now.day, picked.hour, picked.minute),
+                                  final formattedTime = DateFormat(
+                                    'HH:mm',
+                                  ).format(
+                                    DateTime(
+                                      now.year,
+                                      now.month,
+                                      now.day,
+                                      picked.hour,
+                                      picked.minute,
+                                    ),
                                   );
 
                                   txtTime.text = formattedTime;
@@ -392,56 +424,61 @@ class ContractorLeadFollowupController
                                 }
                               },
                             ),
-                          )
-
+                          ),
                         ],
                       ),
                       const SizedBox(height: 16),
 
                       Obx(() {
-                        if(isEditModel.value)
-                          {
-                            return Column(
-                              children: [
-                                Obx(() {
-                                  return NesticoPeDropdownField<String>(
-                                    isRequired: true,
-                                    value: statusFollow.value,
-                                    prefixIcon: Icons.settings_input_composite_outlined,
-                                    items:
-                                    statusFollowList.value
-                                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                                        .toList(),
-                                    onChanged: (val){
-                                      statusFollow.value=val;
-                                      log("Message Status ${statusFollow.value}");
-                                    } ,
-                                    darkText: true,
-                                  );
-                                },),
-                                const SizedBox(height: 16),
-                              ],
-                            );
-                          }
+                        if (isEditModel.value) {
+                          return Column(
+                            children: [
+                              Obx(() {
+                                return NesticoPeDropdownField<String>(
+                                  isRequired: true,
+                                  value: statusFollow.value,
+                                  prefixIcon:
+                                      Icons.settings_input_composite_outlined,
+                                  items:
+                                      statusFollowList.value
+                                          .map(
+                                            (e) => DropdownMenuItem(
+                                              value: e,
+                                              child: Text(e),
+                                            ),
+                                          )
+                                          .toList(),
+                                  onChanged: (val) {
+                                    statusFollow.value = val;
+                                    log("Message Status ${statusFollow.value}");
+                                  },
+                                  darkText: true,
+                                );
+                              }),
+                              const SizedBox(height: 16),
+                            ],
+                          );
+                        }
                         return SizedBox.shrink();
-                      },),
+                      }),
                       // Reminder
-                     Row(
+                      Row(
                         children: [
-
                           const Text(
                             'Reminder',
                             style: TextStyle(
-                                color: ColorRes.textSecondary,
-                                fontSize: AppFontSizes.small,
-                                fontWeight: AppFontWeights.medium),
+                              color: ColorRes.textSecondary,
+                              fontSize: AppFontSizes.small,
+                              fontWeight: AppFontWeights.medium,
+                            ),
                           ),
-                          SizedBox(width: 12,),
-                          Obx(() => CustomSwitch(
-                            onChanged: (val) => reminder.value = val,
-                            value: reminder.value,
-                          ),),
-
+                          SizedBox(width: 12),
+                          Obx(
+                            () => CustomSwitch(
+                              onChanged: (val) => reminder.value = val,
+                              value: reminder.value,
+                            ),
+                          ),
                         ],
                       ),
                       Obx(() {
@@ -475,19 +512,21 @@ class ContractorLeadFollowupController
                       const SizedBox(height: 16),
 
                       // Notes
-                      Text('Notes',
-                          style: TextStyle(
-                              color: ColorRes.textSecondary,
-                              fontSize: AppFontSizes.small,
-                              fontWeight: AppFontWeights.medium)),
+                      Text(
+                        'Notes',
+                        style: TextStyle(
+                          color: ColorRes.textSecondary,
+                          fontSize: AppFontSizes.small,
+                          fontWeight: AppFontWeights.medium,
+                        ),
+                      ),
                       const SizedBox(height: 6),
                       buildTextField(
                         'Notes',
-                       Icons.picture_as_pdf,
-                       txtNotes,
+                        Icons.picture_as_pdf,
+                        txtNotes,
                         maxLines: 4,
                         minLines: 2,
-
                       ),
                       const SizedBox(height: 24),
 
@@ -511,18 +550,18 @@ class ContractorLeadFollowupController
                               ),
                             ),
                             onPressed: () {
-                             if(isEditModel.value)
-                               {
-                                 payloadEditMethod();
-                               }else{
-                               payloadMethod();
-
-                             }
-                             resetFollowUpForm();
-                             Get.back();
-
+                              if (isEditModel.value) {
+                                payloadEditMethod();
+                              } else {
+                                payloadMethod();
+                              }
+                              resetFollowUpForm();
+                              Get.back();
                             },
-                            child: (isEditModel.value)?Text('Update Follow-up'): Text('Add Follow-up'),
+                            child:
+                                (isEditModel.value)
+                                    ? Text('Update Follow-up')
+                                    : Text('Add Follow-up'),
                           ),
                         ],
                       ),
@@ -537,7 +576,6 @@ class ContractorLeadFollowupController
       barrierDismissible: true,
     );
   }
-
 
   void initFollowups(String id) {
     leadId.value = id;
@@ -564,12 +602,20 @@ class ContractorLeadFollowupController
 
   void editFollowUp(String id) {
     // Implement edit functionality
-    Get.snackbar('Edit', 'Edit follow-up: $id');
+    NesticoPeSnackBar.showAwesomeSnackbar(
+      title: 'Edit',
+      message: 'Edit follow-up: $id',
+      contentType: ContentType.success,
+    );
   }
 
   void addNewFollowUp() {
     // Implement add new follow-up
-    Get.snackbar('Add', 'Add new follow-up');
+    NesticoPeSnackBar.showAwesomeSnackbar(
+      title: 'Add',
+      message: 'Add new follow-up',
+      contentType: ContentType.success,
+    );
   }
 
   String formatDateTime(String date, String time) {
@@ -612,8 +658,10 @@ class ContractorLeadFollowupController
     // TODO: implement fetchItems
     final response = await ContractorLeadFollowUpService
         .contractorInquiryService
-        .fetchContractorLeadFollowUp(id: leadId.value,filters: filters.value);
-    log("Follow up section response from api ${response.items.map((e) => e.toMap(),)}");
+        .fetchContractorLeadFollowUp(id: leadId.value, filters: filters.value);
+    log(
+      "Follow up section response from api ${response.items.map((e) => e.toMap())}",
+    );
     return response;
   }
 }

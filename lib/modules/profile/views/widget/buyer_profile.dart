@@ -13,6 +13,7 @@ import '../../../../app/constants/app_font_sizes.dart';
 
 import 'package:get/get.dart';
 
+import '../../../../widgets/messages/snack_bar.dart';
 import '../../../auth/views/delete_account.dart';
 import '../../../reseller/controller/profile/profile_controller.dart';
 import '../../controllers/seller_profile_controller.dart';
@@ -1134,14 +1135,11 @@ class BuyerProfileScreen extends StatelessWidget {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                Get.snackbar(
-                  'Success',
-                  'Logged out successfully',
-                  backgroundColor: ColorRes.success,
-                  colorText: ColorRes.white,
-                  snackPosition: SnackPosition.BOTTOM,
-                  margin: const EdgeInsets.all(16),
-                  borderRadius: 12,
+
+                NesticoPeSnackBar.showAwesomeSnackbar(
+                  title: 'Success',
+                  message: 'Logged out successfully',
+                  contentType: ContentType.success,
                 );
               },
               child: Text(

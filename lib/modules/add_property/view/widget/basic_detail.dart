@@ -17,7 +17,6 @@ class BasicDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Obx(() {
       return Form(
         key: formKey,

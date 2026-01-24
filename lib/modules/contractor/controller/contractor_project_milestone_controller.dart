@@ -308,7 +308,11 @@ class ContractorProjectMilestoneController
       final remainingAmount = calculateRemainingAmount(projectPrice);
 
       if (remainingAmount <= 0) {
-        Get.snackbar('Error', 'No remaining budget available');
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: 'No remaining budget available',
+          contentType: ContentType.failure,
+        );
         isLoading.value = false;
         return;
       }
@@ -366,10 +370,18 @@ class ContractorProjectMilestoneController
         resetForm();
         // loadInitial();
       } else {
-        Get.snackbar('Error', 'Failed to create milestone');
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: 'Failed to create milestone',
+          contentType: ContentType.failure,
+        );
       }
     } catch (e) {
-      Get.snackbar('Error', e.toString());
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: e.toString(),
+        contentType: ContentType.failure,
+      );
     } finally {
       isLoading.value = false;
     }
@@ -387,13 +399,21 @@ class ContractorProjectMilestoneController
 
       // Validate date logic
       if (startDate.value == null) {
-        Get.snackbar('Error', 'Please select start date');
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: 'Please select start date',
+          contentType: ContentType.failure,
+        );
         isLoading.value = false;
         return;
       }
 
       if (endDate.value != null && endDate.value!.isBefore(startDate.value!)) {
-        Get.snackbar('Error', 'End date cannot be before start date');
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: 'End date cannot be before start date',
+          contentType: ContentType.failure,
+        );
         isLoading.value = false;
         return;
       }
@@ -401,7 +421,11 @@ class ContractorProjectMilestoneController
       final remainingAmount = calculateRemainingAmount(projectPrice);
 
       if (remainingAmount <= 0) {
-        Get.snackbar('Error', 'No remaining budget available');
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: 'No remaining budget available',
+          contentType: ContentType.failure,
+        );
         isLoading.value = false;
         return;
       }
@@ -465,10 +489,10 @@ class ContractorProjectMilestoneController
         // loadInitial();
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to update milestone: ${e.toString()}',
-        snackPosition: SnackPosition.BOTTOM,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to update milestone: ${e.toString()}',
+        contentType: ContentType.failure,
       );
     } finally {
       isLoading.value = false;
@@ -503,19 +527,19 @@ class ContractorProjectMilestoneController
         // Call delete service
         await _service.deleteMilestone(milestoneId);
 
-        Get.snackbar(
-          'Success',
-          'Milestone deleted successfully',
-          snackPosition: SnackPosition.BOTTOM,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: 'Milestone deleted successfully',
+          contentType: ContentType.success,
         );
 
         loadInitial();
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to delete milestone: ${e.toString()}',
-        snackPosition: SnackPosition.BOTTOM,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to delete milestone: ${e.toString()}',
+        contentType: ContentType.failure,
       );
     } finally {
       isLoading.value = false;

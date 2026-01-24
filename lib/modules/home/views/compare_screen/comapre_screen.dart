@@ -57,6 +57,7 @@ import '../../../../data/database/secure_storage_service.dart';
 import '../../../../data/network/property/models/property_model.dart';
 import '../../../../app/manager/property/property_pricemanager.dart';
 import '../../../../widgets/New folder/inputs/text_field.dart';
+import '../../../../widgets/messages/snack_bar.dart';
 import '../../../auth/views/login_screen.dart';
 import '../../../propert_detail/view/property_details.dart';
 import '../../../property/controllers/property_controller.dart';
@@ -170,7 +171,6 @@ class PropertyCardForCompare extends StatelessWidget {
   final Items item;
   final VoidCallback? onRemove;
 
-
   const PropertyCardForCompare({super.key, required this.item, this.onRemove});
 
   String _firstImage(Items i) {
@@ -196,10 +196,9 @@ class PropertyCardForCompare extends StatelessWidget {
     return pm.displayPrice;
   }
 
-
   @override
   Widget build(BuildContext context) {
-     final PropertyController controller=Get.find<PropertyController>();
+    final PropertyController controller = Get.find<PropertyController>();
     return GestureDetector(
       onTap: () {
         Get.to(() => PropertyDetailScreen(propertyId: item.id ?? ''));
@@ -323,75 +322,77 @@ class PropertyCardForCompare extends StatelessWidget {
                               ),
                               SizedBox(width: 10),
                               GestureDetector(
-                                onTap:(UserHelper.isGuest)?() => Get.to(() => LoginScreen()): () async {
-                                    try {
-                                      final user =
-                                          await SecureStorage.getUserData();
+                                onTap:
+                                    (UserHelper.isGuest)
+                                        ? () => Get.to(() => LoginScreen())
+                                        : () async {
+                                          try {
+                                            final user =
+                                                await SecureStorage.getUserData();
 
-                                      if (user == null) {
-                                        Get.snackbar(
-                                          'Error',
-                                          'No user data found. Please log in.',
-                                          snackPosition: SnackPosition.BOTTOM,
-                                          backgroundColor: ColorRes.error
-                                              .withOpacity(0.1),
-                                          colorText: ColorRes.error,
-                                        );
-                                        return;
-                                      }
+                                            if (user == null) {
+                                              NesticoPeSnackBar.showAwesomeSnackbar(
+                                                title: 'Error',
+                                                message:
+                                                    'No user data found. Please log in.',
+                                                contentType:
+                                                    ContentType.failure,
+                                              );
+                                              return;
+                                            }
 
-                                      final fullName =
-                                          user.user?.fullName ?? '';
-                                      final firstName =
-                                          user.user?.firstName ?? '';
-                                      final username =
-                                          user.user?.username ?? '';
-                                      final email = user.user?.email ?? '';
-                                      final phone = user.user?.phone ?? '';
+                                            final fullName =
+                                                user.user?.fullName ?? '';
+                                            final firstName =
+                                                user.user?.firstName ?? '';
+                                            final username =
+                                                user.user?.username ?? '';
+                                            final email =
+                                                user.user?.email ?? '';
+                                            final phone =
+                                                user.user?.phone ?? '';
 
-                                      final displayName =
-                                      (firstName.isEmpty
-                                          ? username
-                                          : fullName)
-                                          .trim();
+                                            final displayName =
+                                                (firstName.isEmpty
+                                                        ? username
+                                                        : fullName)
+                                                    .trim();
 
-                                      if (Get.context == null) {
-                                        Get.snackbar(
-                                          'Error',
-                                          'UI not ready to show dialog.',
-                                          snackPosition: SnackPosition.BOTTOM,
-                                          backgroundColor: ColorRes.error
-                                              .withOpacity(0.1),
-                                          colorText: ColorRes.error,
-                                        );
-                                        return;
-                                      }
+                                            if (Get.context == null) {
+                                              NesticoPeSnackBar.showAwesomeSnackbar(
+                                                title: 'Error',
+                                                message:
+                                                    'UI not ready to show dialog.',
+                                                contentType:
+                                                    ContentType.failure,
+                                              );
+                                              return;
+                                            }
 
-                                      addInquiryFromApp(
-                                        displayName,
-                                        email,
-                                        phone, item.id ?? '',
-                                        item.listingType ?? '',
-                                        'property' ?? '',
+                                            addInquiryFromApp(
+                                              displayName,
+                                              email,
+                                              phone,
+                                              item.id ?? '',
+                                              item.listingType ?? '',
+                                              'property' ?? '',
 
-                                          controller,
+                                              controller,
+                                            );
+                                          } catch (e, s) {
+                                            debugPrint(
+                                              '❌ Error in Get Offer button: $e',
+                                            );
+                                            debugPrint('$s');
 
-                                      );
-                                    } catch (e, s) {
-                                      debugPrint(
-                                        '❌ Error in Get Offer button: $e',
-                                      );
-                                      debugPrint('$s');
-                                      Get.snackbar(
-                                        'Error',
-                                        'Something went wrong. Please try again.',
-                                        snackPosition: SnackPosition.BOTTOM,
-                                        backgroundColor: ColorRes.error
-                                            .withOpacity(0.1),
-                                        colorText: ColorRes.error,
-                                      );
-                                    }
-                                },
+                                            NesticoPeSnackBar.showAwesomeSnackbar(
+                                              title: 'Error',
+                                              message:
+                                                  'Something went wrong. Please try again.',
+                                              contentType: ContentType.failure,
+                                            );
+                                          }
+                                        },
                                 child: Container(
                                   padding: EdgeInsets.symmetric(
                                     horizontal: 14,
@@ -440,16 +441,17 @@ class PropertyCardForCompare extends StatelessWidget {
     );
   }
 }
-void addInquiryFromApp(
-    String name,
-    String email,
-    String phone,
-    String propertyID,
-    String propertyType,
-    String type,
 
-    PropertyController controller,
-    ) {
+void addInquiryFromApp(
+  String name,
+  String email,
+  String phone,
+  String propertyID,
+  String propertyType,
+  String type,
+
+  PropertyController controller,
+) {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final _nameController = TextEditingController(text: name);
@@ -526,9 +528,9 @@ void addInquiryFromApp(
                         isRequired: true,
                         validator:
                             (value) =>
-                        value == null || value.trim().isEmpty
-                            ? 'Name is required'
-                            : null,
+                                value == null || value.trim().isEmpty
+                                    ? 'Name is required'
+                                    : null,
                       ),
                       const SizedBox(height: 16),
 
@@ -616,13 +618,13 @@ void addInquiryFromApp(
                           if (_formKey.currentState!.validate()) {
                             // perform your submission logic here
                             final inquiry = {
-
                               "name": name ?? "",
                               "phone": phone ?? "",
                               "email": email ?? "",
                               "agreeToContact": true,
                               "meta": {
-                                "inquiryType": "${propertyType.toLowerCase().replaceAll(" ", "_")}",
+                                "inquiryType":
+                                    "${propertyType.toLowerCase().replaceAll(" ", "_")}",
 
                                 "type": "$type",
                               },
@@ -645,7 +647,8 @@ void addInquiryFromApp(
                               Get.back();
                               await controller.getAllInQuireData(
                                 propertyID ?? '',
-                              );  await controller.getHasInQuireData(
+                              );
+                              await controller.getHasInQuireData(
                                 propertyID ?? '',
                               );
                             } else {
@@ -693,6 +696,7 @@ void addInquiryFromApp(
     barrierDismissible: true,
   );
 }
+
 class CompareScreen extends StatelessWidget {
   const CompareScreen({super.key});
 

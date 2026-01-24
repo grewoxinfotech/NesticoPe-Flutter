@@ -14,6 +14,7 @@ import '../../../../../data/network/property/services/top_seller_profile_service
 import '../../../../../data/network/user/service/user_service.dart';
 import '../../../../../widgets/New folder/inputs/dropdown_field.dart';
 import '../../../../../widgets/New folder/inputs/text_field.dart';
+import '../../../../../widgets/messages/snack_bar.dart';
 import '../../../../add_property/view/create_property.dart';
 import '../../../../profile/model/seller_profile.dart';
 
@@ -53,11 +54,10 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
 
       // Update metrics with new values
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to refresh ',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to refresh ',
+        contentType: ContentType.failure,
       );
     } finally {
       isRefreshing.value = false;

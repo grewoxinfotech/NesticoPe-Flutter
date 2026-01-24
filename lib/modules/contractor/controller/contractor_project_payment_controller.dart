@@ -49,7 +49,12 @@ class ContractorProjectMilestonePaymentController
     'UPI',
   ];
 
-  final List<String> paymentStatus = const ['Pending', 'Success', 'Failed','Refunded'];
+  final List<String> paymentStatus = const [
+    'Pending',
+    'Success',
+    'Failed',
+    'Refunded',
+  ];
 
   /// 🔹 UI State
   final RxBool isLoading = false.obs;
@@ -89,17 +94,18 @@ class ContractorProjectMilestonePaymentController
     editingPaymentId.value = payment.id ?? '';
 
     // Pre-populate form fields
-    selectedMilestoneId.value = payment.milestoneId??'';
-    amountController.text = payment.amount??'0.00';
+    selectedMilestoneId.value = payment.milestoneId ?? '';
+    amountController.text = payment.amount ?? '0.00';
 
     // Capitalize first letter for dropdown match
-    selectedPaymentMode.value = payment.paymentMode?.replaceAll("_", " ").capitalize.toString()??'';
-    selectedPaymentStatus.value = payment.paymentStatus?.replaceAll("_", " ").capitalize.toString()??'';
+    selectedPaymentMode.value =
+        payment.paymentMode?.replaceAll("_", " ").capitalize.toString() ?? '';
+    selectedPaymentStatus.value =
+        payment.paymentStatus?.replaceAll("_", " ").capitalize.toString() ?? '';
 
     paidOn.value = payment.paidOn;
     referenceNoteController.text = payment.referenceNote ?? '';
   }
-
 
   /// 🔹 Save (Create or Update)
   Future<void> saveMilestone() async {
@@ -121,7 +127,11 @@ class ContractorProjectMilestonePaymentController
       milestones.assignAll(response.items);
     } catch (e) {
       log("Failed to load milestones: $e");
-      Get.snackbar("Error", "Failed to load milestones");
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Failed to load milestones",
+        contentType: ContentType.failure,
+      );
     }
   }
 
@@ -136,22 +146,33 @@ class ContractorProjectMilestonePaymentController
       }
 
       if (selectedMilestoneId.value.isEmpty) {
-        Get.snackbar("Validation", "Please select milestone");
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Validation',
+          message: "Please select milestone",
+          contentType: ContentType.failure,
+        );
         isLoading.value = false;
         return;
       }
 
       if (paidOn.value == null) {
-        Get.snackbar("Validation", "Please select payment date");
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Validation',
+          message: "Please select payment date",
+          contentType: ContentType.failure,
+        );
         isLoading.value = false;
         return;
       }
-log("Creating payment for milestone ID: ${selectedPaymentMode.value}");
+      log("Creating payment for milestone ID: ${selectedPaymentMode.value}");
       final payload = {
         "projectId": projectId,
         "milestoneId": selectedMilestoneId.value,
         "amount": amountController.text.trim(),
-        "paymentMode": selectedPaymentMode.value.toLowerCase().replaceAll(" ", "_"),
+        "paymentMode": selectedPaymentMode.value.toLowerCase().replaceAll(
+          " ",
+          "_",
+        ),
         "paymentStatus": selectedPaymentStatus.value.toLowerCase(),
         "paidOn": paidOn.value!.toIso8601String(),
         "referenceNote": referenceNoteController.text.trim(),
@@ -162,29 +183,29 @@ log("Creating payment for milestone ID: ${selectedPaymentMode.value}");
       final success = await service.createMilestonePayment(payload);
 
       if (success) {
-       NesticoPeSnackBar.showAwesomeSnackbar(title: "Success", message: 'Payment added successfully',contentType: ContentType.success);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Success",
+          message: 'Payment added successfully',
+          contentType: ContentType.success,
+        );
         Future.delayed(const Duration(milliseconds: 300), () {
           Get.back(result: true);
         });
         resetForm();
-
       } else {
-        Get.snackbar(
-          "Error",
-          "Failed to add payment",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: "Failed to add payment",
+          contentType: ContentType.failure,
         );
       }
     } catch (e) {
       log("Submit Payment Error: $e");
-      Get.snackbar(
-        "Error",
-        "Something went wrong: $e",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong: $e",
+        contentType: ContentType.failure,
       );
     } finally {
       isLoading.value = false;
@@ -202,29 +223,35 @@ log("Creating payment for milestone ID: ${selectedPaymentMode.value}");
       }
 
       if (selectedMilestoneId.value.isEmpty) {
-        Get.snackbar("Validation", "Please select milestone");
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Validation',
+          message: "Please select milestone",
+          contentType: ContentType.failure,
+        );
         isLoading.value = false;
         return;
       }
 
       if (paidOn.value == null) {
-        Get.snackbar("Validation", "Please select payment date");
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Validation',
+          message: "Please select payment date",
+          contentType: ContentType.failure,
+        );
         isLoading.value = false;
         return;
       }
 
       // Find the selected milestone from the list
       final selectedMilestone = milestones.firstWhereOrNull(
-            (m) => m.id == selectedMilestoneId.value,
+        (m) => m.id == selectedMilestoneId.value,
       );
 
       if (selectedMilestone == null) {
-        Get.snackbar(
-          "Error",
-          "Selected milestone not found",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: "Selected milestone not found",
+          contentType: ContentType.failure,
         );
         isLoading.value = false;
         return;
@@ -264,29 +291,29 @@ log("Creating payment for milestone ID: ${selectedPaymentMode.value}");
       );
 
       if (success) {
-        NesticoPeSnackBar.showAwesomeSnackbar(title: "Success", message: 'Payment updated successfully',contentType: ContentType.success);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Success",
+          message: 'Payment updated successfully',
+          contentType: ContentType.success,
+        );
         Future.delayed(const Duration(milliseconds: 300), () {
           Get.back(result: true);
         });
         resetForm();
-
       } else {
-        Get.snackbar(
-          "Error",
-          "Failed to update payment",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: "Failed to update payment",
+          contentType: ContentType.failure,
         );
       }
     } catch (e) {
       log("Update Payment Error: $e");
-      Get.snackbar(
-        "Error",
-        "Something went wrong: $e",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong: $e",
+        contentType: ContentType.failure,
       );
     } finally {
       isLoading.value = false;
@@ -323,19 +350,26 @@ log("Creating payment for milestone ID: ${selectedPaymentMode.value}");
       final success = await service.deleteMilestonePayment(paymentId);
 
       if (success) {
-        NesticoPeSnackBar.showAwesomeSnackbar(title: "Success", message: 'Payment deleted successfully',contentType: ContentType.success);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Success",
+          message: 'Payment deleted successfully',
+          contentType: ContentType.success,
+        );
         loadInitial();
       } else {
-        NesticoPeSnackBar.showAwesomeSnackbar(title: "Error", message: 'Failed to delete payment',contentType: ContentType.failure);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Error",
+          message: 'Failed to delete payment',
+          contentType: ContentType.failure,
+        );
       }
     } catch (e) {
       log("Delete Payment Error: $e");
-      Get.snackbar(
-        "Error",
-        "Something went wrong: $e",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong: $e",
+        contentType: ContentType.failure,
       );
     } finally {
       isLoading.value = false;

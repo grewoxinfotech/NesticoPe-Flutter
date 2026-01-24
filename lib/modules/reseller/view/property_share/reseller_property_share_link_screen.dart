@@ -6,6 +6,7 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../data/network/property_share/property_share_service.dart';
+import '../../../../widgets/messages/snack_bar.dart';
 import '../../controller/property_share/reseller_property_share_controller.dart';
 
 class ResellerPropertyShareLinkScreen extends StatelessWidget {
@@ -317,7 +318,11 @@ class ResellerPropertyShareLinkScreen extends StatelessWidget {
     required String shareType,
   }) async {
     try {
-      Get.snackbar("Sharing", "Generating share link for $platform...");
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Sharing',
+        message: 'Generating share link for $platform...',
+        contentType: ContentType.help,
+      );
 
       // 🔹 Call createPropertyShare method that handles share creation & redirection
       await controller.createPropertyShare(
@@ -328,7 +333,11 @@ class ResellerPropertyShareLinkScreen extends StatelessWidget {
       );
     } catch (e) {
       debugPrint("⚠️ redirectToShare Error: $e");
-      Get.snackbar("Error", "Something went wrong while sharing: $e");
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong while sharing: $e",
+        contentType: ContentType.failure,
+      );
     }
   }
 

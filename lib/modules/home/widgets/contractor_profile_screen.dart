@@ -7,6 +7,7 @@ import 'package:housing_flutter_app/modules/contractor/view/widget/contractor_in
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../data/network/contractor/model/contractor_profile_model/contractor_profile_model.dart';
 import '../../../data/network/contractor/model/contractot_service_model/contractor_service_model.dart';
+import '../../../widgets/messages/snack_bar.dart';
 import '../controllers/contractor_profile_service_controller/contractor_profile_service_controller.dart';
 import 'contractor_add_inuiry_screen.dart';
 
@@ -301,10 +302,11 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
                             if (contractorServiceController
                                 .selectedItems
                                 .isEmpty) {
-                              Get.snackbar(
-                                "No Service Selected",
-                                "Please select at least one service to continue",
-                                snackPosition: SnackPosition.BOTTOM,
+                              NesticoPeSnackBar.showAwesomeSnackbar(
+                                title: 'No Service Selected',
+                                message:
+                                    "Please select at least one service to continue",
+                                contentType: ContentType.failure,
                               );
                               return;
                             }

@@ -145,7 +145,7 @@ class StepReview extends GetView<ProjectWizardController> {
       final p = controller.project.value;
       return Form(
         key: formKey,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
+        // autovalidateMode: AutovalidateMode.onUserInteraction,
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -317,7 +317,7 @@ class StepReview extends GetView<ProjectWizardController> {
                           child: _buildCompactInfo(
                             Icons.pin_drop,
                             'ZIP',
-                            p?.zipCode??'',
+                            p?.zipCode ?? '',
                           ),
                         ),
                         const SizedBox(width: 12),

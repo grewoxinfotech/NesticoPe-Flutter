@@ -37,6 +37,7 @@ import '../../../../widgets/button/button.dart';
 import '../../../../widgets/button/property_action_button.dart';
 import '../../../../widgets/map/address_and_map_detail.dart';
 import '../../../../widgets/map/near_by_location_map_section.dart';
+import '../../../../widgets/messages/snack_bar.dart';
 import '../../../auth/views/login_screen.dart';
 import '../../../home/widgets/unified_comparison_floating_button.dart';
 import '../../../performance_score/views/performance_score_screen.dart';
@@ -127,7 +128,8 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       final projectId = widget.projectItem?.id ?? widget.projectId ?? '';
       await projectController.getAllInQuireData(
         widget.projectItem?.id ?? widget.projectId ?? '',
-      );  await projectController.getHasInQuireData(
+      );
+      await projectController.getHasInQuireData(
         widget.projectItem?.id ?? widget.projectId ?? '',
       );
 
@@ -137,10 +139,10 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       if (fetchedProject == null) {
         // Show error and go back
         if (mounted) {
-          Get.snackbar(
-            'Error',
-            'Project not found',
-            snackPosition: SnackPosition.BOTTOM,
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Error',
+            message: 'Project not found',
+            contentType: ContentType.failure,
           );
           Get.back();
         }
@@ -182,8 +184,10 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(ProjectController());
-    AppLogger.structured('🔍 Building ProjectDetailsScreen for project ID:' ,project?.toJson());
-
+    AppLogger.structured(
+      '🔍 Building ProjectDetailsScreen for project ID:',
+      project?.toJson(),
+    );
 
     return Scaffold(
       backgroundColor: ColorRes.white.withOpacity(0.95),
@@ -248,8 +252,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-
-
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 14,
@@ -262,12 +264,15 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                 Text( 'Limited Time Offer!',style: TextStyle(
-                                   fontSize: AppFontSizes.medium,
-                                   fontWeight: AppFontWeights.semiBold,
+                                Text(
+                                  'Limited Time Offer!',
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.medium,
+                                    fontWeight: AppFontWeights.semiBold,
 
-                                   color: ColorRes.textPrimary,
-                                 ),),
+                                    color: ColorRes.textPrimary,
+                                  ),
+                                ),
                                 const SizedBox(height: 8),
                                 // Offer Text
                                 const Text(
@@ -291,7 +296,9 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                         vertical: 6,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: ColorRes.success.withOpacity(0.1),
+                                        color: ColorRes.success.withOpacity(
+                                          0.1,
+                                        ),
                                         borderRadius: BorderRadius.circular(8),
                                         border: Border.all(
                                           color: ColorRes.success,
@@ -312,7 +319,8 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                             style: TextStyle(
                                               color: ColorRes.success,
                                               fontSize: AppFontSizes.small,
-                                              fontWeight: AppFontWeights.semiBold,
+                                              fontWeight:
+                                                  AppFontWeights.semiBold,
                                             ),
                                           ),
                                         ],
@@ -323,73 +331,78 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                       title: 'Get Offer',
                                       backgroundColor: ColorRes.error,
                                       height: 36,
-                                      onTap:(UserHelper.isGuest)?()=>Get.to(()=>LoginScreen()) :() async {
-                                        try {
-                                          final user =
-                                          await SecureStorage.getUserData();
+                                      onTap:
+                                          (UserHelper.isGuest)
+                                              ? () =>
+                                                  Get.to(() => LoginScreen())
+                                              : () async {
+                                                try {
+                                                  final user =
+                                                      await SecureStorage.getUserData();
 
-                                          if (user == null) {
-                                            Get.snackbar(
-                                              'Error',
-                                              'No user data found. Please log in.',
-                                              snackPosition: SnackPosition.BOTTOM,
-                                              backgroundColor: ColorRes.error
-                                                  .withOpacity(0.1),
-                                              colorText: ColorRes.error,
-                                            );
-                                            return;
-                                          }
+                                                  if (user == null) {
+                                                    NesticoPeSnackBar.showAwesomeSnackbar(
+                                                      title: 'Error',
+                                                      message:
+                                                          'No user data found. Please log in.',
+                                                      contentType:
+                                                          ContentType.failure,
+                                                    );
+                                                    return;
+                                                  }
 
-                                          final fullName =
-                                              user.user?.fullName ?? '';
-                                          final firstName =
-                                              user.user?.firstName ?? '';
-                                          final username =
-                                              user.user?.username ?? '';
-                                          final email = user.user?.email ?? '';
-                                          final phone = user.user?.phone ?? '';
+                                                  final fullName =
+                                                      user.user?.fullName ?? '';
+                                                  final firstName =
+                                                      user.user?.firstName ??
+                                                      '';
+                                                  final username =
+                                                      user.user?.username ?? '';
+                                                  final email =
+                                                      user.user?.email ?? '';
+                                                  final phone =
+                                                      user.user?.phone ?? '';
 
-                                          final displayName =
-                                          (firstName.isEmpty
-                                              ? username
-                                              : fullName)
-                                              .trim();
+                                                  final displayName =
+                                                      (firstName.isEmpty
+                                                              ? username
+                                                              : fullName)
+                                                          .trim();
 
-                                          if (Get.context == null) {
-                                            Get.snackbar(
-                                              'Error',
-                                              'UI not ready to show dialog.',
-                                              snackPosition: SnackPosition.BOTTOM,
-                                              backgroundColor: ColorRes.error
-                                                  .withOpacity(0.1),
-                                              colorText: ColorRes.error,
-                                            );
-                                            return;
-                                          }
+                                                  if (Get.context == null) {
+                                                    NesticoPeSnackBar.showAwesomeSnackbar(
+                                                      title: 'Error',
+                                                      message:
+                                                          'UI not ready to show dialog.',
+                                                      contentType:
+                                                          ContentType.failure,
+                                                    );
+                                                    return;
+                                                  }
 
-                                          addInquiryFromProject(
-                                              displayName,
-                                              email,
-                                              phone,
-                                              project?.id ?? '',
-                                            'sell',
-                                              "project"
-                                          );
-                                        } catch (e, s) {
-                                          debugPrint(
-                                            '❌ Error in Get Offer button: $e',
-                                          );
-                                          debugPrint('$s');
-                                          Get.snackbar(
-                                            'Error',
-                                            'Something went wrong. Please try again.',
-                                            snackPosition: SnackPosition.BOTTOM,
-                                            backgroundColor: ColorRes.error
-                                                .withOpacity(0.1),
-                                            colorText: ColorRes.error,
-                                          );
-                                        }
-                                      },
+                                                  addInquiryFromProject(
+                                                    displayName,
+                                                    email,
+                                                    phone,
+                                                    project?.id ?? '',
+                                                    'sell',
+                                                    "project",
+                                                  );
+                                                } catch (e, s) {
+                                                  debugPrint(
+                                                    '❌ Error in Get Offer button: $e',
+                                                  );
+                                                  debugPrint('$s');
+
+                                                  NesticoPeSnackBar.showAwesomeSnackbar(
+                                                    title: 'Error',
+                                                    message:
+                                                        'Something went wrong. Please try again.',
+                                                    contentType:
+                                                        ContentType.failure,
+                                                  );
+                                                }
+                                              },
                                     );
                                   }
                                 }),
@@ -511,7 +524,8 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                 ),
                                 child: ContactOwnerBottom(
                                   // Check if inquiry already submitted
-                                  projectConfiguration: project?.configuration??[],
+                                  projectConfiguration:
+                                      project?.configuration ?? [],
                                   isProject: 'project',
                                   inQuireSubmitted:
                                       controller.hasSubmittedInquiry.value,
@@ -541,7 +555,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                     date,
                                     time,
                                     roomInfo,
-                                      selectedVariant
+                                    selectedVariant,
                                   ) async {
                                     final inquiry = {
                                       "name": name ?? "",
@@ -562,13 +576,13 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                             (inquiryListing?.isNotEmpty ??
                                                 false))
                                           "inquiryType":
-                                          inquiryListing.toLowerCase(),
+                                              inquiryListing.toLowerCase(),
                                         if (date != null)
                                           "visitDate":
-                                          '${date.day}-${date.month}-${date.year}',
+                                              '${date.day}-${date.month}-${date.year}',
                                         if (time != null)
                                           "visitTime":
-                                          '${time.hour.toString().padLeft(2, '0')}:'
+                                              '${time.hour.toString().padLeft(2, '0')}:'
                                               '${time.minute.toString().padLeft(2, '0')}',
                                       },
                                     };
@@ -593,7 +607,8 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                       Get.back();
                                       await controller.getAllInQuireData(
                                         project?.id ?? '',
-                                      );   await controller.getHasInQuireData(
+                                      );
+                                      await controller.getHasInQuireData(
                                         project?.id ?? '',
                                       );
                                     } else {
@@ -623,14 +638,15 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       }),
     );
   }
+
   void addInquiryFromProject(
-      String name,
-      String email,
-      String phone,
-      String propertyID,
-      String propertyType,
-      String type,
-      ) {
+    String name,
+    String email,
+    String phone,
+    String propertyID,
+    String propertyType,
+    String type,
+  ) {
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     final controller = Get.find<ProjectController>();
 
@@ -708,9 +724,9 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                           isRequired: true,
                           validator:
                               (value) =>
-                          value == null || value.trim().isEmpty
-                              ? 'Name is required'
-                              : null,
+                                  value == null || value.trim().isEmpty
+                                      ? 'Name is required'
+                                      : null,
                         ),
                         const SizedBox(height: 16),
 
@@ -825,7 +841,8 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                 Get.back();
                                 await controller.getAllInQuireData(
                                   widget.projectItem?.id ?? '',
-                                );  await controller.getHasInQuireData(
+                                );
+                                await controller.getHasInQuireData(
                                   widget?.projectItem?.id ?? '',
                                 );
                               } else {
@@ -873,6 +890,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       barrierDismissible: true,
     );
   }
+
   Widget _buildAppBar(BuildContext context, ProjectItem project) {
     return SliverAppBar(
       expandedHeight: 280,
@@ -1570,8 +1588,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                     ),
                   ],
                 ),
-                if (
-                    variant.models.isNotEmpty &&
+                if (variant.models.isNotEmpty &&
                     variant.models.first.toString().trim().isNotEmpty)
                   RichText(
                     text: TextSpan(
@@ -1583,20 +1600,20 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                             fontWeight: AppFontWeights.semiBold,
                             color: ColorRes.white,
                           ),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              Get.to(
+                          recognizer:
+                              TapGestureRecognizer()
+                                ..onTap = () {
+                                  Get.to(
                                     () => ModelRenderScreen(
-                                  modelUrl: variant.models.first,
-                                  iosModelUrl: variant.models.first,
-                                ),
-                              );
-                            },
+                                      modelUrl: variant.models.first,
+                                      iosModelUrl: variant.models.first,
+                                    ),
+                                  );
+                                },
                         ),
                       ],
                     ),
                   ),
-
               ],
             ),
           ),
@@ -1746,7 +1763,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       ),
     );
   }
-
 
   Widget _buildAmenities(ProjectItem project) {
     return Container(

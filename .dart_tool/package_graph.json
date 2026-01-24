@@ -2189,15 +2189,6 @@
         "sqflite_common",
         "sqflite_platform_interface"
       ]
-    },
-    {
-      "name": "fluttertoast",
-      "version": "9.0.0",
-      "dependencies": [
-        "flutter",
-        "flutter_web_plugins",
-        "web"
-      ]
     }
   ],
   "configVersion": 1

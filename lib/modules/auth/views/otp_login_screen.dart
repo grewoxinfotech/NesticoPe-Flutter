@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/widgets/New%20folder/inputs/text_field.dart';
 import 'package:housing_flutter_app/widgets/input/custom_text_field.dart';
 
 class OtpLoginScreen extends StatefulWidget {
@@ -87,23 +88,24 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Error'),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Error'),
+            content: Text(message),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(_otpSent ? 'Verify OTP' : 'Login with OTP'),
@@ -113,7 +115,10 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
-          child: _otpSent ? _buildOtpVerificationForm(theme) : _buildPhoneForm(theme),
+          child:
+              _otpSent
+                  ? _buildOtpVerificationForm(theme)
+                  : _buildPhoneForm(theme),
         ),
       ),
     );
@@ -136,18 +141,18 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
             ),
           ),
           const SizedBox(height: 24),
-          
+
           // Title
           Text(
             'Enter your phone number',
             style: theme.textTheme.headlineSmall?.copyWith(
               // fontWeight: FontWeight.bold,
-              fontWeight: AppFontWeights.extraBold
+              fontWeight: AppFontWeights.extraBold,
             ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
-          
+
           // Subtitle
           Text(
             'We will send you a verification code',
@@ -159,7 +164,7 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
           const SizedBox(height: 32),
 
           // Phone Field
-          CustomTextField(
+          NesticoPeTextField(
             controller: _phoneController,
             hintText: 'Phone Number',
             keyboardType: TextInputType.phone,
@@ -195,14 +200,10 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
           Container(
             height: 200,
             alignment: Alignment.center,
-            child: Icon(
-              Icons.sms,
-              size: 100,
-              color: theme.colorScheme.primary,
-            ),
+            child: Icon(Icons.sms, size: 100, color: theme.colorScheme.primary),
           ),
           const SizedBox(height: 24),
-          
+
           // Title
           Text(
             'Verify OTP',
@@ -213,7 +214,7 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
-          
+
           // Subtitle
           Text(
             'Enter the verification code sent to ${_phoneController.text}',
@@ -225,7 +226,7 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
           const SizedBox(height: 32),
 
           // OTP Field
-          CustomTextField(
+          NesticoPeTextField(
             controller: _otpController,
             hintText: 'Enter OTP',
             keyboardType: TextInputType.number,
@@ -238,7 +239,7 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
             },
           ),
           const SizedBox(height: 8),
-          
+
           // Resend OTP
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -264,7 +265,7 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
           //   onPressed: _isLoading ? null : _verifyOtp,
           //   isLoading: _isLoading,
           // ),
-          
+
           // Change Number
           TextButton(
             onPressed: () {
@@ -274,13 +275,11 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
             },
             child: Text(
               'Change Phone Number',
-              style: TextStyle(
-                color: theme.colorScheme.primary,
-              ),
+              style: TextStyle(color: theme.colorScheme.primary),
             ),
           ),
         ],
       ),
     );
   }
-} 
+}
