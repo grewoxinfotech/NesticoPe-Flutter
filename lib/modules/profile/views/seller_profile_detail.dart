@@ -13,6 +13,7 @@ import '../../../../app/constants/app_font_sizes.dart';
 import 'package:get/get.dart';
 
 import '../../../widgets/input/city_selection_widget.dart';
+import '../../../widgets/messages/snack_bar.dart';
 import '../../auth/views/delete_account.dart';
 import '../../home/views/home_screen/home_screen.dart';
 import '../../reseller/controller/profile/profile_controller.dart';
@@ -620,8 +621,8 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
           CitySelectionWidget(
             isEditing: controller.isEditing.value,
             controller: controller.positionController,
-            iconColor:ColorRes.leadGreyColor.shade600 ,
-isRequiredTitle: false,
+            iconColor: ColorRes.leadGreyColor.shade600,
+            isRequiredTitle: false,
             onCitySelected: (selectedCity) {
               print("✅ Selected city: ${selectedCity.description}");
               controller.positionController.text =
@@ -1072,7 +1073,13 @@ isRequiredTitle: false,
 
           const SizedBox(height: 12),
 
-          RequestDeleteAccount(),
+          _buildDetailRow(
+            'STATUS',
+            (controller.profileData.value?.user?.isVerified ?? false)
+                ? 'Verified'
+                : 'Unverified',
+          ),
+
         ],
       ),
     );
@@ -1298,14 +1305,11 @@ isRequiredTitle: false,
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                Get.snackbar(
-                  'Success',
-                  'Logged out successfully',
-                  backgroundColor: ColorRes.success,
-                  colorText: ColorRes.white,
-                  snackPosition: SnackPosition.BOTTOM,
-                  margin: const EdgeInsets.all(16),
-                  borderRadius: 12,
+
+                NesticoPeSnackBar.showAwesomeSnackbar(
+                  title: 'Success',
+                  message: 'Logged out successfully',
+                  contentType: ContentType.success,
                 );
               },
               child: Text(

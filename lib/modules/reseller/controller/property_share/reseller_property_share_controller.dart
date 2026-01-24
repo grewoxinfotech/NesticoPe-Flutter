@@ -13,6 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../app/utils/helper_function/contact_helper.dart';
 import '../../../../data/network/interest_form/interest_form_model.dart';
 import '../../../../data/network/interest_form/interest_form_service.dart';
+import '../../../../widgets/messages/snack_bar.dart';
 
 // class ReSellerPropertyShareController extends GetxController {
 //   final InterestFormService _interestFormService = InterestFormService();
@@ -254,7 +255,11 @@ class ReSellerPropertyShareController extends GetxController {
       final resellerId = user?.user?.id ?? '';
 
       if (resellerId.isEmpty) {
-        Get.snackbar("Error", "User not found. Please login again.");
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: "User not found. Please login again.",
+          contentType: ContentType.failure,
+        );
         return;
       }
 
@@ -269,7 +274,11 @@ class ReSellerPropertyShareController extends GetxController {
       );
 
       if (formId == null) {
-        Get.snackbar("Error", "Failed to create interest form.");
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: "Failed to create interest form.",
+          contentType: ContentType.failure,
+        );
         return;
       }
 
@@ -294,16 +303,26 @@ class ReSellerPropertyShareController extends GetxController {
             resellerId: resellerId,
           ),
         );
-        Get.snackbar("Success", "Interest Form Created Successfully!");
+
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: "Interest Form Created Successfully!",
+          contentType: ContentType.success,
+        );
       } else {
-        Get.snackbar(
-          "Error",
-          "Form created, but failed to generate share link.",
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: "Form created, but failed to generate share link.",
+          contentType: ContentType.failure,
         );
       }
     } catch (e) {
       debugPrint("⚠️ Error During Form Creation: $e");
-      Get.snackbar("Error", "Something went wrong while creating the form.");
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong while creating the form.",
+        contentType: ContentType.failure,
+      );
     } finally {
       isLoading.value = false;
     }
@@ -438,16 +457,16 @@ class ReSellerPropertyShareController extends GetxController {
             link: data.shareUrl ?? '',
           );
 
-          Get.snackbar(
-            "Success",
-            "Property shared on $platform successfully!",
-            snackPosition: SnackPosition.BOTTOM,
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Success',
+            message: "Property shared on $platform successfully!",
+            contentType: ContentType.success,
           );
         } else {
-          Get.snackbar(
-            "Error",
-            "Failed to create property share. Please try again.",
-            snackPosition: SnackPosition.BOTTOM,
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Error',
+            message: "Failed to create property share. Please try again.",
+            contentType: ContentType.failure,
           );
         }
       }
@@ -538,7 +557,11 @@ class ReSellerPropertyShareController extends GetxController {
       // );
     } catch (e) {
       debugPrint("⚠️ Error handling property share: $e");
-      Get.snackbar("Error", "Something went wrong while sharing property.");
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong while sharing property.",
+        contentType: ContentType.failure,
+      );
     } finally {
       isLoading.value = false;
     }
@@ -770,7 +793,11 @@ class ReSellerPropertyShareController extends GetxController {
         break;
 
       default:
-        Get.snackbar("Error", "Unsupported share platform: $platform");
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: "Unsupported share platform: $platform",
+          contentType: ContentType.failure,
+        );
     }
   }
 }

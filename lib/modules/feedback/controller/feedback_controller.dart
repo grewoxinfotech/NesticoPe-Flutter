@@ -39,6 +39,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../data/network/feedback/service/feedback_service.dart';
+import '../../../widgets/messages/snack_bar.dart';
 
 class FeedbackController extends GetxController {
   final FeedbackService _feedbackService = FeedbackService();
@@ -60,10 +61,10 @@ class FeedbackController extends GetxController {
 
       final type = inquiry ?? inquiryTypeController.text.trim();
       if (type.isEmpty) {
-        Get.snackbar(
-          "Validation",
-          "Please select or enter an inquiry type.",
-          snackPosition: SnackPosition.BOTTOM,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Validation',
+          message: 'Please select or enter an inquiry type.',
+          contentType: ContentType.failure,
         );
         return;
       }

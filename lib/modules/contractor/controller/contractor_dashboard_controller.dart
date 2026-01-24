@@ -7,6 +7,7 @@ import 'package:housing_flutter_app/data/network/contractor/model/dashboard/cont
 import '../../../app/constants/color_res.dart';
 import '../../../data/database/secure_storage_service.dart';
 import '../../../data/network/contractor/service/dashboard/contractor_dashboard_service.dart';
+import '../../../widgets/messages/snack_bar.dart';
 
 class ContractorDashboardController extends GetxController {
   Rxn<ContractorInsightsModel> contractorInsights =
@@ -20,16 +21,18 @@ class ContractorDashboardController extends GetxController {
     // TODO: implement onInit
     super.onInit();
     getCreatedYearOfUser();
-    getContractorDashboard(leadsYear: selectedGraphYear.value,);
+    getContractorDashboard(leadsYear: selectedGraphYear.value);
   }
+
   // Add these observable variables
   final RxInt selectedGraphYear = DateTime.now().year.obs;
 
-// Method to get last 3 years
+  // Method to get last 3 years
   List<int> getLastThreeYears() {
     final currentYear = DateTime.now().year;
     return [currentYear, currentYear - 1, currentYear - 2];
   }
+
   Future<void> getCreatedYearOfUser() async {
     final user = await SecureStorage.getUserData();
     final createdDate = user?.user?.createdAt ?? '';
@@ -49,7 +52,6 @@ class ContractorDashboardController extends GetxController {
 
   Future<Rxn<ContractorInsightsModel>> getContractorDashboard({
     int? leadsYear,
-
   }) async {
     isLoading.value = true;
     final user = await SecureStorage.getUserData();
@@ -62,10 +64,9 @@ class ContractorDashboardController extends GetxController {
 
     final data = await ContractorDashboardService.contractorDashboardService
         .getContractorDashboard(
-      userId,
-      leadsYear: leadsYear ?? selectedGraphYear.value,
-
-    );
+          userId,
+          leadsYear: leadsYear ?? selectedGraphYear.value,
+        );
 
     contractorInsights.value = ContractorInsightsModel.fromJson(data);
     print("✅ Contractor dashboard fetched successfully");
@@ -73,7 +74,7 @@ class ContractorDashboardController extends GetxController {
     return contractorInsights;
   }
 
-// Method to update leads year
+  // Method to update leads year
   void updateLeadsYear(int year) {
     selectedGraphYear.value = year;
     getContractorDashboard(leadsYear: year);
@@ -87,16 +88,16 @@ class ContractorDashboardController extends GetxController {
 
       // Update metrics with new values
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to refresh dashboard',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to refresh dashboard',
+        contentType: ContentType.failure,
       );
     } finally {
       isRefreshing.value = false;
     }
   }
+
   //
   // Future<Rxn<ContractorInsightsModel>> getContractorDashboard() async {
   //   isLoading.value = true;

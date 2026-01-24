@@ -11,6 +11,7 @@ import '../../../app/constants/color_res.dart';
 import '../../../data/database/secure_storage_service.dart';
 import '../../../data/network/auth/model/user_model.dart';
 import '../../../data/network/contractor/model/contractot_service_model/contractor_inquiry_model.dart';
+import '../../../widgets/messages/snack_bar.dart';
 
 class ContractorInquiryController
     extends PaginatedController<ContractorInquiryItem> {
@@ -53,11 +54,10 @@ class ContractorInquiryController
 
       // Update metrics with new values
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to refresh ',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to refresh ',
+        contentType: ContentType.failure,
       );
     } finally {
       isRefreshing.value = false;
@@ -100,24 +100,18 @@ class ContractorInquiryController
         .updateStatusOfInquiry(id, formattedStatus);
 
     if (response) {
-      Get.snackbar(
-        'Status Updated',
-        colorText: ColorRes.white,
-        backgroundColor: ColorRes.green,
-        'Status changed to $newStatus',
-        snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 2),
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Status Updated',
+        message: 'Status changed to $newStatus',
+        contentType: ContentType.success,
       );
       refreshList();
       getFilterData();
     } else {
-      Get.snackbar(
-        'Status Update Failed',
-        colorText: ColorRes.white,
-        backgroundColor: ColorRes.error,
-        'Could not change status to $newStatus',
-        snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 2),
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Status Update Failed',
+        message: 'Could not change status to $newStatus',
+        contentType: ContentType.failure,
       );
     }
   }
@@ -167,7 +161,6 @@ class ContractorInquiryController
         .convertInquiryIntoLead(payload);
     if (response) {
       refreshList();
-
     }
   }
 
@@ -207,12 +200,11 @@ class ContractorInquiryController
             onPressed: () {
               Get.back();
               deletedContractorInquiry(id);
-              Get.snackbar(
-                'Deleted',
-                'Inquiry deleted successfully',
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: ColorRes.error,
-                colorText: ColorRes.white,
+
+              NesticoPeSnackBar.showAwesomeSnackbar(
+                title: 'Deleted',
+                message: 'Inquiry deleted successfully',
+                contentType: ContentType.success,
               );
             },
             child: const Text("Delete"),
@@ -228,12 +220,10 @@ class ContractorInquiryController
     List<String> convertedServices,
   ) {
     if (services.isEmpty) {
-      Get.snackbar(
-        'Error',
-        'No services available to convert',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: ColorRes.error,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'No services available to convert',
+        contentType: ContentType.failure,
       );
       return;
     }
@@ -246,12 +236,10 @@ class ContractorInquiryController
 
     // ✅ CASE 0: All converted
     if (unconvertedServices.isEmpty) {
-      Get.snackbar(
-        'Info',
-        'All services are already converted',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: ColorRes.warning,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Info',
+        message: 'All services are already converted',
+        contentType: ContentType.help,
       );
       return;
     }
@@ -260,12 +248,10 @@ class ContractorInquiryController
     if (unconvertedServices.length == 1) {
       final service = unconvertedServices.first;
       convertIntoLead(item, service.serviceId, service.serviceName);
-      Get.snackbar(
-        'Success',
-        'Converted "${service.serviceName}" to lead successfully',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: ColorRes.success,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Success',
+        message: 'Converted "${service.serviceName}" to lead successfully',
+        contentType: ContentType.success,
       );
       return;
     }
@@ -321,10 +307,10 @@ class ContractorInquiryController
             style: ElevatedButton.styleFrom(backgroundColor: ColorRes.green),
             onPressed: () async {
               if (selectedServiceId.value.isEmpty) {
-                Get.snackbar(
-                  'Error',
-                  'Please select one service',
-                  snackPosition: SnackPosition.BOTTOM,
+                NesticoPeSnackBar.showAwesomeSnackbar(
+                  title: 'Error',
+                  message: 'Please select one service',
+                  contentType: ContentType.failure,
                 );
                 return;
               }
@@ -336,12 +322,11 @@ class ContractorInquiryController
                 selectedServiceName.value,
               );
 
-              Get.snackbar(
-                'Success',
-                'Converted "${selectedServiceName.value}" to lead successfully',
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: ColorRes.success,
-                colorText: ColorRes.white,
+              NesticoPeSnackBar.showAwesomeSnackbar(
+                title: 'Success',
+                message:
+                    'Converted "${selectedServiceName.value}" to lead successfully',
+                contentType: ContentType.success,
               );
             },
             child: const Text("Convert"),
@@ -472,41 +457,34 @@ class ContractorInquiryController
         },
         "meta": {"notes": 'Generated from inquiry for: $note'},
         "price": quotationPrice,
-        "status": status.toLowerCase().replaceAll(" ","_"),
-
+        "status": status.toLowerCase().replaceAll(" ", "_"),
       };
 
       final response = await ContractorInquiryService.contractorInquiryService
           .convertInquiryQuotation(payload);
 
       if (response) {
-
         refreshList();
-        Get.snackbar(
-          'Success',
-          'Quotation submitted successfully',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: ColorRes.success,
-          colorText: ColorRes.white,
+
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: 'Quotation submitted successfully',
+          contentType: ContentType.success,
         );
         refreshList();
         getFilterData();
       } else {
-        Get.snackbar(
-          'Error',
-          'Failed to submit quotation',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: ColorRes.error,
-          colorText: ColorRes.white,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: 'Failed to submit quotation',
+          contentType: ContentType.failure,
         );
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'An error occurred: $e',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: ColorRes.error,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'An error occurred: $e',
+        contentType: ContentType.failure,
       );
     }
   }

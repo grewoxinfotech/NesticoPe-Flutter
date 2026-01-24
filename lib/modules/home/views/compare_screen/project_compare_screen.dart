@@ -13,6 +13,7 @@ import '../../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../../app/widgets/snack_bar/custom_snackbar.dart';
 import '../../../../data/database/secure_storage_service.dart';
 import '../../../../widgets/New folder/inputs/text_field.dart';
+import '../../../../widgets/messages/snack_bar.dart';
 import '../../../auth/views/login_screen.dart';
 import '../../../builder/controller/project_controller.dart';
 import '../../../property_rating/view/widget/read_more_or_less.dart';
@@ -23,7 +24,6 @@ class ProjectCompareScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: ColorRes.leadGreyColor[50],
       appBar: AppBar(
@@ -195,7 +195,6 @@ class ProjectCardForCompare extends StatelessWidget {
     return i.getPriceRange();
   }
 
-
   @override
   Widget build(BuildContext context) {
     // final projectController = Get.find<ProjectController>();
@@ -317,74 +316,71 @@ class ProjectCardForCompare extends StatelessWidget {
                             ),
                             SizedBox(width: 10),
                             GestureDetector(
-                              onTap:(UserHelper.isGuest)?()=>Get.to(()=>LoginScreen()) :() async {
-                                try {
-                                  final user =
-                                  await SecureStorage.getUserData();
+                              onTap:
+                                  (UserHelper.isGuest)
+                                      ? () => Get.to(() => LoginScreen())
+                                      : () async {
+                                        try {
+                                          final user =
+                                              await SecureStorage.getUserData();
 
-                                  if (user == null) {
-                                    Get.snackbar(
-                                      'Error',
-                                      'No user data found. Please log in.',
-                                      snackPosition: SnackPosition.BOTTOM,
-                                      backgroundColor: ColorRes.error
-                                          .withOpacity(0.1),
-                                      colorText: ColorRes.error,
-                                    );
-                                    return;
-                                  }
+                                          if (user == null) {
+                                            NesticoPeSnackBar.showAwesomeSnackbar(
+                                              title: 'Error',
+                                              message:
+                                                  'No user data found. Please log in.',
+                                              contentType: ContentType.failure,
+                                            );
+                                            return;
+                                          }
 
-                                  final fullName =
-                                      user.user?.fullName ?? '';
-                                  final firstName =
-                                      user.user?.firstName ?? '';
-                                  final username =
-                                      user.user?.username ?? '';
-                                  final email = user.user?.email ?? '';
-                                  final phone = user.user?.phone ?? '';
+                                          final fullName =
+                                              user.user?.fullName ?? '';
+                                          final firstName =
+                                              user.user?.firstName ?? '';
+                                          final username =
+                                              user.user?.username ?? '';
+                                          final email = user.user?.email ?? '';
+                                          final phone = user.user?.phone ?? '';
 
-                                  final displayName =
-                                  (firstName.isEmpty
-                                      ? username
-                                      : fullName)
-                                      .trim();
+                                          final displayName =
+                                              (firstName.isEmpty
+                                                      ? username
+                                                      : fullName)
+                                                  .trim();
 
-                                  if (Get.context == null) {
-                                    Get.snackbar(
-                                      'Error',
-                                      'UI not ready to show dialog.',
-                                      snackPosition: SnackPosition.BOTTOM,
-                                      backgroundColor: ColorRes.error
-                                          .withOpacity(0.1),
-                                      colorText: ColorRes.error,
-                                    );
-                                    return;
-                                  }
+                                          if (Get.context == null) {
+                                            NesticoPeSnackBar.showAwesomeSnackbar(
+                                              title: 'Error',
+                                              message:
+                                                  'UI not ready to show dialog.',
+                                              contentType: ContentType.failure,
+                                            );
+                                            return;
+                                          }
 
-                                  addInquiryFromProject(
-                                      displayName,
-                                      email,
-                                      phone,
-                                  item.id,
-                                      'sell',
-                                      "project",
+                                          addInquiryFromProject(
+                                            displayName,
+                                            email,
+                                            phone,
+                                            item.id,
+                                            'sell',
+                                            "project",
+                                          );
+                                        } catch (e, s) {
+                                          debugPrint(
+                                            '❌ Error in Get Offer button: $e',
+                                          );
+                                          debugPrint('$s');
 
-                                  );
-                                } catch (e, s) {
-                                  debugPrint(
-                                    '❌ Error in Get Offer button: $e',
-                                  );
-                                  debugPrint('$s');
-                                  Get.snackbar(
-                                    'Error',
-                                    'Something went wrong. Please try again.',
-                                    snackPosition: SnackPosition.BOTTOM,
-                                    backgroundColor: ColorRes.error
-                                        .withOpacity(0.1),
-                                    colorText: ColorRes.error,
-                                  );
-                                }
-                              },
+                                          NesticoPeSnackBar.showAwesomeSnackbar(
+                                            title: 'Error',
+                                            message:
+                                                'Something went wrong. Please try again.',
+                                            contentType: ContentType.failure,
+                                          );
+                                        }
+                                      },
                               child: Container(
                                 padding: EdgeInsets.symmetric(
                                   horizontal: 14,
@@ -430,16 +426,16 @@ class ProjectCardForCompare extends StatelessWidget {
         ),
       ),
     );
-
   }
+
   void addInquiryFromProject(
-      String name,
-      String email,
-      String phone,
-      String propertyID,
-      String propertyType,
-      String type,
-      ) {
+    String name,
+    String email,
+    String phone,
+    String propertyID,
+    String propertyType,
+    String type,
+  ) {
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     final controller = Get.find<ProjectController>();
 
@@ -517,9 +513,9 @@ class ProjectCardForCompare extends StatelessWidget {
                           isRequired: true,
                           validator:
                               (value) =>
-                          value == null || value.trim().isEmpty
-                              ? 'Name is required'
-                              : null,
+                                  value == null || value.trim().isEmpty
+                                      ? 'Name is required'
+                                      : null,
                         ),
                         const SizedBox(height: 16),
 
@@ -634,7 +630,8 @@ class ProjectCardForCompare extends StatelessWidget {
                                 Get.back();
                                 await controller.getAllInQuireData(
                                   item.id ?? '',
-                                );  await controller.getHasInQuireData(
+                                );
+                                await controller.getHasInQuireData(
                                   item.id ?? '',
                                 );
                               } else {
@@ -698,7 +695,6 @@ class ProjectCardForCompare extends StatelessWidget {
     }
   }
 }
-
 
 class _ProjectComparisonTable extends StatelessWidget {
   final ProjectItem a;

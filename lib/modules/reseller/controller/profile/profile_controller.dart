@@ -14,6 +14,7 @@ import '../../../../app/constants/color_res.dart';
 import '../../../../data/network/getProfile/model/getProfile_model.dart';
 import '../../../../data/network/profile/reseller_profile/model/reseller_update_profile_model.dart';
 import '../../../../data/network/user/service/user_service.dart';
+import '../../../../widgets/messages/snack_bar.dart';
 import '../../model/user/user_model.dart';
 
 class ProfileController extends GetxController {
@@ -21,7 +22,7 @@ class ProfileController extends GetxController {
   final RxBool isEditing = false.obs;
   final RxBool isSaving = false.obs;
   final RxBool isUploadingImage = false.obs;
-  final RxBool isLoadingIMage=false.obs;
+  final RxBool isLoadingIMage = false.obs;
   UserService _userService = UserService();
   final Rxn<ResellerProfile> resellerProfile = Rxn<ResellerProfile>();
   final Rx<UserProfile> profile =
@@ -99,24 +100,21 @@ class ProfileController extends GetxController {
       return User();
     }
   }
+
   Future<void> refreshReseller() async {
     try {
-
       await getUserProfileData();
 
       await Future.delayed(const Duration(seconds: 1));
 
       // Update metrics with new values
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to refresh ',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to refresh ',
+        contentType: ContentType.failure,
       );
-    } finally {
-
-    }
+    } finally {}
   }
 
   Future<void> getUserProfileData() async {
@@ -186,7 +184,7 @@ class ProfileController extends GetxController {
 
   Future<void> pickImageFromGallery() async {
     try {
-      isLoadingIMage.value=true;
+      isLoadingIMage.value = true;
       final XFile? image = await _picker.pickImage(
         source: ImageSource.gallery,
         maxWidth: 1024,
@@ -197,36 +195,26 @@ class ProfileController extends GetxController {
       if (image != null) {
         selectedImage.value = File(image.path);
 
-        Get.snackbar(
-          'Success',
-          'Image selected successfully',
-          backgroundColor: Colors.green.withOpacity(0.8),
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
-          duration: const Duration(seconds: 2),
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: 'Image selected successfully',
+          contentType: ContentType.success,
         );
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to pick image: ${e.toString()}',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to pick image: ${e.toString()}',
+        contentType: ContentType.failure,
       );
-    }
-    finally{
-      isLoadingIMage.value=false;
+    } finally {
+      isLoadingIMage.value = false;
     }
   }
 
   Future<void> pickImageFromCamera() async {
     try {
-      isLoadingIMage.value=true;
+      isLoadingIMage.value = true;
       final XFile? image = await _picker.pickImage(
         source: ImageSource.camera,
         maxWidth: 1024,
@@ -236,30 +224,21 @@ class ProfileController extends GetxController {
 
       if (image != null) {
         selectedImage.value = File(image.path);
-        Get.snackbar(
-          'Success',
-          'Image captured successfully',
-          backgroundColor: Colors.green.withOpacity(0.8),
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
-          duration: const Duration(seconds: 2),
+
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: 'Image captured successfully',
+          contentType: ContentType.success,
         );
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to capture image: ${e.toString()}',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to capture image: ${e.toString()}',
+        contentType: ContentType.failure,
       );
-    }
-    finally{
-      isLoadingIMage.value=false;
+    } finally {
+      isLoadingIMage.value = false;
     }
   }
 
@@ -363,15 +342,11 @@ class ProfileController extends GetxController {
   void removeProfileImage() {
     selectedImage.value = null;
     profile.value = profile.value.copyWith(avatarUrl: '');
-    Get.snackbar(
-      'Success',
-      'Profile photo removed',
-      backgroundColor: Colors.orange.withOpacity(0.8),
-      colorText: ColorRes.white,
-      snackPosition: SnackPosition.BOTTOM,
-      margin: const EdgeInsets.all(16),
-      borderRadius: 12,
-      duration: const Duration(seconds: 2),
+
+    NesticoPeSnackBar.showAwesomeSnackbar(
+      title: 'Success',
+      message: 'Profile photo removed',
+      contentType: ContentType.success,
     );
   }
 
@@ -383,22 +358,16 @@ class ProfileController extends GetxController {
 
       return imageFile.path;
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to upload image: ${e.toString()}',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to upload image: ${e.toString()}',
+        contentType: ContentType.failure,
       );
       return null;
     } finally {
       isUploadingImage.value = false;
     }
   }
-
-
 
   Future<void> saveProfile() async {
     if (!formKey.currentState!.validate()) return;
@@ -410,7 +379,11 @@ class ProfileController extends GetxController {
       image = await _uploadImage(selectedImage.value!);
       if (image == null) {
         // Upload failed, stop here
-        Get.snackbar('Error', 'Failed to upload image');
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: 'Failed to upload image',
+          contentType: ContentType.failure,
+        );
         isSaving.value = false;
         return;
       }
@@ -462,7 +435,8 @@ class ProfileController extends GetxController {
           response['otpRequired'] == true ||
           response['otpRequired'] == 'true' ||
           (response['success'] == false &&
-              response['message']?.toString().toLowerCase().contains('otp') == true);
+              response['message']?.toString().toLowerCase().contains('otp') ==
+                  true);
 
       if (isOtpRequired) {
         print('🔵 OTP Required detected!');
@@ -510,7 +484,6 @@ class ProfileController extends GetxController {
         return;
       }
 
-
       if (response['success'] == true) {
         if (profileData.value?.user != null) {
           profileData.value = UserModel(
@@ -545,38 +518,30 @@ class ProfileController extends GetxController {
         selectedImage.value = null;
         isEditing.value = false;
 
-        Get.snackbar(
-          'Success',
-          response['message']?.toString() ?? 'Profile updated successfully',
-          backgroundColor: Colors.green,
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message:
+              response['message']?.toString() ?? 'Profile updated successfully',
+          contentType: ContentType.success,
         );
       } else {
         // API returned error
-        Get.snackbar(
-          'Error',
-          response['message']?.toString() ?? 'Failed to update profile',
-          backgroundColor: Colors.red,
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
+
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message:
+              response['message']?.toString() ?? 'Failed to update profile',
+          contentType: ContentType.failure,
         );
       }
     } catch (e, stackTrace) {
       print('❌ Error saving profile: $e');
       print('❌ Stack trace: $stackTrace');
-      Get.snackbar(
-        'Error',
-        'An error occurred while updating profile: ${e.toString()}',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'An error occurred while updating profile: ${e.toString()}',
+        contentType: ContentType.failure,
       );
     } finally {
       isSaving.value = false;
@@ -585,12 +550,10 @@ class ProfileController extends GetxController {
 
   Future<void> verifyPhoneUpdateOtp(String otp) async {
     if (pendingUserData == null) {
-      Get.snackbar(
-        'Error',
-        'No pending update found',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
-        snackPosition: SnackPosition.BOTTOM,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'No pending update found',
+        contentType: ContentType.failure,
       );
       return;
     }
@@ -610,7 +573,7 @@ class ProfileController extends GetxController {
       final response = await ProfileUpdate.profileUpdate
           .verifyOtpForResellerNumber(
             otp,
-        userDataMap!,
+            userDataMap!,
             profileData.value?.user?.id ?? '',
           );
 
@@ -656,36 +619,25 @@ class ProfileController extends GetxController {
         // Close dialog
         Get.back();
 
-        Get.snackbar(
-          'Success',
-          response['message'] ?? 'Phone number updated successfully',
-          backgroundColor: Colors.green,
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: response['message'] ?? 'Phone number updated successfully',
+          contentType: ContentType.success,
         );
       } else {
-        Get.snackbar(
-          'Error',
-          response['message'] ?? 'Invalid OTP',
-          backgroundColor: Colors.red,
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: response['message'] ?? 'Invalid OTP',
+          contentType: ContentType.failure,
         );
       }
     } catch (e) {
       print('Error verifying OTP: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to verify OTP',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to verify OTP',
+        contentType: ContentType.failure,
       );
     } finally {
       isVerifyingOtp.value = false;
@@ -694,11 +646,10 @@ class ProfileController extends GetxController {
 
   Future<void> resendOtpForPhoneUpdate() async {
     if (pendingPhone.value.isEmpty) {
-      Get.snackbar(
-        'Error',
-        'No pending phone number',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'No pending phone number',
+        contentType: ContentType.failure,
       );
       return;
     }
@@ -717,37 +668,25 @@ class ProfileController extends GetxController {
         _startResendTimer();
         isVerifyButtonEnabled.value = true;
 
-        Get.snackbar(
-          'Success',
-          response['message'] ?? 'OTP sent successfully',
-          backgroundColor: Colors.green,
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
-          duration: const Duration(seconds: 2),
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: response['message'] ?? 'OTP sent successfully',
+          contentType: ContentType.success,
         );
       } else {
-        Get.snackbar(
-          'Error',
-          response['message'] ?? 'Failed to resend OTP',
-          backgroundColor: Colors.red,
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: response['message'] ?? 'Failed to resend OTP',
+          contentType: ContentType.failure,
         );
       }
     } catch (e) {
       print('Error resending OTP: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to resend OTP',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to resend OTP',
+        contentType: ContentType.failure,
       );
     } finally {
       isResendingOtp.value = false;
@@ -892,12 +831,10 @@ class ProfileController extends GetxController {
                         if (otpController.text.length == 6) {
                           verifyPhoneUpdateOtp(otpController.text);
                         } else {
-                          Get.snackbar(
-                            'Error',
-                            'Please enter 6-digit OTP',
-                            backgroundColor: Colors.red,
-                            colorText: ColorRes.white,
-                            snackPosition: SnackPosition.BOTTOM,
+                          NesticoPeSnackBar.showAwesomeSnackbar(
+                            title: 'Error',
+                            message: 'Please enter 6-digit OTP',
+                            contentType: ContentType.failure,
                           );
                         }
                       },

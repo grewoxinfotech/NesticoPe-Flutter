@@ -98,6 +98,7 @@ import '../../../data/network/seller/seller_overview_service.dart';
 import '../../../data/network/seller_dashboard/model/seller_dashboardmodel.dart';
 import '../../../data/network/seller_dashboard/service/seller_dashboard_service.dart';
 import '../../../data/network/user/service/user_service.dart';
+import '../../../widgets/messages/snack_bar.dart';
 import '../model/overview_model.dart';
 
 class SellerOverviewController extends GetxController {
@@ -127,20 +128,18 @@ class SellerOverviewController extends GetxController {
     try {
       await getFetchSellerApi(selectedGraphYear.value);
 
-      Get.snackbar(
-        'Success',
-        'Dashboard refreshed successfully',
-        backgroundColor: ColorRes.primary,
-        colorText: ColorRes.white,
-        duration: const Duration(seconds: 2),
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Success',
+        message: 'Dashboard refreshed successfully',
+        contentType: ContentType.success,
       );
     } catch (e) {
       log('refreshSellerDashboard error: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to refresh dashboard',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to refresh dashboard',
+        contentType: ContentType.failure,
       );
     }
   }
@@ -188,17 +187,20 @@ class SellerOverviewController extends GetxController {
       // Fetch dashboard data with the correct year parameter
       log('Calling API...');
       final data = await SellerDashBoardService.sellerDashBoardService
-          .getSellerDashBoard(
-        userId,
-        leadsYear: leadsYear,
+          .getSellerDashBoard(userId, leadsYear: leadsYear);
+      log(
+        'API response received: ${data != null ? "Data exists" : "Data is null"}',
       );
-      log('API response received: ${data != null ? "Data exists" : "Data is null"}');
 
       // Update observable data
       if (data != null) {
         overviewData.value = SellerInsightsModel.fromJson(data);
-        log("Seller Dashboard - Total Properties: ${overviewData.value?.data?.propertyMetrics?.totalProperties}");
-        log('overviewData.value is now: ${overviewData.value != null ? "NOT NULL" : "NULL"}');
+        log(
+          "Seller Dashboard - Total Properties: ${overviewData.value?.data?.propertyMetrics?.totalProperties}",
+        );
+        log(
+          'overviewData.value is now: ${overviewData.value != null ? "NOT NULL" : "NULL"}',
+        );
       } else {
         overviewData.value = null;
         log('No data received from API');
@@ -208,17 +210,18 @@ class SellerOverviewController extends GetxController {
       log('Stack trace: $stackTrace');
       overviewData.value = null;
 
-      Get.snackbar(
-        'Error',
-        'Failed to load dashboard data: $e',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to load dashboard data: $e',
+        contentType: ContentType.failure,
       );
     } finally {
       // Always set loading to false
       isLoading.value = false;
       log('isLoading set to false');
-      log('Final state - isLoading: ${isLoading.value}, overviewData: ${overviewData.value != null ? "HAS DATA" : "NULL"}');
+      log(
+        'Final state - isLoading: ${isLoading.value}, overviewData: ${overviewData.value != null ? "HAS DATA" : "NULL"}',
+      );
     }
   }
 
@@ -231,7 +234,6 @@ class SellerOverviewController extends GetxController {
     }
     await getFetchSellerApi(year);
     selectedGraphYear.value = year;
-
   }
 
   @override

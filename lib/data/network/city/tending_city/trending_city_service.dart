@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/data/network/city/tending_city/trending_city_model.dart';
 import 'package:http/http.dart' as http;
 import '../../../../app/constants/api_constants.dart';
+import '../../../../widgets/messages/snack_bar.dart';
 
 class TrendingCityService extends GetxService {
   // Base URL for the trending cities API
@@ -28,13 +29,19 @@ class TrendingCityService extends GetxService {
 
         trendingCities.value = cityResponse.data;
       } else {
-        Get.snackbar(
-          'Error',
-          'Failed to fetch trending cities: ${response.statusCode}',
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Error",
+          message: 'Failed to fetch trending cities: ${response.statusCode}',
+          contentType: ContentType.failure,
         );
       }
     } catch (e) {
-      Get.snackbar('Error', 'Something went wrong: $e');
+      print('Error fetching trending cities: $e');
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Error",
+        message: 'Something went wrong: $e',
+        contentType: ContentType.failure,
+      );
     } finally {
       isLoading.value = false;
     }

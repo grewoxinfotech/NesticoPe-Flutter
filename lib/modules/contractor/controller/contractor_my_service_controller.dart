@@ -1,5 +1,3 @@
-
-
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -11,11 +9,14 @@ import 'package:housing_flutter_app/data/network/contractor/model/contractot_ser
 import '../../../app/care/pagination/controller/pagination_controller.dart';
 import '../../../app/constants/color_res.dart';
 import '../../../data/network/contractor/model/contractot_service_model/contractor_category_model.dart';
+import '../../../widgets/messages/snack_bar.dart';
 
-class ContractorMyServiceController extends PaginatedController<ContractorServiceItem> {
+class ContractorMyServiceController
+    extends PaginatedController<ContractorServiceItem> {
   // ---------------- FORM VARIABLES ----------------
 
-  Rxn<ContractorServiceCategoryResponse> contractorServiceCategory=Rxn<ContractorServiceCategoryResponse>();
+  Rxn<ContractorServiceCategoryResponse> contractorServiceCategory =
+      Rxn<ContractorServiceCategoryResponse>();
   // Text Fields
   final serviceNameController = TextEditingController();
   final descriptionController = TextEditingController();
@@ -39,7 +40,7 @@ class ContractorMyServiceController extends PaginatedController<ContractorServic
 
   // Chips (multi-select)
   final acceptedPaymentModes = <String>[].obs;
-  final allPaymentModes = ["UPI", "Bank Transfer", "Cash", "Cheque",];
+  final allPaymentModes = ["UPI", "Bank Transfer", "Cash", "Cheque"];
 
   // Filters for pagination (optional)
   RxMap<String, String> filters = <String, String>{}.obs;
@@ -62,11 +63,8 @@ class ContractorMyServiceController extends PaginatedController<ContractorServic
       final user = await SecureStorage.getUserData();
       final userId = user?.user?.id ?? '';
 
-      final response = await ContractorMyService.contractorMyService.fetchContractorService(
-        page: page,
-        filters: filters,
-        id: userId,
-      );
+      final response = await ContractorMyService.contractorMyService
+          .fetchContractorService(page: page, filters: filters, id: userId);
       for (final item in response.items) {
         final id = item.category ?? "";
         if (id.isNotEmpty && !categoryNames.containsKey(id)) {
@@ -80,6 +78,7 @@ class ContractorMyServiceController extends PaginatedController<ContractorServic
       rethrow;
     }
   }
+
   Future<void> refreshService() async {
     try {
       isRefreshing.value = true;
@@ -88,19 +87,20 @@ class ContractorMyServiceController extends PaginatedController<ContractorServic
 
       // Update metrics with new values
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to refresh ',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to refresh ',
+        contentType: ContentType.failure,
       );
     } finally {
       isRefreshing.value = false;
     }
   }
+
   Future<String> getTheContractorByID(String id) async {
     if (categoryNames.containsKey(id)) return categoryNames[id]!;
-    final data = await ContractorMyService.contractorMyService.getContractorByIDCategory(fields: id);
+    final data = await ContractorMyService.contractorMyService
+        .getContractorByIDCategory(fields: id);
     categoryNames[id] = data.name;
     return data.name;
   }
@@ -114,7 +114,10 @@ class ContractorMyServiceController extends PaginatedController<ContractorServic
         items.refresh();
       }
 
-      await ContractorMyService.contractorMyService.changeActiveToInActive(item.id??'', value);
+      await ContractorMyService.contractorMyService.changeActiveToInActive(
+        item.id ?? '',
+        value,
+      );
       print("Service ${item.serviceName} status changed to: $value");
     } catch (e) {
       print("Error toggling service: $e");
@@ -125,25 +128,27 @@ class ContractorMyServiceController extends PaginatedController<ContractorServic
       }
     }
   }
+
   Future<void> deleteService(String id) async {
     try {
-      final success = await ContractorMyService.contractorMyService.deletedService(id);
+      final success = await ContractorMyService.contractorMyService
+          .deletedService(id);
       if (success) {
         items.removeWhere((r) => r.id == id);
         items.refresh();
       }
-
     } catch (e) {
       print("❌ Error deleting review: $e");
-
     }
   }
   //--------------------------SERVICE CATEGORY-------------
 
-  Future<void> getCategoryService()
-  async {
-    final data= await ContractorMyService.contractorMyService.getContractorCategory();
-    contractorServiceCategory.value=ContractorServiceCategoryResponse.fromMap(data);
+  Future<void> getCategoryService() async {
+    final data =
+        await ContractorMyService.contractorMyService.getContractorCategory();
+    contractorServiceCategory.value = ContractorServiceCategoryResponse.fromMap(
+      data,
+    );
   }
 
   // ---------------- CREATE SERVICE ----------------
@@ -163,45 +168,65 @@ class ContractorMyServiceController extends PaginatedController<ContractorServic
         isActive: true,
 
         meta: ContractorMetaData(
-
           priceModel: selectedPriceModel.value.toLowerCase(),
-          minPriceRange: int.tryParse(minRangeController.text.trim())??0,
-          maxPriceRange: int.tryParse(maxRangeController.text.trim())??0,
-          workAvailability: selectedAvailability.value.toLowerCase().split(" ").join("_"),
+          minPriceRange: int.tryParse(minRangeController.text.trim()) ?? 0,
+          maxPriceRange: int.tryParse(maxRangeController.text.trim()) ?? 0,
+          workAvailability: selectedAvailability.value
+              .toLowerCase()
+              .split(" ")
+              .join("_"),
           provideMaterials: provideMaterials.value,
           brandsUsed: brandController.text.trim(),
 
           equipmentProvided: equipmentProvided.value,
           insuranceAvailable: insuranceAvailable.value,
-          acceptedPaymentModes: acceptedPaymentModes.map((element) => element.toLowerCase().split(" ").join("_"),).toList(), // List<String>
-          advanceRequiredPercentage: int.tryParse(advanceController.text.trim()) ?? 0,
-          billingType: selectedBillingType.value.toLowerCase().split(" ").join("_"),
+          acceptedPaymentModes:
+              acceptedPaymentModes
+                  .map((element) => element.toLowerCase().split(" ").join("_"))
+                  .toList(), // List<String>
+          advanceRequiredPercentage:
+              int.tryParse(advanceController.text.trim()) ?? 0,
+          billingType: selectedBillingType.value
+              .toLowerCase()
+              .split(" ")
+              .join("_"),
         ),
         createdAt: DateTime.now().toIso8601String(),
         updatedAt: DateTime.now().toIso8601String(),
       );
 
-// Convert to payload map for API
+      // Convert to payload map for API
       final payload = contractorServiceItem.toMap();
-
 
       print("Create service payload: $payload");
 
-      final response=await ContractorMyService.contractorMyService.createService(payload);
+      final response = await ContractorMyService.contractorMyService
+          .createService(payload);
       print("Create Service Response: $response");
 
-     if(response)
-       {
-         Get.back(); // Close form
-         Get.snackbar("Success", "Service created successfully!");
-         refreshList();
-       }
-     else{
-       Get.snackbar("Error", "Failed to create service");
-     }
+      if (response) {
+        Get.back(); // Close form
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: 'Service created successfully!',
+          contentType: ContentType.success,
+        );
+        refreshList();
+      } else {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: 'Failed to create service',
+          contentType: ContentType.failure,
+        );
+      }
     } catch (e) {
       print("Error creating service: $e");
-      Get.snackbar("Error", "Failed to create service");
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to create service',
+        contentType: ContentType.failure,
+      );
     } finally {
       isCreating.value = false;
     }
@@ -212,82 +237,114 @@ class ContractorMyServiceController extends PaginatedController<ContractorServic
     if (serviceNameController.text.isEmpty ||
         descriptionController.text.isEmpty ||
         priceController.text.isEmpty) {
-      Get.snackbar("Error", "Please fill all required fields");
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Error",
+        message: "Please fill all required fields",
+        contentType: ContentType.failure,
+      );
       return false;
     }
     return true;
   }
+
   //---------------------------------------Up
   // ---------------- UPDATE SERVICE ----------------
-// Add this observable to track which service is being edited
+  // Add this observable to track which service is being edited
   Rxn<ContractorServiceItem> editingService = Rxn<ContractorServiceItem>();
 
-// Method to populate form with existing service data
+  // Method to populate form with existing service data
   void populateFormForEdit(ContractorServiceItem service) {
     editingService.value = service;
 
     serviceNameController.text = service.serviceName ?? '';
     descriptionController.text = service.description ?? '';
 
-    minRangeController.text = service.meta?.minPriceRange.toString()??'';
-    maxRangeController.text = service.meta?.maxPriceRange.toString()??'';
+    minRangeController.text = service.meta?.minPriceRange.toString() ?? '';
+    maxRangeController.text = service.meta?.maxPriceRange.toString() ?? '';
     brandController.text = service.meta?.brandsUsed ?? '';
-    advanceController.text = service.meta?.advanceRequiredPercentage?.toString() ?? '0';
+    advanceController.text =
+        service.meta?.advanceRequiredPercentage?.toString() ?? '0';
 
     selectedCategory.value = service.category ?? "Renovation & Remodeling";
-    selectedPriceModel.value = _formatPriceModel(service.meta?.priceModel ?? 'fixed');
-    selectedAvailability.value = _formatAvailability(service.meta?.workAvailability ?? 'immediate');
-    selectedBillingType.value = _formatBillingType(service.meta?.billingType ?? 'gst');
+    selectedPriceModel.value = _formatPriceModel(
+      service.meta?.priceModel ?? 'fixed',
+    );
+    selectedAvailability.value = _formatAvailability(
+      service.meta?.workAvailability ?? 'immediate',
+    );
+    selectedBillingType.value = _formatBillingType(
+      service.meta?.billingType ?? 'gst',
+    );
 
     provideMaterials.value = service.meta?.provideMaterials ?? false;
     equipmentProvided.value = service.meta?.equipmentProvided ?? false;
     insuranceAvailable.value = service.meta?.insuranceAvailable ?? false;
 
-    acceptedPaymentModes.value = service.meta?.acceptedPaymentModes
-        ?.map((e) => _formatPaymentMode(e))
-        .toList() ?? [];
+    acceptedPaymentModes.value =
+        service.meta?.acceptedPaymentModes
+            ?.map((e) => _formatPaymentMode(e))
+            .toList() ??
+        [];
   }
 
-// Helper methods to format values from API back to UI format
+  // Helper methods to format values from API back to UI format
   String _formatPriceModel(String value) {
     switch (value.toLowerCase()) {
-      case 'fixed': return 'Fixed';
-      case 'hourly': return 'Hourly';
-      case 'per_sq_ft': return 'Per Sq Ft';
-      case 'custom': return 'Custom';
-      default: return 'Fixed';
+      case 'fixed':
+        return 'Fixed';
+      case 'hourly':
+        return 'Hourly';
+      case 'per_sq_ft':
+        return 'Per Sq Ft';
+      case 'custom':
+        return 'Custom';
+      default:
+        return 'Fixed';
     }
   }
 
   String _formatAvailability(String value) {
     switch (value.toLowerCase()) {
-      case 'immediate': return 'Immediate';
-      case 'in_3_days': return 'In 3 Days';
-      case 'in_1_week': return 'In 1 Week';
-      case 'custom': return 'Custom';
-      default: return 'Immediate';
+      case 'immediate':
+        return 'Immediate';
+      case 'in_3_days':
+        return 'In 3 Days';
+      case 'in_1_week':
+        return 'In 1 Week';
+      case 'custom':
+        return 'Custom';
+      default:
+        return 'Immediate';
     }
   }
 
   String _formatBillingType(String value) {
     switch (value.toLowerCase()) {
-      case 'gst': return 'GST';
-      case 'non_gst': return 'Non GST';
-      default: return 'GST';
+      case 'gst':
+        return 'GST';
+      case 'non_gst':
+        return 'Non GST';
+      default:
+        return 'GST';
     }
   }
 
   String _formatPaymentMode(String value) {
     switch (value.toLowerCase()) {
-      case 'upi': return 'UPI';
-      case 'bank_transfer': return 'Bank Transfer';
-      case 'cash': return 'Cash';
-      case 'cheque': return 'Cheque';
-      default: return value;
+      case 'upi':
+        return 'UPI';
+      case 'bank_transfer':
+        return 'Bank Transfer';
+      case 'cash':
+        return 'Cash';
+      case 'cheque':
+        return 'Cheque';
+      default:
+        return value;
     }
   }
 
-// Method to clear form
+  // Method to clear form
   void clearForm() {
     editingService.value = null;
     serviceNameController.clear();
@@ -310,13 +367,17 @@ class ContractorMyServiceController extends PaginatedController<ContractorServic
     acceptedPaymentModes.clear();
   }
 
-// Update service method
+  // Update service method
   Future<void> updateService() async {
     try {
       isCreating.value = true;
 
       if (editingService.value == null) {
-        Get.snackbar("Error", "No service selected for update");
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Error",
+          message: "No service selected for update",
+          contentType: ContentType.failure,
+        );
         return;
       }
 
@@ -332,18 +393,26 @@ class ContractorMyServiceController extends PaginatedController<ContractorServic
         isActive: editingService.value!.isActive, // Preserve active status
         meta: ContractorMetaData(
           priceModel: selectedPriceModel.value.toLowerCase(),
-          minPriceRange: int.tryParse(minRangeController.text.trim())??0,
-          maxPriceRange: int.tryParse(maxRangeController.text.trim())??0,
-          workAvailability: selectedAvailability.value.toLowerCase().split(" ").join("_"),
+          minPriceRange: int.tryParse(minRangeController.text.trim()) ?? 0,
+          maxPriceRange: int.tryParse(maxRangeController.text.trim()) ?? 0,
+          workAvailability: selectedAvailability.value
+              .toLowerCase()
+              .split(" ")
+              .join("_"),
           provideMaterials: provideMaterials.value,
           brandsUsed: brandController.text.trim(),
           equipmentProvided: equipmentProvided.value,
           insuranceAvailable: insuranceAvailable.value,
-          acceptedPaymentModes: acceptedPaymentModes
-              .map((element) => element.toLowerCase().split(" ").join("_"))
-              .toList(),
-          advanceRequiredPercentage: int.tryParse(advanceController.text.trim()) ?? 0,
-          billingType: selectedBillingType.value.toLowerCase().split(" ").join("_"),
+          acceptedPaymentModes:
+              acceptedPaymentModes
+                  .map((element) => element.toLowerCase().split(" ").join("_"))
+                  .toList(),
+          advanceRequiredPercentage:
+              int.tryParse(advanceController.text.trim()) ?? 0,
+          billingType: selectedBillingType.value
+              .toLowerCase()
+              .split(" ")
+              .join("_"),
         ),
         createdAt: editingService.value!.createdAt, // Preserve creation date
         updatedAt: DateTime.now().toIso8601String(),
@@ -353,25 +422,34 @@ class ContractorMyServiceController extends PaginatedController<ContractorServic
 
       print("Update service payload: $payload");
 
-      final response = await ContractorMyService.contractorMyService.updateContractorService(
-
-        payload,
-        editingService.value!.id ?? '',
-      );
+      final response = await ContractorMyService.contractorMyService
+          .updateContractorService(payload, editingService.value!.id ?? '');
 
       print("Update Service Response: $response");
 
       if (response) {
         Get.back(); // Close form
-        Get.snackbar("Success", "Service updated successfully!");
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Success",
+          message: "Service updated successfully!",
+          contentType: ContentType.success,
+        );
         clearForm();
         refreshList();
       } else {
-        Get.snackbar("Error", "Failed to update service");
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Error",
+          message: "Failed to update service",
+          contentType: ContentType.failure,
+        );
       }
     } catch (e) {
       print("Error updating service: $e");
-      Get.snackbar("Error", "Failed to update service");
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Error",
+        message: "Failed to update service",
+        contentType: ContentType.failure,
+      );
     } finally {
       isCreating.value = false;
     }

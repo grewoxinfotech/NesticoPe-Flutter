@@ -14,13 +14,15 @@ import 'package:intl/intl.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/color_res.dart';
+import '../../../widgets/messages/snack_bar.dart';
 import '../../reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 
-class ContractorProjectController extends PaginatedController<ContractorProjectItem>{
+class ContractorProjectController
+    extends PaginatedController<ContractorProjectItem> {
   RxMap<String, String> filters = <String, String>{}.obs;
   final expandedCards = <String, bool>{}.obs;
-  RxString changeStatus=''.obs;
-  final txtTime=TextEditingController();
+  RxString changeStatus = ''.obs;
+  final txtTime = TextEditingController();
   final txtStartDate = TextEditingController();
   final txtEndDate = TextEditingController();
   DateTime startDate = DateTime.now();
@@ -33,6 +35,7 @@ class ContractorProjectController extends PaginatedController<ContractorProjectI
     print("toggle Card $id");
     expandedCards.refresh();
   }
+
   Future<void> fetchContractorProjects() async {
     try {
       isLoading.value = true;
@@ -65,6 +68,7 @@ class ContractorProjectController extends PaginatedController<ContractorProjectI
     statusChange.value = '';
     // update();
   }
+
   Future<void> refreshProject() async {
     try {
       isRefreshing.value = true;
@@ -73,22 +77,23 @@ class ContractorProjectController extends PaginatedController<ContractorProjectI
 
       // Update metrics with new values
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to refresh',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to refresh',
+        contentType: ContentType.failure,
       );
     } finally {
       isRefreshing.value = false;
     }
   }
+
   Future<void> applyFilters(Map<String, String> filter) async {
     filters.assignAll(filter);
     log("Apply Filter in Inquiry Contractor Section ${filters} ");
     // await loadInitial();
     refreshList();
   }
+
   bool isExpanded(String id) => expandedCards[id] ?? false;
 
   @override
@@ -98,18 +103,22 @@ class ContractorProjectController extends PaginatedController<ContractorProjectI
 
     loadInitial();
   }
-  void resetChangeStatus()
-  {
-    selectedDate=null;
-    changeStatus.value='';
+
+  void resetChangeStatus() {
+    selectedDate = null;
+    changeStatus.value = '';
   }
+
   void setValue<T>(Rx<T> target, T value) {
     target.value = value;
   }
+
   void populatedProjectData(ContractorProjectItem project) {
     if (project.deadline != null && project.deadline!.isNotEmpty) {
       selectedDate = DateTime.tryParse(project.deadline!);
-      log("String Date Timer Convert $selectedDate  ============ ${project.deadline}");
+      log(
+        "String Date Timer Convert $selectedDate  ============ ${project.deadline}",
+      );
 
       if (selectedDate != null) {
         // 👇 Update the text controller so the UI shows it
@@ -122,12 +131,10 @@ class ContractorProjectController extends PaginatedController<ContractorProjectI
     changeStatus.value = capitalizeEachWord(project.status);
   }
 
-
-
-
   Future<void> deleteFollowUpByID(String id) async {
-    final response=await ContractorProjectService.contractorProjectService.deletedProject(id);
-    if(response){
+    final response = await ContractorProjectService.contractorProjectService
+        .deletedProject(id);
+    if (response) {
       refreshList();
     }
   }
@@ -153,14 +160,12 @@ class ContractorProjectController extends PaginatedController<ContractorProjectI
               Get.back();
               Get.back();
               deleteFollowUpByID(id);
-              Get.snackbar(
-                'Deleted',
-                'Follow Up deleted successfully',
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: ColorRes.error,
-                colorText: ColorRes.white,
-              );
 
+              NesticoPeSnackBar.showAwesomeSnackbar(
+                title: 'Deleted',
+                message: 'Follow Up deleted successfully',
+                contentType: ContentType.success,
+              );
             },
             child: const Text("Delete"),
           ),
@@ -202,10 +207,10 @@ class ContractorProjectController extends PaginatedController<ContractorProjectI
   // }
   // In ContractorProjectController
   Future<void> updateChangeStatus(
-      String id,
-      String status,
-      String dateUpdate
-      ) async {
+    String id,
+    String status,
+    String dateUpdate,
+  ) async {
     log("Updating project: $dateUpdate");
 
     final Map<String, dynamic> payload = {};
@@ -218,17 +223,15 @@ class ContractorProjectController extends PaginatedController<ContractorProjectI
     }
 
     if (payload.isEmpty) {
-      Get.snackbar(
-        "Warning",
-        "Please select at least one value to update.",
-        backgroundColor: Colors.orange.shade100,
-        colorText: Colors.black87,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Warning',
+        message: "Please select at least one value to update.",
+        contentType: ContentType.warning,
       );
       return;
     }
 
-    final success = await ContractorProjectService
-        .contractorProjectService
+    final success = await ContractorProjectService.contractorProjectService
         .updateStatus(payload, id);
 
     if (success) {
@@ -247,11 +250,10 @@ class ContractorProjectController extends PaginatedController<ContractorProjectI
         items.refresh(); // Trigger Obx update
       }
 
-      Get.snackbar(
-        "Success",
-        "Project updated successfully",
-        backgroundColor: ColorRes.green.shade100,
-        colorText: ColorRes.green.shade700,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Success',
+        message: "Project updated successfully",
+        contentType: ContentType.success,
       );
     }
   }
@@ -259,11 +261,11 @@ class ContractorProjectController extends PaginatedController<ContractorProjectI
   @override
   Future<PaginationResponse<ContractorProjectItem>> fetchItems(int page) async {
     // TODO: implement fetchItems
-    final UserModel user= await SecureStorage.getUserData()??UserModel();
-    final userId=user.user?.id;
-    final response= await ContractorProjectService.contractorProjectService.getContractorProjectData(contractorId: userId??'',filter: filters);
+    final UserModel user = await SecureStorage.getUserData() ?? UserModel();
+    final userId = user.user?.id;
+    final response = await ContractorProjectService.contractorProjectService
+        .getContractorProjectData(contractorId: userId ?? '', filter: filters);
 
     return response;
   }
-
 }

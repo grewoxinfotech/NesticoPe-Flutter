@@ -17,18 +17,19 @@ import '../../../data/network/contractor/model/profile/contractor_profile_model.
 import '../../../data/network/contractor/service/profile/contractor_profile_service.dart';
 import '../../../data/network/profile/seller/service/seller_service.dart';
 import '../../../data/network/user/service/user_service.dart';
+import '../../../widgets/messages/snack_bar.dart';
 import '../../profile/model/seller_profile.dart';
 import '../../reseller/model/user/user_model.dart';
-
 
 class ContractorProfileController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool isEditing = false.obs;
-  final RxBool isLoadingIMage=false.obs;
+  final RxBool isLoadingIMage = false.obs;
   final RxBool isSaving = false.obs;
   final RxBool isUploadingImage = false.obs;
   UserService _userService = UserService();
-  final Rxn<ContractorProfileData> resellerProfile = Rxn<ContractorProfileData>();
+  final Rxn<ContractorProfileData> resellerProfile =
+      Rxn<ContractorProfileData>();
   final Rx<UserProfile> profile =
       UserProfile(
         id: '1',
@@ -38,7 +39,7 @@ class ContractorProfileController extends GetxController {
         position: 'Sales Manager',
         company: 'Tech Solutions Inc.',
         bio:
-        'Experienced sales professional with over 10 years in the industry.',
+            'Experienced sales professional with over 10 years in the industry.',
         avatarUrl: '',
         totalSales: 2500000.0,
         leadsCount: 156,
@@ -47,7 +48,6 @@ class ContractorProfileController extends GetxController {
       ).obs;
 
   final Rxn<UserModel> profileData = Rxn<UserModel>();
-
 
   // OTP verification data
   final RxString pendingPhone = ''.obs;
@@ -122,9 +122,8 @@ class ContractorProfileController extends GetxController {
 
     if (profileData.value?.user?.userType == 'contractor') {
       print("vkjbhfjgi ${profileData.value?.toJson()}");
-      final data = await ContractorProfileUpdate.profileUpdate.getUserProfileData(
-        profileData.value?.user?.id ?? '',
-      );
+      final data = await ContractorProfileUpdate.profileUpdate
+          .getUserProfileData(profileData.value?.user?.id ?? '');
       print("Contractor kgokjgij${data}");
       resellerProfile.value = ContractorProfileData.fromJson(data ?? {});
       print("Contractor efgryfgrfyy${resellerProfile.value?.toJson()}");
@@ -134,8 +133,8 @@ class ContractorProfileController extends GetxController {
   }
 
   Future<Map<String, dynamic>> updateResellerProfile(
-      ContractorUserUpdateProfile userProfile,
-      ) async {
+    ContractorUserUpdateProfile userProfile,
+  ) async {
     profileData.value?.user = await getUserProfile();
     if (profileData.value?.user?.userType == 'contractor') {
       print("jfhfhh ${profileData.value?.toJson()}");
@@ -146,10 +145,10 @@ class ContractorProfileController extends GetxController {
 
       final data = await ContractorProfileUpdate.profileUpdate
           .updateSellerProfileDetails(
-          userProfile,
-          profileData.value?.user?.id ?? '',
-          profileImageFile:selectedImage.value
-      );
+            userProfile,
+            profileData.value?.user?.id ?? '',
+            profileImageFile: selectedImage.value,
+          );
 
       return data;
     }
@@ -164,9 +163,9 @@ class ContractorProfileController extends GetxController {
     phoneController.text = profileData.value?.user?.phone ?? "";
     positionController.text = profileData.value?.user?.city ?? "";
     companyController.text = profileData.value?.user?.state ?? "";
-    experienceController.text = profileData.value?.user?.totalExperience.toString() ?? "";
+    experienceController.text =
+        profileData.value?.user?.totalExperience.toString() ?? "";
     zipController.text = profileData.value?.user?.zipCode ?? "";
-
 
     //
     // // Business Details fields from seller profile
@@ -193,7 +192,7 @@ class ContractorProfileController extends GetxController {
   // Image picker methods
   Future<void> pickImageFromGallery() async {
     try {
-      isLoadingIMage.value=true;
+      isLoadingIMage.value = true;
       final XFile? image = await _picker.pickImage(
         source: ImageSource.gallery,
         maxWidth: 1024,
@@ -204,37 +203,26 @@ class ContractorProfileController extends GetxController {
       if (image != null) {
         selectedImage.value = File(image.path);
 
-        Get.snackbar(
-          'Success',
-          'Image selected successfully',
-          backgroundColor: Colors.green.withOpacity(0.8),
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
-          duration: const Duration(seconds: 2),
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: 'Image selected successfully',
+          contentType: ContentType.success,
         );
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to pick image: ${e.toString()}',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to pick image: ${e.toString()}',
+        contentType: ContentType.failure,
       );
+    } finally {
+      isLoadingIMage.value = false;
     }
-    finally{
-      isLoadingIMage.value=false;
-    }
-
   }
 
   Future<void> pickImageFromCamera() async {
     try {
-      isLoadingIMage.value=true;
+      isLoadingIMage.value = true;
       final XFile? image = await _picker.pickImage(
         source: ImageSource.camera,
         maxWidth: 1024,
@@ -244,30 +232,21 @@ class ContractorProfileController extends GetxController {
 
       if (image != null) {
         selectedImage.value = File(image.path);
-        Get.snackbar(
-          'Success',
-          'Image captured successfully',
-          backgroundColor: Colors.green.withOpacity(0.8),
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
-          duration: const Duration(seconds: 2),
+
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: 'Image captured successfully',
+          contentType: ContentType.success,
         );
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to capture image: ${e.toString()}',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to capture image: ${e.toString()}',
+        contentType: ContentType.failure,
       );
-    }
-    finally{
-      isLoadingIMage.value=false;
+    } finally {
+      isLoadingIMage.value = false;
     }
   }
 
@@ -340,7 +319,7 @@ class ContractorProfileController extends GetxController {
                   },
                 ),
                 if (selectedImage.value != null ||
-                    (profile.value.avatarUrl.isNotEmpty?? false))
+                    (profile.value.avatarUrl.isNotEmpty ?? false))
                   ListTile(
                     leading: Container(
                       padding: const EdgeInsets.all(8),
@@ -373,34 +352,29 @@ class ContractorProfileController extends GetxController {
     profile.value = profile.value.copyWith(avatarUrl: '');
     // Note: Removing profile pic from server would require an API call
     // For now, just clear the local selection
-    Get.snackbar(
-      'Success',
-      'Profile photo removed. Save changes to update.',
-      backgroundColor: Colors.orange.withOpacity(0.8),
-      colorText: ColorRes.white,
-      snackPosition: SnackPosition.BOTTOM,
-      margin: const EdgeInsets.all(16),
-      borderRadius: 12,
-      duration: const Duration(seconds: 2),
+
+    NesticoPeSnackBar.showAwesomeSnackbar(
+      title: 'Success',
+      message: 'Profile photo removed. Save changes to update.',
+      contentType: ContentType.success,
     );
   }
+
   Future<void> refreshFollowUp() async {
     try {
-
       await getUserProfileData();
       await Future.delayed(const Duration(seconds: 1));
 
       // Update metrics with new values
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to refresh ',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to refresh ',
+        contentType: ContentType.failure,
       );
-    } finally {
-    }
+    } finally {}
   }
+
   Future<String?> _uploadImage(File imageFile) async {
     try {
       isUploadingImage.value = true;
@@ -409,14 +383,10 @@ class ContractorProfileController extends GetxController {
 
       return imageFile.path;
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to upload image: ${e.toString()}',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to upload image: ${e.toString()}',
+        contentType: ContentType.failure,
       );
       return null;
     } finally {
@@ -441,7 +411,11 @@ class ContractorProfileController extends GetxController {
         image = await _uploadImage(selectedImage.value!);
         if (image == null) {
           // Upload failed, stop here
-          Get.snackbar('Error', 'Failed to upload image');
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Error',
+            message: 'Failed to upload image',
+            contentType: ContentType.failure,
+          );
           isSaving.value = false;
           return;
         }
@@ -456,8 +430,7 @@ class ContractorProfileController extends GetxController {
         firstName: nameController.text,
         lastName: lastNameController.text,
         phone: phoneController.text,
-        experinec:int.tryParse( experienceController.text)??0,
-
+        experinec: int.tryParse(experienceController.text) ?? 0,
       );
 
       print("🟢 User data prepared: ${user.toMap()}");
@@ -476,9 +449,10 @@ class ContractorProfileController extends GetxController {
 
       final isOtpRequired =
           response['otpRequired'] == true ||
-              response['otpRequired'] == 'true' ||
-              (response['success'] == false &&
-                  response['message']?.toString().toLowerCase().contains('otp') == true);
+          response['otpRequired'] == 'true' ||
+          (response['success'] == false &&
+              response['message']?.toString().toLowerCase().contains('otp') ==
+                  true);
 
       if (isOtpRequired) {
         print('🔵 OTP Required detected!');
@@ -496,7 +470,7 @@ class ContractorProfileController extends GetxController {
           userType: profileData.value?.user?.userType,
           roleId: profileData.value?.user?.roleId,
           isVerified: profileData.value?.user?.isVerified,
-          totalExperience:int.tryParse(experienceController.text),
+          totalExperience: int.tryParse(experienceController.text),
         );
 
         pendingPhone.value = response['phone'] ?? phoneController.text;
@@ -512,7 +486,7 @@ class ContractorProfileController extends GetxController {
           _showOtpVerificationDialog(
             phone: pendingPhone.value,
             message:
-            response['message'] ??
+                response['message'] ??
                 'OTP verification required for phone number change',
           );
           otpResendTimer.value = 0;
@@ -526,7 +500,7 @@ class ContractorProfileController extends GetxController {
           _showOtpVerificationDialog(
             phone: pendingPhone.value,
             message:
-            response['message'] ??
+                response['message'] ??
                 'OTP verification required for phone number change',
           );
         }
@@ -551,7 +525,6 @@ class ContractorProfileController extends GetxController {
               roleId: profileData.value?.user?.roleId,
               isVerified: profileData.value?.user?.isVerified,
               totalExperience: int.tryParse(experienceController.text),
-
             ),
             token: profileData.value?.token,
           );
@@ -565,37 +538,26 @@ class ContractorProfileController extends GetxController {
         selectedImage.value = null;
         isEditing.value = false;
 
-        Get.snackbar(
-          'Success',
-          response['message'] ?? 'Profile updated successfully',
-          backgroundColor: Colors.green,
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: response['message'] ?? 'Profile updated successfully',
+          contentType: ContentType.success,
         );
       } else {
         // API returned error
-        Get.snackbar(
-          'Error',
-          response['message'] ?? 'Failed to update profile',
-          backgroundColor: Colors.red,
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: response['message'] ?? 'Failed to update profile',
+          contentType: ContentType.failure,
         );
       }
     } catch (e) {
       print('Error saving profile: $e');
-      Get.snackbar(
-        'Error',
-        'An error occurred while updating profile',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'An error occurred while updating profile',
+        contentType: ContentType.failure,
       );
     } finally {
       isSaving.value = false;
@@ -604,12 +566,10 @@ class ContractorProfileController extends GetxController {
 
   Future<void> verifyPhoneUpdateOtp(String otp) async {
     if (pendingUserData == null) {
-      Get.snackbar(
-        'Error',
-        'No pending update found',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
-        snackPosition: SnackPosition.BOTTOM,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'No pending update found',
+        contentType: ContentType.failure,
       );
       return;
     }
@@ -625,14 +585,13 @@ class ContractorProfileController extends GetxController {
       'totalExperience': pendingUserData?.totalExperience,
     };
 
-
     try {
       final response = await ContractorProfileUpdate.profileUpdate
           .verifyOtpForSellerNumber(
-        otp,
-        userDataMap!,
-        profileData.value?.user?.id ?? '',
-      );
+            otp,
+            userDataMap!,
+            profileData.value?.user?.id ?? '',
+          );
 
       if (response['success'] == true) {
         _resendTimer?.cancel();
@@ -675,36 +634,25 @@ class ContractorProfileController extends GetxController {
         // Close dialog
         Get.back();
 
-        Get.snackbar(
-          'Success',
-          response['message'] ?? 'Phone number updated successfully',
-          backgroundColor: Colors.green,
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: response['message'] ?? 'Phone number updated successfully',
+          contentType: ContentType.success,
         );
       } else {
-        Get.snackbar(
-          'Error',
-          response['message'] ?? 'Invalid OTP',
-          backgroundColor: Colors.red,
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: response['message'] ?? 'Invalid OTP',
+          contentType: ContentType.failure,
         );
       }
     } catch (e) {
       print('Error verifying OTP: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to verify OTP',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to verify OTP',
+        contentType: ContentType.failure,
       );
     } finally {
       isVerifyingOtp.value = false;
@@ -713,11 +661,10 @@ class ContractorProfileController extends GetxController {
 
   Future<void> resendOtpForPhoneUpdate() async {
     if (pendingPhone.value.isEmpty) {
-      Get.snackbar(
-        'Error',
-        'No pending phone number',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'No pending phone number',
+        contentType: ContentType.failure,
       );
       return;
     }
@@ -727,46 +674,34 @@ class ContractorProfileController extends GetxController {
     try {
       final response = await ContractorProfileUpdate.profileUpdate
           .resendPhoneSellerUpdateOtp(
-        profileData.value?.user?.id ?? '',
-        pendingPhone.value,
-      );
+            profileData.value?.user?.id ?? '',
+            pendingPhone.value,
+          );
 
       if (response['success'] == true) {
         otpResendTimer.value = 60;
         _startResendTimer();
         isVerifyButtonEnabled.value = true;
 
-        Get.snackbar(
-          'Success',
-          response['message'] ?? 'OTP sent successfully',
-          backgroundColor: Colors.green,
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
-          duration: const Duration(seconds: 2),
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: response['message'] ?? 'OTP sent successfully',
+          contentType: ContentType.success,
         );
       } else {
-        Get.snackbar(
-          'Error',
-          response['message'] ?? 'Failed to resend OTP',
-          backgroundColor: Colors.red,
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: response['message'] ?? 'Failed to resend OTP',
+          contentType: ContentType.failure,
         );
       }
     } catch (e) {
       print('Error resending OTP: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to resend OTP',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to resend OTP',
+        contentType: ContentType.failure,
       );
     } finally {
       isResendingOtp.value = false;
@@ -855,7 +790,7 @@ class ContractorProfileController extends GetxController {
               ),
               const SizedBox(height: 16),
               Obx(
-                    () => Row(
+                () => Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     if (otpResendTimer.value > 0)
@@ -869,19 +804,19 @@ class ContractorProfileController extends GetxController {
                     else
                       TextButton.icon(
                         onPressed:
-                        isResendingOtp.value
-                            ? null
-                            : resendOtpForPhoneUpdate,
+                            isResendingOtp.value
+                                ? null
+                                : resendOtpForPhoneUpdate,
                         icon:
-                        isResendingOtp.value
-                            ? const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                          ),
-                        )
-                            : const Icon(Icons.refresh, size: 18),
+                            isResendingOtp.value
+                                ? const SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                                : const Icon(Icons.refresh, size: 18),
                         label: const Text('Resend OTP'),
                       ),
                   ],
@@ -902,23 +837,21 @@ class ContractorProfileController extends GetxController {
             child: const Text('Cancel'),
           ),
           Obx(
-                () => ElevatedButton(
+            () => ElevatedButton(
               onPressed:
-              (!isVerifyButtonEnabled.value || isVerifyingOtp.value)
-                  ? null
-                  : () {
-                if (otpController.text.length == 6) {
-                  verifyPhoneUpdateOtp(otpController.text);
-                } else {
-                  Get.snackbar(
-                    'Error',
-                    'Please enter 6-digit OTP',
-                    backgroundColor: Colors.red,
-                    colorText: ColorRes.white,
-                    snackPosition: SnackPosition.BOTTOM,
-                  );
-                }
-              },
+                  (!isVerifyButtonEnabled.value || isVerifyingOtp.value)
+                      ? null
+                      : () {
+                        if (otpController.text.length == 6) {
+                          verifyPhoneUpdateOtp(otpController.text);
+                        } else {
+                          NesticoPeSnackBar.showAwesomeSnackbar(
+                            title: 'Error',
+                            message: 'Please enter 6-digit OTP',
+                            contentType: ContentType.failure,
+                          );
+                        }
+                      },
               style: ElevatedButton.styleFrom(
                 backgroundColor: ColorRes.blueColor,
                 foregroundColor: ColorRes.white,
@@ -927,16 +860,16 @@ class ContractorProfileController extends GetxController {
                 ),
               ),
               child:
-              isVerifyingOtp.value
-                  ? const SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: ColorRes.white,
-                ),
-              )
-                  : const Text('Verify'),
+                  isVerifyingOtp.value
+                      ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: ColorRes.white,
+                        ),
+                      )
+                      : const Text('Verify'),
             ),
           ),
         ],

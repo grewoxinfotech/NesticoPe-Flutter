@@ -16,6 +16,8 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:timeago/timeago.dart' as currencyFormat;
 
+import '../../../../widgets/messages/snack_bar.dart';
+
 /// Screen for displaying quotation details with action buttons
 class ContractorQuotationScreen extends StatefulWidget {
   final ContractorQuotation quotation;
@@ -501,7 +503,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
         SizedBox(height: 12),
 
         // Download PDF Button
-        if (widget.quotation.isConverted)...[
+        if (widget.quotation.isConverted) ...[
           SafeArea(
             child: SizedBox(
               width: double.infinity,
@@ -529,12 +531,15 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
               ),
             ),
           ),
-        ]else...[
+        ] else ...[
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
               onPressed: _downloadQuotationPDF,
-              icon: const Icon(Icons.picture_as_pdf_outlined, color: ColorRes.primary),
+              icon: const Icon(
+                Icons.picture_as_pdf_outlined,
+                color: ColorRes.primary,
+              ),
               label: const Text(
                 'Share Document PDF ',
                 style: TextStyle(
@@ -548,17 +553,12 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                side: const BorderSide(
-                  color: ColorRes.primary,
-                  width: 1.5,
-                ),
+                side: const BorderSide(color: ColorRes.primary, width: 1.5),
               ),
             ),
           ),
           const SizedBox(height: 12),
         ],
-
-
 
         // Convert to Lead Button
         if (!widget.quotation.isConverted)
@@ -629,7 +629,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
       AlertDialog(
         backgroundColor: ColorRes.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title:  Text(
+        title: Text(
           'Confirm Status Change',
           style: TextStyle(
             fontWeight: AppFontWeights.semiBold,
@@ -1190,13 +1190,11 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
       Get.back(); // Close loading dialog
       print('PDF Generation Error: $e');
       print('Stack Trace: $stackTrace');
-      Get.snackbar(
-        'Error',
-        'Failed to generate PDF: ${e.toString()}',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: ColorRes.error,
-        colorText: ColorRes.white,
-        duration: const Duration(seconds: 5),
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to generate PDF: ${e.toString()}',
+        contentType: ContentType.failure,
       );
     }
   }
@@ -1908,22 +1906,16 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
       );
       await file.writeAsBytes(bytes);
 
-      Get.snackbar(
-        'Success',
-        'PDF saved to ${file.path}',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: ColorRes.primary,
-        colorText: ColorRes.white,
-        duration: const Duration(seconds: 3),
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Success',
+        message: 'PDF saved to ${file.path}',
+        contentType: ContentType.success,
       );
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to save PDF: ${e.toString()}',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: ColorRes.error,
-        colorText: ColorRes.white,
-        duration: const Duration(seconds: 3),
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to save PDF: ${e.toString()}',
+        contentType: ContentType.failure,
       );
     }
   }
@@ -1935,13 +1927,10 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
         filename: 'quotation_${widget.quotation.id.substring(0, 8)}.pdf',
       );
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to share PDF: ${e.toString()}',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: ColorRes.error,
-        colorText: ColorRes.white,
-        duration: const Duration(seconds: 3),
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to share PDF: ${e.toString()}',
+        contentType: ContentType.failure,
       );
     }
   }

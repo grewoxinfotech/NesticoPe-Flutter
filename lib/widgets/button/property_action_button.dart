@@ -10,6 +10,7 @@ import '../../modules/property/controllers/share_property_controller.dart';
 import '../../modules/property/views/property_detail_screen.dart';
 import '../../modules/saved_property/controllers/property_favorite_controller.dart';
 import '../bar/navigation_bar/navigation_Bar.dart';
+import '../messages/snack_bar.dart';
 
 class EntityActionButtons extends StatelessWidget {
   final String id;
@@ -35,7 +36,9 @@ class EntityActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final SharePropertyController propertyShareController=Get.put(SharePropertyController());
+    final SharePropertyController propertyShareController = Get.put(
+      SharePropertyController(),
+    );
     return Row(
       children: [
         // ------------------ COMPARE BUTTON ------------------
@@ -140,15 +143,20 @@ class EntityActionButtons extends StatelessWidget {
           backgroundColor: ColorRes.white,
           onPressed:
               onShare ??
-                      () async {
-                    await propertyShareController.getPropertyLinkById(id);
-                    final shareUrl = propertyShareController.shareProperty.value?.data?.shareUrl;
-                    if (shareUrl != null && shareUrl.isNotEmpty) {
-                      ContactHelper.shareContent(link: shareUrl,);
-                    } else {
-                      Get.snackbar("Error", "Unable to generate share link right now.");
-                    }
-                  },
+              () async {
+                await propertyShareController.getPropertyLinkById(id);
+                final shareUrl =
+                    propertyShareController.shareProperty.value?.data?.shareUrl;
+                if (shareUrl != null && shareUrl.isNotEmpty) {
+                  ContactHelper.shareContent(link: shareUrl);
+                } else {
+                  NesticoPeSnackBar.showAwesomeSnackbar(
+                    title: "Error",
+                    message: "Unable to generate share link right now.",
+                    contentType: ContentType.failure,
+                  );
+                }
+              },
         ),
       ],
     );

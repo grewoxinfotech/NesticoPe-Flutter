@@ -25,6 +25,7 @@ import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 import 'package:housing_flutter_app/widgets/input/custom_text_field.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
+import '../../../widgets/New folder/inputs/text_field.dart';
 import '../../builder/view/project_detail/project_detail.dart';
 import '../../filter_property/controller/city_insigths_controller.dart';
 import '../../filter_property/model/city_insigths_model.dart';
@@ -505,7 +506,7 @@ class CommonSearchField extends StatefulWidget {
   const CommonSearchField({
     super.key,
     this.onCitySelected,
-    this.isSearchForBuilding=false,
+    this.isSearchForBuilding = false,
     this.isFromAddProperty = false,
     this.onlySearchCity = false,
     this.initialSearchText,
@@ -536,16 +537,13 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
       micController.searchText.value.text = widget.initialSearchText!;
       print('micro jsdewud ${micController.searchText.value.text}');
 
-
-
-
       // Call appropriate search based on isLocality
       if (widget.isLocality) {
         controller.fetchPredictionsLocality(
           widget.initialSearchText!,
           widget.selectedCity ?? '',
         );
-      }else if(widget.isSearchForBuilding){
+      } else if (widget.isSearchForBuilding) {
         controller.fetchBuildingsAndSocieties(
           widget.initialSearchText!,
           widget.selectedCity ?? '',
@@ -561,19 +559,21 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
     }
 
     micController.searchText.value.addListener(() {
-      debugPrint('Check which is true ${widget.isLocality}  building ${widget.isSearchForBuilding}');
+      debugPrint(
+        'Check which is true ${widget.isLocality}  building ${widget.isSearchForBuilding}',
+      );
       // Call appropriate search based on isLocality
       if (widget.isLocality) {
         controller.fetchPredictionsLocality(
           micController.searchText.value.text,
           widget.selectedCity ?? '',
         );
-      } else if (widget.isSearchForBuilding){
+      } else if (widget.isSearchForBuilding) {
         controller.fetchBuildingsAndSocieties(
           micController.searchText.value.text,
           widget.selectedCity ?? '',
         );
-      }else {
+      } else {
         if (!widget.onlySearchCity) {
           controller.fetchPredictionsCity(micController.searchText.value.text);
         } else {
@@ -648,9 +648,9 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                 children: [
                   Expanded(
                     child: Obx(
-                      () => CustomTextField(
+                      () => NesticoPeTextField(
                         enabled: true,
-                        fillColor: ColorRes.white,
+                        // fillColor: ColorRes.white,
                         suffixIcon: InkWell(
                           onTap: () {
                             final searchText =
@@ -664,7 +664,9 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                               ).firstMatch(upperSearchText);
                               final bhkNumber = bhkMatch?.group(1) ?? '';
                               searchHistoryController.addSearchHistory({
-                                'keywords': [ propertyController.selectedCity.value],
+                                'keywords': [
+                                  propertyController.selectedCity.value,
+                                ],
                               });
 
                               Get.to(
@@ -712,12 +714,13 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                         //     widget.isLocality && widget.selectedCity != null
                         //         ? 'Search locality in ${widget.selectedCity}...'
                         //         : widget.hintText,
-                        hintText: widget.isLocality && widget.selectedCity != null
-                            ? 'Search locality in ${widget.selectedCity}...'
-                            : widget.isSearchForBuilding && widget.selectedCity != null
-                            ? 'Search building or society in ${widget.selectedCity}...'
-                            : widget.hintText,
-
+                        hintText:
+                            widget.isLocality && widget.selectedCity != null
+                                ? 'Search locality in ${widget.selectedCity}...'
+                                : widget.isSearchForBuilding &&
+                                    widget.selectedCity != null
+                                ? 'Search building or society in ${widget.selectedCity}...'
+                                : widget.hintText,
                       ),
                     ),
                   ),
@@ -805,7 +808,6 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                       ColorRes.leadGreyColor.shade600,
                       1,
                     ),
-
                   );
                 }
 
@@ -823,7 +825,10 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                   itemBuilder: (context, index) {
                     final Prediction item = controller.predictions[index];
 
-                    AppLogger.structured("Prediction List Data ",Prediction.fromJson(item.toJson()));
+                    AppLogger.structured(
+                      "Prediction List Data ",
+                      Prediction.fromJson(item.toJson()),
+                    );
 
                     return InkWell(
                       // onTap:(widget.isNavigate)? () async {
@@ -938,7 +943,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                                       micController.searchText.value.clear();
                                     }
                                   }
-                                }else if (widget.isSearchForBuilding) {
+                                } else if (widget.isSearchForBuilding) {
                                   if (widget.onTap != null) {
                                     widget.onTap!(item.description!);
                                   }
@@ -949,9 +954,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                                   // Optional navigation or simply return selection to parent
                                   controller.predictions.clear();
                                   micController.searchText.value.clear();
-
-                                }
-                                else {
+                                } else {
                                   // Fallback if onTap is not provided
                                   if (widget.onTap != null) {
                                     widget.onTap!(item.description!);
@@ -967,7 +970,6 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                               : () {
                                 // Check if this is a BHK property search result
                                 if (item.items != null) {
-
                                   Get.to(
                                     () => PropertyDetailScreen(
                                       propertyId: item.items!.id ?? '',
@@ -985,7 +987,6 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                                   controller.predictions.clear();
                                   micController.searchText.value.clear();
                                 } else if (widget.isLocality) {
-
                                   if (widget.onTap != null) {
                                     widget.onTap!(item.description!);
                                   }
@@ -994,9 +995,9 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                                     widget.onCitySelected!(item);
                                   }
                                   searchHistoryController.addSearchHistory({
-                                    'keywords': [item.description!
-                                        .split(',')
-                                        .first],
+                                    'keywords': [
+                                      item.description!.split(',').first,
+                                    ],
                                   });
 
                                   Get.to(
@@ -1025,8 +1026,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                                   // Optional navigation or simply return selection to parent
                                   controller.predictions.clear();
                                   micController.searchText.value.clear();
-                                }
-                                else {
+                                } else {
                                   if (widget.onTap != null) {
                                     widget.onTap!(item.description!);
                                   }
@@ -1036,10 +1036,10 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                                   controller.predictions
                                       .clear(); // Clear predictions
                                   micController.searchText.value.clear();
-                                    searchHistoryController.addSearchHistory({
-                                    'keywords': [item.description!
-                                        .split(',')
-                                        .first],
+                                  searchHistoryController.addSearchHistory({
+                                    'keywords': [
+                                      item.description!.split(',').first,
+                                    ],
                                   });
                                   Get.to(
                                     () => PropertyDetail(
@@ -1127,20 +1127,22 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                 //         2,
                 //       ),
                 //     )
-                return (widget.isFromAddProperty || widget.isLocality || widget.isSearchForBuilding)
+                return (widget.isFromAddProperty ||
+                        widget.isLocality ||
+                        widget.isSearchForBuilding)
                     ? Center(
-                  child: buildCommonText(
-                    widget.isLocality
-                        ? 'Search for localities in ${widget.selectedCity}'
-                        : widget.isSearchForBuilding
-                        ? 'Search for buildings or societies in ${widget.selectedCity}'
-                        : '',
-                    AppFontSizes.medium,
-                    AppFontWeights.regular,
-                    ColorRes.grey,
-                    2,
-                  ),
-                )
+                      child: buildCommonText(
+                        widget.isLocality
+                            ? 'Search for localities in ${widget.selectedCity}'
+                            : widget.isSearchForBuilding
+                            ? 'Search for buildings or societies in ${widget.selectedCity}'
+                            : '',
+                        AppFontSizes.medium,
+                        AppFontWeights.regular,
+                        ColorRes.grey,
+                        2,
+                      ),
+                    )
                     : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -1149,7 +1151,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                             return Center(child: CircularProgressIndicator());
                           }
                           return Padding(
-                            padding:  EdgeInsets.symmetric(horizontal: 16),
+                            padding: EdgeInsets.symmetric(horizontal: 16),
                             child: buildSection(
                               "Popular Locations",
                               cityController.allCities,
@@ -1329,7 +1331,11 @@ Widget highlightText(
 //   );
 // }
 
-Widget buildSection(String title, List<CityData> data,{bool isFromLoginSide=false}) {
+Widget buildSection(
+  String title,
+  List<CityData> data, {
+  bool isFromLoginSide = false,
+}) {
   final searchHistoryController = Get.find<SearchHistoryController>();
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1359,8 +1365,7 @@ Widget buildSection(String title, List<CityData> data,{bool isFromLoginSide=fals
               propertyType: city.listingTypes.join(", "),
               cardHeight: 65,
               onTap: () {
-
-               if(!isFromLoginSide){
+                if (!isFromLoginSide) {
                   final filters = {"city": city.city};
 
                   print("Applied Filters: $filters");
@@ -1369,10 +1374,10 @@ Widget buildSection(String title, List<CityData> data,{bool isFromLoginSide=fals
                   });
 
                   Get.back(result: filters);
-               }else{
-                 final selectedCity = city.city.trim();
-                 Get.back(result: selectedCity);
-               }
+                } else {
+                  final selectedCity = city.city.trim();
+                  Get.back(result: selectedCity);
+                }
               },
             );
           },

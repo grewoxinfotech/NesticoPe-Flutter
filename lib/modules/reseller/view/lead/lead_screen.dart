@@ -292,6 +292,7 @@ import 'package:housing_flutter_app/modules/seller/module/lead_screen/controller
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_visit_controller.dart';
 
 import '../../../../widgets/bottom_sheet/widgets/lead_filter_chips.dart';
+import '../../../../widgets/messages/snack_bar.dart';
 
 class ResellerLeadScreen extends StatefulWidget {
   final bool isViewAll;
@@ -515,9 +516,11 @@ class _ResellerLeadScreenState extends State<ResellerLeadScreen> {
                                     );
                                   } catch (e, st) {
                                     log('❌ Reseller lead open error: $e\n$st');
-                                    Get.snackbar(
-                                      'Error',
-                                      'Failed to open lead details',
+
+                                    NesticoPeSnackBar.showAwesomeSnackbar(
+                                      title: 'Error',
+                                      message: 'Failed to pick images: $e',
+                                      contentType: ContentType.failure,
                                     );
                                   } finally {
                                     isLoadingLead.value = false;

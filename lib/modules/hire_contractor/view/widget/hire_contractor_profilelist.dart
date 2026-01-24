@@ -14,6 +14,7 @@ import '../../../../data/network/contractor/model/contractot_service_model/contr
 import '../../../../data/network/contractor/model/hire-contractor_service_model.dart';
 import '../../../../data/network/contractor/model/new_hire_contractor.dart';
 import '../../../../widgets/bar/filter_bar/filter_chip_bar.dart';
+import '../../../../widgets/messages/snack_bar.dart';
 import '../../../contractor/controller/contractor_my_service_controller.dart';
 import '../../../contractor/view/profile/contractot_profile.dart';
 import '../../../home/controllers/contractor_profile_controller/contractor_compare_manager.dart';
@@ -268,10 +269,10 @@ class _HireContractorCardState extends State<HireContractorCard> {
             ),
           );
         } else {
-          Get.snackbar(
-            'Not Found',
-            'Contractor profile could not be loaded.',
-            snackPosition: SnackPosition.BOTTOM,
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Not Found',
+            message: 'Contractor profile could not be loaded.',
+            contentType: ContentType.failure,
           );
         }
       },
@@ -534,10 +535,10 @@ class _AllContractorCardState extends State<AllContractorCard> {
             ),
           );
         } else {
-          Get.snackbar(
-            'Not Found',
-            'Contractor profile could not be loaded.',
-            snackPosition: SnackPosition.BOTTOM,
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Not Found',
+            message: 'Contractor profile could not be loaded.',
+            contentType: ContentType.failure,
           );
         }
       },

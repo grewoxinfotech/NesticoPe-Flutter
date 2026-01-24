@@ -1273,7 +1273,7 @@ class PostProperty extends StatelessWidget {
                     return null;
                   },
                   controller.sell_rent_Address,
-                  maxLines: 2,
+                  maxLines: 1,
                   minLines: 1,
                 ),
                 SizedBox(height: 16),
@@ -1392,18 +1392,18 @@ class PostProperty extends StatelessWidget {
                             return 'Please enter a valid number';
                           }
 
-                          final range = AreaRangeHelper.getAreaRange(
-                            controller.bhkType.value,
-                            controller.areaUnit.value,
-                          );
-
-                          if (range[0] == 0 && range[1] == 0) {
-                            return 'Please select BHK type first';
-                          }
-
-                          if (entered < range[0] || entered > range[1]) {
-                            return 'Area must be between ${range[0]} - ${range[1]} ${controller.areaUnit.value}';
-                          }
+                          // final range = AreaRangeHelper.getAreaRange(
+                          //   controller.bhkType.value,
+                          //   controller.areaUnit.value,
+                          // );
+                          //
+                          // if (range[0] == 0 && range[1] == 0) {
+                          //   return 'Please select BHK type first';
+                          // }
+                          //
+                          // if (entered < range[0] || entered > range[1]) {
+                          //   return 'Area must be between ${range[0]} - ${range[1]} ${controller.areaUnit.value}';
+                          // }
 
                           return null;
                         },
@@ -1614,7 +1614,6 @@ class PostProperty extends StatelessWidget {
                     MaterialPageRoute(
                       builder:
                           (context) => CommonSearchField(
-
                             onCitySelected: (city) {
                               Navigator.pop(context, city);
                             },
@@ -2021,7 +2020,8 @@ class PostProperty extends StatelessWidget {
                   controller.selectedIndex.value != "Office" &&
                   controller.selectedIndex.value != "Shop" &&
                   controller.selectedIndex.value != "Showroom" &&
-                  controller.selectedIndex.value != "Warehouse" && controller.selectedIndex.value != 'Other') ...[
+                  controller.selectedIndex.value != "Warehouse" &&
+                  controller.selectedIndex.value != 'Other') ...[
                 SizedBox(height: 16),
                 buildSectionTitle('Location Hub'),
                 SizedBox(height: 8),
@@ -2173,7 +2173,8 @@ class PostProperty extends StatelessWidget {
               if (controller.selectedIndex.value == 'Shop' ||
                   controller.selectedIndex.value == 'Showroom' ||
                   controller.selectedIndex.value == "Warehouse" ||
-                  controller.selectedIndex.value == "Office"||controller.selectedIndex.value == 'Other') ...[
+                  controller.selectedIndex.value == "Office" ||
+                  controller.selectedIndex.value == 'Other') ...[
                 SizedBox(height: 16),
                 Text("Carpet Area"),
                 SizedBox(height: 8),
@@ -2237,7 +2238,8 @@ class PostProperty extends StatelessWidget {
               if (controller.selectedIndex.value != "Office" &&
                   controller.selectedIndex.value != "Shop" &&
                   controller.selectedIndex.value != "Showroom" &&
-                  controller.selectedIndex.value != "Warehouse"&&controller.selectedIndex.value != 'Other') ...[
+                  controller.selectedIndex.value != "Warehouse" &&
+                  controller.selectedIndex.value != 'Other') ...[
                 SizedBox(height: 16),
                 buildSectionTitle("Ownership"),
                 SizedBox(height: 8),
@@ -2506,8 +2508,12 @@ class PostProperty extends StatelessWidget {
                               Navigator.pop(context, city);
                             },
                             isFromAddProperty: true,
-                            isSearchForBuilding: true, // 👈 enable building search mode
-                            selectedCity: controller.cityController.text, // current city filter
+                            isSearchForBuilding:
+                                true, // 👈 enable building search mode
+                            selectedCity:
+                                controller
+                                    .cityController
+                                    .text, // current city filter
                             initialSearchText:
                                 controller.commercial_rent_building_Name.text,
                             hintText: 'Building / Project / Society',
@@ -2528,17 +2534,19 @@ class PostProperty extends StatelessWidget {
                   // }
                   controller.commercial_rent_building_Name.text =
                       selectedCity.structuredFormatting?.mainText ??
-                          selectedCity.description ??
-                          '';
+                      selectedCity.description ??
+                      '';
 
                   // ✅ Fill Locality & Address (secondary text)
-                  if (controller.commercial_rent_building_Name.text.isNotEmpty) {
+                  if (controller
+                      .commercial_rent_building_Name
+                      .text
+                      .isNotEmpty) {
                     controller.commercial_rent_Loaclity_Name.text =
                         selectedCity.structuredFormatting?.secondaryText ?? '';
                     controller.sell_rent_Address.text =
                         selectedCity.structuredFormatting?.secondaryText ?? '';
                   }
-
 
                   print(
                     "city ${controller.commercial_rent_building_Name.text}",
@@ -2763,45 +2771,45 @@ class PostProperty extends StatelessWidget {
                 buildSectionTitle('Posession status'),
                 SizedBox(height: 8),
                 Obx(
-                      () => Wrap(
+                  () => Wrap(
                     spacing: 12,
                     children:
-                    ['Immediate', 'In Future'].map((e) {
-                      return buildChoice(
-                        title: e,
-                        selected:
-                        controller
-                            .commercial_rent_posessionStatus
-                            .value ==
-                            e,
-                        onTap: () {
-                          controller.setValue(
-                            controller.commercial_rent_posessionStatus,
-                            e,
+                        ['Immediate', 'In Future'].map((e) {
+                          return buildChoice(
+                            title: e,
+                            selected:
+                                controller
+                                    .commercial_rent_posessionStatus
+                                    .value ==
+                                e,
+                            onTap: () {
+                              controller.setValue(
+                                controller.commercial_rent_posessionStatus,
+                                e,
+                              );
+                            },
                           );
-                        },
-                      );
-                    }).toList(),
+                        }).toList(),
                   ),
                 ),
                 Obx(
-                      () =>
-                  controller.selectedPossessionStatus.value
-                      ? Padding(
-                    padding: const EdgeInsets.only(top: 8, left: 4),
-                    child: Text(
-                      'Please select possession type',
-                      style: TextStyle(
-                        color: ColorRes.error.shade700,
-                        // fontSize: 12,
-                        fontSize: AppFontSizes.bodySmall,
-                      ),
-                    ),
-                  )
-                      : const SizedBox.shrink(),
+                  () =>
+                      controller.selectedPossessionStatus.value
+                          ? Padding(
+                            padding: const EdgeInsets.only(top: 8, left: 4),
+                            child: Text(
+                              'Please select possession type',
+                              style: TextStyle(
+                                color: ColorRes.error.shade700,
+                                // fontSize: 12,
+                                fontSize: AppFontSizes.bodySmall,
+                              ),
+                            ),
+                          )
+                          : const SizedBox.shrink(),
                 ),
                 if (controller.commercial_rent_posessionStatus.value ==
-                    "Under Construction" ||
+                        "Under Construction" ||
                     controller.commercial_rent_posessionStatus.value ==
                         "In Future") ...[
                   SizedBox(height: 16),
@@ -2848,7 +2856,7 @@ class PostProperty extends StatelessWidget {
                       );
                       if (picked != null) {
                         controller.commercial_rent_AvailableFrom.text =
-                        "${picked.day}/${picked.month}/${picked.year}";
+                            "${picked.day}/${picked.month}/${picked.year}";
                       }
                     },
                     isPhoneKey: true,
@@ -2935,7 +2943,8 @@ class PostProperty extends StatelessWidget {
                   controller.selectedIndex.value != "Office" &&
                   controller.selectedIndex.value != "Shop" &&
                   controller.selectedIndex.value != "Showroom" &&
-                  controller.selectedIndex.value != "Warehouse"&&controller.selectedIndex.value != "Other") ...[
+                  controller.selectedIndex.value != "Warehouse" &&
+                  controller.selectedIndex.value != "Other") ...[
                 SizedBox(height: 16),
                 buildSectionTitle('Location Hub'),
                 SizedBox(height: 8),
@@ -3088,7 +3097,8 @@ class PostProperty extends StatelessWidget {
               if (controller.selectedIndex.value == 'Shop' ||
                   controller.selectedIndex.value == 'Showroom' ||
                   controller.selectedIndex.value == "Warehouse" ||
-                  controller.selectedIndex.value == "Office"||controller.selectedIndex.value == "Other") ...[
+                  controller.selectedIndex.value == "Office" ||
+                  controller.selectedIndex.value == "Other") ...[
                 SizedBox(height: 16),
                 Text("Carpet Area"),
                 SizedBox(height: 8),
@@ -3147,7 +3157,8 @@ class PostProperty extends StatelessWidget {
               if (controller.selectedIndex.value != "Office" &&
                   controller.selectedIndex.value != "Shop" &&
                   controller.selectedIndex.value != "Showroom" &&
-                  controller.selectedIndex.value != "Warehouse"&&  controller.selectedIndex.value != "Other") ...[
+                  controller.selectedIndex.value != "Warehouse" &&
+                  controller.selectedIndex.value != "Other") ...[
                 SizedBox(height: 16),
                 buildSectionTitle("Ownership"),
                 SizedBox(height: 8),

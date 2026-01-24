@@ -262,6 +262,7 @@ import 'package:housing_flutter_app/modules/common/lead_components/lead_filter_h
 import '../../../data/network/property/models/property_model.dart';
 import '../../../widgets/bottom_sheet/lead_filter_bottomsheet.dart';
 import '../../../widgets/bottom_sheet/widgets/lead_filter_chips.dart';
+import '../../../widgets/messages/snack_bar.dart';
 import '../../seller/module/lead_screen/controllers/lead_controller.dart';
 import '../../seller/module/lead_screen/controllers/lead_property_inquiry_controller.dart';
 import '../../seller/module/lead_screen/controllers/lead_property_negotiable_price_controller.dart';
@@ -1086,9 +1087,11 @@ class _BuilderLeadState extends State<BuilderLeads> {
                             );
                           } catch (e, st) {
                             log('❌ Builder lead open error: $e\n$st');
-                            Get.snackbar(
-                              'Error',
-                              'Failed to open lead details',
+
+                            NesticoPeSnackBar.showAwesomeSnackbar(
+                              title: 'Error',
+                              message: 'Failed to open lead details',
+                              contentType: ContentType.failure,
                             );
                           } finally {
                             isLoadingLead.value = false;

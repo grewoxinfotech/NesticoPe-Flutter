@@ -11,6 +11,7 @@ import '../../../data/network/contractor/model/contractot_service_model/contract
 import '../../../data/network/contractor/model/new_hire_contractor.dart';
 import '../../../data/network/contractor/service/hire_contractor_service.dart';
 import '../../../utils/logger/app_logger.dart';
+import '../../../widgets/messages/snack_bar.dart';
 
 class HireContractorFilterProfileController
     extends PaginatedController<OverAllContractorItem> {
@@ -111,11 +112,10 @@ class HireContractorFilterProfileController
       await Future.delayed(const Duration(milliseconds: 800));
       refreshList();
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to refresh services',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to refresh services',
+        contentType: ContentType.failure,
       );
     } finally {}
   }

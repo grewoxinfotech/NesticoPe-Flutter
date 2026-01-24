@@ -747,7 +747,7 @@ class StepAdditional extends GetView<ProjectWizardController> {
       final p = controller.project.value;
       return Form(
         key: formKey,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
+        // autovalidateMode: AutovalidateMode.onUserInteraction,
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -783,9 +783,9 @@ class StepAdditional extends GetView<ProjectWizardController> {
                       final amenitiesList = IconManager.allAmenities;
                       final showAll = controller.showAllAmenities.value;
                       final displayList =
-                      showAll
-                          ? amenitiesList
-                          : amenitiesList.take(9).toList();
+                          showAll
+                              ? amenitiesList
+                              : amenitiesList.take(9).toList();
 
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -794,91 +794,91 @@ class StepAdditional extends GetView<ProjectWizardController> {
                             spacing: 8,
                             runSpacing: 8,
                             children:
-                            displayList.map((e) {
-                              final isSelected = controller
-                                  .project.value.amenities
-                                  .contains(e.title);
+                                displayList.map((e) {
+                                  final isSelected = controller
+                                      .project
+                                      .value
+                                      .amenities
+                                      .contains(e.title);
 
-                              return Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    controller.addBuilderAmenities(e.title);
-                                    print(
-                                      "Selected Amenities ${controller
-                                          .project.value.amenities}",
-                                    );
-                                  },
-                                  child: Container(
-                                    width: 95,
-                                    height: 110,
-                                    decoration: BoxDecoration(
-                                      color:
-                                      isSelected
-                                          ? Theme
-                                          .of(context)
-                                          .primaryColor
-                                          .withOpacity(0.1)
-                                          : ColorRes.white,
-                                      borderRadius: BorderRadius.circular(
-                                        12,
-                                      ),
-                                      border: Border.all(
-                                        color:
-                                        isSelected
-                                            ? Theme
-                                            .of(
-                                          context,
-                                        )
-                                            .primaryColor
-                                            : ColorRes.leadGreyColor.shade300,
-                                        width: 1,
-                                      ),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 8,
-                                      horizontal: 12,
-                                    ),
-                                    alignment: Alignment.center,
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        AppSvgIcon(
-                                          assetName: e.key,
-                                          size: 25,
-                                          folder: 'amenities',
+                                  return Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        controller.addBuilderAmenities(e.title);
+                                        print(
+                                          "Selected Amenities ${controller.project.value.amenities}",
+                                        );
+                                      },
+                                      child: Container(
+                                        width: 95,
+                                        height: 110,
+                                        decoration: BoxDecoration(
                                           color:
-                                          isSelected
-                                              ? Theme
-                                              .of(
-                                            context,
-                                          )
-                                              .primaryColor
-                                              : ColorRes.leadGreyColor.shade600,
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          e.title,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
+                                              isSelected
+                                                  ? Theme.of(context)
+                                                      .primaryColor
+                                                      .withOpacity(0.1)
+                                                  : ColorRes.white,
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          border: Border.all(
                                             color:
-                                            isSelected
-                                                ? Theme
-                                                .of(
-                                              context,
-                                            )
-                                                .primaryColor
-                                                : ColorRes.black,
-                                            fontWeight: AppFontWeights.regular,
-                                            fontSize: AppFontSizes.extraSmall,
+                                                isSelected
+                                                    ? Theme.of(
+                                                      context,
+                                                    ).primaryColor
+                                                    : ColorRes
+                                                        .leadGreyColor
+                                                        .shade300,
+                                            width: 1,
                                           ),
                                         ),
-                                      ],
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 8,
+                                          horizontal: 12,
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            AppSvgIcon(
+                                              assetName: e.key,
+                                              size: 25,
+                                              folder: 'amenities',
+                                              color:
+                                                  isSelected
+                                                      ? Theme.of(
+                                                        context,
+                                                      ).primaryColor
+                                                      : ColorRes
+                                                          .leadGreyColor
+                                                          .shade600,
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              e.title,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color:
+                                                    isSelected
+                                                        ? Theme.of(
+                                                          context,
+                                                        ).primaryColor
+                                                        : ColorRes.black,
+                                                fontWeight:
+                                                    AppFontWeights.regular,
+                                                fontSize:
+                                                    AppFontSizes.extraSmall,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                              );
-                            }).toList(),
+                                  );
+                                }).toList(),
                           ),
                           if (amenitiesList.length > 9)
                             Padding(
@@ -915,46 +915,45 @@ class StepAdditional extends GetView<ProjectWizardController> {
               ),
               const SizedBox(height: 16),
               buildBuilderDefaultText('Property Status'),
-              SizedBox(height: 8,),
+              SizedBox(height: 8),
               Obx(
-                    () =>
-                    Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      children:
-                      controller.propertyStatusList
-                          .map(
-                            (e) {
-                              controller.selectedPropertyStatus.value=controller.project.value.status?.capitalize??'';
-                              log("Selected Property Status ${controller.selectedPropertyStatus.value}");
-                              log("Project Status ${controller.project.value.status}");
+                () => Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children:
+                      controller.propertyStatusList.map((e) {
+                        controller.selectedPropertyStatus.value =
+                            controller.project.value.status?.capitalize ?? '';
+                        log(
+                          "Selected Property Status ${controller.selectedPropertyStatus.value}",
+                        );
+                        log(
+                          "Project Status ${controller.project.value.status}",
+                        );
 
-                            return buildChoice(
-                              title: e.capitalize.toString(),
-                              selected:
+                        return buildChoice(
+                          title: e.capitalize.toString(),
+                          selected:
                               controller.selectedPropertyStatus.value == e,
-                              onTap: () {
-                                controller.setCommonMethodValue(
-                                  controller.selectedPropertyStatus,
-                                  e,
-                                );
-                                controller.project.update((x) {
-                                 x?.status= e.toLowerCase();
-
-                                });
-                              },
+                          onTap: () {
+                            controller.setCommonMethodValue(
+                              controller.selectedPropertyStatus,
+                              e,
                             );
-                            }
-                      )
-                          .toList(),
-                    ),
+                            controller.project.update((x) {
+                              x?.status = e.toLowerCase();
+                            });
+                          },
+                        );
+                      }).toList(),
+                ),
               ),
               // Wrap(
               //   children: ['Completed','Ongoing','Launch'].map((e) => buildChoice(title: title, selected: selected, onTap: onTap),),
               // ),
 
               // Project Highlights Card
-              SizedBox(height: 16,),
+              SizedBox(height: 16),
               _buildCard(
                 theme: theme,
                 child: Column(
@@ -967,25 +966,22 @@ class StepAdditional extends GetView<ProjectWizardController> {
                       maxLine: 4,
                       minLine: 1,
                       initialValue: p.projectHighlights.join(', '),
-                      hint:
-                      'e.g. Modern architecture',
+                      hint: 'e.g. Modern architecture',
                       onSaved:
-                          (v) =>
-                          controller.project.update(
-                                (x) =>
-                            x!.projectHighlights =
-                                (v ?? '')
-                                    .split(',')
-                                    .map((e) => e.trim())
-                                    .where((e) => e.isNotEmpty)
-                                    .toList(),
+                          (v) => controller.project.update(
+                            (x) =>
+                                x!.projectHighlights =
+                                    (v ?? '')
+                                        .split(',')
+                                        .map((e) => e.trim())
+                                        .where((e) => e.isNotEmpty)
+                                        .toList(),
                           ),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 16),
-
 
               // Contact Information Card
               _buildCard(
@@ -995,14 +991,17 @@ class StepAdditional extends GetView<ProjectWizardController> {
                   children: [
                     buildBuilderDefaultHeaderText('Contact Information'),
                     const SizedBox(height: 8),
-                    // SizedBox(height: 16),
 
+                    // SizedBox(height: 16),
                     CommonTextField(
                       label: 'Contact Name',
                       hint: 'e.g John Mark',
                       initialValue: p.projectContactInfo?.name ?? '',
-                      prefixIcon: Icon(Icons.person_outline, size: 20,
-                        color: ColorRes.primary,),
+                      prefixIcon: Icon(
+                        Icons.person_outline,
+                        size: 20,
+                        color: ColorRes.primary,
+                      ),
                       onSaved: (v) {
                         controller.project.update((x) {
                           x!.projectContactInfo ??= ProjectContactInfo();
@@ -1015,8 +1014,11 @@ class StepAdditional extends GetView<ProjectWizardController> {
                       label: 'Phone Number',
                       hint: '+91',
                       initialValue: p.projectContactInfo?.phone ?? '',
-                      prefixIcon: Icon(Icons.phone_outlined, size: 20,
-                        color: ColorRes.primary,),
+                      prefixIcon: Icon(
+                        Icons.phone_outlined,
+                        size: 20,
+                        color: ColorRes.primary,
+                      ),
                       keyboardType: TextInputType.phone,
                       onSaved: (v) {
                         controller.project.update((x) {
@@ -1031,8 +1033,11 @@ class StepAdditional extends GetView<ProjectWizardController> {
                       label: 'Email Address',
                       hint: 'jhone@gmail.com',
                       initialValue: p.projectContactInfo?.email ?? '',
-                      prefixIcon: Icon(Icons.email_outlined, size: 20,
-                        color: ColorRes.primary,),
+                      prefixIcon: Icon(
+                        Icons.email_outlined,
+                        size: 20,
+                        color: ColorRes.primary,
+                      ),
                       keyboardType: TextInputType.emailAddress,
                       validator: ProjectValidators.email,
                       onSaved: (v) {
@@ -1041,7 +1046,6 @@ class StepAdditional extends GetView<ProjectWizardController> {
                           x.projectContactInfo!.email = v?.trim();
                         });
                       },
-
                     ),
                   ],
                 ),
@@ -1083,50 +1087,50 @@ class StepAdditional extends GetView<ProjectWizardController> {
     return child;
   }
 
-//   Widget _buildDropdown({
-//     required ThemeData theme,
-//     required String? value,
-//     String? label,
-//     required String hint,
-//     required IconData icon,
-//     required List<DropdownMenuItem<String>> items,
-//     required void Function(String?) onChanged,
-//   }) {
-//     return SizedBox(
-//       height: 50,
-//       child: DropdownButtonFormField<String>(
-//         value: value,
-//         style: TextStyle(fontSize: AppFontSizes.bodySmall),
-//         items: items,
-//         isExpanded: true,
-//         hint: Text(hint, style: TextStyle(fontSize: AppFontSizes.bodySmall)),
-//         decoration: InputDecoration(
-//           labelText: label,
-//           prefixIcon: Icon(icon, size: 20),
-//           border: OutlineInputBorder(
-//             borderRadius: BorderRadius.circular(12),
-//             borderSide: BorderSide(color: Colors.grey.shade300),
-//           ),
-//           enabledBorder: OutlineInputBorder(
-//             borderRadius: BorderRadius.circular(12),
-//             borderSide: BorderSide(color: Colors.grey.shade300),
-//           ),
-//           focusedBorder: OutlineInputBorder(
-//             borderRadius: BorderRadius.circular(12),
-//             borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
-//           ),
-//           filled: true,
-//           fillColor: Colors.grey.shade50,
-//           contentPadding: const EdgeInsets.symmetric(
-//             horizontal: 16,
-//             vertical: 16,
-//           ),
-//         ),
-//         onChanged: onChanged,
-//       ),
-//     );
-//   }
-// }
+  //   Widget _buildDropdown({
+  //     required ThemeData theme,
+  //     required String? value,
+  //     String? label,
+  //     required String hint,
+  //     required IconData icon,
+  //     required List<DropdownMenuItem<String>> items,
+  //     required void Function(String?) onChanged,
+  //   }) {
+  //     return SizedBox(
+  //       height: 50,
+  //       child: DropdownButtonFormField<String>(
+  //         value: value,
+  //         style: TextStyle(fontSize: AppFontSizes.bodySmall),
+  //         items: items,
+  //         isExpanded: true,
+  //         hint: Text(hint, style: TextStyle(fontSize: AppFontSizes.bodySmall)),
+  //         decoration: InputDecoration(
+  //           labelText: label,
+  //           prefixIcon: Icon(icon, size: 20),
+  //           border: OutlineInputBorder(
+  //             borderRadius: BorderRadius.circular(12),
+  //             borderSide: BorderSide(color: Colors.grey.shade300),
+  //           ),
+  //           enabledBorder: OutlineInputBorder(
+  //             borderRadius: BorderRadius.circular(12),
+  //             borderSide: BorderSide(color: Colors.grey.shade300),
+  //           ),
+  //           focusedBorder: OutlineInputBorder(
+  //             borderRadius: BorderRadius.circular(12),
+  //             borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
+  //           ),
+  //           filled: true,
+  //           fillColor: Colors.grey.shade50,
+  //           contentPadding: const EdgeInsets.symmetric(
+  //             horizontal: 16,
+  //             vertical: 16,
+  //           ),
+  //         ),
+  //         onChanged: onChanged,
+  //       ),
+  //     );
+  //   }
+  // }
 }
 
 Text buildBuilderDefaultText(String text) {
@@ -1175,7 +1179,10 @@ Widget builderPropertyType(ProjectWizardController controller) {
                         : ColorRes.white,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: isSelected ? ColorRes.transparentColor : ColorRes.leadGreyColor.shade300,
+                  color:
+                      isSelected
+                          ? ColorRes.transparentColor
+                          : ColorRes.leadGreyColor.shade300,
                   width: 1,
                 ),
               ),
@@ -1185,7 +1192,10 @@ Widget builderPropertyType(ProjectWizardController controller) {
                   AppSvgIcon(
                     assetName: item.key,
                     size: 24,
-                    color: isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade600,
+                    color:
+                        isSelected
+                            ? ColorRes.primary
+                            : ColorRes.leadGreyColor.shade600,
                     folder: 'amenities',
                   ),
                   const SizedBox(height: 8),

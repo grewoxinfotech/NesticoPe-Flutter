@@ -13,6 +13,7 @@ import '../../../app/constants/color_res.dart';
 import '../../../data/network/lead/lead_service.dart';
 import '../../../data/network/review/service/review_service.dart';
 import '../../../widgets/New folder/inputs/text_field.dart';
+import '../../../widgets/messages/snack_bar.dart';
 import '../../review/controllers/review_controller.dart';
 import '../../review/views/widget/rating_widget.dart';
 
@@ -22,8 +23,8 @@ class MyContractorController extends PaginatedController<NewUpdatedLeadModel> {
   Rxn<GlobalKey> formKey = Rxn<GlobalKey>();
   RxMap<String, String> filters = <String, String>{}.obs;
   var isReasonValid = false.obs;
-  final currentUserId="".obs;
-  ReviewUserService _reviewService=ReviewUserService();
+  final currentUserId = "".obs;
+  ReviewUserService _reviewService = ReviewUserService();
   var txtReason = TextEditingController();
 
   @override
@@ -47,36 +48,32 @@ class MyContractorController extends PaginatedController<NewUpdatedLeadModel> {
 
       // Update metrics with new values
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to refresh ',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to refresh ',
+        contentType: ContentType.failure,
       );
     } finally {
       isRefreshing.value = false;
     }
   }
-  Future<void> getCurrentUserid()
-  async {
-    final user=await SecureStorage.getUserData();
-    currentUserId.value=user?.user?.id??'';
+
+  Future<void> getCurrentUserid() async {
+    final user = await SecureStorage.getUserData();
+    currentUserId.value = user?.user?.id ?? '';
   }
 
   void clearValues() {
     txtReason.clear();
-    controller.overallRating.value=0.0;
+    controller.overallRating.value = 0.0;
   }
 
-
-
-  Future<bool> checkReviewDone(String id)
-  async {
-    final reponse=await _reviewService.getTheBuyerGiveReview(id);
+  Future<bool> checkReviewDone(String id) async {
+    final reponse = await _reviewService.getTheBuyerGiveReview(id);
     return reponse;
   }
 
-  void openAddFollowUpDialog(String name, String contractor,String serviceId) {
+  void openAddFollowUpDialog(String name, String contractor, String serviceId) {
     Get.dialog(
       Dialog(
         backgroundColor: ColorRes.white,
@@ -157,7 +154,7 @@ class MyContractorController extends PaginatedController<NewUpdatedLeadModel> {
                             children: [
                               Text(
                                 name ?? 'N/A',
-                                style:  TextStyle(
+                                style: TextStyle(
                                   fontSize: AppFontSizes.bodyMedium,
                                   fontWeight: AppFontWeights.semiBold,
                                   color: Colors.black87,
@@ -175,8 +172,7 @@ class MyContractorController extends PaginatedController<NewUpdatedLeadModel> {
                               ),
                             ],
                           ),
-                        )
-,
+                        ),
                         const SizedBox(height: 16),
                         Obx(
                           () => RatingField(
@@ -215,9 +211,7 @@ class MyContractorController extends PaginatedController<NewUpdatedLeadModel> {
                             }
                             return null;
                           },
-
                         ),
-
 
                         const SizedBox(height: 16),
                         // Buttons
@@ -258,34 +252,45 @@ class MyContractorController extends PaginatedController<NewUpdatedLeadModel> {
                             //
                             //   child: Text('Submit'),
                             // ),
-                            Obx(() => ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: ColorRes.primary,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                            Obx(
+                              () => ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: ColorRes.primary,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
                                 ),
+                                onPressed:
+                                    isReasonValid.value
+                                        ? () async {
+                                          if (formKey.value?.currentState !=
+                                                  null &&
+                                              !(formKey.value?.currentState
+                                                      as FormState)
+                                                  .validate()) {
+                                            log(
+                                              "Form is invalid. Please correct the errors.",
+                                            );
+                                            return;
+                                          }
+
+                                          Get.back();
+                                          log(
+                                            "Form is valid. Submitting review...",
+                                          );
+
+                                          await addReviewForContractorHandler(
+                                            serviceId:
+                                                serviceId, // Pass contractor ID
+                                            reviewerId:
+                                                currentUserId
+                                                    .value, // Replace with actual logged-in user ID
+                                          );
+                                        }
+                                        : null, // ✅ Disabled if reason < 10 chars
+                                child: Text('Submit'),
                               ),
-                              onPressed: isReasonValid.value
-                                  ? () async {
-                                if (formKey.value?.currentState != null &&
-                                    !(formKey.value?.currentState as FormState).validate()) {
-                                  log("Form is invalid. Please correct the errors.");
-                                  return;
-                                }
-
-                                Get.back();
-                                log("Form is valid. Submitting review...");
-
-                                await addReviewForContractorHandler(
-                                  serviceId: serviceId, // Pass contractor ID
-                                  reviewerId: currentUserId.value, // Replace with actual logged-in user ID
-                                );
-
-                              }
-                                  : null, // ✅ Disabled if reason < 10 chars
-                              child: Text('Submit'),
-                            ))
-
+                            ),
                           ],
                         ),
                       ],
@@ -300,6 +305,7 @@ class MyContractorController extends PaginatedController<NewUpdatedLeadModel> {
       barrierDismissible: true,
     );
   }
+
   Future<void> addReviewForContractorHandler({
     required String serviceId,
     required String reviewerId,
@@ -319,34 +325,34 @@ class MyContractorController extends PaginatedController<NewUpdatedLeadModel> {
       log("📝 Review Payload: $reviewPayload");
 
       // 2️⃣ Send the review using the ReviewUserService
-      final bool success = await _reviewService.addReviewForContractor(reviewPayload);
+      final bool success = await _reviewService.addReviewForContractor(
+        reviewPayload,
+      );
 
       // 3️⃣ Handle the response
       if (success) {
-        Get.snackbar(
-          "Success",
-          "Review submitted successfully!",
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: "Review submitted successfully!",
+          contentType: ContentType.success,
         );
         refreshList();
         clearValues();
       } else {
         clearValues();
-        Get.snackbar(
-          "Error",
-          "Failed to submit review. Please try again.",
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: "Failed to submit review. Please try again.",
+          contentType: ContentType.failure,
         );
       }
     } catch (e, st) {
       log("❌ Error in addReviewForContractorHandler: $e\n$st");
-      Get.snackbar(
-        "Error",
-        "Something went wrong while adding review.",
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong while adding review.",
+        contentType: ContentType.failure,
       );
     }
   }

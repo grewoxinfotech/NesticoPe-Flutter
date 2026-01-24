@@ -1468,6 +1468,7 @@ import 'package:housing_flutter_app/modules/search_property/view/search_screen.d
 
 import '../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../data/network/auth/model/user_model.dart';
+import '../../../widgets/New folder/inputs/text_field.dart';
 import '../../auth/controllers/auth_controller.dart';
 import '../../search_property/controller/search_controller.dart';
 
@@ -1488,15 +1489,16 @@ class CreatePropertyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(CreatePropertyController());
-    final GoogleMapSearchController controllerCity =
-    Get.put(GoogleMapSearchController(),tag: 'city');
+    final GoogleMapSearchController controllerCity = Get.put(
+      GoogleMapSearchController(),
+      tag: 'city',
+    );
 
     if (isEdit) {
-
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final editController = Get.put(LoadEditPropertyPayload());
         if (property != null) {
-          controller.isEdited.value=isEdit;
+          controller.isEdited.value = isEdit;
           log('Editing value : ${controller.isEdited.value}');
           editController.onLoad(controller, property!);
         }
@@ -1997,7 +1999,6 @@ class CreatePropertyScreen extends StatelessWidget {
                                 !hasFormKey ||
                                 (formKeys[step]!.currentState?.validate() ??
                                     true);
-                            
 
                             if (isValid) {
                               if (controller.stepperSelectedIndex.value <
@@ -2720,6 +2721,94 @@ Widget buildSizedSectionTitle(String title, {double width = 70}) {
   );
 }
 
+// Widget buildTextField(
+//   String label,
+//   IconData icon,
+//   TextEditingController controller, {
+//   bool isPhone = false,
+//   bool isPhoneKey = false,
+//   bool isEnable = true,
+//   int maxLines = 1,
+//   int minLines = 1,
+//   TextInputType inputType = TextInputType.text,
+//   List<TextInputFormatter>? formatter,
+//   VoidCallback? onTap,
+//   String? Function(String?)? validator,
+//   Function(String)? onChanged,
+// }) {
+//   return GestureDetector(
+//     onTap: onTap,
+//     child: TextFormField(
+//       controller: controller,
+//       enabled: isEnable,
+//       maxLines: maxLines,
+//       minLines: minLines,
+//       keyboardType: isPhoneKey ? TextInputType.phone : inputType,
+//       inputFormatters: formatter,
+//       onChanged: onChanged,
+//       style: TextStyle(
+//         fontSize: AppFontSizes.medium,
+//         color: ColorRes.textPrimary,
+//       ),
+//       validator: validator,
+//       decoration: InputDecoration(
+//         prefixIcon:
+//             isPhone
+//                 ? Padding(
+//                   padding: const EdgeInsets.only(left: 8),
+//                   child: buildPhonePrefix(),
+//                 )
+//                 : Icon(icon, color: ColorRes.primary, size: 20),
+//         prefixIconConstraints: const BoxConstraints(
+//           minWidth: 48,
+//           maxHeight: 20,
+//         ),
+//         hintText: label,
+//         hintStyle: TextStyle(
+//           fontSize: AppFontSizes.medium,
+//           color: ColorRes.leadGreyColor.shade500,
+//         ),
+//         contentPadding: const EdgeInsets.symmetric(
+//           vertical: 14,
+//           horizontal: 12,
+//         ),
+//         enabledBorder: OutlineInputBorder(
+//           borderRadius: BorderRadius.circular(12),
+//           borderSide: BorderSide(
+//             width: 0.8,
+//             color: ColorRes.grey.withOpacity(0.3),
+//           ),
+//         ),
+//         disabledBorder: OutlineInputBorder(
+//           borderRadius: BorderRadius.circular(12),
+//           borderSide: BorderSide(
+//             width: 0.8,
+//             color: ColorRes.grey.withOpacity(0.3),
+//           ),
+//         ),
+//         focusedBorder: OutlineInputBorder(
+//           borderRadius: BorderRadius.circular(12),
+//           borderSide: const BorderSide(width: 1.2, color: ColorRes.primary),
+//         ),
+//         errorBorder: OutlineInputBorder(
+//           borderRadius: BorderRadius.circular(12),
+//           borderSide: const BorderSide(width: 1.2, color: ColorRes.error),
+//         ),
+//         focusedErrorBorder: OutlineInputBorder(
+//           borderRadius: BorderRadius.circular(12),
+//           borderSide: const BorderSide(width: 1.2, color: ColorRes.error),
+//         ),
+//         filled: true,
+//         fillColor: Colors.grey.shade50,
+//         errorStyle: TextStyle(
+//           color: ColorRes.error.shade700,
+//           fontSize: AppFontSizes.small,
+//         ),
+//       ),
+//     ),
+//   );
+// }
+
 Widget buildTextField(
   String label,
   IconData icon,
@@ -2735,76 +2824,24 @@ Widget buildTextField(
   String? Function(String?)? validator,
   Function(String)? onChanged,
 }) {
-  return GestureDetector(
+  return NesticoPeTextField(
+    controller: controller,
+    hintText: label,
+    enabled: isEnable,
+    maxLines: maxLines,
+    keyboardType: isPhoneKey ? TextInputType.phone : inputType,
+    formatter: formatter,
+    validator: validator,
+    onChanged: onChanged,
     onTap: onTap,
-    child: TextFormField(
-      controller: controller,
-      enabled: isEnable,
-      maxLines: maxLines,
-      minLines: minLines,
-      keyboardType: isPhoneKey ? TextInputType.phone : inputType,
-      inputFormatters: formatter,
-      onChanged: onChanged,
-      style: TextStyle(
-        fontSize: AppFontSizes.medium,
-        color: ColorRes.textPrimary,
-      ),
-      validator: validator,
-      decoration: InputDecoration(
-        prefixIcon:
-            isPhone
-                ? Padding(
-                  padding: const EdgeInsets.only(left: 8),
-                  child: buildPhonePrefix(),
-                )
-                : Icon(icon, color: ColorRes.primary, size: 20),
-        prefixIconConstraints: const BoxConstraints(
-          minWidth: 48,
-          maxHeight: 20,
-        ),
-        hintText: label,
-        hintStyle: TextStyle(
-          fontSize: AppFontSizes.medium,
-          color: ColorRes.leadGreyColor.shade500,
-        ),
-        contentPadding: const EdgeInsets.symmetric(
-          vertical: 14,
-          horizontal: 12,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            width: 0.8,
-            color: ColorRes.grey.withOpacity(0.3),
-          ),
-        ),
-        disabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            width: 0.8,
-            color: ColorRes.grey.withOpacity(0.3),
-          ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(width: 1.2, color: ColorRes.primary),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(width: 1.2, color: ColorRes.error),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(width: 1.2, color: ColorRes.error),
-        ),
-        filled: true,
-        fillColor: Colors.grey.shade50,
-        errorStyle: TextStyle(
-          color: ColorRes.error.shade700,
-          fontSize: AppFontSizes.small,
-        ),
-      ),
-    ),
+    prefixIcon: isPhone ? null : icon,
+    suffixIcon:
+        isPhone
+            ? Padding(
+              padding: const EdgeInsets.only(right: 12),
+              child: buildPhonePrefix(),
+            )
+            : null,
   );
 }
 

@@ -11,6 +11,7 @@ import '../../../data/network/auth/model/user_model.dart';
 import '../../../data/network/contractor/model/contractor_hire_profile_model.dart';
 import '../../../data/network/contractor/model/contractot_service_model/contractor_category_model.dart';
 import '../../../data/network/contractor/service/hire_contractor_service.dart';
+import '../../../widgets/messages/snack_bar.dart';
 
 class HireContractorListOfProfileController extends PaginatedController<User> {
   // Observable variables
@@ -22,7 +23,6 @@ class HireContractorListOfProfileController extends PaginatedController<User> {
   RxDouble selectedServiceRating = 0.0.obs; // new rating filter
   RxDouble selectedContractorRating = 0.0.obs; // new rating filter
   RxString selectedCity = ''.obs; // new rating filter
-
 
   RxMap<String, String> filters = <String, String>{}.obs;
   var errorMessage = ''.obs;
@@ -40,12 +40,12 @@ class HireContractorListOfProfileController extends PaginatedController<User> {
   }
 
   Future<void> applyFilters(Map<String, String> filter) async {
-
     filters.assignAll(filter);
     log("Apply Filter in Inquiry Contractor Section ${filters} ");
     // await loadInitial();
     refreshList();
   }
+
   void setValue<T>(Rx<T> target, T value) {
     target.value = value;
   }
@@ -60,7 +60,6 @@ class HireContractorListOfProfileController extends PaginatedController<User> {
   }
 
   // 🔹 Apply filters and refresh
-
 
   @override
   Future<PaginationResponse<User>> fetchItems(int page) async {
@@ -79,26 +78,26 @@ class HireContractorListOfProfileController extends PaginatedController<User> {
       for (final user in response.items) {
         // Try to find a matching profile by userId
         final profile = userProfileData.value!.profiles.firstWhere(
-              (p) => p.userId == user.id,
-          orElse: () => HireContractorUserProfile(
-            id: '',
-            userId: user.id ?? '',
-            totalReviews: 0,
-            overallRating: '0.00',
-            warningCount: 0,
-            totalServices: 0,
-            isBlocked: false,
-            activeServices: 0,
-            createdAt: DateTime.now(),
-            updatedAt: DateTime.now(),
-          ),
+          (p) => p.userId == user.id,
+          orElse:
+              () => HireContractorUserProfile(
+                id: '',
+                userId: user.id ?? '',
+                totalReviews: 0,
+                overallRating: '0.00',
+                warningCount: 0,
+                totalServices: 0,
+                isBlocked: false,
+                activeServices: 0,
+                createdAt: DateTime.now(),
+                updatedAt: DateTime.now(),
+              ),
         );
 
         // Create combined model
-        combinedList.add(HireContractorUserWithProfile(
-          user: user,
-          profile: profile,
-        ));
+        combinedList.add(
+          HireContractorUserWithProfile(user: user, profile: profile),
+        );
       }
 
       log('✅ Combined list length: ${combinedList.length}');
@@ -109,14 +108,13 @@ class HireContractorListOfProfileController extends PaginatedController<User> {
     return response;
   }
 
-
   Future<void> fetchUserProfile() async {
     userProfileData.value = await HireContractorService.contractorMyService
         .fetchUserProfileData({'moduleName': 'contractor'});
-    if ( userProfileData.value != null) {
-      print('Fetched ${ userProfileData.value?.count} profiles');
-      for (HireContractorUserProfile profile in  userProfileData.value?.profiles??[]) {
-
+    if (userProfileData.value != null) {
+      print('Fetched ${userProfileData.value?.count} profiles');
+      for (HireContractorUserProfile profile
+          in userProfileData.value?.profiles ?? []) {
         print('${profile.userId} → Rating: ${profile.overallRating}');
       }
     } else {
@@ -124,24 +122,23 @@ class HireContractorListOfProfileController extends PaginatedController<User> {
     }
   }
 
-
   Future<void> refreshContractorData() async {
     try {
       hireContractorData.refresh();
-    await Future.delayed(const Duration(seconds: 1));
+      await Future.delayed(const Duration(seconds: 1));
 
-    // Update metrics with new values
+      // Update metrics with new values
     } catch (e) {
-    Get.snackbar(
-    'Error',
-    'Failed to refresh ',
-    backgroundColor: Colors.red,
-    colorText: ColorRes.white,
-    );
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Error",
+        message: 'Failed to refresh ',
+        contentType: ContentType.failure,
+      );
     } finally {
-    isRefreshing.value = false;
+      isRefreshing.value = false;
     }
   }
+
   Future<void> refreshService() async {
     try {
       isRefreshing.value = true;
@@ -150,11 +147,10 @@ class HireContractorListOfProfileController extends PaginatedController<User> {
 
       // Update metrics with new values
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to refresh ',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Error",
+        message: 'Failed to refresh ',
+        contentType: ContentType.failure,
       );
     } finally {
       isRefreshing.value = false;
@@ -162,17 +158,11 @@ class HireContractorListOfProfileController extends PaginatedController<User> {
   }
 }
 
-
-
-
 class HireContractorUserWithProfile {
   final User user;
   final HireContractorUserProfile profile;
 
-  HireContractorUserWithProfile({
-    required this.user,
-    required this.profile,
-  });
+  HireContractorUserWithProfile({required this.user, required this.profile});
 
   /// ✅ Create from Map or JSON
   factory HireContractorUserWithProfile.fromMap(Map<String, dynamic> map) {
@@ -184,10 +174,7 @@ class HireContractorUserWithProfile {
 
   /// ✅ Convert to Map
   Map<String, dynamic> toMap() {
-    return {
-      'user': user.toJson(),
-      'profile': profile.toMap(),
-    };
+    return {'user': user.toJson(), 'profile': profile.toMap()};
   }
 
   /// ✅ Optional: JSON helper methods
@@ -196,4 +183,3 @@ class HireContractorUserWithProfile {
 
   Map<String, dynamic> toJson() => toMap();
 }
-

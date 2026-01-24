@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import '../../../app/constants/api_constants.dart';
 import '../../../modules/filter_property/model/city_insigths_model.dart';
+import '../../../widgets/messages/snack_bar.dart';
 
 class CityService extends GetxService {
   // List to store fetched cities
@@ -24,11 +25,19 @@ class CityService extends GetxService {
 
         cities.value = cityResponse.data;
       } else {
-        Get.snackbar('Error', 'Failed to fetch cities: ${response.statusCode}');
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Error",
+          message: 'Failed to fetch cities: ${response.statusCode}',
+          contentType: ContentType.failure,
+        );
       }
       print("cities ===== ${response.body}");
     } catch (e) {
-      Get.snackbar('Error', 'Something went wrong: $e');
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Error",
+        message: 'Something went wrong: $e',
+        contentType: ContentType.failure,
+      );
     } finally {
       isLoading.value = false;
     }

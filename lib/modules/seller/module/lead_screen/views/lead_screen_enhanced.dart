@@ -3749,6 +3749,7 @@ import '../../../../../app/manager/data_masker.dart';
 
 import '../../../../../widgets/bottom_sheet/lead_filter_bottomsheet.dart';
 import '../../../../../widgets/bottom_sheet/widgets/lead_filter_chips.dart';
+import '../../../../../widgets/messages/snack_bar.dart';
 import '../../../../dashboard/views/seller_dashboard_screen.dart';
 import '../../../../reseller/controller/dashborad_controller/dashboard_controller.dart';
 import '../../../../reseller/model/dashboard/dashboard_model.dart';
@@ -4108,9 +4109,10 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
                             );
                           } catch (e, st) {
                             log('Error while opening lead: $e\n$st');
-                            Get.snackbar(
-                              'Error',
-                              'Failed to open lead details.',
+                            NesticoPeSnackBar.showAwesomeSnackbar(
+                              title: 'Error',
+                              message: 'Failed to open lead details.',
+                              contentType: ContentType.failure,
                             );
                           } finally {
                             // Hide loader

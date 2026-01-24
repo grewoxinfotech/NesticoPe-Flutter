@@ -16,6 +16,7 @@ import '../../../data/network/contractor/model/contractor_lead_model/contractor_
 import '../../../data/network/contractor/model/contractor_project_model/contracto_project_model.dart';
 import '../../../data/network/contractor/model/employee/contractor_employee_model.dart';
 import '../../../data/network/contractor/service/project/contractor_project_service.dart';
+import '../../../widgets/messages/snack_bar.dart';
 import '../../reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 import 'contractor_project_controller.dart';
 import 'contractot_employee_controller.dart';
@@ -187,11 +188,11 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
 
       // Update metrics with new values
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to refresh ',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message:   'Failed to refresh',
+        contentType: ContentType.failure,
       );
     } finally {
       isRefreshing.value = false;
@@ -271,11 +272,11 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
   Future<void> convertIntoProject(String id) async {
     debugPrint("📦 Project Payload => $id");
     if (deadline.value == null || startDate.value == null) {
-      Get.snackbar(
-        "Error",
-        "Please fill required fields",
-        backgroundColor: ColorRes.error.shade100,
-        colorText: ColorRes.error.shade700,
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message:  "Please fill required fields",
+        contentType: ContentType.failure,
       );
       return;
     }
@@ -304,11 +305,11 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
   Future<void> updateProject(String id) async {
     debugPrint("📦 Project Payload => $id");
     if (deadline.value == null || startDate.value == null) {
-      Get.snackbar(
-        "Error",
-        "Please fill required fields",
-        backgroundColor: ColorRes.error.shade100,
-        colorText: ColorRes.error.shade700,
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message:   "Please fill required fields",
+        contentType: ContentType.failure,
       );
       return;
     }
@@ -468,12 +469,11 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
             style: ElevatedButton.styleFrom(backgroundColor: ColorRes.green),
             onPressed: () {
               Get.back();
-              Get.snackbar(
-                "Converted",
-                "'${item.name}' converted successfully!",
-                backgroundColor: ColorRes.green,
-                colorText: ColorRes.white,
-                snackPosition: SnackPosition.BOTTOM,
+
+              NesticoPeSnackBar.showAwesomeSnackbar(
+                title: "Converted",
+                message:  "'${item.name}' converted successfully!",
+                contentType: ContentType.success,
               );
             },
             child: const Text(
@@ -506,12 +506,11 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
             onPressed: () {
               deletedContractorLead(id);
               Navigator.of(Get.context!).pop();
-              Get.snackbar(
-                'Deleted',
-                'Lead deleted successfully',
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: ColorRes.error,
-                colorText: ColorRes.white,
+
+              NesticoPeSnackBar.showAwesomeSnackbar(
+                title: "Deleted",
+                message:  'Lead deleted successfully',
+                contentType: ContentType.success,
               );
             },
             child: const Text("Delete"),
@@ -564,31 +563,30 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
           .updateContractorLead(leadId, payload);
 
       if (response) {
-        Get.snackbar(
-          "Success",
-          "Lead updated successfully!",
-          backgroundColor: ColorRes.green,
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
+
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Success",
+          message:   "Lead updated successfully!",
+          contentType: ContentType.success,
         );
         refreshList();
         Get.back();
         resetForm();
       } else {
-        Get.snackbar(
-          "Error",
-          "Failed to update lead.",
-          backgroundColor: ColorRes.error.shade100,
-          colorText: ColorRes.error.shade700,
+
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Error",
+          message:  "Failed to update lead.",
+          contentType: ContentType.failure,
         );
       }
     } catch (e, s) {
       debugPrint("🚨 Error in updateLeadDetails: $e\n$s");
-      Get.snackbar(
-        "Error",
-        "Something went wrong while updating.",
-        backgroundColor: ColorRes.error.shade100,
-        colorText: ColorRes.error.shade700,
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Error",
+        message:  "Something went wrong while updating.",
+        contentType: ContentType.failure,
       );
     }
   }
@@ -611,11 +609,11 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
 
       if (payload.isEmpty) {
         print("⚠️ No valid status or stage provided to update.");
-        Get.snackbar(
-          "Warning",
-          "Please select at least one value to update.",
-          backgroundColor: Colors.orange.shade100,
-          colorText: Colors.black87,
+
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Warning",
+          message: "Please select at least one value to update.",
+          contentType: ContentType.warning,
         );
         return;
       }
@@ -629,36 +627,32 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
       if (success) {
         print("✅ Lead updated successfully with $payload");
 
-        Get.snackbar(
-          "Updated",
-          "Lead status/stage updated successfully.",
-          backgroundColor: ColorRes.green,
-          colorText: ColorRes.white,
-          snackPosition: SnackPosition.BOTTOM,
+
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Updated",
+          message:"Lead status/stage updated successfully.",
+          contentType: ContentType.success,
         );
 
         refreshList(); // reloads data from API
       } else {
         print("🔴 Failed to update lead with $payload");
 
-        Get.snackbar(
-          "Error",
-          "Failed to update lead.",
-          backgroundColor: ColorRes.error.shade100,
-          colorText: ColorRes.error.shade700,
-          snackPosition: SnackPosition.BOTTOM,
+
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Error",
+          message: "Failed to update lead.",
+          contentType: ContentType.failure,
         );
       }
     } catch (e, stack) {
       print("🚨 Exception in updateTheStatusAndStage: $e");
       print("🧠 Stack trace: $stack");
 
-      Get.snackbar(
-        "Error",
-        "Something went wrong while updating.",
-        backgroundColor: ColorRes.error.shade100,
-        colorText: ColorRes.error.shade700,
-        snackPosition: SnackPosition.BOTTOM,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Error",
+        message: "Something went wrong while updating.",
+        contentType: ContentType.failure,
       );
     }
   }

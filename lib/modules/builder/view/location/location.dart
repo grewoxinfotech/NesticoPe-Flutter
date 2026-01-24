@@ -27,7 +27,10 @@ class StepLocation extends GetView<ProjectWizardController> {
 
   @override
   Widget build(BuildContext context) {
-    GoogleMapSearchController googleMapController=Get.put(GoogleMapSearchController(),tag: 'city');
+    GoogleMapSearchController googleMapController = Get.put(
+      GoogleMapSearchController(),
+      tag: 'city',
+    );
 
     final theme = Theme.of(context);
     return Obx(() {
@@ -43,7 +46,14 @@ class StepLocation extends GetView<ProjectWizardController> {
             children: [
               const SizedBox(height: 12),
 
-              const Text('City',style: TextStyle(fontSize: 10,fontWeight: FontWeight.w600,color: ColorRes.textColor),),
+              const Text(
+                'City',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  color: ColorRes.textColor,
+                ),
+              ),
               const SizedBox(height: 8),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,24 +119,33 @@ class StepLocation extends GetView<ProjectWizardController> {
                         Prediction selectedCity = await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => CommonSearchField(
-                              onlySearchCity: true,
-                              onCitySelected: (city) {
-                                Navigator.pop(context, city);
-                              },
-                              isFromAddProperty: true,
-                              initialSearchText: controller.cityController.text,
-                            ),
+                            builder:
+                                (context) => CommonSearchField(
+                                  onlySearchCity: true,
+                                  onCitySelected: (city) {
+                                    Navigator.pop(context, city);
+                                  },
+                                  isFromAddProperty: true,
+                                  initialSearchText:
+                                      controller.cityController.text,
+                                ),
                           ),
                         );
 
                         // ✅ Extract city from description
-                        String city = selectedCity.description?.split(',')[0].trim() ?? '';
+                        String city =
+                            selectedCity.description?.split(',')[0].trim() ??
+                            '';
 
                         // ✅ Extract state from terms array (second-to-last item before country)
                         String state = '';
-                        if (selectedCity.terms != null && selectedCity.terms!.length >= 2) {
-                          state = selectedCity.terms![selectedCity.terms!.length - 2].value ?? '';
+                        if (selectedCity.terms != null &&
+                            selectedCity.terms!.length >= 2) {
+                          state =
+                              selectedCity
+                                  .terms![selectedCity.terms!.length - 2]
+                                  .value ??
+                              '';
                         }
 
                         // ✅ Update controllers
@@ -147,8 +166,15 @@ class StepLocation extends GetView<ProjectWizardController> {
                 ],
               ),
               const SizedBox(height: 12),
-              const Text('Locality',style: TextStyle(fontSize: 10,fontWeight: FontWeight.w600,color: ColorRes.textColor),),
-              SizedBox(height: 10,),
+              const Text(
+                'Locality',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  color: ColorRes.textColor,
+                ),
+              ),
+              SizedBox(height: 10),
               buildTextField(
                 "Search Locality",
                 Icons.area_chart_outlined,
@@ -167,32 +193,30 @@ class StepLocation extends GetView<ProjectWizardController> {
                     MaterialPageRoute(
                       builder:
                           (context) => CommonSearchField(
-                        isLocality: true,
+                            isLocality: true,
 
-                        selectedCity: controller.cityController.text,
-                        onCitySelected: (city) {
-                          Navigator.pop(context, city);
-                        },
+                            selectedCity: controller.cityController.text,
+                            onCitySelected: (city) {
+                              Navigator.pop(context, city);
+                            },
                             hintText: 'Locality',
-                        isFromAddProperty: true,
-                        initialSearchText:
-                        controller.locationController.text,
-                      ),
+                            isFromAddProperty: true,
+                            initialSearchText:
+                                controller.locationController.text,
+                          ),
                     ),
                   );
 
                   controller.locationController.text =
-                      selectedCity.description??'';
-                  controller.addressController.text=
-                      selectedCity.description??'';
+                      selectedCity.description ?? '';
+                  controller.addressController.text =
+                      selectedCity.description ?? '';
                   controller.project.update((x) {
                     x!.location = selectedCity.description ?? '';
                     x!.address = selectedCity.description ?? '';
                   });
 
-
                   // controller.cityController.text = selectedCity.split(',')[0];
-
 
                   print("city ${controller.locationController.text}");
                 },
@@ -213,7 +237,7 @@ class StepLocation extends GetView<ProjectWizardController> {
                 onSaved:
                     (v) => controller.project.update(
                       (x) => x!.address = v!.trim(),
-                ),
+                    ),
               ),
               const SizedBox(height: 12),
 
@@ -244,7 +268,6 @@ class StepLocation extends GetView<ProjectWizardController> {
                     ),
                   ),
                   const SizedBox(width: 12),
-
                 ],
               ),
             ],

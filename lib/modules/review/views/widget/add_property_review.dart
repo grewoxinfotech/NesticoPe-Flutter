@@ -10,6 +10,7 @@ import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../app/constants/size_manager.dart';
 import '../../../../data/network/overall_rating/model/overall_rating_model.dart';
+import '../../../../widgets/messages/snack_bar.dart';
 import '../../controllers/review_controller.dart';
 
 class AddReviewScreen extends StatelessWidget {
@@ -563,7 +564,11 @@ class AddReviewScreen extends StatelessWidget {
   Future<void> _submit() async {
     if (!(controller.formKey.currentState?.validate() ?? false)) return;
     if (controller.overallRating.value == 0) {
-      Get.snackbar('Required', 'Please provide an overall rating');
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Required',
+        message: 'Please provide an overall rating',
+        contentType: ContentType.failure,
+      );
       return;
     }
 
@@ -601,11 +606,18 @@ class AddReviewScreen extends StatelessWidget {
       if (success) {
         controller.resetForm();
         Get.back(result: true); // return true to previous screen
-      } else {
-        Get.snackbar('Error', 'Failed to submit review');
-      }
+      } else
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: 'Failed to submit review',
+          contentType: ContentType.failure,
+        );
     } catch (e) {
-      Get.snackbar('Error', e.toString());
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: e.toString(),
+        contentType: ContentType.failure,
+      );
     }
   }
 }

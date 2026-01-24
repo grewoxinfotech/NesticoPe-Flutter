@@ -5,21 +5,20 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_inquiry_controller.dart';
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../widgets/New folder/inputs/dropdown_field.dart';
+import '../../../../../widgets/messages/snack_bar.dart';
 import '../../../../add_property/view/create_property.dart';
 import '../../../controller/contractor_lead_controller.dart';
-
 
 class ContractorLeadFilter extends StatefulWidget {
   const ContractorLeadFilter({super.key});
 
   @override
-  State<ContractorLeadFilter> createState() =>
-      _ContractorLeadFilterState();
+  State<ContractorLeadFilter> createState() => _ContractorLeadFilterState();
 }
 
 class _ContractorLeadFilterState extends State<ContractorLeadFilter> {
   final ContractorLeadController controller =
-  Get.find<ContractorLeadController>();
+      Get.find<ContractorLeadController>();
 
   final _formKey = GlobalKey<FormState>();
   DateTime? startDate;
@@ -33,11 +32,17 @@ class _ContractorLeadFilterState extends State<ContractorLeadFilter> {
       if (controller.txtEndDate.text.isNotEmpty && controller.endCreate != null)
         'endDate': controller.txtEndDate.text,
       if (controller.leadStatus.value.isNotEmpty)
-        'status': controller.leadStatus.value.toLowerCase().replaceAll(" ", "_"),
+        'status': controller.leadStatus.value.toLowerCase().replaceAll(
+          " ",
+          "_",
+        ),
       if (controller.leadStage.value.isNotEmpty)
         'stage': controller.leadStage.value.toLowerCase().replaceAll(" ", "_"),
       if (controller.leadSource.value.isNotEmpty)
-        'source': controller.leadSource.value.toLowerCase().replaceAll(" ", "_"),
+        'source': controller.leadSource.value.toLowerCase().replaceAll(
+          " ",
+          "_",
+        ),
     };
   }
 
@@ -60,8 +65,10 @@ class _ContractorLeadFilterState extends State<ContractorLeadFilter> {
             children: [
               // 🔹 Header
               Container(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 decoration: const BoxDecoration(
                   color: ColorRes.primary,
                   borderRadius: BorderRadius.only(
@@ -82,7 +89,10 @@ class _ContractorLeadFilterState extends State<ContractorLeadFilter> {
                       ),
                     ),
                     InkWell(
-                      onTap: () { Get.back();controller.resetFilters();},
+                      onTap: () {
+                        Get.back();
+                        controller.resetFilters();
+                      },
                       borderRadius: BorderRadius.circular(50),
                       child: const Icon(
                         Icons.close_rounded,
@@ -98,8 +108,10 @@ class _ContractorLeadFilterState extends State<ContractorLeadFilter> {
               Flexible(
                 flex: 1,
                 child: SingleChildScrollView(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 16,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -124,7 +136,8 @@ class _ContractorLeadFilterState extends State<ContractorLeadFilter> {
                                 FocusScope.of(context).unfocus();
                                 DateTime? picked = await showDatePicker(
                                   context: context,
-                                  initialDate: controller.startCreate ?? DateTime.now(),
+                                  initialDate:
+                                      controller.startCreate ?? DateTime.now(),
                                   firstDate: DateTime(2000),
                                   lastDate: DateTime(2100),
                                   builder: (context, child) {
@@ -157,7 +170,7 @@ class _ContractorLeadFilterState extends State<ContractorLeadFilter> {
                                     }
                                   });
                                   controller.txtStartDate.text =
-                                  "${picked.year}-${picked.month}-${picked.day}";
+                                      "${picked.year}-${picked.month}-${picked.day}";
                                   // controller.getPropertyType(propertyController.items);
                                 }
                               },
@@ -183,12 +196,10 @@ class _ContractorLeadFilterState extends State<ContractorLeadFilter> {
                               isEnable: false,
                               onTap: () async {
                                 if (startDate == null) {
-                                  Get.snackbar(
-                                    'Date Required',
-                                    'Please select start date first',
-                                    snackPosition: SnackPosition.BOTTOM,
-                                    backgroundColor: ColorRes.primary.withOpacity(0.8),
-                                    colorText: ColorRes.white,
+                                  NesticoPeSnackBar.showAwesomeSnackbar(
+                                    title: 'Date Required',
+                                    message: 'Please select start date first',
+                                    contentType: ContentType.failure,
                                   );
                                   return;
                                 }
@@ -197,7 +208,7 @@ class _ContractorLeadFilterState extends State<ContractorLeadFilter> {
                                 DateTime? picked = await showDatePicker(
                                   context: context,
                                   initialDate:
-                                  endDate ??
+                                      endDate ??
                                       (startDate!.isAfter(DateTime.now())
                                           ? startDate!
                                           : DateTime.now()),
@@ -228,7 +239,7 @@ class _ContractorLeadFilterState extends State<ContractorLeadFilter> {
                                     controller.endCreate = picked;
                                   });
                                   controller.txtEndDate.text =
-                                  "${picked.year}-${picked.month}-${picked.day}";
+                                      "${picked.year}-${picked.month}-${picked.day}";
                                   // controller.getPropertyType(propertyController.items);
                                 }
                               },
@@ -248,19 +259,27 @@ class _ContractorLeadFilterState extends State<ContractorLeadFilter> {
                           hintText: "Select availability",
                           prefixIcon: Icons.auto_graph,
                           items:
-                          [  'New',
-                            'Contacted',
-                            'Qualified',
-                            'Negotiation',
-                            'Lost',
-                            'Converted',]
-                              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                              .toList(),
-                          onChanged: (val){
-                            controller.setValue(
-                                controller.leadStatus, val);
-                            log("Contractor_status ${controller.leadStatus.value}");
-                          } ,
+                              [
+                                    'New',
+                                    'Contacted',
+                                    'Qualified',
+                                    'Negotiation',
+                                    'Lost',
+                                    'Converted',
+                                  ]
+                                  .map(
+                                    (e) => DropdownMenuItem(
+                                      value: e,
+                                      child: Text(e),
+                                    ),
+                                  )
+                                  .toList(),
+                          onChanged: (val) {
+                            controller.setValue(controller.leadStatus, val);
+                            log(
+                              "Contractor_status ${controller.leadStatus.value}",
+                            );
+                          },
                           darkText: true,
                         );
                       }),
@@ -274,18 +293,26 @@ class _ContractorLeadFilterState extends State<ContractorLeadFilter> {
                           hintText: "Select availability",
                           prefixIcon: Icons.polyline_sharp,
                           items:
-                          [  'New Lead',
-                            'Contacted',
-                            'Interested',
-                            'Site Visit',
-                            'Sell',]
-                              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                              .toList(),
-                          onChanged: (val){
-                            controller.setValue(
-                                controller.leadStage, val);
-                            log("Contractor_status ${controller.leadStage.value}");
-                          } ,
+                              [
+                                    'New Lead',
+                                    'Contacted',
+                                    'Interested',
+                                    'Site Visit',
+                                    'Sell',
+                                  ]
+                                  .map(
+                                    (e) => DropdownMenuItem(
+                                      value: e,
+                                      child: Text(e),
+                                    ),
+                                  )
+                                  .toList(),
+                          onChanged: (val) {
+                            controller.setValue(controller.leadStage, val);
+                            log(
+                              "Contractor_status ${controller.leadStage.value}",
+                            );
+                          },
                           darkText: true,
                         );
                       }),
@@ -299,18 +326,23 @@ class _ContractorLeadFilterState extends State<ContractorLeadFilter> {
                           hintText: "Select availability",
                           prefixIcon: Icons.source,
                           items:
-                         controller.sourceList.value
-                              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                              .toList(),
-                          onChanged: (val){
-                            controller.setValue(
-                                controller.leadSource, val);
-                            log("Contractor_status ${controller.leadSource.value}");
-                          } ,
+                              controller.sourceList.value
+                                  .map(
+                                    (e) => DropdownMenuItem(
+                                      value: e,
+                                      child: Text(e),
+                                    ),
+                                  )
+                                  .toList(),
+                          onChanged: (val) {
+                            controller.setValue(controller.leadSource, val);
+                            log(
+                              "Contractor_status ${controller.leadSource.value}",
+                            );
+                          },
                           darkText: true,
                         );
                       }),
-
                     ],
                   ),
                 ),
@@ -318,8 +350,10 @@ class _ContractorLeadFilterState extends State<ContractorLeadFilter> {
 
               // 🔹 Footer Buttons
               Container(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
                 decoration: BoxDecoration(
                   color: ColorRes.white,
                   border: Border(
@@ -334,10 +368,8 @@ class _ContractorLeadFilterState extends State<ContractorLeadFilter> {
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () {
-
                           Get.back(result: <String, String>{});
                           controller.resetFilters();
-
                         },
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
@@ -399,7 +431,4 @@ class _ContractorLeadFilterState extends State<ContractorLeadFilter> {
       ),
     );
   }
-
 }
-
-

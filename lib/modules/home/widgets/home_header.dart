@@ -23,6 +23,7 @@ import 'package:housing_flutter_app/modules/search_property/view/search_screen.d
 
 import '../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../data/network/auth/model/user_model.dart';
+import '../../../widgets/messages/snack_bar.dart';
 import '../../builder/controller/builder_form_controller.dart';
 import '../../builder/view/builder_main_screen.dart';
 import '../../contractor/view/contractor_main.dart';
@@ -318,10 +319,10 @@ class _HomeHeaderState extends State<HomeHeader> {
                       print("Error checking user type: $e");
                       print(s);
 
-                      Get.snackbar(
-                        "Error",
-                        "Something went wrong. Please try again.",
-                        snackPosition: SnackPosition.BOTTOM,
+                      NesticoPeSnackBar.showAwesomeSnackbar(
+                        title: 'Error',
+                        message: "Something went wrong. Please try again.",
+                        contentType: ContentType.failure,
                       );
                     }
                   },

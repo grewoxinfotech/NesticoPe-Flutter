@@ -680,7 +680,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       text: project.value.projectName,
     );
     projectAreaController = TextEditingController(
-      text: project.value.projectArea.toString(),
+      text: project.value.projectArea.toStringAsFixed(0),
     );
     totalBuildingsController = TextEditingController(
       text: project.value.projectSize.totalBuildings.toString(),
@@ -857,11 +857,10 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
 
       // Update metrics with new values
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to refresh ',
-        backgroundColor: Colors.red,
-        colorText: ColorRes.white,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Error",
+        message: 'Failed to refresh ',
+        contentType: ContentType.failure,
       );
     } finally {
       isRefreshing.value = false;
@@ -946,10 +945,10 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
 
       if (files.isNotEmpty) {
         if (project.value.imageList.length + files.length > 5) {
-          Get.snackbar(
-            'Limit Exceeded',
-            'You can only select up to 5 images in total',
-            snackPosition: SnackPosition.BOTTOM,
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Limit Exceeded',
+            message: 'You can only select up to 5 images in total',
+            contentType: ContentType.failure,
           );
           return;
         }
@@ -970,10 +969,10 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
         );
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to pick images: $e',
-        snackPosition: SnackPosition.BOTTOM,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Error",
+        message: 'Failed to pick images: $e',
+        contentType: ContentType.failure,
       );
     }
   }
@@ -987,10 +986,10 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
 
       if (videos.isNotEmpty) {
         if (project.value.videoList.length + videos.length > 5) {
-          Get.snackbar(
-            'Limit Exceeded',
-            'You can only select up to 5 videos in total',
-            snackPosition: SnackPosition.BOTTOM,
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: "Limit Exceeded",
+            message: 'You can only select up to 5 videos in total',
+            contentType: ContentType.failure,
           );
           return;
         }
@@ -1004,17 +1003,17 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
         });
         project.refresh();
 
-        Get.snackbar(
-          'Success',
-          '${videos.length} video(s) added',
-          snackPosition: SnackPosition.BOTTOM,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Success",
+          message: '${videos.length} video(s) added',
+          contentType: ContentType.success,
         );
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to pick videos: $e',
-        snackPosition: SnackPosition.BOTTOM,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Error",
+        message: 'Failed to pick videos: $e',
+        contentType: ContentType.failure,
       );
     }
   }
@@ -1144,10 +1143,10 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       if (result != null && result.files.isNotEmpty) {
         // Check total limit
         if (project.value.documentList.length + result.files.length > 2) {
-          Get.snackbar(
-            'Limit Exceeded',
-            'You can only select up to 2 documents in total',
-            snackPosition: SnackPosition.BOTTOM,
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: "Limit Exceeded",
+            message: 'You can only select up to 2 documents in total',
+            contentType: ContentType.failure,
           );
           return;
         }
@@ -1168,18 +1167,18 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
 
         project.refresh();
 
-        Get.snackbar(
-          'Success',
-          '${result.files.length} document(s) added',
-          snackPosition: SnackPosition.BOTTOM,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Success",
+          message: '${result.files.length} document(s) added',
+          contentType: ContentType.success,
         );
       }
     } catch (e) {
       print('Failed to pick documents: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to pick documents: $e',
-        snackPosition: SnackPosition.BOTTOM,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Error",
+        message: 'Failed to pick documents: $e',
+        contentType: ContentType.failure,
       );
     }
   }
@@ -1256,7 +1255,11 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       if (currentStep.value == 0) {
         final err = _validateDates();
         if (err != null) {
-          Get.snackbar('Validation Error', err);
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: "Error",
+            message: 'Validation Error: $err',
+            contentType: ContentType.failure,
+          );
           return false;
         }
       }
@@ -1633,18 +1636,18 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       // TODO: Add API call here
       print('Saving Project Data: $projectData');
 
-      Get.snackbar(
-        'Success',
-        'Project data saved successfully!',
-        snackPosition: SnackPosition.BOTTOM,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Success",
+        message: 'Project data saved successfully!',
+        contentType: ContentType.success,
       );
 
       return true;
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to save project data: $e',
-        snackPosition: SnackPosition.BOTTOM,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Error",
+        message: 'Failed to save project data: $e',
+        contentType: ContentType.failure,
       );
       return false;
     }

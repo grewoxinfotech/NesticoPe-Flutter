@@ -10,13 +10,15 @@ class TrendingCitiesResponse {
   });
 
   factory TrendingCitiesResponse.fromJson(Map<String, dynamic> json) {
+    final dataObj = json['data'];
+
     return TrendingCitiesResponse(
       success: json['success'] ?? false,
       message: json['message'] ?? '',
       data:
-          json['data'] != null
+          dataObj != null && dataObj['items'] != null
               ? List<TrendingCityData>.from(
-                json['data'].map((x) => TrendingCityData.fromJson(x)),
+                dataObj['items'].map((x) => TrendingCityData.fromJson(x)),
               )
               : [],
     );

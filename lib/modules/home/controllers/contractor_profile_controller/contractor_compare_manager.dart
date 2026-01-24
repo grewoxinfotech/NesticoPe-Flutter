@@ -4,9 +4,11 @@ import 'package:housing_flutter_app/app/manager/project_compare_manager.dart';
 
 import '../../../../app/manager/compare_manager.dart';
 import '../../../../data/network/contractor/model/contractor_profile_model/contractor_profile_model.dart';
+import '../../../../widgets/messages/snack_bar.dart';
 
 class ContractorCompareManager extends GetxController {
-  static ContractorCompareManager get to => Get.find<ContractorCompareManager>();
+  static ContractorCompareManager get to =>
+      Get.find<ContractorCompareManager>();
 
   final RxMap<String, Contractor> _selected = <String, Contractor>{}.obs;
 
@@ -28,10 +30,11 @@ class ContractorCompareManager extends GetxController {
 
     if (_selected.length >= max) {
       // You can show a snackbar or toast here
-      Get.snackbar(
-        'Limit Reached',
-        'You can compare up to $max contractors only',
-        snackPosition: SnackPosition.BOTTOM,
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Limit Reached',
+        message: 'You can compare up to $max contractors only',
+        contentType: ContentType.failure,
       );
       return;
     }
