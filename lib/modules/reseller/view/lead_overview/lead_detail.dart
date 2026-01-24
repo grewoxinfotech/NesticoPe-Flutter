@@ -449,7 +449,9 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
             log(
               "Buyer Data ${property.id}    ============== ${propertyInquiryController?.selectedInquiry.value?.propertyId}",
             );
-log("Buyer Id from api ${propertyInquiryController?.selectedInquiry.value?.userId}");
+            log(
+              "Buyer Id from api ${propertyInquiryController?.selectedInquiry.value?.userId}",
+            );
             Get.to(
               () => LeadVisit(
                 leadVisitController: leadVisitController,
@@ -462,7 +464,8 @@ log("Buyer Id from api ${propertyInquiryController?.selectedInquiry.value?.userI
                     propertyInquiryController
                         ?.selectedInquiry
                         .value
-                        ?.propertyId??property.id,
+                        ?.propertyId ??
+                    property.id,
               ),
             );
           },
@@ -483,18 +486,17 @@ log("Buyer Id from api ${propertyInquiryController?.selectedInquiry.value?.userI
             final selectedInquiry =
                 propertyInquiryController?.selectedInquiry.value;
 
-              // Set visit id
-              log(
-                'Setting visit ID for user ${selectedInquiry?.userId} and property ${selectedInquiry?.propertyId}',
-              );
-              leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
-                selectedInquiry?.propertyId ?? property.id??'',
-               buyerID:  selectedInquiry?.userId??'',
-              );
-              log(
-                'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
-              );
-
+            // Set visit id
+            log(
+              'Setting visit ID for user ${selectedInquiry?.userId} and property ${selectedInquiry?.propertyId}',
+            );
+            leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
+              selectedInquiry?.propertyId ?? property.id ?? '',
+              buyerID: selectedInquiry?.userId ?? '',
+            );
+            log(
+              'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
+            );
 
             Get.to(
               () => LeadNegotiablePriceScreen(
@@ -519,21 +521,20 @@ log("Buyer Id from api ${propertyInquiryController?.selectedInquiry.value?.userI
             final selectedInquiry =
                 propertyInquiryController?.selectedInquiry.value;
 
-              // Set visit id
-              log(
-                'Setting visit ID for user ${selectedInquiry?.userId} and property ${selectedInquiry?.propertyId}',
-              );
-              leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
-                selectedInquiry?.propertyId ?? property.id??'',
-              buyerID:   selectedInquiry?.userId??'',
-
-              );
-              log(
-                'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
-              );
+            // Set visit id
+            log(
+              'Setting visit ID for user ${selectedInquiry?.userId} and property ${selectedInquiry?.propertyId}',
+            );
+            leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
+              selectedInquiry?.propertyId ?? property.id ?? '',
+              buyerID: selectedInquiry?.userId ?? '',
+            );
+            log(
+              'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
+            );
 
             log("Set the lead user ${widget.lead?.toJson()}");
-            leadVisitController.getLeadId(widget.lead?.id??'');
+            leadVisitController.getLeadId(widget.lead?.id ?? '');
             Get.to(() => LeadFollowUpScreen(controller: leadVisitController));
           },
         ),

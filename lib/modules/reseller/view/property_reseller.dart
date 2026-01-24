@@ -2974,7 +2974,7 @@ Widget buildLeadGraph(DashboardController controller) {
         SizedBox(
           height: 200,
           width: double.infinity,
-          child: MonthlyLineChart(monthlyData: monthlyData, months: months),
+          child: MonthlyBarChart(monthlyData: monthlyData, months: months,color: ColorRes.green,),
         ),
       ],
     ),
@@ -3216,7 +3216,7 @@ Widget buildCommissionGraph(DashboardController controller) {
 //   }
 // }
 
-class MonthlyLineChart extends StatelessWidget {
+/*class MonthlyLineChart extends StatelessWidget {
   final List<double> monthlyData;
   final List<String> months;
 
@@ -3332,7 +3332,7 @@ class MonthlyLineChart extends StatelessWidget {
               interval: interval,
               getTitlesWidget:
                   (value, meta) => Text(
-                    Formatter.formatNumber(value.toInt()),
+                    Formatter.formatGraphNumber(value.toInt()),
                     style: const TextStyle(fontSize: 10),
                   ),
               reservedSize: 28,
@@ -3380,7 +3380,7 @@ class MonthlyLineChart extends StatelessWidget {
       ),
     );
   }
-}
+}*/
 
 Widget buildReferralProgram({
   required BuildContext context,
@@ -5563,7 +5563,7 @@ Widget buildTopProducts(DashboardController controller) {
             ),
             TextButton(
               onPressed: () {
-                Get.to(() => ResellerLeadScreen());
+                Get.to(() => ResellerLeadScreen(isViewAll: true,));
               },
               style: TextButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
@@ -5988,7 +5988,7 @@ Widget buildMonthlyPerformance({
                   // const SizedBox(height: 6),
                   // buildBenefit('✓ Access to properties'),
                   ...List.generate(
-                    benefits.length,
+                    benefits.length<=2?benefits.length:2,
                     (index) => buildBenefit('✓ ${benefits[index]}'),
                   ),
                 ],
@@ -6328,7 +6328,7 @@ class MainNavigationScreen extends StatelessWidget {
     final screens = [
       ResellerDashboardScreen(),
       ProductListingScreen(),
-      ResellerLeadScreen(),
+      ResellerLeadScreen(isViewAll: true,),
       ResellerSubscriptionPlanScreen(),
       ResellerProfileScreen(),
     ];

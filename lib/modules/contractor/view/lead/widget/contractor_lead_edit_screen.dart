@@ -487,7 +487,7 @@ class _ContractorLeadEditScreenState extends State<ContractorLeadEditScreen> {
                 // --- Notes ---
                 buildTextFieldSection(
                   label: 'Notes',
-                  controller: controller.txtNotes,
+                  controller: controller.txtEditNotes,
                   maxLines: 3,
                 ),
 

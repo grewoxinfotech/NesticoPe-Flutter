@@ -65,7 +65,8 @@ class ProfileController extends GetxController {
   final phoneController = TextEditingController();
   final positionController = TextEditingController();
   final companyController = TextEditingController();
-  final bioController = TextEditingController();
+  final expController = TextEditingController();
+  final totalExperience=TextEditingController();
   final addressController = TextEditingController();
   final zipController = TextEditingController();
 
@@ -165,6 +166,8 @@ class ProfileController extends GetxController {
     companyController.text = profileData.value?.user?.state ?? "";
     addressController.text = profileData.value?.user?.address ?? "";
     zipController.text = profileData.value?.user?.zipCode ?? "";
+    totalExperience.text=profileData.value?.user?.totalExperience.toString()??"";
+    
   }
 
   void toggleEdit() {
@@ -420,6 +423,8 @@ class ProfileController extends GetxController {
       lastName: lastNameController.text,
       address: addressController.text,
       zipCode: zipController.text,
+      totalExperience: int.tryParse(totalExperience.text),
+      
       username: profileData.value?.user?.username,
       userType: "reseller",
       roleId: profileData.value?.user?.roleId,
@@ -516,6 +521,7 @@ class ProfileController extends GetxController {
               email: emailController.text,
               phone: phoneController.text,
               city: positionController.text,
+              totalExperience: int.tryParse(totalExperience.text),
               zipCode: zipController.text,
               state: companyController.text,
               profilePic: image ?? '',
@@ -623,6 +629,7 @@ class ProfileController extends GetxController {
               phone: updatedUser['phone'],
               city: positionController.text,
               state: companyController.text,
+              totalExperience: int.tryParse(totalExperience.text),
               profilePic: profileData.value?.user?.profilePic,
               username: updatedUser['username'],
               userType: profileData.value?.user?.userType,
@@ -924,13 +931,13 @@ class ProfileController extends GetxController {
   void onClose() {
     // Cancel timer to prevent memory leaks
     _resendTimer?.cancel();
-
+totalExperience.dispose();
     nameController.dispose();
     emailController.dispose();
     phoneController.dispose();
     positionController.dispose();
     companyController.dispose();
-    bioController.dispose();
+    expController.dispose();
     super.onClose();
   }
 }

@@ -86,7 +86,6 @@ class ResellerProfileScreen extends StatelessWidget {
                         // Statistics Cards
                         // _buildStatisticsCards(profileController),
                         // const SizedBox(height: 16),
-
                         _buildLeadOverView(),
                         const SizedBox(height: 16),
 
@@ -98,7 +97,9 @@ class ResellerProfileScreen extends StatelessWidget {
                         if (!profileController.isEditing.value) ...[
                           _buildSellerDetailsSection(profileController),
                           const SizedBox(height: 16),
-                          RequestDeleteAccount(),
+                          _buildSellerAccountSection(profileController),
+     /*                     const SizedBox(height: 16),
+                          RequestDeleteAccount(),*/
                         ],
                       ],
                     ),
@@ -145,7 +146,7 @@ class ResellerProfileScreen extends StatelessWidget {
               Spacer(),
               _buildDetailRow(
                 'Performance Levels',
-                controller.resellerProfile.value?.data.performanceLevel??'',
+                controller.resellerProfile.value?.data.performanceLevel ?? '',
               ),
             ],
           ),
@@ -170,6 +171,68 @@ class ResellerProfileScreen extends StatelessWidget {
       ),
     );
   }
+  Widget _buildSellerAccountSection(ProfileController controller) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: ColorRes.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: ColorRes.leadGreyColor.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Account Information',
+            style: TextStyle(
+              fontSize: AppFontSizes.bodyMedium,
+              fontWeight: AppFontWeights.bold,
+              color: ColorRes.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox(height: 16),
+              _buildDetailRow(
+                'Created At',
+             /*   '${Formatter.formatPrice(num.tryParse(controller.resellerProfile.value?.data.totalCommissions ?? '') ?? 0) ?? ''}',*/
+                '${Formatter.formatDate(controller.resellerProfile.value?.data.createdAt)}'
+
+              ),
+              const SizedBox(height: 12),
+              Spacer(),
+              _buildDetailRow(
+                'Last Updated',
+                  '${Formatter.formatDate(controller.resellerProfile.value?.data.updatedAt)}'
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox(height: 16),
+              _buildDetailRow(
+                'Verification Status',
+                '${(controller.profileData.value?.user?.isVerified??true)?"Verified":"Not Verified"} ',
+              ),
+              const SizedBox(height: 12),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          RequestDeleteAccount(),
+        ],
+      ),
+    );
+  }
+
   Widget _buildDetailRow(String label, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -195,6 +258,7 @@ class ResellerProfileScreen extends StatelessWidget {
       ],
     );
   }
+
   Widget _buildProfileHeader(ProfileController controller) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -908,7 +972,7 @@ class ResellerProfileScreen extends StatelessWidget {
           const SizedBox(height: 8),
           Row(
             children: [
-             /* Container(
+              /* Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
                   vertical: 4,
@@ -1118,8 +1182,6 @@ class ResellerProfileScreen extends StatelessWidget {
               label: 'Fist Name',
               icon: Icons.person_outline,
               enabled: controller.isEditing.value,
-              validator:
-                  (value) => value?.isEmpty ?? true ? 'Name is required' : null,
             ),
             const SizedBox(height: 14),
             _buildFormField(
@@ -1127,8 +1189,6 @@ class ResellerProfileScreen extends StatelessWidget {
               label: 'Last Name',
               icon: Icons.person_outline,
               enabled: controller.isEditing.value,
-              validator:
-                  (value) => value?.isEmpty ?? true ? 'Name is required' : null,
             ),
             const SizedBox(height: 14),
             _buildFormField(
@@ -1150,6 +1210,10 @@ class ResellerProfileScreen extends StatelessWidget {
               icon: Icons.phone_outlined,
               enabled: controller.isEditing.value,
               keyboardType: TextInputType.phone,
+              validator: (value) {
+                if (value?.isEmpty ?? true) return 'Phone number is required';
+                return null;
+              },
             ),
             const SizedBox(height: 14),
             // _buildFormField(
@@ -1198,14 +1262,32 @@ class ResellerProfileScreen extends StatelessWidget {
             //   icon: Icons.location_on_outlined,
             //   enabled: controller.isEditing.value,
             // ),
-            // const SizedBox(height: 14),
-            // _buildFormField(
-            //   controller: controller.bioController,
-            //   label: 'Bio',
-            //   icon: Icons.info_outline,
-            //   enabled: controller.isEditing.value,
-            //   maxLines: 3,
-            // ),
+            const SizedBox(height: 14),
+            const SizedBox(height: 14),
+            _buildFormField(
+              controller: controller.totalExperience,
+              label: 'Total Experience',
+              keyboardType: TextInputType.number,
+              icon: Icons.work_history_outlined,
+              enabled: controller.isEditing.value,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Total experience is required';
+                }
+
+                final number = int.tryParse(value);
+
+                if (number == null) {
+                  return 'Please enter a valid number';
+                }
+
+                if (number > 60) {
+                  return 'Experience cannot be more than 60 years';
+                }
+
+                return null; // valid
+              },
+            ),
             if (controller.isEditing.value) ...[
               const SizedBox(height: 24),
               Row(

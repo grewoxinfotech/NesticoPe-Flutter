@@ -154,7 +154,8 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                               onTap: () {
                                 Get.to(() => ContractorPlanScreen());
                               },
-                            ), _buildActionButton(
+                            ),
+                            _buildActionButton(
                               icon: Icons.person,
                               label: "Employees",
 
@@ -167,7 +168,9 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                               label: "My Quotations",
 
                               onTap: () {
-                                Get.to(() => const ContractorQuotationListScreen());
+                                Get.to(
+                                  () => const ContractorQuotationListScreen(),
+                                );
                               },
                             ),
                           ],
@@ -635,9 +638,6 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
             label: 'First Name',
             icon: Icons.person_outline,
             enabled: controller.isEditing.value,
-            validator:
-                (value) =>
-                    value?.isEmpty ?? true ? 'First name is required' : null,
           ),
           const SizedBox(height: 14),
           _buildFormField(
@@ -645,9 +645,6 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
             label: 'Last Name',
             icon: Icons.person_outline,
             enabled: controller.isEditing.value,
-            validator:
-                (value) =>
-                    value?.isEmpty ?? true ? 'Last name is required' : null,
           ),
           const SizedBox(height: 14),
           _buildFormField(
@@ -669,6 +666,10 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
             icon: Icons.phone_outlined,
             enabled: controller.isEditing.value,
             keyboardType: TextInputType.phone,
+            validator: (value) {
+              if (value?.isEmpty ?? true) return 'Phone number is required';
+              return null;
+            },
           ),
           const SizedBox(height: 14),
           // _buildFormField(
@@ -1032,16 +1033,28 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
               Expanded(
                 child: _buildDetailRow(
                   'CREATED AT',
-                  formatDate(controller.profileData.value?.user?.createdAt),
+                  Formatter.formatDate(controller.profileData.value?.user?.createdAt),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: _buildDetailRow(
                   'LAST UPDATED',
-                  formatDate(controller.profileData.value?.user?.updatedAt),
+                  Formatter.formatDate(controller.profileData.value?.user?.updatedAt),
                 ),
               ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox(height: 16),
+              _buildDetailRow(
+                'Verification Status',
+                '${(controller.profileData.value?.user?.isVerified??true)?"Verified":"Not Verified"}',
+              ),
+              const SizedBox(height: 12),
             ],
           ),
 
@@ -1131,7 +1144,8 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
               _buildDetailRow(
                 'Contractor Type',
 
-                controller.resellerProfile.value?.contractorType ?? 'Not Provided',
+                controller.resellerProfile.value?.contractorType ??
+                    'Not Provided',
               ),
               // _buildDetailRow(
               //   'Account Status',

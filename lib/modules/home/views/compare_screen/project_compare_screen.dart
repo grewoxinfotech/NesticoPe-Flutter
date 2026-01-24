@@ -198,7 +198,7 @@ class ProjectCardForCompare extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final projectController = Get.find<ProjectController>();
+    // final projectController = Get.find<ProjectController>();
     return Material(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(12),

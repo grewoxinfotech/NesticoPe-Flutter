@@ -216,10 +216,10 @@ class MonthlyBarChart extends StatelessWidget {
             sideTitles: SideTitles(
               showTitles: true,
               interval: interval, // ✅ dynamic interval
-              reservedSize: 36,
+              reservedSize: 40,
               getTitlesWidget: (value, meta) {
                 return isAmount? Text(
-                  Formatter.formatPrice(value.toInt()),
+                  Formatter.formatGraphPrice(value.toInt()),
 
                   style: TextStyle(
                     fontSize: 10,

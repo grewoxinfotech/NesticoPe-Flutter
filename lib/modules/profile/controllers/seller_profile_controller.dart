@@ -497,6 +497,7 @@ class SellerProfileController extends GetxController {
           lastName: lastNameController.text,
           email: emailController.text,
           phone: phoneController.text,
+          totalExperience: int.tryParse(totalExperience.text),
           city: positionController.text,
           zipCode: zipController.text,
           state: companyController.text,
@@ -551,7 +552,7 @@ class SellerProfileController extends GetxController {
               email: emailController.text,
               phone: phoneController.text,
               city: positionController.text,
-
+              totalExperience: int.tryParse(totalExperience.text),
               zipCode: zipController.text,
               state: companyController.text,
               profilePic: image ?? profileData.value?.user?.profilePic,
@@ -631,6 +632,7 @@ class SellerProfileController extends GetxController {
       'city': pendingUserData?.city,
       'state': pendingUserData?.state,
       'address': pendingUserData?.address,
+      "totalExperience":pendingUserData?.totalExperience,
       'profiledata': {
         'contactName':contactPersonController.text ,
         'contactPhone': contactPhoneController.text,
@@ -664,6 +666,7 @@ class SellerProfileController extends GetxController {
               phone: updatedUser['phone'],
               city: positionController.text,
               state: companyController.text,
+              totalExperience: int.tryParse(totalExperience.text),
               profilePic: profileData.value?.user?.profilePic,
               username: updatedUser['username'],
               userType: profileData.value?.user?.userType,
@@ -969,6 +972,7 @@ class SellerProfileController extends GetxController {
     phoneController.dispose();
     positionController.dispose();
     companyController.dispose();
+    totalExperience.dispose();
     addressController.dispose();
     zipController.dispose();
     contactPersonController.dispose();

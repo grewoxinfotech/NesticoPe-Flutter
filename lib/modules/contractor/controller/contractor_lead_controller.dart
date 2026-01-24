@@ -7,6 +7,7 @@ import 'package:housing_flutter_app/app/care/pagination/models/pagination_models
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 import 'package:housing_flutter_app/data/network/contractor/service/contractor_lead_service.dart';
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/app_font_sizes.dart';
@@ -70,6 +71,9 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
   RxString selectedServiceId = ''.obs;
   RxString selectedServiceName = ''.obs;
   RxString selectedServiceDescription = ''.obs;
+  RxString quotationId = "".obs;
+  RxString quotationPrice = "".obs;
+  RxBool isConvertedToProject = false.obs;
 
   /// ---------------- Dropdown data lists ----------------
   RxList<String> contractorList = <String>[].obs;
@@ -83,6 +87,7 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
     txtName.text = lead.name ?? '';
     txtPhone.text = lead.phone ?? '';
     txtEmail.text = lead.email ?? '';
+    /*txtNotes.text=lead*/
 
     selectedContractor.value = lead.customFields?.contractorId ?? '';
     selectedContractorName.value = lead.customFields?.contractorUsername ?? '';
@@ -92,7 +97,13 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
     selectedServiceName.value = lead.customFields?.serviceName ?? '';
     selectedServiceDescription.value =
         lead.customFields?.serviceDescription ?? '';
-    print("Edit of lead in contractor ${selectedServiceName.value} = == = = === = == = =  =${selectedServiceId.value}");
+    quotationId.value = lead.customFields?.quotationId ?? '';
+    quotationPrice.value = lead.customFields?.quotationPrice.toString() ?? '';
+    isConvertedToProject.value =
+        lead.customFields?.isConvertedToProject ?? false;
+    print(
+      "Edit of lead in contractor ${selectedServiceName.value} = == = = === = == = =  =${selectedServiceId.value}",
+    );
     selectedSource.value = capitalizeEachWord(lead.source) ?? '';
     selectedStatus.value = capitalizeEachWord(lead.status);
 
@@ -327,8 +338,7 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
     txtClientName.text = item.name ?? "";
     txtClientEmail.text = item.email ?? "";
     txtClientPhone.text = item.phone ?? "";
-    txtProjectPrice.text=item.customFields?.quotationPrice.toString()??'';
-
+    txtProjectPrice.text = item.customFields?.quotationPrice.toString() ?? '';
 
     selectedService.value = item.customFields?.serviceName ?? '';
 
@@ -358,14 +368,15 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
   }
 
   Map<String, dynamic> updateProjectPayload() {
-
     debugPrint("🟢 Updating project payload");
     debugPrint("🟢 Updating $startDate    ------ $deadline");
 
     return {
       "title": txtTitle.text.trim(),
-      "startDate": "${startDate.value?.year}-${startDate.value?.month}-${startDate.value?.day}",
-      "deadline": "${deadline.value?.year}-${deadline.value?.month}-${deadline.value?.day}",
+      "startDate":
+          "${startDate.value?.year}-${startDate.value?.month}-${startDate.value?.day}",
+      "deadline":
+          "${deadline.value?.year}-${deadline.value?.month}-${deadline.value?.day}",
 
       "price": txtProjectPrice.text.trim(),
       "notes": txtNotes.text.trim(),
@@ -415,7 +426,11 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
     UserModel user = await SecureStorage.getUserData() ?? UserModel();
     final userId = user.user?.id ?? '';
     final response = await ContractorLeadService.contractorLeadService
-        .fetchContractorLead(id: userId, filter: filters.value,isConverted: false);
+        .fetchContractorLead(
+          id: userId,
+          filter: filters.value,
+          isConverted: false,
+        );
     print("Contractor Lead items: ${response.items.length}");
     getAllSourceData();
     return response;
@@ -489,7 +504,6 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: ColorRes.error),
             onPressed: () {
-
               deletedContractorLead(id);
               Navigator.of(Get.context!).pop();
               Get.snackbar(
@@ -518,36 +532,33 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
   /// 🔹 Build Update Payload to match backend JSON structure
   Map<String, dynamic> getUpdateLeadPayload(String leadId) {
     return {
-      "id": leadId,
-      "data": {
-        "name": txtName.text.trim(),
-        "phone": txtPhone.text.trim(),
-        "email": txtEmail.text.trim(),
-        "source": selectedSource.value.trim().toLowerCase().replaceAll(
-          " ",
-          "_",
-        ),
-        "status": selectedStatus.value.trim().toLowerCase().replaceAll(
-          " ",
-          "_",
-        ),
-        "stage": selectedStage.value.trim().toLowerCase().replaceAll(" ", "_"),
-        "notes": txtEditNotes.text.trim(),
-        "customFields": {
-          "contractorId": selectedContractor.value,
-          "serviceId": selectedServiceId.value,
-          "serviceName": selectedServiceName.value,
-        },
+      "name": txtName.text.trim(),
+      "phone": txtPhone.text.trim(),
+      "email": txtEmail.text.trim(),
+      "source": selectedSource.value.trim().toLowerCase().replaceAll(" ", "_"),
+      "status": selectedStatus.value.trim().toLowerCase().replaceAll(" ", "_"),
+      "stage": selectedStage.value.trim().toLowerCase().replaceAll(" ", "_"),
+      "notes": txtEditNotes.text.trim(),
+      "customFields": {
+        "contractorId": selectedContractor.value,
+        "serviceId": selectedServiceId.value,
+        "serviceName": selectedServiceName.value,
+        "contractorUsername": selectedContractorName.value,
+        "serviceDescription": selectedServiceDescription.value,
+        "quotationId": quotationId.value,
+        "quotationPrice": quotationPrice.value,
+        "isConvertedToProject": isConvertedToProject.value,
       },
       "reseller_id": selectedContractor.value,
-      "contractorUsername": selectedContractorName.value,
     };
+
+    /*  "contractorUsername": selectedContractorName.value,*/
   }
 
   Future<void> updateLeadDetails(String leadId) async {
     try {
       final payload = getUpdateLeadPayload(leadId);
-      debugPrint("🟩 Lead Update Payload => $payload");
+      AppLogger.structured("🟩 Lead Update Payload =>", payload);
 
       final response = await ContractorLeadService.contractorLeadService
           .updateContractorLead(leadId, payload);
@@ -652,5 +663,3 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
     }
   }
 }
-
-

@@ -678,21 +678,28 @@ class _AddOrEditProjectScreenState extends State<AddOrEditProjectScreen> {
                         "Deadline",
                         Icons.date_range,
                         controller.deadline.value,
-                        () async {
+                            () async {
+                          final startDate = controller.startDate.value ?? DateTime.now();
+                          final currentDeadline = controller.deadline.value ?? startDate;
+
+                          final initialDate = currentDeadline.isBefore(startDate)
+                              ? startDate
+                              : currentDeadline;
+
                           final picked = await showDatePicker(
                             context: context,
-                            initialDate:
-                                controller.deadline.value ?? DateTime.now(),
-                            firstDate:
-                                controller.startDate.value ?? DateTime.now(),
+                            initialDate: initialDate,
+                            firstDate: startDate,
                             lastDate: DateTime(2100),
                           );
+
                           if (picked != null) {
                             controller.deadline.value = picked;
                           }
                         },
                       ),
                     ),
+
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -887,7 +894,7 @@ class _AddOrEditProjectScreenState extends State<AddOrEditProjectScreen> {
                       .toList(),
             ),
             const SizedBox(height: 8),
-            DropdownButtonFormField<ContractorEmployeeItem>(
+          /*  DropdownButtonFormField<ContractorEmployeeItem>(
               decoration: const InputDecoration.collapsed(hintText: ""),
               hint: const Text(
                 "Select employees",
@@ -945,7 +952,64 @@ class _AddOrEditProjectScreenState extends State<AddOrEditProjectScreen> {
                   controller.selectedEmployees.add(val);
                 }
               },
+            ),*/
+            DropdownButtonFormField<ContractorEmployeeItem>(
+              decoration: const InputDecoration.collapsed(hintText: ""),
+              hint: const Text(
+                "Select employees",
+                style: TextStyle(
+                  fontSize: AppFontSizes.medium,
+                  fontWeight: AppFontWeights.regular,
+                ),
+              ),
+              icon: const Icon(Icons.arrow_drop_down),
+              items: employees.map((emp) {
+                final assignedProject = controllerProject.items.firstWhereOrNull(
+                      (proj) => proj.meta.employees.any((e) => e.id == emp.id),
+                );
+
+                final isAssigned = assignedProject != null;
+                final clientName = assignedProject?.client.name ?? '';
+
+                return DropdownMenuItem<ContractorEmployeeItem>(
+                  enabled: !isAssigned,
+                  value: emp,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min, // ✅ prevents overflow
+                    children: [
+                      Text(
+                        emp.name ?? 'Unnamed',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.small,
+                          color: isAssigned ? Colors.grey : ColorRes.textColor,
+                          fontWeight: AppFontWeights.medium,
+                        ),
+                      ),
+                      if (isAssigned)
+                        Text(
+                          "Assigned to: ${clientName.isNotEmpty ? clientName : 'Assigned'}",
+                          style: const TextStyle(
+                            fontSize: AppFontSizes.caption,
+                            color: Colors.redAccent,
+                            fontWeight: AppFontWeights.medium,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              }).toList(),
+              onChanged: (val) {
+                if (val != null &&
+                    !controller.selectedEmployees.any(
+                          (existing) => existing.id == val.id,
+                    )) {
+                  controller.selectedEmployees.add(val);
+                }
+              },
             ),
+
           ],
         ),
       );

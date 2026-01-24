@@ -115,9 +115,9 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
 
                               const SizedBox(height: 16),
                               _buildAccountInfoSection(profileController),
-                              const SizedBox(height: 16),
+                        /*      const SizedBox(height: 16),
 
-                              RequestDeleteAccount(),
+                              RequestDeleteAccount(),*/
                             ],
 
                             // Account Information Section (Read-only)
@@ -575,9 +575,7 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
             label: 'First Name',
             icon: Icons.person_outline,
             enabled: controller.isEditing.value,
-            validator:
-                (value) =>
-                    value?.isEmpty ?? true ? 'First name is required' : null,
+
           ),
           const SizedBox(height: 14),
           _buildFormField(
@@ -585,9 +583,7 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
             label: 'Last Name',
             icon: Icons.person_outline,
             enabled: controller.isEditing.value,
-            validator:
-                (value) =>
-                    value?.isEmpty ?? true ? 'Last name is required' : null,
+
           ),
           const SizedBox(height: 14),
           _buildFormField(
@@ -609,6 +605,10 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
             icon: Icons.phone_outlined,
             enabled: controller.isEditing.value,
             keyboardType: TextInputType.phone,
+            validator: (value) {
+          if (value?.isEmpty ?? true) return 'Phone number is required';
+          return null;
+            },
           ),
           const SizedBox(height: 14),
           // _buildFormField(
@@ -1040,24 +1040,39 @@ isRequiredTitle: false,
             ),
           ),
           const SizedBox(height: 16),
-          _buildDetailRow(
-            'CREATED AT',
-            controller.resellerProfile.value?.createdAt != null
-                ? '${controller.resellerProfile.value!.createdAt?.day} ${_getMonthName(controller.resellerProfile.value!.createdAt!.month)} ${controller.resellerProfile.value!.createdAt?.year}'
-                : 'N/A',
+          Row(
+            children: [
+              Expanded(
+                child: _buildDetailRow(
+                  'CREATED AT',
+                  Formatter.formatDate(controller.profileData.value?.user?.createdAt),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildDetailRow(
+                  'LAST UPDATED',
+                  Formatter.formatDate(controller.profileData.value?.user?.updatedAt),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 12),
-          _buildDetailRow(
-            'LAST UPDATED',
-            controller.resellerProfile.value?.updatedAt != null
-                ? '${controller.resellerProfile.value!.updatedAt?.day} ${_getMonthName(controller.resellerProfile.value!.updatedAt!.month)} ${controller.resellerProfile.value!.updatedAt?.year}'
-                : 'N/A',
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox(height: 16),
+              _buildDetailRow(
+                'Verification Status',
+                '${(controller.profileData.value?.user?.isVerified??true)?"Verified":"Not Verified"}',
+              ),
+              const SizedBox(height: 12),
+            ],
           ),
+
           const SizedBox(height: 12),
-          _buildDetailRow(
-            'STATUS',
-            (controller.profileData.value?.user?.isVerified??false)?'Verified':'Unverified',
-          ),
+
+          RequestDeleteAccount(),
         ],
       ),
     );

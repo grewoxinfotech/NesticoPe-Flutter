@@ -821,7 +821,21 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
     try {
       // Show loading dialog
       Get.dialog(
-        const Center(child: CircularProgressIndicator()),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            CircularProgressIndicator(color: ColorRes.primary),
+            SizedBox(height: 16),
+            Text(
+              "Generating PDF...",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
         barrierDismissible: false,
       );
 
@@ -1118,10 +1132,60 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
           },
         ),
       );
+      Get.back(); // close first dialog
+      Get.dialog(
+        Center(
+          child: Container(
+            width: 220,
+            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                CircularProgressIndicator(
+                  color: ColorRes.primary,
+                  strokeWidth: 3,
+                ),
+                SizedBox(height: 18),
+                Text(
+                  "Preparing to share PDF...",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: ColorRes.textColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        barrierDismissible: false,
+        barrierColor: Colors.black.withOpacity(0.4), // 🔹 Dim background
+      );
+
 
       // Close loading dialog
-      Get.back();
+
       await _sharePDF(pdf);
+      Get.back();
+     /* Get.snackbar(
+        'Success',
+        'Quotation PDF generated and ready to share!',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: ColorRes.primary,
+        colorText: Colors.white,
+      );*/
     } catch (e, stackTrace) {
       Get.back(); // Close loading dialog
       print('PDF Generation Error: $e');
