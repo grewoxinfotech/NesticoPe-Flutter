@@ -442,10 +442,10 @@ class _ServiceCardState extends State<ServiceCard> {
   @override
   void initState() {
     super.initState();
-    loadCategory();
+    // loadCategory();
   }
 
-  void loadCategory() async {
+/*  void loadCategory() async {
     final id = widget.item.category ?? "";
     if (id.isEmpty) return;
 
@@ -454,7 +454,7 @@ class _ServiceCardState extends State<ServiceCard> {
       categoryName = name;
       isCategoryLoading = false;
     });
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -585,14 +585,17 @@ class _ServiceCardState extends State<ServiceCard> {
                 ],
               ),
               const SizedBox(height: 8),
-              Text(
-                "${categoryName}",
-                style: TextStyle(
-                  fontSize: AppFontSizes.bodySmall,
-                  color: ColorRes.primary,
-                  fontWeight: AppFontWeights.medium,
-                ),
-              ),
+              Obx(() {
+                final name = widget.controller.categoryNames[widget.item.category] ?? "Loading...";
+                return Text(
+                  name,
+                  style: TextStyle(
+                    fontSize: AppFontSizes.bodySmall,
+                    color: ColorRes.primary,
+                    fontWeight: AppFontWeights.medium,
+                  ),
+                );
+              }),
 
               /// Expanded Section
               if (expanded) ...[

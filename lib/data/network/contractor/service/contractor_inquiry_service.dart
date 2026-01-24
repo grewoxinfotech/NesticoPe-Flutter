@@ -6,6 +6,7 @@ import 'package:http/http.dart' ;
 
 import '../../../../app/care/pagination/models/pagination_models.dart';
 import '../../../../app/constants/api_constants.dart';
+import '../../../../widgets/messages/snack_bar.dart';
 import '../model/contractor_quotation/contractor_quotation.dart';
 import '../model/contractot_service_model/contractor_inquiry_model.dart';
 
@@ -111,16 +112,35 @@ class ContractorInquiryService{
         {
           final data =jsonDecode(response.body);
           print("Contractor Inquiry Status Change : $data");
+          final jsonData = json.decode(response.body);
+          // final jsonData = json.decode(response.body);
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Success',
+            message: jsonData['message'],
+            contentType: ContentType.success,
+          );
           return data['success'];
         }
       else{
         print("Failed to Change Status: ${response.statusCode}");
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: jsonData['message'],
+          contentType: ContentType.failure,
+        );
         print("Response body: ${response.body}");
         throw Exception("Failed to Change Status");
       }
     }
     catch(e)
     {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );
       print("Exception in Status: $e");
       return false;
     }
@@ -136,16 +156,35 @@ class ContractorInquiryService{
         {
           final data =jsonDecode(response.body);
           print("Contractor Quotation Status Change : $data");
+          final jsonData = json.decode(response.body);
+          // final jsonData = json.decode(response.body);
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Success',
+            message: jsonData['message'],
+            contentType: ContentType.success,
+          );
           return data['success'];
         }
       else{
         print("Failed to Change Status: ${response.statusCode}");
         print("Response body: ${response.body}");
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: jsonData['message'],
+          contentType: ContentType.failure,
+        );
         throw Exception("Failed to Change Status");
       }
     }
     catch(e)
     {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );
       print("Exception in Status: $e");
       return false;
     }
@@ -161,16 +200,36 @@ class ContractorInquiryService{
       {
         final data =jsonDecode(response.body);
         print("Contractor Inquiry Deleted : $data");
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
+
         return data['success'];
       }
       else{
         print("Failed to Delete Inquiry: ${response.statusCode}");
         print("Response body: ${response.body}");
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: jsonData['message'],
+          contentType: ContentType.failure,
+        );
         throw Exception("Failed to Delete Inquiry");
       }
     }
     catch(e)
     {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );
       print("Exception in Delete Inquiry: $e");
       return false;
     }
@@ -184,16 +243,35 @@ class ContractorInquiryService{
       {
         final data =jsonDecode(response.body);
         print("Contractor Quotation Deleted : $data");
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
         return data['success'];
       }
       else{
         print("Failed to Delete Quotation: ${response.statusCode}");
         print("Response body: ${response.body}");
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: jsonData['message'],
+          contentType: ContentType.failure,
+        );
         throw Exception("Failed to Delete Quotation");
       }
     }
     catch(e)
     {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );
       print("Exception in Delete Quotation: $e");
       return false;
     }
@@ -207,15 +285,34 @@ class ContractorInquiryService{
       {
         final data =jsonDecode(response.body);
         print("Contractor Inquiry Convert Into Lead : $data");
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
         return data['success'];
       }
       else{
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: jsonData['message'],
+          contentType: ContentType.failure,
+        );
         print("Failed to convert Into Lead: ${response.statusCode}");
         print("Response body: ${response.body}");
         throw Exception("Failed to Convert into lead");
       }
 
     }catch(e){
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );
       print("Exception Convert Into Lead $e");
       return false;
     }
@@ -228,16 +325,35 @@ class ContractorInquiryService{
       if(response.statusCode==200|| response.statusCode==201)
       {
         final data =jsonDecode(response.body);
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
         print("Contractor Inquiry Send Quotation : $data");
         return data['success'];
       }
       else{
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: jsonData['message'],
+          contentType: ContentType.failure,
+        );
         print("Failed to Send Quotation: ${response.statusCode}");
         print("Response body: ${response.body}");
         throw Exception("Failed to Send Quotation");
       }
 
     }catch(e){
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );
       print("Exception Convert Into Lead $e");
       return false;
     }
@@ -249,16 +365,35 @@ class ContractorInquiryService{
       if(response.statusCode==200|| response.statusCode==201)
       {
         final data =jsonDecode(response.body);
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
         print("Contractor Inquiry Send Quotation : $data");
         return data['success'];
       }
       else{
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: jsonData['message'],
+          contentType: ContentType.failure,
+        );
         print("Failed to Send Quotation: ${response.statusCode}");
         print("Response body: ${response.body}");
         throw Exception("Failed to Send Quotation");
       }
 
     }catch(e){
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );
       print("Exception Convert Into Lead $e");
       return false;
     }

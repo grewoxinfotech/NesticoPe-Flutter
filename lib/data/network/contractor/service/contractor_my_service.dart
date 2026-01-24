@@ -116,13 +116,32 @@ class ContractorMyService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         print("Service deleted Successfully: $data");
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
         return data['success'];
       } else {
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: jsonData['message'],
+          contentType: ContentType.failure,
+        );
         print("Failed to load deleted: ${response.statusCode}");
         print("Response body: ${response.body}");
         throw Exception("Failed to deleted");
       }
     } catch (e) {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );
       print("Response body: ${e}");
       return false;
     }
@@ -158,15 +177,33 @@ class ContractorMyService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
-
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
         print("Change the active and Inactive: $data");
         return data['success'];
       } else {
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: jsonData['message'],
+          contentType: ContentType.failure,
+        );
         print("Failed to load Active: ${response.statusCode}");
         print("Response body: ${response.body}");
         throw Exception("Failed to load Active");
       }
     } catch (e) {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );
       print("Response body: ${e}");
       return false;
     }
@@ -186,14 +223,33 @@ class ContractorMyService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
         print("Service Updated Successfully: $data");
         return data['success'];
       } else {
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: jsonData['message'],
+          contentType: ContentType.failure,
+        );
         print("Failed to update service: ${response.statusCode}");
         print("Response body: ${response.body}");
         throw Exception("Failed to update service");
       }
     } catch (e) {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );
       print("Response body for update service: ${e}");
       return false;
     }
@@ -211,6 +267,13 @@ class ContractorMyService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
         print("Inquiry Created Successfully: $data");
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
         return data['success'];
       } else {
         final data = jsonDecode(response.body);
@@ -224,6 +287,11 @@ class ContractorMyService {
         throw Exception("Failed to create Inquiry");
       }
     } catch (e) {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );
       print("Response body for create Inquiry: ${e}");
       return false;
     }

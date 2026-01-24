@@ -60,6 +60,7 @@ class TopCategoryItem {
   final String? updatedBy;
   final String name;
   final String description;
+  final String? icon;
   final int isActive;
   final int displayOrder;
   final DateTime createdAt;
@@ -75,6 +76,7 @@ class TopCategoryItem {
     required this.name,
     required this.description,
     required this.isActive,
+    this.icon,
     required this.displayOrder,
     required this.createdAt,
     required this.updatedAt,
@@ -89,6 +91,7 @@ class TopCategoryItem {
       createdBy: json['created_by'] ?? '',
       updatedBy: json['updated_by'],
       name: json['name'] ?? '',
+      icon: json['icon']??'',
       description: json['description'] ?? '',
       isActive: json['isActive'] ?? 0,
       displayOrder: json['displayOrder'] ?? 0,
@@ -107,6 +110,7 @@ class TopCategoryItem {
       'created_by': createdBy,
       'updated_by': updatedBy,
       'name': name,
+      'icon':icon,
       'description': description,
       'isActive': isActive,
       'displayOrder': displayOrder,

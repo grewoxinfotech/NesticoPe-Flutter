@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
 import '../../../../../app/constants/api_constants.dart';
+import '../../../../../widgets/messages/snack_bar.dart';
 import '../../../../database/secure_storage_service.dart';
 import '../model/reseller_update_profile_model.dart';
 
@@ -119,14 +120,32 @@ class ProfileUpdate {
 
       // ✅ Handle success (200/201)
       if (response.statusCode == 200 || response.statusCode == 201) {
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
         return decoded;
       }
-
+      final jsonData = json.decode(response.body);
+      // final jsonData = json.decode(response.body);
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Failed',
+        message: jsonData['message'],
+        contentType: ContentType.failure,
+      );
       // ⚠️ Other errors
       print('⚠️ Reseller Profile Update Error Response: $decoded');
       return decoded;
     } catch (e, stack) {
-      print('❌ Exception in Reseller Profile Update: $e');
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );print('❌ Exception in Reseller Profile Update: $e');
       print(stack);
       return {
         'success': false,
@@ -159,8 +178,17 @@ class ProfileUpdate {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Clear the updatePhoneToken after successful verification
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
         return decoded;
       } else {
+        final jsonData=jsonDecode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(title: "Failed", message:jsonData['message'] , contentType: ContentType.failure);
         print('⚠️ Reseller Profile Update Error Response: $decoded');
         return {
           'success': false,
@@ -168,6 +196,11 @@ class ProfileUpdate {
         };
       }
     } catch (e, stack) {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );
       print('❌ Exception in Reseller Profile Update: $e');
       print(stack);
       return {

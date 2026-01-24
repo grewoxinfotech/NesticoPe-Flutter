@@ -135,10 +135,21 @@ class ContractorLeadScreen extends StatelessWidget {
                             itemCount: controller.items.length,
                             itemBuilder: (context, index) {
                               final item = controller.items[index];
-                              if (item.customFields?.isConvertedToProject ?? false) {
-                                return const SizedBox.shrink();
-
-                              }
+                           /*   if (item.customFields?.isConvertedToProject ?? false) {
+                                return SizedBox(
+                                  height: MediaQuery.of(context).size.height * 0.7,
+                                  child: Center(
+                                    child: Text(
+                                      "No Lead available",
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.body,
+                                        color: ColorRes.textSecondary,
+                                        fontWeight: AppFontWeights.medium,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }*/
                               ContractorServiceItem? serviceData =
                                   serviceController.items.value.firstWhere(
                                     (e) => e.id == item.customFields?.serviceId,

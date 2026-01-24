@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:lottie/lottie.dart';
 
@@ -26,7 +27,7 @@ class TopCategoriesSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 120,
+      height: 165,
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         scrollDirection: Axis.horizontal,
@@ -48,17 +49,14 @@ class _CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var imageUrl='';
-   try{
-    imageUrl = services.firstWhere(
-           (e) => e['name']?.toUpperCase() == item.name.toUpperCase(),
-       orElse: () => {'lottieUrl': ''},
-     )['lottieUrl']??'';
-log("Found lottieUrl for ${item.name}: $imageUrl");
-   }catch(e){
-      debugPrint("Error finding lottieUrl for ${item.name}: $e");
-   }
 
+    final matched = contractorServiceCategories.firstWhere(
+          (c) => c["name"] == item.name,
+      orElse: () => {"icon": Icons.category, "color": Colors.grey},
+    );
+
+    final fallbackIcon = matched["icon"] as IconData;
+    final fallbackColor = matched["color"] as Color;
 
     final controller = Get.put(HireContractorController());
     final controllerNew = Get.put(HireContractorNewController());
@@ -71,7 +69,7 @@ log("Found lottieUrl for ${item.name}: $imageUrl");
         Get.to(()=>HireContractorProfileList());
       },
       child: Container(
-        width: 260,
+        width: 250,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -82,56 +80,71 @@ log("Found lottieUrl for ${item.name}: $imageUrl");
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// Top Blue Line
-          Row(
-            children: [
-              // if (imageUrl != null && imageUrl.isNotEmpty)
-              //   // SizedBox(
-              //   //   height: 80,
-              //   //   width: 80,
-              //   //   child: Image.network(imageUrl),
-              //   // ),
-              //
-              // const SizedBox(width: 12),
-
-              Expanded(
-                child: Text(
-                  item.name.toUpperCase(),
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: ColorRes.primary,
+            Row(
+              children: [
+                if (item.icon != null && (item.icon?.isNotEmpty ?? false))
+                  SizedBox(
+                    height: 50,
+                    width: 50,
+                    child: Image.network(item.icon ?? '', fit: BoxFit.contain),
+                  )
+                else
+                  Container(
+                    height: 50,
+                    width: 50,
+                    decoration: BoxDecoration(
+                      color: fallbackColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12), // 👈 square with rounded corners
+                    ),
+                    child: Icon(
+                      fallbackIcon,
+                      color: fallbackColor,
+                      size: 25,
+                    ),
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+
+                const SizedBox(width: 12),
+
+                Expanded(
+                  child: Text(
+                    item.name.toUpperCase(),
+                    style:  TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: ColorRes.primary,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
+              ],
+            ),
 
-              const SizedBox(height: 15),
-            ],
-          ),
-
+            const SizedBox(height: 8),
             /// Description
             Text(
-              item.description,
+              '${item.description}',
               style: TextStyle(
                 fontSize: 11,
                 color: ColorRes.leadGreyColor.shade600,
+                fontWeight: AppFontWeights.medium,
                 height: 1.4,
               ),
               maxLines:2,
               overflow: TextOverflow.ellipsis,
             ),
-
-            const Spacer(),
+Spacer(),
+            Divider(color: ColorRes.leadGreyColor.shade300,),
+            SizedBox(height: 2,),
 
             /// Rating Row (only if available)
-            if (item.serviceCount > 0)
+
               Row(
                 children: [
                    Icon(
                     Icons.star,
                     color: ColorRes.homeAmber,
-                    size: 18,
+                    size: 15,
                   ),
                   const SizedBox(width: 6),
                   Text(
@@ -139,14 +152,14 @@ log("Found lottieUrl for ${item.name}: $imageUrl");
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
                       color: ColorRes.textColor,
-                      fontSize: 14,
+                      fontSize: 12,
                     ),
                   ),
                   const SizedBox(width: 6),
                   Text(
                     '(${item.serviceCount} services)',
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 10,
                       fontWeight: FontWeight.w500,
                       color: Colors.grey.shade600,
                     ),

@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:housing_flutter_app/app/constants/api_constants.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 
+import '../../../widgets/messages/snack_bar.dart';
 import 'interest_form_model.dart';
 
 class InterestFormService {
@@ -40,17 +41,43 @@ class InterestFormService {
         final String? createdId = data["data"]?["id"];
 
         if (createdId != null) {
+          final jsonData = json.decode(response.body);
+          // final jsonData = json.decode(response.body);
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Success',
+            message: jsonData['message'],
+            contentType: ContentType.success,
+          );
           debugPrint("✅ Interest form created with ID: $createdId");
           return createdId;
         } else {
+          final jsonData = json.decode(response.body);
+          // final jsonData = json.decode(response.body);
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Failed',
+            message: jsonData['message'],
+            contentType: ContentType.failure,
+          );
           debugPrint("⚠️ Response did not contain an ID");
           return null;
         }
       } else {
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: jsonData['message'],
+          contentType: ContentType.failure,
+        );
         debugPrint("❌ Failed to submit form: ${response.statusCode}");
         return null;
       }
     } catch (e) {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );
       debugPrint("⚠️ Error submitting interest form: $e");
       return null;
     } finally {

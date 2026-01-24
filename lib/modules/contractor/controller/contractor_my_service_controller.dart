@@ -35,6 +35,7 @@ class ContractorMyServiceController extends PaginatedController<ContractorServic
   final provideMaterials = false.obs;
   final equipmentProvided = false.obs;
   final insuranceAvailable = false.obs;
+  final categoryNames = <String, String>{}.obs;
 
   // Chips (multi-select)
   final acceptedPaymentModes = <String>[].obs;
@@ -66,7 +67,12 @@ class ContractorMyServiceController extends PaginatedController<ContractorServic
         filters: filters,
         id: userId,
       );
-
+      for (final item in response.items) {
+        final id = item.category ?? "";
+        if (id.isNotEmpty && !categoryNames.containsKey(id)) {
+          getTheContractorByID(id); // async call (no await needed)
+        }
+      }
       print("Fetched items: ${response.items.length}");
       return response;
     } catch (e) {
@@ -92,23 +98,11 @@ class ContractorMyServiceController extends PaginatedController<ContractorServic
       isRefreshing.value = false;
     }
   }
-  Future<String> getTheContractorByID(String id)
-   async {
-   final data= await ContractorMyService.contractorMyService.getContractorByIDCategory(
-      fields: id
-    );
-   log("data for service category ${data.toMap()}");
-   return data.name;
-
-   // print("Category Data ${data}");
-   //  final item = contractorServiceCategory.value?.data.items
-   //      .firstWhere((e) => e.id == id,);
-   //
-   //  String name = item?.name ?? "";
-   //
-   //  return name;
-
-
+  Future<String> getTheContractorByID(String id) async {
+    if (categoryNames.containsKey(id)) return categoryNames[id]!;
+    final data = await ContractorMyService.contractorMyService.getContractorByIDCategory(fields: id);
+    categoryNames[id] = data.name;
+    return data.name;
   }
 
   // ---------------- TOGGLE ACTIVE STATUS ----------------

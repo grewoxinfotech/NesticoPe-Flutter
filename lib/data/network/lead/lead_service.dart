@@ -11,6 +11,7 @@ import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../modules/seller/module/lead_screen/model/lead_model.dart';
+import '../../../widgets/messages/snack_bar.dart';
 import 'model/lead_property_inquiry_model.dart';
 import 'model/lead_property_price_negotiable.dart';
 
@@ -232,14 +233,37 @@ class LeadService {
   ) async {
     try {
       final response = await http.put(
-        Uri.parse("$baseLeadNegotiablePriceUrl/$id"),
-        headers: await headers(),
-        body: jsonEncode(data),
+          Uri.parse("$baseLeadNegotiablePriceUrl/$id"),
+          headers: await headers(),
+    body: jsonEncode(data),
+    );
+      if(response.statusCode==200|| response.statusCode==201)
+      {
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
+        return true;
+      }
+      final jsonData = json.decode(response.body);
+      // final jsonData = json.decode(response.body);
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Failed',
+        message: jsonData['message'],
+        contentType: ContentType.failure,
       );
-      return response.statusCode == 200;
+    return false;
     } catch (e) {
-      print("Update lead exception: $e");
-      return false;
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );
+    print("Update lead exception: $e");
+    return false;
     }
   }
 
@@ -264,20 +288,47 @@ class LeadService {
       print("📥 Response Body: ${response.body}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
         return true;
       } else {
-        print(
-          "❌ Failed to update negotiable price. Status: ${response.statusCode}",
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: jsonData['message'],
+          contentType: ContentType.failure,
         );
+        print("❌ Failed to update negotiable price. Status: ${response.statusCode}");
         return false;
       }
     } on SocketException catch (e) {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "$e",
+        contentType: ContentType.failure,
+      );
       print("🌐 Network error: $e");
       return false;
     } on FormatException catch (e) {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "$e",
+        contentType: ContentType.failure,
+      );
       print("⚠️ Invalid response format: $e");
       return false;
     } catch (e, stackTrace) {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );
       print("🔥 Unexpected exception in updateRejectOfNegotiable: $e");
       print(stackTrace);
       return false;
@@ -350,8 +401,33 @@ class LeadService {
         body: jsonEncode(lead.toJson()),
       );
       debugPrint("Create lead response: ${response.body}");
+      if(response.statusCode==200|| response.statusCode==201)
+        {
+          final jsonData = json.decode(response.body);
+          // final jsonData = json.decode(response.body);
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Success',
+            message: jsonData['message'],
+            contentType: ContentType.success,
+          );
+        }
+      else{
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: jsonData['message'],
+          contentType: ContentType.failure,
+        );
+      }
+
       return response.statusCode == 201 || response.statusCode == 200;
     } catch (e) {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );
       print("Create lead exception: $e");
       return false;
     }
@@ -365,8 +441,33 @@ class LeadService {
         headers: await headers(),
         body: jsonEncode(lead.toJson()),
       );
+      if(response.statusCode==200 || response.statusCode==201)
+        {
+          final jsonData = json.decode(response.body);
+          // final jsonData = json.decode(response.body);
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Success',
+            message: jsonData['message'],
+            contentType: ContentType.success,
+          );
+        }
+      else{
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: jsonData['message'],
+          contentType: ContentType.
+          failure,
+        );
+      }
       return response.statusCode == 200;
     } catch (e) {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );
       print("Update lead exception: $e");
       return false;
     }
@@ -379,8 +480,30 @@ class LeadService {
         Uri.parse("$baseUrl/$id"),
         headers: await headers(),
       );
-      return response.statusCode == 200 || response.statusCode == 204;
+      if(response.statusCode==200 || response.statusCode==201)
+        {
+          final jsonData = json.decode(response.body);
+          // final jsonData = json.decode(response.body);
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Success',
+            message: jsonData['message'],
+            contentType: ContentType.success,
+          );
+        }else{
+        final data = jsonDecode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: data['message'],
+          contentType: ContentType.failure,
+        );
+      }
+      return response.statusCode == 200 || response.statusCode == 201;
     } catch (e) {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );
       print("Delete lead exception: $e");
       return false;
     }
@@ -514,13 +637,32 @@ class LeadService {
       debugPrint("Update lead visit response: ${response.body}");
       if (response.statusCode == 201 || response.statusCode == 200) {
         print("Lead visit data updated successfully.");
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
         final data = jsonDecode(response.body);
         return data['success'];
       } else {
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: jsonData['message'],
+          contentType: ContentType.failure,
+        );
         print("Failed to update lead visit data: ${response.statusCode}");
         return false;
       }
     } catch (e) {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );
       print("Create lead visit exception: $e");
       return false;
     }

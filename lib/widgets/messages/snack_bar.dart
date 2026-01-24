@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import '../../app/constants/app_font_sizes.dart';
 import '../../app/constants/color_res.dart';
 
+export 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 class NesticoPeSnackBar {
   static void showAwesomeSnackbar({
     required String title,
@@ -32,3 +33,4 @@ class NesticoPeSnackBar {
       ..showSnackBar(snackBar);
   }
 }
+

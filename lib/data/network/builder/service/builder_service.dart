@@ -11,6 +11,8 @@ import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
 import 'package:http_parser/http_parser.dart';
 
+import '../../../../widgets/messages/snack_bar.dart';
+
 // import '../model/builder_projectModel.dart';
 
 class BuilderService {
@@ -43,6 +45,7 @@ class BuilderService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+
 
         return PaginationResponse<ProjectItem>.fromJson(
           data,
@@ -211,20 +214,37 @@ class BuilderService {
       debugPrint("📄 Response Body: ${response.body}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        CustomSnackBar.show(
+        final data=jsonDecode(response.body);
+  /*      CustomSnackBar.show(
           Get.overlayContext!,
           message: "Project created successfully",
           type: SnackBarType.success,
+        );*/
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: data['message'] ?? 'Project Created Successfully',
+          contentType: ContentType.success,
         );
         return true;
       }
+      final data=jsonDecode(response.body);
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Failed',
+        message: data['message'] ?? 'Project Created fail',
+        contentType: ContentType.failure,
+      );
       return false;
     } catch (e) {
       debugPrint("❌ Create project exception: $e");
-      CustomSnackBar.show(
+    /*  CustomSnackBar.show(
         Get.overlayContext!,
         message: "Error while creating project",
         type: SnackBarType.error,
+      );*/
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Failed',
+        message:'Project Created fail',
+        contentType: ContentType.failure,
       );
       return false;
     }
@@ -323,26 +343,43 @@ class BuilderService {
       debugPrint("📄 Response Body: ${response.body}");
 
       if (response.statusCode == 200) {
-        CustomSnackBar.show(
+        /*CustomSnackBar.show(
           Get.overlayContext!,
           message: "Project updated successfully",
           type: SnackBarType.success,
+        );*/
+        final data=jsonDecode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: data['message'] ?? 'Project update successfully',
+          contentType: ContentType.success,
         );
         return true;
       }
 
-      CustomSnackBar.show(
+    /*  CustomSnackBar.show(
         Get.overlayContext!,
         message: "Failed to update project",
         type: SnackBarType.error,
+      );*/
+      final data=jsonDecode(response.body);
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Failed',
+        message: data['message'] ?? 'Failed to update project',
+        contentType: ContentType.failure,
       );
       return false;
     } catch (e) {
       debugPrint("❌ Update project exception: $e");
-      CustomSnackBar.show(
+     /* CustomSnackBar.show(
         Get.overlayContext!,
         message: "Error while updating project",
         type: SnackBarType.error,
+      );*/
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Failed',
+        message: "Error while updating project",
+        contentType: ContentType.failure,
       );
       return false;
     }

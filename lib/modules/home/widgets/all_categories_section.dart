@@ -9,6 +9,7 @@ import 'package:housing_flutter_app/modules/hire_contractor/controller/hire_cont
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../data/network/contractor/model/contractot_service_model/contractor_service_category_model.dart';
+import '../../../utils/global.dart';
 import '../../hire_contractor/controller/hire_contractor_filter_controller.dart';
 import '../../hire_contractor/view/widget/hire_contractor_profilelist.dart';
 
@@ -61,6 +62,13 @@ class _AllCategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final matched = contractorServiceCategories.firstWhere(
+          (c) => c["name"] == item.name,
+      orElse: () => {"icon": Icons.category, "color": Colors.grey},
+    );
+
+    final fallbackIcon = matched["icon"] as IconData;
+    final fallbackColor = matched["color"] as Color;
     final controller = Get.put(HireContractorController());
     final controllerProfileData = Get.put(HireContractorListOfProfileController());
     final controllerFilterData = Get.put(HireContractorFilterProfileController());
@@ -72,7 +80,7 @@ class _AllCategoryCard extends StatelessWidget {
         Get.to(() => HireContractorProfileList());
       },
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 10),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -81,7 +89,46 @@ class _AllCategoryCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            Row(
+              children: [
+                if (item.icon != null && (item.icon?.isNotEmpty ?? false))
+                  SizedBox(
+                    height: 50,
+                    width: 50,
+                    child: Image.network(item.icon ?? '', fit: BoxFit.contain),
+                  )
+                else
+                  Container(
+                    height: 50,
+                    width: 50,
+                    decoration: BoxDecoration(
+                      color: fallbackColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12), // 👈 square with rounded corners
+                    ),
+                    child: Icon(
+                      fallbackIcon,
+                      color: fallbackColor,
+                      size: 25,
+                    ),
+                  ),
+
+                const SizedBox(width: 12),
+
+                Expanded(
+                  child: Text(
+                    item.name.toUpperCase(),
+                    style:  TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: ColorRes.primary,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+           /* Text(
               (item.name ?? '').toUpperCase(),
               style: const TextStyle(
                 fontSize: 14,
@@ -91,19 +138,22 @@ class _AllCategoryCard extends StatelessWidget {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 12),*/
+            SizedBox(height: 6,),
             Text(
               item.description ?? 'No description available',
               style: TextStyle(
-                fontSize: 13,
+                fontSize: 11,
                 color: ColorRes.leadGreyColor.shade600,
+                fontWeight: AppFontWeights.medium,
                 height: 1.4,
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 8),
-            if ((item.serviceCount ?? 0) > 0)
+            const SizedBox(height: 4),
+            Divider(color: ColorRes.leadGreyColor.shade300,),
+            const SizedBox(height: 4),
               Row(
                 children: [
                   const Icon(Icons.star, color: ColorRes.homeAmber, size: 18),

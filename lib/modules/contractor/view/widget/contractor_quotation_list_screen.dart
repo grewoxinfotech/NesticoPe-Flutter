@@ -7,6 +7,7 @@ import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/data/network/contractor/model/contractor_quotation/contractor_quotation.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_quotation_controller.dart';
 import 'package:housing_flutter_app/modules/contractor/view/widget/contractor_quotation_screen.dart';
+import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 
 /// Screen for displaying list of contractor quotations
 class ContractorQuotationListScreen extends StatelessWidget {
@@ -340,7 +341,7 @@ class _QuotationListItem extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding:  EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: statusColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
@@ -359,7 +360,7 @@ class _QuotationListItem extends StatelessWidget {
           ),
           const SizedBox(width: 6),
           Text(
-            status,
+            capitalizeEachWord(status),
             style: TextStyle(
               fontSize: AppFontSizes.extraSmall,
               fontWeight: AppFontWeights.semiBold,

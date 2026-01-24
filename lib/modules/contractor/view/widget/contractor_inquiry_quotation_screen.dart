@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -7,6 +9,7 @@ import 'package:housing_flutter_app/data/network/contractor/model/contractot_ser
 import 'package:housing_flutter_app/data/network/contractor/model/contractor_quotation/contractor_quotation.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_inquiry_controller.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_quotation_controller.dart';
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 
 /// Screen for submitting or editing quotation for a contractor inquiry
 class ContractorInquiryQuotationScreen extends StatefulWidget {
@@ -46,9 +49,12 @@ class _ContractorInquiryQuotationScreenState
   void initState() {
     super.initState();
     // Format the status to match dropdown items (Title Case)
+    AppLogger.structured("Edit quotation and data",widget.quotation?.toMap());
     if (widget.isEditMode && widget.quotation != null) {
       // Pre-fill form with existing quotation data
-      _quotationController.text = widget.quotation!.price;
+      _quotationController.text =
+          double.parse(widget.quotation!.price).toInt().toString();
+
       _quotationNoteController.text = widget.quotation!.meta.notes;
       // Capitalize first letter to match dropdown items
       _selectedStatus = widget.quotation!.status.isNotEmpty

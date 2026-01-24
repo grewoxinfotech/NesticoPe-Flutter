@@ -267,6 +267,15 @@
       ]
     },
     {
+      "name": "fluttertoast",
+      "version": "9.0.0",
+      "dependencies": [
+        "flutter",
+        "flutter_web_plugins",
+        "web"
+      ]
+    },
+    {
       "name": "google_maps_flutter",
       "version": "2.13.1",
       "dependencies": [

@@ -3,48 +3,61 @@ import '../modules/reseller/model/reseller_lead_model/reseller_lead_overview.dar
 
 
 
-final List<Map<String, String>> services = [
+import 'package:flutter/material.dart';
+
+final List<Map<String, dynamic>> contractorServiceCategories = [
   {
     "name": "Planning & Design",
-    "lottieUrl": "https://lottie.host/c184a6a1-69a2-4856-b454-e1667ed30e21/EyPqNZs6lB.lottie"
-  },
-  {
-    "name": "Approvals & Legal Work",
-    "lottieUrl": "https://lottie.host/a1c5b421-20b1-4ad6-b546-4c213c8cd62d/LNP0QHVUMx.lottie"
+    "icon": Icons.architecture, // 🏗️
+    "color": Colors.blueAccent,
   },
   {
     "name": "Construction Execution",
-    "lottieUrl": "https://lottie.host/9c5fc812-2a64-49a5-b2bf-6704920a6038/gzNeh6S7PY.lottie"
-  },
-  {
-    "name": "Material Supply",
-    "lottieUrl": "https://lottie.host/6cdf8b3c-76b0-46fc-ba94-395ebfc3b429/1DAVShHNZY.lottie"
+    "icon": Icons.foundation, // 🧱
+    "color": Colors.orangeAccent,
   },
   {
     "name": "Renovation & Remodeling",
-    "lottieUrl": "https://lottie.host/22ff1561-e3ca-4868-8b1d-08ba8023d549/VY4Zk2T7Ay.lottie"
+    "icon": Icons.handyman, // 🔧
+    "color": Colors.purpleAccent,
   },
   {
     "name": "Interior Work",
-    "lottieUrl": "https://lottie.host/7e77e871-6f69-4e87-9c10-06e95445ff54/BIaMFCeAVR.lottie"
+    "icon": Icons.chair, // 🪑
+    "color": Colors.teal,
+  },
+  {
+    "name": "Material Supply",
+    "icon": Icons.local_shipping, // 🚚
+    "color": Colors.green,
   },
   {
     "name": "MEP Services",
-    "lottieUrl": "https://lottie.host/1261f3c3-0fdf-4e21-9f13-08f5ce7d0721/6whVJfyBbv.lottie"
+    "icon": Icons.electrical_services, // ⚙️
+    "color": Colors.redAccent,
   },
   {
     "name": "Smart Building Solutions",
-    "lottieUrl": "https://lottie.host/d03eb4ec-d3cf-47a5-992d-59fa793639a7/osruVx2ggI.lottie"
+    "icon": Icons.broadcast_on_home, // 🏠
+    "color": Colors.indigo,
+  },
+  {
+    "name": "Approvals & Legal Work",
+    "icon": Icons.gavel, // ⚖️
+    "color": Colors.brown,
   },
   {
     "name": "Maintenance & AMC",
-    "lottieUrl": "https://lottie.host/0585468f-fa70-49d2-8155-3e584ebb3ff5/QTf6e73pYD.lottie"
+    "icon": Icons.build_circle, // 🛠️
+    "color": Colors.cyan,
   },
   {
     "name": "Specialized Services",
-    "lottieUrl": "https://lottie.host/9cf23a6b-4443-4cf4-aaed-9007cf5aa3ea/zvH2i9jr5N.lottie"
+    "icon": Icons.design_services, // 🎨
+    "color": Colors.deepOrangeAccent,
   },
 ];
+
 
 
 

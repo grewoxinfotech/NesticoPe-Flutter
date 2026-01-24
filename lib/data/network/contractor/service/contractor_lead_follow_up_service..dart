@@ -6,6 +6,7 @@ import 'package:http/http.dart' ;
 
 import '../../../../app/care/pagination/models/pagination_models.dart';
 import '../../../../app/constants/api_constants.dart';
+import '../../../../widgets/messages/snack_bar.dart';
 import '../model/contractor_lead_model/contractor_lead_followup_model.dart';
 import '../model/contractot_service_model/contractor_inquiry_model.dart';
 
@@ -69,15 +70,33 @@ class ContractorLeadFollowUpService{
     if (response.statusCode == 200||response.statusCode == 201) {
     final data = jsonDecode(response.body);
     print("Contractor Lead ADD Follow Up data: $data");
+    final jsonData = json.decode(response.body);
+    // final jsonData = json.decode(response.body);
+    NesticoPeSnackBar.showAwesomeSnackbar(
+      title: 'Success',
+      message: jsonData['message'],
+      contentType: ContentType.success,
+    );
     return data['success'];
     } else {
     print("Failed to load Lead ADD Follow Up: ${response.statusCode}");
     print("Response body: ${response.body}");
-
+    final jsonData = json.decode(response.body);
+    // final jsonData = json.decode(response.body);
+    NesticoPeSnackBar.showAwesomeSnackbar(
+      title: 'Failed',
+      message: jsonData['message'],
+      contentType: ContentType.failure,
+    );
     throw Exception("Failed to load Lead ADD Follow Up");
 
     }
     }catch(e){
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );
       print("Exception in Lead ADD Follow Up: $e");
       return false;
 
@@ -92,9 +111,23 @@ class ContractorLeadFollowUpService{
 
       if (response.statusCode == 200||response.statusCode == 201) {
         final data = jsonDecode(response.body);
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
         print("Contractor Lead Update Follow Up data: $data");
         return data['success'];
       } else {
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: jsonData['message'],
+          contentType: ContentType.failure,
+        );
         print("Failed to load Lead Update Follow Up: ${response.statusCode}");
         print("Response body: ${response.body}");
 
@@ -102,6 +135,11 @@ class ContractorLeadFollowUpService{
 
       }
     }catch(e){
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );
       print("Exception in Lead Update Follow Up: $e");
       return false;
 
@@ -141,10 +179,24 @@ class ContractorLeadFollowUpService{
       if(response.statusCode==200)
       {
         final data =jsonDecode(response.body);
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
         print("Contractor Lead Follow Up Deleted : $data");
         return data['success'];
       }
       else{
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
         print("Failed to Delete Follow Up: ${response.statusCode}");
         print("Response body: ${response.body}");
         throw Exception("Failed to Delete Follow Up");
@@ -152,6 +204,11 @@ class ContractorLeadFollowUpService{
     }
     catch(e)
     {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );
       print("Exception in Delete Follow Up: $e");
       return false;
     }

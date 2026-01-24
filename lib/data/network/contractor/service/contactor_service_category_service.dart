@@ -42,6 +42,7 @@ class TopCategoryService {
         final model = TopCategoryResponse.fromJson(jsonData);
         AppLogger.structured('Top Categorise of full ',model.toJson() );
 
+
         return model.data?.items ?? [];
       } else {
         debugPrint(

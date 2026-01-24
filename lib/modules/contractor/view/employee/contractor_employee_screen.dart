@@ -80,6 +80,7 @@ class ContractorEmployeeScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // TODO: Add new employee
+          controller.isEditing.value=false;
           showAddEmployeeDialog(context, controller);
         },
         backgroundColor: ColorRes.primary,
@@ -349,10 +350,10 @@ void showAddEmployeeDialog(
               ),
               child: Row(
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      "Add Employee",
-                      style: TextStyle(
+                      "${controller.isEditing.value?'Update':"Add"} Employee",
+                      style: const TextStyle(
                         fontSize: AppFontSizes.body,
                         fontWeight: AppFontWeights.semiBold,
                         color: ColorRes.white,

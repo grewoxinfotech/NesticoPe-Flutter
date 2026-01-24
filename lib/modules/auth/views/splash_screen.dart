@@ -1,3 +1,4 @@
+/*
 import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/material.dart';
@@ -279,7 +280,8 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Scaffold(
+    */
+/*return Scaffold(
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -356,6 +358,254 @@ class _SplashScreenState extends State<SplashScreen>
           ],
         ),
       ),
+    );*//*
+
+    return Scaffold(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        color: ColorRes.white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Logo Animation
+            ScaleTransition(
+              scale: _animation,
+              child: FadeTransition(
+                opacity: _animation,
+                child: Column(
+                  children: [
+                    Container(
+                      width: 120,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: theme.colorScheme.primary.withOpacity(0.3),
+                            blurRadius: 15,
+                            offset: const Offset(0, 5),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Image.asset(
+                          'assets/images/NesticoPe_logo.png', // 👈 your logo path
+                          width: 70,
+                          height: 70,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Tagline with fade animation
+            FadeTransition(
+              opacity: _animation,
+              child: Text(
+                'NesticoPe',
+                style: TextStyle(
+                  color: ColorRes.leadGreyColor.shade700,
+                  fontSize: AppFontSizes.body,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ),
+
+            // Loading indicator
+            const SizedBox(height: 60),
+            CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(
+                theme.colorScheme.secondary,
+              ),
+              strokeWidth: 3,
+            ),
+          ],
+        ),
+      ),
+    );
+
+  }
+}
+*/
+import 'dart:ui';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
+import 'package:housing_flutter_app/modules/dashboard/views/seller_dashboard_screen.dart';
+import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
+import '../../../app/utils/helper_function/user_helper/user_helper.dart';
+import '../../../data/database/secure_storage_service.dart';
+import '../../builder/view/builder_main_screen.dart';
+import '../../contractor/view/contractor_main.dart';
+import '../../dashboard/views/dashboard_screen.dart';
+import 'onboarding_screen.dart';
+
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({Key? key}) : super(key: key);
+
+  @override
+  _SplashScreenState createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1800),
+    );
+
+    _animation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOutBack,
+    );
+
+    _animationController.forward();
+    splash();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  Future<void> splash() async {
+    await Future.delayed(const Duration(seconds: 2));
+
+    try {
+      await UserHelper.initUserType();
+
+      final bool isFirstTimeUser = await SecureStorage.isFirstTimeUser();
+      if (isFirstTimeUser) {
+        await Get.offAll(() => const OnboardingScreen());
+        return;
+      }
+
+      final bool isLogin = await SecureStorage.getLoggedIn();
+      final String? token = await SecureStorage.getToken();
+
+      if (isLogin && (token == null || token.isEmpty)) {
+        await SecureStorage.clearAll();
+        UserHelper.clearUserType();
+        await Get.offAll(() => const LoginScreen());
+        return;
+      }
+
+      Get.put(PropertyFavoriteController(), permanent: true);
+
+      if (UserHelper.isBuyer) {
+        await Get.offAll(() => const DashboardScreen());
+        return;
+      }
+      if (UserHelper.isSellerOwner) {
+        await Get.offAll(() => const SellerDashboardScreen());
+        return;
+      }
+      if (UserHelper.isSellerBuilder) {
+        await Get.offAll(() => const BuilderMainScreen());
+        return;
+      }
+      if (UserHelper.isContractor) {
+        await Get.offAll(() => const ContractorMainScreen());
+        return;
+      }
+
+      await Get.offAll(() => const DashboardScreen());
+    } catch (e) {
+      debugPrint("❌ Error during splash init: $e");
+      await Get.offAll(() => const LoginScreen());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // 🌈 Base dark gradient
+        /*  Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0x810E0E0E),
+                  Color(0x81262626),
+                  Color(0x692C2C2C),
+                ],
+              ),
+            ),
+          ),*/
+
+          // 🌫 Full-screen blur overlay (black glassmorphism)
+          BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.black.withOpacity(0.45),
+                    Colors.black.withOpacity(0.25),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // ✨ Subtle radial glow (optional, behind logo)
+          // Container(
+          //   decoration: BoxDecoration(
+          //     gradient: RadialGradient(
+          //       center: Alignment.center,
+          //       radius: 1.0,
+          //       colors: [
+          //         Colors.white.withOpacity(0.05),
+          //         Colors.transparent,
+          //       ],
+          //     ),
+          //   ),
+          // ),
+
+          // 🪄 Animated Logo
+          Center(
+            child: ScaleTransition(
+              scale: _animation,
+              child: FadeTransition(
+                opacity: _animation,
+                child: Container(
+
+                  child: Image.asset(
+                    'assets/images/NesticoPe_logo.png',
+                    width: 160,
+                    height: 160,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
+
+

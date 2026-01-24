@@ -20,34 +20,27 @@ import 'package:timeago/timeago.dart' as currencyFormat;
 class ContractorQuotationScreen extends StatefulWidget {
   final ContractorQuotation quotation;
 
-  const ContractorQuotationScreen({
-    super.key,
-    required this.quotation,
-  });
+  const ContractorQuotationScreen({super.key, required this.quotation});
 
   @override
   State<ContractorQuotationScreen> createState() =>
       _ContractorQuotationScreenState();
 }
 
-class _ContractorQuotationScreenState
-    extends State<ContractorQuotationScreen> {
+class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
   String? _selectedStatus;
   String _currentStatus = '';
 
-  final List<String> _statusOptions = [
-    'Pending',
-    'Accepted',
-    'Rejected',
-  ];
+  final List<String> _statusOptions = ['Pending', 'Accepted', 'Rejected'];
 
   @override
   void initState() {
     super.initState();
     // Capitalize first letter to match dropdown items
-    _currentStatus = widget.quotation.status.isNotEmpty
-        ? capitalizeEachWord(widget.quotation.status)
-        : 'Pending';
+    _currentStatus =
+        widget.quotation.status.isNotEmpty
+            ? capitalizeEachWord(widget.quotation.status)
+            : 'Pending';
     _selectedStatus = _currentStatus;
   }
 
@@ -101,18 +94,36 @@ class _ContractorQuotationScreenState
                 icon: Icons.home_outlined,
                 title: 'Property Details',
                 children: [
-                  _buildInfoRow('Type:', widget.quotation.meta.propertyDetails?.propertyType??''),
+                  _buildInfoRow(
+                    'Type:',
+                    widget.quotation.meta.propertyDetails?.propertyType ?? '',
+                  ),
                   const SizedBox(height: 12),
-                  _buildInfoRow('City:', widget.quotation.meta.propertyDetails?.city??''),
+                  _buildInfoRow(
+                    'City:',
+                    widget.quotation.meta.propertyDetails?.city ?? '',
+                  ),
                   const SizedBox(height: 12),
-                  _buildInfoRow('Location:', widget.quotation.meta.propertyDetails?.location??''),
+                  _buildInfoRow(
+                    'Location:',
+                    widget.quotation.meta.propertyDetails?.location ?? '',
+                  ),
                   const SizedBox(height: 12),
-                  _buildInfoRow('State:', widget.quotation.meta.propertyDetails?.state??''),
+                  _buildInfoRow(
+                    'State:',
+                    widget.quotation.meta.propertyDetails?.state ?? '',
+                  ),
                   const SizedBox(height: 12),
-                  _buildInfoRow('Carpet Area:', '${widget.quotation.meta.propertyDetails?.carpetArea} sq.ft'),
+                  _buildInfoRow(
+                    'Carpet Area:',
+                    '${widget.quotation.meta.propertyDetails?.carpetArea} sq.ft',
+                  ),
                   const SizedBox(height: 12),
                   if (widget.quotation.meta.propertyDetails?.bhk != null)
-                    _buildInfoRow('BHK:', '${widget.quotation.meta.propertyDetails?.bhk}'),
+                    _buildInfoRow(
+                      'BHK:',
+                      '${widget.quotation.meta.propertyDetails?.bhk}',
+                    ),
                 ],
               ),
 
@@ -123,9 +134,16 @@ class _ContractorQuotationScreenState
                 icon: Icons.build_outlined,
                 title: 'Service Details',
                 children: [
-                  _buildInfoRow('Services:', widget.quotation.meta.serviceNames??''),
+                  _buildInfoRow(
+                    'Services:',
+                    widget.quotation.meta.serviceNames ?? '',
+                  ),
                   const SizedBox(height: 12),
-                  _buildInfoRow('Description:', widget.quotation.meta.propertyDetails?.serviceDescription??''),
+                  _buildInfoRow(
+                    'Description:',
+                    widget.quotation.meta.propertyDetails?.serviceDescription ??
+                        '',
+                  ),
                 ],
               ),
 
@@ -136,23 +154,34 @@ class _ContractorQuotationScreenState
                 icon: Icons.receipt_outlined,
                 title: 'Quotation Details',
                 children: [
-                  _buildInfoRow('Price:', '${Formatter.formatPrice(num.tryParse(widget.quotation.price)??0)}'),
+                  _buildInfoRow(
+                    'Price:',
+                    '${Formatter.formatPrice(num.tryParse(widget.quotation.price) ?? 0)}',
+                  ),
                   const SizedBox(height: 12),
                   _buildInfoRow('Notes:', widget.quotation.meta.notes),
                   const SizedBox(height: 12),
-                  _buildInfoRow('Created At:', _formatDate(widget.quotation.createdAt)),
+                  _buildInfoRow(
+                    'Created At:',
+                    _formatDate(widget.quotation.createdAt),
+                  ),
                   const SizedBox(height: 12),
-                  _buildInfoRow('Updated At:', _formatDate(widget.quotation.updatedAt)),
+                  _buildInfoRow(
+                    'Updated At:',
+                    _formatDate(widget.quotation.updatedAt),
+                  ),
                   const SizedBox(height: 12),
-                  _buildInfoRow('Converted:', widget.quotation.isConverted ? 'Yes' : 'No'),
+                  _buildInfoRow(
+                    'Converted:',
+                    widget.quotation.isConverted ? 'Yes' : 'No',
+                  ),
                 ],
               ),
 
               const SizedBox(height: 24),
 
               // Status Change Section
-              if (!widget.quotation.isConverted)
-                _buildStatusChangeSection(),
+              if (!widget.quotation.isConverted) _buildStatusChangeSection(),
 
               const SizedBox(height: 24),
 
@@ -192,21 +221,14 @@ class _ContractorQuotationScreenState
       decoration: BoxDecoration(
         color: statusColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: statusColor.withOpacity(0.3),
-          width: 1.5,
-        ),
+        border: Border.all(color: statusColor.withOpacity(0.3), width: 1.5),
       ),
       child: Row(
         children: [
-          Icon(
-            statusIcon,
-            color: statusColor,
-            size: 24,
-          ),
+          Icon(statusIcon, color: statusColor, size: 24),
           const SizedBox(width: 12),
           Text(
-            'Status: ${capitalizeEachWord(_selectedStatus??'')}',
+            'Status: ${capitalizeEachWord(_selectedStatus ?? '')}',
             style: TextStyle(
               fontSize: AppFontSizes.small,
               fontWeight: AppFontWeights.medium,
@@ -246,21 +268,14 @@ class _ContractorQuotationScreenState
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: ColorRes.border,
-          width: 1,
-        ),
+        border: Border.all(color: ColorRes.border, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                icon,
-                size: 20,
-                color: ColorRes.textSecondary,
-              ),
+              Icon(icon, size: 20, color: ColorRes.textSecondary),
               const SizedBox(width: 8),
               Text(
                 title,
@@ -297,7 +312,7 @@ class _ContractorQuotationScreenState
         const SizedBox(width: 12),
         Expanded(
           child: Text(
-            value,
+            value.isEmpty ? "Not mentioned" : value,
             style: const TextStyle(
               fontSize: AppFontSizes.small,
               color: ColorRes.textPrimary,
@@ -315,10 +330,7 @@ class _ContractorQuotationScreenState
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: ColorRes.border,
-          width: 1,
-        ),
+        border: Border.all(color: ColorRes.border, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -368,10 +380,7 @@ class _ContractorQuotationScreenState
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(
-                  color: ColorRes.primary,
-                  width: 2,
-                ),
+                borderSide: const BorderSide(color: ColorRes.primary, width: 2),
               ),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
@@ -388,12 +397,13 @@ class _ContractorQuotationScreenState
               color: ColorRes.textPrimary,
             ),
             dropdownColor: ColorRes.white,
-            items: _statusOptions.map((String status) {
-              return DropdownMenuItem<String>(
-                value: status,
-                child: Text(status),
-              );
-            }).toList(),
+            items:
+                _statusOptions.map((String status) {
+                  return DropdownMenuItem<String>(
+                    value: status,
+                    child: Text(status),
+                  );
+                }).toList(),
             onChanged: (String? newValue) {
               if (newValue != null) {
                 setState(() {
@@ -406,9 +416,10 @@ class _ContractorQuotationScreenState
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: _selectedStatus != capitalizeEachWord(widget.quotation.status)
-                  ? _updateStatus
-                  : null,
+              onPressed:
+                  _selectedStatus != capitalizeEachWord(widget.quotation.status)
+                      ? _updateStatus
+                      : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: ColorRes.primary,
                 padding: const EdgeInsets.symmetric(vertical: 14),
@@ -437,63 +448,89 @@ class _ContractorQuotationScreenState
     return Column(
       children: [
         // Edit Button
-       Row(
-         children: [
-           if (!widget.quotation.isConverted)
-             Expanded(
-               child: ElevatedButton.icon(
-                 onPressed: _editQuotation,
-                 icon: const Icon(Icons.edit_outlined, color: ColorRes.white),
-                 label: const Text(
-                   'Edit Quotation',
-                   style: TextStyle(
-                     fontSize: AppFontSizes.medium,
-                     fontWeight: AppFontWeights.semiBold,
-                     color: ColorRes.white,
-                   ),
-                 ),
-                 style: ElevatedButton.styleFrom(
-                   backgroundColor: ColorRes.primary,
-                   padding: const EdgeInsets.symmetric(vertical: 16),
-                   shape: RoundedRectangleBorder(
-                     borderRadius: BorderRadius.circular(12),
-                   ),
-                 ),),
-             ),
-           if (!widget.quotation.isConverted) const SizedBox(width: 12),
-           // Delete Button
-           Expanded(
-             child: OutlinedButton.icon(
-               onPressed: _deleteQuotation,
-               icon: const Icon(Icons.delete_outline, color: ColorRes.error),
-               label: const Text(
-                 'Delete Quotation',
-                 style: TextStyle(
-                   fontSize: AppFontSizes.medium,
-                   fontWeight: AppFontWeights.semiBold,
-                   color: ColorRes.error,
-                 ),
-               ),
-               style: OutlinedButton.styleFrom(
-                 padding: const EdgeInsets.symmetric(vertical: 16),
-                 shape: RoundedRectangleBorder(
-                   borderRadius: BorderRadius.circular(12),
-                 ),
-                 side: const BorderSide(
-                   color: ColorRes.error,
-                   width: 1.5,
-                 ),
-               ),
-             ),
-           ),
-         ],
-       ),
+        Row(
+          children: [
+            if (!widget.quotation.isConverted)
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: _editQuotation,
+                  icon: const Icon(Icons.edit_outlined, color: ColorRes.white),
+                  label: const Text(
+                    'Edit Quotation',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.white,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorRes.primary,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+            if (!widget.quotation.isConverted) const SizedBox(width: 12),
+            // Delete Button
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: _deleteQuotation,
+                icon: const Icon(Icons.delete_outline, color: ColorRes.error),
+                label: const Text(
+                  'Delete Quotation',
+                  style: TextStyle(
+                    fontSize: AppFontSizes.medium,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.error,
+                  ),
+                ),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  side: const BorderSide(color: ColorRes.error, width: 1.5),
+                ),
+              ),
+            ),
+          ],
+        ),
 
         SizedBox(height: 12),
 
         // Download PDF Button
-        SafeArea(
-          child: SizedBox(
+        if (widget.quotation.isConverted)...[
+          SafeArea(
+            child: SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: _downloadQuotationPDF,
+                icon: const Icon(
+                  Icons.picture_as_pdf_outlined,
+                  color: ColorRes.primary,
+                ),
+                label: const Text(
+                  'Share Document PDF ',
+                  style: TextStyle(
+                    fontSize: AppFontSizes.medium,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.primary,
+                  ),
+                ),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  side: const BorderSide(color: ColorRes.primary, width: 1.5),
+                ),
+              ),
+            ),
+          ),
+        ]else...[
+          SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
               onPressed: _downloadQuotationPDF,
@@ -518,9 +555,10 @@ class _ContractorQuotationScreenState
               ),
             ),
           ),
-        ),
+          const SizedBox(height: 12),
+        ],
 
-        const SizedBox(height: 12),
+
 
         // Convert to Lead Button
         if (!widget.quotation.isConverted)
@@ -549,7 +587,6 @@ class _ContractorQuotationScreenState
               ),
             ),
           ),
-
 
         // Delete Button
         // SizedBox(
@@ -591,13 +628,12 @@ class _ContractorQuotationScreenState
     Get.dialog(
       AlertDialog(
         backgroundColor: ColorRes.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: const Text(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title:  Text(
           'Confirm Status Change',
           style: TextStyle(
             fontWeight: AppFontWeights.semiBold,
+            fontSize: AppFontSizes.body,
             color: ColorRes.textPrimary,
           ),
         ),
@@ -651,9 +687,7 @@ class _ContractorQuotationScreenState
     Get.dialog(
       AlertDialog(
         backgroundColor: ColorRes.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text(
           'Convert to Lead',
           style: TextStyle(
@@ -707,11 +741,8 @@ class _ContractorQuotationScreenState
   void _deleteQuotation() {
     Get.dialog(
       AlertDialog(
-
         backgroundColor: ColorRes.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text(
           'Delete Quotation',
           style: TextStyle(
@@ -765,28 +796,32 @@ class _ContractorQuotationScreenState
   }
 
   void _editQuotation() {
-    Get.to(() => ContractorInquiryQuotationScreen(
-      quotation: widget.quotation,
-      isEditMode: true,
-    ));
+    Get.to(
+      () => ContractorInquiryQuotationScreen(
+        quotation: widget.quotation,
+        isEditMode: true,
+      ),
+    );
   }
 
   String capitalizeEachWord(String text) {
     if (text.isEmpty) return text;
-    return text.split('_').map((word) {
-      if (word.isEmpty) return word;
-      return word[0].toUpperCase() + word.substring(1).toLowerCase();
-    }).join(' ');
+    return text
+        .split('_')
+        .map((word) {
+          if (word.isEmpty) return word;
+          return word[0].toUpperCase() + word.substring(1).toLowerCase();
+        })
+        .join(' ');
   }
+
   Future<void> _downloadQuotationPDF() async {
-    final user=await SecureStorage.getUserData();
+    final user = await SecureStorage.getUserData();
     log("user : $user");
     try {
       // Show loading dialog
       Get.dialog(
-        const Center(
-          child: CircularProgressIndicator(),
-        ),
+        const Center(child: CircularProgressIndicator()),
         barrierDismissible: false,
       );
 
@@ -794,7 +829,7 @@ class _ContractorQuotationScreenState
 
       // Define colors matching the website
       final primaryColor = PdfColor.fromInt(0xFF2980B9); // Professional Blue
-      final secondaryColor = PdfColors.black ; // Gray
+      final secondaryColor = PdfColors.black; // Gray
       final darkColor = PdfColor.fromInt(0xFF2C3E50); // Dark Navy
 
       // Add page to PDF
@@ -824,22 +859,47 @@ class _ContractorQuotationScreenState
                         pw.Column(
                           crossAxisAlignment: pw.CrossAxisAlignment.start,
                           children: [
-                            pw.Text('NesticoPe', style: pw.TextStyle(fontSize: 22, fontWeight: pw.FontWeight.bold, color: primaryColor)),
+                            pw.Text(
+                              'NesticoPe',
+                              style: pw.TextStyle(
+                                fontSize: 22,
+                                fontWeight: pw.FontWeight.bold,
+                                color: primaryColor,
+                              ),
+                            ),
                             pw.SizedBox(height: 2),
-                            pw.Text('Buy - Sell - Rent', style: pw.TextStyle(fontSize: 10, color: primaryColor)),
+                            pw.Text(
+                              'Buy - Sell - Rent',
+                              style: pw.TextStyle(
+                                fontSize: 10,
+                                color: primaryColor,
+                              ),
+                            ),
                           ],
                         ),
                         pw.Column(
                           crossAxisAlignment: pw.CrossAxisAlignment.end,
                           children: [
-                            pw.Text('Contractor', style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: darkColor)),
+                            pw.Text(
+                              'Contractor',
+                              style: pw.TextStyle(
+                                fontSize: 18,
+                                fontWeight: pw.FontWeight.bold,
+                                color: darkColor,
+                              ),
+                            ),
                             pw.SizedBox(height: 2),
-                            pw.Text('${user?.user?.email ?? ''} | ${user?.user?.phone ?? ''}', style: pw.TextStyle(fontSize: 10, color: secondaryColor)),
+                            pw.Text(
+                              '${user?.user?.email ?? ''} | ${user?.user?.phone ?? ''}',
+                              style: pw.TextStyle(
+                                fontSize: 10,
+                                color: secondaryColor,
+                              ),
+                            ),
                           ],
                         ),
                       ],
                     ),
-
 
                     pw.SizedBox(height: 20),
 
@@ -985,11 +1045,45 @@ class _ContractorQuotationScreenState
                                 ),
                               ),
                               pw.SizedBox(height: 8),
-                              _buildPropertyRow('Type', widget.quotation.meta.propertyDetails?.propertyType ?? ''),
-                              _buildPropertyRow('City', widget.quotation.meta.propertyDetails?.city ?? ''),
-                              _buildPropertyRow('Location', widget.quotation.meta.propertyDetails?.location ?? ''),
-                              if (widget.quotation.meta.propertyDetails?.carpetArea != null && widget.quotation.meta.propertyDetails!.carpetArea > 0)
-                                _buildPropertyRow('Area', '${widget.quotation.meta.propertyDetails!.carpetArea} sqft'),
+                              _buildPropertyRow(
+                                'Type',
+                                widget
+                                        .quotation
+                                        .meta
+                                        .propertyDetails
+                                        ?.propertyType ??
+                                    '',
+                              ),
+                              _buildPropertyRow(
+                                'City',
+                                widget.quotation.meta.propertyDetails?.city ??
+                                    '',
+                              ),
+                              _buildPropertyRow(
+                                'Location',
+                                widget
+                                        .quotation
+                                        .meta
+                                        .propertyDetails
+                                        ?.location ??
+                                    '',
+                              ),
+                              if (widget
+                                          .quotation
+                                          .meta
+                                          .propertyDetails
+                                          ?.carpetArea !=
+                                      null &&
+                                  widget
+                                          .quotation
+                                          .meta
+                                          .propertyDetails!
+                                          .carpetArea >
+                                      0)
+                                _buildPropertyRow(
+                                  'Area',
+                                  '${widget.quotation.meta.propertyDetails!.carpetArea} sqft',
+                                ),
                             ],
                           ),
                         ),
@@ -1015,10 +1109,7 @@ class _ContractorQuotationScreenState
                     pw.SizedBox(height: 6),
                     pw.Text(
                       _getFooterNotes(),
-                      style: pw.TextStyle(
-                        fontSize: 9,
-                        color: secondaryColor,
-                      ),
+                      style: pw.TextStyle(fontSize: 9, color: secondaryColor),
                     ),
                   ],
                 ),
@@ -1031,7 +1122,6 @@ class _ContractorQuotationScreenState
       // Close loading dialog
       Get.back();
       await _sharePDF(pdf);
-
     } catch (e, stackTrace) {
       Get.back(); // Close loading dialog
       print('PDF Generation Error: $e');
@@ -1071,35 +1161,41 @@ class _ContractorQuotationScreenState
           pw.Expanded(
             child: pw.Text(
               value,
-              style: pw.TextStyle(
-                fontSize: 10,
-                color: secondaryColor,
-              ),
+              style: pw.TextStyle(fontSize: 10, color: secondaryColor),
             ),
           ),
         ],
       ),
     );
   }
+
   pw.Widget _buildItemTable(
-      PdfColor primaryColor,
-      PdfColor darkColor,
-      PdfColor secondaryColor,
-      ) {
+    PdfColor primaryColor,
+    PdfColor darkColor,
+    PdfColor secondaryColor,
+  ) {
     // Build description
     String description = widget.quotation.meta.serviceNames ?? '';
 
     if (widget.quotation.meta.notes.isNotEmpty) {
-      String cleanNotes = widget.quotation.meta.notes.replaceAll('Generated from inquiry for: ', '');
+      String cleanNotes = widget.quotation.meta.notes.replaceAll(
+        'Generated from inquiry for: ',
+        '',
+      );
       if (!description.contains(cleanNotes) && cleanNotes.isNotEmpty) {
-        description += description.isNotEmpty ? '\n\nNote: $cleanNotes' : cleanNotes;
+        description +=
+            description.isNotEmpty ? '\n\nNote: $cleanNotes' : cleanNotes;
       }
     }
 
     if (description.isEmpty) description = 'General Service';
 
     // Parse and format price
-    final price = double.tryParse(widget.quotation.price.toString().replaceAll(',', '')) ?? 0;
+    final price =
+        double.tryParse(
+          widget.quotation.price.toString().replaceAll(',', ''),
+        ) ??
+        0;
 
     String formatIndianCurrency(double amount) {
       final s = amount.toStringAsFixed(0);
@@ -1107,7 +1203,13 @@ class _ContractorQuotationScreenState
       if (n <= 3) return '₹ $s';
       final last3 = s.substring(n - 3);
       final rest = s.substring(0, n - 3);
-      final formatted = rest.replaceAllMapped(RegExp(r'(\d)(?=(\d\d)+\d$)'), (Match m) => '${m[1]},') + ',' + last3;
+      final formatted =
+          rest.replaceAllMapped(
+            RegExp(r'(\d)(?=(\d\d)+\d$)'),
+            (Match m) => '${m[1]},',
+          ) +
+          ',' +
+          last3;
       return 'Rs. $formatted';
     }
 
@@ -1124,7 +1226,10 @@ class _ContractorQuotationScreenState
           decoration: pw.BoxDecoration(color: primaryColor),
           children: [
             pw.Padding(
-              padding: const pw.EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+              padding: const pw.EdgeInsets.symmetric(
+                vertical: 8,
+                horizontal: 10,
+              ),
               child: pw.Text(
                 'Description',
                 style: pw.TextStyle(
@@ -1135,7 +1240,10 @@ class _ContractorQuotationScreenState
               ),
             ),
             pw.Padding(
-              padding: const pw.EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+              padding: const pw.EdgeInsets.symmetric(
+                vertical: 8,
+                horizontal: 10,
+              ),
               child: pw.Text(
                 'Total',
                 textAlign: pw.TextAlign.right,
@@ -1156,10 +1264,7 @@ class _ContractorQuotationScreenState
               padding: const pw.EdgeInsets.all(10),
               child: pw.Text(
                 description,
-                style: pw.TextStyle(
-                  fontSize: 10,
-                  color: darkColor,
-                ),
+                style: pw.TextStyle(fontSize: 10, color: darkColor),
               ),
             ),
             pw.Padding(
@@ -1168,10 +1273,7 @@ class _ContractorQuotationScreenState
                 alignment: pw.Alignment.centerRight,
                 child: pw.Text(
                   formatIndianCurrency(price),
-                  style: pw.TextStyle(
-                    fontSize: 10,
-                    color: darkColor,
-                  ),
+                  style: pw.TextStyle(fontSize: 10, color: darkColor),
                 ),
               ),
             ),
@@ -1347,8 +1449,14 @@ class _ContractorQuotationScreenState
 
     try {
       if (widget.quotation.meta.propertyDetails?.serviceDescription != null &&
-          widget.quotation.meta.propertyDetails!.serviceDescription.isNotEmpty) {
-        notes += '\nScope: ${widget.quotation.meta.propertyDetails!.serviceDescription}';
+          widget
+              .quotation
+              .meta
+              .propertyDetails!
+              .serviceDescription
+              .isNotEmpty) {
+        notes +=
+            '\nScope: ${widget.quotation.meta.propertyDetails!.serviceDescription}';
       }
     } catch (e) {
       print('Error getting footer notes: $e');
@@ -1357,7 +1465,7 @@ class _ContractorQuotationScreenState
     return notes;
   }
 
-// Helper method to format date safely
+  // Helper method to format date safely
   String _formatQuotationDate(DateTime date) {
     try {
       return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
@@ -1672,9 +1780,7 @@ class _ContractorQuotationScreenState
     Get.dialog(
       AlertDialog(
         backgroundColor: ColorRes.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text(
           'PDF Generated Successfully',
           style: TextStyle(
@@ -1692,7 +1798,6 @@ class _ContractorQuotationScreenState
         actions: [
           TextButton.icon(
             onPressed: () async {
-
               await _savePDF(pdf);
               Navigator.of(context).pop();
             },
@@ -1734,7 +1839,9 @@ class _ContractorQuotationScreenState
     try {
       final bytes = await pdf.save();
       final directory = await getApplicationDocumentsDirectory();
-      final file = File('${directory.path}/quotation_${widget.quotation.id.substring(0, 8)}.pdf');
+      final file = File(
+        '${directory.path}/quotation_${widget.quotation.id.substring(0, 8)}.pdf',
+      );
       await file.writeAsBytes(bytes);
 
       Get.snackbar(

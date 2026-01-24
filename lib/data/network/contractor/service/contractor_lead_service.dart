@@ -9,6 +9,7 @@ import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
+import '../../../../widgets/messages/snack_bar.dart';
 import '../model/contractor_lead_model/contractor_lead_model.dart';
 
 class ContractorLeadService{
@@ -20,13 +21,14 @@ final _basurl=ApiConstants.leads;
     return await ApiConstants.getHeaders();
   }
 
-  Future<PaginationResponse<ContractorLeadItem>> fetchContractorLead({int page = 1,Map<String ,String>? filter,required String id})
+  Future<PaginationResponse<ContractorLeadItem>> fetchContractorLead({int page = 1,Map<String ,String>? filter,required String id,required bool isConverted})
   async {
    try{
      final query={
        'page':page.toString(),
        if(filter!=null)...filter,
-       'reseller_id':id
+       'reseller_id':id,
+       "customFields.isConvertedToProject":isConverted.toString()
      };
      final uri=Uri.parse(_basurl).replace(queryParameters: query);
 
@@ -65,14 +67,32 @@ final _basurl=ApiConstants.leads;
       log("Response Body: ${response.body}");
 
       if (response.statusCode == 200 || response.statusCode == 204) {
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
        final data=jsonDecode(response.body);
        return data['success'];
       } else {
-
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: jsonData['message'],
+          contentType: ContentType.failure,
+        );
         log("Failed to delete contractor lead. Status: ${response.statusCode}");
         return false;
       }
     } catch (e, stack) {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );
       log("Exception while deleting contractor lead: $e");
       log("StackTrace: $stack");
       return false;
@@ -97,14 +117,32 @@ final _basurl=ApiConstants.leads;
 
      if (response.statusCode == 200 || response.statusCode == 201) {
        final data=jsonDecode(response.body);
+       final jsonData = json.decode(response.body);
+       // final jsonData = json.decode(response.body);
+       NesticoPeSnackBar.showAwesomeSnackbar(
+         title: 'Success',
+         message: jsonData['message'],
+         contentType: ContentType.success,
+       );
        AppLogger.structured("Convert Into Project Response", data);
        return data['success'];
      } else {
-
+       final jsonData = json.decode(response.body);
+       // final jsonData = json.decode(response.body);
+       NesticoPeSnackBar.showAwesomeSnackbar(
+         title: 'Failed',
+         message: jsonData['message'],
+         contentType: ContentType.failure,
+       );
        log("Failed to Convert Into Project. Status: ${response.statusCode}");
        return false;
      }
    }catch(e){
+     NesticoPeSnackBar.showAwesomeSnackbar(
+       title: 'Error',
+       message: "Something went wrong",
+       contentType: ContentType.failure,
+     );
      log("Failed to Convert Into Project. Status: ${e}");
      return false;
    }
@@ -132,16 +170,36 @@ final _basurl=ApiConstants.leads;
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
         final success = data['success'] ?? false;
 
         log("🟢 Lead Updated Successfully → success: $success");
         return success;
       } else {
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: jsonData['message'],
+          contentType: ContentType.
+          failure,
+        );
         log("🔴 Failed to update lead. Status Code: ${response.statusCode}");
         log("❌ Response: ${response.body}");
         return false;
       }
     } catch (e, stack) {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );
       log("🚨 Exception while updating lead: $e");
       log("🧠 Stack Trace: $stack");
       return false;
@@ -171,21 +229,46 @@ final _basurl=ApiConstants.leads;
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+
 
         final success = data['success'] == true;
         if (success) {
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Success',
+            message: jsonData['message'],
+            contentType: ContentType.success,
+          );
           log("🟢 Lead updated successfully for ID: $id");
         } else {
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Failed',
+            message: jsonData['message'],
+            contentType: ContentType.failure,
+          );
           log("🔴 Lead update response returned success = false");
         }
 
         return success;
       } else {
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: jsonData['message'],
+          contentType: ContentType.failure,
+        );
         log("🔴 Failed to update lead. Status Code: ${response.statusCode}");
         log("❌ Response: ${response.body}");
         return false;
       }
     } catch (e, stack) {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: "Something went wrong",
+        contentType: ContentType.failure,
+      );
       log("🚨 Exception while updating contractor lead: $e");
       log("🧠 Stack Trace: $stack");
       return false;

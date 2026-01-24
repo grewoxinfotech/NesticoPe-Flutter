@@ -11,6 +11,7 @@ import 'package:mime/mime.dart';
 
 import '../../../../../app/constants/api_constants.dart';
 import '../../../../../modules/profile/model/seller_profile.dart';
+import '../../../../../widgets/messages/snack_bar.dart';
 import '../../../../database/secure_storage_service.dart';
 import '../../model/profile/contractor_profile_model.dart';
 
@@ -136,7 +137,13 @@ class ContractorProfileUpdate {
       final decoded = jsonDecode(response.body);
       print('📦 Seller Profile Update Response: $decoded');
       print('📦 Status Code: ${response.statusCode}');
-
+      final jsonData = json.decode(response.body);
+      // final jsonData = json.decode(response.body);
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Success',
+        message: jsonData['message'],
+        contentType: ContentType.success,
+      );
       // ✅ Handle OTP-required responses
       if (decoded['otpRequired'] == true ||
           decoded['message']?.toString().toLowerCase().contains('otp') == true) {
@@ -149,8 +156,22 @@ class ContractorProfileUpdate {
 
       // ✅ Success
       if (response.statusCode == 200 || response.statusCode == 201) {
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
         return decoded;
       }
+       json.decode(response.body);
+      // final jsonData = json.decode(response.body);
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Failed',
+        message: jsonData['message']??"Failed to update profile Data",
+        contentType: ContentType.failure,
+      );
 
       // ⚠️ Error
       print('⚠️ Contractor Profile Update Error Response: $decoded');
@@ -204,9 +225,23 @@ class ContractorProfileUpdate {
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Clear the updatePhoneToken after successful verification
         print('✅ Cleared updatePhoneToken after successful verification');
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
         return decoded;
       } else {
         print('⚠️ Contractor Profile Update Error Response: $decoded');
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: jsonData['message'],
+          contentType: ContentType.failure,
+        );
         return {
           'story': false,
           'message': decoded['message'] ?? 'Failed to verify OTP',
@@ -244,9 +279,22 @@ class ContractorProfileUpdate {
           );
           print('✅ Saved new updatePhoneToken after resend');
         }
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
         return decoded;
       } else {
         print('⚠️ Resend OTP Error Response: $decoded');
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: decoded['message'],
+          contentType: ContentType.failure,
+        );
         return {
           'story': false,
           'message': decoded['message'] ?? 'Failed to resend OTP',
@@ -255,6 +303,11 @@ class ContractorProfileUpdate {
     } catch (e, stack) {
       print('❌ Exception in Resend OTP: $e');
       print(stack);
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Failed',
+        message: "Error while updating project",
+        contentType: ContentType.failure,
+      );
       return {
         'story': false,
         'message': 'Error resending OTP: ${e.toString()}',

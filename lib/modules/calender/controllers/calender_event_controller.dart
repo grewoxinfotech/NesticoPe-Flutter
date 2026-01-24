@@ -6,6 +6,7 @@ import '../../../app/care/pagination/controller/pagination_controller.dart';
 import '../../../data/network/calender/model/calender_category_model.dart';
 import '../../../data/network/calender/model/calender_model.dart';
 import '../../../data/network/calender/service/calender_service.dart';
+import '../../../widgets/messages/snack_bar.dart';
 import 'calender_event_category_controller.dart';
 
 class CalenderEventController extends PaginatedController<CalenderEventModel> {
@@ -110,6 +111,15 @@ class CalenderEventController extends PaginatedController<CalenderEventModel> {
   /// Delete Event
   Future<void> deleteEvent(String id) async {
     final deleted = await _service.deleteEvent(id);
+    if(deleted){
+      // final jsonData = json.decode(response.body);
+      // final jsonData = json.decode(response.body);
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Success',
+        message: "Event deleted successfully",
+        contentType: ContentType.success,
+      );
+    }
     if (deleted) loadInitial();
   }
 

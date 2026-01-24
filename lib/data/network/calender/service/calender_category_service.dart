@@ -88,8 +88,19 @@ class CalenderCategoryService {
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
         return CalenderCategoryModel.fromJson(jsonData['data']);
       }
+      final jsonData = json.decode(response.body);
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Failed',
+        message: jsonData['message']?? "Fail to Add Event",
+        contentType: ContentType.failure,
+      );
       return null;
     } catch (e) {
       print("Exception in load Events: $e");
@@ -114,9 +125,21 @@ class CalenderCategoryService {
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
         return CalenderCategoryModel.fromJson(jsonData['data']);
       }
+      final jsonData = json.decode(response.body);
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Failed',
+        message: jsonData['message']??'Failed to update event',
+        contentType: ContentType.failure,
+      );
       return null;
+
     } catch (e) {
       print("Exception in load Events: $e");
       NesticoPeSnackBar.showAwesomeSnackbar(
@@ -136,8 +159,20 @@ class CalenderCategoryService {
         headers: await headers(),
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
+        final jsonData=jsonDecode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
         return true;
       }
+      final jsonData=jsonDecode(response.body);
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Failed',
+        message: jsonData['message']??'Failed to deleted event',
+        contentType: ContentType.failure,
+      );
       return false;
     } catch (e) {
       print("Exception in load Events: $e");

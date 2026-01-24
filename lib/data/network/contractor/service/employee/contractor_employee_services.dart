@@ -7,6 +7,7 @@ import 'package:housing_flutter_app/confige/helper/api_helper.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
+import '../../../../../widgets/messages/snack_bar.dart';
 import '../../model/employee/contractor_employee_model.dart';
 
 class ContractorEmployeeServices {
@@ -68,9 +69,22 @@ class ContractorEmployeeServices {
       if (response.statusCode == 200 || response.statusCode == 201) {
         log("Add Contractor Employee Response: ${response.body}");
         final data = jsonDecode(response.body);
-        // Handle the response data as needed
+
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: data['message'],
+          contentType: ContentType.success,
+        );
         return data['success'];
       } else {
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: jsonData['message']??"Failed to add contractor employee",
+          contentType: ContentType.failure,
+        );
         print("Failed to add contractor employee: ${response.statusCode}");
         print("Response body: ${response.body}");
        return false;
@@ -93,9 +107,22 @@ class ContractorEmployeeServices {
       if (response.statusCode == 200 || response.statusCode == 201) {
         log("Delete Contractor Employee Response: ${response.body}");
         final data = jsonDecode(response.body);
-        // Handle the response data as needed
+
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
         return data['success'];
       } else {
+        final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: jsonData['message']??"Failed to deleted contractor",
+          contentType: ContentType.failure,
+        );
         print("Failed to delete contractor employee: ${response.statusCode}");
         print("Response body: ${response.body}");
         return false;
@@ -117,9 +144,22 @@ class ContractorEmployeeServices {
       if (response.statusCode == 200 || response.statusCode == 201) {
         log("Update Contractor Employee Response: ${response.body}");
         final data = jsonDecode(response.body);
+        // final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: data['message'],
+          contentType: ContentType.success,
+        );
         // Handle the response data as needed
         return data['success'];
       } else {
+        final data = jsonDecode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Failed',
+          message: data['message']??"Failed to update contractor employee",
+          contentType: ContentType.failure,
+        );
         print("Failed to update contractor employee: ${response.statusCode}");
         print("Response body: ${response.body}");
         return false;

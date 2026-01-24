@@ -74,6 +74,7 @@ class ContractorServiceCategory {
   String? updatedBy;
   String name;
   String description;
+  String? icon;
   bool isActive;
   int displayOrder;
   DateTime createdAt;
@@ -83,6 +84,7 @@ class ContractorServiceCategory {
     required this.id,
     required this.createdBy,
     this.updatedBy,
+     this.icon,
     required this.name,
     required this.description,
     required this.isActive,
@@ -96,6 +98,7 @@ class ContractorServiceCategory {
       id: map['id'] ?? '',
       createdBy: map['created_by'] ?? '',
       updatedBy: map['updated_by'],
+      icon: map['icon']??'',
       name: map['name'] ?? '',
       description: map['description'] ?? '',
       isActive: map['isActive'] ?? false,
@@ -111,6 +114,7 @@ class ContractorServiceCategory {
       'created_by': createdBy,
       'updated_by': updatedBy,
       'name': name,
+      'icon':icon,
       'description': description,
       'isActive': isActive,
       'displayOrder': displayOrder,

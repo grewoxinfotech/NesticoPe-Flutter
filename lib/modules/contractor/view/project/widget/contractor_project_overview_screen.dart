@@ -85,6 +85,8 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
             );
             await contractorEmployee.loadInitial();
 
+            log("project edit ${project?.toJson()}");
+
 contractorLeadController.populateProjectForm(project??ContractorProjectItem.fromJson({}));
 
 Get.to(() => AddOrEditProjectScreen(projectItem: project??ContractorProjectItem.fromJson({}),));

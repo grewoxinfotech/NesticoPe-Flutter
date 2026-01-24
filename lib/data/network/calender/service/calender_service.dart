@@ -73,9 +73,19 @@ class CalenderService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final jsonData = json.decode(response.body);
-
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
         return CalenderEventModel.fromJson(jsonData['data']);
       }
+      final jsonData = json.decode(response.body);
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Failed',
+        message: jsonData['message']??"Failed to add event",
+        contentType: ContentType.failure,
+      );
     } catch (e) {
       print("Exception in add Event: $e");
       NesticoPeSnackBar.showAwesomeSnackbar(
@@ -104,8 +114,21 @@ class CalenderService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
         return CalenderEventModel.fromJson(jsonData['data']);
       }
+      final jsonData = json.decode(response.body);
+      // final jsonData = json.decode(response.body);
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Failed',
+        message: jsonData['message']??'Failed to update event',
+        contentType: ContentType.failure,
+      );
     } catch (e) {
       print("Exception in update Event: $e");
       NesticoPeSnackBar.showAwesomeSnackbar(
@@ -129,6 +152,7 @@ class CalenderService {
       print("DELETE RESPONSE: ${response.body}");
 
       return response.statusCode == 200 || response.statusCode == 201;
+
     } catch (e) {
       print("Exception in delete Event: $e");
       NesticoPeSnackBar.showAwesomeSnackbar(

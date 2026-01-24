@@ -87,10 +87,12 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
     selectedContractor.value = lead.customFields?.contractorId ?? '';
     selectedContractorName.value = lead.customFields?.contractorUsername ?? '';
     print("sdsadgsa Previous ${selectedContractorName.value}");
-    selectedServiceId.value = lead.customFields?.serviceId ?? '';
+    selectedServiceId.value = lead.customFields?.serviceId?.trim() ?? '';
+
     selectedServiceName.value = lead.customFields?.serviceName ?? '';
     selectedServiceDescription.value =
         lead.customFields?.serviceDescription ?? '';
+    print("Edit of lead in contractor ${selectedServiceName.value} = == = = === = == = =  =${selectedServiceId.value}");
     selectedSource.value = capitalizeEachWord(lead.source) ?? '';
     selectedStatus.value = capitalizeEachWord(lead.status);
 
@@ -413,7 +415,7 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
     UserModel user = await SecureStorage.getUserData() ?? UserModel();
     final userId = user.user?.id ?? '';
     final response = await ContractorLeadService.contractorLeadService
-        .fetchContractorLead(id: userId, filter: filters.value);
+        .fetchContractorLead(id: userId, filter: filters.value,isConverted: false);
     print("Contractor Lead items: ${response.items.length}");
     getAllSourceData();
     return response;
@@ -487,8 +489,9 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: ColorRes.error),
             onPressed: () {
-              Get.back();
+
               deletedContractorLead(id);
+              Navigator.of(Get.context!).pop();
               Get.snackbar(
                 'Deleted',
                 'Lead deleted successfully',
