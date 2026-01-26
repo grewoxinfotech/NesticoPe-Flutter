@@ -565,6 +565,7 @@ import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 import 'package:housing_flutter_app/data/network/builder/service/builder_service.dart';
 import 'package:housing_flutter_app/modules/builder/view/builder_dashboard.dart';
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -1351,30 +1352,30 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
             project.value.documentList.map((path) => File(path)).toList(),
       );
       if (success) {
-        NesticoPeSnackBar.showAwesomeSnackbar(
-          title: "Project Created Successfully",
-          message: "",
-          contentType: ContentType.success,
-        );
+        // NesticoPeSnackBar.showAwesomeSnackbar(
+        //   title: "Project Created Successfully",
+        //   message: "",
+        //   contentType: ContentType.success,
+        // );
         refreshList();
         Get.offUntil(
           MaterialPageRoute(builder: (_) => BuilderMainScreen()),
           (route) => route.isFirst,
         );
       } else {
-        NesticoPeSnackBar.showAwesomeSnackbar(
-          title: "Failed to Create Project",
-          message: "",
-          contentType: ContentType.failure,
-        );
+        // NesticoPeSnackBar.showAwesomeSnackbar(
+        //   title: "Failed to Create Project",
+        //   message: "",
+        //   contentType: ContentType.failure,
+        // );
       }
     } catch (e) {
       print('Create builder project error: $e');
-      NesticoPeSnackBar.showAwesomeSnackbar(
-        title: "Failed to Create Project",
-        message: "",
-        contentType: ContentType.failure,
-      );
+      // NesticoPeSnackBar.showAwesomeSnackbar(
+      //   title: "Failed to Create Project",
+      //   message: "",
+      //   contentType: ContentType.failure,
+      // );
     }
   }
 
@@ -1393,29 +1394,29 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
 
       if (success) {
         refreshList();
-        NesticoPeSnackBar.showAwesomeSnackbar(
-          title: "Project Updated Successfully",
-          message: "",
-          contentType: ContentType.success,
-        );
+        // NesticoPeSnackBar.showAwesomeSnackbar(
+        //   title: "Success",
+        //   message: "Project Updated Successfully",
+        //   contentType: ContentType.success,
+        // );
         Get.offUntil(
           MaterialPageRoute(builder: (_) => BuilderMainScreen()),
           (route) => route.isFirst,
         );
       } else {
-        NesticoPeSnackBar.showAwesomeSnackbar(
-          title: "Failed to Update Project",
-          message: "",
-          contentType: ContentType.failure,
-        );
+        // NesticoPeSnackBar.showAwesomeSnackbar(
+        //   title: "Error",
+        //   message: "Failed to Update Project",
+        //   contentType: ContentType.failure,
+        // );
       }
     } catch (e) {
       print('Update builder project error: $e');
-      NesticoPeSnackBar.showAwesomeSnackbar(
-        title: "Failed to Update Project",
-        message: "",
-        contentType: ContentType.failure,
-      );
+      // NesticoPeSnackBar.showAwesomeSnackbar(
+      //   title: "Failed to Update Project",
+      //   message: "",
+      //   contentType: ContentType.failure,
+      // );
     }
   }
 
@@ -1489,8 +1490,66 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   //   return p;
   // }
 
+  // Future<AddProjectModel> updateProjectData(AddProjectModel updatedData) async {
+  //   currentStep.value = 0;
+  //   final user = await SecureStorage.getUserData();
+  //
+  //   AppLogger("Update Project of Builder", updatedData);
+  //
+  //   project.update((p) {
+  //     if (p == null) return;
+  //     p.id = updatedData.id;
+  //     p.pdfPath = updatedData.brochure;
+  //     p.imageList =
+  //         updatedData.mediaGallery!.images.isNotEmpty
+  //             ? updatedData.mediaGallery!.images
+  //             : p.imageList;
+  //     p.videoList =
+  //         updatedData.mediaGallery!.videos.isNotEmpty
+  //             ? updatedData.mediaGallery!.videos
+  //             : p.videoList;
+  //     p.projectName = updatedData.projectName;
+  //     p.projectArea = updatedData.projectArea;
+  //     p.projectSize = ProjectSize(
+  //       totalBuildings: updatedData.projectSize.totalBuildings,
+  //       totalUnits: updatedData.projectSize.totalUnits,
+  //     );
+  //     p.launchDate = updatedData.launchDate;
+  //     p.possessionDate = updatedData.possessionDate;
+  //     p.configurations = updatedData.configurations;
+  //     p.reraId = updatedData.reraId;
+  //     p.address = updatedData.address;
+  //     p.status = updatedData.status;
+  //     p.city = updatedData.city;
+  //     p.state = updatedData.state;
+  //     p.zipCode = updatedData.zipCode;
+  //     p.location = updatedData.location;
+  //     p.amenities = updatedData.amenities;
+  //     p.brochure = updatedData.brochure;
+  //     p.nearbyLocations = updatedData.nearbyLocations;
+  //     p.projectContactInfo = ProjectContactInfo(
+  //       name:
+  //           user?.user?.username ?? updatedData.projectContactInfo?.name ?? '',
+  //       phone: user?.user?.phone ?? updatedData.projectContactInfo?.phone ?? '',
+  //       email: user?.user?.email ?? updatedData.projectContactInfo?.email ?? '',
+  //     );
+  //     p.propertyTypes = updatedData.propertyTypes;
+  //     p.projectHighlights = updatedData.projectHighlights;
+  //     p.brochure = updatedData.brochure;
+  //     print("✅ Updated Project Data: ${p.toJson()}");
+  //     // p.imageList = updatedData.mea
+  //   });
+  //
+  //   await assignData();
+  //
+  //   return project.value;
+  // }
+
   Future<AddProjectModel> updateProjectData(AddProjectModel updatedData) async {
+    currentStep.value = 0;
     final user = await SecureStorage.getUserData();
+
+    AppLogger("Update Project of Builder", updatedData);
 
     project.update((p) {
       if (p == null) return;
@@ -1520,7 +1579,10 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       p.state = updatedData.state;
       p.zipCode = updatedData.zipCode;
       p.location = updatedData.location;
-      p.amenities = updatedData.amenities;
+      p.amenities =
+          updatedData.amenities
+              .map((item) => item.toLowerCase().replaceAll(" ", "_"))
+              .toList();
       p.brochure = updatedData.brochure;
       p.nearbyLocations = updatedData.nearbyLocations;
       p.projectContactInfo = ProjectContactInfo(
@@ -1533,8 +1595,26 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       p.projectHighlights = updatedData.projectHighlights;
       p.brochure = updatedData.brochure;
       print("✅ Updated Project Data: ${p.toJson()}");
-      // p.imageList = updatedData.mea
     });
+
+    // ✅ Populate the controllers with existing variant data
+    if (project.value.configurations.isNotEmpty) {
+      for (var config in project.value.configurations) {
+        for (var variant in config.variants) {
+          if (variant.platformFees != null && variant.platformFees! > 0) {
+            platformFees.text = variant.platformFees!.toStringAsFixed(2);
+          }
+          if (variant.brokerCommission != null &&
+              variant.brokerCommission! > 0) {
+            brokerRageCommission.text = variant.brokerCommission!
+                .toStringAsFixed(2);
+          }
+          // Only update first variant's values to controllers (or loop for all if needed)
+          break;
+        }
+        break;
+      }
+    }
 
     await assignData();
 

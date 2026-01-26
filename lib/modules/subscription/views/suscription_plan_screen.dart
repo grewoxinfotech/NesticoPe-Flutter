@@ -57,9 +57,27 @@ class SubscriptionPlansScreen extends StatelessWidget {
                 }
 
                 final plan = item.plan;
-                final used = item.usedProperties;
-                final max = item.metadata?['maxProperties'] ?? 0;
-                final percent = max == 0 ? 0.0 : (used / max);
+                final int used =
+                    item.usedProperties > 0
+                        ? item.usedProperties
+                        : item.usedServices;
+
+                final int max =
+                    (item.metadata?['maxProperties'] ??
+                                item.metadata?['maxServices'] ??
+                                0)
+                            is String
+                        ? int.tryParse(
+                              item.metadata?['maxProperties'] ??
+                                  item.metadata?['maxServices'] ??
+                                  '0',
+                            ) ??
+                            0
+                        : (item.metadata?['maxProperties'] ??
+                            item.metadata?['maxServices'] ??
+                            0);
+
+                final double percent = max <= 0 ? 0.0 : used / max;
 
                 return Container(
                   padding: const EdgeInsets.all(16),
@@ -157,13 +175,13 @@ class SubscriptionPlansScreen extends StatelessWidget {
                           final cards = [
                             (
                               'Start Date',
-                              Formatter.formatDate(item.startDate),
+                              Formatter.formatDate(item.startDate.toString()),
                               Icons.timer_outlined,
                               ColorRes.primary,
                             ),
                             (
                               'Expiry Date',
-                              Formatter.formatDate(item.endDate),
+                              Formatter.formatDate(item.endDate.toString()),
                               Icons.calendar_month_outlined,
                               ColorRes.green,
                             ),

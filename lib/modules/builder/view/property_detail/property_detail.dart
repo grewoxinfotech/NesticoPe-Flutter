@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/modules/builder/view/property_detail/widget/variation_media_upload_widget.dart';
 import 'package:housing_flutter_app/modules/saved_property/views/saved_property_screen.dart';
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 import 'package:housing_flutter_app/widgets/button/button.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -97,6 +98,8 @@ class StepConfigurations extends GetView<ProjectWizardController> {
               const SizedBox(height: 8),
               ...List.generate(p.configurations.length, (ci) {
                 final cfg = p.configurations[ci];
+                AppLogger("Configuration Logical Bug", cfg.toJson());
+
                 return Column(
                   children: [
                     SizedBox(height: 8),

@@ -543,7 +543,8 @@ class AddProjectModel {
     'location': location,
     'configurations': configurations.map((c) => c.toJson()).toList(),
     'nearbyLocations': nearbyLocations,
-    'amenities': amenities,
+    'amenities':
+        amenities.map((e) => e.toLowerCase().replaceAll(" ", "_")).toList(),
     'projectHighlights': projectHighlights,
     'mediaGallery': mediaGallery?.toJson(),
     'imageList': imageList,
@@ -899,6 +900,85 @@ class ScoreDetails {
 /// 🔹 VARIANTS / CONFIGURATIONS
 /// ===============================
 
+// class ProjectVariant {
+//   String name;
+//   double builtUpArea;
+//   double carpetArea;
+//   double price;
+//   double? pricePerSqFt;
+//   int totalUnits;
+//   double? platformFees;
+//   double? brokerCommission;
+//
+//   int availableUnits;
+//   List<String> specifications;
+//   List<String> images;
+//   List<String> videos;
+//   List<String> models;
+//   String? threeDModel;
+//   String? variantId;
+//
+//   ProjectVariant({
+//     required this.name,
+//     required this.builtUpArea,
+//     required this.carpetArea,
+//     this.platformFees,
+//     this.brokerCommission,
+//
+//     required this.price,
+//     this.pricePerSqFt,
+//     required this.totalUnits,
+//     required this.availableUnits,
+//     this.specifications = const [],
+//     this.images = const [],
+//     this.videos = const [],
+//     this.models = const [],
+//     this.threeDModel,
+//     this.variantId,
+//   });
+//
+//   factory ProjectVariant.fromJson(Map<String, dynamic> json) {
+//     final media = json['variantMedia'] ?? {};
+//     return ProjectVariant(
+//       name: json['name'] ?? '',
+//       builtUpArea: (json['builtUpArea'] ?? 0).toDouble(),
+//       platformFees: (json['platformFees'] ?? 0).toDouble(),
+//       brokerCommission: (json['brokerCommission'] ?? 0).toDouble(),
+//
+//       carpetArea: (json['carpetArea'] ?? 0).toDouble(),
+//       price: (json['price'] ?? 0).toDouble(),
+//       pricePerSqFt: json['pricePerSqFt']?.toDouble(),
+//       totalUnits: json['totalUnits'] ?? 0,
+//       availableUnits: json['availableUnits'] ?? 0,
+//       specifications: List<String>.from(json['specifications'] ?? []),
+//       images: List<String>.from(media['images'] ?? json['images'] ?? []),
+//       videos: List<String>.from(media['videos'] ?? json['videos'] ?? []),
+//       models: List<String>.from(media['models'] ?? []),
+//       threeDModel: json['threeDModel'],
+//       variantId: json['variantId'],
+//     );
+//   }
+//
+//   Map<String, dynamic> toJson() => {
+//     'name': name,
+//     'builtUpArea': builtUpArea,
+//     'carpetArea': carpetArea,
+//     'price': price,
+//     'pricePerSqFt': pricePerSqFt,
+//     'totalUnits': totalUnits,
+//     'availableUnits': availableUnits,
+//     'specifications': specifications,
+//     'platformFees': platformFees,
+//     'brokerCommission': brokerCommission,
+//
+//     'images': images,
+//     'videos': videos,
+//     'models': models,
+//     'threeDModel': threeDModel,
+//     'variantId': variantId,
+//   };
+// }
+
 class ProjectVariant {
   String name;
   double builtUpArea;
@@ -906,10 +986,10 @@ class ProjectVariant {
   double price;
   double? pricePerSqFt;
   int totalUnits;
+  int availableUnits;
   double? platformFees;
   double? brokerCommission;
 
-  int availableUnits;
   List<String> specifications;
   List<String> images;
   List<String> videos;
@@ -921,13 +1001,12 @@ class ProjectVariant {
     required this.name,
     required this.builtUpArea,
     required this.carpetArea,
-    this.platformFees,
-    this.brokerCommission,
-
     required this.price,
     this.pricePerSqFt,
     required this.totalUnits,
     required this.availableUnits,
+    this.platformFees,
+    this.brokerCommission,
     this.specifications = const [],
     this.images = const [],
     this.videos = const [],
@@ -937,22 +1016,36 @@ class ProjectVariant {
   });
 
   factory ProjectVariant.fromJson(Map<String, dynamic> json) {
-    final media = json['variantMedia'] ?? {};
     return ProjectVariant(
       name: json['name'] ?? '',
       builtUpArea: (json['builtUpArea'] ?? 0).toDouble(),
-      platformFees: (json['platformFees'] ?? 0).toDouble(),
-      brokerCommission: (json['brokerCommission'] ?? 0).toDouble(),
-
       carpetArea: (json['carpetArea'] ?? 0).toDouble(),
       price: (json['price'] ?? 0).toDouble(),
-      pricePerSqFt: json['pricePerSqFt']?.toDouble(),
+      pricePerSqFt:
+          json['pricePerSqFt'] != null
+              ? (json['pricePerSqFt']).toDouble()
+              : null,
       totalUnits: json['totalUnits'] ?? 0,
       availableUnits: json['availableUnits'] ?? 0,
-      specifications: List<String>.from(json['specifications'] ?? []),
-      images: List<String>.from(media['images'] ?? json['images'] ?? []),
-      videos: List<String>.from(media['videos'] ?? json['videos'] ?? []),
-      models: List<String>.from(media['models'] ?? []),
+      platformFees:
+          json['platformFees'] != null
+              ? (json['platformFees']).toDouble()
+              : null,
+      brokerCommission:
+          json['brokerCommission'] != null
+              ? (json['brokerCommission']).toDouble()
+              : null,
+      // specifications: List<String>.from(json['specifications'] ?? []),
+      specifications:
+          (json['specifications'] as List<dynamic>? ?? []).map((e) {
+            final s = e.toString().trim();
+            return s.startsWith('"') && s.endsWith('"')
+                ? s.substring(1, s.length - 1)
+                : s;
+          }).toList(),
+      images: List<String>.from(json['images'] ?? []),
+      videos: List<String>.from(json['videos'] ?? []),
+      models: List<String>.from(json['models'] ?? []),
       threeDModel: json['threeDModel'],
       variantId: json['variantId'],
     );
@@ -966,10 +1059,9 @@ class ProjectVariant {
     'pricePerSqFt': pricePerSqFt,
     'totalUnits': totalUnits,
     'availableUnits': availableUnits,
-    'specifications': specifications,
     'platformFees': platformFees,
     'brokerCommission': brokerCommission,
-
+    'specifications': specifications,
     'images': images,
     'videos': videos,
     'models': models,
@@ -978,20 +1070,42 @@ class ProjectVariant {
   };
 }
 
+// class ProjectConfiguration {
+//   int bhk;
+//   List<ProjectVariant> variants;
+//
+//   ProjectConfiguration({required this.bhk, this.variants = const []});
+//
+//   factory ProjectConfiguration.fromJson(Map<String, dynamic> json) =>
+//       ProjectConfiguration(
+//         bhk: json['bhk'] ?? 0,
+//         variants:
+//             (json['variants'] as List<dynamic>? ?? [])
+//                 .map((v) => ProjectVariant.fromJson(v))
+//                 .toList(),
+//       );
+//
+//   Map<String, dynamic> toJson() => {
+//     'bhk': bhk,
+//     'variants': variants.map((v) => v.toJson()).toList(),
+//   };
+// }
+
 class ProjectConfiguration {
   int bhk;
   List<ProjectVariant> variants;
 
   ProjectConfiguration({required this.bhk, this.variants = const []});
 
-  factory ProjectConfiguration.fromJson(Map<String, dynamic> json) =>
-      ProjectConfiguration(
-        bhk: json['bhk'] ?? 0,
-        variants:
-            (json['variants'] as List<dynamic>? ?? [])
-                .map((v) => ProjectVariant.fromJson(v))
-                .toList(),
-      );
+  factory ProjectConfiguration.fromJson(Map<String, dynamic> json) {
+    return ProjectConfiguration(
+      bhk: json['bhk'] ?? 0,
+      variants:
+          (json['variants'] as List<dynamic>? ?? [])
+              .map((e) => ProjectVariant.fromJson(e))
+              .toList(),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     'bhk': bhk,
@@ -1010,7 +1124,6 @@ class ProjectItem {
   final String projectArea;
   final ProjectSize? projectSize;
   final double? performanceScorePercent;
-
 
   final SizeRange? sizeRange;
   final String? launchDate;
@@ -1122,8 +1235,7 @@ class ProjectItem {
         json['projectSize'] != null
             ? ProjectSize.fromJson(json['projectSize'])
             : null,
-    performanceScorePercent:
-    (json['performanceScorePercent'] ?? 0).toDouble(),
+    performanceScorePercent: (json['performanceScorePercent'] ?? 0).toDouble(),
 
     sizeRange:
         json['sizeRange'] != null
@@ -1290,7 +1402,33 @@ extension ProjectItemMapper on ProjectItem {
               ? DateTime.tryParse(possessionDate!) ?? DateTime.now()
               : DateTime.now(),
 
-      configurations: configuration,
+      // configurations: configuration,
+      configurations:
+          configuration.map((c) {
+            return ProjectConfiguration(
+              bhk: c.bhk,
+              variants:
+                  c.variants.map((v) {
+                    return ProjectVariant(
+                      name: v.name,
+                      builtUpArea: v.builtUpArea,
+                      carpetArea: v.carpetArea,
+                      price: v.price,
+                      pricePerSqFt: v.pricePerSqFt,
+                      totalUnits: v.totalUnits,
+                      availableUnits: v.availableUnits,
+                      platformFees: v.platformFees,
+                      brokerCommission: v.brokerCommission,
+                      specifications: v.specifications,
+                      images: v.images,
+                      videos: v.videos,
+                      models: v.models,
+                      threeDModel: v.threeDModel,
+                      variantId: v.variantId,
+                    );
+                  }).toList(),
+            );
+          }).toList(),
 
       reraId: reraId,
       propertyTypes: propertyTypes,

@@ -29,6 +29,8 @@ class NesticoPeTextField extends StatelessWidget {
   final Color? iconColor;
   final TextStyle style;
   final List<TextInputFormatter>? formatter;
+  final String? initialValue;
+  final int? minLines;
 
   const NesticoPeTextField({
     super.key,
@@ -58,6 +60,8 @@ class NesticoPeTextField extends StatelessWidget {
     this.textCapitalization = TextCapitalization.none,
     this.maxLength,
     this.formatter = const [],
+    this.initialValue,
+    this.minLines,
   });
 
   @override
@@ -123,6 +127,8 @@ class NesticoPeTextField extends StatelessWidget {
             onChanged: onChanged,
             textCapitalization: textCapitalization,
             autovalidateMode: AutovalidateMode.onUserInteraction,
+            initialValue: initialValue,
+            minLines: minLines,
             // autovalidateMode: autovalidateMode ?? AutovalidateMode.disabled,
             inputFormatters: formatter,
             style: TextStyle(

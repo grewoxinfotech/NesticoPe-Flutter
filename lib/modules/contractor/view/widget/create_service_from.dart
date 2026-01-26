@@ -303,9 +303,9 @@ import '../../controller/contractor_my_service_controller.dart';
 
 class AddServiceScreen extends StatelessWidget {
   final ContractorServiceItem? serviceToEdit;
-   AddServiceScreen({super.key, this.serviceToEdit});
+  AddServiceScreen({super.key, this.serviceToEdit});
 
-  GlobalKey<FormState> formKey=GlobalKey<FormState>();
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ContractorMyServiceController>();
@@ -321,7 +321,7 @@ class AddServiceScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: ColorRes.white,
       appBar: AppBar(
-        title:  Text(
+        title: Text(
           serviceToEdit == null ? "Add New Service" : "Edit Service",
           style: TextStyle(
             color: ColorRes.textPrimary,
@@ -357,19 +357,24 @@ class AddServiceScreen extends StatelessWidget {
                   value: controller.selectedCategory.value,
                   hintText: "Select category",
                   prefixIcon: Icons.category,
-                  items: controller.contractorServiceCategory.value?.data.items
-                      .map((e) => DropdownMenuItem(
-                    value: e.id, // only store the name
-                    child: Text(e.name),
-                  ))
-                      .toList()??[],
-                  onChanged: (val) => controller.selectedCategory.value = val ?? '',
+                  items:
+                      controller.contractorServiceCategory.value?.data.items
+                          .map(
+                            (e) => DropdownMenuItem(
+                              value: e.id, // only store the name
+                              child: Text(e.name),
+                            ),
+                          )
+                          .toList() ??
+                      [],
+                  onChanged:
+                      (val) => controller.selectedCategory.value = val ?? '',
                   darkText: true,
                 ),
 
                 SizedBox(height: 16),
                 buildSectionTitle("Description *"),
-                SizedBox(height: 8,),
+                SizedBox(height: 8),
                 buildTextField(
                   "Describe your service",
                   Icons.description,
@@ -387,25 +392,26 @@ class AddServiceScreen extends StatelessWidget {
                   hintText: "Select price model",
                   prefixIcon: Icons.payments,
                   items:
-                      ["Fixed", "Hourly","Per Sq Ft","Custom"]
-
-                          .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                      ["Fixed", "Hourly", "Per Sq Ft", "Custom"]
+                          .map(
+                            (e) => DropdownMenuItem(value: e, child: Text(e)),
+                          )
                           .toList(),
                   onChanged: (val) => controller.selectedPriceModel.value = val,
                   darkText: true,
                 ),
 
-               // if(controller.selectedPriceModel.value!="Custom")...[
-               //   SizedBox(height: 16),
-               //   buildSectionTitle("Price (₹) *"),
-               //   SizedBox(height: 8),
-               //   buildTextField(
-               //     "0",
-               //     Icons.currency_rupee,
-               //     controller.priceController,
-               //     isPhoneKey: true,
-               //   ),
-               // ],
+                // if(controller.selectedPriceModel.value!="Custom")...[
+                //   SizedBox(height: 16),
+                //   buildSectionTitle("Price (₹) *"),
+                //   SizedBox(height: 8),
+                //   buildTextField(
+                //     "0",
+                //     Icons.currency_rupee,
+                //     controller.priceController,
+                //     isPhoneKey: true,
+                //   ),
+                // ],
                 SizedBox(height: 16),
                 buildSectionTitle("Minimum Price"),
                 SizedBox(height: 8),
@@ -436,7 +442,9 @@ class AddServiceScreen extends StatelessWidget {
                       return "Please enter maximum price";
                     }
                     final max = double.tryParse(value);
-                    final min = double.tryParse(controller.minRangeController.text);
+                    final min = double.tryParse(
+                      controller.minRangeController.text,
+                    );
                     if (max == null || max < 0) {
                       return "Enter a valid number";
                     }
@@ -445,6 +453,15 @@ class AddServiceScreen extends StatelessWidget {
                     }
                     return null;
                   },
+                ),
+
+                SizedBox(height: 16),
+                buildSectionTitle("Visit Charge"),
+                SizedBox(height: 8),
+                buildTextField(
+                  "e.g., 100",
+                  Icons.monetization_on_outlined,
+                  controller.visitChargeController,
                 ),
 
                 SizedBox(height: 16),
@@ -457,19 +474,22 @@ class AddServiceScreen extends StatelessWidget {
                   hintText: "Select availability",
                   prefixIcon: Icons.schedule,
                   items:
-                      ["Immediate", "In 3 Days", "In 1 Week","Custom"]
-                          .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                      ["Immediate", "In 3 Days", "In 1 Week", "Custom"]
+                          .map(
+                            (e) => DropdownMenuItem(value: e, child: Text(e)),
+                          )
                           .toList(),
-                  onChanged: (val) => controller.selectedAvailability.value = val,
+                  onChanged:
+                      (val) => controller.selectedAvailability.value = val,
                   darkText: true,
                 ),
 
                 const SizedBox(height: 16),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16,vertical: 12),
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
                     color: ColorRes.leadGreyColor.shade200,
-                    borderRadius: BorderRadius.circular(12)
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
                     children: [
@@ -477,12 +497,12 @@ class AddServiceScreen extends StatelessWidget {
                         "Provide Materials",
                         controller.provideMaterials,
                       ),
-                      SizedBox(height: 10,),
+                      SizedBox(height: 10),
                       _buildToggle(
                         "Equipment Provided",
                         controller.equipmentProvided,
                       ),
-                      SizedBox(height: 10,),
+                      SizedBox(height: 10),
                       _buildToggle(
                         "Insurance Available",
                         controller.insuranceAvailable,
@@ -518,7 +538,8 @@ class AddServiceScreen extends StatelessWidget {
                     final value = double.tryParse(v);
                     if (value == null) return "Enter a valid number";
 
-                    if (value < 0 || value > 100) return "Percentage must be between 0 and 100";
+                    if (value < 0 || value > 100)
+                      return "Percentage must be between 0 and 100";
 
                     return null; // valid
                   },
@@ -535,9 +556,12 @@ class AddServiceScreen extends StatelessWidget {
                   prefixIcon: Icons.receipt_long,
                   items:
                       ["GST", "Non GST"]
-                          .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                          .map(
+                            (e) => DropdownMenuItem(value: e, child: Text(e)),
+                          )
                           .toList(),
-                  onChanged: (val) => controller.selectedBillingType.value = val,
+                  onChanged:
+                      (val) => controller.selectedBillingType.value = val,
                   darkText: true,
                 ),
 
@@ -564,7 +588,7 @@ class AddServiceScreen extends StatelessWidget {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                            if (formKey.currentState?.validate()??false) {
+                            if (formKey.currentState?.validate() ?? false) {
                               if (controller.editingService.value != null) {
                                 controller.updateService();
                               } else {
@@ -589,10 +613,10 @@ class AddServiceScreen extends StatelessWidget {
                                       strokeWidth: 2,
                                     ),
                                   )
-                                  :  Text(
-                                controller.editingService.value != null
-                                    ? "Update Service"
-                                    : "Create Service",
+                                  : Text(
+                                    controller.editingService.value != null
+                                        ? "Update Service"
+                                        : "Create Service",
                                     style: TextStyle(
                                       color: ColorRes.white,
                                       fontWeight: AppFontWeights.semiBold,
@@ -636,7 +660,7 @@ class AddServiceScreen extends StatelessWidget {
               // Call controller toggle
               observable.value = val;
             },
-          )
+          ),
           // Switch(
           //   value: observable.value,
           //   onChanged: (val) => observable.value = val,

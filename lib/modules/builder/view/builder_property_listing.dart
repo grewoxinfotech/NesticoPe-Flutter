@@ -10,6 +10,7 @@ import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
 import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
 import 'package:housing_flutter_app/modules/builder/controller/project_controller.dart';
 import 'package:housing_flutter_app/modules/builder/view/project_detail/project_detail.dart';
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 
 import '../../../app/constants/size_manager.dart';
 import '../../../app/manager/property/property_pricemanager.dart';
@@ -957,6 +958,9 @@ class BuilderProjectCard extends StatelessWidget {
                       elevation: 3,
                       child: InkWell(
                         onTap: () async {
+                          print("Project Edit");
+                          AppLogger("Project Edit", project.toJson());
+                          // AppLogger("Project Edit After Convert",project.toAddProjectModel());
                           final result = await Get.to(
                             () => CreateProjectScreen(isFromEdit: true),
                             arguments: project.id,

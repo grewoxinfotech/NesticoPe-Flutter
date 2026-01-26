@@ -99,8 +99,10 @@ class SubscriptionPlan {
     );
   }
 }
+
 class PlanFeatures {
   final dynamic maxProperties; // can be "unlimited" or int
+  final dynamic maxService; // can be "unlimited" or int
   final dynamic maxLeads; // can be "unlimited" or int
   final dynamic maxUsers; // can be "unlimited" or int
   final String? commission;
@@ -121,6 +123,7 @@ class PlanFeatures {
 
   PlanFeatures({
     this.maxProperties,
+    this.maxService,
     this.maxLeads,
     this.maxUsers,
     this.commission,
@@ -142,6 +145,7 @@ class PlanFeatures {
   factory PlanFeatures.fromJson(Map<String, dynamic> json) {
     return PlanFeatures(
       maxProperties: json['maxProperties'],
+      maxService: json['maxServices'],
       maxLeads: json['maxLeads'],
       maxUsers: json['maxUsers'],
       commission: json['commission'],
@@ -164,6 +168,7 @@ class PlanFeatures {
   Map<String, dynamic> toJson() {
     return {
       'maxProperties': maxProperties,
+      'maxServices': maxService,
       'maxLeads': maxLeads,
       'maxUsers': maxUsers,
       'commission': commission,
@@ -230,39 +235,72 @@ class FeatureItem {
   FeatureItem({required this.name, required this.isIncluded});
 }
 
+const Map<String, String> featureLabels = {
+  'maxProperties': 'Max Properties',
+  'maxServices': 'Max Services',
+  'maxLeads': 'Max Leads',
+  'maxUsers': 'Max Users',
+  'commission': 'Commission',
+  'analytics': 'Analytics',
+  'support': 'Support',
+  'bulkListing': 'Bulk Listing',
+  'clientManagement': 'Client Management',
+  'verifiedBadge': 'Verified Badge',
+  'marketingTools': 'Marketing Tools',
+  'dedicatedSupport': 'Dedicated Support',
+  'exportData': 'Export Data',
+  'advancedReports': 'Advanced Reports',
+  'customBranding': 'Custom Branding',
+  'apiAccess': 'API Access',
+  'prioritySupport': 'Priority Support',
+  'dedicatedManager': 'Dedicated Manager',
+  'profileListing': 'Profile Listing',
+  'projectGallery': 'Project Gallery',
+  'leadGeneration': 'Lead Generation',
+};
+
+extension PlanFeaturesMap on PlanFeatures {
+  Map<String, dynamic> asMap() {
+    return {
+      'maxProperties': maxProperties,
+      'maxServices': maxService,
+      'maxLeads': maxLeads,
+      'maxUsers': maxUsers,
+      'commission': commission,
+      'analytics': analytics,
+      'support': support,
+      'bulkListing': bulkListing,
+      'clientManagement': clientManagement,
+      'verifiedBadge': verifiedBadge,
+      'marketingTools': marketingTools,
+      'dedicatedSupport': dedicatedSupport,
+      'exportData': exportData,
+      'advancedReports': advancedReports,
+      'customBranding': customBranding,
+      'apiAccess': apiAccess,
+      'prioritySupport': prioritySupport,
+      'dedicatedManager': dedicatedManager,
+    }..removeWhere((_, value) => value == null);
+  }
+}
+
 extension PlanFeaturesMapper on PlanFeatures {
   List<FeatureItem> toFeatureList() {
-    return [
-      FeatureItem(
-        name: "Max Properties: ${maxProperties ?? '-'}",
-        isIncluded: maxProperties != null,
-      ),
-      FeatureItem(
-        name: "Commission: ${commission ?? '-'}",
-        isIncluded: commission != null,
-      ),
-      FeatureItem(
-        name: "Analytics: ${analytics ?? '-'}",
-        isIncluded: analytics != null,
-      ),
-      FeatureItem(
-        name: "Support: ${support ?? '-'}",
-        isIncluded: support != null,
-      ),
-      FeatureItem(name: "Bulk Listing", isIncluded: bulkListing == true),
-      FeatureItem(
-        name: "Client Management: ${clientManagement ?? '-'}",
-        isIncluded: clientManagement != null,
-      ),
-      FeatureItem(name: "Verified Badge", isIncluded: verifiedBadge == true),
-      FeatureItem(
-        name: "Marketing Tools: ${marketingTools ?? '-'}",
-        isIncluded: marketingTools != null,
-      ),
-      FeatureItem(
-        name: "Dedicated Support",
-        isIncluded: dedicatedSupport == true,
-      ),
-    ];
+    final features = asMap();
+
+    return features.entries.map((entry) {
+      final key = entry.key;
+      final value = entry.value;
+
+      final label = featureLabels[key] ?? key;
+
+      // Boolean features
+      if (value is bool) {
+        return FeatureItem(name: label, isIncluded: value);
+      }
+
+      // Numeric / String / unlimited features
+      return FeatureItem(name: "$label: $value", isIncluded: true);
+    }).toList();
   }
 }

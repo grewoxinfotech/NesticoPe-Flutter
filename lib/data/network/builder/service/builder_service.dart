@@ -46,7 +46,6 @@ class BuilderService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
-
         return PaginationResponse<ProjectItem>.fromJson(
           data,
           (json) => ProjectItem.fromJson(json),
@@ -214,8 +213,8 @@ class BuilderService {
       debugPrint("📄 Response Body: ${response.body}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final data=jsonDecode(response.body);
-  /*      CustomSnackBar.show(
+        final data = jsonDecode(response.body);
+        /*      CustomSnackBar.show(
           Get.overlayContext!,
           message: "Project created successfully",
           type: SnackBarType.success,
@@ -227,7 +226,7 @@ class BuilderService {
         );
         return true;
       }
-      final data=jsonDecode(response.body);
+      final data = jsonDecode(response.body);
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Failed',
         message: data['message'] ?? 'Project Created fail',
@@ -236,14 +235,14 @@ class BuilderService {
       return false;
     } catch (e) {
       debugPrint("❌ Create project exception: $e");
-    /*  CustomSnackBar.show(
+      /*  CustomSnackBar.show(
         Get.overlayContext!,
         message: "Error while creating project",
         type: SnackBarType.error,
       );*/
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Failed',
-        message:'Project Created fail',
+        message: 'Project Created fail',
         contentType: ContentType.failure,
       );
       return false;
@@ -258,6 +257,7 @@ class BuilderService {
     File? documents,
   }) async {
     try {
+      AppLogger("🧾 Multipart fields1:", projectData.toJson());
       final uri = Uri.parse('$baseUrl/$projectId'); // include project ID
       debugPrint("📤 Updating project at: $uri");
 
@@ -333,7 +333,7 @@ class BuilderService {
         }
       }
 
-      debugPrint("🧾 Multipart fields: ${request.fields}");
+      AppLogger("🧾 Multipart fields:", request.fields);
       debugPrint("📎 Attached files: ${request.files.length}");
 
       final streamedResponse = await request.send();
@@ -348,7 +348,7 @@ class BuilderService {
           message: "Project updated successfully",
           type: SnackBarType.success,
         );*/
-        final data=jsonDecode(response.body);
+        final data = jsonDecode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: 'Success',
           message: data['message'] ?? 'Project update successfully',
@@ -357,12 +357,12 @@ class BuilderService {
         return true;
       }
 
-    /*  CustomSnackBar.show(
+      /*  CustomSnackBar.show(
         Get.overlayContext!,
         message: "Failed to update project",
         type: SnackBarType.error,
       );*/
-      final data=jsonDecode(response.body);
+      final data = jsonDecode(response.body);
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Failed',
         message: data['message'] ?? 'Failed to update project',
@@ -371,16 +371,16 @@ class BuilderService {
       return false;
     } catch (e) {
       debugPrint("❌ Update project exception: $e");
-     /* CustomSnackBar.show(
+      /* CustomSnackBar.show(
         Get.overlayContext!,
         message: "Error while updating project",
         type: SnackBarType.error,
       );*/
-      NesticoPeSnackBar.showAwesomeSnackbar(
-        title: 'Failed',
-        message: "Error while updating project",
-        contentType: ContentType.failure,
-      );
+      // NesticoPeSnackBar.showAwesomeSnackbar(
+      //   title: 'Failed',
+      //   message: "Error while updating project",
+      //   contentType: ContentType.failure,
+      // );
       return false;
     }
   }

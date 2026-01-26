@@ -80,7 +80,6 @@ class StepBasicInfo extends GetView<ProjectWizardController> {
               const SizedBox(height: 12),
 
               IntrinsicHeight(
-                
                 child: Row(
                   children: [
                     Expanded(
@@ -90,7 +89,8 @@ class StepBasicInfo extends GetView<ProjectWizardController> {
                           CommonTextField(
                             label: 'Total Building',
                             controller: controller.totalBuildingsController,
-                            initialValue: p.projectSize.totalBuildings.toString(),
+                            initialValue:
+                                p.projectSize.totalBuildings.toString(),
                             keyboardType: TextInputType.number,
                             prefixIcon: Icon(
                               Icons.domain_outlined,

@@ -728,6 +728,7 @@ import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/modules/add_property/view/create_property.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../app/manager/icon_manager.dart';
+import '../../../../app/services/string_manager.dart';
 import '../../../../app/utils/svg_widget.dart';
 import '../../../../data/network/builder/model/builder_model.dart';
 import '../../controller/builder_form_controller.dart';
@@ -799,7 +800,15 @@ class StepAdditional extends GetView<ProjectWizardController> {
                                       .project
                                       .value
                                       .amenities
-                                      .contains(e.title);
+                                      .any(
+                                        (a) =>
+                                            normalizeAmenity(a) ==
+                                            normalizeAmenity(e.title),
+                                      );
+
+                                  print(
+                                    "Selected Amenities ${controller.project.value.amenities}",
+                                  );
 
                                   return Padding(
                                     padding: const EdgeInsets.all(4.0),

@@ -165,6 +165,7 @@ class ContractorLeadScreen extends StatelessWidget {
                                             priceModel: '',
                                             maxPriceRange: 0,
                                             minPriceRange: 0,
+                                            visitCharge: 0,
                                             workAvailability: '',
                                             provideMaterials: false,
                                             brandsUsed: '',

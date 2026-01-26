@@ -23,6 +23,7 @@ class ContractorMyServiceController
   final priceController = TextEditingController(text: "0");
   final minRangeController = TextEditingController();
   final maxRangeController = TextEditingController();
+  final visitChargeController = TextEditingController();
   final brandController = TextEditingController();
   final advanceController = TextEditingController(text: "0");
 
@@ -171,6 +172,7 @@ class ContractorMyServiceController
           priceModel: selectedPriceModel.value.toLowerCase(),
           minPriceRange: int.tryParse(minRangeController.text.trim()) ?? 0,
           maxPriceRange: int.tryParse(maxRangeController.text.trim()) ?? 0,
+          visitCharge: int.tryParse(visitChargeController.text.trim()) ?? 0,
           workAvailability: selectedAvailability.value
               .toLowerCase()
               .split(" ")
@@ -261,6 +263,7 @@ class ContractorMyServiceController
 
     minRangeController.text = service.meta?.minPriceRange.toString() ?? '';
     maxRangeController.text = service.meta?.maxPriceRange.toString() ?? '';
+    visitChargeController.text = service.meta?.visitCharge.toString() ?? '';
     brandController.text = service.meta?.brandsUsed ?? '';
     advanceController.text =
         service.meta?.advanceRequiredPercentage?.toString() ?? '0';
@@ -352,6 +355,7 @@ class ContractorMyServiceController
     priceController.text = '0';
     minRangeController.clear();
     maxRangeController.clear();
+    visitChargeController.clear();
     brandController.clear();
     advanceController.text = '0';
 
@@ -395,6 +399,7 @@ class ContractorMyServiceController
           priceModel: selectedPriceModel.value.toLowerCase(),
           minPriceRange: int.tryParse(minRangeController.text.trim()) ?? 0,
           maxPriceRange: int.tryParse(maxRangeController.text.trim()) ?? 0,
+          visitCharge: int.tryParse(visitChargeController.text.trim()) ?? 0,
           workAvailability: selectedAvailability.value
               .toLowerCase()
               .split(" ")
@@ -463,6 +468,7 @@ class ContractorMyServiceController
     priceController.dispose();
     maxRangeController.dispose();
     minRangeController.dispose();
+    visitChargeController.dispose();
     brandController.dispose();
     advanceController.dispose();
     super.onClose();

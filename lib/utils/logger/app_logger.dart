@@ -1,6 +1,10 @@
 import 'dart:convert';
 
 class AppLogger {
+  AppLogger(String title, dynamic data) {
+    structured(title, data);
+  }
+
   /// Pretty + structured + chunked logger
   static void structured(String title, dynamic data) {
     try {

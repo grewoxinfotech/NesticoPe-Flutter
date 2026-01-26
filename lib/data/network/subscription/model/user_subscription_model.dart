@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class CurrentUserSubscription {
   final bool success;
   final String message;
@@ -13,16 +15,15 @@ class CurrentUserSubscription {
     return CurrentUserSubscription(
       success: json['success'] ?? false,
       message: json['message'] ?? '',
-      data: json['data'] != null ? SCurrentUserSubscriptionData.fromJson(json['data']) : null,
+      data:
+          json['data'] != null
+              ? SCurrentUserSubscriptionData.fromJson(json['data'])
+              : null,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data?.toMap(),
-    };
+    return {'success': success, 'message': message, 'data': data?.toMap()};
   }
 }
 
@@ -45,9 +46,10 @@ class SCurrentUserSubscriptionData {
 
   factory SCurrentUserSubscriptionData.fromJson(Map<String, dynamic> json) {
     return SCurrentUserSubscriptionData(
-      items: (json['items'] as List<dynamic>?)
-          ?.map((e) => CurrentUserSubscriptionItem.fromJson(e))
-          .toList() ??
+      items:
+          (json['items'] as List<dynamic>?)
+              ?.map((e) => CurrentUserSubscriptionItem.fromJson(e))
+              .toList() ??
           [],
       total: json['total'] ?? 0,
       currentPage: json['currentPage'] ?? 1,
@@ -76,15 +78,16 @@ class CurrentUserSubscriptionItem {
   final String? userId;
   final String? planId;
   final String? amount;
-  final String? startDate;
-  final String? endDate;
+  final DateTime? startDate;
+  final DateTime? endDate;
   final String? status;
   final bool autoRenew;
   final bool isPremium;
   final Map<String, dynamic>? metadata;
   final int usedProperties;
-  final String? createdAt;
-  final String? updatedAt;
+  final int usedServices;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
   final CurrentUserPlan? plan;
   final CurrentUserData? user;
 
@@ -102,6 +105,7 @@ class CurrentUserSubscriptionItem {
     this.isPremium = false,
     this.metadata,
     this.usedProperties = 0,
+    this.usedServices = 0,
     this.createdAt,
     this.updatedAt,
     this.plan,
@@ -116,22 +120,28 @@ class CurrentUserSubscriptionItem {
       userId: json['userId'],
       planId: json['planId'],
       amount: json['amount'],
-      startDate: json['startDate'],
-      endDate: json['endDate'],
+      startDate:
+          json['startDate'] != null ? DateTime.parse(json['startDate']) : null,
+      endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
       status: json['status'],
       autoRenew: json['autoRenew'] ?? false,
       isPremium: json['isPremium'] ?? false,
-      metadata: json['metadata'] != null
-          ? Map<String, dynamic>.from(json['metadata'])
-          : null,
+      metadata:
+          json['metadata'] != null
+              ? Map<String, dynamic>.from(json['metadata'])
+              : null,
       usedProperties: json['usedProperties'] ?? 0,
-      createdAt: json['createdAt'],
-      updatedAt: json['updatedAt'],
-      plan: json['plan'] != null ? CurrentUserPlan.fromJson(json['plan']) : null,
-      user: json['user'] != null ? CurrentUserData.fromJson(json['user']) : null,
+      usedServices: json['usedServices'] ?? 0,
+      createdAt:
+          json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      plan:
+          json['plan'] != null ? CurrentUserPlan.fromJson(json['plan']) : null,
+      user:
+          json['user'] != null ? CurrentUserData.fromJson(json['user']) : null,
     );
   }
-
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -140,15 +150,16 @@ class CurrentUserSubscriptionItem {
       'userId': userId,
       'planId': planId,
       'amount': amount,
-      'startDate': startDate,
-      'endDate': endDate,
+      'startDate': startDate?.toIso8601String(),
+      'endDate': endDate?.toIso8601String(),
       'status': status,
       'autoRenew': autoRenew,
       'isPremium': isPremium,
       'metadata': metadata,
       'usedProperties': usedProperties,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'usedServices': usedServices,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
       'plan': plan?.toMap(),
       'user': user?.toMap(),
     };
@@ -163,7 +174,7 @@ class CurrentUserPlan {
   final String? amount;
   final bool? isPremium;
   final bool? isActive;
-  final String? features;
+  final Map<String, dynamic>? features;
 
   CurrentUserPlan({
     this.name,
@@ -185,10 +196,9 @@ class CurrentUserPlan {
       amount: json['amount'],
       isPremium: json['isPremium'],
       isActive: json['isActive'],
-      features: json['features'],
+      features: json['features'] != null ? jsonDecode(json['features']) : null,
     );
   }
-
   Map<String, dynamic> toMap() {
     return {
       'name': name,

@@ -37,9 +37,25 @@ class UserSubscriptionDetails extends StatelessWidget {
         }
 
         final plan = item.plan;
-        final used = item.usedProperties;
-        final max = item.metadata?['maxProperties'] ?? 0;
-        final percent = max == 0 ? 0.0 : (used / max);
+        final int used =
+            item.usedProperties > 0 ? item.usedProperties : item.usedServices;
+
+        final int max =
+            (item.metadata?['maxProperties'] ??
+                        item.metadata?['maxServices'] ??
+                        0)
+                    is String
+                ? int.tryParse(
+                      item.metadata?['maxProperties'] ??
+                          item.metadata?['maxServices'] ??
+                          '0',
+                    ) ??
+                    0
+                : (item.metadata?['maxProperties'] ??
+                    item.metadata?['maxServices'] ??
+                    0);
+
+        final double percent = max <= 0 ? 0.0 : used / max;
 
         return SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -134,12 +150,39 @@ class UserSubscriptionDetails extends StatelessWidget {
                   itemBuilder: (context, index) {
                     // Map index to your cards
                     final cards = [
-                      ('Start Date', Formatter.formatDate(item.startDate), Icons.timer_outlined, ColorRes.deepPurpleColor),
-                      ('Expiry Date', Formatter.formatDate(item.endDate), Icons.calendar_month_outlined, ColorRes.green),
-                      ('Plan Amount', Formatter.formatPrice(double.tryParse(plan?.amount ?? "0") ?? 0), Icons.currency_rupee_outlined, ColorRes.orangeColor),
-                      ('Subscription Tier', plan?.isPremium == true ? "Premium" : "Basic", Icons.star_rounded, ColorRes.purpleColor),
+                      (
+                        'Start Date',
+                        Formatter.formatDate(item.startDate.toString()),
+                        Icons.timer_outlined,
+                        ColorRes.deepPurpleColor,
+                      ),
+                      (
+                        'Expiry Date',
+                        Formatter.formatDate(item.endDate.toString()),
+                        Icons.calendar_month_outlined,
+                        ColorRes.green,
+                      ),
+                      (
+                        'Plan Amount',
+                        Formatter.formatPrice(
+                          double.tryParse(plan?.amount ?? "0") ?? 0,
+                        ),
+                        Icons.currency_rupee_outlined,
+                        ColorRes.orangeColor,
+                      ),
+                      (
+                        'Subscription Tier',
+                        plan?.isPremium == true ? "Premium" : "Basic",
+                        Icons.star_rounded,
+                        ColorRes.purpleColor,
+                      ),
                     ];
-                    return buildMetricCard(cards[index].$1, cards[index].$2, cards[index].$3, cards[index].$4);
+                    return buildMetricCard(
+                      cards[index].$1,
+                      cards[index].$2,
+                      cards[index].$3,
+                      cards[index].$4,
+                    );
                   },
                 ),
                 const Text(

@@ -149,6 +149,7 @@ class SubscriptionPlanController extends PaginatedController<SubscriptionPlan> {
 
     /// Apply default required filter
     filters["plansFor"] = _resolvePlansFor(userRole);
+    loadInitial();
   }
 
   /// Normalize role mapping in one place
@@ -162,11 +163,11 @@ class SubscriptionPlanController extends PaginatedController<SubscriptionPlan> {
     return role; // seller, reseller, contractor
   }
 
-  @override
-  void onInit() {
-    super.onInit();
-    loadInitial();
-  }
+  // @override
+  // void onInit() {
+  //   super.onInit();
+  //   loadInitial();
+  // }
 
   ///==================== Fetch (Pagination) ====================
   @override

@@ -35,6 +35,7 @@ class StepLocation extends GetView<ProjectWizardController> {
     final theme = Theme.of(context);
     return Obx(() {
       final p = controller.project.value;
+      print("Zip Debug: ${p.zipCode}");
       return Form(
         key: formKey,
         autovalidateMode: AutovalidateMode.onUserInteraction,

@@ -169,10 +169,6 @@ class IconManager {
     ),
   ];
 
-
-
-
-
   static final List<IconItem> furnitureItems = [
     // ---------- Boolean Furnishings ----------
     IconItem(
@@ -185,16 +181,8 @@ class IconManager {
       title: "Washing Machine",
       icon: Icons.local_laundry_service,
     ),
-    IconItem(
-      key: AppSvgRes.cupboard,
-      title: "Cupboard",
-      icon: Icons.cabin,
-    ),
-    IconItem(
-      key: AppSvgRes.sofa,
-      title: "Sofa",
-      icon: Icons.chair_alt,
-    ),
+    IconItem(key: AppSvgRes.cupboard, title: "Cupboard", icon: Icons.cabin),
+    IconItem(key: AppSvgRes.sofa, title: "Sofa", icon: Icons.chair_alt),
     IconItem(
       key: AppSvgRes.microwave,
       title: "Microwave",
@@ -205,11 +193,7 @@ class IconManager {
       title: "Stove",
       icon: Icons.local_fire_department,
     ),
-    IconItem(
-      key: AppSvgRes.refrigerate,
-      title: "Fridge",
-      icon: Icons.kitchen,
-    ),
+    IconItem(key: AppSvgRes.refrigerate, title: "Fridge", icon: Icons.kitchen),
     IconItem(
       key: AppSvgRes.water_purifier,
       title: "Water Purifier",
@@ -220,11 +204,7 @@ class IconManager {
       title: "Gas Pipeline",
       icon: Icons.gas_meter,
     ),
-    IconItem(
-      key: AppSvgRes.chimney,
-      title: "Chimney",
-      icon: Icons.wind_power,
-    ),
+    IconItem(key: AppSvgRes.chimney, title: "Chimney", icon: Icons.wind_power),
     IconItem(
       key: AppSvgRes.modular_kitchen,
       title: "Modular Kitchen",
@@ -372,18 +352,42 @@ class IconManager {
       icon: Icons.sports_basketball,
     ),
     IconItem(key: AppSvgRes.swimming, title: "Swimming Pool", icon: Icons.pool),
-    IconItem(key: AppSvgRes.tap, title: "Regular Water Supply", icon: Icons.water_drop),
-    IconItem(key: AppSvgRes.rain_water_harvesting, title: "Rainwater Harvesting", icon: Icons.water_drop),
-    IconItem(key: AppSvgRes.security, title: "24/7 Security", icon: Icons.water_drop),
+    IconItem(
+      key: AppSvgRes.tap,
+      title: "Regular Water Supply",
+      icon: Icons.water_drop,
+    ),
+    IconItem(
+      key: AppSvgRes.rain_water_harvesting,
+      title: "Rainwater Harvesting",
+      icon: Icons.water_drop,
+    ),
+    IconItem(
+      key: AppSvgRes.security,
+      title: "24/7 Security",
+      icon: Icons.water_drop,
+    ),
     IconItem(key: AppSvgRes.parking, title: "Parking", icon: Icons.water_drop),
-    IconItem(key: AppSvgRes.sunlight, title: "Sunlight", icon: Icons.water_drop),
-    IconItem(key: AppSvgRes.ventilator, title: "Ventilation", icon: Icons.water_drop),
+    IconItem(
+      key: AppSvgRes.sunlight,
+      title: "Sunlight",
+      icon: Icons.water_drop,
+    ),
+    IconItem(
+      key: AppSvgRes.ventilator,
+      title: "Ventilation",
+      icon: Icons.water_drop,
+    ),
   ];
-  static final List<IconItem> roomAmenities=[
+  static final List<IconItem> roomAmenities = [
     IconItem(key: AppSvgRes.wifi, title: "Wifi", icon: Icons.wifi),
     IconItem(key: AppSvgRes.tv, title: "TV", icon: Icons.tv),
     IconItem(key: AppSvgRes.ac, title: "Ac", icon: Icons.ac_unit),
-    IconItem(key: AppSvgRes.geyser, title: "Geyser", icon: Icons.hot_tub_outlined),
+    IconItem(
+      key: AppSvgRes.geyser,
+      title: "Geyser",
+      icon: Icons.hot_tub_outlined,
+    ),
     IconItem(key: AppSvgRes.refrigerate, title: "Fridge", icon: Icons.kitchen),
     IconItem(key: AppSvgRes.cupboard, title: "Cupboard", icon: Icons.inventory),
   ];
@@ -498,31 +502,141 @@ class IconManager {
   //     icon: Icons.video_call_outlined,
   //   ),
   // ];
-  static final List<IconItem> allAmenities = [
-    // ✅ Existing + corrected + newly added items
-    IconItem(key: AppSvgRes.cctv, title: "cctv", icon: Icons.videocam),
-    IconItem(key: AppSvgRes.club, title: "club_house", icon: Icons.house),
-    IconItem(key: AppSvgRes.gate, title: "gated_community", icon: Icons.door_front_door),
-    IconItem(key: AppSvgRes.gym, title: "gym", icon: Icons.fitness_center),
-    IconItem(key: AppSvgRes.battery, title: "power_backup", icon: Icons.battery_charging_full_outlined),
-    IconItem(key: AppSvgRes.elevator, title: "lift", icon: Icons.elevator_outlined),
-    IconItem(key: AppSvgRes.garden, title: "garden", icon: Icons.park),
-    IconItem(key: AppSvgRes.hall, title: "community_hall", icon: Icons.holiday_village),
-    IconItem(key: AppSvgRes.intercom, title: "intercom", icon: Icons.phone_in_talk),
-    IconItem(key: AppSvgRes.playground, title: "kids_area", icon: Icons.sports_soccer),
-    IconItem(key: AppSvgRes.sports, title: "sports", icon: Icons.sports_basketball),
-    IconItem(key: AppSvgRes.swimming, title: "swimming_pool", icon: Icons.pool),
-    IconItem(key: AppSvgRes.tap, title: "regular_water_supply", icon: Icons.water_drop),
-    IconItem(key: AppSvgRes.parking, title: "parking", icon: Icons.local_parking),
-    IconItem(key: AppSvgRes.rain_water_harvesting, title: "rainwater_harvesting", icon: Icons.water_drop),
-    IconItem(key: AppSvgRes.security, title: "security", icon: Icons.security),
-    // Add fallback variants
-    IconItem(key: "wifi", title: "wifi", icon: Icons.wifi),
-    IconItem(key: "ventilation", title: "ventilation", icon: Icons.air),
-    IconItem(key: "sunlight", title: "sunlight", icon: Icons.wb_sunny_outlined),
-    IconItem(key: "ev_charging", title: "ev_charging", icon: Icons.electric_car),
-  ];
+  // static final List<IconItem> allAmenities = [
+  //   // ✅ Existing + corrected + newly added items
+  //   IconItem(key: AppSvgRes.cctv, title: "cctv", icon: Icons.videocam),
+  //   IconItem(key: AppSvgRes.club, title: "club_house", icon: Icons.house),
+  //   IconItem(key: AppSvgRes.gate, title: "gated_community", icon: Icons.door_front_door),
+  //   IconItem(key: AppSvgRes.gym, title: "gym", icon: Icons.fitness_center),
+  //   IconItem(key: AppSvgRes.battery, title: "power_backup", icon: Icons.battery_charging_full_outlined),
+  //   IconItem(key: AppSvgRes.elevator, title: "lift", icon: Icons.elevator_outlined),
+  //   IconItem(key: AppSvgRes.garden, title: "garden", icon: Icons.park),
+  //   IconItem(key: AppSvgRes.hall, title: "community_hall", icon: Icons.holiday_village),
+  //   IconItem(key: AppSvgRes.intercom, title: "intercom", icon: Icons.phone_in_talk),
+  //   IconItem(key: AppSvgRes.playground, title: "kids_area", icon: Icons.sports_soccer),
+  //   IconItem(key: AppSvgRes.sports, title: "sports", icon: Icons.sports_basketball),
+  //   IconItem(key: AppSvgRes.swimming, title: "swimming_pool", icon: Icons.pool),
+  //   IconItem(key: AppSvgRes.tap, title: "regular_water_supply", icon: Icons.water_drop),
+  //   IconItem(key: AppSvgRes.parking, title: "parking", icon: Icons.local_parking),
+  //   IconItem(key: AppSvgRes.rain_water_harvesting, title: "rainwater_harvesting", icon: Icons.water_drop),
+  //   IconItem(key: AppSvgRes.security, title: "security", icon: Icons.security),
+  //   // Add fallback variants
+  //   IconItem(key: "wifi", title: "wifi", icon: Icons.wifi),
+  //   IconItem(key: "ventilation", title: "ventilation", icon: Icons.air),
+  //   IconItem(key: "sunlight", title: "sunlight", icon: Icons.wb_sunny_outlined),
+  //   IconItem(key: "ev_charging", title: "ev_charging", icon: Icons.electric_car),
+  // ];
 
+  static final List<IconItem> allAmenities = [
+    IconItem(key: AppSvgRes.swimming, title: "swimming_pool", icon: Icons.pool),
+    IconItem(
+      key: AppSvgRes.gym,
+      title: "gymnasium",
+      icon: Icons.fitness_center,
+    ),
+    IconItem(
+      key: AppSvgRes.club,
+      title: "club_house",
+      icon: Icons.meeting_room,
+    ),
+    IconItem(
+      key: AppSvgRes.playground,
+      title: "children_play_area",
+      icon: Icons.child_care,
+    ),
+    IconItem(
+      key: AppSvgRes.jogging,
+      title: "jogging_track",
+      icon: Icons.directions_run,
+    ),
+    IconItem(key: AppSvgRes.garden, title: "gardens", icon: Icons.park),
+    IconItem(
+      key: AppSvgRes.meditation,
+      title: "meditation_area",
+      icon: Icons.self_improvement,
+    ),
+    IconItem(
+      key: AppSvgRes.hall,
+      title: "multipurpose_hall",
+      icon: Icons.groups,
+    ),
+    IconItem(
+      key: AppSvgRes.amphitheatre,
+      title: "amphitheatre",
+      icon: Icons.stadium,
+    ),
+    IconItem(
+      key: AppSvgRes.temple,
+      title: "temple",
+      icon: Icons.temple_hindu_outlined,
+    ),
+    IconItem(
+      key: AppSvgRes.security,
+      title: "24x7_security",
+      icon: Icons.security,
+    ),
+    IconItem(
+      key: AppSvgRes.cctv,
+      title: "cctv_surveillance",
+      icon: Icons.videocam,
+    ),
+    IconItem(
+      key: AppSvgRes.parking,
+      title: "visitor_parking",
+      icon: Icons.local_parking,
+    ),
+    IconItem(
+      key: AppSvgRes.parking,
+      title: "covered_parking",
+      icon: Icons.local_parking,
+    ),
+    IconItem(
+      key: AppSvgRes.fire_safety,
+      title: "fire_safety",
+      icon: Icons.fire_extinguisher,
+    ),
+    IconItem(
+      key: AppSvgRes.battery,
+      title: "power_backup",
+      icon: Icons.battery_charging_full_outlined,
+    ),
+    IconItem(
+      key: AppSvgRes.elevator,
+      title: "lift",
+      icon: Icons.elevator_outlined,
+    ),
+    IconItem(
+      key: AppSvgRes.service_lift,
+      title: "service_lift",
+      icon: Icons.elevator_outlined,
+    ),
+    IconItem(
+      key: AppSvgRes.waste_disposal,
+      title: "waste_disposal",
+      icon: Icons.recycling,
+    ),
+    IconItem(
+      key: AppSvgRes.solar,
+      title: "solar_panels",
+      icon: Icons.solar_power,
+    ),
+    IconItem(
+      key: AppSvgRes.ev_charging,
+      title: "ev_charging",
+      icon: Icons.electric_car,
+    ),
+    IconItem(key: AppSvgRes.wifi, title: "wifi_connectivity", icon: Icons.wifi),
+    IconItem(
+      key: AppSvgRes.maintenance,
+      title: "maintenance_staff",
+      icon: Icons.engineering,
+    ),
+    IconItem(
+      key: AppSvgRes.laundry,
+      title: "laundry_service",
+      icon: Icons.local_laundry_service,
+    ),
+  ];
 
   /// 🔹 Return `IconData` (Material icon) for fallback UI
   static IconData getIcon(String key) {
@@ -586,16 +700,17 @@ class IconManager {
       final normalized = keyOrTitle.toLowerCase().replaceAll('-', '_').trim();
 
       final item = allAmenities.firstWhere(
-            (amenity) =>
-        amenity.key.toLowerCase() == normalized ||
+        (amenity) =>
+            amenity.key.toLowerCase() == normalized ||
             amenity.title.toLowerCase() == normalized ||
             amenity.key.toLowerCase().contains(normalized) ||
             normalized.contains(amenity.key.toLowerCase()),
-        orElse: () => IconItem(
-          key: 'unknown',
-          title: 'Unknown',
-          icon: Icons.help_outline,
-        ),
+        orElse:
+            () => IconItem(
+              key: 'unknown',
+              title: 'Unknown',
+              icon: Icons.help_outline,
+            ),
       );
 
       return item.icon;
@@ -604,5 +719,4 @@ class IconManager {
       return Icons.help_outline;
     }
   }
-
 }

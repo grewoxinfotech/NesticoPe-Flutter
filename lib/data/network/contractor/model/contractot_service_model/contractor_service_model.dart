@@ -1,3 +1,10 @@
+import 'package:housing_flutter_app/app/utils/formater/formater.dart';
+import 'package:housing_flutter_app/modules/propert_detail/view/property_details.dart';
+
+import '../../../../../modules/propert_detail/view/property_details.dart';
+import '../../../../../modules/propert_detail/view/property_details.dart'
+    as Formatter;
+
 class ContractorServiceResponse {
   final bool success;
   final String message;
@@ -157,24 +164,24 @@ class ContractorServiceItem {
 }
 
 class ContractorMetaData {
+  String priceModel;
+  int minPriceRange;
+  int maxPriceRange;
+  int visitCharge;
+  String workAvailability;
+  bool provideMaterials;
+  String brandsUsed;
+  bool equipmentProvided;
+  bool insuranceAvailable;
+  List<String> acceptedPaymentModes;
+  int advanceRequiredPercentage;
+  String billingType;
 
-   String priceModel;
-   int minPriceRange;
-   int maxPriceRange;
-   String workAvailability;
-   bool provideMaterials;
-   String brandsUsed;
-   bool equipmentProvided;
-   bool insuranceAvailable;
-   List<String> acceptedPaymentModes;
-   int advanceRequiredPercentage;
-   String billingType;
-
-   ContractorMetaData({
-
+  ContractorMetaData({
     required this.priceModel,
     required this.minPriceRange,
     required this.maxPriceRange,
+    required this.visitCharge,
     required this.workAvailability,
     required this.provideMaterials,
     required this.brandsUsed,
@@ -187,10 +194,10 @@ class ContractorMetaData {
 
   factory ContractorMetaData.fromJson(Map<String, dynamic> json) {
     return ContractorMetaData(
-
       priceModel: json['priceModel'] ?? '',
       minPriceRange: json['minPrice'] ?? 0,
       maxPriceRange: json['maxPrice'] ?? 0,
+      visitCharge: json['visitCharge'] ?? 0,
       workAvailability: json['workAvailability'] ?? '',
       provideMaterials: json['provideMaterials'] ?? false,
       brandsUsed: json['brandsUsed'] ?? '',
@@ -206,10 +213,10 @@ class ContractorMetaData {
 
   Map<String, dynamic> toJson() {
     return {
-
       'priceModel': priceModel,
       'minPrice': minPriceRange,
       'maxPrice': maxPriceRange,
+      'visitCharge': visitCharge,
       'workAvailability': workAvailability,
       'provideMaterials': provideMaterials,
       'brandsUsed': brandsUsed,
@@ -224,12 +231,9 @@ class ContractorMetaData {
   String get priceRange {
     if (minPriceRange == 0 && maxPriceRange == 0) {
       return 'No Price Range';
-    } else if (minPriceRange == 0) {
-      return 'Upto ₹$maxPriceRange';
-    } else if (maxPriceRange == 0) {
-      return 'From ₹$minPriceRange';
     } else {
-      return '₹$minPriceRange - ₹$maxPriceRange';
+      return Formatter.formatPriceRange(minPriceRange, maxPriceRange);
+      ;
     }
   }
 
