@@ -10,6 +10,7 @@ import 'package:housing_flutter_app/modules/review/views/widget/rating_widget.da
 import 'package:housing_flutter_app/widgets/New%20folder/inputs/dropdown_field.dart';
 import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
 import 'package:intl/intl.dart';
+import 'package:month_year_picker/month_year_picker.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../data/network/reseller/reseller_success_stories/reseller_success_stories_model.dart';
@@ -25,6 +26,7 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
     this.story,
     this.isEditMode = false,
   });
+
   final ResellerSuccessStoryController controller = Get.put(
     ResellerSuccessStoryController(),
   );
@@ -59,15 +61,33 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
   //   super.dispose();
   // }
 
+  // Future<void> _pickMonthYear(BuildContext context) async {
+  //   final now = DateTime.now();
+  //   final picked = await showDatePicker(
+  //     context: context,
+  //     initialDate: controller.selectedMonthYear.value ?? now,
+  //     firstDate: DateTime(2000),
+  //     lastDate: DateTime(2100),
+  //     helpText: "Select Month and Year",
+  //     fieldHintText: "Month/Year",
+  //   );
+  //
+  //   if (picked != null) {
+  //     controller.selectedMonthYear.value = picked;
+  //     controller.monthYearController.text = DateFormat(
+  //       'MMMM yyyy',
+  //     ).format(picked);
+  //   }
+  // }
+
   Future<void> _pickMonthYear(BuildContext context) async {
     final now = DateTime.now();
-    final picked = await showDatePicker(
-      context: context,
+    final picked = await showMonthYearPicker(
+      context: Get.context!,
       initialDate: controller.selectedMonthYear.value ?? now,
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
-      helpText: "Select Month and Year",
-      fieldHintText: "Month/Year",
+      useRootNavigator: true,
     );
 
     if (picked != null) {
@@ -232,7 +252,26 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
 
                 hintText: "Select month & year",
                 readOnly: true,
-                onTap: () => _pickMonthYear(context),
+                onTap: () async {
+                  log("ffihvfdfdvfiufiu ");
+                    final now = DateTime.now();
+                    final picked = await showDatePicker(
+
+                      context: context,
+                      initialDate: controller.selectedMonthYear.value ?? now,
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2100),
+                      helpText: "Select Month and Year",
+                      fieldHintText: "Month/Year",
+                    );
+
+                    if (picked != null) {
+                      controller.selectedMonthYear.value = picked;
+                      controller.monthYearController.text = DateFormat(
+                        'MMMM yyyy',
+                      ).format(picked);
+                    }
+                },
                 validator:
                     (val) =>
                         val == null || val.isEmpty
@@ -243,7 +282,7 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
               const SizedBox(height: 16),
 
               // --- Status Dropdown ---
-              Text(
+             /* Text(
                 "Status *",
                 style: const TextStyle(
                   fontWeight: FontWeight.w600,
@@ -251,11 +290,11 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
                   color: Colors.black,
                 ),
               ),
-              const SizedBox(height: 8),
-              Obx(
+              const SizedBox(height: 8),*/
+              /*Obx(
                 () => NesticoPeDropdownField<String>(
                   value: controller.selectedStatus.value,
-
+                  enabled: false,
                   items:
                       controller.statusOptions
                           .map(
@@ -269,6 +308,21 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
                               ? "Please select a status"
                               : null,
                 ),
+              ),*/
+              NesticoPeTextField(
+                title: "Status",
+                controller: TextEditingController(text: controller.selectedStatus.value),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                readOnly: true,
+                enabled: false,
+
+                hintText: "Enter total number of deals",
+                keyboardType: TextInputType.number,
+                validator: (val) {
+                  if (val == null || val.isEmpty) return "Enter total deals";
+                  if (int.tryParse(val) == null) return "Enter valid number";
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
 

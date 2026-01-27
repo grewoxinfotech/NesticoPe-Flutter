@@ -477,7 +477,7 @@ class OnboardingScreen extends StatelessWidget {
                 icon: Icons.store,
                 iconColor: ColorRes.primary,
                 iconBgColor: ColorRes.primary.withOpacity(0.05),
-                title: 'Reseller Registration',
+                title: 'Partner Registration',
                 subtitle: 'Join our partners program',
               ),
               SizedBox(height: 16),

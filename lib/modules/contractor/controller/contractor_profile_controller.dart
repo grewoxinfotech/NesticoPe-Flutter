@@ -163,9 +163,16 @@ class ContractorProfileController extends GetxController {
     phoneController.text = profileData.value?.user?.phone ?? "";
     positionController.text = profileData.value?.user?.city ?? "";
     companyController.text = profileData.value?.user?.state ?? "";
-    experienceController.text =
-        profileData.value?.user?.totalExperience.toString() ?? "";
+
     zipController.text = profileData.value?.user?.zipCode ?? "";
+    if((profileData.value?.user?.totalExperience!=null))
+    {
+      experienceController.text=profileData.value?.user?.totalExperience.toString()??'';
+    }
+    else{
+
+      experienceController.text="0";
+    }
 
     //
     // // Business Details fields from seller profile

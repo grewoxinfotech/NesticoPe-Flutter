@@ -22,7 +22,7 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: ColorRes.bgColor,
         title: Text(
-          'Reseller Success Stories',
+          'Partner Success Stories',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),

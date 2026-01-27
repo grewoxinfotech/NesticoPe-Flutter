@@ -154,239 +154,284 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
           width: 1,
         ),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Stack(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Obx(() {
-                ImageProvider? imageProvider;
-                final profilePic =
-                    controller.profileData.value?.user?.profilePic;
-                final selectedImage = controller.selectedImage.value;
+              SizedBox(width: 6,),
+              Stack(
+                children: [
+                  Obx(() {
+                    ImageProvider? imageProvider;
+                    final profilePic =
+                        controller.profileData.value?.user?.profilePic;
+                    final selectedImage = controller.selectedImage.value;
 
-                // 🔹 Show loader if image upload in progress
-                if (controller.isLoadingIMage.value) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+                    // 🔹 Show loader if image upload in progress
+                    if (controller.isLoadingIMage.value) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-                bool isNetworkImage = false;
-                String? imageUrl;
+                    bool isNetworkImage = false;
+                    String? imageUrl;
 
-                // 1️⃣ If user selected a new image
-                if (selectedImage != null) {
-                  if (selectedImage is File) {
-                    imageProvider = FileImage(selectedImage);
-                  } else if (selectedImage.toString().startsWith('http')) {
-                    imageUrl = selectedImage.toString();
-                    imageProvider = NetworkImage(imageUrl);
-                    isNetworkImage = true;
-                  }
-                } else if (profilePic != null && profilePic.isNotEmpty) {
-                  if (profilePic.startsWith('http')) {
-                    imageUrl = profilePic;
-                    imageProvider = NetworkImage(profilePic);
-                    isNetworkImage = true;
-                  } else if (File(profilePic).existsSync()) {
-                    imageProvider = FileImage(File(profilePic));
-                  }
-                }
+                    // 1️⃣ If user selected a new image
+                    if (selectedImage != null) {
+                      if (selectedImage is File) {
+                        imageProvider = FileImage(selectedImage);
+                      } else if (selectedImage.toString().startsWith('http')) {
+                        imageUrl = selectedImage.toString();
+                        imageProvider = NetworkImage(imageUrl);
+                        isNetworkImage = true;
+                      }
+                    } else if (profilePic != null && profilePic.isNotEmpty) {
+                      if (profilePic.startsWith('http')) {
+                        imageUrl = profilePic;
+                        imageProvider = NetworkImage(profilePic);
+                        isNetworkImage = true;
+                      } else if (File(profilePic).existsSync()) {
+                        imageProvider = FileImage(File(profilePic));
+                      }
+                    }
 
-                return Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: ColorRes.primary, width: 2),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: ClipOval(
-                      child: SizedBox(
-                        width: 70,
-                        height: 70,
-                        child:
-                            imageProvider != null
-                                ? (isNetworkImage
-                                    ? Image.network(
-                                      imageUrl!,
-                                      fit: BoxFit.cover,
-                                      loadingBuilder: (
-                                        context,
-                                        child,
-                                        progress,
-                                      ) {
-                                        if (progress == null) return child;
-                                        return const Center(
-                                          child: SizedBox(
-                                            width: 25,
-                                            height: 25,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      errorBuilder:
-                                          (context, error, stackTrace) =>
-                                              const Icon(
-                                                Icons.person,
-                                                size: 30,
-                                              ),
-                                    )
-                                    : Image(
-                                      image: imageProvider,
-                                      fit: BoxFit.cover,
-                                    ))
-                                : CircleAvatar(
-                                  radius: 35,
-                                  backgroundColor: ColorRes.primary.withOpacity(
-                                    0.1,
-                                  ),
-                                  child: Icon(
-                                    Icons.person,
-                                    size: 25,
-                                    color: ColorRes.primary.withOpacity(0.8),
-                                  ),
-                                ),
-                      ),
-                    ),
-                  ),
-                );
-              }),
-
-              // Obx(() {
-              //   ImageProvider? imageProvider;
-              //
-              //   // ✅ 1. Check if user selected a new local image
-              //   if (controller.selectedImage.value != null) {
-              //     imageProvider = FileImage(controller.selectedImage.value!);
-              //   }
-              //   // ✅ 2. Else use profilePic from API
-              //   else {
-              //     final profilePic = controller.profileData.value?.user?.profilePic;
-              //
-              //     if (profilePic != null && profilePic.isNotEmpty) {
-              //       // ✅ If it's a network URL
-              //       if (profilePic.startsWith('http') || profilePic.startsWith('https')) {
-              //         imageProvider = NetworkImage(profilePic);
-              //       }
-              //       // ✅ Else if it's a valid local file path
-              //       else if (File(profilePic).existsSync()) {
-              //         imageProvider = FileImage(File(profilePic));
-              //       }
-              //     }
-              //   }
-              //
-              //   // ✅ 3. Build the circular avatar
-              //   return Container(
-              //     decoration: BoxDecoration(
-              //       shape: BoxShape.circle,
-              //       border: Border.all(color: ColorRes.primary, width: 2),
-              //     ),
-              //     child: Padding(
-              //       padding: const EdgeInsets.all(2.0),
-              //       child: CircleAvatar(
-              //         radius: 35,
-              //         backgroundColor:
-              //         imageProvider == null ? ColorRes.primary.withOpacity(0.1) : null,
-              //         backgroundImage: imageProvider,
-              //         child: imageProvider == null
-              //             ? Icon(
-              //           Icons.person,
-              //           size: 25,
-              //           color: ColorRes.primary.withOpacity(0.8),
-              //         )
-              //             : null,
-              //       ),
-              //     ),
-              //   );
-              // }),
-              if (controller.isEditing.value)
-                Positioned(
-                  bottom: -2,
-                  right: 0,
-                  child: GestureDetector(
-                    onTap: () {
-                      controller.showImagePickerOptions(Get.context!);
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(6),
+                    return Container(
                       decoration: BoxDecoration(
-                        color: ColorRes.primary,
                         shape: BoxShape.circle,
-                        border: Border.all(color: ColorRes.white, width: 2),
+                        border: Border.all(color: ColorRes.primary, width: 2),
                       ),
-                      child: const Icon(
-                        Icons.camera_alt,
-                        color: ColorRes.white,
-                        size: 12,
+                      child: Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: ClipOval(
+                          child: SizedBox(
+                            width: 70,
+                            height: 70,
+                            child:
+                                imageProvider != null
+                                    ? (isNetworkImage
+                                        ? Image.network(
+                                          imageUrl!,
+                                          fit: BoxFit.cover,
+                                          loadingBuilder: (
+                                            context,
+                                            child,
+                                            progress,
+                                          ) {
+                                            if (progress == null) return child;
+                                            return const Center(
+                                              child: SizedBox(
+                                                width: 25,
+                                                height: 25,
+                                                child: CircularProgressIndicator(
+                                                  strokeWidth: 2,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          errorBuilder:
+                                              (context, error, stackTrace) =>
+                                                  const Icon(
+                                                    Icons.person,
+                                                    size: 30,
+                                                  ),
+                                        )
+                                        : Image(
+                                          image: imageProvider,
+                                          fit: BoxFit.cover,
+                                        ))
+                                    : CircleAvatar(
+                                      radius: 35,
+                                      backgroundColor: ColorRes.primary.withOpacity(
+                                        0.1,
+                                      ),
+                                      child: Icon(
+                                        Icons.person,
+                                        size: 25,
+                                        color: ColorRes.primary.withOpacity(0.8),
+                                      ),
+                                    ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+
+                  // Obx(() {
+                  //   ImageProvider? imageProvider;
+                  //
+                  //   // ✅ 1. Check if user selected a new local image
+                  //   if (controller.selectedImage.value != null) {
+                  //     imageProvider = FileImage(controller.selectedImage.value!);
+                  //   }
+                  //   // ✅ 2. Else use profilePic from API
+                  //   else {
+                  //     final profilePic = controller.profileData.value?.user?.profilePic;
+                  //
+                  //     if (profilePic != null && profilePic.isNotEmpty) {
+                  //       // ✅ If it's a network URL
+                  //       if (profilePic.startsWith('http') || profilePic.startsWith('https')) {
+                  //         imageProvider = NetworkImage(profilePic);
+                  //       }
+                  //       // ✅ Else if it's a valid local file path
+                  //       else if (File(profilePic).existsSync()) {
+                  //         imageProvider = FileImage(File(profilePic));
+                  //       }
+                  //     }
+                  //   }
+                  //
+                  //   // ✅ 3. Build the circular avatar
+                  //   return Container(
+                  //     decoration: BoxDecoration(
+                  //       shape: BoxShape.circle,
+                  //       border: Border.all(color: ColorRes.primary, width: 2),
+                  //     ),
+                  //     child: Padding(
+                  //       padding: const EdgeInsets.all(2.0),
+                  //       child: CircleAvatar(
+                  //         radius: 35,
+                  //         backgroundColor:
+                  //         imageProvider == null ? ColorRes.primary.withOpacity(0.1) : null,
+                  //         backgroundImage: imageProvider,
+                  //         child: imageProvider == null
+                  //             ? Icon(
+                  //           Icons.person,
+                  //           size: 25,
+                  //           color: ColorRes.primary.withOpacity(0.8),
+                  //         )
+                  //             : null,
+                  //       ),
+                  //     ),
+                  //   );
+                  // }),
+                  if (controller.isEditing.value)
+                    Positioned(
+                      bottom: -2,
+                      right: 0,
+                      child: GestureDetector(
+                        onTap: () {
+                          controller.showImagePickerOptions(Get.context!);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: ColorRes.primary,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: ColorRes.white, width: 2),
+                          ),
+                          child: const Icon(
+                            Icons.camera_alt,
+                            color: ColorRes.white,
+                            size: 12,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(width: 16),
-          // Text Info Section
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 140,
-                  child: Text(
-                    ' ${controller.profileData.value?.user?.username ?? ''}',
-                    maxLines: 1,
-                    style: TextStyle(
-                      fontSize: AppFontSizes.body,
-                      fontWeight: AppFontWeights.bold,
-                      color: ColorRes.textPrimary,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: ColorRes.primary.withOpacity(0.08),
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(
-                      color: ColorRes.primary.withOpacity(0.3),
-                      width: 1,
-                    ),
-                  ),
-                  child: Text(
-                    '${controller.profileData.value?.user?.userType ?? ''}',
-                    style: TextStyle(
-                      fontSize: AppFontSizes.extraSmall,
-                      color: ColorRes.primary,
-                      fontWeight: AppFontWeights.medium,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Row(
+                ],
+              ),
+              const SizedBox(width: 16),
+              // Text Info Section
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      width: 150,
+                      width: 140,
                       child: Text(
-                        '${controller.profileData.value?.user?.city ?? 'Not Define'} ',
+                        ' ${controller.profileData.value?.user?.username ?? ''}',
+                        maxLines: 1,
                         style: TextStyle(
-                          fontSize: AppFontSizes.small,
-                          color: ColorRes.leadGreyColor[600],
+                          fontSize: AppFontSizes.body,
+                          fontWeight: AppFontWeights.bold,
+                          color: ColorRes.textPrimary,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: ColorRes.primary.withOpacity(0.08),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                          color: ColorRes.primary.withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        '${controller.profileData.value?.user?.userType ?? ''}',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.extraSmall,
+                          color: ColorRes.primary,
                           fontWeight: AppFontWeights.medium,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 150,
+                          child: Text(
+                            '${controller.profileData.value?.user?.city ?? 'Not Define'} ',
+                            style: TextStyle(
+                              fontSize: AppFontSizes.small,
+                              color: ColorRes.leadGreyColor[600],
+                              fontWeight: AppFontWeights.medium,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
+          SizedBox(height: 6,),
+          Obx(
+                () => GestureDetector(
+              onTap: () {
+                if (controller.isEditing.value) {
+                  controller.saveProfile();
+                } else {
+                  controller.toggleEdit();
+                }
+              },
+
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF4281F6), Color(0xFF1E43FF)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.15),
+                      blurRadius: 3,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
+                ),
+                child: Text(
+                  controller.isEditing.value ? 'Save Changes' : 'Customize',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );

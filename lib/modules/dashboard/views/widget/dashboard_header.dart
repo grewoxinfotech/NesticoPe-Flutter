@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
@@ -6,12 +7,14 @@ import '../../../../app/constants/color_res.dart';
 class DashboardHeader extends StatelessWidget {
   final String title;
   final String subtitle;
+  final String? image;
   // final IconData icon;
 
   const DashboardHeader({
     super.key,
     required this.title,
     required this.subtitle,
+    this.image
     // required this.icon,
   });
 
@@ -25,6 +28,7 @@ class DashboardHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
+          // 📄 Text section
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,16 +51,27 @@ class DashboardHeader extends StatelessWidget {
               ],
             ),
           ),
-          // Container(
-          //   padding: const EdgeInsets.all(12),
-          //   decoration: BoxDecoration(
-          //     color: ColorRes.white.withOpacity(0.2),
-          //     borderRadius: BorderRadius.circular(12),
-          //   ),
-          //   child: Icon(icon, color: ColorRes.white, size: 40),
-          // ),
+
+        if(UserHelper.isReseller)...[
+          const SizedBox(width: 12),
+
+          // 🖼️ Image section
+          Container(
+            height: 60,
+            width: 60,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: ColorRes.white.withOpacity(0.2),
+              image: DecorationImage(
+                image: AssetImage('assets/images/reseller_dashboard.png'), // 👈 replace with your image path
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ]
         ],
       ),
     );
+
   }
 }

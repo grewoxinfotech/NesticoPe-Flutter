@@ -500,7 +500,7 @@ final propertyTimeline = List<Map<String, dynamic>>.from(propertyMetrics['proper
 Future<void> exportResellerInsightsToExcel(Map<String, dynamic> jsonData) async {
   try {
     final excel = Excel.createExcel();
-    final sheet = excel['Reseller Export Data'];
+    final sheet = excel['Partner Export Data'];
     final data = Map<String, dynamic>.from(jsonData['data'] ?? {});
 
     // 🔹 Helper: add spacing
@@ -517,7 +517,7 @@ Future<void> exportResellerInsightsToExcel(Map<String, dynamic> jsonData) async 
 
 
     // 🏠 1️⃣ BASIC METRICS
-    header('Reseller Overview');
+    header('Partner Overview');
     sheet.appendRow([
       TextCellValue('Metric'),
       TextCellValue('Value'),

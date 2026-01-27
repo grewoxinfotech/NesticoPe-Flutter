@@ -164,7 +164,14 @@ class ProfileController extends GetxController {
     companyController.text = profileData.value?.user?.state ?? "";
     addressController.text = profileData.value?.user?.address ?? "";
     zipController.text = profileData.value?.user?.zipCode ?? "";
-    totalExperience.text=profileData.value?.user?.totalExperience.toString()??"";
+   if((profileData.value?.user?.totalExperience!=null))
+     {
+       totalExperience.text=profileData.value?.user?.totalExperience.toString()??'';
+     }
+   else{
+
+     totalExperience.text="0";
+   }
     
   }
 

@@ -591,7 +591,7 @@ class AuthController extends GetxController {
       } else {
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: "Conversion Failed",
-          message: "Failed to Convert Buyer to Reseller",
+          message: "Failed to Convert Buyer to Partner",
           contentType: ContentType.failure,
         );
       }

@@ -13,11 +13,16 @@ class DashboardLayout extends StatelessWidget {
 
   DashboardLayout({super.key, this.floatingButton, required this.child,required this.onRefresh,});
   RxString name = ''.obs;
+  RxString image="".obs;
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final user = await SecureStorage.getUserData();
       if (user != null) {
+        if(user.user?.profilePic!=null && (user.user?.profilePic?.isNotEmpty??false))
+          {
+            image.value=user.user?.profilePic??'';
+          }
         if (user.user?.firstName != null && user.user?.lastName != null) {
           name.value = '${user.user!.firstName} ${user.user!.lastName}';
         } else {
@@ -51,6 +56,7 @@ class DashboardLayout extends StatelessWidget {
                 () => DashboardHeader(
                   title: 'Welcome, ${name.value}',
                   subtitle: 'Manage your properties efficiently',
+                  image: image.value,
                   // icon: Icons.home_work_rounded,
                 ),
               ),

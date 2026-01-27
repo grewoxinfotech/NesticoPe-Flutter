@@ -506,7 +506,7 @@
 // }
 //
 
-import 'dart:convert';
+/*import 'dart:convert';
 
 class ResellerInsightsModel {
   final bool success;
@@ -1021,4 +1021,658 @@ class CommissionTrend {
   Map<String, dynamic> toJson() {
     return {'name': name, 'commission': commission};
   }
+}*/
+import 'dart:convert';
+
+class ResellerInsightsModel {
+  final bool success;
+  final String message;
+  final ResellerData data;
+
+  ResellerInsightsModel({
+    required this.success,
+    required this.message,
+    required this.data,
+  });
+
+  factory ResellerInsightsModel.fromJson(Map<String, dynamic> json) {
+    return ResellerInsightsModel(
+      success: json['success'] ?? false,
+      message: json['message'] ?? '',
+      data: ResellerData.fromJson(json['data'] ?? {}),
+    );
+  }
+
+  Map<String, dynamic> toJson() =>
+      {'success': success, 'message': message, 'data': data.toJson()};
+
+  static ResellerInsightsModel fromRawJson(String str) =>
+      ResellerInsightsModel.fromJson(json.decode(str));
+
+  String toRawJson() => json.encode(toJson());
 }
+
+class ResellerData {
+  final int totalAssignedProperties;
+  final Earnings earnings;
+  final Performance performance;
+  final Leaderboard leaderboard;
+  final DailyGoals dailyGoals;
+  final Level level;
+  final List<SuccessStory> successStories;
+  final List<LeadsTrend> leadsTrend;
+  final List<CommissionTrend> commissionTrend;
+  final Milestones? milestones; // 👈 New field
+  final String lastUpdated;
+
+  ResellerData({
+    required this.totalAssignedProperties,
+    required this.earnings,
+    required this.performance,
+    required this.leaderboard,
+    required this.dailyGoals,
+    required this.level,
+    required this.successStories,
+    required this.leadsTrend,
+    required this.commissionTrend,
+    this.milestones,
+    required this.lastUpdated,
+  });
+
+  factory ResellerData.fromJson(Map<String, dynamic> json) {
+    return ResellerData(
+      totalAssignedProperties: json['totalAssignedProperties'] ?? 0,
+      earnings: Earnings.fromJson(json['earnings'] ?? {}),
+      performance: Performance.fromJson(json['performance'] ?? {}),
+      leaderboard: Leaderboard.fromJson(json['leaderboard'] ?? {}),
+      dailyGoals: DailyGoals.fromJson(json['dailyGoals'] ?? {}),
+      level: Level.fromJson(json['level'] ?? {}),
+      successStories: (json['successStories'] as List<dynamic>? ?? [])
+          .map((e) => SuccessStory.fromJson(e))
+          .toList(),
+      leadsTrend: (json['leadsTrend'] as List<dynamic>? ?? [])
+          .map((e) => LeadsTrend.fromJson(e))
+          .toList(),
+      commissionTrend: (json['commissionTrend'] as List<dynamic>? ?? [])
+          .map((e) => CommissionTrend.fromJson(e))
+          .toList(),
+      milestones: json['milestones'] != null
+          ? Milestones.fromJson(json['milestones'])
+          : null,
+      lastUpdated: json['lastUpdated'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'totalAssignedProperties': totalAssignedProperties,
+    'earnings': earnings.toJson(),
+    'performance': performance.toJson(),
+    'leaderboard': leaderboard.toJson(),
+    'dailyGoals': dailyGoals.toJson(),
+    'level': level.toJson(),
+    'successStories': successStories.map((e) => e.toJson()).toList(),
+    'leadsTrend': leadsTrend.map((e) => e.toJson()).toList(),
+    'commissionTrend': commissionTrend.map((e) => e.toJson()).toList(),
+    'milestones': milestones?.toJson(),
+    'lastUpdated': lastUpdated,
+  };
+}
+
+/// ===================== EARNINGS =====================
+class Earnings {
+  final num totalCommission;
+  final num paidCommission;
+  final num unpaidCommission;
+  final num monthlyBonus;
+  final num currentMonthCommission;
+  final num previousMonthCommission;
+
+  Earnings({
+    required this.totalCommission,
+    required this.paidCommission,
+    required this.unpaidCommission,
+    required this.monthlyBonus,
+    required this.currentMonthCommission,
+    required this.previousMonthCommission,
+  });
+
+  factory Earnings.fromJson(Map<String, dynamic> json) {
+    return Earnings(
+      totalCommission: json['totalCommission'] ?? 0,
+      paidCommission: (json['paidCommission'] is String)
+          ? num.tryParse(json['paidCommission']) ?? 0
+          : json['paidCommission'] ?? 0,
+      unpaidCommission: json['unpaidCommission'] ?? 0,
+      monthlyBonus: json['monthlyBonus'] ?? 0,
+      currentMonthCommission: json['currentMonthCommission'] ?? 0,
+      previousMonthCommission: json['previousMonthCommission'] ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'totalCommission': totalCommission,
+    'paidCommission': paidCommission,
+    'unpaidCommission': unpaidCommission,
+    'monthlyBonus': monthlyBonus,
+    'currentMonthCommission': currentMonthCommission,
+    'previousMonthCommission': previousMonthCommission,
+  };
+}
+
+/// ===================== PERFORMANCE =====================
+class Performance {
+  final int totalLeads;
+  final int closedDeals;
+  final num totalDealsAmount;
+  final int currentMonthLeads;
+  final int previousMonthLeads;
+
+  Performance({
+    required this.totalLeads,
+    required this.closedDeals,
+    required this.totalDealsAmount,
+    required this.currentMonthLeads,
+    required this.previousMonthLeads,
+  });
+
+  factory Performance.fromJson(Map<String, dynamic> json) {
+    return Performance(
+      totalLeads: json['totalLeads'] ?? 0,
+      closedDeals: json['closedDeals'] ?? 0,
+      totalDealsAmount: json['totalDealsAmount'] ?? 0,
+      currentMonthLeads: json['currentMonthLeads'] ?? 0,
+      previousMonthLeads: json['previousMonthLeads'] ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'totalLeads': totalLeads,
+    'closedDeals': closedDeals,
+    'totalDealsAmount': totalDealsAmount,
+    'currentMonthLeads': currentMonthLeads,
+    'previousMonthLeads': previousMonthLeads,
+  };
+}
+
+/// ===================== LEADERBOARD =====================
+class Leaderboard {
+  final List<TopReseller> topResellers;
+  final int currentRank;
+  final List<TopProperty> topProperties;
+
+  Leaderboard({
+    required this.topResellers,
+    required this.currentRank,
+    required this.topProperties,
+  });
+
+  factory Leaderboard.fromJson(Map<String, dynamic> json) {
+    return Leaderboard(
+      topResellers: (json['topResellers'] as List<dynamic>? ?? [])
+          .map((e) => TopReseller.fromJson(e))
+          .toList(),
+      currentRank: json['currentRank'] ?? 0,
+      topProperties: (json['topProperties'] as List<dynamic>? ?? [])
+          .map((e) => TopProperty.fromJson(e))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'topResellers': topResellers.map((e) => e.toJson()).toList(),
+    'currentRank': currentRank,
+    'topProperties': topProperties.map((e) => e.toJson()).toList(),
+  };
+}
+
+class TopReseller {
+  final int rank;
+  final String resellerId;
+  final String name;
+  final String email;
+  final String city;
+  final String? state;
+  final String? profilePic;
+  final num totalCommission;
+  final int totalDeals;
+  final String level;
+  final bool isCurrentUser;
+
+  TopReseller({
+    required this.rank,
+    required this.resellerId,
+    required this.name,
+    required this.email,
+    required this.city,
+    this.state,
+    this.profilePic,
+    required this.totalCommission,
+    required this.totalDeals,
+    required this.level,
+    required this.isCurrentUser,
+  });
+
+  factory TopReseller.fromJson(Map<String, dynamic> json) {
+    return TopReseller(
+      rank: json['rank'] ?? 0,
+      resellerId: json['resellerId'] ?? '',
+      name: json['name'] ?? '',
+      email: json['email'] ?? '',
+      city: json['city'] ?? '',
+      state: json['state'],
+      profilePic: json['profilePic'],
+      totalCommission: json['totalCommission'] ?? 0,
+      totalDeals: json['totalDeals'] ?? 0,
+      level: json['level'] ?? '',
+      isCurrentUser: json['isCurrentUser'] ?? false,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'rank': rank,
+    'resellerId': resellerId,
+    'name': name,
+    'email': email,
+    'city': city,
+    'state': state,
+    'profilePic': profilePic,
+    'totalCommission': totalCommission,
+    'totalDeals': totalDeals,
+    'level': level,
+    'isCurrentUser': isCurrentUser,
+  };
+}
+
+class TopProperty {
+  final String id;
+  final String propertyType;
+  final String city;
+  final String? state;
+  final String image;
+  final num price;
+  final num commission;
+  final String? profilePic;
+
+  TopProperty({
+    required this.id,
+    required this.propertyType,
+    required this.city,
+    this.state,
+    required this.image,
+    required this.price,
+    required this.commission,
+    this.profilePic,
+  });
+
+  factory TopProperty.fromJson(Map<String, dynamic> json) {
+    return TopProperty(
+      id: json['id'] ?? '',
+      propertyType: json['propertyType'] ?? '',
+      city: json['city'] ?? '',
+      state: json['state'],
+      image: json['image'] ?? '',
+      price: json['price'] ?? 0,
+      commission: json['commission'] ?? 0,
+      profilePic: json['profilePic'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'propertyType': propertyType,
+    'city': city,
+    'state': state,
+    'image': image,
+    'price': price,
+    'commission': commission,
+    'profilePic': profilePic,
+  };
+}
+
+/// ===================== DAILY GOALS =====================
+class DailyGoals {
+  final int dailyLeadGoal;
+  final int todaysLeads;
+  final int achievementStreak;
+  final int minimumLeadsForStreak;
+
+  DailyGoals({
+    required this.dailyLeadGoal,
+    required this.todaysLeads,
+    required this.achievementStreak,
+    required this.minimumLeadsForStreak,
+  });
+
+  factory DailyGoals.fromJson(Map<String, dynamic> json) {
+    return DailyGoals(
+      dailyLeadGoal: json['dailyLeadGoal'] ?? 0,
+      todaysLeads: json['todaysLeads'] ?? 0,
+      achievementStreak: json['achievementStreak'] ?? 0,
+      minimumLeadsForStreak: json['minimumLeadsForStreak'] ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'dailyLeadGoal': dailyLeadGoal,
+    'todaysLeads': todaysLeads,
+    'achievementStreak': achievementStreak,
+    'minimumLeadsForStreak': minimumLeadsForStreak,
+  };
+}
+
+/// ===================== LEVEL =====================
+class Level {
+  final String currentLevel;
+  final String currentLevelIcon;
+  final num commissionRate;
+  final List<String> benefits;
+  final num totalCommissionEarned;
+  final num totalClosedDeals;
+  final String nextLevelName;
+  final String? nextLevelIcon; // 👈 added (exists in JSON)
+  final num nextLevelThreshold;
+  final num nextLevelCommissionRate;
+  final num amountToNextLevel;
+  final num progressToNextLevel;
+  final num totalSalesVolume;
+
+  Level({
+    required this.currentLevel,
+    required this.currentLevelIcon,
+    required this.commissionRate,
+    required this.benefits,
+    required this.totalCommissionEarned,
+    required this.totalClosedDeals,
+    required this.nextLevelName,
+    this.nextLevelIcon,
+    required this.nextLevelThreshold,
+    required this.nextLevelCommissionRate,
+    required this.amountToNextLevel,
+    required this.progressToNextLevel,
+    required this.totalSalesVolume,
+  });
+
+  factory Level.fromJson(Map<String, dynamic> json) {
+    return Level(
+      currentLevel: json['currentLevel'] ?? '',
+      currentLevelIcon: json['currentLevelIcon'] ?? '',
+      commissionRate: json['commissionRate'] ?? 0,
+      benefits:
+      (json['benefits'] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
+      totalCommissionEarned: json['totalCommissionEarned'] ?? 0,
+      totalClosedDeals: json['totalClosedDeals'] ?? 0,
+      nextLevelName: json['nextLevelName'] ?? '',
+      nextLevelIcon: json['nextLevelIcon'],
+      nextLevelThreshold: json['nextLevelThreshold'] ?? 0,
+      nextLevelCommissionRate: json['nextLevelCommissionRate'] ?? 0,
+      amountToNextLevel: json['amountToNextLevel'] ?? 0,
+      progressToNextLevel: json['progressToNextLevel'] ?? 0,
+      totalSalesVolume: json['totalSalesVolume'] ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'currentLevel': currentLevel,
+    'currentLevelIcon': currentLevelIcon,
+    'commissionRate': commissionRate,
+    'benefits': benefits,
+    'totalCommissionEarned': totalCommissionEarned,
+    'totalClosedDeals': totalClosedDeals,
+    'nextLevelName': nextLevelName,
+    'nextLevelIcon': nextLevelIcon,
+    'nextLevelThreshold': nextLevelThreshold,
+    'nextLevelCommissionRate': nextLevelCommissionRate,
+    'amountToNextLevel': amountToNextLevel,
+    'progressToNextLevel': progressToNextLevel,
+    'totalSalesVolume': totalSalesVolume,
+  };
+}
+
+/// ===================== SUCCESS STORY =====================
+class SuccessStory {
+  final String id;
+  final String createdBy;
+  final String? updatedBy;
+  final String resellerId;
+  final String title;
+  final String description;
+  final String achievement;
+  final String monthYear;
+  final int totalDeals;
+  final String totalValue;
+  final int rating;
+  final String? image;
+  final String status;
+  final String createdAt;
+  final String updatedAt;
+
+  SuccessStory({
+    required this.id,
+    required this.createdBy,
+    this.updatedBy,
+    required this.resellerId,
+    required this.title,
+    required this.description,
+    required this.achievement,
+    required this.monthYear,
+    required this.totalDeals,
+    required this.totalValue,
+    required this.rating,
+    this.image,
+    required this.status,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  factory SuccessStory.fromJson(Map<String, dynamic> json) {
+    return SuccessStory(
+      id: json['id'] ?? '',
+      createdBy: json['created_by'] ?? '',
+      updatedBy: json['updated_by'],
+      resellerId: json['resellerId'] ?? '',
+      title: json['title'] ?? '',
+      description: json['description'] ?? '',
+      achievement: json['achievement'] ?? '',
+      monthYear: json['monthYear'] ?? '',
+      totalDeals: json['totalDeals'] ?? 0,
+      totalValue: json['totalValue'] ?? '0',
+      rating: json['rating'] ?? 0,
+      image: json['image'],
+      status: json['status'] ?? '',
+      createdAt: json['createdAt'] ?? '',
+      updatedAt: json['updatedAt'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'created_by': createdBy,
+    'updated_by': updatedBy,
+    'resellerId': resellerId,
+    'title': title,
+    'description': description,
+    'achievement': achievement,
+    'monthYear': monthYear,
+    'totalDeals': totalDeals,
+    'totalValue': totalValue,
+    'rating': rating,
+    'image': image,
+    'status': status,
+    'createdAt': createdAt,
+    'updatedAt': updatedAt,
+  };
+}
+
+/// ===================== LEADS TREND =====================
+class LeadsTrend {
+  final String name;
+  final int leads;
+
+  LeadsTrend({required this.name, required this.leads});
+
+  factory LeadsTrend.fromJson(Map<String, dynamic> json) =>
+      LeadsTrend(name: json['name'] ?? '', leads: json['leads'] ?? 0);
+
+  Map<String, dynamic> toJson() => {'name': name, 'leads': leads};
+}
+
+/// ===================== COMMISSION TREND =====================
+class CommissionTrend {
+  final String name;
+  final num commission;
+
+  CommissionTrend({required this.name, required this.commission});
+
+  factory CommissionTrend.fromJson(Map<String, dynamic> json) => CommissionTrend(
+    name: json['name'] ?? '',
+    commission: json['commission'] ?? 0,
+  );
+
+  Map<String, dynamic> toJson() => {'name': name, 'commission': commission};
+}
+
+/// ===================== MILESTONES (NEW) =====================
+class Milestones {
+  final num totalFeesGenerated;
+  final List<Bonus> bonuses;
+  final MilestoneItem? nextMilestone;
+  final int progress;
+  final List<MilestoneItem> allMilestones;
+
+  Milestones({
+    required this.totalFeesGenerated,
+    required this.bonuses,
+    this.nextMilestone,
+    required this.progress,
+    required this.allMilestones,
+  });
+
+  factory Milestones.fromJson(Map<String, dynamic> json) {
+    return Milestones(
+      totalFeesGenerated: json['totalFeesGenerated'] ?? 0,
+      bonuses: (json['bonuses'] as List<dynamic>? ?? [])
+          .map((e) => Bonus.fromJson(e))
+          .toList(),
+      nextMilestone: json['nextMilestone'] != null
+          ? MilestoneItem.fromJson(json['nextMilestone'])
+          : null,
+      progress: json['progress'] ?? 0,
+      allMilestones: (json['allMilestones'] as List<dynamic>? ?? [])
+          .map((e) => MilestoneItem.fromJson(e))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'totalFeesGenerated': totalFeesGenerated,
+    'bonuses': bonuses.map((e) => e.toJson()).toList(),
+    'nextMilestone': nextMilestone?.toJson(),
+    'progress': progress,
+    'allMilestones': allMilestones.map((e) => e.toJson()).toList(),
+  };
+}
+
+/// ===================== BONUS =====================
+class Bonus {
+  final String id;
+  final String? createdBy;
+  final String? updatedBy;
+  final String resellerId;
+  final String cumulativeFeeAtTime;
+  final String rewardUnlocked;
+  final String milestoneReached;
+  final String nextMilestoneTarget;
+  final String status;
+  final Meta? meta;
+  final String createdAt;
+  final String updatedAt;
+
+  Bonus({
+    required this.id,
+    this.createdBy,
+    this.updatedBy,
+    required this.resellerId,
+    required this.cumulativeFeeAtTime,
+    required this.rewardUnlocked,
+    required this.milestoneReached,
+    required this.nextMilestoneTarget,
+    required this.status,
+    this.meta,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  factory Bonus.fromJson(Map<String, dynamic> json) {
+    return Bonus(
+      id: json['id'] ?? '',
+      createdBy: json['created_by'],
+      updatedBy: json['updated_by'],
+      resellerId: json['reseller_id'] ?? '',
+      cumulativeFeeAtTime: json['cumulative_fee_at_time'] ?? '',
+      rewardUnlocked: json['reward_unlocked'] ?? '',
+      milestoneReached: json['milestone_reached'] ?? '',
+      nextMilestoneTarget: json['next_milestone_target'] ?? '',
+      status: json['status'] ?? '',
+      meta: json['meta'] != null ? Meta.fromJson(json['meta']) : null,
+      createdAt: json['createdAt'] ?? '',
+      updatedAt: json['updatedAt'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'created_by': createdBy,
+    'updated_by': updatedBy,
+    'reseller_id': resellerId,
+    'cumulative_fee_at_time': cumulativeFeeAtTime,
+    'reward_unlocked': rewardUnlocked,
+    'milestone_reached': milestoneReached,
+    'next_milestone_target': nextMilestoneTarget,
+    'status': status,
+    'meta': meta?.toJson(),
+    'createdAt': createdAt,
+    'updatedAt': updatedAt,
+  };
+}
+
+class Meta {
+  final String triggeredAt;
+  final num totalCommissionsAtTime;
+
+  Meta({
+    required this.triggeredAt,
+    required this.totalCommissionsAtTime,
+  });
+
+  factory Meta.fromJson(Map<String, dynamic> json) {
+    return Meta(
+      triggeredAt: json['triggered_at'] ?? '',
+      totalCommissionsAtTime: json['total_commissions_at_time'] ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'triggered_at': triggeredAt,
+    'total_commissions_at_time': totalCommissionsAtTime,
+  };
+}
+
+class MilestoneItem {
+  final num limit;
+  final String gift;
+
+  MilestoneItem({
+    required this.limit,
+    required this.gift,
+  });
+
+  factory MilestoneItem.fromJson(Map<String, dynamic> json) {
+    return MilestoneItem(
+      limit: json['limit'] ?? 0,
+      gift: json['gift'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() => {'limit': limit, 'gift': gift};
+}
+

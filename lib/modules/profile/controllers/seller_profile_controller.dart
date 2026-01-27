@@ -182,8 +182,14 @@ class SellerProfileController extends GetxController {
     addressController.text = profileData.value?.user?.address ?? "";
     zipController.text = profileData.value?.user?.zipCode ?? "";
 
-    totalExperience.text =
-        profileData.value?.user?.totalExperience.toString() ?? "";
+    if((profileData.value?.user?.totalExperience!=null))
+    {
+      totalExperience.text=profileData.value?.user?.totalExperience.toString()??'';
+    }
+    else{
+
+      totalExperience.text="0";
+    }
     // Business Details fields from seller profile
     contactPersonController.text = resellerProfile.value?.contactName ?? "";
     contactPhoneController.text = resellerProfile.value?.contactPhone ?? "";

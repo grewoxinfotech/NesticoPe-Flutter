@@ -24,6 +24,7 @@ import 'package:housing_flutter_app/modules/property/controllers/recommended_pro
 import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 import 'package:housing_flutter_app/modules/seller/view/widget/seller_list.dart';
+import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../app/constants/color_res.dart';
@@ -38,6 +39,10 @@ import '../../../search_property/controller/search_controller.dart';
 import '../../../search_property/model/search_model.dart';
 import '../../controllers/contractor_profile_controller/contractor_profile_controller.dart';
 import '../../widgets/all_categories_section.dart';
+import '../../widgets/all_news_&_articles_screen.dart';
+
+// import '../../widgets/success_srory_detail_screen.dart';
+import '../../widgets/partner_success_stories_detail_screen.dart';
 import '../../widgets/top_categories_section.dart';
 import '../../widgets/unified_comparison_floating_button.dart';
 import '../../../../data/network/builder/model/builder_model.dart';
@@ -344,7 +349,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _buildRecommendedProperties(),
         _buildCitySection(),
         _buildExploreProjects(),
-        const SizedBox(height: 20),
+        const SizedBox(height: 15),
         _buildFurnishingTypeSection(),
         _buildTopProperties(),
         _buildTopProjectsInCity(),
@@ -353,11 +358,351 @@ class _HomeScreenState extends State<HomeScreen> {
         _buildTopCategories(),
         _buildPlatformServices(),
         _buildNewsAndArticles(),
-        const SizedBox(height: 20),
+        _resellerSuccessStories(),
+        // const SizedBox(height: 15),
         _buildWhyChooseUs(),
         _buildReviewsAndTestimonials(),
       ],
     );
+  }
+
+  Widget _resellerSuccessStories() {
+    return Obx(() {
+      if (searchHistoryController.isLoading.value &&
+          searchHistoryController.items.isEmpty) {
+        return Column(
+          children: [
+            const SizedBox(height: 15),
+            const TitleWithViewAll(
+              title: "Our Partners' Achievements",
+              showViewAll: false,
+            ),
+            const SizedBox(height: 6),
+            const ContractorCardShimmer(),
+          ],
+        );
+      }
+
+      if (searchHistoryController.items.isEmpty) {
+        return const SizedBox.shrink();
+      }
+
+      return Column(
+        children: [
+          const TitleWithViewAll(
+            title: "Our Partners' Achievements",
+            showViewAll: false,
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            height: 180,
+            child: ListView.separated(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              separatorBuilder: (context, index) => const SizedBox(width: 12),
+              scrollDirection: Axis.horizontal,
+              itemCount: searchHistoryController.items.length,
+              itemBuilder: (context, index) {
+                final data = searchHistoryController.items[index];
+
+                return GestureDetector(
+                  onTap: () {
+                     Get.to(
+                      () => ResellerSuccessDetailScreen(successStory: data),
+                    );
+                  /*  Get.defaultDialog(
+                      title: "",
+                      contentPadding: const EdgeInsets.all(16),
+                      backgroundColor: Colors.white,
+                      radius: 16,
+                      content: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight:
+                              MediaQuery.of(context).size.height *
+                              0.75, // max 75% of screen height
+                        ),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Optional: Image at top
+                              if (data.image != null)
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.network(
+                                    data.image!,
+                                    height: 150,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              if (data.image != null)
+                                const SizedBox(height: 16),
+
+                              // Title
+                              Text(
+                                data.title ?? "No Title",
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.body,
+                                  fontWeight: AppFontWeights.semiBold,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+
+                              // Achievement with background
+                              if (data.achievement != null)
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(12),
+                                  margin: const EdgeInsets.only(bottom: 12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue.shade50,
+                                    // Light background color
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    data.achievement!,
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.bodySmall,
+                                      fontWeight: AppFontWeights.medium,
+                                      color: Colors.blue.shade900,
+                                    ),
+                                  ),
+                                ),
+
+                              // Description with background
+                              if (data.description != null)
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(12),
+                                  margin: const EdgeInsets.only(bottom: 12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade100,
+                                    // Light grey background
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    data.description!,
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.bodySmall,
+                                      fontWeight: AppFontWeights.medium,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ),
+
+                              // Additional info
+                              if (data.createdAt != null)
+                                Text(
+                                  "Created at: ${Formatter.formatDate(data.createdAt!.toIso8601String())}",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: ColorRes.leadGreyColor.shade600,
+                                    fontWeight: AppFontWeights.medium,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      actions: [
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () => Get.back(),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: ColorRes.primary,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              elevation: 2,
+                            ),
+                            child: const Text(
+                              "Close",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );*/
+                  },
+                  child: Container(
+                    width: 240,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: ColorRes.leadGreyColor.shade300,
+                        width: 1,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 🖼 Small image + title row
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                data.image ?? '',
+                                height: 38,
+                                width: 38,
+                                fit: BoxFit.cover,
+                                errorBuilder:
+                                    (_, __, ___) => Container(
+                                      height: 38,
+                                      width: 38,
+                                      color: Colors.grey[300],
+                                      child: const Icon(Icons.person, size: 20),
+                                    ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                data.title ?? '',
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.black87,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+
+                        // 📄 Description
+                        Text(
+                          '${data.description}' ?? '',
+                          style: const TextStyle(
+                            fontSize: 10,
+                            color: Colors.black54,
+                          ),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 8),
+
+                        // 🏷 Achievement tag
+               /*         Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.shade50,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            '${data.achievement}' ?? 'Achievement',
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.blueAccent,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),*/
+
+                        Spacer(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "${data.totalDeals ?? 0}",
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                                Text(
+                                  "TOTAL DEALS",
+                                  style: TextStyle(
+                                    fontSize: 9,
+                                    color: ColorRes.leadGreyColor.shade600,
+                                    fontWeight: AppFontWeights.medium,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  "${Formatter.formatPrice(num.tryParse(data.totalValue ?? '0') ?? 0)}",
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                                Text(
+                                  "TOTAL VALUE",
+                                  style: TextStyle(
+                                    fontSize: 9,
+                                    color: ColorRes.leadGreyColor.shade600,
+                                    fontWeight: AppFontWeights.medium,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+
+                        // ⭐ Rating
+                        Row(
+                          children: [
+                            ...List.generate(
+                              5,
+                              (star) => Icon(
+                                Icons.star,
+                                size: 14,
+                                color:
+                                    star < (data.rating ?? 0)
+                                        ? Colors.blueAccent
+                                        : Colors.grey.shade300,
+                              ),
+                            ),
+                            const Spacer(),
+                            Text(
+                              data.updatedAt != null
+                                  ? "Updated: ${DateFormat('yyyy-MM-dd').format(data.updatedAt!)}"
+                                  : '',
+                              style: const TextStyle(
+                                fontSize: 10,
+                                color: Colors.black45,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      );
+    });
   }
 
   Widget _buildPropertyTypeSelector() {
@@ -778,7 +1123,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 8),
             TitleWithViewAll(
               title:
-                  "Top properties in ${propertyController.selectedCity.value}",
+                  "Top Properties in ${propertyController.selectedCity.value}",
               showViewAll: false,
             ),
             const SizedBox(height: 12),
@@ -799,9 +1144,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
       return Column(
         children: [
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
           TitleWithViewAll(
-            title: "Top properties in ${propertyController.selectedCity.value}",
+            title: "Top Properties in ${propertyController.selectedCity.value}",
             showViewAll: true,
             onViewAll: () => Get.to(() => PropertyDetail()),
           ),
@@ -837,7 +1182,7 @@ class _HomeScreenState extends State<HomeScreen> {
           projectController.topProjects.isEmpty) {
         return Column(
           children: [
-            const SizedBox(height: 8),
+            const SizedBox(height: 15),
             TitleWithViewAll(
               title: "Top Project in ${projectController.selectedCity.value}",
               showViewAll: false,
@@ -859,7 +1204,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       return Column(
         children: [
-          const SizedBox(height: 8),
+          const SizedBox(height: 15),
           TitleWithViewAll(
             title: "Top Project in ${projectController.selectedCity.value}",
             showViewAll: true,
@@ -887,7 +1232,7 @@ class _HomeScreenState extends State<HomeScreen> {
           topSellerController.items.isEmpty) {
         return Column(
           children: [
-            const SizedBox(height: 8),
+            const SizedBox(height: 15),
             const TitleWithViewAll(title: "Recommended Sellers"),
             const SizedBox(height: 12),
             const SellerListShimmer(),
@@ -901,7 +1246,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       return Column(
         children: [
-          const SizedBox(height: 8),
+          const SizedBox(height: 15),
           const TitleWithViewAll(title: "Recommended Sellers"),
           const SizedBox(height: 12),
           SellerListWidget(topSeller: topSellerController.items),
@@ -916,9 +1261,9 @@ class _HomeScreenState extends State<HomeScreen> {
           contractorServiceController.items.isEmpty) {
         return Column(
           children: [
-            const SizedBox(height: 20),
+            const SizedBox(height: 15),
             const TitleWithViewAll(
-              title: "Top Contractors",
+              title: "Top Rated Contractors",
               showViewAll: false,
             ),
             const SizedBox(height: 6),
@@ -933,8 +1278,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
       return Column(
         children: [
-          const SizedBox(height: 20),
-          const TitleWithViewAll(title: "Top Contractors", showViewAll: false),
+          const SizedBox(height: 15),
+          const TitleWithViewAll(
+            title: "Top Rated Contractors",
+            showViewAll: false,
+          ),
           const SizedBox(height: 6),
           SizedBox(
             height: 250,
@@ -963,9 +1311,9 @@ class _HomeScreenState extends State<HomeScreen> {
           topCategoryController.categories.isEmpty) {
         return Column(
           children: [
-            const SizedBox(height: 20),
+            const SizedBox(height: 8),
             const TitleWithViewAll(
-              title: "Top Service Categories",
+              title: "Build & Manage Ecosystem",
               showViewAll: true,
             ),
             const SizedBox(height: 12),
@@ -980,9 +1328,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
       return Column(
         children: [
-          const SizedBox(height: 20),
+          const SizedBox(height: 8),
           TitleWithViewAll(
-            title: "Top Service Categories",
+            title: "Build & Manage Ecosystem",
             showViewAll: true,
             onViewAll:
                 () => Get.to(
@@ -1006,7 +1354,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             const SizedBox(height: 12),
             const TitleWithViewAll(
-              title: "Platform Services",
+              title: "Explore Services",
               showViewAll: false,
             ),
             const SizedBox(height: 12),
@@ -1022,10 +1370,7 @@ class _HomeScreenState extends State<HomeScreen> {
       return Column(
         children: [
           const SizedBox(height: 12),
-          const TitleWithViewAll(
-            title: "Platform Services",
-            showViewAll: false,
-          ),
+          const TitleWithViewAll(title: "Explore Services", showViewAll: false),
           const SizedBox(height: 12),
           PlatformServiceHorizontalList(
             services: platformServicesController.items,
@@ -1040,9 +1385,9 @@ class _HomeScreenState extends State<HomeScreen> {
       if (newsController.isLoading.value && newsController.items.isEmpty) {
         return Column(
           children: [
-            const SizedBox(height: 20),
+            const SizedBox(height: 15),
             const TitleWithViewAll(
-              title: "News & Articles",
+              title: "Latest News & Articles",
               showViewAll: false,
             ),
             const SizedBox(height: 12),
@@ -1058,8 +1403,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
       return Column(
         children: [
-          const SizedBox(height: 20),
-          const TitleWithViewAll(title: "News & Articles", showViewAll: false),
+          const SizedBox(height: 15),
+          TitleWithViewAll(
+            title: "Latest News & Articles",
+            showViewAll: true,
+            onViewAll: () {
+              Get.to(
+                () => AllNewsArticleScreen(articles: newsController.items),
+              );
+            },
+          ),
           const SizedBox(height: 12),
           NewsAndArticles(articles: newsController.items),
           const SizedBox(height: 20),
@@ -1071,7 +1424,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildWhyChooseUs() {
     return Column(
       children: [
-        const TitleWithViewAll(title: "Why Choose Us", showViewAll: false),
+        SizedBox(height: 15),
+        TitleWithViewAll(
+          title: "Why Choose Us",
+          showViewAll: true,
+          onViewAll: () {},
+        ),
         const SizedBox(height: 12),
         WhyChooseUsSection(),
       ],
@@ -1091,9 +1449,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
       return Column(
         children: [
-          const SizedBox(height: 20),
+          const SizedBox(height: 15),
           const TitleWithViewAll(
-            title: "Reviews & Testimonials",
+            title: "What Our Customers Say",
             showViewAll: false,
           ),
           const SizedBox(height: 12),

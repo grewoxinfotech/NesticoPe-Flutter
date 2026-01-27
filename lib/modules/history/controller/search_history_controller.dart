@@ -1,9 +1,14 @@
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
+import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
 import 'package:housing_flutter_app/data/network/history/model/search_history_model.dart';
 import 'package:housing_flutter_app/data/network/history/service/search_history_service.dart';
 import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 
-class SearchHistoryController extends GetxController {
+import '../../../data/network/history/model/success_story_model.dart';
+import '../../../data/network/history/service/success_story_service.dart';
+
+class SearchHistoryController extends PaginatedController<BuyerSideResellerSuccessStoryItem> {
   final Rxn<SearchHistoryResponse> searchHistoryResponse = Rxn<SearchHistoryResponse>();
 
   RxBool isLoading = false.obs;
@@ -13,6 +18,7 @@ class SearchHistoryController extends GetxController {
   @override
   onInit() {
     super.onInit();
+    loadInitial();
     fetchSearchHistory();
   }
 
@@ -56,6 +62,18 @@ class SearchHistoryController extends GetxController {
      fetchSearchHistory();
      searchHistoryResponse.value?.data.item.clear();
 
+    }
+  }
+
+  @override
+  Future<PaginationResponse<BuyerSideResellerSuccessStoryItem>> fetchItems(int page) {
+    try{
+      final response=SuccessStoryService.service.fetchResellerSuccessStories(status: 'published',limit: 10);
+      AppLogger.structured("Buyer Side Success Stories", response);
+      return response;
+    }catch(e){
+
+      rethrow;
     }
   }
 }

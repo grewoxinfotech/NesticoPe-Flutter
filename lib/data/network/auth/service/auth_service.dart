@@ -265,7 +265,7 @@ class AuthService {
         return responseData;
       } else {
         throw Exception(
-          responseData['message'] ?? 'Reseller registration failed',
+          responseData['message'] ?? 'Partner registration failed',
         );
       }
     } catch (e) {

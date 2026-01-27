@@ -908,8 +908,8 @@ class ProfileScreen extends StatelessWidget {
         if (UserHelper.isReseller) ...[
           _buildActionButton(
             icon: Icons.dashboard_outlined,
-            label: "Reseller Dashboard",
-            subtitle: 'Navigate to Reseller Panel',
+            label: "Partner Dashboard",
+            subtitle: 'Navigate to Partner Panel',
             onTap: () => Get.to(() => MainNavigationScreen()),
           ),
 

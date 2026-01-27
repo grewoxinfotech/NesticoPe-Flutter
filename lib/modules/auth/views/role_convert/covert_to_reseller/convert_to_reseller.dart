@@ -121,7 +121,7 @@ class ResellerConversionScreen extends StatelessWidget {
                       children: [
                         // Title
                         Text(
-                          "Become a Reseller",
+                          "Become a Partner",
                           style: TextStyle(
                             fontFamily: 'Exo',
                             color: ColorRes.primary,
@@ -233,7 +233,7 @@ class ResellerConversionScreen extends StatelessWidget {
                                             MainAxisAlignment.center,
                                         children: [
                                           Text(
-                                            "Confirm - Convert to Reseller",
+                                            "Confirm - Convert to Partner",
                                             style: TextStyle(
                                               fontFamily: 'Exo',
                                               fontSize: 16,

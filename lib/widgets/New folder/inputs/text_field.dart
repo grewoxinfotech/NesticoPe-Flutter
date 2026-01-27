@@ -111,63 +111,59 @@ class NesticoPeTextField extends StatelessWidget {
             ],
           ),
         AppSpacing.verticalSmall,
-        GestureDetector(
+        TextFormField(
+          controller: controller,
+          validator: validator,
+          obscureText: obscureText,
+          keyboardType: keyboardType,
+          maxLength: maxLength,
           onTap: onTap,
-          child: TextFormField(
-            controller: controller,
-            validator: validator,
-            obscureText: obscureText,
-            keyboardType: keyboardType,
-            maxLength: maxLength,
-            maxLines: maxLines,
-            enabled: enabled,
-            readOnly: readOnly,
-            focusNode: focusNode,
-            textInputAction: textInputAction,
-            onChanged: onChanged,
-            textCapitalization: textCapitalization,
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            initialValue: initialValue,
-            minLines: minLines,
-            // autovalidateMode: autovalidateMode ?? AutovalidateMode.disabled,
-            inputFormatters: formatter,
-            style: TextStyle(
-              fontSize: AppFontSizes.bodySmall,
-              color: Get.theme.colorScheme.onSurface,
-              fontWeight: AppFontWeights.medium,
+          maxLines: maxLines,
+          enabled: enabled,
+          readOnly: readOnly,
+          focusNode: focusNode,
+          textInputAction: textInputAction,
+          onChanged: onChanged,
+          textCapitalization: textCapitalization,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          // autovalidateMode: autovalidateMode ?? AutovalidateMode.disabled,
+          inputFormatters: formatter,
+          style: TextStyle(
+            fontSize: AppFontSizes.bodySmall,
+            color: Get.theme.colorScheme.onSurface,
+            fontWeight: AppFontWeights.medium,
+          ),
+          decoration: InputDecoration(
+            contentPadding: const EdgeInsets.all(AppPadding.small),
+            filled: true,
+            fillColor:
+                enabled
+                    ? Get.theme.colorScheme.surface
+                    : Get.theme.colorScheme.surface.withAlpha(128),
+            hintText: hintText,
+            hintStyle: TextStyle(
+              color: Get.theme.colorScheme.onSurface.withAlpha(128),
+              fontSize: AppFontSizes.bodyMedium,
+              fontWeight: AppFontWeights.regular,
             ),
-            decoration: InputDecoration(
-              contentPadding: const EdgeInsets.all(AppPadding.small),
-              filled: true,
-              fillColor:
-                  enabled
-                      ? Get.theme.colorScheme.surface
-                      : Get.theme.colorScheme.surface.withAlpha(128),
-              hintText: hintText,
-              hintStyle: TextStyle(
-                color: Get.theme.colorScheme.onSurface.withAlpha(128),
-                fontSize: AppFontSizes.bodyMedium,
-                fontWeight: AppFontWeights.regular,
-              ),
-              prefixIcon:
-                  prefixIcon != null
-                      ? Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Icon(prefixIcon, size: 20, color: iconColor),
-                      )
-                      : null,
-              prefixIconConstraints: const BoxConstraints(minWidth: 40),
-              suffixIcon: suffixIcon,
-              enabledBorder: tile(Get.theme.dividerColor),
-              focusedBorder: tile(Get.theme.colorScheme.primary),
-              errorBorder: tile(Get.theme.colorScheme.error),
-              focusedErrorBorder: tile(Get.theme.colorScheme.error),
-              disabledBorder: tile(Get.theme.dividerColor),
-              errorStyle: TextStyle(
-                color: Get.theme.colorScheme.error,
-                fontSize: AppFontSizes.small,
-                fontWeight: AppFontWeights.semiBold,
-              ),
+            prefixIcon:
+                prefixIcon != null
+                    ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Icon(prefixIcon, size: 20, color: iconColor),
+                    )
+                    : null,
+            prefixIconConstraints: const BoxConstraints(minWidth: 40),
+            suffixIcon: suffixIcon,
+            enabledBorder: tile(Get.theme.dividerColor),
+            focusedBorder: tile(Get.theme.colorScheme.primary),
+            errorBorder: tile(Get.theme.colorScheme.error),
+            focusedErrorBorder: tile(Get.theme.colorScheme.error),
+            disabledBorder: tile(Get.theme.dividerColor),
+            errorStyle: TextStyle(
+              color: Get.theme.colorScheme.error,
+              fontSize: AppFontSizes.small,
+              fontWeight: AppFontWeights.semiBold,
             ),
           ),
         ),

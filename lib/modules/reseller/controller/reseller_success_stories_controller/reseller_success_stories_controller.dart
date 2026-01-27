@@ -273,22 +273,38 @@ class ResellerSuccessStoryController
 
   Future<void> builderImagePicker() async {
     try {
-      XFile? files = await ImagePicker().pickImage(
+      // Show loading indicator
+      Get.dialog(
+        const Center(
+          child: CircularProgressIndicator(),
+        ),
+        barrierDismissible: false,
+      );
+
+      // Simulate picking image
+      XFile? file = await ImagePicker().pickImage(
         source: ImageSource.gallery,
         imageQuality: 80,
         maxWidth: 1024,
         maxHeight: 1024,
       );
 
-      if (files != null) {
-        imagePath.value = File(files.path);
+      // Dismiss loader
+      if (Get.isDialogOpen ?? false) Get.back();
+
+      if (file != null) {
+        imagePath.value = File(file.path);
       }
     } catch (e) {
+      // Close loader if open
+      if (Get.isDialogOpen ?? false) Get.back();
+
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
-        message: 'Failed to pick images: $e',
+        message: 'Failed to pick image: $e',
         contentType: ContentType.failure,
       );
     }
   }
+
 }

@@ -278,7 +278,7 @@ class SubscriptionPlansScreen extends StatelessWidget {
       case 'sellerBuilder':
         return 'Become a Seller';
       case 'reseller':
-        return 'Become a Reseller';
+        return 'Become a Partner';
       case 'contractor':
         return 'Become a Contractor';
       default:

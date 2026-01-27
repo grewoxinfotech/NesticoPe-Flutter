@@ -1,12 +1,17 @@
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/app/utils/svg_widget.dart';
 import 'package:housing_flutter_app/data/network/reseller/reseller_success_stories/reseller_success_stories_model.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/widget/dashboard_layout.dart';
+import 'package:housing_flutter_app/modules/property_rating/view/widget/read_more_or_less.dart';
 import 'package:housing_flutter_app/modules/reseller/view/profile/reseller_profile.dart';
 import 'package:housing_flutter_app/modules/reseller/view/reseller_success_stories/add_reseller_success_stories_screen.dart';
 import 'package:housing_flutter_app/modules/reseller/view/subscription_plan/reseller_subscription_plan.dart';
@@ -14,6 +19,7 @@ import 'package:housing_flutter_app/modules/seller/module/lead_screen/controller
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
 import 'package:housing_flutter_app/modules/reseller/widget/graph/linear_graph.dart';
 import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../../app/constants/size_manager.dart';
 import '../../../app/manager/property/property_pricemanager.dart';
@@ -33,6 +39,9 @@ import '../../seller/module/lead_screen/views/lead_screen_enhanced.dart'
 import '../controller/dashborad_controller/dashboard_controller.dart';
 import '../model/dashboard/dashboard_model.dart';
 
+import '../widget/dashboard_widget/animated_builder_widget.dart';
+import '../widget/dashboard_widget/level_card_motion.dart';
+import '../widget/dashboard_widget/partner_milestone_reward_screen.dart';
 import 'lead/lead_screen.dart';
 import 'lead_overview/lead_detail.dart';
 import 'listing/property_listing.dart';
@@ -1091,6 +1100,16 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
                             ),
 
                             const SizedBox(height: 20),
+                            PartnerMilestoneRewardScreen(
+                              milestones:
+                                  controller
+                                      .resellerInsightsModel
+                                      .value
+                                      ?.data
+                                      .milestones ??
+                                  Milestones.fromJson({}),
+                            ),
+                            const SizedBox(height: 20),
 
                             Obx(
                               () => buildBestResellerOnTheMonth(
@@ -1161,77 +1180,6 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
                                 title: 'Leaderboard Rankings',
                                 subtitle: 'Top performers across regions',
                                 filters: ['All', 'Monthly'],
-                                // leaderboardData: [
-                                //   {
-                                //     'rank': 1,
-                                //     'name': 'Rajesh Kumar',
-                                //     'level': 'Platinum Level',
-                                //     'city': 'Ahmedabad',
-                                //     'sales': '₹35L',
-                                //     'deals': '70',
-                                //     'color': ColorRes.orangeColor.withOpacity(
-                                //       0.05,
-                                //     ),
-                                //     'borderColor': ColorRes.orangeColor
-                                //         .withOpacity(0.3),
-                                //     'medalIcon': Icons.emoji_events,
-                                //   },
-                                //   {
-                                //     'rank': 2,
-                                //     'name': 'Priya Sharma',
-                                //     'level': 'Platinum Level',
-                                //     'city': 'Ahmedabad',
-                                //     'sales': '₹32L',
-                                //     'deals': '64',
-                                //     'color': ColorRes.orangeColor.withOpacity(
-                                //       0.05,
-                                //     ),
-                                //     'borderColor': ColorRes.orangeColor
-                                //         .withOpacity(0.3),
-                                //     'medalIcon': Icons.emoji_events,
-                                //   },
-                                //   {
-                                //     'rank': 3,
-                                //     'name': 'You',
-                                //     'level': 'Gold Level',
-                                //     'city': 'Ahmedabad',
-                                //     'sales': '₹29L',
-                                //     'deals': '57',
-                                //     'color': ColorRes.green.withOpacity(0.05),
-                                //     'borderColor': ColorRes.green.withOpacity(
-                                //       0.3,
-                                //     ),
-                                //     'medalIcon': Icons.emoji_events,
-                                //     'isCurrentUser': true,
-                                //   },
-                                //   {
-                                //     'rank': 4,
-                                //     'name': 'Amit Patel',
-                                //     'level': 'Gold Level',
-                                //     'city': 'Ahmedabad',
-                                //     'sales': '₹24L',
-                                //     'deals': '48',
-                                //     'color': ColorRes.leadGreyColor.withOpacity(
-                                //       0.05,
-                                //     ),
-                                //     'borderColor': ColorRes.leadGreyColor
-                                //         .withOpacity(0.3),
-                                //     'medalIcon': null,
-                                //   },
-                                //   {
-                                //     'rank': 5,
-                                //     'name': 'Neha Desai',
-                                //     'level': 'Silver Level',
-                                //     'city': 'Ahmedabad',
-                                //     'sales': '₹21L',
-                                //     'deals': '42',
-                                //     'color': ColorRes.blueColor.withOpacity(0.05),
-                                //     'borderColor': ColorRes.blueColor.withOpacity(
-                                //       0.3,
-                                //     ),
-                                //     'medalIcon': null,
-                                //   },
-                                // ],
                                 leaderboardData:
                                     controller
                                         .resellerCityWiseLeaderBoard
@@ -1348,7 +1296,7 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
                             buildCommissionGraph(controller),
                             // const SizedBox(height: 20),
                             // _buildRecentLeads(controller),
-                            const SizedBox(height: 15),
+                            /*   const SizedBox(height: 15),
                             // buildTopProducts(controller),
                             Obx(() {
                               final successStories =
@@ -1467,7 +1415,7 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
                                       ),
                                     ],
                                   );
-                            }),
+                            }),*/
                           ],
                         ),
                       )
@@ -1710,7 +1658,7 @@ class SuccessStoryCard extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    Text(
+                  /*  Text(
                       story.description,
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
@@ -1719,7 +1667,8 @@ class SuccessStoryCard extends StatelessWidget {
                         color: ColorRes.leadGreyColor.shade600,
                         height: 1.4,
                       ),
-                    ),
+                    ),*/
+                    ReadMoreClass(description: story.description, trimLines: 3, size:AppFontSizes.caption , colorClickableText: ColorRes.primary),
 
                     const SizedBox(height: 8),
                     Divider(height: 1, color: ColorRes.border),
@@ -1749,7 +1698,8 @@ class SuccessStoryCard extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 6),
-                        Text(
+                        ReadMoreClass(description: story.achievement, trimLines: 3, size:AppFontSizes.caption , colorClickableText: ColorRes.primary),
+                       /* Text(
                           story.achievement,
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
@@ -1758,7 +1708,7 @@ class SuccessStoryCard extends StatelessWidget {
                             color: ColorRes.leadGreyColor.shade600,
                             height: 1.4,
                           ),
-                        ),
+                        ),*/
                       ],
                     ),
 
@@ -2608,10 +2558,13 @@ Widget buildTopPropertyForGoodCommission(
       children: [
         Row(
           children: [
-            Icon(
-              Icons.apartment_outlined,
-              color: ColorRes.leadIndigoColor,
-              size: 24,
+            TiltingIcon(
+
+              icon: Icon(
+                Icons.apartment_outlined,
+                color: ColorRes.leadIndigoColor,
+                size: 24,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -2694,7 +2647,10 @@ Widget buildTopPropertyForGoodCommission(
                                 image: DecorationImage(
                                   image: NetworkImage(
                                     (property.propertyMedia?.images != null &&
-                                        property.propertyMedia!.images!.isNotEmpty)
+                                            property
+                                                .propertyMedia!
+                                                .images!
+                                                .isNotEmpty)
                                         ? property.propertyMedia!.images!.first
                                         : 'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg',
                                   ),
@@ -2703,7 +2659,6 @@ Widget buildTopPropertyForGoodCommission(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
-
                           ],
                         ),
                         const SizedBox(width: 12),
@@ -2941,7 +2896,14 @@ Widget buildLeadGraph(DashboardController controller) {
       children: [
         Row(
           children: [
-            Icon(Icons.area_chart_outlined, color: ColorRes.green, size: 24),
+
+            TiltingIcon(
+              direction: TiltDirection.horizontal,
+              icon: Icon(
+                Icons.area_chart_outlined, color: ColorRes.green,
+                size: 24,
+              ),
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -2974,7 +2936,12 @@ Widget buildLeadGraph(DashboardController controller) {
         SizedBox(
           height: 200,
           width: double.infinity,
-          child: MonthlyBarChart(monthlyData: monthlyData, months: months,color: ColorRes.green,),
+          child: MonthlyBarChart(
+            monthlyData: monthlyData,
+            months: months,
+            color: ColorRes.green,
+            isAmount: false,
+          ),
         ),
       ],
     ),
@@ -3040,10 +3007,13 @@ Widget buildCommissionGraph(DashboardController controller) {
       children: [
         Row(
           children: [
-            Icon(
-              Icons.area_chart_outlined,
-              color: ColorRes.lightPurpleColor,
-              size: 24,
+            TiltingIcon(
+              direction: TiltDirection.horizontal,
+              icon: Icon(
+                Icons.area_chart_outlined,
+                color: ColorRes.lightPurpleColor,
+                size: 24,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -3419,10 +3389,13 @@ Widget buildReferralProgram({
         // Header Section
         Row(
           children: [
-            Icon(
-              Icons.card_giftcard_outlined,
-              color: ColorRes.purpleColor,
-              size: 28,
+           TiltingIcon(
+direction: TiltDirection.horizontal,
+              icon: Icon(
+                Icons.card_giftcard_outlined,
+                color: ColorRes.purpleColor,
+                size: 24,
+              ),
             ),
             const SizedBox(width: 8),
             Expanded(
@@ -3729,7 +3702,16 @@ Widget buildLeaderBoardRanking({
         // Header Section
         Row(
           children: [
-            Icon(Icons.emoji_events_outlined, color: headerIconColor, size: 28),
+        /*    Icon(Icons.emoji_events_outlined, color: headerIconColor, size: 28),*/
+            TiltingIcon(
+tiltAmount: 0.5,
+              direction: TiltDirection.vertical,
+              icon: Icon(
+                Icons.emoji_events_outlined,
+                color:headerIconColor,
+                size: 24,
+              ),
+            ),
             const SizedBox(width: 8),
             Expanded(
               child: Column(
@@ -3774,9 +3756,8 @@ Widget buildLeaderBoardRanking({
                       vertical: 8,
                     ),
                     filled: true,
-                    fillColor: ColorRes.orangeColor.withOpacity(
-                      0.1,
-                    ), // background color
+                    fillColor: ColorRes.orangeColor.withOpacity(0.1),
+                    // background color
                     // ✅ Borders for different states
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -3858,9 +3839,8 @@ Widget buildLeaderBoardRanking({
                       vertical: 8,
                     ),
                     filled: true,
-                    fillColor: ColorRes.orangeColor.withOpacity(
-                      0.1,
-                    ), // background color
+                    fillColor: ColorRes.orangeColor.withOpacity(0.1),
+                    // background color
                     // ✅ Borders for different states
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -3959,9 +3939,8 @@ Widget buildLeaderBoardRanking({
                 vertical: 8,
               ),
               filled: true,
-              fillColor: ColorRes.orangeColor.withOpacity(
-                0.1,
-              ), // background color
+              fillColor: ColorRes.orangeColor.withOpacity(0.1),
+              // background color
               // ✅ Borders for different states
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -4489,7 +4468,14 @@ Widget resellerLeaderBoard({
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              Icon(Icons.emoji_events_outlined, color: headerColor, size: 24),
+              TiltingIcon(
+                icon: Icon(
+                  Icons.emoji_events_outlined,
+                  color: headerColor,
+                  size: 24,
+                ),
+              ),
+
               const SizedBox(width: 8),
               Text(
                 title,
@@ -4514,10 +4500,12 @@ Widget resellerLeaderBoard({
           ),
           child: Row(
             children: [
-              Icon(
-                Icons.emoji_events_outlined,
-                color: bannerIconColor,
-                size: 40,
+              TiltingIcon(
+                icon: Icon(
+                  Icons.emoji_events_outlined,
+                  color: bannerIconColor,
+                  size: 24,
+                ),
               ),
               const SizedBox(width: 12),
               Column(
@@ -4694,10 +4682,12 @@ Widget buildBestResellerOnTheMonth({
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Icon(
-              Icons.emoji_events,
-              color: ColorRes.homeAmber.shade800,
-              size: 35,
+            TiltingIcon(
+              icon: Icon(
+                Icons.emoji_events_outlined,
+                color: ColorRes.orangeColor,
+                size: 24,
+              ),
             ),
             const SizedBox(width: 8),
             Column(
@@ -4711,7 +4701,7 @@ Widget buildBestResellerOnTheMonth({
                       color: ColorRes.textPrimary,
                     ),
                     children: [
-                      const TextSpan(text: 'Best Reseller '),
+                      const TextSpan(text: 'Best Partner '),
                       TextSpan(
                         text: 'of the Month',
                         style: TextStyle(color: ColorRes.error),
@@ -4793,10 +4783,12 @@ Widget buildBestResellerOnTheMonth({
           ),
           child: Row(
             children: [
-              Icon(
-                Icons.emoji_events,
-                color: ColorRes.homeAmber.shade800,
-                size: 20,
+              TiltingIcon(
+                icon: Icon(
+                  Icons.emoji_events_outlined,
+                  color: ColorRes.orangeColor,
+                  size: 24,
+                ),
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -4949,13 +4941,18 @@ Widget buildDailyGoals({
           ),
           child: Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: accentColor.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(12),
+            AnimatedContainerScaler(
+            minScale: 0.95,
+            maxScale: 1.10,
+            duration: const Duration(seconds: 2),
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: accentColor.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(Icons.bolt, color: accentColor, size: 24),
                 ),
-                child: Icon(Icons.bolt, color: accentColor, size: 24),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -5563,7 +5560,7 @@ Widget buildTopProducts(DashboardController controller) {
             ),
             TextButton(
               onPressed: () {
-                Get.to(() => ResellerLeadScreen(isViewAll: true,));
+                Get.to(() => ResellerLeadScreen(isViewAll: true));
               },
               style: TextButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
@@ -5945,7 +5942,7 @@ Widget buildMonthlyPerformance({
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Level Card
-            Container(
+            /*Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -5993,7 +5990,9 @@ Widget buildMonthlyPerformance({
                   ),
                 ],
               ),
-            ),
+            ),*/
+            LevelCard(levelName: levelName, benefits: benefits),
+
             const SizedBox(height: 16),
 
             // Progress and Stats
@@ -6004,6 +6003,14 @@ Widget buildMonthlyPerformance({
                 Row(
                   children: [
                     Icon(Icons.bolt, color: ColorRes.orangeColor, size: 20),
+
+                    /*AnimatedIconScaler(
+                      icon: Icons.bolt,
+                      color: ColorRes.orangeColor,
+                      minSize: 20,
+                      maxSize: 25,
+                      duration: Duration(seconds: 5),
+                    ),*/
                     const SizedBox(width: 6),
                     Text(
                       'Progress to ($streakDays) Level',
@@ -6033,7 +6040,7 @@ Widget buildMonthlyPerformance({
                   ],
                 ),
                 const SizedBox(height: 8),
-                ClipRRect(
+                /*  ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: LinearProgressIndicator(
                     value: progressValue,
@@ -6043,8 +6050,37 @@ Widget buildMonthlyPerformance({
                     ),
                     minHeight: 8,
                   ),
-                ),
-                const SizedBox(height: 6),
+                ),*/
+                /* ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Stack(
+                    children: [
+                      TweenAnimationBuilder<double>(
+                        tween: Tween<double>(begin: 0, end: progressValue),
+                        duration: const Duration(milliseconds: 800),
+                        curve: Curves.easeInOut,
+                        builder: (context, value, _) => LinearProgressIndicator(
+                          value: value,
+                          backgroundColor: ColorRes.leadGreyColor.withOpacity(0.2),
+                          valueColor: AlwaysStoppedAnimation<Color>(ColorRes.orangeColor),
+                          minHeight: 8,
+                        ),
+                      ),
+                      // ✨ Shimmer effect overlay
+                      Positioned.fill(
+                        child: Shimmer.fromColors(
+                          baseColor: Colors.transparent,
+                          highlightColor: Colors.white.withOpacity(0.3),
+                          period: const Duration(seconds: 4),
+                          child: Container(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),*/
+                ProgressWithLabel(progressValue: progressValue),
+
+                /*  const SizedBox(height: 6),
                 Align(
                   alignment: Alignment.centerRight,
                   child: Text(
@@ -6055,50 +6091,325 @@ Widget buildMonthlyPerformance({
                       color: ColorRes.leadGreyColor.shade600,
                     ),
                   ),
-                ),
+                ),*/
 
                 // Unlock Message
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: ColorRes.homeAmber.withOpacity(0.08),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: ColorRes.homeAmber.withOpacity(0.3),
-                      width: 1,
+                SizedBox(height: 50),
+                /*   AnimatedContainerScaler(
+                  minScale: 0.9,
+                  maxScale: 1.05,
+                  duration: const Duration(seconds: 2),
+                  child:        Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
                     ),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.emoji_events_outlined,
-                        color: ColorRes.homeAmber.shade700,
-                        size: 14,
+                    decoration: BoxDecoration(
+                      color: ColorRes.homeAmber.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: ColorRes.homeAmber.withOpacity(0.3),
+                        width: 1,
                       ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          '$unlockMessage',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: AppFontSizes.small,
-                            color: ColorRes.homeAmber.shade700,
-                            fontWeight: AppFontWeights.medium,
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.emoji_events_outlined,
+                          color: ColorRes.homeAmber.shade700,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            '$unlockMessage',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: AppFontSizes.small,
+                              color: ColorRes.homeAmber.shade700,
+                              fontWeight: AppFontWeights.medium,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
+
+                ),*/
+                AnimatedContainerScaler(
+                  minScale: 0.95,
+                  maxScale: 1.10,
+                  duration: const Duration(seconds: 2),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      /*gradient: LinearGradient(
+                        colors: [
+                          ColorRes.homeAmber.withOpacity(0.15),
+                          Colors.white.withOpacity(0.2),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),*/
+                      boxShadow: [
+                        BoxShadow(
+                          color: ColorRes.homeAmber.withOpacity(0.25),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                      border: Border.all(
+                        color: ColorRes.homeAmber.withOpacity(0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: ColorRes.homeAmber,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: TiltingIcon(
+                            icon: Icon(
+                              Icons.workspace_premium,
+                              color: Colors.white,
+                              size: 24,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            unlockMessage,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: AppFontSizes.small,
+                              color: Color(0xffC87E41),
+                              fontWeight: AppFontWeights.semiBold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 12),
+              ],
+            ),
+          ],
+        ),
+
+        // 🌟 Level Up Journey Section
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                RotationIconWidget(
+                  duration: const Duration(seconds: 3),
+                  minScale: 0.6,
+                  maxScale: 0.7,
+                  child: Container(
+                    padding: EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: ColorRes.homeAmber,
+                    ),
+                    child: Icon(
+                      Icons.emoji_events_rounded,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                  ),
+                ),
+                // const SizedBox(width: 6),
+                Text(
+                  "Level Up Journey",
+                  style: TextStyle(
+                    fontSize: AppFontSizes.small,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.textPrimary,
+                  ),
+                ),
+              ],
+            ),
+            // 🔸 Level Progress Indicator (Current → Next)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // 🏅 Current Level
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ScaleIconWidget(
+                      duration: const Duration(seconds: 3),
+                      minScale: 0.6,
+                      maxScale: 0.7,
+                      child: Container(
+                        padding: EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: ColorRes.white,
+                          border: Border.all(
+                            color: ColorRes.leadGreyColor.shade300,
+                            width: 1,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.08),
+                              // soft shadow
+                              blurRadius: 10,
+                              // how blurry the shadow is
+                              offset: Offset(0, 4),
+                              // position of shadow (x, y)
+                              spreadRadius: 1, // how far the shadow spreads
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          Icons.emoji_events_rounded,
+                          color: ColorRes.purpleColor,
+                          size: 30,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      levelName, // 👈 Current Level
+                      style: TextStyle(
+                        fontSize: AppFontSizes.bodySmall,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.purpleColor,
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Progress line with gradient glow
+                Expanded(
+                  child: ProgressWithLabel(
+                    progressValue: progressValue,
+                    progressColor: ColorRes.orangeColor,
+                    backgroundColor: ColorRes.orangeColor,
+                    labelColor: ColorRes.white,
+                    thickness: 4,
+                  ),
+                ),
+
+                // 🏆 Next Level
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ScaleIconWidget(
+                      duration: const Duration(seconds: 3),
+                      minScale: 0.6,
+                      maxScale: 0.7,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          // 🏆 Trophy Container
+                          DottedBorder(
+                            options: RoundedRectDottedBorderOptions(
+                              dashPattern: [10, 5],
+                              strokeWidth: 2,
+                              radius: Radius.circular(16),
+                              color: ColorRes.leadGreyColor.shade600,
+                              padding: EdgeInsets.all(16),
+                            ), // length of dash & gap
+                            child: Icon(
+                              Icons.emoji_events_outlined,
+                              color: ColorRes.leadGreyColor.shade600,
+                              size: 30,
+                            ),
+                          ),
+
+                          // 🔒 Lock Icon Overlay
+                          Positioned(
+                            right: -4,
+                            bottom: -4,
+                            /* child: AppSvgIcon(assetName: "lock-svgrepo-com.svg",folder: "amenities",size: 40,)*/
+                            child: SvgPicture.asset(
+                              'assets/amenities/lock-svgrepo-com.svg',
+                              width: 24,
+                              height: 24,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      "$streakDays",
+                      style: TextStyle(
+                        fontSize: AppFontSizes.bodySmall,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.leadGreyColor.shade600,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
           ],
         ),
-        const SizedBox(height: 25),
+        SizedBox(height: 20),
+        DottedBorder(
+          options: RoundedRectDottedBorderOptions(
+            dashPattern: [5, 5],
+            strokeWidth: 1,
+            radius: Radius.circular(16),
+            color: ColorRes.orangeColor.shade600,
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF8F0), // light orange background
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: const [
+                    Icon(
+                      CupertinoIcons.gift,
+                      color: Color(0xFFFF9800),
+                      size: 18,
+                    ),
+                    SizedBox(width: 6),
+                    Text(
+                      "Unlock at Bronze:",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF8B4500),
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    _buildTag("Higher Commission"),
+                    _buildTag("Priority Leads"),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 20),
 
         // Commission and Leads Stats
         Column(
@@ -6128,6 +6439,24 @@ Widget buildMonthlyPerformance({
           ],
         ),
       ],
+    ),
+  );
+}
+
+Widget _buildTag(String text) {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+    decoration: BoxDecoration(
+      color: const Color(0xFFFFEED9),
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: Text(
+      text,
+      style: const TextStyle(
+        color: Color(0xFFB25B00),
+        fontWeight: FontWeight.w500,
+        fontSize: 11,
+      ),
     ),
   );
 }
@@ -6328,7 +6657,7 @@ class MainNavigationScreen extends StatelessWidget {
     final screens = [
       ResellerDashboardScreen(),
       ProductListingScreen(),
-      ResellerLeadScreen(isViewAll: true,),
+      ResellerLeadScreen(isViewAll: true),
       ResellerSubscriptionPlanScreen(),
       ResellerProfileScreen(),
     ];

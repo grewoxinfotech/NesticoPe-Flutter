@@ -102,7 +102,7 @@ class InsightsScreen extends StatelessWidget {
               SizedBox(height: 16),
 
               _buildGuestRoleTile(
-                title: "Reseller Plans",
+                title: "Partner Plans",
                 subtitle: "Join our partners program",
                 icon: Icons.handshake_outlined,
                 iconColor: ColorRes.primary,
