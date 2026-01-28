@@ -189,22 +189,28 @@ class ContractorMyService {
       } else {
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
-        NesticoPeSnackBar.showAwesomeSnackbar(
-          title: 'Failed',
-          message: jsonData['message'],
-          contentType: ContentType.failure,
-        );
+        // NesticoPeSnackBar.showAwesomeSnackbar(
+        //   title: 'Failed',
+        //   message: jsonData['message'],
+        //   contentType: ContentType.failure,
+        // );
         print("Failed to load Active: ${response.statusCode}");
         print("Response body: ${response.body}");
-        throw Exception("Failed to load Active");
+        throw Exception(jsonData['message'] ?? "Failed to load Active");
       }
     } catch (e) {
+      final errorMessage =
+          e is Exception
+              ? e.toString().replaceFirst('Exception: ', '')
+              : 'Something went wrong';
+
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
-        message: "Something went wrong",
+        message: errorMessage,
         contentType: ContentType.failure,
       );
-      print("Response body: ${e}");
+
+      print("Error: $e");
       return false;
     }
   }
@@ -235,19 +241,24 @@ class ContractorMyService {
       } else {
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
-        NesticoPeSnackBar.showAwesomeSnackbar(
-          title: 'Failed',
-          message: jsonData['message'],
-          contentType: ContentType.failure,
-        );
+        // NesticoPeSnackBar.showAwesomeSnackbar(
+        //   title: 'Failed',
+        //   message: jsonData['message'],
+        //   contentType: ContentType.failure,
+        // );
         print("Failed to update service: ${response.statusCode}");
         print("Response body: ${response.body}");
-        throw Exception("Failed to update service");
+        throw Exception(jsonData['message'] ?? "Failed to update service");
       }
     } catch (e) {
+      final errorMessage =
+          e is Exception
+              ? e.toString().replaceFirst('Exception: ', '')
+              : 'Something went wrong';
+
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
-        message: "Something went wrong",
+        message: errorMessage,
         contentType: ContentType.failure,
       );
       print("Response body for update service: ${e}");

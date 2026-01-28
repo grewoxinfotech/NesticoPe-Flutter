@@ -50,6 +50,15 @@ class _HireContractorFilterState extends State<HireContractorFilter> {
           controllerProfileData.selectedServiceRating.value.toInt().toString();
     }
 
+    if (controllerProfileData.selectedExperience.value.isNotEmpty) {
+      filters['experience'] = controllerProfileData.selectedExperience.value;
+    }
+
+    if (controllerProfileData.selectedAccountType.value.isNotEmpty) {
+      filters['premiumAccount'] =
+          controllerProfileData.selectedAccountType.value;
+    }
+
     return filters;
   }
 
@@ -124,7 +133,6 @@ class _HireContractorFilterState extends State<HireContractorFilter> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         buildSectionTitle('Service Category'),
-                        const SizedBox(height: 8),
                         NesticoPeDropdownField<String>(
                           value: controllerProfileData.selectedCategoryId.value,
                           hintText: "Select category",
@@ -154,8 +162,9 @@ class _HireContractorFilterState extends State<HireContractorFilter> {
                           },
                           darkText: true,
                         ),
-                        buildSectionTitle('City'),
                         const SizedBox(height: 8),
+
+                        buildSectionTitle('City'),
                         NesticoPeDropdownField<String>(
                           value:
                               controllerProfileData.selectedCity.value.isEmpty
@@ -236,6 +245,81 @@ class _HireContractorFilterState extends State<HireContractorFilter> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: const [Text('0.0'), Text('5.0')],
                         ),
+
+                        const SizedBox(height: 20),
+                        buildSectionTitle('Years of Experience'),
+                        const SizedBox(height: 8),
+
+                        GridView.count(
+                          crossAxisCount: 3,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 2,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          children:
+                              ['1', '2', '3', '4', '5', '5+'].map((exp) {
+                                return Obx(() {
+                                  return filterChip(
+                                    label: '$exp yr${exp == '1' ? '' : 's'}',
+                                    isSelected:
+                                        controllerProfileData
+                                            .selectedExperience
+                                            .value ==
+                                        exp,
+                                    onTap: () {
+                                      controllerProfileData
+                                          .selectedExperience
+                                          .value = exp;
+                                    },
+                                  );
+                                });
+                              }).toList(),
+                        ),
+
+                        const SizedBox(height: 20),
+                        buildSectionTitle('Account Type'),
+                        const SizedBox(height: 8),
+
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Obx(() {
+                                return filterChip(
+                                  label: '⭐ Premium',
+                                  isSelected:
+                                      controllerProfileData
+                                          .selectedAccountType
+                                          .value ==
+                                      'premium',
+                                  onTap: () {
+                                    controllerProfileData
+                                        .selectedAccountType
+                                        .value = 'premium';
+                                  },
+                                );
+                              }),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Obx(() {
+                                return filterChip(
+                                  label: 'Regular',
+                                  isSelected:
+                                      controllerProfileData
+                                          .selectedAccountType
+                                          .value ==
+                                      'regular',
+                                  onTap: () {
+                                    controllerProfileData
+                                        .selectedAccountType
+                                        .value = 'regular';
+                                  },
+                                );
+                              }),
+                            ),
+                          ],
+                        ),
                       ],
                     );
                   }),
@@ -264,6 +348,8 @@ class _HireContractorFilterState extends State<HireContractorFilter> {
                         onPressed: () {
                           Get.back();
                           controllerProfileData.resetFilters();
+                          controllerProfileData.selectedCategoryId.value = '';
+                          controllerProfileData.selectedCategoryName.value = '';
                         },
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
@@ -295,6 +381,8 @@ class _HireContractorFilterState extends State<HireContractorFilter> {
                           //   controllerProfileData.selectedCategoryId.value,
                           //   // controllerProfileData.selectedCategoryName.value,
                           // );
+
+                          filters.remove('category_ui');
 
                           log("Applied Filters: $filters");
                           Get.back(result: filters);
@@ -328,6 +416,38 @@ class _HireContractorFilterState extends State<HireContractorFilter> {
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget filterChip({
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color:
+                isSelected ? ColorRes.primary : ColorRes.grey.withOpacity(0.4),
+            width: isSelected ? 1.5 : 1,
+          ),
+          color:
+              isSelected ? ColorRes.primary.withOpacity(0.08) : ColorRes.white,
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: isSelected ? ColorRes.primary : ColorRes.grey,
           ),
         ),
       ),

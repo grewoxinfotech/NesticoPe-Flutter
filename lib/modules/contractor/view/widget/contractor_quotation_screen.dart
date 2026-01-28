@@ -17,6 +17,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:timeago/timeago.dart' as currencyFormat;
 
 import '../../../../widgets/messages/snack_bar.dart';
+import '../../controller/contractor_referral_controller.dart';
 
 /// Screen for displaying quotation details with action buttons
 class ContractorQuotationScreen extends StatefulWidget {
@@ -796,6 +797,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
   }
 
   void _editQuotation() {
+    Get.put(ContractorReferralController(userId: widget.quotation.user.id));
     Get.to(
       () => ContractorInquiryQuotationScreen(
         quotation: widget.quotation,
@@ -1174,12 +1176,11 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
         barrierColor: Colors.black.withOpacity(0.4), // 🔹 Dim background
       );
 
-
       // Close loading dialog
 
       await _sharePDF(pdf);
       Get.back();
-     /* Get.snackbar(
+      /* Get.snackbar(
         'Success',
         'Quotation PDF generated and ready to share!',
         snackPosition: SnackPosition.BOTTOM,

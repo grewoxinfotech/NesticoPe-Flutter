@@ -14,6 +14,7 @@
         "connectivity_plus",
         "cupertino_icons",
         "device_info_plus",
+        "dotted_border",
         "dropdown_button2",
         "dropdown_search",
         "easy_stepper",
@@ -38,6 +39,7 @@
         "lottie",
         "mime",
         "model_viewer_plus",
+        "month_year_picker",
         "multi_image_picker_view",
         "open_filex",
         "path_provider",
@@ -2188,6 +2190,22 @@
         "path",
         "sqflite_common",
         "sqflite_platform_interface"
+      ]
+    },
+    {
+      "name": "month_year_picker",
+      "version": "0.5.0+1",
+      "dependencies": [
+        "flutter",
+        "flutter_localizations",
+        "intl"
+      ]
+    },
+    {
+      "name": "dotted_border",
+      "version": "3.1.0",
+      "dependencies": [
+        "flutter"
       ]
     }
   ],

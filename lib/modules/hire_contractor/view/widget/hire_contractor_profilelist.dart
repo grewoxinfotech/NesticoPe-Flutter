@@ -70,6 +70,7 @@ class HireContractorProfileList extends StatelessWidget {
               if (result != null) {
                 log("Selected Filters → $result");
                 if (result != null) {
+                  result.remove('city');
                   selectedFilters.value = result;
                   controllerFilter.applyFilters(result);
                 }
@@ -87,8 +88,12 @@ class HireContractorProfileList extends StatelessWidget {
           children: [
             Obx(() {
               // Check if filters are applied
+              // final hasFilters =
+              //     controllerFilter.selectedCategoryName.isNotEmpty &&
+              //     controllerFilter.selectedCategoryId.isNotEmpty;
+
               final hasFilters =
-                  controllerFilter.selectedCategoryName.isNotEmpty &&
+                  selectedFilters.isNotEmpty ||
                   controllerFilter.selectedCategoryId.isNotEmpty;
 
               if (!hasFilters) {
@@ -199,11 +204,14 @@ class HireContractorProfileList extends StatelessWidget {
                                 controllerFilter.selectedCategoryId.value,
                                 controllerFilter.selectedCategoryName.value,
                               ),
-                          child: ListView.builder(
+                          child: ListView.separated(
                             padding: const EdgeInsets.all(16),
                             itemCount: contractors.length,
+                            separatorBuilder:
+                                (context, index) => SizedBox(height: 12),
                             itemBuilder: (context, index) {
                               final item = contractors[index];
+
                               return HireContractorCard(
                                 data: item,
                                 contractor: contractor,
@@ -225,6 +233,345 @@ class HireContractorProfileList extends StatelessWidget {
   }
 }
 
+// class HireContractorCard extends StatefulWidget {
+//   final OverAllContractorItem data;
+//   final TopContractorsController contractor;
+//
+//   HireContractorCard({super.key, required this.data, required this.contractor});
+//
+//   @override
+//   State<HireContractorCard> createState() => _HireContractorCardState();
+// }
+//
+// class _HireContractorCardState extends State<HireContractorCard> {
+//   Contractor? contractorProfile;
+//
+//   @override
+//   void initState() {
+//     // TODO: implement initState
+//     super.initState();
+//     _fetchUserByID();
+//   }
+//
+//   void _fetchUserByID() async {
+//     final userId = widget.data.userId;
+//
+//     contractorProfile = await widget.contractor.getContractorById(userId);
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final compare = Get.put(ContractorCompareManager(), permanent: true);
+//     final user = widget.data;
+//
+//     return GestureDetector(
+//       onTap: () async {
+//         contractorProfile?.username = widget.data.username ?? '';
+//         contractorProfile?.firstName = widget.data.firstName ?? '';
+//         contractorProfile?.lastName = widget.data.lastName ?? '';
+//         contractorProfile?.totalExperience = widget.data.totalExperience ?? 0;
+//         if (contractorProfile != null) {
+//           Get.to(
+//             () => ContractorProfileDetailsScreen(
+//               contractor: contractorProfile ?? Contractor.fromJson({}),
+//             ),
+//           );
+//         } else {
+//           NesticoPeSnackBar.showAwesomeSnackbar(
+//             title: 'Not Found',
+//             message: 'Contractor profile could not be loaded.',
+//             contentType: ContentType.failure,
+//           );
+//         }
+//       },
+//       child: Container(
+//         margin: const EdgeInsets.symmetric(vertical: 8),
+//         padding: const EdgeInsets.all(16),
+//         decoration: BoxDecoration(
+//           color: ColorRes.surface,
+//           borderRadius: BorderRadius.circular(12),
+//           border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+//         ),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             /// ===================== TOP ROW =====================
+//             Row(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 CircleAvatar(
+//                   radius: 26,
+//                   backgroundColor: Colors.grey.shade100,
+//                   backgroundImage:
+//                       (widget.data.profilePic?.isNotEmpty ?? false)
+//                           ? NetworkImage(widget.data.profilePic!)
+//                           : null,
+//                   onBackgroundImageError:
+//                       (widget.data.profilePic?.isNotEmpty ?? false)
+//                           ? (_, __) {} // only active if image is non-null
+//                           : null,
+//                   child:
+//                       (widget.data.profilePic?.isEmpty ?? true)
+//                           ? const Icon(
+//                             Icons.engineering,
+//                             color: Colors.orange,
+//                             size: 28,
+//                           )
+//                           : null,
+//                 ),
+//
+//                 const SizedBox(width: 12),
+//
+//                 /// ===================== NAME & EXPERIENCE =====================
+//                 Expanded(
+//                   child: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: [
+//                       Row(
+//                         children: [
+//                           Text(
+//                             widget.data.username ?? 'Unknown Contractor',
+//                             maxLines: 1,
+//                             overflow: TextOverflow.ellipsis,
+//                             style: const TextStyle(
+//                               fontSize: AppFontSizes.medium,
+//                               fontWeight: AppFontWeights.semiBold,
+//                               color: ColorRes.textColor,
+//                             ),
+//                           ),
+//                           if (widget.data.contractorType != null &&
+//                               widget.data.contractorType!.isNotEmpty) ...[
+//                             SizedBox(width: 4),
+//                             Container(
+//                               padding: const EdgeInsets.symmetric(
+//                                 horizontal: 8,
+//                                 vertical: 4,
+//                               ),
+//                               decoration: BoxDecoration(
+//                                 color: ColorRes.primary.withOpacity(0.05),
+//                                 borderRadius: BorderRadius.circular(6),
+//                                 border: Border.all(
+//                                   color: ColorRes.primary.withOpacity(0.3),
+//                                 ),
+//                               ),
+//                               child: Text(
+//                                 widget.data.contractorType!,
+//                                 style: TextStyle(
+//                                   fontSize: AppFontSizes.caption,
+//                                   fontWeight: AppFontWeights.medium,
+//                                   color: ColorRes.primary,
+//                                 ),
+//                               ),
+//                             ),
+//                           ],
+//                           if (widget.data.subscription!.hasPremiumPlan ==
+//                               true) ...[
+//                             SizedBox(width: 4),
+//                             Container(
+//                               padding: const EdgeInsets.symmetric(
+//                                 horizontal: 8,
+//                                 vertical: 4,
+//                               ),
+//                               decoration: BoxDecoration(
+//                                 color: ColorRes.homeYellow.withOpacity(0.05),
+//                                 borderRadius: BorderRadius.circular(6),
+//                                 border: Border.all(
+//                                   color: ColorRes.homeYellow.withOpacity(0.3),
+//                                 ),
+//                               ),
+//                               child: Text(
+//                                 'Premium',
+//                                 style: TextStyle(
+//                                   fontSize: AppFontSizes.caption,
+//                                   fontWeight: AppFontWeights.medium,
+//                                   color: ColorRes.homeYellow,
+//                                 ),
+//                               ),
+//                             ),
+//                           ],
+//                         ],
+//                       ),
+//                       Text(
+//                         'Total Service ${widget.data.activeServices.toString()}' ??
+//                             'Unknown Contractor',
+//                         maxLines: 1,
+//                         overflow: TextOverflow.ellipsis,
+//                         style: TextStyle(
+//                           fontSize: AppFontSizes.small,
+//                           fontWeight: AppFontWeights.medium,
+//                           color: ColorRes.leadGreyColor.shade600,
+//                         ),
+//                       ),
+//                       if (widget.data.totalExperience != null &&
+//                           widget.data.totalExperience! > 0)
+//                         Text(
+//                           '${widget.data.totalExperience!} Years Exp.',
+//                           maxLines: 1,
+//                           overflow: TextOverflow.ellipsis,
+//                           style: TextStyle(
+//                             fontSize: AppFontSizes.small,
+//                             fontWeight: AppFontWeights.medium,
+//                             color: ColorRes.leadGreyColor.shade600,
+//                           ),
+//                         ),
+//                       if (widget.data.contractorVisitCharge != null &&
+//                           widget.data.contractorVisitCharge! > 0)
+//                         Text(
+//                           'Per Visit: ₹${widget.data.contractorVisitCharge!}',
+//                           maxLines: 1,
+//                           overflow: TextOverflow.ellipsis,
+//                           style: TextStyle(
+//                             fontSize: AppFontSizes.small,
+//                             fontWeight: AppFontWeights.medium,
+//                             color: ColorRes.leadGreyColor.shade600,
+//                           ),
+//                         ),
+//                     ],
+//                   ),
+//                 ),
+//
+//                 /// ===================== COMPARE BUTTON =====================
+//                 GestureDetector(
+//                   onTap: () {
+//                     _fetchUserByID();
+//
+//                     if (contractorProfile != null) {
+//                       compare.toggle(
+//                         contractorProfile ?? Contractor.fromJson({}),
+//                         max: 2,
+//                       );
+//                     }
+//                   },
+//                   child: Obx(() {
+//                     final selected = compare.isSelected(user.id ?? '');
+//                     return Container(
+//                       height: 32,
+//                       width: 32,
+//                       decoration: BoxDecoration(
+//                         color: selected ? ColorRes.primary : ColorRes.surface,
+//                         borderRadius: BorderRadius.circular(8),
+//                         border: Border.all(
+//                           color: selected ? ColorRes.primary : ColorRes.border,
+//                           width: 1.2,
+//                         ),
+//                       ),
+//                       child: Icon(
+//                         Icons.compare_arrows,
+//                         color: selected ? ColorRes.white : ColorRes.primary,
+//                         size: 18,
+//                       ),
+//                     );
+//                   }),
+//                 ),
+//               ],
+//             ),
+//
+//             const SizedBox(height: 10),
+//
+//             /// ===================== RATING ROW =====================
+//             Row(
+//               children: [
+//                 Row(
+//                   children: List.generate(5, (index) {
+//                     final rating =
+//                         double.tryParse(widget.data.overallRating) ?? 0;
+//                     if (index < rating.floor()) {
+//                       return const Icon(
+//                         Icons.star,
+//                         color: Colors.amber,
+//                         size: 16,
+//                       );
+//                     } else if (index < rating) {
+//                       return const Icon(
+//                         Icons.star_half,
+//                         color: Colors.amber,
+//                         size: 16,
+//                       );
+//                     } else {
+//                       return Icon(
+//                         Icons.star_border,
+//                         color: Colors.amber.shade400,
+//                         size: 16,
+//                       );
+//                     }
+//                   }),
+//                 ),
+//                 const SizedBox(width: 6),
+//                 Text(
+//                   (double.tryParse(
+//                         widget.data.overallRating,
+//                       )?.toStringAsFixed(1)) ??
+//                       '0.0',
+//                   style: const TextStyle(
+//                     fontWeight: AppFontWeights.semiBold,
+//                     fontSize: AppFontSizes.bodySmall,
+//                     color: ColorRes.textColor,
+//                   ),
+//                 ),
+//                 const SizedBox(width: 4),
+//                 Text(
+//                   "(${widget.data.totalReviews} review${widget.data.totalReviews == 1 ? '' : 's'})",
+//                   style: const TextStyle(
+//                     fontSize: AppFontSizes.caption,
+//                     color: ColorRes.textSecondary,
+//                   ),
+//                 ),
+//               ],
+//             ),
+//
+//             const SizedBox(height: 10),
+//             Divider(color: ColorRes.border, thickness: 1),
+//             const SizedBox(height: 10),
+//
+//             /// ===================== SERVICES / PROJECTS STATS =====================
+//             Column(
+//               children: [
+//                 ...List.generate(widget.data.servicesInCategory.length, (
+//                   index,
+//                 ) {
+//                   return Container(
+//                     margin: const EdgeInsets.only(bottom: 8),
+//                     padding: const EdgeInsets.all(8),
+//                     decoration: BoxDecoration(
+//                       borderRadius: BorderRadius.circular(12),
+//                       color: ColorRes.leadGreyColor.shade300,
+//                     ),
+//                     child: Row(
+//                       children: [
+//                         Expanded(
+//                           child: Text(
+//                             '${widget.data.servicesInCategory[index].serviceName}',
+//                             style: TextStyle(
+//                               fontSize: AppFontSizes.small,
+//                               fontWeight: AppFontWeights.medium,
+//                               color: ColorRes.textColor,
+//                             ),
+//                           ),
+//                         ),
+//                         Spacer(),
+//                         Icon(Icons.star, size: 16, color: ColorRes.orangeColor),
+//                         SizedBox(width: 6),
+//                         Text(
+//                           '${widget.data.servicesInCategory[index].rating}',
+//                           style: TextStyle(
+//                             fontSize: AppFontSizes.small,
+//                             fontWeight: AppFontWeights.medium,
+//                             color: ColorRes.textColor,
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   );
+//                 }),
+//               ],
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
 class HireContractorCard extends StatefulWidget {
   final OverAllContractorItem data;
   final TopContractorsController contractor;
@@ -240,14 +587,12 @@ class _HireContractorCardState extends State<HireContractorCard> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _fetchUserByID();
   }
 
   void _fetchUserByID() async {
     final userId = widget.data.userId;
-
     contractorProfile = await widget.contractor.getContractorById(userId);
   }
 
@@ -262,10 +607,12 @@ class _HireContractorCardState extends State<HireContractorCard> {
         contractorProfile?.firstName = widget.data.firstName ?? '';
         contractorProfile?.lastName = widget.data.lastName ?? '';
         contractorProfile?.totalExperience = widget.data.totalExperience ?? 0;
+
         if (contractorProfile != null) {
           Get.to(
             () => ContractorProfileDetailsScreen(
               contractor: contractorProfile ?? Contractor.fromJson({}),
+              isPremium: widget.data.subscription?.hasPremiumPlan ?? false,
             ),
           );
         } else {
@@ -277,212 +624,405 @@ class _HireContractorCardState extends State<HireContractorCard> {
         }
       },
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 8),
-        padding: const EdgeInsets.all(16),
+        // margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         decoration: BoxDecoration(
-          color: ColorRes.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+          color: ColorRes.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: ColorRes.leadGreyColor.shade300),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// ===================== TOP ROW =====================
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CircleAvatar(
-                  radius: 26,
-                  backgroundColor: Colors.grey.shade100,
-                  backgroundImage:
-                      (widget.data.profilePic?.isNotEmpty ?? false)
-                          ? NetworkImage(widget.data.profilePic!)
-                          : null,
-                  onBackgroundImageError:
-                      (widget.data.profilePic?.isNotEmpty ?? false)
-                          ? (_, __) {} // only active if image is non-null
-                          : null,
-                  child:
-                      (widget.data.profilePic?.isEmpty ?? true)
-                          ? const Icon(
-                            Icons.engineering,
-                            color: Colors.orange,
-                            size: 28,
-                          )
-                          : null,
-                ),
-
-                const SizedBox(width: 12),
-
-                /// ===================== NAME & EXPERIENCE =====================
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.data.username ?? 'Unknown Contractor',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: AppFontSizes.medium,
-                          fontWeight: AppFontWeights.semiBold,
-                          color: ColorRes.textColor,
-                        ),
-                      ),
-                      Text(
-                        'Total Service ${widget.data.activeServices.toString()}' ??
-                            'Unknown Contractor',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: AppFontSizes.small,
-                          fontWeight: AppFontWeights.medium,
-                          color: ColorRes.leadGreyColor.shade600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                /// ===================== COMPARE BUTTON =====================
-                GestureDetector(
-                  onTap: () {
-                    _fetchUserByID();
-
-                    if (contractorProfile != null) {
-                      compare.toggle(
-                        contractorProfile ?? Contractor.fromJson({}),
-                        max: 2,
-                      );
-                    }
-                  },
-                  child: Obx(() {
-                    final selected = compare.isSelected(user.id ?? '');
-                    return Container(
-                      height: 32,
-                      width: 32,
-                      decoration: BoxDecoration(
-                        color: selected ? ColorRes.primary : ColorRes.surface,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: selected ? ColorRes.primary : ColorRes.border,
-                          width: 1.2,
-                        ),
-                      ),
-                      child: Icon(
-                        Icons.compare_arrows,
-                        color: selected ? ColorRes.white : ColorRes.primary,
-                        size: 18,
-                      ),
-                    );
-                  }),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 10),
-
-            /// ===================== RATING ROW =====================
-            Row(
-              children: [
-                Row(
-                  children: List.generate(5, (index) {
-                    final rating =
-                        double.tryParse(widget.data.overallRating) ?? 0;
-                    if (index < rating.floor()) {
-                      return const Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                        size: 16,
-                      );
-                    } else if (index < rating) {
-                      return const Icon(
-                        Icons.star_half,
-                        color: Colors.amber,
-                        size: 16,
-                      );
-                    } else {
-                      return Icon(
-                        Icons.star_border,
-                        color: Colors.amber.shade400,
-                        size: 16,
-                      );
-                    }
-                  }),
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  (double.tryParse(
-                        widget.data.overallRating,
-                      )?.toStringAsFixed(1)) ??
-                      '0.0',
-                  style: const TextStyle(
-                    fontWeight: AppFontWeights.semiBold,
-                    fontSize: AppFontSizes.bodySmall,
-                    color: ColorRes.textColor,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  "(${widget.data.totalReviews} review${widget.data.totalReviews == 1 ? '' : 's'})",
-                  style: const TextStyle(
-                    fontSize: AppFontSizes.caption,
-                    color: ColorRes.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 10),
-            Divider(color: ColorRes.border, thickness: 1),
-            const SizedBox(height: 10),
-
-            /// ===================== SERVICES / PROJECTS STATS =====================
-            Column(
-              children: [
-                ...List.generate(widget.data.servicesInCategory.length, (
-                  index,
-                ) {
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    padding: const EdgeInsets.all(8),
+            /// ===================== HEADER SECTION =====================
+            Container(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// Profile Avatar
+                  Container(
+                    width: 52,
+                    height: 52,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: ColorRes.leadGreyColor.shade300,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: ColorRes.primary.withOpacity(0.1),
+                        width: 2,
+                      ),
                     ),
-                    child: Row(
+                    child: CircleAvatar(
+                      radius: 24,
+                      backgroundColor: ColorRes.primary.withOpacity(0.1),
+                      backgroundImage:
+                          (widget.data.profilePic?.isNotEmpty ?? false)
+                              ? NetworkImage(widget.data.profilePic!)
+                              : null,
+                      onBackgroundImageError:
+                          (widget.data.profilePic?.isNotEmpty ?? false)
+                              ? (_, __) {}
+                              : null,
+                      child:
+                          (widget.data.profilePic?.isEmpty ?? true)
+                              ? Text(
+                                _getInitials(widget.data.username ?? 'U'),
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.large,
+                                  fontWeight: AppFontWeights.bold,
+                                  color: ColorRes.primary,
+                                ),
+                              )
+                              : null,
+                    ),
+                  ),
+
+                  const SizedBox(width: 12),
+
+                  /// Name and Type/Premium Badges
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: Text(
-                            '${widget.data.servicesInCategory[index].serviceName}',
-                            style: TextStyle(
-                              fontSize: AppFontSizes.small,
-                              fontWeight: AppFontWeights.medium,
-                              color: ColorRes.textColor,
-                            ),
+                        Text(
+                          widget.data.username ?? 'Unknown Contractor',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: ColorRes.textColor,
+                            letterSpacing: -0.3,
                           ),
                         ),
-                        Spacer(),
-                        Icon(Icons.star, size: 16, color: ColorRes.orangeColor),
-                        SizedBox(width: 6),
-                        Text(
-                          '${widget.data.servicesInCategory[index].rating}',
-                          style: TextStyle(
-                            fontSize: AppFontSizes.small,
-                            fontWeight: AppFontWeights.medium,
-                            color: ColorRes.textColor,
-                          ),
+                        const SizedBox(height: 6),
+                        Row(
+                          children: [
+                            if (widget.data.contractorType != null &&
+                                widget.data.contractorType!.isNotEmpty) ...[
+                              _buildBadge(
+                                label: widget.data.contractorType!,
+                                backgroundColor: ColorRes.primary.withOpacity(
+                                  0.08,
+                                ),
+                                textColor: ColorRes.primary,
+                              ),
+                              const SizedBox(width: 6),
+                            ],
+                            if (widget.data.subscription?.hasPremiumPlan ==
+                                true)
+                              _buildBadge(
+                                label: 'Premium',
+                                backgroundColor: ColorRes.homeYellow
+                                    .withOpacity(0.12),
+                                textColor: ColorRes.homeYellow,
+                              ),
+                          ],
                         ),
                       ],
                     ),
-                  );
-                }),
-              ],
+                  ),
+
+                  /// Compare Button
+                  GestureDetector(
+                    onTap: () {
+                      _fetchUserByID();
+                      if (contractorProfile != null) {
+                        compare.toggle(
+                          contractorProfile ?? Contractor.fromJson({}),
+                          max: 2,
+                        );
+                      }
+                    },
+                    child: Obx(() {
+                      final selected = compare.isSelected(user.id ?? '');
+                      return Container(
+                        height: 36,
+                        width: 36,
+                        decoration: BoxDecoration(
+                          color:
+                              selected ? ColorRes.primary : Colors.transparent,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color:
+                                selected ? ColorRes.primary : ColorRes.border,
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.compare_arrows_rounded,
+                          color:
+                              selected
+                                  ? ColorRes.white
+                                  : ColorRes.textSecondary,
+                          size: 20,
+                        ),
+                      );
+                    }),
+                  ),
+                ],
+              ),
             ),
+
+            /// ===================== STATS ROW =====================
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  _buildStatItem(
+                    label: 'Total Services',
+                    value: widget.data.activeServices?.toString() ?? '0',
+                  ),
+                  const SizedBox(width: 24),
+                  if (widget.data.totalExperience != null &&
+                      widget.data.totalExperience! > 0)
+                    _buildStatItem(
+                      label: 'Experience',
+                      value: '${widget.data.totalExperience}+ Years Experience',
+                    ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            /// ===================== PER VISIT PRICE =====================
+            if (widget.data.contractorVisitCharge != null &&
+                widget.data.contractorVisitCharge! > 0)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Text(
+                    //   'Per Visit Price',
+                    //   style: TextStyle(
+                    //     fontSize: AppFontSizes.caption,
+                    //     fontWeight: AppFontWeights.medium,
+                    //     color: ColorRes.textSecondary,
+                    //   ),
+                    // ),
+                    const SizedBox(height: 4),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: '₹${widget.data.contractorVisitCharge!}',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: ColorRes.textColor,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                          TextSpan(
+                            text: ' per visit',
+                            style: TextStyle(
+                              fontSize: AppFontSizes.small,
+                              fontWeight: AppFontWeights.medium,
+                              color: ColorRes.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+            const SizedBox(height: 14),
+
+            /// ===================== RATING ROW =====================
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  Row(
+                    children: List.generate(5, (index) {
+                      final rating =
+                          double.tryParse(widget.data.overallRating) ?? 0;
+                      if (index < rating.floor()) {
+                        return const Icon(
+                          Icons.star_rounded,
+                          color: Color(0xFFFFB800),
+                          size: 18,
+                        );
+                      } else if (index < rating) {
+                        return const Icon(
+                          Icons.star_half_rounded,
+                          color: Color(0xFFFFB800),
+                          size: 18,
+                        );
+                      } else {
+                        return Icon(
+                          Icons.star_outline_rounded,
+                          color: Colors.grey.shade300,
+                          size: 18,
+                        );
+                      }
+                    }),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    (double.tryParse(
+                          widget.data.overallRating,
+                        )?.toStringAsFixed(1)) ??
+                        '0.0',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      color: ColorRes.textColor,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    "(${widget.data.totalReviews} review${widget.data.totalReviews == 1 ? '' : 's'})",
+                    style: TextStyle(
+                      fontSize: AppFontSizes.small,
+                      color: ColorRes.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            /// ===================== SERVICES CHIPS =====================
+            if (widget.data.servicesInCategory.isNotEmpty)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    ...widget.data.servicesInCategory.take(3).map((service) {
+                      return _buildServiceChip(
+                        serviceName: service.serviceName ?? '',
+                        rating: service.rating?.toString(),
+                      );
+                    }),
+                    if (widget.data.servicesInCategory.length > 3)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: ColorRes.primary.withOpacity(0.08),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          '+${widget.data.servicesInCategory.length - 3} more',
+                          style: TextStyle(
+                            fontSize: AppFontSizes.caption,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.primary,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+
+            const SizedBox(height: 16),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildBadge({
+    required String label,
+    required Color backgroundColor,
+    required Color textColor,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: textColor,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatItem({required String label, required String value}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: AppFontSizes.caption,
+            fontWeight: AppFontWeights.medium,
+            color: ColorRes.textSecondary,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: AppFontSizes.medium,
+            fontWeight: FontWeight.w600,
+            color: ColorRes.textColor,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildServiceChip({required String serviceName, String? rating}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: ColorRes.leadGreyColor.shade100,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: ColorRes.border.withOpacity(0.5), width: 1),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Flexible(
+            child: Text(
+              serviceName,
+              style: TextStyle(
+                fontSize: AppFontSizes.small,
+                fontWeight: AppFontWeights.medium,
+                color: ColorRes.textColor,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+
+          if (rating != null && rating.isNotEmpty) ...[
+            const SizedBox(width: 6),
+            Icon(Icons.star_rounded, size: 14, color: Color(0xFFFFB800)),
+            const SizedBox(width: 2),
+            Text(
+              rating,
+              style: TextStyle(
+                fontSize: AppFontSizes.caption,
+                fontWeight: FontWeight.w600,
+                color: ColorRes.textColor,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  String _getInitials(String name) {
+    final parts = name.trim().split(' ');
+    if (parts.isEmpty) return 'U';
+    if (parts.length == 1) return parts[0][0].toUpperCase();
+    return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
   }
 }
 

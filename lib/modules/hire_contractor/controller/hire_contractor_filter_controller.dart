@@ -32,6 +32,8 @@ class HireContractorFilterProfileController
   RxString selectedCategoryName = ''.obs;
   RxDouble selectedServiceRating = 0.0.obs;
   RxDouble selectedContractorRating = 0.0.obs;
+  final selectedExperience = ''.obs;
+  final selectedAccountType = ''.obs;
   RxString selectedCity = ''.obs;
 
   RxMap<String, String> filters = <String, String>{}.obs;
@@ -97,11 +99,15 @@ class HireContractorFilterProfileController
   }
 
   void resetFilters() {
-    selectedCategoryId.value = '';
-    selectedCategoryName.value = '';
+    selectedExperience.value = '';
+    selectedAccountType.value = '';
+    // ❌ DON'T reset these - keep the category selected
+    // selectedCategoryId.value = '';
+    // selectedCategoryName.value = '';
     selectedContractorRating.value = 0.0;
     selectedServiceRating.value = 0.0;
-    items.value = []; // Clear filtered data
+    selectedCity.value = ''; // Add this to reset city
+    filters.clear(); // Clear the filters map
   }
 
   /// 🔁 Refresh contractor list manually
@@ -134,6 +140,10 @@ class HireContractorFilterProfileController
               selectedContractorRating.value.toInt().toString(),
         if (selectedServiceRating.value > 0)
           'serviceMinRating': selectedServiceRating.value.toInt().toString(),
+        if (selectedExperience.value.isNotEmpty)
+          'experience': selectedExperience.value,
+        if (selectedAccountType.value.isNotEmpty)
+          'premiumAccount': selectedAccountType.value,
       };
 
       log(

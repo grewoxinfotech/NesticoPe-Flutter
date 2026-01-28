@@ -368,10 +368,9 @@ class Items {
     data['totalVisits'] = totalVisits ?? 0;
     data['totalSales'] = totalSales ?? 0;
     data['totalCommissions'] = totalCommissions ?? "0.00";
-    if((assignedTo?.isNotEmpty??false)&& assignedTo != null)
-      {
-        data['assignedTo'] = assignedTo?.map((e) => e.toMap()).toList();
-      }
+    if ((assignedTo?.isNotEmpty ?? false) && assignedTo != null) {
+      data['assignedTo'] = assignedTo?.map((e) => e.toMap()).toList();
+    }
     data['assignmentDate'] = assignmentDate;
     data['assignmentExpiryDate'] = assignmentExpiryDate;
     data['potentialEarnings'] = potentialEarnings;
@@ -402,6 +401,18 @@ class Items {
     if (fiveYearGrowth != null) data['fiveYearGrowth'] = fiveYearGrowth;
 
     return data;
+  }
+
+  bool get isSold {
+    if (propertyStatus == null ||
+        propertyStatus!.toLowerCase() != "sold" ||
+        updatedAt == null)
+      return false;
+
+    final updatedDate = DateTime.parse(updatedAt!);
+    final sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
+
+    return updatedDate.isBefore(sevenDaysAgo);
   }
 }
 

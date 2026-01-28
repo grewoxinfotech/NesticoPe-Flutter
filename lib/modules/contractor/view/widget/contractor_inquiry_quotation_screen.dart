@@ -9,6 +9,7 @@ import 'package:housing_flutter_app/data/network/contractor/model/contractot_ser
 import 'package:housing_flutter_app/data/network/contractor/model/contractor_quotation/contractor_quotation.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_inquiry_controller.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_quotation_controller.dart';
+import 'package:housing_flutter_app/modules/contractor/controller/contractor_referral_controller.dart';
 import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 
 /// Screen for submitting or editing quotation for a contractor inquiry
@@ -36,20 +37,13 @@ class _ContractorInquiryQuotationScreenState
   final _quotationNoteController = TextEditingController();
   String _selectedStatus = 'Pending';
 
-  final List<String> _statusOptions = [
-    'Pending',
-    'Accepted',
-
-
-    'Rejected',
-
-  ];
+  final List<String> _statusOptions = ['Pending', 'Accepted', 'Rejected'];
 
   @override
   void initState() {
     super.initState();
     // Format the status to match dropdown items (Title Case)
-    AppLogger.structured("Edit quotation and data",widget.quotation?.toMap());
+    AppLogger.structured("Edit quotation and data", widget.quotation?.toMap());
     if (widget.isEditMode && widget.quotation != null) {
       // Pre-fill form with existing quotation data
       _quotationController.text =
@@ -57,9 +51,11 @@ class _ContractorInquiryQuotationScreenState
 
       _quotationNoteController.text = widget.quotation!.meta.notes;
       // Capitalize first letter to match dropdown items
-      _selectedStatus = widget.quotation!.status.isNotEmpty
-          ? widget.quotation!.status[0].toUpperCase() + widget.quotation!.status.substring(1).toLowerCase()
-          : 'Pending';
+      _selectedStatus =
+          widget.quotation!.status.isNotEmpty
+              ? widget.quotation!.status[0].toUpperCase() +
+                  widget.quotation!.status.substring(1).toLowerCase()
+              : 'Pending';
     } else {
       _selectedStatus = 'Pending';
     }
@@ -73,6 +69,7 @@ class _ContractorInquiryQuotationScreenState
 
   @override
   Widget build(BuildContext context) {
+    final referralController = Get.find<ContractorReferralController>();
     return Scaffold(
       backgroundColor: ColorRes.background,
       appBar: AppBar(
@@ -103,11 +100,26 @@ class _ContractorInquiryQuotationScreenState
                   icon: Icons.person_outline,
                   title: 'Customer Details',
                   children: [
-                    _buildInfoRow('Name :', widget.isEditMode ? widget.quotation!.user.name : widget.inquiry!.name),
+                    _buildInfoRow(
+                      'Name :',
+                      widget.isEditMode
+                          ? widget.quotation!.user.name
+                          : widget.inquiry!.name,
+                    ),
                     const SizedBox(height: 12),
-                    _buildInfoRow('Phone :', widget.isEditMode ? widget.quotation!.user.phone : widget.inquiry!.phone),
+                    _buildInfoRow(
+                      'Phone :',
+                      widget.isEditMode
+                          ? widget.quotation!.user.phone
+                          : widget.inquiry!.phone,
+                    ),
                     const SizedBox(height: 12),
-                    _buildInfoRow('Email :', widget.isEditMode ? widget.quotation!.user.email : widget.inquiry!.email),
+                    _buildInfoRow(
+                      'Email :',
+                      widget.isEditMode
+                          ? widget.quotation!.user.email
+                          : widget.inquiry!.email,
+                    ),
                   ],
                 ),
 
@@ -118,12 +130,34 @@ class _ContractorInquiryQuotationScreenState
                   icon: Icons.home_outlined,
                   title: 'Property Details',
                   children: [
-                    _buildInfoRow('Type :', widget.isEditMode ? widget.quotation!.meta.propertyDetails?.propertyType??'' : widget.inquiry!.meta.propertyType),
+                    _buildInfoRow(
+                      'Type :',
+                      widget.isEditMode
+                          ? widget
+                                  .quotation!
+                                  .meta
+                                  .propertyDetails
+                                  ?.propertyType ??
+                              ''
+                          : widget.inquiry!.meta.propertyType,
+                    ),
                     const SizedBox(height: 12),
-                    _buildInfoRow('City :', widget.isEditMode ? widget.quotation!.meta.propertyDetails?.city??'' : widget.inquiry!.meta.city),
+                    _buildInfoRow(
+                      'City :',
+                      widget.isEditMode
+                          ? widget.quotation!.meta.propertyDetails?.city ?? ''
+                          : widget.inquiry!.meta.city,
+                    ),
                     const SizedBox(height: 12),
-                    if (widget.isEditMode ? widget.quotation!.meta.propertyDetails?.bhk != null : widget.inquiry!.meta.bhk != null)
-                      _buildInfoRow('BHK :', widget.isEditMode ? '${widget.quotation!.meta.propertyDetails?.bhk}' : '${widget.inquiry!.meta.bhk}'),
+                    if (widget.isEditMode
+                        ? widget.quotation!.meta.propertyDetails?.bhk != null
+                        : widget.inquiry!.meta.bhk != null)
+                      _buildInfoRow(
+                        'BHK :',
+                        widget.isEditMode
+                            ? '${widget.quotation!.meta.propertyDetails?.bhk}'
+                            : '${widget.inquiry!.meta.bhk}',
+                      ),
                   ],
                 ),
 
@@ -136,7 +170,7 @@ class _ContractorInquiryQuotationScreenState
                   children: [
                     if (widget.isEditMode)
                       Text(
-                        widget.quotation!.meta.serviceNames??'',
+                        widget.quotation!.meta.serviceNames ?? '',
                         style: const TextStyle(
                           fontSize: AppFontSizes.small,
                           color: ColorRes.textPrimary,
@@ -147,31 +181,34 @@ class _ContractorInquiryQuotationScreenState
                       Wrap(
                         spacing: 8,
                         runSpacing: 8,
-                        children: widget.inquiry!.services
-                            .map(
-                              (service) => Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: ColorRes.primary.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: ColorRes.primary.withOpacity(0.3),
+                        children:
+                            widget.inquiry!.services
+                                .map(
+                                  (service) => Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: ColorRes.primary.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(
+                                        color: ColorRes.primary.withOpacity(
+                                          0.3,
+                                        ),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      service.serviceName,
+                                      style: const TextStyle(
+                                        fontSize: AppFontSizes.small,
+                                        color: ColorRes.primary,
+                                        fontWeight: AppFontWeights.medium,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                child: Text(
-                                  service.serviceName,
-                                  style: const TextStyle(
-                                    fontSize: AppFontSizes.small,
-                                    color: ColorRes.primary,
-                                    fontWeight: AppFontWeights.medium,
-                                  ),
-                                ),
-                              ),
-                            )
-                            .toList(),
+                                )
+                                .toList(),
                       ),
                   ],
                 ),
@@ -185,11 +222,13 @@ class _ContractorInquiryQuotationScreenState
                   child: TextFormField(
                     controller: _quotationController,
                     keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                    ],
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    onChanged: (value) {
+                      final price = int.tryParse(value) ?? 0;
+                      referralController.calculateDiscount(price);
+                    },
                     decoration: InputDecoration(
-                      hintText: '₹ 0',
+                      hintText: '0',
                       hintStyle: TextStyle(
                         color: ColorRes.textSecondary.withOpacity(0.5),
                         fontSize: AppFontSizes.medium,
@@ -261,6 +300,97 @@ class _ContractorInquiryQuotationScreenState
                   ),
                 ),
 
+                // Obx(
+                //   () => Text(
+                //     'Special Offer: ${referralController.discountPercentage}% discount available based on referral points!',
+                //     style: TextStyle(
+                //       fontSize: AppFontSizes.small,
+                //       color: ColorRes.primary,
+                //     ),
+                //   ),
+                // ),
+
+                // Obx(
+                //   () => Text(
+                //     'Calculated Price after ${referralController.discountPercentage}% discount: '
+                //     '₹${referralController.originalPrice.value} → '
+                //     '₹${referralController.discountedPriceObs.value} '
+                //     '(Save ₹${referralController.savedPriceObs.value})',
+                //     style: TextStyle(
+                //       fontSize: AppFontSizes.small,
+                //       color: ColorRes.success,
+                //     ),
+                //   ),
+                // ),
+                Obx(() {
+                  if (referralController.discountPercentage <= 0) {
+                    return SizedBox.shrink();
+                  }
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 8),
+                      RichText(
+                        text: TextSpan(
+                          style: TextStyle(
+                            fontSize: AppFontSizes.small,
+                            color: ColorRes.textPrimary, // default color
+                          ),
+                          children: [
+                            const TextSpan(
+                              text: 'Calculated Price after ',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: ColorRes.primary,
+                              ),
+                            ),
+                            TextSpan(
+                              text:
+                                  '${referralController.discountPercentage}% ',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: ColorRes.primary,
+                              ),
+                            ),
+                            const TextSpan(
+                              text: 'discount: ',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: ColorRes.primary,
+                              ),
+                            ),
+                            TextSpan(
+                              text:
+                                  '₹${referralController.originalPrice.value} ',
+                              style: TextStyle(
+                                decoration: TextDecoration.lineThrough,
+                                color: ColorRes.grey,
+                              ),
+                            ),
+                            const TextSpan(text: ' → '),
+                            TextSpan(
+                              text:
+                                  '₹${referralController.discountedPriceObs.value} ',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: ColorRes.success,
+                              ),
+                            ),
+                            // TextSpan(
+                            //   text:
+                            //       '(Save ₹${referralController.savedPriceObs.value})',
+                            //   style: TextStyle(
+                            //     fontWeight: FontWeight.w600,
+                            //     color: ColorRes.success,
+                            //   ),
+                            // ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+
                 const SizedBox(height: 20),
                 _buildInputField(
                   label: 'Status',
@@ -311,12 +441,13 @@ class _ContractorInquiryQuotationScreenState
                       color: ColorRes.textPrimary,
                     ),
                     dropdownColor: ColorRes.white,
-                    items: _statusOptions.map((String status) {
-                      return DropdownMenuItem<String>(
-                        value: status,
-                        child: Text(status),
-                      );
-                    }).toList(),
+                    items:
+                        _statusOptions.map((String status) {
+                          return DropdownMenuItem<String>(
+                            value: status,
+                            child: Text(status),
+                          );
+                        }).toList(),
                     onChanged: (String? newValue) {
                       if (newValue != null) {
                         setState(() {
@@ -407,12 +538,14 @@ class _ContractorInquiryQuotationScreenState
 
                 // Status Dropdown
 
-
                 // Save Button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _submitQuotation,
+                    onPressed:
+                        () => _submitQuotation(
+                          referralController.discountedPriceObs.value,
+                        ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorRes.primary,
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -449,21 +582,14 @@ class _ContractorInquiryQuotationScreenState
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: ColorRes.border,
-          width: 1,
-        ),
+        border: Border.all(color: ColorRes.border, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                icon,
-                size: 20,
-                color: ColorRes.textSecondary,
-              ),
+              Icon(icon, size: 20, color: ColorRes.textSecondary),
               const SizedBox(width: 8),
               Text(
                 title,
@@ -547,18 +673,20 @@ class _ContractorInquiryQuotationScreenState
     );
   }
 
-  void _submitQuotation() {
+  void _submitQuotation(int discountPrice) {
     if (_formKey.currentState!.validate()) {
       final quotationPrice = int.tryParse(_quotationController.text);
-      
+
       if (widget.isEditMode && widget.quotation != null) {
         // Update existing quotation
         final quotationController = Get.find<ContractorQuotationController>();
         quotationController.updateQuotation(
-          quotationId: widget.quotation??ContractorQuotation.fromMap({}),
+          quotationId: widget.quotation ?? ContractorQuotation.fromMap({}),
           price: quotationPrice ?? 0,
           status: _selectedStatus,
           note: _quotationNoteController.text,
+          userId: widget.inquiry!.userId,
+          discountedPrice: discountPrice,
         );
       } else {
         // Create new quotation
@@ -569,6 +697,8 @@ class _ContractorInquiryQuotationScreenState
           status: _selectedStatus,
           inquiry: widget.inquiry!,
           note: _quotationNoteController.text,
+          userId: widget.inquiry!.userId,
+          discountedPrice: discountPrice,
         );
       }
 

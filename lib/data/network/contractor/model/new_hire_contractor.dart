@@ -20,11 +20,12 @@ class OverAllContractorResponse {
     return OverAllContractorResponse(
       success: json['success'] ?? false,
       message: json['message'] ?? '',
-      data: json['data'] != null
-          ? OverAllContractorData.fromJson(
-        Map<String, dynamic>.from(json['data']),
-      )
-          : null,
+      data:
+          json['data'] != null
+              ? OverAllContractorData.fromJson(
+                Map<String, dynamic>.from(json['data']),
+              )
+              : null,
     );
   }
 
@@ -41,17 +42,18 @@ class OverAllContractorData {
   final List<OverAllContractorItem> contractors;
   final int total;
 
-  OverAllContractorData({
-    required this.contractors,
-    required this.total,
-  });
+  OverAllContractorData({required this.contractors, required this.total});
 
   factory OverAllContractorData.fromJson(Map<String, dynamic> json) {
     return OverAllContractorData(
-      contractors: (json['contractors'] as List<dynamic>? ?? [])
-          .map((e) =>
-          OverAllContractorItem.fromJson(Map<String, dynamic>.from(e)))
-          .toList(),
+      contractors:
+          (json['contractors'] as List<dynamic>? ?? [])
+              .map(
+                (e) => OverAllContractorItem.fromJson(
+                  Map<String, dynamic>.from(e),
+                ),
+              )
+              .toList(),
       total: json['total'] ?? 0,
     );
   }
@@ -74,6 +76,7 @@ class OverAllContractorItem {
   final String? city;
   final String? state;
   final int? totalExperience;
+  final int? contractorVisitCharge;
   final int totalServices;
   final int activeServices;
   final String overallRating;
@@ -109,6 +112,7 @@ class OverAllContractorItem {
     required this.servicesInCategory,
     required this.totalServicesInCategory,
     required this.avgRatingInCategory,
+    this.contractorVisitCharge,
   });
 
   factory OverAllContractorItem.fromJson(Map<String, dynamic> json) {
@@ -131,17 +135,23 @@ class OverAllContractorItem {
       contractorType: json['contractorType'],
       isBlocked: json['isBlocked'] ?? false,
       warningCount: json['warningCount'] ?? 0,
-      subscription: json['subscription'] != null
-          ? OverAllContractorSubscription.fromJson(
-        Map<String, dynamic>.from(json['subscription']),
-      )
-          : null,
-      servicesInCategory: (json['servicesInCategory'] as List<dynamic>? ?? [])
-          .map((e) =>
-          OverAllServiceInCategory.fromJson(Map<String, dynamic>.from(e)))
-          .toList(),
+      subscription:
+          json['subscription'] != null
+              ? OverAllContractorSubscription.fromJson(
+                Map<String, dynamic>.from(json['subscription']),
+              )
+              : null,
+      servicesInCategory:
+          (json['servicesInCategory'] as List<dynamic>? ?? [])
+              .map(
+                (e) => OverAllServiceInCategory.fromJson(
+                  Map<String, dynamic>.from(e),
+                ),
+              )
+              .toList(),
       totalServicesInCategory: json['totalServicesInCategory'] ?? 0,
       avgRatingInCategory: json['avgRatingInCategory'] ?? '0.00',
+      contractorVisitCharge: json['contractorVisitCharge'],
     );
   }
 
@@ -168,6 +178,7 @@ class OverAllContractorItem {
     'servicesInCategory': servicesInCategory.map((e) => e.toMap()).toList(),
     'totalServicesInCategory': totalServicesInCategory,
     'avgRatingInCategory': avgRatingInCategory,
+    'contractorVisitCharge': contractorVisitCharge,
   };
 }
 
@@ -223,7 +234,6 @@ class OverAllServiceInCategory {
   };
 }
 
-
 class ContractorCityInsightsResponse {
   final bool success;
   final String message;
@@ -239,11 +249,14 @@ class ContractorCityInsightsResponse {
     return ContractorCityInsightsResponse(
       success: json['success'] ?? false,
       message: json['message'] ?? '',
-      data: (json['data'] as List<dynamic>? ?? [])
-          .map((e) => ContractorCityInsight.fromJson(
-        Map<String, dynamic>.from(e),
-      ))
-          .toList(),
+      data:
+          (json['data'] as List<dynamic>? ?? [])
+              .map(
+                (e) => ContractorCityInsight.fromJson(
+                  Map<String, dynamic>.from(e),
+                ),
+              )
+              .toList(),
     );
   }
 
@@ -262,10 +275,7 @@ class ContractorCityInsight {
   final String city;
   final int count;
 
-  ContractorCityInsight({
-    required this.city,
-    required this.count,
-  });
+  ContractorCityInsight({required this.city, required this.count});
 
   factory ContractorCityInsight.fromJson(Map<String, dynamic> json) {
     return ContractorCityInsight(
@@ -275,9 +285,6 @@ class ContractorCityInsight {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'city': city,
-      'count': count,
-    };
+    return {'city': city, 'count': count};
   }
 }

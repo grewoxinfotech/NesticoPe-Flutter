@@ -224,6 +224,12 @@
       "languageVersion": "3.7"
     },
     {
+      "name": "dotted_border",
+      "rootUri": "file:///C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/dotted_border-3.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
       "name": "dropdown_button2",
       "rootUri": "file:///C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/dropdown_button2-2.3.9",
       "packageUri": "lib/",
@@ -684,6 +690,12 @@
       "rootUri": "file:///C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/model_viewer_plus-1.9.3",
       "packageUri": "lib/",
       "languageVersion": "3.4"
+    },
+    {
+      "name": "month_year_picker",
+      "rootUri": "file:///C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/month_year_picker-0.5.0+1",
+      "packageUri": "lib/",
+      "languageVersion": "3.8"
     },
     {
       "name": "multi_image_picker_view",

@@ -13,8 +13,13 @@ import 'contractor_add_inuiry_screen.dart';
 
 class ContractorProfileDetailsScreen extends StatelessWidget {
   final Contractor contractor;
+  final bool isPremium;
 
-  ContractorProfileDetailsScreen({super.key, required this.contractor});
+  ContractorProfileDetailsScreen({
+    super.key,
+    required this.contractor,
+    this.isPremium = false,
+  });
 
   // Make this an instance variable accessible to the controller
   final RxBool isListSelectable = false.obs;
@@ -159,82 +164,102 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
                                           ],
                                         ),
                                       ),
-
-                                    // Location (only if city exists)
-                                    Obx(() {
-                                      final city =
-                                          contractorServiceController
-                                              .userData
-                                              .value
-                                              ?.city;
-
-                                      if (city == null || city.isEmpty) {
-                                        return const SizedBox.shrink();
-                                      }
-
-                                      return Padding(
-                                        padding: const EdgeInsets.only(top: 4),
-                                        child: Row(
-                                          children: [
-                                            const Icon(
-                                              Icons.location_on_outlined,
-                                              color: ColorRes.primary,
-                                              size: 18,
-                                            ),
-                                            const SizedBox(width: 4),
-                                            Expanded(
-                                              child: Text(
-                                                'Provides service in $city',
-                                                style: TextStyle(
-                                                  fontSize:
-                                                      AppFontSizes.caption,
-                                                  fontWeight:
-                                                      AppFontWeights.medium,
-                                                  color:
-                                                      ColorRes
-                                                          .leadGreyColor
-                                                          .shade600,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    }),
                                   ],
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        if (contractor.contractorType != null &&
-                            contractor.contractorType!.isNotEmpty) ...[
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: ColorRes.primary.withOpacity(0.05),
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(
-                                color: ColorRes.primary.withOpacity(0.3),
+                        Column(
+                          children: [
+                            if (contractor.contractorType != null &&
+                                contractor.contractorType!.isNotEmpty) ...[
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: ColorRes.primary.withOpacity(0.05),
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: ColorRes.primary.withOpacity(0.3),
+                                  ),
+                                ),
+                                child: Text(
+                                  contractor.contractorType!,
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.caption,
+                                    fontWeight: AppFontWeights.medium,
+                                    color: ColorRes.primary,
+                                  ),
+                                ),
                               ),
-                            ),
-                            child: Text(
-                              contractor.contractorType!,
-                              style: TextStyle(
-                                fontSize: AppFontSizes.caption,
-                                fontWeight: AppFontWeights.medium,
-                                color: ColorRes.primary,
+                            ],
+
+                            if (isPremium) ...[
+                              SizedBox(height: 4),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: ColorRes.homeYellow.withOpacity(0.05),
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: ColorRes.homeYellow.withOpacity(0.3),
+                                  ),
+                                ),
+                                child: Text(
+                                  'Premium',
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.caption,
+                                    fontWeight: AppFontWeights.medium,
+                                    color: ColorRes.homeYellow,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ],
+                            ],
+                          ],
+                        ),
                       ],
                     ),
                   ),
 
+                  // Location (only if city exists)
+                  Obx(() {
+                    final city =
+                        contractorServiceController.userData.value?.city;
+
+                    if (city == null || city.isEmpty) {
+                      return const SizedBox.shrink();
+                    }
+
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.location_on_outlined,
+                            color: ColorRes.primary,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              'Provides service in $city',
+                              style: TextStyle(
+                                fontSize: AppFontSizes.caption,
+                                fontWeight: AppFontWeights.medium,
+                                color: ColorRes.leadGreyColor.shade600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
                   const SizedBox(height: 12),
 
                   // ---------------- CONTACT BUTTON ----------------
@@ -708,8 +733,8 @@ class ServiceCard extends StatelessWidget {
                 _detailColumn("PRICE", service.meta.priceRange),
                 _detailColumn("AVAILABILITY", service.meta.workAvailability),
                 _detailColumn(
-                  "STATUS",
-                  service.isActive ? "Active" : "Inactive",
+                  "Visiting Charge",
+                  '₹${service.meta.visitCharge.toString()}',
                   highlight: true,
                 ),
               ],

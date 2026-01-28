@@ -214,6 +214,8 @@ class ContractorQuotationController
     required int price,
     required String status,
     required String note,
+    required String userId,
+    required int discountedPrice,
   }) async {
     try {
       Get.dialog(
@@ -232,9 +234,13 @@ class ContractorQuotationController
           "email": "${quotationId.user.email}",
           "phone": "${quotationId.user.phone}",
         },
-        "price": price,
         "status": status.toLowerCase().replaceAll(" ", '_'),
-        "meta": {"notes": "Generated from inquiry for: $note"},
+        "meta": {
+          "notes": 'Generated from inquiry for: $note',
+          "originalPrice": price,
+          "inquiryCustomerId": userId,
+        },
+        "price": discountedPrice,
         "is_converted": false,
         "createdAt": DateTime.now().toIso8601String(),
         "updatedAt": DateTime.now().toIso8601String(),

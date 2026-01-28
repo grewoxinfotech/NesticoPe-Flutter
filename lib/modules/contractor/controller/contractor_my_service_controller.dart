@@ -208,27 +208,27 @@ class ContractorMyServiceController
 
       if (response) {
         Get.back(); // Close form
-        NesticoPeSnackBar.showAwesomeSnackbar(
-          title: 'Success',
-          message: 'Service created successfully!',
-          contentType: ContentType.success,
-        );
+        // NesticoPeSnackBar.showAwesomeSnackbar(
+        //   title: 'Success',
+        //   message: 'Service created successfully!',
+        //   contentType: ContentType.success,
+        // );
         refreshList();
       } else {
-        NesticoPeSnackBar.showAwesomeSnackbar(
-          title: 'Error',
-          message: 'Failed to create service',
-          contentType: ContentType.failure,
-        );
+        // NesticoPeSnackBar.showAwesomeSnackbar(
+        //   title: 'Error',
+        //   message: 'Failed to create service',
+        //   contentType: ContentType.failure,
+        // );
       }
     } catch (e) {
       print("Error creating service: $e");
 
-      NesticoPeSnackBar.showAwesomeSnackbar(
-        title: 'Error',
-        message: 'Failed to create service',
-        contentType: ContentType.failure,
-      );
+      // NesticoPeSnackBar.showAwesomeSnackbar(
+      //   title: 'Error',
+      //   message: 'Failed to create service',
+      //   contentType: ContentType.failure,
+      // );
     } finally {
       isCreating.value = false;
     }
@@ -434,19 +434,19 @@ class ContractorMyServiceController
 
       if (response) {
         Get.back(); // Close form
-        NesticoPeSnackBar.showAwesomeSnackbar(
-          title: "Success",
-          message: "Service updated successfully!",
-          contentType: ContentType.success,
-        );
+        // NesticoPeSnackBar.showAwesomeSnackbar(
+        //   title: "Success",
+        //   message: "Service updated successfully!",
+        //   contentType: ContentType.success,
+        // );
         clearForm();
         refreshList();
       } else {
-        NesticoPeSnackBar.showAwesomeSnackbar(
-          title: "Error",
-          message: "Failed to update service",
-          contentType: ContentType.failure,
-        );
+        // NesticoPeSnackBar.showAwesomeSnackbar(
+        //   title: "Error",
+        //   message: "Failed to update service",
+        //   contentType: ContentType.failure,
+        // );
       }
     } catch (e) {
       print("Error updating service: $e");

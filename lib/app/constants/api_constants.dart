@@ -5,12 +5,8 @@ class ApiConstants {
   // Manual override options (comment/uncomment as needed):
   // static const String baseURL = "http://housing.grewox.com/api/v1"; // Live
 
-
-
-   static const String url = "http://192.168.1.5:19725";
- // static const String url = "https://commentary-flush-reprints-prison.trycloudflare.com";
-
-
+  static const String url = "http://192.168.1.5:19725";
+  // static const String url = "https://commentary-flush-reprints-prison.trycloudflare.com";
 
   // static const String url =
   //     "https://bow-dir-facility-adjusted.trycloudflare.com";
@@ -23,8 +19,6 @@ class ApiConstants {
   static String get deleteAccount => "$baseURL/deleteAccount";
 
   static String get loginEndpoint => "$auth/login";
-
-
 
   static String get registerEndpoint => "$auth/signup";
 
@@ -40,13 +34,17 @@ class ApiConstants {
 
   static String get convertToContractor => "$auth/convert-buyer-to-contractor";
 
-  static String get aadharInitiateVerification => "$auth/initiate-aadhaar-verification";
+  static String get aadharInitiateVerification =>
+      "$auth/initiate-aadhaar-verification";
 
   static String get aadharVerifyOtp => "$auth/verify-aadhaar-otp";
 
   static String get referralGet => "$baseURL/referral/my-stats";
 
-  static String get generateResellerCertificate=>"$baseURL/certificate/generate-and-save-certificate";
+  static String get referral => "$baseURL/referral";
+
+  static String get generateResellerCertificate =>
+      "$baseURL/certificate/generate-and-save-certificate";
 
   static String get generateReferCode => "$baseURL/referral/generate-code";
 
@@ -63,9 +61,9 @@ class ApiConstants {
   static String get subscriptionPlan => "$baseURL/subscriptionPlan";
   static String get searchHistory => "$baseURL/searchHistory";
 
-
   static String get subscription => "$baseURL/subscription";
-  static String get subscriptionPlanInquiry => "$baseURL/subscriptionPlanInquiry";
+  static String get subscriptionPlanInquiry =>
+      "$baseURL/subscriptionPlanInquiry";
 
   // Lead
   static String get leads => "$baseURL/lead";
@@ -76,7 +74,8 @@ class ApiConstants {
 
   static String get platformService => "$baseURL/platformService";
 
-  static String get propertyRecommend => "$baseURL/property/personalized-recommendations";
+  static String get propertyRecommend =>
+      "$baseURL/property/personalized-recommendations";
 
   static String get builderProject => "$baseURL/builderproject";
 
@@ -84,9 +83,11 @@ class ApiConstants {
 
   static String get resellerSuccessStory => "$baseURL/resellerSuccessStory";
 
-  static String get resellerCityWiseReseller=>"$baseURL/insight/citywise-leaderboard";
+  static String get resellerCityWiseReseller =>
+      "$baseURL/insight/citywise-leaderboard";
 
-  static String get resellerGetAllCity=>"$baseURL/cityInsights/reseller-cities";
+  static String get resellerGetAllCity =>
+      "$baseURL/cityInsights/reseller-cities";
 
   static String get locationPriceMetrics => "$baseURL/locationPriceMetrics";
 
@@ -135,32 +136,40 @@ class ApiConstants {
 
   static String get contractorService => "$baseURL/contractorService";
 
-  static String get contractorServiceCategory => "$baseURL/contractorServiceCategory";
+  static String get contractorServiceCategory =>
+      "$baseURL/contractorServiceCategory";
 
-  static String get contractorServiceByCategory => "$baseURL/contractorService/by-category";
-  static String get contractorServicesCity => "$baseURL/cityInsights/contractor-cities";
+  static String get contractorServiceByCategory =>
+      "$baseURL/contractorService/by-category";
+  static String get contractorServicesCity =>
+      "$baseURL/cityInsights/contractor-cities";
 
-  static String get resellerPropertyShare=>"$baseURL/propertyShare/reference";
+  static String get resellerPropertyShare => "$baseURL/propertyShare/reference";
 
   static String get contractorInquiry => "$baseURL/contractorInquiry";
-  static String get contractorInquiryQuotation => "$baseURL/contractorquotation";
+  static String get contractorInquiryQuotation =>
+      "$baseURL/contractorquotation";
 
   static String get contractorProject => "$baseURL/contractorProjects";
 
   static String get contractorProjectMilestone => "$baseURL/projectmilestone";
 
-  static String get contractorProjectMilestonePayment => "$baseURL/milestonepayment";
+  static String get contractorProjectMilestonePayment =>
+      "$baseURL/milestonepayment";
 
   static String get contractorLeadFollowUp => "$baseURL/followup";
-  static String get myContractorProfileReview => "$baseURL/review/check/contractor_service";
+  static String get myContractorProfileReview =>
+      "$baseURL/review/check/contractor_service";
 
-  static String get contractorCompare => "$baseURL/contractorService/contractor";
+  static String get contractorCompare =>
+      "$baseURL/contractorService/contractor";
 
   static String get contractorUserProfile => "$baseURL/user/profiles";
 
   static String get contractorEmployees => "$baseURL/employee";
 
-  static String get contractorTopServiceCategory => "$baseURL/contractorServiceCategory/top";
+  static String get contractorTopServiceCategory =>
+      "$baseURL/contractorServiceCategory/top";
 
   //---------------------------------other-----------------------------//
 
@@ -222,10 +231,6 @@ class ApiConstants {
   }
 }
 
-
-
-
-
 ///http://192.168.1.5:19725/api/v1/certificate/generate-and-save-certificate
 ///
 /// payload
@@ -250,4 +255,3 @@ class ApiConstants {
 //         "certificateUrl": "https://crmmediabucket.s3.amazonaws.com/RealEstate/superadmin/reseller/common/1lH7F520ZTMd9ZZ9ihxCU0i/certificate/2026-01/reseller_certificate_1768967368494_rs1.pdf.pdf"
 //     }
 // }
-

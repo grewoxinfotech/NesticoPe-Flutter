@@ -443,6 +443,8 @@ class ContractorInquiryController
     required String status,
     required String note,
     required ContractorInquiryItem inquiry,
+    required String userId,
+    required int discountedPrice,
   }) async {
     try {
       // TODO: Implement API call to save quotation
@@ -455,8 +457,12 @@ class ContractorInquiryController
           "email": inquiry.email,
           "phone": inquiry.phone,
         },
-        "meta": {"notes": 'Generated from inquiry for: $note'},
-        "price": quotationPrice,
+        "meta": {
+          "notes": 'Generated from inquiry for: $note',
+          "originalPrice": quotationPrice,
+          "inquiryCustomerId": userId,
+        },
+        "price": discountedPrice,
         "status": status.toLowerCase().replaceAll(" ", "_"),
       };
 
