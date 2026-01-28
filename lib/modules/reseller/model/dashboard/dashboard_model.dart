@@ -1,17 +1,26 @@
 /// Status matches your "Status" array
 enum LeadStatus {
-  all,
   new_,        // New
   contacted,
   qualified,
   negotiation,
   lost,
   convert,
+  fake,
+}
+
+enum SourceType {
+  app,
+  website,
+  referral,
+  socialMedia,
+  direct,
+  other,
 }
 
 /// Stage matches your "Stage" array
 enum LeadStage {
-  all,
+
   newLead,     // New Lead
   contacted,
   interested,
@@ -106,12 +115,12 @@ class Lead {
       status: LeadStatus.values.firstWhere(
             (e) => e.toString().split('.').last.toLowerCase() ==
             (json['status'] ?? '').toString().toLowerCase(),
-        orElse: () => LeadStatus.all,
+        orElse: () => LeadStatus.new_,
       ),
       stage: LeadStage.values.firstWhere(
             (e) => e.toString().split('.').last.toLowerCase() ==
             (json['stage'] ?? '').toString().toLowerCase(),
-        orElse: () => LeadStage.all,
+        orElse: () => LeadStage.newLead,
       ),
       property: json['property'] ?? '',
       reseller: json['reseller'] ?? '',

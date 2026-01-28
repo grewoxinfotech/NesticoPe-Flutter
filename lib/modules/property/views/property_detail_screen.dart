@@ -3582,6 +3582,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                         return _buildMediaBanner(
                           currentProperty.propertyMedia ?? PropertyMedia(),
                           currentProperty.id ?? '',
+                          currentProperty,
                         );
                       },
                     ),
@@ -5114,7 +5115,11 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   // Also remove this getter since we're using _property.value directly
   // Items? get property => _property.value;
 
-  Widget _buildMediaBanner(PropertyMedia media, String id) {
+  Widget _buildMediaBanner(
+    PropertyMedia media,
+    String id,
+    Items currentProperty,
+  ) {
     final PageController pageController = PageController();
     final images = media.images ?? [];
     final videos = media.videos ?? [];
@@ -5211,49 +5216,49 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                 ),
               ),
 
-              Obx(() {
-                return Positioned(
-                  left: 16,
-                  bottom: 16,
-                  child: Row(
-                    children: [
-                      ReraComponent(
-                        text:
-                            (!controller.isDeveloper.value)
-                                ? "Verified"
-                                : "rera",
-                        backgroundColor: ColorRes.black.withOpacity(0.7),
-                        textColor: ColorRes.background,
-                        fontSize: AppFontSizes.small,
-
-                        borderRadius: AppRadius.small,
-                        fontWeight: AppFontWeights.bold,
-                        showIcon: true,
-                        iconColor: ColorRes.success,
-                        iconSize: 14,
-                      ),
-                      const SizedBox(width: 8),
-                      if (property
-                              ?.scoreBreakdown
-                              ?.components
-                              .premium
-                              .isPremium ??
-                          false)
+              if ((currentProperty.reraId?.isNotEmpty ?? false) &&
+                  currentProperty.reraId != null) ...[
+                Obx(() {
+                  return Positioned(
+                    left: 16,
+                    bottom: 16,
+                    child: Row(
+                      children: [
                         ReraComponent(
-                          text: "NesticoPe Assured",
+                          text: "rera",
                           backgroundColor: ColorRes.black.withOpacity(0.7),
                           textColor: ColorRes.background,
-
-                          iconColor: ColorRes.primary,
                           fontSize: AppFontSizes.small,
+
                           borderRadius: AppRadius.small,
                           fontWeight: AppFontWeights.bold,
                           showIcon: true,
+                          iconColor: ColorRes.success,
+                          iconSize: 14,
                         ),
-                    ],
-                  ),
-                );
-              }),
+                        const SizedBox(width: 8),
+                        if (property
+                                ?.scoreBreakdown
+                                ?.components
+                                .premium
+                                .isPremium ??
+                            false)
+                          ReraComponent(
+                            text: "NesticoPe Assured",
+                            backgroundColor: ColorRes.black.withOpacity(0.7),
+                            textColor: ColorRes.background,
+
+                            iconColor: ColorRes.primary,
+                            fontSize: AppFontSizes.small,
+                            borderRadius: AppRadius.small,
+                            fontWeight: AppFontWeights.bold,
+                            showIcon: true,
+                          ),
+                      ],
+                    ),
+                  );
+                }),
+              ],
             ],
           );
         },
@@ -5304,25 +5309,46 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
           // 🔹 Type + See on Map
           Row(
             children: [
-              if (property.listingType != null)
+              if (property.propertyStatus?.toLowerCase() != "sold") ...[
+                if (property.listingType != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: ColorRes.primary.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(AppRadius.small),
+                    ),
+                    child: Text(
+                      property.listingType!.toUpperCase(),
+                      style: TextStyle(
+                        fontSize: AppFontSizes.small,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.primary,
+                      ),
+                    ),
+                  ),
+              ] else ...[
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: ColorRes.primary.withOpacity(0.15),
+                    color: ColorRes.error.withOpacity(0.15),
                     borderRadius: BorderRadius.circular(AppRadius.small),
                   ),
                   child: Text(
-                    property.listingType!.toUpperCase(),
+                    property.propertyStatus!.toUpperCase(),
                     style: TextStyle(
                       fontSize: AppFontSizes.small,
                       fontWeight: AppFontWeights.semiBold,
-                      color: ColorRes.primary,
+                      color: ColorRes.error,
                     ),
                   ),
                 ),
+              ],
 
               const Spacer(),
 

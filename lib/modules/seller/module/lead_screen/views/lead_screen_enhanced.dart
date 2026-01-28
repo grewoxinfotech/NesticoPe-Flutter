@@ -4569,27 +4569,38 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
                   vertical: isCompact ? 6 : 8,
                 ),
                 decoration: BoxDecoration(
-                  color: getStatusColor(
-                    getLeadStatusFromString(lead.status!),
-                  ).withOpacity(0.08),
+                  color:
+                      (lead.isFake ?? false)
+                          ? ColorRes.error.withOpacity(0.08)
+                          : getStatusColor(
+                            getLeadStatusFromString(lead.status!),
+                          ).withOpacity(0.08),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: getStatusColor(
-                      getLeadStatusFromString(lead.status!),
-                    ).withOpacity(0.3),
+                    color:
+                        (lead.isFake ?? false)
+                            ? ColorRes.error.shade300
+                            : getStatusColor(
+                              getLeadStatusFromString(lead.status!),
+                            ).withOpacity(0.3),
                     width: 1,
                   ),
                 ),
                 child: Text(
-                  getStatusText(getLeadStatusFromString(lead.status!)),
+                  (lead.isFake ?? false)
+                      ? "Fake"
+                      : getStatusText(getLeadStatusFromString(lead.status!)),
                   style: TextStyle(
                     fontSize:
                         isCompact
                             ? AppFontSizes.extraSmall
                             : AppFontSizes.small,
-                    color: getStatusColor(
-                      getLeadStatusFromString(lead.status!),
-                    ),
+                    color:
+                        (lead.isFake ?? false)
+                            ? ColorRes.error
+                            : getStatusColor(
+                              getLeadStatusFromString(lead.status!),
+                            ),
                     fontWeight: AppFontWeights.bold,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -4622,6 +4633,39 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
                             ? AppFontSizes.extraSmall
                             : AppFontSizes.small,
                     color: getStageColor(getLeadStageFromString(lead.stage)),
+                    fontWeight: AppFontWeights.bold,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              SizedBox(width: 8),
+              // Stage Badge
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isCompact ? 10 : 14,
+                  vertical: isCompact ? 6 : 8,
+                ),
+                decoration: BoxDecoration(
+                  color: getSourceColor(
+                    getSourceFromString(lead.source??''),
+                  ).withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: getSourceColor(
+                      getSourceFromString(lead.source??''),
+                    ).withOpacity(0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Text(
+                  getSourceText(getSourceFromString(lead.source??'')),
+                  style: TextStyle(
+                    fontSize:
+                    isCompact
+                        ? AppFontSizes.extraSmall
+                        : AppFontSizes.small,
+                    color: getSourceColor(getSourceFromString(lead.source??'')),
+
                     fontWeight: AppFontWeights.bold,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -4850,9 +4894,10 @@ Color getStatusColor(LeadStatus status) {
       return ColorRes.leadIndigoColor;
     case LeadStatus.lost:
       return ColorRes.error;
+    case LeadStatus.fake:
+      return ColorRes.error;
     case LeadStatus.convert:
       return ColorRes.leadTealColor;
-    case LeadStatus.all:
     default:
       return ColorRes.leadGreyColor;
   }
@@ -4870,14 +4915,78 @@ LeadStatus getLeadStatusFromString(String status) {
       return LeadStatus.negotiation;
     case 'lost':
       return LeadStatus.lost;
-    case 'convert':
+    case 'converted':
       return LeadStatus.convert;
-    case 'all':
-      return LeadStatus.all;
+    case 'fake':
+      return LeadStatus.fake;
     default:
-      return LeadStatus.all;
+      return LeadStatus.new_;
   }
 }
+
+Color getSourceColor(SourceType source) {
+  switch (source) {
+    case SourceType.app:
+      return ColorRes.leadTealColor;
+    case SourceType.website:
+      return ColorRes.blueColor;
+    case SourceType.referral:
+      return ColorRes.purpleColor;
+    case SourceType.socialMedia:
+      return ColorRes.orangeColor;
+    case SourceType.direct:
+      return ColorRes.leadIndigoColor;
+    case SourceType.other:
+      return ColorRes.leadGreyColor;
+    default:
+      return ColorRes.leadGreyColor;
+  }
+}
+
+SourceType getSourceFromString(String source) {
+  switch (source.toLowerCase()) {
+    case 'app':
+      return SourceType.app;
+    case 'website':
+      return SourceType.website;
+    case 'referral':
+      return SourceType.referral;
+    case 'social_media':
+      return SourceType.socialMedia;
+    case 'direct':
+      return SourceType.direct;
+    case 'other':
+      return SourceType.other;
+    default:
+      return SourceType.other;
+  }
+}
+
+String getSourceText(SourceType source) {
+  switch (source) {
+    case SourceType.app:
+      return 'App';
+    case SourceType.website:
+      return 'Website';
+    case SourceType.referral:
+      return 'Referral';
+    case SourceType.socialMedia:
+      return 'Social Media';
+    case SourceType.direct:
+      return 'Direct';
+    case SourceType.other:
+      return 'Other';
+    default:
+      return 'Unknown';
+  }
+}
+
+
+
+
+
+
+
 
 String getStatusText(LeadStatus status) {
   switch (status) {
@@ -4893,7 +5002,8 @@ String getStatusText(LeadStatus status) {
       return 'Lost';
     case LeadStatus.convert:
       return 'Converted';
-    case LeadStatus.all:
+    case LeadStatus.fake:
+      return "Fake";
     default:
       return 'All';
   }
@@ -4911,7 +5021,6 @@ Color getStageColor(LeadStage stage) {
       return ColorRes.leadIndigoColor;
     case LeadStage.sell:
       return ColorRes.success;
-    case LeadStage.all:
     default:
       return ColorRes.leadGreyColor;
   }
@@ -4933,10 +5042,9 @@ LeadStage getLeadStageFromString(String? stage) {
       return LeadStage.siteVisit;
     case 'sell':
       return LeadStage.sell;
-    case 'all':
-      return LeadStage.all;
     default:
-      return LeadStage.all; // fallback
+      return LeadStage.sell;
+    // fallback
   }
 }
 
@@ -4952,7 +5060,6 @@ String getStageText(LeadStage stage) {
       return 'Site Visit';
     case LeadStage.sell:
       return 'Sell';
-    case LeadStage.all:
     default:
       return 'All';
   }

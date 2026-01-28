@@ -64,6 +64,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
   Rxn<Items> leadProperty = Rxn<Items>();
 
   RxBool isLoadingProperty = false.obs;
+  RxString markedBy="".obs;
 
   @override
   void initState() {
@@ -71,9 +72,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
     if (propertyId != null) {
       _initializeProperty(propertyId);
     }
-    // else {
-    //   _initializeProperty(widget.property!.id ?? '');
-    // }
+
     super.initState();
   }
 
@@ -314,19 +313,21 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
               ),
 
               if (widget.property != null) ...[
-                Divider(thickness: 8, color: Colors.grey[100]),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  child: _buildSectionHeader(
-                    'Report',
-                    Icons.report_gmailerrorred_outlined,
-                    isCompact,
-                  ),
-                ),
-                ReportPropertyCard(propertyId: widget.property!.id!),
+               if(widget.property?.propertyStatus?.toLowerCase()!="sold")...[
+                 Divider(thickness: 8, color: Colors.grey[100]),
+                 Padding(
+                   padding: const EdgeInsets.symmetric(
+                     horizontal: 16,
+                     vertical: 8,
+                   ),
+                   child: _buildSectionHeader(
+                     'Report',
+                     Icons.report_gmailerrorred_outlined,
+                     isCompact,
+                   ),
+                 ),
+                 ReportPropertyCard(propertyId: widget.property!.id!),
+               ]
               ],
 
               // 8. Notes Section (Only for Leads)
@@ -334,6 +335,114 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                 Divider(thickness: 8, color: Colors.grey[100]),
                 _buildNotesSection(context, isCompact),
               ],
+
+              if ((widget.lead?.isFake ?? false) && widget.isFromLead) ...[
+                Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: _buildSectionHeader('Lead Status', Icons.leaderboard_sharp, true),
+                ), SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Container(
+                    width: double.infinity,
+                    // margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFF0F0),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFFFFBDBD)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: const [
+                            Icon(Icons.warning_amber_rounded, color: Colors.red, size: 20),
+                            SizedBox(width: 6),
+                            Text(
+                              "MARKED AS FAKE",
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                         Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "Marked By: Adimn\n",
+                                style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87),
+                              ),
+                              // TextSpan(text: "Admin\n"),
+                              TextSpan(
+                                text: "On: ",
+                                style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87),
+                              ),
+                              TextSpan(text: "${Formatter.formatDateFromDateTime(DateTime.tryParse(widget.lead?.markedFakeAt??''))}\n"),
+
+                              TextSpan(
+                                text: "Reason: ",
+                                style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87),
+                              ),
+                              TextSpan(
+                                text: "${widget.lead?.fakeReason}",
+                                style: TextStyle(color: Colors.red, fontStyle: FontStyle.italic),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+
+              if ((widget.lead?.status?.toLowerCase() == "converted") &&
+                  (widget.lead?.stage?.toLowerCase() == "sell") ) ...[
+                Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: _buildSectionHeader('Lead Status', Icons.leaderboard_sharp, true),
+                ), SizedBox(height: 16),
+                GestureDetector(
+                  onTap: () {
+                    // 🟢 Add your action here
+                    // Example: Get.to(() => CommissionPaymentScreen(lead: widget.lead));
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE8FBE8),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: const Color(0xFF86E386)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(Icons.attach_money_rounded, color: Color(0xFF27AE60), size: 18),
+                        SizedBox(width: 8),
+                        Text(
+                          "PAY PARTNER COMMISSION NOW",
+                          style: TextStyle(
+                            color: Color(0xFF27AE60),
+                            fontWeight: FontWeight.w700,
+                            fontSize: 13,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+
 
               Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
               Obx(() {
@@ -506,38 +615,40 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
           },
         ),
         const SizedBox(height: 8),
-        ListTile(
-          tileColor: ColorRes.white,
-          title: Text(
-            'Follow Ups',
-            style: TextStyle(
-              fontSize: AppFontSizes.medium,
-              fontWeight: AppFontWeights.semiBold,
-            ),
-          ),
-          leading: Icon(Icons.follow_the_signs, color: ColorRes.primary),
-          trailing: Icon(Icons.arrow_forward_ios_rounded),
-          onTap: () {
-            final selectedInquiry =
-                propertyInquiryController?.selectedInquiry.value;
+       if(widget.isFromLead)...[
+         ListTile(
+           tileColor: ColorRes.white,
+           title: Text(
+             'Follow Ups',
+             style: TextStyle(
+               fontSize: AppFontSizes.medium,
+               fontWeight: AppFontWeights.semiBold,
+             ),
+           ),
+           leading: Icon(Icons.follow_the_signs, color: ColorRes.primary),
+           trailing: Icon(Icons.arrow_forward_ios_rounded),
+           onTap: () {
+             final selectedInquiry =
+                 propertyInquiryController?.selectedInquiry.value;
 
-            // Set visit id
-            log(
-              'Setting visit ID for user ${selectedInquiry?.userId} and property ${selectedInquiry?.propertyId}',
-            );
-            leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
-              selectedInquiry?.propertyId ?? property.id ?? '',
-              buyerID: selectedInquiry?.userId ?? '',
-            );
-            log(
-              'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
-            );
+             // Set visit id
+             log(
+               'Setting visit ID for user ${selectedInquiry?.userId} and property ${selectedInquiry?.propertyId}',
+             );
+             leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
+               selectedInquiry?.propertyId ?? property.id ?? '',
+               buyerID: selectedInquiry?.userId ?? '',
+             );
+             log(
+               'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
+             );
 
-            log("Set the lead user ${widget.lead?.toJson()}");
-            leadVisitController.getLeadId(widget.lead?.id ?? '');
-            Get.to(() => LeadFollowUpScreen(controller: leadVisitController));
-          },
-        ),
+             log("Set the lead user ${widget.lead?.toJson()}");
+             leadVisitController.getLeadId(widget.lead?.id ?? '');
+             Get.to(() => LeadFollowUpScreen(controller: leadVisitController));
+           },
+         ),
+       ],
         const SizedBox(height: 8),
       ],
     );

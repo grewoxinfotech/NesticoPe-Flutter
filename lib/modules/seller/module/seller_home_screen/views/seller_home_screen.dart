@@ -743,7 +743,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
 
           // --- Chart section ---
           SizedBox(
-            height: 350,
+            height: 360,
             width: double.infinity,
             child: LeadSourceDistributionPieGraph(
               breakdown:

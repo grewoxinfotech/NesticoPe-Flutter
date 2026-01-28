@@ -149,25 +149,25 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                 ),
 
                 // TODO: fetch by role
-                Positioned(
-                  left: 14,
-                  bottom: 14,
-                  child: ReraComponent(
-                    text:
-                        (widget.role.trim().toLowerCase() == 'owner')
-                            ? "Verified"
-                            : "rera",
-                    backgroundColor: ColorRes.black.withOpacity(0.7),
-                    textColor: ColorRes.background,
-                    fontSize: AppFontSizes.extraSmall,
+                if((widget.property.reraId?.isNotEmpty??false) && (widget.property.reraId!=null))
+                  ...[
+                    Positioned(
+                      left: 14,
+                      bottom: 14,
+                      child: ReraComponent(
+                        text: "rera",
+                        backgroundColor: ColorRes.black.withOpacity(0.7),
+                        textColor: ColorRes.background,
+                        fontSize: AppFontSizes.extraSmall,
 
-                    borderRadius: AppRadius.small,
-                    fontWeight: AppFontWeights.bold,
-                    showIcon: true,
-                    iconColor: ColorRes.success,
-                    iconSize: 14,
-                  ),
-                ),
+                        borderRadius: AppRadius.small,
+                        fontWeight: AppFontWeights.bold,
+                        showIcon: true,
+                        iconColor: ColorRes.success,
+                        iconSize: 14,
+                      ),
+                    ),
+                  ],
 
                 // Compare & Favorite buttons
                 Positioned(

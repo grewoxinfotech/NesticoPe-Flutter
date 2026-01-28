@@ -36,6 +36,8 @@ dependencies:
   salomon_bottom_bar:
   font_awesome_flutter:
   flutter_svg:
+  geolocator:
+  geocoding:
   google_fonts:
   smooth_page_indicator:
   video_player:

@@ -238,25 +238,36 @@ class LeadCardWidget extends StatelessWidget {
                     vertical: isCompact ? 6 : 8,
                   ),
                   decoration: BoxDecoration(
-                    color: getStatusColor(
+                    color:
+                    (lead.isFake ?? false)
+                        ? ColorRes.error.withOpacity(0.08)
+                        : getStatusColor(
                       getLeadStatusFromString(lead.status!),
                     ).withOpacity(0.08),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: getStatusColor(
+                      color:
+                      (lead.isFake ?? false)
+                          ? ColorRes.error.shade300
+                          : getStatusColor(
                         getLeadStatusFromString(lead.status!),
                       ).withOpacity(0.3),
                       width: 1,
                     ),
                   ),
                   child: Text(
-                    getStatusText(getLeadStatusFromString(lead.status!)),
+                    (lead.isFake ?? false)
+                        ? "Fake"
+                        : getStatusText(getLeadStatusFromString(lead.status!)),
                     style: TextStyle(
                       fontSize:
-                          isCompact
-                              ? AppFontSizes.extraSmall
-                              : AppFontSizes.small,
-                      color: getStatusColor(
+                      isCompact
+                          ? AppFontSizes.extraSmall
+                          : AppFontSizes.small,
+                      color:
+                      (lead.isFake ?? false)
+                          ? ColorRes.error
+                          : getStatusColor(
                         getLeadStatusFromString(lead.status!),
                       ),
                       fontWeight: AppFontWeights.bold,
@@ -297,41 +308,40 @@ class LeadCardWidget extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                // Spacer(),
-                //
-                // // Action Buttons
-                // Row(
-                //   children: [
-                //     if (onView != null) ...[
-                //       buildActionButton(
-                //         icon: Icons.visibility,
-                //         color: ColorRes.blueColor,
-                //         onPressed: onView!,
-                //         tooltip: 'View Lead',
-                //         isCompact: isCompact,
-                //       ),
-                //       SizedBox(width: 8),
-                //     ],
-                //     if (onEdit != null) ...[
-                //       buildActionButton(
-                //         icon: Icons.edit,
-                //         color: ColorRes.orangeColor,
-                //         onPressed: onEdit!,
-                //         tooltip: 'Edit Lead',
-                //         isCompact: isCompact,
-                //       ),
-                //       SizedBox(width: 8),
-                //     ],
-                //     if (onDelete != null)
-                //       buildActionButton(
-                //         icon: Icons.delete,
-                //         color: ColorRes.error,
-                //         onPressed: onDelete!,
-                //         tooltip: 'Delete Lead',
-                //         isCompact: isCompact,
-                //       ),
-                //   ],
-                // ),
+                SizedBox(width: 8),
+                // Stage Badge
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isCompact ? 10 : 14,
+                    vertical: isCompact ? 6 : 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: getSourceColor(
+                      getSourceFromString(lead.source??''),
+                    ).withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: getSourceColor(
+                        getSourceFromString(lead.source??''),
+                      ).withOpacity(0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Text(
+                    getSourceText(getSourceFromString(lead.source??'')),
+                    style: TextStyle(
+                      fontSize:
+                      isCompact
+                          ? AppFontSizes.extraSmall
+                          : AppFontSizes.small,
+                      color: getSourceColor(getSourceFromString(lead.source??'')),
+
+                      fontWeight: AppFontWeights.bold,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+
               ],
             ),
           ],

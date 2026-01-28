@@ -8,6 +8,7 @@ import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 import 'package:housing_flutter_app/data/network/getProfile/service/getProfile_service.dart';
 import 'package:housing_flutter_app/data/network/profile/reseller_profile/service/reseller_profile_service.dart';
+import 'package:housing_flutter_app/widgets/location_permission/location_permission_method.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../app/constants/color_res.dart';
@@ -182,13 +183,11 @@ class SellerProfileController extends GetxController {
     addressController.text = profileData.value?.user?.address ?? "";
     zipController.text = profileData.value?.user?.zipCode ?? "";
 
-    if((profileData.value?.user?.totalExperience!=null))
-    {
-      totalExperience.text=profileData.value?.user?.totalExperience.toString()??'';
-    }
-    else{
-
-      totalExperience.text="0";
+    if ((profileData.value?.user?.totalExperience != null)) {
+      totalExperience.text =
+          profileData.value?.user?.totalExperience.toString() ?? '';
+    } else {
+      totalExperience.text = "0";
     }
     // Business Details fields from seller profile
     contactPersonController.text = resellerProfile.value?.contactName ?? "";
@@ -213,62 +212,69 @@ class SellerProfileController extends GetxController {
 
   // Image picker methods
   Future<void> pickImageFromGallery() async {
-    try {
-      isLoadingIMage.value = true;
-      final XFile? image = await _picker.pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 1024,
-        maxHeight: 1024,
-        imageQuality: 85,
-      );
-
-      if (image != null) {
-        selectedImage.value = File(image.path);
-
-        NesticoPeSnackBar.showAwesomeSnackbar(
-          title: 'Success',
-          message: "Image selected successfully",
-          contentType: ContentType.success,
+    bool isGranted = await requestGalleryPermission();
+    if (isGranted) {
+      try {
+        isLoadingIMage.value = true;
+        final XFile? image = await _picker.pickImage(
+          source: ImageSource.gallery,
+          maxWidth: 1024,
+          maxHeight: 1024,
+          imageQuality: 85,
         );
+
+        if (image != null) {
+          selectedImage.value = File(image.path);
+
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Success',
+            message: "Image selected successfully",
+            contentType: ContentType.success,
+          );
+        }
+      } catch (e) {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: "Failed to pick image: ${e.toString()}",
+          contentType: ContentType.failure,
+        );
+      } finally {
+        isLoadingIMage.value = false;
       }
-    } catch (e) {
-      NesticoPeSnackBar.showAwesomeSnackbar(
-        title: 'Error',
-        message: "Failed to pick image: ${e.toString()}",
-        contentType: ContentType.failure,
-      );
-    } finally {
-      isLoadingIMage.value = false;
     }
   }
 
   Future<void> pickImageFromCamera() async {
-    try {
-      isLoadingIMage.value = true;
-      final XFile? image = await _picker.pickImage(
-        source: ImageSource.camera,
-        maxWidth: 1024,
-        maxHeight: 1024,
-        imageQuality: 85,
-      );
+    bool isGranted= await requestCameraPermission();
+    if(isGranted)
+      {
+        try {
+          isLoadingIMage.value = true;
+          final XFile? image = await _picker.pickImage(
+            source: ImageSource.camera,
+            maxWidth: 1024,
+            maxHeight: 1024,
+            imageQuality: 85,
+          );
 
-      if (image != null) {
-        selectedImage.value = File(image.path);
-        NesticoPeSnackBar.showAwesomeSnackbar(
-          title: 'Success',
-          message: "Image captured successfully",
-          contentType: ContentType.success,
-        );
+          if (image != null) {
+            selectedImage.value = File(image.path);
+            NesticoPeSnackBar.showAwesomeSnackbar(
+              title: 'Success',
+              message: "Image captured successfully",
+              contentType: ContentType.success,
+            );
+          }
+        } catch (e) {
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Error',
+            message: 'Failed to capture image: ${e.toString()}',
+            contentType: ContentType.failure,
+          );
+        } finally {
+          isLoadingIMage.value = false;
+        }
       }
-    } catch (e) {
-      NesticoPeSnackBar.showAwesomeSnackbar(
-        title: 'Error',
-        message: 'Failed to capture image: ${e.toString()}',
-        contentType: ContentType.failure,
-      );
-    } finally {
-      isLoadingIMage.value = false;
-    }
   }
 
   void showImagePickerOptions(BuildContext context) {
@@ -602,7 +608,7 @@ class SellerProfileController extends GetxController {
       'city': pendingUserData?.city,
       'state': pendingUserData?.state,
       'address': pendingUserData?.address,
-      "totalExperience":pendingUserData?.totalExperience,
+      "totalExperience": pendingUserData?.totalExperience,
       'profiledata': {
         'contactName': contactPersonController.text,
         'contactPhone': contactPhoneController.text,

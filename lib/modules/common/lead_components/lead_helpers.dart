@@ -18,9 +18,11 @@ Color getStatusColor(LeadStatus status) {
       return ColorRes.leadIndigoColor;
     case LeadStatus.lost:
       return ColorRes.error;
+    case LeadStatus.fake:
+      return ColorRes.error;
     case LeadStatus.convert:
       return ColorRes.leadTealColor;
-    case LeadStatus.all:
+
     default:
       return ColorRes.leadGreyColor;
   }
@@ -50,12 +52,13 @@ LeadStatus getLeadStatusFromString(String status) {
       return LeadStatus.negotiation;
     case 'lost':
       return LeadStatus.lost;
-    case 'convert':
+    case 'converted':
       return LeadStatus.convert;
-    case 'all':
-      return LeadStatus.all;
+    case 'fake':
+      return LeadStatus.fake;
+
     default:
-      return LeadStatus.all;
+      return LeadStatus.new_;
   }
 }
 
@@ -74,7 +77,8 @@ String getStatusText(LeadStatus status) {
       return 'Lost';
     case LeadStatus.convert:
       return 'Converted';
-    case LeadStatus.all:
+    case LeadStatus.fake:
+      return "Fake";
     default:
       return 'All';
   }
@@ -93,9 +97,66 @@ Color getStageColor(LeadStage stage) {
       return ColorRes.leadIndigoColor;
     case LeadStage.sell:
       return ColorRes.success;
-    case LeadStage.all:
+
     default:
       return ColorRes.leadGreyColor;
+  }
+}
+
+Color getSourceColor(SourceType source) {
+  switch (source) {
+    case SourceType.app:
+      return ColorRes.leadTealColor;
+    case SourceType.website:
+      return ColorRes.blueColor;
+    case SourceType.referral:
+      return ColorRes.purpleColor;
+    case SourceType.socialMedia:
+      return ColorRes.orangeColor;
+    case SourceType.direct:
+      return ColorRes.leadIndigoColor;
+    case SourceType.other:
+      return ColorRes.leadGreyColor;
+    default:
+      return ColorRes.leadGreyColor;
+  }
+}
+
+SourceType getSourceFromString(String source) {
+  switch (source.toLowerCase()) {
+    case 'app':
+      return SourceType.app;
+    case 'website':
+      return SourceType.website;
+    case 'referral':
+      return SourceType.referral;
+    case 'social_media':
+      return SourceType.socialMedia;
+    case 'direct':
+      return SourceType.direct;
+    case 'other':
+      return SourceType.other;
+    default:
+      return SourceType.other;
+  }
+}
+
+String getSourceText(SourceType source) {
+  switch (source) {
+    case SourceType.app:
+      return 'App';
+    case SourceType.website:
+      return 'Website';
+    case SourceType.referral:
+      return 'Referral';
+    case SourceType.socialMedia:
+      return 'Social Media';
+    case SourceType.direct:
+      return 'Direct';
+    case SourceType.other:
+      return 'Other';
+    default:
+      return 'Unknown';
   }
 }
 
@@ -116,10 +177,9 @@ LeadStage getLeadStageFromString(String? stage) {
       return LeadStage.siteVisit;
     case 'sell':
       return LeadStage.sell;
-    case 'all':
-      return LeadStage.all;
+
     default:
-      return LeadStage.all;
+      return LeadStage.newLead;
   }
 }
 
@@ -136,7 +196,6 @@ String getStageText(LeadStage stage) {
       return 'Site Visit';
     case LeadStage.sell:
       return 'Sell';
-    case LeadStage.all:
     default:
       return 'All';
   }

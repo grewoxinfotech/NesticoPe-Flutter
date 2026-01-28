@@ -8,6 +8,7 @@ import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 import 'package:housing_flutter_app/data/network/getProfile/service/getProfile_service.dart';
 import 'package:housing_flutter_app/data/network/profile/reseller_profile/service/reseller_profile_service.dart';
+import 'package:housing_flutter_app/widgets/location_permission/location_permission_method.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../app/constants/color_res.dart';
@@ -67,7 +68,7 @@ class ProfileController extends GetxController {
   final positionController = TextEditingController();
   final companyController = TextEditingController();
   final expController = TextEditingController();
-  final totalExperience=TextEditingController();
+  final totalExperience = TextEditingController();
   final addressController = TextEditingController();
   final zipController = TextEditingController();
 
@@ -164,15 +165,12 @@ class ProfileController extends GetxController {
     companyController.text = profileData.value?.user?.state ?? "";
     addressController.text = profileData.value?.user?.address ?? "";
     zipController.text = profileData.value?.user?.zipCode ?? "";
-   if((profileData.value?.user?.totalExperience!=null))
-     {
-       totalExperience.text=profileData.value?.user?.totalExperience.toString()??'';
-     }
-   else{
-
-     totalExperience.text="0";
-   }
-    
+    if ((profileData.value?.user?.totalExperience != null)) {
+      totalExperience.text =
+          profileData.value?.user?.totalExperience.toString() ?? '';
+    } else {
+      totalExperience.text = "0";
+    }
   }
 
   void toggleEdit() {
@@ -190,62 +188,69 @@ class ProfileController extends GetxController {
   }
 
   Future<void> pickImageFromGallery() async {
-    try {
-      isLoadingIMage.value = true;
-      final XFile? image = await _picker.pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 1024,
-        maxHeight: 1024,
-        imageQuality: 85,
-      );
+    bool isGranted = await requestGalleryPermission();
 
-      if (image != null) {
-        selectedImage.value = File(image.path);
-
-        NesticoPeSnackBar.showAwesomeSnackbar(
-          title: 'Success',
-          message: 'Image selected successfully',
-          contentType: ContentType.success,
+    if (isGranted) {
+      try {
+        isLoadingIMage.value = true;
+        final XFile? image = await _picker.pickImage(
+          source: ImageSource.gallery,
+          maxWidth: 1024,
+          maxHeight: 1024,
+          imageQuality: 85,
         );
+
+        if (image != null) {
+          selectedImage.value = File(image.path);
+
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Success',
+            message: 'Image selected successfully',
+            contentType: ContentType.success,
+          );
+        }
+      } catch (e) {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: 'Failed to pick image: ${e.toString()}',
+          contentType: ContentType.failure,
+        );
+      } finally {
+        isLoadingIMage.value = false;
       }
-    } catch (e) {
-      NesticoPeSnackBar.showAwesomeSnackbar(
-        title: 'Error',
-        message: 'Failed to pick image: ${e.toString()}',
-        contentType: ContentType.failure,
-      );
-    } finally {
-      isLoadingIMage.value = false;
     }
   }
 
   Future<void> pickImageFromCamera() async {
-    try {
-      isLoadingIMage.value = true;
-      final XFile? image = await _picker.pickImage(
-        source: ImageSource.camera,
-        maxWidth: 1024,
-        maxHeight: 1024,
-        imageQuality: 85,
-      );
-
-      if (image != null) {
-        selectedImage.value = File(image.path);
-
-        NesticoPeSnackBar.showAwesomeSnackbar(
-          title: 'Success',
-          message: 'Image captured successfully',
-          contentType: ContentType.success,
+    bool isGranted = await requestCameraPermission();
+    if (isGranted) {
+      try {
+        isLoadingIMage.value = true;
+        final XFile? image = await _picker.pickImage(
+          source: ImageSource.camera,
+          maxWidth: 1024,
+          maxHeight: 1024,
+          imageQuality: 85,
         );
+
+        if (image != null) {
+          selectedImage.value = File(image.path);
+
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Success',
+            message: 'Image captured successfully',
+            contentType: ContentType.success,
+          );
+        }
+      } catch (e) {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: 'Failed to capture image: ${e.toString()}',
+          contentType: ContentType.failure,
+        );
+      } finally {
+        isLoadingIMage.value = false;
       }
-    } catch (e) {
-      NesticoPeSnackBar.showAwesomeSnackbar(
-        title: 'Error',
-        message: 'Failed to capture image: ${e.toString()}',
-        contentType: ContentType.failure,
-      );
-    } finally {
-      isLoadingIMage.value = false;
     }
   }
 
@@ -404,7 +409,7 @@ class ProfileController extends GetxController {
       address: addressController.text,
       zipCode: zipController.text,
       totalExperience: int.tryParse(totalExperience.text),
-      
+
       username: profileData.value?.user?.username,
       userType: "reseller",
       roleId: profileData.value?.user?.roleId,
@@ -875,7 +880,7 @@ class ProfileController extends GetxController {
   void onClose() {
     // Cancel timer to prevent memory leaks
     _resendTimer?.cancel();
-totalExperience.dispose();
+    totalExperience.dispose();
     nameController.dispose();
     emailController.dispose();
     phoneController.dispose();

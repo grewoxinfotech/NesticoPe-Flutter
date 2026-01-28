@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+import 'package:housing_flutter_app/widgets/location_permission/location_permission_method.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../data/network/reseller/reseller_success_stories/reseller_success_stories_model.dart';
@@ -253,8 +254,8 @@ class ResellerSuccessStoryController
   ResellerSuccessItem buildStoryModel() {
     return ResellerSuccessItem(
       id: "",
-      resellerId:
-          "tzX2qZP1qmVBS2K8uYt22XO", // You can dynamically assign current user ID here
+      resellerId: "tzX2qZP1qmVBS2K8uYt22XO",
+      // You can dynamically assign current user ID here
       title: titleController.text.trim(),
       description: descriptionController.text.trim(),
       achievement: achievementController.text.trim(),
@@ -272,39 +273,39 @@ class ResellerSuccessStoryController
   }
 
   Future<void> builderImagePicker() async {
-    try {
-      // Show loading indicator
-      Get.dialog(
-        const Center(
-          child: CircularProgressIndicator(),
-        ),
-        barrierDismissible: false,
-      );
+    bool isGranted = await requestGalleryPermission();
+    if (isGranted) {
+      try {
+        // Show loading indicator
+        Get.dialog(
+          const Center(child: CircularProgressIndicator()),
+          barrierDismissible: false,
+        );
 
-      // Simulate picking image
-      XFile? file = await ImagePicker().pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 80,
-        maxWidth: 1024,
-        maxHeight: 1024,
-      );
+        // Simulate picking image
+        XFile? file = await ImagePicker().pickImage(
+          source: ImageSource.gallery,
+          imageQuality: 80,
+          maxWidth: 1024,
+          maxHeight: 1024,
+        );
 
-      // Dismiss loader
-      if (Get.isDialogOpen ?? false) Get.back();
+        // Dismiss loader
+        if (Get.isDialogOpen ?? false) Get.back();
 
-      if (file != null) {
-        imagePath.value = File(file.path);
+        if (file != null) {
+          imagePath.value = File(file.path);
+        }
+      } catch (e) {
+        // Close loader if open
+        if (Get.isDialogOpen ?? false) Get.back();
+
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: 'Failed to pick image: $e',
+          contentType: ContentType.failure,
+        );
       }
-    } catch (e) {
-      // Close loader if open
-      if (Get.isDialogOpen ?? false) Get.back();
-
-      NesticoPeSnackBar.showAwesomeSnackbar(
-        title: 'Error',
-        message: 'Failed to pick image: $e',
-        contentType: ContentType.failure,
-      );
     }
   }
-
 }

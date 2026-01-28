@@ -39,6 +39,7 @@ class LeadService {
   Future<PaginationResponse<LeadItem>> fetchLeads({
     int page = 1,
     String? userId,
+    int limit=10,
     Map<String, String>? filters,
     bool fromReseller = false,
   }) async {
@@ -50,6 +51,7 @@ class LeadService {
       // First page: include all filters including property_id
       queryParameters = {
         'page': page.toString(),
+
         if (userId != null) 'reseller_id': userId,
         if (filters != null) ...filters,
       };
@@ -233,12 +235,11 @@ class LeadService {
   ) async {
     try {
       final response = await http.put(
-          Uri.parse("$baseLeadNegotiablePriceUrl/$id"),
-          headers: await headers(),
-    body: jsonEncode(data),
-    );
-      if(response.statusCode==200|| response.statusCode==201)
-      {
+        Uri.parse("$baseLeadNegotiablePriceUrl/$id"),
+        headers: await headers(),
+        body: jsonEncode(data),
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -255,15 +256,15 @@ class LeadService {
         message: jsonData['message'],
         contentType: ContentType.failure,
       );
-    return false;
+      return false;
     } catch (e) {
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: "Something went wrong",
         contentType: ContentType.failure,
       );
-    print("Update lead exception: $e");
-    return false;
+      print("Update lead exception: $e");
+      return false;
     }
   }
 
@@ -304,7 +305,9 @@ class LeadService {
           message: jsonData['message'],
           contentType: ContentType.failure,
         );
-        print("❌ Failed to update negotiable price. Status: ${response.statusCode}");
+        print(
+          "❌ Failed to update negotiable price. Status: ${response.statusCode}",
+        );
         return false;
       }
     } on SocketException catch (e) {
@@ -401,17 +404,15 @@ class LeadService {
         body: jsonEncode(lead.toJson()),
       );
       debugPrint("Create lead response: ${response.body}");
-      if(response.statusCode==200|| response.statusCode==201)
-        {
-          final jsonData = json.decode(response.body);
-          // final jsonData = json.decode(response.body);
-          NesticoPeSnackBar.showAwesomeSnackbar(
-            title: 'Success',
-            message: jsonData['message'],
-            contentType: ContentType.success,
-          );
-        }
-      else{
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
+      } else {
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -441,24 +442,21 @@ class LeadService {
         headers: await headers(),
         body: jsonEncode(lead.toJson()),
       );
-      if(response.statusCode==200 || response.statusCode==201)
-        {
-          final jsonData = json.decode(response.body);
-          // final jsonData = json.decode(response.body);
-          NesticoPeSnackBar.showAwesomeSnackbar(
-            title: 'Success',
-            message: jsonData['message'],
-            contentType: ContentType.success,
-          );
-        }
-      else{
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
+      } else {
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: 'Failed',
           message: jsonData['message'],
-          contentType: ContentType.
-          failure,
+          contentType: ContentType.failure,
         );
       }
       return response.statusCode == 200;
@@ -480,16 +478,15 @@ class LeadService {
         Uri.parse("$baseUrl/$id"),
         headers: await headers(),
       );
-      if(response.statusCode==200 || response.statusCode==201)
-        {
-          final jsonData = json.decode(response.body);
-          // final jsonData = json.decode(response.body);
-          NesticoPeSnackBar.showAwesomeSnackbar(
-            title: 'Success',
-            message: jsonData['message'],
-            contentType: ContentType.success,
-          );
-        }else{
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final jsonData = json.decode(response.body);
+        // final jsonData = json.decode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'],
+          contentType: ContentType.success,
+        );
+      } else {
         final data = jsonDecode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: 'Failed',
@@ -528,7 +525,7 @@ class LeadService {
       );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-
+        AppLogger.structured("Lead Data from seller", data);
         return PaginationResponse<LeadItem>.fromJson(
           data,
           (json) => LeadItem.fromJson(json),

@@ -5799,9 +5799,11 @@ Color _getStatusColor(LeadStatus status) {
       return ColorRes.leadIndigoColor;
     case LeadStatus.lost:
       return ColorRes.error;
+    case LeadStatus.fake:
+      return ColorRes.error;
     case LeadStatus.convert:
       return ColorRes.leadTealColor;
-    case LeadStatus.all:
+
     default:
       return ColorRes.leadGreyColor;
   }
@@ -5821,7 +5823,9 @@ String _getStatusText(LeadStatus status) {
       return 'Lost';
     case LeadStatus.convert:
       return 'Converted';
-    case LeadStatus.all:
+    case LeadStatus.fake:
+      return "Fake";
+
     default:
       return 'All';
   }
@@ -5845,7 +5849,7 @@ Color _getStageColor(LeadStage stage) {
     case LeadStage.sell:
       return ColorRes.success;
     // return Colors.green;
-    case LeadStage.all:
+
     default:
       return ColorRes.leadGreyColor;
     // return Colors.grey;
@@ -5864,7 +5868,7 @@ String _getStageText(LeadStage stage) {
       return 'Site Visit';
     case LeadStage.sell:
       return 'Sell';
-    case LeadStage.all:
+
     default:
       return 'All';
   }

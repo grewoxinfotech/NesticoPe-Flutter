@@ -1076,7 +1076,9 @@ Color getStatusColor(LeadStatus status) {
       return ColorRes.error;
     case LeadStatus.convert:
       return ColorRes.leadTealColor;
-    case LeadStatus.all:
+    case LeadStatus.fake:
+      return ColorRes.error;
+
     default:
       return ColorRes.leadGreyColor;
   }
@@ -1094,12 +1096,13 @@ LeadStatus getLeadStatusFromString(String status) {
       return LeadStatus.negotiation;
     case 'lost':
       return LeadStatus.lost;
-    case 'convert':
+    case 'converted':
       return LeadStatus.convert;
-    case 'all':
-      return LeadStatus.all;
+    case 'fake':
+      return LeadStatus.fake;
+
     default:
-      return LeadStatus.all;
+      return LeadStatus.new_;
   }
 }
 
@@ -1117,7 +1120,9 @@ String getStatusText(LeadStatus status) {
       return 'Lost';
     case LeadStatus.convert:
       return 'Converted';
-    case LeadStatus.all:
+    case LeadStatus.fake:
+      return "Fake";
+
     default:
       return 'All';
   }
@@ -1135,7 +1140,7 @@ Color getStageColor(LeadStage stage) {
       return ColorRes.leadIndigoColor;
     case LeadStage.sell:
       return ColorRes.success;
-    case LeadStage.all:
+
     default:
       return ColorRes.leadGreyColor;
   }
@@ -1157,10 +1162,9 @@ LeadStage getLeadStageFromString(String? stage) {
       return LeadStage.siteVisit;
     case 'sell':
       return LeadStage.sell;
-    case 'all':
-      return LeadStage.all;
+
     default:
-      return LeadStage.all; // fallback
+      return LeadStage.newLead; // fallback
   }
 }
 
@@ -1176,7 +1180,7 @@ String getStageText(LeadStage stage) {
       return 'Site Visit';
     case LeadStage.sell:
       return 'Sell';
-    case LeadStage.all:
+    case LeadStage.newLead:
     default:
       return 'All';
   }

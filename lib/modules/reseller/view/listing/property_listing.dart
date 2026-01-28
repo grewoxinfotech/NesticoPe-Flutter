@@ -1265,7 +1265,7 @@ class ProductCard extends StatelessWidget {
           child: Row(
             children: [
               // Image Section with Selection Overlay
-              Stack(
+              /* Stack(
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.horizontal(
@@ -1283,7 +1283,8 @@ class ProductCard extends StatelessWidget {
                     ),
                   ),
                   // Selection Checkbox Overlay
-                  /*  if (isSelectionMode.value)
+                  */
+              /*  if (isSelectionMode.value)
                       Positioned(
                         top: 8,
                         left: 8,
@@ -1312,6 +1313,83 @@ class ProductCard extends StatelessWidget {
                                   : null,
                         ),
                       ),*/
+              /*
+                ],
+              ),*/
+              Stack(
+                children: [
+                  // Property Image
+                  ClipRRect(
+                    borderRadius: const BorderRadius.horizontal(
+                      left: Radius.circular(11),
+                    ),
+                    child: CustomImage(
+                      type: CustomImageType.network,
+                      src:
+                          (product.propertyMedia?.images?.isNotEmpty ?? false)
+                              ? product.propertyMedia!.images!.first
+                              : 'https://via.placeholder.com/150',
+                      // fallback placeholder
+                      width: 110,
+                      height: 121,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+
+                  // 🟥 SOLD Label Overlay
+                  if (product.propertyStatus?.toLowerCase() == 'sold')
+                    Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.3),
+                          borderRadius: const BorderRadius.horizontal(
+                            left: Radius.circular(11),
+                          ),
+                        ),
+                        alignment: Alignment.center,
+                        child: Transform.rotate(
+                          angle: 24.6,
+
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 2,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: ColorRes.white,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Text(
+                                "SOLD",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  letterSpacing: 1.5,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                  // (Optional) Checkbox overlay if needed later
+                  /* if (isSelectionMode.value)
+      Positioned(
+        top: 8,
+        left: 8,
+        child: ...
+      ), */
                 ],
               ),
 

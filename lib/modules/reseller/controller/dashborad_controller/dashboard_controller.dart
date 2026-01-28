@@ -615,6 +615,7 @@ import 'package:housing_flutter_app/data/network/property/services/property_serv
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
 
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
+import 'package:housing_flutter_app/widgets/location_permission/location_permission_method.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
@@ -916,9 +917,13 @@ class DashboardController extends GetxController {
   }
 
   Future<void> pickImage() async {
-    final picked = await picker.pickImage(source: ImageSource.gallery);
-    if (picked != null) {
-      imageFile.value = File(picked.path);
+    bool isGranted = await requestGalleryPermission();
+
+    if (isGranted) {
+      final picked = await picker.pickImage(source: ImageSource.gallery);
+      if (picked != null) {
+        imageFile.value = File(picked.path);
+      }
     }
   }
 
@@ -1525,7 +1530,8 @@ class DashboardController extends GetxController {
         return 'Lost';
       case LeadStatus.convert:
         return 'Converted';
-      case LeadStatus.all:
+      case LeadStatus.fake:
+        return "Fake";
       default:
         return 'All';
     }
@@ -1543,7 +1549,7 @@ class DashboardController extends GetxController {
         return 'Site Visit';
       case LeadStage.sell:
         return 'Sell';
-      case LeadStage.all:
+
       default:
         return 'All';
     }

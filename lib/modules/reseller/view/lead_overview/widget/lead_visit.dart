@@ -57,8 +57,8 @@ class _LeadVisitState extends State<LeadVisit> {
   late final leadVisitController = widget.leadVisitController;
   late final propertyInquiryController = widget.propertyInquiryController;
 
-  @override
-  void initState() {
+ /* @override*/
+/*  void initState() {
     // TODO: implement initState
     super.initState();
     final selectedInquiry = propertyInquiryController?.selectedInquiry.value;
@@ -80,7 +80,34 @@ class _LeadVisitState extends State<LeadVisit> {
       );
       leadVisitController.setLeadVisitId(widget.buyerID, widget.propertyId);
     }
+  }*/
+  @override
+  void initState() {
+    super.initState();
+
+    // Defer execution until after the first frame is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final selectedInquiry = propertyInquiryController?.selectedInquiry.value;
+
+      if (selectedInquiry != null) {
+        print(
+          'Setting visit ID for user ${widget.buyerID} and property ${widget.propertyId}',
+        );
+        print(
+          'Selected Inquiry: ${selectedInquiry.toMap()} and property: ${selectedInquiry.propertyId}',
+        );
+
+        leadVisitController.setLeadVisitId(widget.buyerID, widget.propertyId);
+        print('Visit ID set: ${leadVisitController.items.map((e) => e.toMap())}');
+      } else if (widget.propertyId != null) {
+        print(
+          'Setting Buyer ID for user ${widget.buyerID} and property ${widget.propertyId}',
+        );
+        leadVisitController.setLeadVisitId(widget.buyerID, widget.propertyId);
+      }
+    });
   }
+
 
   @override
   Widget build(BuildContext context) {

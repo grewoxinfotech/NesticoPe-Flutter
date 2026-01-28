@@ -266,6 +266,7 @@ import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
 
 import '../../../data/database/secure_storage_service.dart';
+import '../../../widgets/location_permission/location_permission_method.dart';
 import '../../dashboard/views/dashboard_screen.dart';
 import '../../history/controller/search_history_controller.dart';
 import '../../home/views/select_city_screen/select_city_screen.dart';
@@ -309,65 +310,114 @@ class OnboardingController extends GetxController {
   Future<void> handleBuyHome() async {
     print('Navigating to Buy Home screen');
 
-    // ✅ Get city selection
-    final city = await Get.to(() => SelectCityScreen(
-      isFromLogin: true,
-      title: 'Find or Buy Property in Your Location',
-    ));
+    String? cityLocation = await getCurrentCity();
 
-    if (city != null) {
-      // ✅ Save city and mark onboarding complete
-      log("city login chage $city");
-      await searchHistoryController.addSearchHistory({
-        'keywords': ['$city'],
-      });
-      await SecureStorage.saveSelectedCity(city);
+    if (cityLocation != null) {
+      print("✅ You are currently in: $cityLocation");
+    } else {
+      print("❌ Unable to get city name");
+    }
+
+    if ((cityLocation == null)) {
+      // ✅ Get city selection
+      final city = await Get.to(
+        () => SelectCityScreen(
+          isFromLogin: true,
+          title: 'Find or Buy Property in Your Location',
+        ),
+      );
+
+      if (city != null) {
+        // ✅ Save city and mark onboarding complete
+        log("city login chage $city");
+        await searchHistoryController.addSearchHistory({
+          'keywords': ['$city'],
+        });
+        await SecureStorage.saveSelectedCity(city);
+        await SecureStorage.setAppLaunched(); // ✅ Mark as not first time
+
+        // ✅ Navigate to dashboard with filters
+        await Get.offAll(
+          () => DashboardScreen(
+            propertyFilter: [
+              {'city': city},
+              {'listingType': 'Sell'},
+            ],
+          ),
+        );
+      } else {
+        // User cancelled city selection - stay on onboarding
+        selectedOption.value = '';
+      }
+    } else {
+      await SecureStorage.saveSelectedCity(cityLocation ?? '');
       await SecureStorage.setAppLaunched(); // ✅ Mark as not first time
 
       // ✅ Navigate to dashboard with filters
       await Get.offAll(
         () => DashboardScreen(
           propertyFilter: [
-            {'city': city},
+            {'city': cityLocation ?? ''},
             {'listingType': 'Sell'},
           ],
         ),
       );
-    } else {
-      // User cancelled city selection - stay on onboarding
-      selectedOption.value = '';
     }
   }
 
   Future<void> handleRentHome() async {
     print('Navigating to Rent Home screen');
 
-    // ✅ Get city selection
-    final city = await Get.to(() => SelectCityScreen(
-      isFromLogin: true,
-      title: 'Find or Rent Property in Your Location',
-    ));
+    final cityLocation = await getCurrentCity();
 
-    if (city != null) {
-      // ✅ Save city and mark onboarding complete
-     await searchHistoryController.addSearchHistory({
-        'keywords': ["$city"],
-      });
-      await SecureStorage.saveSelectedCity(city);
+    if (cityLocation != null) {
+      log("permission for location ${cityLocation}");
+    }
+
+    if (cityLocation == null) {
+      // ✅ Get city selection
+      final city = await Get.to(
+        () => SelectCityScreen(
+          isFromLogin: true,
+          title: 'Find or Rent Property in Your Location',
+        ),
+      );
+
+      if (city != null) {
+        // ✅ Save city and mark onboarding complete
+        await searchHistoryController.addSearchHistory({
+          'keywords': ["$city"],
+        });
+        await SecureStorage.saveSelectedCity(city);
+        await SecureStorage.setAppLaunched(); // ✅ Mark as not first time
+
+        // ✅ Navigate to dashboard with filters
+        await Get.offAll(
+          () => DashboardScreen(
+            propertyFilter: [
+              {'city': city},
+              {'listingType': 'Rent'},
+            ],
+          ),
+        );
+      } else {
+        // User cancelled city selection - stay on onboarding
+        selectedOption.value = '';
+      }
+    }
+    else{
+      await SecureStorage.saveSelectedCity(cityLocation ?? '');
       await SecureStorage.setAppLaunched(); // ✅ Mark as not first time
 
       // ✅ Navigate to dashboard with filters
       await Get.offAll(
-        () => DashboardScreen(
+            () => DashboardScreen(
           propertyFilter: [
-            {'city': city},
-            {'listingType': 'Rent'},
+            {'city': cityLocation ?? ''},
+            {'listingType': 'Sell'},
           ],
         ),
       );
-    } else {
-      // User cancelled city selection - stay on onboarding
-      selectedOption.value = '';
     }
   }
 
@@ -420,7 +470,6 @@ class OnboardingScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: SingleChildScrollView(
-
           scrollDirection: Axis.vertical,
 
           child: Column(
@@ -506,7 +555,8 @@ class OnboardingScreen extends StatelessWidget {
   }) {
     return Obx(
       () => IgnorePointer(
-        ignoring: controller.isProcessing.value, // ✅ Disable during processing
+        ignoring: controller.isProcessing.value,
+        // ✅ Disable during processing
         child: Opacity(
           opacity: controller.isProcessing.value ? 0.6 : 1.0,
           child: InkWell(

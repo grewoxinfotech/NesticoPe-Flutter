@@ -34,6 +34,7 @@ import 'package:housing_flutter_app/modules/add_property/model/review_property_m
 import 'package:housing_flutter_app/modules/add_property/model/room_detail_model.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/dashboard_screen.dart';
 import 'package:housing_flutter_app/utils/logger/app_logger.dart';
+import 'package:housing_flutter_app/widgets/location_permission/location_permission_method.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -1082,87 +1083,94 @@ class CreatePropertyController extends GetxController {
   }
 
   Future<void> pickImageFromCamera() async {
-    if (isProcessing.value) return;
+    bool isGranted = await requestCameraPermission();
+    if (isGranted) {
+      if (isProcessing.value) return;
 
-    try {
-      isProcessing.value = true;
-      final ImagePicker picker = ImagePicker();
-      final XFile? file = await picker.pickImage(
-        source: ImageSource.camera,
-        imageQuality: 80,
-        maxWidth: 1024,
-        maxHeight: 1024,
-      );
-      if (file != null) {
-        if (selectedImages.length >= maxImages) {
-          _showImageLimitSnackbar(
-            "You can only select up to $maxImages images.",
-          );
-          return;
+      try {
+        isProcessing.value = true;
+        final ImagePicker picker = ImagePicker();
+        final XFile? file = await picker.pickImage(
+          source: ImageSource.camera,
+          imageQuality: 80,
+          maxWidth: 1024,
+          maxHeight: 1024,
+        );
+        if (file != null) {
+          if (selectedImages.length >= maxImages) {
+            _showImageLimitSnackbar(
+              "You can only select up to $maxImages images.",
+            );
+            return;
+          }
+          selectedImages.add(PhotoImageModel(path: file.path));
         }
-        selectedImages.add(PhotoImageModel(path: file.path));
-      }
-    } catch (e) {
-      debugPrint("Error picking image from camera: $e");
+      } catch (e) {
+        debugPrint("Error picking image from camera: $e");
 
-      NesticoPeSnackBar.showAwesomeSnackbar(
-        title: 'Error',
-        message: "Failed to pick image: ${e.toString()}",
-        contentType: ContentType.failure,
-      );
-    } finally {
-      isProcessing.value = false;
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: "Failed to pick image: ${e.toString()}",
+          contentType: ContentType.failure,
+        );
+      } finally {
+        isProcessing.value = false;
+      }
     }
   }
 
   Future<void> pickImagesFromGallery() async {
-    if (isProcessing.value) return;
+  bool isGranted = await requestGalleryPermission();
+  if(isGranted)
+    {
+      if (isProcessing.value) return;
 
-    try {
-      isProcessing.value = true;
+      try {
+        isProcessing.value = true;
 
-      final ImagePicker picker = ImagePicker();
-      final List<XFile>? files = await picker.pickMultiImage(
-        imageQuality: 80, // Compress images
-        maxWidth: 1024,
-        maxHeight: 1024,
-      );
+        final ImagePicker picker = ImagePicker();
+        final List<XFile>? files = await picker.pickMultiImage(
+          imageQuality: 80, // Compress images
+          maxWidth: 1024,
+          maxHeight: 1024,
+        );
 
-      if (files != null && files.isNotEmpty) {
-        final remainingSlots = maxImages - selectedImages.length;
+        if (files != null && files.isNotEmpty) {
+          final remainingSlots = maxImages - selectedImages.length;
 
-        if (remainingSlots <= 0) {
-          _showImageLimitSnackbar(
-            "You can only select up to $maxImages images.",
-          );
-          return;
+          if (remainingSlots <= 0) {
+            _showImageLimitSnackbar(
+              "You can only select up to $maxImages images.",
+            );
+            return;
+          }
+
+          final filesToAdd = files.take(remainingSlots);
+
+          // Process images in batches to prevent ANR
+          await Future.microtask(() {
+            selectedImages.addAll(
+              filesToAdd.map((e) => PhotoImageModel(path: e.path)),
+            );
+          });
+
+          if (files.length > remainingSlots) {
+            _showImageLimitSnackbar(
+              "Only $remainingSlots image(s) added. Max $maxImages images allowed.",
+            );
+          }
         }
+      } catch (e) {
+        debugPrint("Error picking images: $e");
 
-        final filesToAdd = files.take(remainingSlots);
-
-        // Process images in batches to prevent ANR
-        await Future.microtask(() {
-          selectedImages.addAll(
-            filesToAdd.map((e) => PhotoImageModel(path: e.path)),
-          );
-        });
-
-        if (files.length > remainingSlots) {
-          _showImageLimitSnackbar(
-            "Only $remainingSlots image(s) added. Max $maxImages images allowed.",
-          );
-        }
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: "Failed to pick images: ${e.toString()}",
+          contentType: ContentType.failure,
+        );
+      } finally {
+        isProcessing.value = false;
       }
-    } catch (e) {
-      debugPrint("Error picking images: $e");
-
-      NesticoPeSnackBar.showAwesomeSnackbar(
-        title: 'Error',
-        message: "Failed to pick images: ${e.toString()}",
-        contentType: ContentType.failure,
-      );
-    } finally {
-      isProcessing.value = false;
     }
   }
 
