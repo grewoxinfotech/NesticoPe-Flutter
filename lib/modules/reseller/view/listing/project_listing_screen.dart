@@ -11,6 +11,7 @@ import '../../../../data/database/secure_storage_service.dart';
 import '../../../../widgets/bar/filter_bar/filter_chip_bar.dart';
 import '../../../builder/controller/project_controller.dart';
 import '../../../builder/view/project_detail/project_detail.dart';
+import '../../../builder/view/widget/project_filter_screen.dart';
 import '../../../propert_detail/view/property_details.dart';
 import '../../../seller/module/lead_screen/views/lead_screen_enhanced.dart';
 import '../../controller/dashborad_controller/dashboard_controller.dart';
@@ -115,7 +116,19 @@ class _ProjectListingScreenState extends State<ProjectListingScreen> {
               onTap: () async {
                 if (!Get.isRegistered<ProjectController>())
                   Get.put(ProjectController());
-                final result = await Get.to(() => ResellerProjectFilter());
+                // final result = await Get.to(() => ResellerProjectFilter());
+                final result = await Get.to<Map<String, String>>(
+                  () => ProjectFilterScreen(
+                    initialFilters: selectedFilters.value,
+                    onApply: (filterData) {
+                      // Return selected filters to previous screen
+                      Get.back(result: filterData);
+                    },
+                  ),
+                  transition: Transition.downToUp,
+                  // optional for sheet-like slide-up effect
+                  duration: const Duration(milliseconds: 300),
+                );
 
                 if (result != null) {
                   final newFilter = convertFiltersToString(result);
@@ -243,7 +256,7 @@ class ProjectsGrid extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'No properties found',
+                'No Projects found',
                 style: TextStyle(
                   fontSize: AppFontSizes.large,
                   fontWeight: AppFontWeights.semiBold,

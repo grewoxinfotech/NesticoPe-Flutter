@@ -637,11 +637,11 @@ class DashboardController extends GetxController {
   Rxn<ResellerInsightsModel> resellerInsightsModel =
       Rxn<ResellerInsightsModel>();
   Rxn<ResellerLeaderboardCitywise> resellerCityWiseLeaderBoard =
-
       Rxn<ResellerLeaderboardCitywise>();
   Rxn<ResellerCityLeaderBoardAllCities> resellerAllCity =
       Rxn<ResellerCityLeaderBoardAllCities>();
-  ResellerSuccessStoryController resellerSuccessStory=ResellerSuccessStoryController();
+  ResellerSuccessStoryController resellerSuccessStory =
+      ResellerSuccessStoryController();
   RxList<Items> itemData = <Items>[].obs;
   PropertyController propertyController = PropertyController();
   Rxn<ReferralModel> dummyReferral = Rxn<ReferralModel>();
@@ -1071,7 +1071,7 @@ class DashboardController extends GetxController {
 
       if (success) {
         await resellerSuccessStory.refreshList();
-         resellerSuccessStory.items.refresh();
+        resellerSuccessStory.items.refresh();
         await fetchResellerDashboardDataFromApi();
       }
     } catch (e) {
