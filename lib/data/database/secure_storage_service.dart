@@ -19,6 +19,16 @@ class SecureStorage {
   static const String _termsAndConditionApply = "termAndConditionApply";
   static const String _keyAadharVerified = 'isAadharVerified';
   static const String _keyHasLaunched = 'hasLaunchedApp';
+  static const String _keyNotificationToken = 'notificationToken';
+
+  // Notification Token
+  static Future<void> saveNotificationToken(String token) async {
+    await _storage.write(key: _keyNotificationToken, value: token);
+  }
+
+  static Future<String?> getNotificationToken() async {
+    return _storage.read(key: _keyNotificationToken);
+  }
 
   /// Mark that the app has been opened once
   static Future<void> setAppLaunched() async {

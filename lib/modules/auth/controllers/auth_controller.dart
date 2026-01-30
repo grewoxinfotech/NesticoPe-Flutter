@@ -16,6 +16,8 @@ import 'package:housing_flutter_app/modules/profile/views/profile_screen.dart';
 import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import '../../../data/network/user/service/notification_sync_service.dart';
+import '../../../services/notification_service.dart';
 import '../../add_property/view/create_property.dart';
 import '../../dashboard/views/dashboard_screen.dart';
 import '../views/login_screen.dart';
@@ -99,15 +101,52 @@ class AuthController extends GetxController {
 
   void setRole(UserRole role) => selectedRole.value = role;
 
+  // Future<void> login(String email, String password) async {
+  //   try {
+  //     isLoading.value = true;
+  //     final user = await authService.login(email, password);
+  //
+  //     await SecureStorage.saveToken(user.token!);
+  //     await SecureStorage.saveUserData(user);
+  //     await SecureStorage.saveLoggedIn(true);
+  //     await SecureStorage.saveTermAndConditionValue(false.toString());
+  //     await UserHelper.setUserType(
+  //       user.user?.userType,
+  //       sellerType: user.user?.sellerType,
+  //       isAadharVerified: user.user?.isAadharVerified,
+  //     );
+  //
+  //     currentUser.value = user;
+  //     authState.value = AuthState.authenticated;
+  //
+  //     Get.offAll(() => const DashboardScreen());
+  //   } catch (e) {
+  //     errorMessage.value = e.toString();
+  //     NesticoPeSnackBar.showAwesomeSnackbar(
+  //       title: "Login Failed",
+  //       message: e.toString(),
+  //       contentType: ContentType.failure,
+  //     );
+  //     print("[Debug]-> Error: $e");
+  //   } finally {
+  //     isLoading.value = false;
+  //   }
+  // }
+
   Future<void> login(String email, String password) async {
     try {
       isLoading.value = true;
+
+      // 1️⃣ Login API
       final user = await authService.login(email, password);
 
+      // 2️⃣ Save auth data
       await SecureStorage.saveToken(user.token!);
       await SecureStorage.saveUserData(user);
       await SecureStorage.saveLoggedIn(true);
       await SecureStorage.saveTermAndConditionValue(false.toString());
+
+      // 3️⃣ Set user role/type
       await UserHelper.setUserType(
         user.user?.userType,
         sellerType: user.user?.sellerType,
@@ -117,15 +156,36 @@ class AuthController extends GetxController {
       currentUser.value = user;
       authState.value = AuthState.authenticated;
 
+      // 4️⃣ 🔔 NOTIFICATION SYNC
+      final userId = user.user?.id?.toString();
+      final role = UserHelper.userType?.name ?? 'buyer';
+
+      if (userId != null && userId.isNotEmpty) {
+        await NotificationService.instance.attachLoggedInUser(
+          userId: userId,
+          role: role,
+          syncToBackend: (playerId) async {
+            // ✅ THIS IS THE SYNC POINT
+            await NotificationSyncService.instance.syncToBackend(
+              deviceToken: playerId,
+              metadata: {'user_id': userId, 'role': role},
+            );
+          },
+        );
+      }
+
+      // 5️⃣ Navigate (always LAST)
       Get.offAll(() => const DashboardScreen());
     } catch (e) {
       errorMessage.value = e.toString();
+
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: "Login Failed",
         message: e.toString(),
         contentType: ContentType.failure,
       );
-      print("[Debug]-> Error: $e");
+
+      debugPrint("[Login Error] $e");
     } finally {
       isLoading.value = false;
     }
@@ -293,20 +353,20 @@ class AuthController extends GetxController {
     }
   }
 
-/*  Future<void> generateResellerApi(Map<String,dynamic> user) async {
+  /*  Future<void> generateResellerApi(Map<String,dynamic> user) async {
 
     AppLogger.structured("Fetch User Data After otp verification", user);
 
       try {
         final Map<String, dynamic> userData = {
-         *//* 'userId': user?.id,
+         */ /* 'userId': user?.id,
           "certificateData": {
             "firstName": "",
             "lastName": "",
             "username": user?.user?.username,
             "email": user?.user?.email,
             "phone": user?.user?.phone,
-          },*//*
+          },*/ /*
         };
 
         final result = await authService.generateResellerCertificate(userData);
@@ -457,7 +517,10 @@ class AuthController extends GetxController {
       await SecureStorage.saveLoggedIn(true);
 
       currentUser.value = user;
-      AppLogger.structured("VerifyOtp method current user value ", user.toJson());
+      AppLogger.structured(
+        "VerifyOtp method current user value ",
+        user.toJson(),
+      );
 
       authState.value = AuthState.authenticated;
     } catch (e) {
@@ -707,11 +770,17 @@ class AuthController extends GetxController {
   }
 
   Future<void> logout() async {
+    final playerId = await SecureStorage.getNotificationToken();
+    if (playerId != null) {
+      NotificationSyncService.instance.removeNotificationToken(playerId);
+    }
     await SecureStorage.clearAll();
     UserHelper.clearUserType();
     currentUser.value = null;
     authState.value = AuthState.unauthenticated;
-    // Get.offAll(() => const LoginScreen());
+
+    await NotificationService.instance.resetToGuest();
+
     Get.offAll(() => const DashboardScreen());
   }
 }

@@ -1069,6 +1069,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
+  onesignal_flutter:
+    dependency: "direct main"
+    description:
+      name: onesignal_flutter
+      sha256: "0008a1ab56b5eae4ad7ece4464cbc19b4afda6c7a4f9f7d22163a719d0e96834"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.3.7"
   open_filex:
     dependency: "direct main"
     description:
@@ -1086,7 +1094,11 @@ packages:
     source: hosted
     version: "2.2.0"
   package_info_plus:
+<<<<<<< Updated upstream
     dependency: transitive
+=======
+    dependency: "direct main"
+>>>>>>> Stashed changes
     description:
       name: package_info_plus
       sha256: f69da0d3189a4b4ceaeb1a3defb0f329b3b352517f52bed4290f83d4f06bc08d

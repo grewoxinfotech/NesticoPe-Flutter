@@ -39,6 +39,10 @@ class ApiConstants {
 
   static String get aadharVerifyOtp => "$auth/verify-aadhaar-otp";
 
+  static String get sendNotificationId => "$baseURL/user/notification/token";
+
+  static String get removeNotificationId => "$baseURL/user/notification/token";
+
   static String get referralGet => "$baseURL/referral/my-stats";
 
   static String get referral => "$baseURL/referral";

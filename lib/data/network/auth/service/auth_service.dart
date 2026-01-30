@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
+import 'package:housing_flutter_app/data/network/user/service/notification_sync_service.dart';
 import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
 import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 import 'package:http/http.dart' as http;
@@ -13,6 +14,7 @@ import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:get/get.dart';
 
 import '../../../../app/widgets/snackbar/snackbar.dart';
+import '../../../../services/notification_service.dart';
 import '../../../../widgets/messages/snack_bar.dart';
 
 class AuthService {
@@ -25,20 +27,20 @@ class AuthService {
   }
 
   Future<bool> generateResellerCertificate(
-      Map<String, dynamic> userData,
-      ) async {
+    Map<String, dynamic> userData,
+  ) async {
     try {
       AppLogger.structured("Fetch The Certificate Data from API", userData);
 
-      final user={
+      final user = {
         "userId": userData['userId'],
-        "certificateData":{
+        "certificateData": {
           "firstName": "",
           "lastName": "",
           "username": userData['username'],
           "email": userData['email'],
-          "phone": userData['phone']
-        }
+          "phone": userData['phone'],
+        },
       };
       AppLogger.structured("Fetch The Certificate Data from API", user);
       final response = await http.post(
@@ -49,7 +51,9 @@ class AuthService {
       debugPrint("Generate Reseller Certificate Done ${response.statusCode}");
       debugPrint("Response of api : ${response.body}");
       if (response.statusCode == 200 || response.statusCode == 201) {
-        debugPrint("✅ Generate Reseller Certificate Done ${response.statusCode}");
+        debugPrint(
+          "✅ Generate Reseller Certificate Done ${response.statusCode}",
+        );
         debugPrint("Response : ${response.body}");
 
         final data = jsonDecode(response.body);
@@ -76,7 +80,9 @@ class AuthService {
 
         return success;
       } else {
-        debugPrint("Generate Reseller Certificate Failed ${response.statusCode}");
+        debugPrint(
+          "Generate Reseller Certificate Failed ${response.statusCode}",
+        );
         Fluttertoast.showToast(
           msg: "❌ Server Error: ${response.statusCode}",
           toastLength: Toast.LENGTH_SHORT,
@@ -322,15 +328,13 @@ class AuthService {
 
     final data = jsonDecode(response.body);
     if (response.statusCode == 200 && data['success'] == true) {
-      if(data['data']['user']['userType']=="reseller")
-        {
-          generateResellerCertificate(data['data']['certificateData']);
-          return UserModel.fromJson(data['data']['user'])
-            ..token = data['data']['token'] ?? token;
-        }
+      if (data['data']['user']['userType'] == "reseller") {
+        generateResellerCertificate(data['data']['certificateData']);
+        return UserModel.fromJson(data['data']['user'])
+          ..token = data['data']['token'] ?? token;
+      }
       return UserModel.fromJson(data['data']['user'])
         ..token = data['data']['token'] ?? token;
-
     }
     throw Exception(data['message'] ?? 'OTP verification failed');
   }
@@ -454,6 +458,7 @@ class AuthService {
 
   Future<void> logout() async {
     await SecureStorage.clearAll();
+    await NotificationService.instance.resetToGuest();
     Get.offAll(const LoginScreen());
   }
 
