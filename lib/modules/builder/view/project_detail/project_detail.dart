@@ -524,6 +524,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                 ),
                                 child: ContactOwnerBottom(
                                   // Check if inquiry already submitted
+                                  propertyStatus: "",
                                   projectConfiguration:
                                       project?.configuration ?? [],
                                   isProject: 'project',

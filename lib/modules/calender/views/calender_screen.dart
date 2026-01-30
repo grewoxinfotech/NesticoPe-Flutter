@@ -25,8 +25,9 @@ class CalendarScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text('Add Event'),
+        title: Text('Add Event',style: TextStyle(fontWeight: AppFontWeights.semiBold),),
         centerTitle: true,
         actions: [
           IconButton(onPressed: () => showEventDialog(), icon: Icon(Icons.add)),
@@ -47,7 +48,7 @@ class CalendarScreen extends StatelessWidget {
                 () => Text(
                   "${DateFormat.MMMM().format(controller.currentDate.value)} "
                   "${controller.currentDate.value.year}",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600,color: ColorRes.leadGreyColor.shade600),
                 ),
               ),
               IconButton(

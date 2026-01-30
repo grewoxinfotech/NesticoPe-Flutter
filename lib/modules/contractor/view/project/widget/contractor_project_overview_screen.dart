@@ -8,6 +8,8 @@ import 'package:housing_flutter_app/modules/contractor/controller/contractor_pro
 import 'package:housing_flutter_app/modules/contractor/controller/contractot_employee_controller.dart';
 import 'package:housing_flutter_app/modules/contractor/view/project/widget/contactor_project_milestone_screen.dart';
 import 'package:housing_flutter_app/modules/contractor/view/project/widget/contractor_project_milestone_payment_screen.dart';
+import 'package:housing_flutter_app/modules/contractor/view/project/widget/contractor_project_photos_screen.dart';
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/constants/color_res.dart';
 import '../../../../../data/network/contractor/model/contractor_project_model/contracto_project_model.dart';
@@ -79,23 +81,34 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
         backgroundColor: ColorRes.surface,
         elevation: 0.5,
         actions: [
-          TextButton(onPressed: () async {
-            final project = controller.items.firstWhereOrNull(
-                  (p) => p.id == projectId,
-            );
-            await contractorEmployee.loadInitial();
+          TextButton(
+            onPressed: () async {
+              final project = controller.items.firstWhereOrNull(
+                (p) => p.id == projectId,
+              );
+              await contractorEmployee.loadInitial();
 
-            log("project edit ${project?.toJson()}");
+              log("project edit ${project?.toJson()}");
 
-contractorLeadController.populateProjectForm(project??ContractorProjectItem.fromJson({}));
+              contractorLeadController.populateProjectForm(
+                project ?? ContractorProjectItem.fromJson({}),
+              );
 
-Get.to(() => AddOrEditProjectScreen(projectItem: project??ContractorProjectItem.fromJson({}),));
-
-          }, child: Text('Edit',style: TextStyle(
-            fontSize: AppFontSizes.bodyMedium,
-            fontWeight: AppFontWeights.medium,
-            color: ColorRes.primary,
-          ),))
+              Get.to(
+                () => AddOrEditProjectScreen(
+                  projectItem: project ?? ContractorProjectItem.fromJson({}),
+                ),
+              );
+            },
+            child: Text(
+              'Edit',
+              style: TextStyle(
+                fontSize: AppFontSizes.bodyMedium,
+                fontWeight: AppFontWeights.medium,
+                color: ColorRes.primary,
+              ),
+            ),
+          ),
         ],
       ),
       body: Obx(() {
@@ -214,7 +227,12 @@ Get.to(() => AddOrEditProjectScreen(projectItem: project??ContractorProjectItem.
                   _formatDate(project.completedAt),
                 ),
                 _buildTimelineRow("Progress", project.progress.toString()),
-                _buildTimelineRow("Price", Formatter.formatPrice(num.tryParse(project?.projectPrice??'') ?? 0)),
+                _buildTimelineRow(
+                  "Price",
+                  Formatter.formatPrice(
+                    num.tryParse(project?.projectPrice ?? '') ?? 0,
+                  ),
+                ),
                 const SizedBox(height: 10),
 
                 // Client Details
@@ -247,7 +265,14 @@ Get.to(() => AddOrEditProjectScreen(projectItem: project??ContractorProjectItem.
                 _buildSectionTitle(Icons.person, "Team Members"),
                 const SizedBox(height: 10),
                 _buildTeamMembers(project.meta.employees),
+                const SizedBox(height: 20),
+                _buildSectionTitle(Icons.image_outlined, "Project Photos"),
+                const SizedBox(height: 10),
 
+                _buildProjectPhoto(
+                  project,
+                  project.id,
+                ),
                 const SizedBox(height: 20),
 
                 // Created and Updated
@@ -571,8 +596,8 @@ Get.to(() => AddOrEditProjectScreen(projectItem: project??ContractorProjectItem.
       ),
     );
   }
-  Widget _buildTeamMembers(List<ContractorEmployee> project){
 
+  Widget _buildTeamMembers(List<ContractorEmployee> project) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
@@ -580,7 +605,7 @@ Get.to(() => AddOrEditProjectScreen(projectItem: project??ContractorProjectItem.
         color: ColorRes.background,
         borderRadius: BorderRadius.circular(10),
       ),
-      child:   ListTile(
+      child: ListTile(
         leading: Icon(Icons.person, size: 20),
         title: Text(
           "Team Members",
@@ -590,14 +615,49 @@ Get.to(() => AddOrEditProjectScreen(projectItem: project??ContractorProjectItem.
           ),
         ),
         onTap: () {
-          Get.to(
-                () => ContractorProjectEmployee(
-                  employeeList: project,
-
-            ),
-          );
+          Get.to(() => ContractorProjectEmployee(employeeList: project));
         },
         trailing: Icon(Icons.arrow_forward_ios, size: 15),
+      ),
+    );
+  }
+
+  Widget _buildProjectPhoto(
+    ContractorProjectItem project,
+    String projectId,
+  ) {
+   AppLogger("Structure of project ,",project.meta.beforePhoto.map((e) => e.toJson(),));
+
+
+    return StatefulBuilder(
+      builder: (context, setState) =>  Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: ColorRes.background,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: ListTile(
+          leading: Icon(Icons.image_outlined, size: 20),
+          title: Text(
+            "Project Photos",
+            style: const TextStyle(
+              fontSize: AppFontSizes.caption,
+              color: ColorRes.textColor,
+            ),
+          ),
+          onTap: () {
+            setState(() {
+              Get.to(
+                    () => ContractorProjectPhotosScreen(
+                  project: project,
+                  projectId: projectId,
+                ),
+              );
+
+          },);},
+          trailing: Icon(Icons.arrow_forward_ios, size: 15),
+        ),
       ),
     );
   }
@@ -641,7 +701,11 @@ Get.to(() => AddOrEditProjectScreen(projectItem: project??ContractorProjectItem.
               ),
             ),
             onTap: () {
-              Get.to(()=>ContractorProjectMileStonePaymentScreen(projectId: projectId));
+              Get.to(
+                () => ContractorProjectMileStonePaymentScreen(
+                  projectId: projectId,
+                ),
+              );
             },
             trailing: Icon(Icons.arrow_forward_ios, size: 15),
           ),

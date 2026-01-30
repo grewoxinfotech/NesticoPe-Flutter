@@ -33,6 +33,7 @@ class ContactOwnerBottom extends StatefulWidget {
   final String listingType;
   final String nameLabel;
   final String phoneLabel;
+  final String propertyStatus;
   final String emailLabel;
   final String contactButtonText;
   final String termsText;
@@ -65,10 +66,8 @@ class ContactOwnerBottom extends StatefulWidget {
     String planningToBuy,
     DateTime? selectedDate,
     TimeOfDay? selectedTime,
-      Map<String,dynamic>? roomInfo,
-      Map<String,dynamic>? selectedVarient,
-
-
+    Map<String, dynamic>? roomInfo,
+    Map<String, dynamic>? selectedVarient,
   )?
   onContactPressed;
   final ValueChanged<bool?>? onAllowSellerContactChanged;
@@ -78,12 +77,11 @@ class ContactOwnerBottom extends StatefulWidget {
   // Icons
   final IconData nameIcon;
   List<PgRoomInfo>? pgRoomData;
-  List<ProjectConfiguration>?  projectConfiguration;
+  List<ProjectConfiguration>? projectConfiguration;
 
   final IconData phoneIcon;
   final IconData emailIcon;
   final Icon chatButtonIcon;
-
 
   ContactOwnerBottom({
     super.key,
@@ -107,6 +105,7 @@ class ContactOwnerBottom extends StatefulWidget {
     this.bookSiteVisit = false,
     this.onChatPressed,
     this.inQuireSubmitted = false,
+    required this.propertyStatus,
     this.onContactPressed,
     this.onAllowSellerContactChanged,
     this.onHomeLoanInterestChanged,
@@ -118,7 +117,8 @@ class ContactOwnerBottom extends StatefulWidget {
     this.forRentPrice = 0.0,
     this.forSellPrice = 0,
     this.isForSell = false,
-    required this.listingType, required this.isProject,
+    required this.listingType,
+    required this.isProject,
   });
 
   @override
@@ -152,31 +152,30 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
   void initState() {
     super.initState();
     setState(() {
-     if(widget.isProject.toLowerCase()!="project")
-       {
-         if (widget.isForSell) {
-           if (widget.listingType == "sell") {
-             _negotiablePriceController.text = widget.forSellPrice.toString();
-             miniPrice = widget.forSellPrice * 0.98;
-             currentPrice = widget.forSellPrice;
-             log("Current price ${currentPrice} ${miniPrice}");
-           } else if (widget.listingType == "rent") {
-             _negotiablePriceController.text = widget.forRentPrice.toString();
-             miniPrice = widget.forRentPrice * 0.98;
-             currentPrice = widget.forRentPrice;
-           }
-         } else {
-           if (widget.listingType == "sell") {
-             _negotiablePriceController.text = widget.forSellPrice.toString();
-             miniPrice = widget.forSellPrice * 0.98;
-             currentPrice = widget.forSellPrice;
-           } else if (widget.listingType == "rent") {
-             _negotiablePriceController.text = widget.forRentPrice.toString();
-             miniPrice = widget.forRentPrice * 0.98;
-             currentPrice = widget.forRentPrice;
-           }
-         }
-       }
+      if (widget.isProject.toLowerCase() != "project") {
+        if (widget.isForSell) {
+          if (widget.listingType == "sell") {
+            _negotiablePriceController.text = widget.forSellPrice.toString();
+            miniPrice = widget.forSellPrice * 0.98;
+            currentPrice = widget.forSellPrice;
+            log("Current price ${currentPrice} ${miniPrice}");
+          } else if (widget.listingType == "rent") {
+            _negotiablePriceController.text = widget.forRentPrice.toString();
+            miniPrice = widget.forRentPrice * 0.98;
+            currentPrice = widget.forRentPrice;
+          }
+        } else {
+          if (widget.listingType == "sell") {
+            _negotiablePriceController.text = widget.forSellPrice.toString();
+            miniPrice = widget.forSellPrice * 0.98;
+            currentPrice = widget.forSellPrice;
+          } else if (widget.listingType == "rent") {
+            _negotiablePriceController.text = widget.forRentPrice.toString();
+            miniPrice = widget.forRentPrice * 0.98;
+            currentPrice = widget.forRentPrice;
+          }
+        }
+      }
     });
     selectedType = widget.listingType;
     _nameController = TextEditingController();
@@ -228,7 +227,7 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
           _selectedDate,
           _selectedTime,
           roomDetail,
-          configuration
+          configuration,
         );
       }
     } else {
@@ -318,6 +317,149 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
               style: TextStyle(
                 fontSize: AppFontSizes.bodySmall,
                 color: ColorRes.leadGreyColor,
+                height: 1.6,
+              ),
+            ),
+
+            // const SizedBox(height: 32),
+            //
+            // // Action button (always visible for better UX)
+            // SizedBox(
+            //   width: double.infinity,
+            //   child: ElevatedButton(
+            //     style: ElevatedButton.styleFrom(
+            //       backgroundColor: ColorRes.primary,
+            //       foregroundColor: Colors.white,
+            //       elevation: 0,
+            //       shadowColor: Colors.transparent,
+            //       shape: RoundedRectangleBorder(
+            //         borderRadius: BorderRadius.circular(12),
+            //       ),
+            //       padding: const EdgeInsets.symmetric(vertical: 16),
+            //     ),
+            //     onPressed: () => Get.back(),
+            //     child: Text(
+            //       "Got It",
+            //       style: TextStyle(
+            //         fontSize: 16,
+            //         fontWeight: AppFontWeights.semiBold,
+            //         color: Colors.white,
+            //         letterSpacing: 0.2,
+            //       ),
+            //     ),
+            //   ),
+            // ),
+            //
+            // const SizedBox(height: 8),
+            //
+            // // Optional: View My Inquiries link
+            // TextButton(
+            //   onPressed: () {
+            //     Get.back();
+            //     // Navigate to inquiries page
+            //     // Get.toNamed(Routes.MY_INQUIRIES);
+            //   },
+            //   style: TextButton.styleFrom(
+            //     padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            //   ),
+            //   child: Text(
+            //     "View My Inquiries",
+            //     style: TextStyle(
+            //       fontSize: 14,
+            //       fontWeight: AppFontWeights.medium,
+            //       color: ColorRes.primary,
+            //     ),
+            //   ),
+            // ),
+          ],
+        ),
+      );
+    } else if (widget.propertyStatus.toLowerCase() == "sold" &&
+        widget.propertyStatus.isNotEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Close button (top-right)
+            Align(
+              alignment: Alignment.topRight,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(50),
+                onTap: () => Get.back(),
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: ColorRes.leadGreyColor.withOpacity(0.08),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.close_rounded,
+                    color: ColorRes.primary,
+                    size: 20,
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 8),
+
+            // Success Icon with animation potential
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: ColorRes.homeYellow.withOpacity(0.12),
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    color: ColorRes.homeYellow.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.warning_amber,
+                    color: ColorRes.homeYellow,
+                    size: 40,
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Title
+            Text(
+              "Property Sold!",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: AppFontSizes.large,
+                fontWeight: AppFontWeights.bold,
+                color: ColorRes.blueGrey,
+              ),
+            ),
+
+            const SizedBox(height: 8),
+
+            // Subtitle / message
+            Text(
+              "This property has been sold.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: AppFontSizes.bodySmall,
+                color: ColorRes.leadGreyColor,
+                height: 1.6,
+              ),),
+              Text(
+              "Please look for other properties.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: AppFontSizes.bodyMedium,
+                color: ColorRes.textSecondary,
                 height: 1.6,
               ),
             ),
@@ -655,7 +797,8 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
                     final selected = widget.pgRoomData!.firstWhere(
                       (d) => d.roomType == val,
                     );
-                    currentPrice=double.tryParse(selected.rent.toString())??0.0;
+                    currentPrice =
+                        double.tryParse(selected.rent.toString()) ?? 0.0;
                     roomDetail = {
                       'roomType': selected.roomType,
                       'price': selected.rent,
@@ -674,39 +817,47 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
                 value: configuration?['variantId'],
                 hintText: "Choose a variant",
                 prefixIcon: Icons.home_outlined,
-                items: widget.projectConfiguration
-                    ?.expand((config) => config.variants.map((variant) {
-                  return DropdownMenuItem<String>(
-                    value: variant.variantId ?? variant.name,
-                    child: Text(
-                      '${variant.name.isNotEmpty ? variant.name : '${config.bhk} BHK'} - ${Formatter.formatPrice(variant.price)}',
-                      style: const TextStyle(
-                        fontSize: AppFontSizes.small,
-                        fontWeight: AppFontWeights.medium,
-                      ),
-                    ),
-                  );
-
-                }))
-                    .toList() ??
+                items:
+                    widget.projectConfiguration
+                        ?.expand(
+                          (config) => config.variants.map((variant) {
+                            return DropdownMenuItem<String>(
+                              value: variant.variantId ?? variant.name,
+                              child: Text(
+                                '${variant.name.isNotEmpty ? variant.name : '${config.bhk} BHK'} - ${Formatter.formatPrice(variant.price)}',
+                                style: const TextStyle(
+                                  fontSize: AppFontSizes.small,
+                                  fontWeight: AppFontWeights.medium,
+                                ),
+                              ),
+                            );
+                          }),
+                        )
+                        .toList() ??
                     [],
                 onChanged: (val) {
                   setState(() {
                     // Find the selected variant from nested configs
                     final selectedConfig = widget.projectConfiguration!
-                        .firstWhere((c) => c.variants.any((v) => v.variantId == val || v.name == val));
+                        .firstWhere(
+                          (c) => c.variants.any(
+                            (v) => v.variantId == val || v.name == val,
+                          ),
+                        );
                     final selectedVariant = selectedConfig.variants.firstWhere(
-                            (v) => v.variantId == val || v.name == val);
+                      (v) => v.variantId == val || v.name == val,
+                    );
 
                     currentPrice = selectedVariant.price;
-                    miniPrice= selectedVariant.price *0.98;
+                    miniPrice = selectedVariant.price * 0.98;
                     configuration = {
                       'bhk': selectedConfig.bhk,
                       'name': selectedVariant.name,
                       'price': selectedVariant.price,
                       'id': selectedVariant.variantId,
                     };
-                    _negotiablePriceController.text = selectedVariant.price.toString();
+                    _negotiablePriceController.text =
+                        selectedVariant.price.toString();
                   });
                 },
                 darkText: true,
@@ -877,43 +1028,43 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
                         },
                       ),
                       const SizedBox(height: 12),
-                     if(widget.listingType.toLowerCase()=="pg")...[
-                       Text(
-                         "Base room price: ${Formatter.formatPrice(currentPrice)}",
-                         style: TextStyle(
-                           fontSize: AppFontSizes.caption,
-                           fontWeight: AppFontWeights.medium,
-                           color: ColorRes.textSecondary,
-                         ),
-                       ),
-                       const SizedBox(height: 4),
-                       Text(
-                         "Negotiate on the selected room's price",
-                         style: TextStyle(
-                           fontSize: AppFontSizes.caption,
-                           fontWeight: AppFontWeights.medium,
-                           color: ColorRes.primary,
-                         ),
-                       ),
-                     ]else...[
-                       Text(
-                         "Original property price: ${Formatter.formatPrice(currentPrice)}",
-                         style: TextStyle(
-                           fontSize: AppFontSizes.caption,
-                           fontWeight: AppFontWeights.medium,
-                           color: ColorRes.textSecondary,
-                         ),
-                       ),
-                       const SizedBox(height: 4),
-                       Text(
-                         "Minimum acceptable price (2% discount): ${Formatter.formatFullPrice(miniPrice)}",
-                         style: TextStyle(
-                           fontSize: AppFontSizes.caption,
-                           fontWeight: AppFontWeights.medium,
-                           color: ColorRes.primary,
-                         ),
-                       ),
-                     ]
+                      if (widget.listingType.toLowerCase() == "pg") ...[
+                        Text(
+                          "Base room price: ${Formatter.formatPrice(currentPrice)}",
+                          style: TextStyle(
+                            fontSize: AppFontSizes.caption,
+                            fontWeight: AppFontWeights.medium,
+                            color: ColorRes.textSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          "Negotiate on the selected room's price",
+                          style: TextStyle(
+                            fontSize: AppFontSizes.caption,
+                            fontWeight: AppFontWeights.medium,
+                            color: ColorRes.primary,
+                          ),
+                        ),
+                      ] else ...[
+                        Text(
+                          "Original property price: ${Formatter.formatPrice(currentPrice)}",
+                          style: TextStyle(
+                            fontSize: AppFontSizes.caption,
+                            fontWeight: AppFontWeights.medium,
+                            color: ColorRes.textSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          "Minimum acceptable price (2% discount): ${Formatter.formatFullPrice(miniPrice)}",
+                          style: TextStyle(
+                            fontSize: AppFontSizes.caption,
+                            fontWeight: AppFontWeights.medium,
+                            color: ColorRes.primary,
+                          ),
+                        ),
+                      ],
                     ],
                   );
                 },

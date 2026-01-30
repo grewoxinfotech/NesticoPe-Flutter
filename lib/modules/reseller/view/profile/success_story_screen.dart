@@ -38,102 +38,106 @@ class _SuccessStoryScreenState extends State<SuccessStoryScreen> {
                   successStories.isEmpty;
 
           return isEmpty
-              ? Column(
-            children: [
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: ColorRes.white,
-                  border: Border.all(
-                    color:
-                    ColorRes.leadGreyColor.shade300,
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(
-                    20,
-                  ),
-                ),
-                padding: EdgeInsets.all(40),
+              ? Padding(
+                padding: const EdgeInsets.all(16),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Share Your Success',
-                      style: TextStyle(
-                        fontSize: AppFontSizes.body,
-                        fontWeight:
-                        AppFontWeights.semiBold,
-                        color: ColorRes.textColor,
-                      ),
+                            // mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: ColorRes.white,
+                    border: Border.all(
+                      color:
+                      ColorRes.leadGreyColor.shade300,
+                      width: 1,
                     ),
-                    SizedBox(height: 12),
-
-                    Text(
-                      'Add your achievement success and inspire others in the community',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: AppFontSizes.small,
-                        color:
-                        ColorRes
-                            .leadGreyColor
-                            .shade700,
-                        height: 1.5,
-                      ),
+                    borderRadius: BorderRadius.circular(
+                      20,
                     ),
-                    SizedBox(height: 20),
-
-                    Container(
-                      decoration: BoxDecoration(
-                        color: ColorRes.primary,
-                        borderRadius:
-                        BorderRadius.circular(12),
+                  ),
+                  padding: EdgeInsets.all(40),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Share Your Success',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.body,
+                          fontWeight:
+                          AppFontWeights.semiBold,
+                          color: ColorRes.textColor,
+                        ),
                       ),
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          Get.to(
-                                () =>
-                                AddResellerSuccessStoryScreen(
-                                  isEditMode: false,
-                                ),
-                          );
-                        },
-                        icon: Icon(
-                          Icons.add_circle_outline,
-                          size: 22,
+                      SizedBox(height: 12),
+
+                      Text(
+                        'Add your achievement success and inspire others in the community',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: AppFontSizes.small,
+                          color:
+                          ColorRes
+                              .leadGreyColor
+                              .shade700,
+                          height: 1.5,
                         ),
-                        label: Text(
-                          'Add Success Story',
+                      ),
+                      SizedBox(height: 20),
+
+                      Container(
+                        decoration: BoxDecoration(
+                          color: ColorRes.primary,
+                          borderRadius:
+                          BorderRadius.circular(12),
                         ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                          Colors.transparent,
-                          foregroundColor: Colors.white,
-                          shadowColor:
-                          Colors.transparent,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Get.to(
+                                  () =>
+                                  AddResellerSuccessStoryScreen(
+                                    isEditMode: false,
+                                  ),
+                            );
+                          },
+                          icon: Icon(
+                            Icons.add_circle_outline,
+                            size: 22,
                           ),
-                          textStyle: TextStyle(
-                            fontSize:
-                            AppFontSizes.medium,
-                            fontWeight:
-                            AppFontWeights.semiBold,
+                          label: Text(
+                            'Add Success Story',
                           ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                            BorderRadius.circular(
-                              12,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                            Colors.transparent,
+                            foregroundColor: Colors.white,
+                            shadowColor:
+                            Colors.transparent,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            textStyle: TextStyle(
+                              fontSize:
+                              AppFontSizes.medium,
+                              fontWeight:
+                              AppFontWeights.semiBold,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                              BorderRadius.circular(
+                                12,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          )
+                            ],
+                          ),
+              )
               : Column(
             children: [
               Padding(

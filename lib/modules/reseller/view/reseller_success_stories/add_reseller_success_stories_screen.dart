@@ -32,6 +32,9 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
   );
   final DashboardController dashboardController =
       Get.find<DashboardController>();
+  final ResellerSuccessStoryController controllerReseller =
+  Get.find<ResellerSuccessStoryController>();
+
 
   // final formKey = GlobalKey<FormState>();
   //
@@ -123,7 +126,10 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
               : null,
     ); // you can implement API call in controller
     if (success) {
+      await controllerReseller.refreshList();
+      controllerReseller.items.refresh();
       await dashboardController.fetchResellerDashboardDataFromApi();
+
     }
     if (!success) {
       NesticoPeSnackBar.showAwesomeSnackbar(
@@ -178,6 +184,9 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
     }
     Get.back();
     await dashboardController.fetchResellerDashboardDataFromApi();
+    await controllerReseller.refreshList();
+    controllerReseller.items.refresh();
+
 
     controller.resetForm();
   }
@@ -318,11 +327,6 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
 
                 hintText: "Enter total number of deals",
                 keyboardType: TextInputType.number,
-                validator: (val) {
-                  if (val == null || val.isEmpty) return "Enter total deals";
-                  if (int.tryParse(val) == null) return "Enter valid number";
-                  return null;
-                },
               ),
               const SizedBox(height: 16),
 

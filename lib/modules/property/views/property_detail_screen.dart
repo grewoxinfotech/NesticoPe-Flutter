@@ -4444,6 +4444,8 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                         return widget;
                       },
                     ),
+
+                  if(property?.propertyStatus?.toLowerCase()!="sold")...[
                     Divider(
                       indent: 18,
                       endIndent: 18,
@@ -4523,81 +4525,81 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                     backgroundColor: ColorRes.error,
                                     height: 36,
                                     onTap:
-                                        (UserHelper.isGuest)
-                                            ? () => Get.to(() => LoginScreen())
-                                            : () async {
-                                              try {
-                                                final user =
-                                                    await SecureStorage.getUserData();
+                                    (UserHelper.isGuest)
+                                        ? () => Get.to(() => LoginScreen())
+                                        : () async {
+                                      try {
+                                        final user =
+                                        await SecureStorage.getUserData();
 
-                                                if (user == null) {
-                                                  NesticoPeSnackBar.showAwesomeSnackbar(
-                                                    title: "Error",
-                                                    message:
-                                                        'No user data found. Please log in.',
-                                                    contentType:
-                                                        ContentType.failure,
-                                                  );
-                                                  return;
-                                                }
+                                        if (user == null) {
+                                          NesticoPeSnackBar.showAwesomeSnackbar(
+                                            title: "Error",
+                                            message:
+                                            'No user data found. Please log in.',
+                                            contentType:
+                                            ContentType.failure,
+                                          );
+                                          return;
+                                        }
 
-                                                final fullName =
-                                                    user.user?.fullName ?? '';
-                                                final firstName =
-                                                    user.user?.firstName ?? '';
-                                                final username =
-                                                    user.user?.username ?? '';
-                                                final email =
-                                                    user.user?.email ?? '';
-                                                final phone =
-                                                    user.user?.phone ?? '';
+                                        final fullName =
+                                            user.user?.fullName ?? '';
+                                        final firstName =
+                                            user.user?.firstName ?? '';
+                                        final username =
+                                            user.user?.username ?? '';
+                                        final email =
+                                            user.user?.email ?? '';
+                                        final phone =
+                                            user.user?.phone ?? '';
 
-                                                final displayName =
-                                                    (firstName.isEmpty
-                                                            ? username
-                                                            : fullName)
-                                                        .trim();
+                                        final displayName =
+                                        (firstName.isEmpty
+                                            ? username
+                                            : fullName)
+                                            .trim();
 
-                                                if (Get.context == null) {
-                                                  NesticoPeSnackBar.showAwesomeSnackbar(
-                                                    title: "Error",
-                                                    message:
-                                                        'UI not ready to show dialog.',
-                                                    contentType:
-                                                        ContentType.failure,
-                                                  );
-                                                  return;
-                                                }
+                                        if (Get.context == null) {
+                                          NesticoPeSnackBar.showAwesomeSnackbar(
+                                            title: "Error",
+                                            message:
+                                            'UI not ready to show dialog.',
+                                            contentType:
+                                            ContentType.failure,
+                                          );
+                                          return;
+                                        }
 
-                                                addInquiryFromApp(
-                                                  displayName,
-                                                  email,
-                                                  phone,
-                                                  currentProperty.id ?? '',
-                                                  currentProperty.listingType
-                                                          ?.toLowerCase()
-                                                          .replaceAll(
-                                                            " ",
-                                                            "_",
-                                                          ) ??
-                                                      '',
-                                                  "property",
-                                                );
-                                              } catch (e, s) {
-                                                debugPrint(
-                                                  '❌ Error in Get Offer button: $e',
-                                                );
-                                                debugPrint('$s');
+                                        addInquiryFromApp(
+                                          displayName,
+                                          email,
+                                          phone,
+                                          currentProperty.id ?? '',
+                                          currentProperty.listingType
+                                              ?.toLowerCase()
+                                              .replaceAll(
+                                            " ",
+                                            "_",
+                                          ) ??
+                                              '',
+                                          "property",
+                                        );
+                                      } catch (e, s) {
+                                        debugPrint(
+                                          '❌ Error in Get Offer button: $e',
+                                        );
+                                        debugPrint('$s');
 
-                                                NesticoPeSnackBar.showAwesomeSnackbar(
-                                                  title: "Error",
-                                                  message:
-                                                      'Something went wrong. Please try again.',
-                                                  contentType:
-                                                      ContentType.failure,
-                                                );
-                                              }
-                                            },
+                                        NesticoPeSnackBar.showAwesomeSnackbar(
+                                          title: "Error",
+                                          message:
+                                          'Something went wrong. Please try again.',
+                                          contentType:
+                                          ContentType.failure,
+                                        );
+                                      }
+                                    },
                                   );
                                 }
                               }),
@@ -4606,6 +4608,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                         ),
                       ],
                     ),
+                  ],
 
                     if (!UserHelper.isGuest) ...[
                       if (controller.items.isNotEmpty) ...[
@@ -4684,13 +4687,20 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                     ),
                   ),
                   builder:
-                      (context) => DraggableScrollableSheet(
+                      (context) {
+                        final hasSubmitted = controller.hasSubmittedInquiry.value;
+                        final propertySold = (currentProperty.propertyStatus ?? '').toLowerCase() == "sold";
+
+                        // Decide which section is showing
+                        final bool isCompactView = hasSubmitted || propertySold;
+
+                    return DraggableScrollableSheet(
                         expand: false,
                         minChildSize: 0.45,
                         initialChildSize:
-                            controller.hasSubmittedInquiry.value ? 0.45 : 0.85,
+                        isCompactView ? 0.45 : 0.85,
                         maxChildSize:
-                            controller.hasSubmittedInquiry.value ? 0.45 : 0.85,
+                        isCompactView ? 0.45 : 0.85,
                         builder:
                             (
                               context,
@@ -4698,6 +4708,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                             ) => SingleChildScrollView(
                               controller: scrollController,
                               child: Padding(
+
                                 padding: EdgeInsets.only(
                                   bottom:
                                       MediaQuery.of(context).viewInsets.bottom,
@@ -4707,6 +4718,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                 ),
                                 child: ContactOwnerBottom(
                                   isProject: 'property',
+                                  propertyStatus: currentProperty.propertyStatus??'',
                                   pgRoomData:
                                       currentProperty
                                           .propertyDetails
@@ -4839,11 +4851,11 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                 ),
                               ),
                             ),
-                      ),
+                      );},
                 );
               }
             },
-            primaryTitle: "View Contact",
+            primaryTitle:(currentProperty.propertyStatus?.toLowerCase()=="sold")?"Property Sold" :"View Contact",
           ),
         );
       }),
@@ -5136,7 +5148,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
           return Stack(
             children: [
               /// Media (Image / Video)
-              SizedBox(
+              /*     SizedBox(
                 height: 300,
                 width: double.infinity,
                 child: PageView.builder(
@@ -5166,6 +5178,51 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                     } else if (item["type"] == "video") {
                       return CustomVideoPlayer(url: item["url"]!);
                     }
+                    return const SizedBox.shrink();
+                  },
+                ),
+              ),*/
+              SizedBox(
+                height: 300,
+                width: double.infinity,
+                child: PageView.builder(
+                  controller: pageController,
+                  itemCount: mediaList.length,
+                  onPageChanged: (index) {
+                    setState(() {
+                      currentPage = index;
+                    });
+                  },
+                  itemBuilder: (context, index) {
+                    final item = mediaList[index];
+                    final url = item["url"] ?? '';
+                    const imageOfNotAvailable =
+                        "assets/images/not_available_image.png";
+
+                    if (item["type"] == "image") {
+                      return Image.network(
+                        url,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          debugPrint("⚠️ Image failed to load: $url");
+                          return Image.asset(
+                            imageOfNotAvailable,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                          );
+                        },
+                      );
+                    } else if (item["type"] == "video") {
+                      return CustomVideoPlayer(url: url);
+                    }
+
                     return const SizedBox.shrink();
                   },
                 ),

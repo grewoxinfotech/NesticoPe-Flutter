@@ -1243,7 +1243,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (topSellerController.items.isEmpty) {
         return const SizedBox.shrink();
       }
-
+      print("[TopSeller] topSeller : ${topSellerController.items.map((e) => e.toJson())}");
       return Column(
         children: [
           const SizedBox(height: 15),

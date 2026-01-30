@@ -197,18 +197,20 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
                               ),
                             ],
 
-                            if (isPremium) ...[
-                              SizedBox(height: 4),
+                            if (contractor.subscription.hasPremiumPlan) ...[
+                              SizedBox(height: 6),
+
                               Container(
+
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 8,
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: ColorRes.homeYellow.withOpacity(0.05),
+                                  color: ColorRes.orangeColor.withOpacity(0.05),
                                   borderRadius: BorderRadius.circular(6),
                                   border: Border.all(
-                                    color: ColorRes.homeYellow.withOpacity(0.3),
+                                    color: ColorRes.orangeColor.withOpacity(0.3),
                                   ),
                                 ),
                                 child: Text(
@@ -216,7 +218,7 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: AppFontSizes.caption,
                                     fontWeight: AppFontWeights.medium,
-                                    color: ColorRes.homeYellow,
+                                    color: ColorRes.orangeColor,
                                   ),
                                 ),
                               ),
@@ -399,7 +401,7 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 20),
             // ---------------- SECTION TITLE ----------------
             Row(
               children: [
@@ -538,6 +540,7 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
     String? contractorLastName,
     String? userName,
   }) {
+
     final fullName =
         '${contractorFirstName ?? ''} ${contractorLastName ?? ''}'.trim();
 
@@ -730,7 +733,7 @@ class ServiceCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _detailColumn("PRICE", service.meta.priceRange),
+
                 _detailColumn("AVAILABILITY", service.meta.workAvailability),
                 _detailColumn(
                   "Visiting Charge",
@@ -741,6 +744,11 @@ class ServiceCard extends StatelessWidget {
             ),
           ),
           Divider(color: ColorRes.leadGreyColor.shade300, height: 1),
+          SizedBox(height: 10,),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: _detailColumn("PRICE", service.meta.priceRange),
+          ),
           // Features list -----------
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -787,6 +795,8 @@ class ServiceCard extends StatelessWidget {
   }
 
   Widget _detailColumn(String title, String value, {bool highlight = false}) {
+
+    print("iudjiidfi ${value}");
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

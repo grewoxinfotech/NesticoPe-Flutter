@@ -613,6 +613,7 @@ import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 import 'package:housing_flutter_app/data/network/property/services/property_service.dart';
 import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
+import 'package:housing_flutter_app/modules/reseller/controller/reseller_success_stories_controller/reseller_success_stories_controller.dart';
 
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
 import 'package:housing_flutter_app/widgets/location_permission/location_permission_method.dart';
@@ -636,9 +637,11 @@ class DashboardController extends GetxController {
   Rxn<ResellerInsightsModel> resellerInsightsModel =
       Rxn<ResellerInsightsModel>();
   Rxn<ResellerLeaderboardCitywise> resellerCityWiseLeaderBoard =
+
       Rxn<ResellerLeaderboardCitywise>();
   Rxn<ResellerCityLeaderBoardAllCities> resellerAllCity =
       Rxn<ResellerCityLeaderBoardAllCities>();
+  ResellerSuccessStoryController resellerSuccessStory=ResellerSuccessStoryController();
   RxList<Items> itemData = <Items>[].obs;
   PropertyController propertyController = PropertyController();
   Rxn<ReferralModel> dummyReferral = Rxn<ReferralModel>();
@@ -1067,6 +1070,8 @@ class DashboardController extends GetxController {
       final success = await _service.deleteSuccessStory(id);
 
       if (success) {
+        await resellerSuccessStory.refreshList();
+         resellerSuccessStory.items.refresh();
         await fetchResellerDashboardDataFromApi();
       }
     } catch (e) {

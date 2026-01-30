@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/data/network/reseller/reseller_success_stories/reseller_success_stories_model.dart';
+import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -28,11 +29,17 @@ class ResellerSuccessStoryService {
   Future<PaginationResponse<ResellerSuccessItem>> fetchSuccessStories({
     int page = 1,
     Map<String, String>? filters,
+    int limit=10,
+    String? resellerId,
+    String? module,
   }) async {
     try {
       final queryParameters = {
         'page': page.toString(),
         if (filters != null) ...filters,
+        'limit': limit.toString(),
+        if (resellerId != null) 'resellerId': resellerId,
+        if (module != null) 'module': module,
       };
 
       final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
@@ -111,26 +118,26 @@ class ResellerSuccessStoryService {
       debugPrint("📄 Response Body: ${response.body}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        CustomSnackBar.show(
-          Get.overlayContext!,
-          message: "Success success created successfully",
-          type: SnackBarType.success,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: "Successfully to create success",
+          contentType: ContentType.success,
         );
         return true;
       }
 
-      CustomSnackBar.show(
-        Get.overlayContext!,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Failed',
         message: "Failed to create success success",
-        type: SnackBarType.error,
+contentType: ContentType.failure,
       );
       return false;
     } catch (e) {
       debugPrint("❌ Create Success Story Exception: $e");
-      CustomSnackBar.show(
-        Get.overlayContext!,
-        message: "Error while creating success success",
-        type: SnackBarType.error,
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Failed',
+        message: "Failed to create success success",
+        contentType: ContentType.failure,
       );
       return false;
     }

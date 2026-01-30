@@ -542,7 +542,7 @@ Future<void> exportResellerInsightsToExcel(Map<String, dynamic> jsonData) async 
     });
 
     // 🏆 4️⃣ LEADERBOARD
-    header('Leaderboard');
+    header('Leaderboard Top Reseller');
     sheet.appendRow([TextCellValue('Rank'), TextCellValue('Name'), TextCellValue('Email'),
       TextCellValue('City'), TextCellValue('Level'), TextCellValue('Total Commission'),
       TextCellValue('Total Deals')]);
@@ -629,6 +629,55 @@ Future<void> exportResellerInsightsToExcel(Map<String, dynamic> jsonData) async 
         TextCellValue(t['name']?.toString() ?? ''),
         TextCellValue(t['commission']?.toString() ?? ''),
       ]);
+    }
+    header('Partner Milestones');
+    final milestones = Map<String, dynamic>.from(data['milestones'] ?? {});
+
+    if (milestones.isNotEmpty) {
+      sheet.appendRow([
+        TextCellValue('Total Fees Generated'),
+        TextCellValue(milestones['totalFeesGenerated']?.toString() ?? '0')
+      ]);
+      sheet.appendRow([
+        TextCellValue('Progress (%)'),
+        TextCellValue(milestones['progress']?.toString() ?? '0')
+      ]);
+
+      // ➕ Next Milestone
+      final next = Map<String, dynamic>.from(milestones['nextMilestone'] ?? {});
+      if (next.isNotEmpty) {
+        gap();
+        sheet.appendRow([TextCellValue('Next Milestone')]);
+        next.forEach((k, v) {
+          sheet.appendRow([TextCellValue(_formatKey(k)), TextCellValue(v.toString())]);
+        });
+      }
+
+      // 🎁 Bonuses
+      final bonuses = List<Map<String, dynamic>>.from(milestones['bonuses'] ?? []);
+      if (bonuses.isNotEmpty) {
+        gap();
+        sheet.appendRow([TextCellValue('Unlocked Bonuses')]);
+        final keys = bonuses.first.keys.toList();
+        sheet.appendRow(keys.map((k) => TextCellValue(_formatKey(k))).toList());
+        for (var b in bonuses) {
+          sheet.appendRow(keys.map((k) => TextCellValue(b[k]?.toString() ?? '')).toList());
+        }
+      }
+
+      // 🎯 All Milestones
+      final all = List<Map<String, dynamic>>.from(milestones['allMilestones'] ?? []);
+      if (all.isNotEmpty) {
+        gap();
+        sheet.appendRow([TextCellValue('All Milestones')]);
+        sheet.appendRow([TextCellValue('Limit'), TextCellValue('Gift')]);
+        for (var m in all) {
+          sheet.appendRow([
+            TextCellValue(m['limit']?.toString() ?? ''),
+            TextCellValue(m['gift']?.toString() ?? ''),
+          ]);
+        }
+      }
     }
 
     // 🧾 11️⃣ OTHER DETAILS

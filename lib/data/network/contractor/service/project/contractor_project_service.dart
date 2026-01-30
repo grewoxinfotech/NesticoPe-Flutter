@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
 import 'package:housing_flutter_app/data/network/contractor/model/contractor_project_model/contracto_project_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:housing_flutter_app/app/constants/api_constants.dart';
+
+import '../../../../../utils/logger/app_logger.dart';
 
 class ContractorProjectService {
   ContractorProjectService._();
@@ -11,10 +14,113 @@ class ContractorProjectService {
   static ContractorProjectService contractorProjectService =
       ContractorProjectService._();
   final _baseUrl = ApiConstants.contractorProject;
+  final _basePhotoUrl = ApiConstants.contractorProjectPhotos;
 
   static Future<Map<String, String>> header() async {
     return await ApiConstants.getHeaders();
   }
+
+  Future<bool> uploadBeforePhotos({
+    required String projectId,
+    required List<File> beforePhotos,
+    required String key,
+  }) async {
+    try {
+      log('=================================================');
+      final uri = Uri.parse('$_basePhotoUrl/upload');
+      final request = http.MultipartRequest('POST', uri);
+
+      // Attach headers
+      final headers = await header();
+      request.headers.addAll(headers);
+
+      // Add fields
+      request.fields['projectId'] = projectId;
+
+      // Add multiple image files
+      for (final photo in beforePhotos) {
+        request.files.add(
+          await http.MultipartFile.fromPath('$key', photo.path),
+        );
+      }
+
+      // Send request
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+
+      log("📸 Upload Response: $responseBody");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(responseBody);
+        return data['success'] == true;
+      } else {
+        log("❌ Failed to upload photos: ${response.statusCode}");
+        log("Body: $responseBody");
+        return false;
+      }
+    } catch (e, stack) {
+      log("🚨 Exception in uploadBeforePhotos: $e\n$stack");
+      return false;
+    }
+  }
+
+/*  Future<bool> deletedProjectPhoto(Map<String, dynamic> status) async {
+    try {
+      final uri = Uri.parse('${ApiConstants.contractorProjectPhotos}/delete');
+      log("🗑️ Deleting project photo with data: $status");
+
+      final request = http.Request('DELETE', uri)
+        ..headers.addAll(await header())
+        ..body = jsonEncode(status);
+
+      final streamedResponse = await request.send();
+      final responseBody = await streamedResponse.stream.bytesToString();
+
+      log("📨 Delete photo response: $responseBody");
+
+      if (streamedResponse.statusCode == 200 || streamedResponse.statusCode == 201) {
+        final data = jsonDecode(responseBody);
+        return data['success'] == true;
+      } else {
+        log("❌ Failed to delete photo: ${streamedResponse.statusCode}");
+        return false;
+      }
+    } catch (e, stack) {
+      log("🚨 Exception in deletedProjectPhoto: $e\n$stack");
+      return false;
+    }
+  }*/
+  Future<bool> deletedProjectPhoto(Map<String, dynamic> status) async {
+    try {
+      final uri = Uri.parse('${ApiConstants.contractorProjectPhotos}/delete');
+      log("🗑️ Deleting project photo with data: $status");
+
+      final headers = await header()
+        ..addAll({'Content-Type': 'application/json'});
+
+      // 🚀 Direct delete request with body
+      final response = await http.delete(
+        uri,
+        headers: headers,
+        body: jsonEncode(status),
+      );
+
+      log("📨 Delete photo response: ${response.body}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        return data['success'] == true;
+      } else {
+        log("❌ Failed to delete photo: ${response.statusCode}");
+        return false;
+      }
+    } catch (e, stack) {
+      log("🚨 Exception in deletedProjectPhoto: $e\n$stack");
+      return false;
+    }
+  }
+
+
 
   Future<PaginationResponse<ContractorProjectItem>> getContractorProjectData({
     int page = 1,
@@ -34,6 +140,7 @@ class ContractorProjectService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        AppLogger.structured("App Logger for Contractor Project", data);
         return PaginationResponse<ContractorProjectItem>.fromJson(
           data,
           (json) =>
@@ -76,6 +183,7 @@ class ContractorProjectService {
       return false;
     }
   }
+
   Future<bool> updateProject(Map<String, dynamic> status, String id) async {
     try {
       log("shgdsgasdsidsdwddhjuwd $status");

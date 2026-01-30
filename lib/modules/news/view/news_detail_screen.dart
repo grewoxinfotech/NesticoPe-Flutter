@@ -94,7 +94,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ),
-                actions: [
+         /*       actions: [
                   // Container(
                   //   margin: const EdgeInsets.all(8),
                   //   decoration: BoxDecoration(
@@ -124,7 +124,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                       },
                     ),
                   ),
-                ],
+                ],*/
                 flexibleSpace: FlexibleSpaceBar(
                   background: Stack(
                     fit: StackFit.expand,

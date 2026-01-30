@@ -73,12 +73,10 @@ class NesticoPeNavigationBar extends StatelessWidget {
                 title: Text("Plans", style: style),
               ),
 
-            if(!UserHelper.isGuest)...[
               SalomonBottomBarItem(
                 icon: Icon(Icons.engineering_outlined, size: iconSize * 1.2),
                 title: Text("Hire Contractor", style: style),
               ),
-            ]
             ],
           ),
         ),

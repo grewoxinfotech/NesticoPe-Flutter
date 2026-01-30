@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
+import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
 import 'package:housing_flutter_app/modules/reseller/view/reseller_success_stories/add_reseller_success_stories_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:readmore/readmore.dart';
 import '../../../../app/constants/color_res.dart';
+import '../../../../app/utils/formater/formater.dart';
 import '../../../../data/network/reseller/reseller_success_stories/reseller_success_stories_model.dart';
+import '../../../property_rating/view/widget/read_more_or_less.dart';
 import '../../controller/reseller_success_stories_controller/reseller_success_stories_controller.dart';
 
-class ResellerSuccessStoryScreen extends StatelessWidget {
+class ContractorSuccessStoryScreen extends StatelessWidget {
   final ResellerSuccessStoryController controller = Get.put(
     ResellerSuccessStoryController(),
   );
 
-  ResellerSuccessStoryScreen({super.key});
+  final DashboardController dashboardController = Get.put(
+    DashboardController(),
+  );
+
+  ContractorSuccessStoryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,53 +29,37 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: ColorRes.bgColor,
         title: Text(
-          'Partner Success Stories',
+          'Contractor Success Stories',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
       body: CustomScrollView(
         slivers: [
           Obx(() {
-            if (controller.isLoading.value && controller.items.isEmpty) {
+            if (controller.isLoading.value) {
               return SliverFillRemaining(child: _buildLoadingState());
             }
 
-            if (controller.items.isEmpty) {
+            if (controller.items.isEmpty && !controller.isLoading.value) {
               return SliverFillRemaining(child: _buildEmptyState());
             }
 
             return SliverPadding(
-              padding: const EdgeInsets.all(12),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    if (index < controller.items.length) {
-                      final story = controller.items[index];
-                      return _buildStoryCard(story, index);
-                    } else if (controller.isLoading.value) {
-                      return const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 20),
-                        child: Center(
-                          child: SizedBox(
-                            width: 30,
-                            height: 30,
-                            child: CircularProgressIndicator(strokeWidth: 2.5),
-                          ),
-                        ),
-                      );
-                    }
-                    return null;
-                  },
-                  childCount:
-                      controller.items.length +
-                      (controller.isLoading.value ? 1 : 0),
+              padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 4),
+              sliver: SliverToBoxAdapter(
+                child: ContractorSuccessStoryCard(
+                  story:
+                      controller.items.isNotEmpty
+                          ? controller.items.first
+                          : ResellerSuccessItem.fromJson({}),
+                  // fallback if list is empty
+                  controller: dashboardController,
                 ),
               ),
             );
           }),
         ],
       ),
-      floatingActionButton: _buildFAB(),
     );
   }
 
@@ -116,70 +107,109 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
   Widget _buildEmptyState() {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(16),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          // mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(24),
+              width: double.infinity,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.blue.shade50, Colors.purple.shade50],
+                color: ColorRes.white,
+                border: Border.all(
+                  color:
+                  ColorRes.leadGreyColor.shade300,
+                  width: 1,
                 ),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.auto_stories,
-                size: 60,
-                color: ColorRes.primary,
-              ),
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              "No Success Stories Yet",
-              style: TextStyle(
-                fontSize: AppFontSizes.body,
-                fontWeight: AppFontWeights.semiBold,
-                color: ColorRes.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "Start celebrating achievements!\nCreate your first story story and inspire others.",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: AppFontSizes.bodySmall,
-                color: ColorRes.leadGreyColor.shade600,
-                height: 1.4,
-              ),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: () {
-                Get.to(() => AddResellerSuccessStoryScreen());
-              },
-              icon: const Icon(Icons.add),
-              label: const Text("Create First Story"),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ColorRes.primary,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 32,
-                  vertical: 16,
+                borderRadius: BorderRadius.circular(
+                  20,
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                elevation: 4,
+              ),
+              padding: EdgeInsets.all(40),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Share Your Success',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.body,
+                      fontWeight:
+                      AppFontWeights.semiBold,
+                      color: ColorRes.textColor,
+                    ),
+                  ),
+                  SizedBox(height: 12),
+
+                  Text(
+                    'Add your achievement success and inspire others in the community',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: AppFontSizes.small,
+                      color:
+                      ColorRes
+                          .leadGreyColor
+                          .shade700,
+                      height: 1.5,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+
+                  Container(
+                    decoration: BoxDecoration(
+                      color: ColorRes.primary,
+                      borderRadius:
+                      BorderRadius.circular(12),
+                    ),
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Get.to(
+                              () =>
+                              AddResellerSuccessStoryScreen(
+                                isEditMode: false,
+                              ),
+                        );
+                      },
+                      icon: Icon(
+                        Icons.add_circle_outline,
+                        size: 22,
+                      ),
+                      label: Text(
+                        'Add Success Story',
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                        Colors.transparent,
+                        foregroundColor: Colors.white,
+                        shadowColor:
+                        Colors.transparent,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        textStyle: TextStyle(
+                          fontSize:
+                          AppFontSizes.medium,
+                          fontWeight:
+                          AppFontWeights.semiBold,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                          BorderRadius.circular(
+                            12,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ),
-      ),
+      )
     );
   }
 
-  Widget _buildStoryCard(ResellerSuccessItem story, int index) {
+  Widget _buildStoryCard(ResellerSuccessItem story) {
     final formattedDate = DateFormat.yMMMM().format(
       DateTime.parse(story.monthYear.toIso8601String()),
     );
@@ -518,5 +548,600 @@ class ResellerSuccessStoryScreen extends StatelessWidget {
       default:
         return ColorRes.builderGridLightPurple;
     }
+  }
+}
+
+class ContractorSuccessStoryCard extends StatelessWidget {
+  final ResellerSuccessItem story;
+  final DashboardController controller;
+
+  const ContractorSuccessStoryCard({
+    super.key,
+    required this.story,
+    required this.controller,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isPublished = story.status.toLowerCase() == 'published';
+    final formattedDate = _formatMonthYear(story.monthYear.toIso8601String());
+
+    return Align(
+      alignment: Alignment.center,
+      child: FractionallySizedBox(
+        widthFactor: 1,
+        child: Card(
+          color: ColorRes.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: ColorRes.leadGreyColor.shade300),
+          ),
+          margin: const EdgeInsets.symmetric(vertical: 10),
+          elevation: 3,
+          clipBehavior: Clip.hardEdge,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 🔹 Image Stack Section
+              Stack(
+                children: [
+                  // Main Image
+                  AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child:
+                        story.image != null && story.image!.isNotEmpty
+                            ? Image.network(
+                              story.image!,
+                              fit: BoxFit.cover,
+
+                              // 🌀 Add loading indicator
+                              loadingBuilder: (
+                                context,
+                                child,
+                                loadingProgress,
+                              ) {
+                                if (loadingProgress == null) return child;
+                                return Container(
+                                  color: ColorRes.leadGreyColor.shade200,
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      color: ColorRes.primary,
+                                      value:
+                                          loadingProgress.expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  (loadingProgress
+                                                          .expectedTotalBytes ??
+                                                      1)
+                                              : null,
+                                    ),
+                                  ),
+                                );
+                              },
+                              errorBuilder:
+                                  (context, error, stackTrace) => Container(
+                                    color: ColorRes.leadGreyColor.shade700,
+                                    child: Icon(
+                                      Icons.broken_image,
+                                      color: ColorRes.white.withOpacity(0.7),
+                                      size: 40,
+                                    ),
+                                  ),
+                            )
+                            : Container(
+                              color: ColorRes.leadGreyColor.shade700,
+                              child: Icon(
+                                Icons.image,
+                                color: ColorRes.white.withOpacity(0.7),
+                                size: 40,
+                              ),
+                            ),
+                  ),
+
+                  // Published/Draft Badge
+                  Positioned(
+                    top: 12,
+                    right: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color:
+                              isPublished
+                                  ? ColorRes.green
+                                  : ColorRes.leadGreyColor.shade800,
+                          width: 0.5,
+                        ),
+                        color:
+                            isPublished
+                                ? ColorRes.green
+                                : ColorRes.leadGreyColor.shade600,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: ColorRes.white,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            isPublished ? 'PUBLISHED' : 'DRAFT',
+                            style: const TextStyle(
+                              color: ColorRes.white,
+                              fontSize: AppFontSizes.caption,
+                              fontWeight: AppFontWeights.semiBold,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Date Badge (bottom-left)
+                  Positioned(
+                    bottom: 10,
+                    left: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: ColorRes.black, width: 0.5),
+                        color: ColorRes.white,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.calendar_today_outlined,
+                            color: ColorRes.black,
+                            size: 14,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            formattedDate,
+                            style: const TextStyle(
+                              color: ColorRes.black,
+                              fontSize: AppFontSizes.caption,
+                              fontWeight: AppFontWeights.medium,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              // 🔹 Content Section
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            story.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: AppFontSizes.medium,
+                              fontWeight: AppFontWeights.semiBold,
+                              color: ColorRes.textColor,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 12),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: ColorRes.homeAmber.shade200,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            color: ColorRes.homeAmber.shade50,
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.star,
+                                color: ColorRes.homeAmber.shade800,
+                                size: 14,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                story.rating.toStringAsFixed(1),
+                                style: TextStyle(
+                                  color: ColorRes.homeAmber.shade800,
+                                  fontSize: AppFontSizes.caption,
+                                  fontWeight: AppFontWeights.semiBold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    /*  Text(
+                      story.description,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: AppFontSizes.caption,
+                        color: ColorRes.leadGreyColor.shade600,
+                        height: 1.4,
+                      ),
+                    ),*/
+                    ReadMoreClass(
+                      description: story.description,
+                      trimLines: 3,
+                      size: AppFontSizes.caption,
+                      colorClickableText: ColorRes.primary,
+                    ),
+
+                    const SizedBox(height: 8),
+                    Divider(height: 1, color: ColorRes.border),
+                    const SizedBox(height: 8),
+
+                    // Achievement Box
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.emoji_events_outlined,
+                              color: ColorRes.green,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'ACHIEVEMENT',
+                              style: TextStyle(
+                                color: ColorRes.green,
+                                fontSize: AppFontSizes.small,
+                                fontWeight: AppFontWeights.semiBold,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        ReadMoreClass(
+                          description: story.achievement,
+                          trimLines: 3,
+                          size: AppFontSizes.caption,
+                          colorClickableText: ColorRes.primary,
+                        ),
+                        /* Text(
+                          story.achievement,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: AppFontSizes.caption,
+                            color: ColorRes.leadGreyColor.shade600,
+                            height: 1.4,
+                          ),
+                        ),*/
+                      ],
+                    ),
+
+                    const SizedBox(height: 8),
+                    Divider(height: 1, color: ColorRes.border),
+                    const SizedBox(height: 8),
+
+                    // Performance Section
+                    _buildPerformanceSection(),
+                    const SizedBox(height: 8),
+
+                    // Action Buttons
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              ResellerSuccessItem storyData =
+                                  ResellerSuccessItem(
+                                    id: story.id,
+                                    title: story.title,
+                                    description: story.description,
+                                    achievement: story.achievement,
+                                    totalDeals: story.totalDeals,
+                                    totalValue: story.totalValue,
+                                    monthYear: DateTime.parse(
+                                      story.monthYear.toIso8601String(),
+                                    ),
+
+                                    rating: story.rating,
+                                    status: story.status,
+                                    image: story.image,
+                                    resellerId: story.resellerId,
+                                  );
+                              Get.to(
+                                () => AddResellerSuccessStoryScreen(
+                                  isEditMode: true,
+                                  story: storyData,
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: ColorRes.green.withOpacity(0.1),
+                              foregroundColor: ColorRes.green,
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text(
+                              'Edit',
+                              style: TextStyle(
+                                fontSize: AppFontSizes.medium,
+                                fontWeight: AppFontWeights.semiBold,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Get.dialog(
+                                AlertDialog(
+                                  backgroundColor: ColorRes.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  icon: Icon(
+                                    Icons.info,
+                                    color: ColorRes.homeAmber,
+                                  ),
+                                  title: const Text(
+                                    'Delete Success Story',
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.large,
+                                      fontWeight: AppFontWeights.bold,
+                                    ),
+                                  ),
+                                  content: const Text(
+                                    'Are you sure you want to delete this story?',
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.medium,
+                                      fontWeight: AppFontWeights.regular,
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Get.back(); // close dialog
+                                      },
+                                      child: const Text(
+                                        'Cancel',
+                                        style: TextStyle(
+                                          color: ColorRes.grey,
+                                          fontWeight: AppFontWeights.medium,
+                                        ),
+                                      ),
+                                    ),
+                                    Obx(() {
+                                      return ElevatedButton(
+                                        onPressed:
+                                            controller.deleteSuccessStory.value
+                                                ? null // disable while deleting
+                                                : () {
+                                                  Get.back(); // close dialog
+                                                  controller.deleteStory(
+                                                    story.id,
+                                                  );
+                                                },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: ColorRes.error,
+                                          foregroundColor: ColorRes.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
+                                          ),
+                                        ),
+                                        child:
+                                            controller.deleteSuccessStory.value
+                                                ? const SizedBox(
+                                                  height: 20,
+                                                  width: 20,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                        strokeWidth: 2,
+                                                        color: Colors.white,
+                                                      ),
+                                                )
+                                                : const Text(
+                                                  'Yes, Delete',
+                                                  style: TextStyle(
+                                                    fontWeight:
+                                                        AppFontWeights.semiBold,
+                                                  ),
+                                                ),
+                                      );
+                                    }),
+                                  ],
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: ColorRes.error.withOpacity(0.1),
+                              foregroundColor: ColorRes.error,
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text(
+                              'Delete',
+                              style: TextStyle(
+                                fontSize: AppFontSizes.medium,
+                                fontWeight: AppFontWeights.semiBold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPerformanceSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.bar_chart,
+              color: ColorRes.builderGridLightPurple,
+              size: 20,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'PERFORMANCE',
+              style: TextStyle(
+                color: ColorRes.builderGridLightPurple,
+                fontSize: AppFontSizes.small,
+                fontWeight: AppFontWeights.semiBold,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: _buildPerformanceTile(
+                icon: Icons.check_circle_outline,
+                iconColor: ColorRes.builderGridLightBlue,
+                bgColor: ColorRes.builderGridLightBlue.withOpacity(0.1),
+                label: 'TOTAL LEADS',
+                value: Formatter.formatNumber(story.totalDeals),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _buildPerformanceTile(
+                icon: Icons.attach_money,
+                iconColor: ColorRes.green,
+                bgColor: ColorRes.green.withOpacity(0.1),
+                label: 'TOTAL VALUE',
+                value:
+                    '${Formatter.formatPrice(int.tryParse(story.totalValue) ?? 0)}',
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _buildPerformanceTile(
+                icon: Icons.star_outline,
+                iconColor: ColorRes.homeAmber,
+                bgColor: ColorRes.homeAmber.withOpacity(0.1),
+                label: 'AVG PER DEAL',
+                value:
+                    story.totalDeals > 0
+                        ? '${Formatter.formatPrice(((int.tryParse(story.totalValue) ?? 0) / story.totalDeals).round())}'
+                        : '₹0',
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPerformanceTile({
+    required IconData icon,
+    required Color iconColor,
+    required Color bgColor,
+    required String label,
+    required String value,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: ColorRes.background,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: iconColor, size: 16),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            label,
+            style: TextStyle(
+              color: ColorRes.leadGreyColor.shade600,
+              fontSize: AppFontSizes.mini,
+              fontWeight: AppFontWeights.medium,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            value,
+            style: const TextStyle(
+              color: ColorRes.textColor,
+              fontSize: AppFontSizes.medium,
+              fontWeight: AppFontWeights.semiBold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatMonthYear(String dateString) {
+    try {
+      final date = DateTime.parse(dateString);
+      return DateFormat('MMM yyyy').format(date);
+    } catch (_) {
+      return dateString;
+    }
+  }
+
+  String _formatValue(int value) {
+    if (value >= 100000) {
+      return '${(value / 100000).toStringAsFixed(0)}L';
+    } else if (value >= 1000) {
+      return '${(value / 1000).toStringAsFixed(0)}K';
+    }
+    return value.toString();
   }
 }

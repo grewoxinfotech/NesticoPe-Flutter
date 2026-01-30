@@ -18,7 +18,7 @@ class SellerListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("[TopSeller] topSeller : ${topSeller.map((e) => e.firstName)}");
+    print("[TopSeller] topSeller : ${topSeller.map((e) => e.toJson())}");
     return SizedBox(
       height: 140,
       // smaller height
@@ -100,84 +100,6 @@ class SellerListWidget extends StatelessWidget {
         },
       ),
     );
-    // return SizedBox(
-    //   height: 390, // smaller height
-    //   child: GridView.builder(
-    //     scrollDirection: Axis.horizontal,
-    //     itemCount: topSeller.length,
-    //     padding: const EdgeInsets.symmetric(horizontal: 10),
-    //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-    //       crossAxisCount: 2,
-    //       // mainAxisSpacing: 10,
-    //       crossAxisSpacing: 10,
-    //       childAspectRatio: 190 / 140, // Adjusted for wider cards
-    //     ),
-    //     itemBuilder: (context, index) {
-    //       final property = topSeller[index];
-    //       final seller = property['seller'];
-    //
-    //       return SizedBox(
-    //         width: 140, // reduced card width
-    //         child: GestureDetector(
-    //           onTap: () {
-    //             Get.to(
-    //               () => AgentProfilePage(
-    //                 agent: AgentProfile(
-    //                   name: "Houselink Properties",
-    //                   logoUrl:
-    //                       "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg",
-    //                   badgeText: "HOUSING EXPERT PRO",
-    //                   buyersServed: "600+ Buyers Served",
-    //                   listings: "Authentic Listing",
-    //                   description:
-    //                       "Deal with ready-to-move & under-construction Residential or Commercial.",
-    //                   infoTiles: [
-    //                     InfoTileData(title: "Experience", value: "8 years"),
-    //                     InfoTileData(title: "Properties", value: "54"),
-    //                     InfoTileData(title: 'Firm Prop', value: 'Firm'),
-    //                   ],
-    //                   areas: ["Ghatkopar East", "Vikhroli East"],
-    //                   categories: [
-    //                     {'type': 'Buy', 'number': 17},
-    //                     {'type': 'Rent', 'number': 17},
-    //                     {'type': 'Buy', 'number': 17},
-    //                     {'type': 'Rent', 'number': 17},
-    //                   ],
-    //                   tags: [
-    //                     AgentTagData(
-    //                       icon: Icons.verified,
-    //                       text: "Trusted agent",
-    //                       color: Colors.green,
-    //                     ),
-    //                     AgentTagData(
-    //                       icon: Icons.star,
-    //                       text: "Professional Expert",
-    //                       color: Colors.amber,
-    //                     ),
-    //                   ],
-    //                   showTags: true,
-    //                   showAreas: true,
-    //                   isOwner: false,
-    //                   // 🔥 hides the Areas section
-    //                   showActiveProperties: true,
-    //                   showSellertopSeller:
-    //                       true, // 🔥 hides SellertopSeller
-    //                 ),
-    //               ),
-    //             );
-    //           },
-    //           child: SellerCard(
-    //             name: seller["name"],
-    //             imageUrl: seller["image"],
-    //             experience: seller["experience"],
-    //             location: seller["location"],
-    //             properties: seller["properties_count"],
-    //           ),
-    //         ),
-    //       );
-    //     },
-    //   ),
-    // );
   }
 }
 
@@ -219,11 +141,12 @@ class SellerCard extends StatelessWidget {
           if (state != null && state!.isNotEmpty) state!,
         ].join(', ');
 
-    final inventoryText = sellerType?.toLowerCase() == 'builder'
-        ? '${projects ?? 0} Projects'
-        : '${properties ?? 0} Properties';
+    final inventoryText =
+        sellerType?.toLowerCase() == 'builder'
+            ? '${projects ?? 0} Projects'
+            : '${properties ?? 0} Properties';
 
-    return Container(
+    /*return Container(
       margin: const EdgeInsets.symmetric(horizontal: 6),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -232,165 +155,165 @@ class SellerCard extends StatelessWidget {
         border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // 🧑 Profile Row
-          Row(
+          CircleAvatar(
+            radius: 25,
+            backgroundColor: ColorRes.primary.withOpacity(0.1),
+            backgroundImage:
+            imageUrl != null && imageUrl!.isNotEmpty
+                ? NetworkImage(imageUrl!)
+                : null,
+            child:
+            imageUrl == null || imageUrl!.isEmpty
+                ? const Icon(
+              Icons.person,
+              color: ColorRes.primary,
+              size: 25,
+            )
+                : null,
+          ),
+          const SizedBox(width: 12),
+        */ /*  Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Avatar
-              CircleAvatar(
-                radius: 25,
-                backgroundColor: ColorRes.primary.withOpacity(0.1),
-                backgroundImage:
-                    imageUrl != null && imageUrl!.isNotEmpty
-                        ? NetworkImage(imageUrl!)
-                        : null,
-                child:
-                    imageUrl == null || imageUrl!.isEmpty
-                        ? const Icon(
-                          Icons.person,
-                          color: ColorRes.primary,
-                          size: 25,
-                        )
-                        : null,
-              ),
-              const SizedBox(width: 12),
+
 
               // Info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name.isNotEmpty ? name : "Unknown Seller",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: AppFontSizes.bodySmall,
-                        fontWeight: AppFontWeights.semiBold,
-                        color: ColorRes.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
 
-                    // 🏢 Seller Type + Location
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.person_outline,
-                          size: 14,
-                          color: ColorRes.textSecondary,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          (sellerType ?? 'Owner'),
-                          style: const TextStyle(
-                            fontSize: AppFontSizes.caption,
-                            color: ColorRes.textSecondary,
-                          ),
-                        ),
-                        if (displayLocation.isNotEmpty) ...[
-                          const SizedBox(width: 8),
-                          const Icon(
-                            Icons.location_on_outlined,
-                            size: 14,
-                            color: ColorRes.textSecondary,
-                          ),
-                          const SizedBox(width: 2),
-                          Expanded(
-                            child: Text(
-                              displayLocation,
-                              style: const TextStyle(
-                                fontSize: AppFontSizes.caption,
-                                color: ColorRes.textSecondary,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-
-                    // 💼 Experience row
-                    // if (experience != null && experience!.isNotEmpty) ...[
-                    //   const SizedBox(height: 6),
-                    //   Row(
-                    //     children: [
-                    //       const Icon(Icons.work_outline,
-                    //           size: 14, color: ColorRes.textSecondary),
-                    //       const SizedBox(width: 4),
-                    //       Text(
-                    //         "$experience experience",
-                    //         style: const TextStyle(
-                    //           fontSize: AppFontSizes.caption,
-                    //           color: ColorRes.textSecondary,
-                    //         ),
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ],
-                    const SizedBox(height: 6),
-                    //
-                    // // 🏅 Badges
-                    // Row(
-                    //   children: [
-                    //     if (isPremium)
-                    //       Container(
-                    //         padding: const EdgeInsets.symmetric(
-                    //           horizontal: 8,
-                    //           vertical: 3,
-                    //         ),
-                    //         decoration: BoxDecoration(
-                    //           color: Colors.amber.withOpacity(0.2),
-                    //           borderRadius: BorderRadius.circular(12),
-                    //         ),
-                    //         child: const Row(
-                    //           children: [
-                    //             Icon(Icons.star, size: 14, color: Colors.amber),
-                    //             SizedBox(width: 3),
-                    //             Text(
-                    //               "Premium",
-                    //               style: TextStyle(
-                    //                 fontSize: AppFontSizes.caption,
-                    //                 fontWeight: AppFontWeights.medium,
-                    //                 color: Colors.amber,
-                    //               ),
-                    //             ),
-                    //           ],
-                    //         ),
-                    //       ),
-                    //     if (isPremium) const SizedBox(width: 8),
-                    //     Container(
-                    //       padding: const EdgeInsets.symmetric(
-                    //         horizontal: 8,
-                    //         vertical: 3,
-                    //       ),
-                    //       decoration: BoxDecoration(
-                    //         color: Colors.green.withOpacity(0.15),
-                    //         borderRadius: BorderRadius.circular(12),
-                    //       ),
-                    //       child: const Row(
-                    //         children: [
-                    //           Icon(Icons.circle, size: 8, color: Colors.green),
-                    //           SizedBox(width: 4),
-                    //           Text(
-                    //             "Active",
-                    //             style: TextStyle(
-                    //               fontSize: AppFontSizes.caption,
-                    //               fontWeight: AppFontWeights.medium,
-                    //               color: Colors.green,
-                    //             ),
-                    //           ),
-                    //         ],
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
-                  ],
+            ],
+          ),*/ /*
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                name.isNotEmpty ? name : "Unknown Seller",
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: AppFontSizes.bodySmall,
+                  fontWeight: AppFontWeights.semiBold,
+                  color: ColorRes.textPrimary,
                 ),
               ),
+              const SizedBox(height: 4),
+
+              // 🏢 Seller Type + Location
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.person_outline,
+                    size: 14,
+                    color: ColorRes.textSecondary,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    (sellerType ?? 'Owner'),
+                    style: const TextStyle(
+                      fontSize: AppFontSizes.caption,
+                      color: ColorRes.textSecondary,
+                    ),
+                  ),
+                  if (displayLocation.isNotEmpty) ...[
+                    const SizedBox(width: 8),
+                    const Icon(
+                      Icons.location_on_outlined,
+                      size: 14,
+                      color: ColorRes.textSecondary,
+                    ),
+                    const SizedBox(width: 2),
+                    Expanded(
+                      child: Text(
+                        displayLocation,
+                        style: const TextStyle(
+                          fontSize: AppFontSizes.caption,
+                          color: ColorRes.textSecondary,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+
+              // 💼 Experience row
+              // if (experience != null && experience!.isNotEmpty) ...[
+              //   const SizedBox(height: 6),
+              //   Row(
+              //     children: [
+              //       const Icon(Icons.work_outline,
+              //           size: 14, color: ColorRes.textSecondary),
+              //       const SizedBox(width: 4),
+              //       Text(
+              //         "$experience experience",
+              //         style: const TextStyle(
+              //           fontSize: AppFontSizes.caption,
+              //           color: ColorRes.textSecondary,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ],
+              const SizedBox(height: 6),
+              //
+              // // 🏅 Badges
+              // Row(
+              //   children: [
+              //     if (isPremium)
+              //       Container(
+              //         padding: const EdgeInsets.symmetric(
+              //           horizontal: 8,
+              //           vertical: 3,
+              //         ),
+              //         decoration: BoxDecoration(
+              //           color: Colors.amber.withOpacity(0.2),
+              //           borderRadius: BorderRadius.circular(12),
+              //         ),
+              //         child: const Row(
+              //           children: [
+              //             Icon(Icons.star, size: 14, color: Colors.amber),
+              //             SizedBox(width: 3),
+              //             Text(
+              //               "Premium",
+              //               style: TextStyle(
+              //                 fontSize: AppFontSizes.caption,
+              //                 fontWeight: AppFontWeights.medium,
+              //                 color: Colors.amber,
+              //               ),
+              //             ),
+              //           ],
+              //         ),
+              //       ),
+              //     if (isPremium) const SizedBox(width: 8),
+              //     Container(
+              //       padding: const EdgeInsets.symmetric(
+              //         horizontal: 8,
+              //         vertical: 3,
+              //       ),
+              //       decoration: BoxDecoration(
+              //         color: Colors.green.withOpacity(0.15),
+              //         borderRadius: BorderRadius.circular(12),
+              //       ),
+              //       child: const Row(
+              //         children: [
+              //           Icon(Icons.circle, size: 8, color: Colors.green),
+              //           SizedBox(width: 4),
+              //           Text(
+              //             "Active",
+              //             style: TextStyle(
+              //               fontSize: AppFontSizes.caption,
+              //               fontWeight: AppFontWeights.medium,
+              //               color: Colors.green,
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //   ],
+              // ),
             ],
           ),
 
@@ -427,6 +350,149 @@ class SellerCard extends StatelessWidget {
                   ],
                 ),
               ),
+            ],
+          ),
+        ],
+      ),
+    );*/
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 6),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isPremium ? const Color(0xFFFFC107) : Colors.grey.shade300,
+          width: 1.5,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // --- Top Row (Profile + Name + Badges)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Profile Image
+              CircleAvatar(
+                radius: 28,
+                backgroundColor: Colors.grey.shade200,
+                backgroundImage:
+                    imageUrl != null && imageUrl!.isNotEmpty
+                        ? NetworkImage(imageUrl!)
+                        : null,
+                child:
+                    (imageUrl == null || imageUrl!.isEmpty)
+                        ? const Icon(Icons.person, size: 32, color: Colors.grey)
+                        : null,
+              ),
+              const SizedBox(width: 12),
+
+              // Name + Location
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Name
+                    Text(
+                      name.isNotEmpty ? name : "Unknown Seller",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    // Location
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            displayLocation.isNotEmpty
+                                ? displayLocation
+                                : "Location not available",
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontWeight: AppFontWeights.medium,
+                              fontSize: 11,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    if (isPremium || (sellerType?.isNotEmpty ?? false))
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: ColorRes.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: ColorRes.primary.withOpacity(0.3),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.start,
+
+                          children: [
+                            if (isPremium)
+                              const Icon(
+                                Icons.workspace_premium,
+                                size: 16,
+                                color: Color(0xFFFFC107),
+                              ),
+                            if (isPremium) const SizedBox(width: 4),
+                            Text(
+                              '${isPremium ? "PREMIUM " : ""}${sellerType?.toUpperCase() ?? ""}',
+                              style: TextStyle(
+                                color: ColorRes.primary,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              // Premium + SellerType Badge
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Properties / Projects Count
+              Row(
+                children: [
+                  Icon(Icons.home_outlined, color: ColorRes.primary, size: 20),
+                  const SizedBox(width: 6),
+                  Text(
+                    inventoryText,
+                    style: const TextStyle(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+
+              // View Portfolio Li
             ],
           ),
         ],

@@ -2011,533 +2011,7 @@ class SuccessStoryCard extends StatelessWidget {
   }
 }
 
-// class SuccessStoryCard extends StatelessWidget {
-//   final SuccessStory story;
-//
-//   const SuccessStoryCard({super.key, required this.story});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final isPublished = story.status.toLowerCase() == 'published';
-//     final formattedDate = _formatMonthYear(story.monthYear);
-//
-//     return Align(
-//       alignment: Alignment.center,
-//       child: FractionallySizedBox(
-//         widthFactor: 1,
-//         child: Card(
-//           color: ColorRes.white,
-//           shape: RoundedRectangleBorder(
-//             borderRadius: BorderRadius.circular(16),
-//           ),
-//           margin: const EdgeInsets.symmetric(vertical: 10),
-//           elevation: 3,
-//           clipBehavior: Clip.hardEdge,
-//           child: Column(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: [
-//               // 🔹 Content Section (moved to top)
-//               Padding(
-//                 padding: const EdgeInsets.all(16.0),
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     // Image and Title Row
-//                     Row(
-//                       crossAxisAlignment: CrossAxisAlignment.start,
-//                       children: [
-//                         // Small Image
-//                         Container(
-//                           width: 60,
-//                           height: 60,
-//                           decoration: BoxDecoration(
-//                             borderRadius: BorderRadius.circular(12),
-//                             color: ColorRes.leadGreyColor[800],
-//                           ),
-//                           clipBehavior: Clip.hardEdge,
-//                           child:
-//                               story.image != null && story.image!.isNotEmpty
-//                                   ? Image.network(
-//                                     story.image!,
-//                                     fit: BoxFit.cover,
-//                                     errorBuilder:
-//                                         (context, error, stackTrace) => Icon(
-//                                           Icons.broken_image,
-//                                           color: ColorRes.white.withOpacity(
-//                                             0.7,
-//                                           ),
-//                                           size: 30,
-//                                         ),
-//                                   )
-//                                   : Icon(
-//                                     Icons.image,
-//                                     color: ColorRes.white.withOpacity(0.7),
-//                                     size: 30,
-//                                   ),
-//                         ),
-//                         const SizedBox(width: 12),
-//
-//                         // Title and Badge
-//                         Expanded(
-//                           child: Column(
-//                             crossAxisAlignment: CrossAxisAlignment.start,
-//                             children: [
-//                               // Trophy icon and title
-//                               Row(
-//                                 children: [
-//                                   Expanded(
-//                                     child: Text(
-//                                       story.title,
-//                                       maxLines: 1,
-//                                       overflow: TextOverflow.ellipsis,
-//                                       style: const TextStyle(
-//                                         fontSize: AppFontSizes.medium,
-//                                         fontWeight: AppFontWeights.semiBold,
-//                                         color: ColorRes.textColor,
-//                                       ),
-//                                     ),
-//                                   ),
-//                                   const SizedBox(width: 6),
-//
-//                                 ],
-//                               ),
-//                               const SizedBox(height: 6),
-//                               Row(
-//                                 children: [
-//                                   Icon(
-//                                     Icons.calendar_today_outlined,
-//                                     color: ColorRes.leadGreyColor.shade600,
-//                                     size: 16,
-//                                   ),
-//                                   const SizedBox(width: 4),
-//                                   Text(
-//                                     formattedDate,
-//                                     style: TextStyle(
-//                                       color: ColorRes.leadGreyColor.shade600,
-//                                       fontSize: AppFontSizes.small,
-//                                     ),
-//                                   ),
-//                                   const Spacer(),
-//                                   Container(
-//                                     padding: const EdgeInsets.symmetric(
-//                                       horizontal: 12,
-//                                       vertical: 4,
-//                                     ),
-//                                     decoration: BoxDecoration(
-//                                       color:
-//                                       isPublished
-//                                           ? ColorRes.green.withOpacity(0.1)
-//                                           : ColorRes.leadGreyColor.withOpacity(0.1),
-//                                       borderRadius: BorderRadius.circular(20),
-//                                     ),
-//                                     child: Row(
-//                                       children: [
-//                                         Container(
-//                                           width: 8,
-//                                           height: 8,
-//                                           decoration: BoxDecoration(
-//                                             color:
-//                                             isPublished
-//                                                 ? ColorRes.green
-//                                                 : ColorRes.leadGreyColor,
-//                                             shape: BoxShape.circle,
-//                                           ),
-//                                         ),
-//                                         const SizedBox(width: 6),
-//                                         Text(
-//                                           isPublished ? 'PUBLISHED' : 'DRAFT',
-//                                           style: TextStyle(
-//                                             color:
-//                                             isPublished
-//                                                 ? ColorRes.green
-//                                                 : ColorRes.leadGreyColor,
-//                                             fontSize: AppFontSizes.caption,
-//                                             fontWeight: AppFontWeights.semiBold,
-//                                           ),
-//                                         ),
-//                                       ],
-//                                     ),
-//                                   ),
-//                                 ],
-//                               ),
-//
-//                               // Row(
-//                               //   children: [
-//                               //     RatingBarIndicator(
-//                               //       rating: story.rating.toDouble(),
-//                               //       itemBuilder:
-//                               //           (context, index) => const Icon(
-//                               //             Icons.star,
-//                               //             color: Colors.amber,
-//                               //           ),
-//                               //       itemSize: 15,
-//                               //     ),
-//                               //     const SizedBox(width: 6),
-//                               //     Text(
-//                               //       "(${story.rating.toStringAsFixed(1)})",
-//                               //       style:  TextStyle(
-//                               //         color: ColorRes.leadGreyColor.shade700,
-//                               //         fontSize: AppFontSizes.caption,
-//                               //       ),
-//                               //     ),
-//                               //   ],
-//                               // ),
-//                             ],
-//                           ),
-//                         ),
-//                       ],
-//                     ),
-//                     //
-//                     // const SizedBox(height: 12),
-//                     //
-//                     // Row(
-//                     //   children: [
-//                     //     Icon(
-//                     //       Icons.calendar_today_outlined,
-//                     //       color: ColorRes.leadGreyColor.shade600,
-//                     //       size: 16,
-//                     //     ),
-//                     //     const SizedBox(width: 4),
-//                     //     Text(
-//                     //       formattedDate,
-//                     //       style: TextStyle(
-//                     //         color: ColorRes.leadGreyColor.shade600,
-//                     //         fontSize: AppFontSizes.small,
-//                     //       ),
-//                     //     ),
-//                     //     const Spacer(),
-//                     //     Container(
-//                     //       padding: const EdgeInsets.symmetric(
-//                     //         horizontal: 12,
-//                     //         vertical: 4,
-//                     //       ),
-//                     //       decoration: BoxDecoration(
-//                     //         color:
-//                     //             isPublished
-//                     //                 ? ColorRes.green.withOpacity(0.1)
-//                     //                 : ColorRes.leadGreyColor.withOpacity(0.1),
-//                     //         borderRadius: BorderRadius.circular(20),
-//                     //       ),
-//                     //       child: Row(
-//                     //         children: [
-//                     //           Container(
-//                     //             width: 8,
-//                     //             height: 8,
-//                     //             decoration: BoxDecoration(
-//                     //               color:
-//                     //                   isPublished
-//                     //                       ? ColorRes.green
-//                     //                       : ColorRes.leadGreyColor,
-//                     //               shape: BoxShape.circle,
-//                     //             ),
-//                     //           ),
-//                     //           const SizedBox(width: 6),
-//                     //           Text(
-//                     //             isPublished ? 'PUBLISHED' : 'DRAFT',
-//                     //             style: TextStyle(
-//                     //               color:
-//                     //                   isPublished
-//                     //                       ? ColorRes.green
-//                     //                       : ColorRes.leadGreyColor,
-//                     //               fontSize: AppFontSizes.caption,
-//                     //               fontWeight: AppFontWeights.semiBold,
-//                     //             ),
-//                     //           ),
-//                     //         ],
-//                     //       ),
-//                     //     ),
-//                     //   ],
-//                     // ),
-//                   ],
-//                 ),
-//               ),
-//               Padding(
-//                 padding: EdgeInsets.symmetric(horizontal: 16),
-//                 child: Container(
-//                   padding: EdgeInsets.all(8),
-//                   decoration: BoxDecoration(
-//                     borderRadius: BorderRadius.circular(12),
-//                     color: ColorRes.green.withOpacity(0.05),
-//                   border: Border.all(
-//                       color: ColorRes.green.withOpacity(0.3),
-//                       width: 1,
-//                   ),
-//                   ),
-//                   child: Column(
-//                     children: [
-//                       Row(
-//                         children: [
-//                           Icon(
-//                             Icons.emoji_events_outlined,
-//                             color: ColorRes.green,
-//                             size: 20,
-//                           ),
-//                           const SizedBox(width: 8),
-//                           Text(
-//                             'ACHIEVEMENT',
-//
-//                             style: TextStyle(
-//                               color: ColorRes.green,
-//                               fontSize: AppFontSizes.small,
-//                               fontWeight: AppFontWeights.semiBold,
-//                               letterSpacing: 0.5,
-//                             ),
-//                           ),
-//                           Spacer(),
-//                           Container(
-//                             padding: const EdgeInsets.symmetric(
-//                               horizontal: 8,
-//                               vertical: 2,
-//                             ),
-//                             decoration: BoxDecoration(
-//                               border: Border.all(color: ColorRes.homeAmber.shade200,width: 1),
-//                               borderRadius: BorderRadius.circular(12),
-//                               color: ColorRes.homeAmber.shade50,
-//
-//                             ),
-//                             child: Row(
-//                               children: [
-//                                 Icon(
-//                                   Icons.star,
-//                                   color: ColorRes.homeAmber.shade800,
-//                                   size: 14,
-//                                 ),
-//                                 const SizedBox(width: 4),
-//                                 Text(
-//                                   '${story.rating.toStringAsFixed(1)}',
-//                                   style: TextStyle(
-//                                     color:
-//                                     ColorRes.homeAmber.shade800,
-//                                     fontSize: AppFontSizes.caption,
-//                                     fontWeight: AppFontWeights.semiBold,
-//                                   ),
-//                                 ),
-//                               ],
-//                             ),
-//                           )
-//                         ],
-//                       ),
-//                       const SizedBox(height: 6),
-//
-//                       // Achievement description
-//                       Text(
-//                         story.achievement,
-//                         maxLines: 3,
-//                         style: TextStyle(
-//                           fontSize: AppFontSizes.caption,
-//                           color: ColorRes.leadGreyColor.shade600,
-//                           height: 1.4,
-//                         ),
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//
-//
-//
-//               const SizedBox(height: 16),
-//
-//               // const Padding(
-//               //   padding: EdgeInsets.symmetric(horizontal: 16),
-//               //   child: Divider(height: 1, color: ColorRes.border),
-//               // ),
-//               //
-//               // const SizedBox(height: 16),
-//
-//               // 🔹 Performance Section
-//               Padding(
-//                 padding: const EdgeInsets.symmetric(horizontal: 16),
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     Row(
-//                       children: [
-//                         Icon(
-//                           Icons.bar_chart,
-//                           color: ColorRes.builderGridLightPurple,
-//                           size: 20,
-//                         ),
-//                         const SizedBox(width: 8),
-//                         Text(
-//                           'PERFORMANCE',
-//                           style: TextStyle(
-//                             color: ColorRes.builderGridLightPurple,
-//                             fontSize: AppFontSizes.small,
-//                             fontWeight: AppFontWeights.semiBold,
-//                             letterSpacing: 0.5,
-//                           ),
-//                         ),
-//                       ],
-//                     ),
-//                     const SizedBox(height: 12),
-//
-//                     // Horizontal Performance Tiles
-//                   Row(
-//                     children: [
-//                       Expanded(
-//                         child: _buildPerformanceTile(
-//                           icon: Icons.check_circle_outline,
-//                           iconColor: ColorRes.builderGridLightBlue,
-//                           bgColor: ColorRes.builderGridLightBlue.withOpacity(0.1),
-//                           label: 'TOTAL LEADS',
-//                           value: story.totalDeals.toString(),
-//                         ),
-//                       ),
-//                       const SizedBox(width: 8),
-//
-//                       Expanded(
-//                         child: _buildPerformanceTile(
-//                           icon: Icons.attach_money,
-//                           iconColor: ColorRes.green,
-//                           bgColor: ColorRes.green.withOpacity(0.1),
-//                           label: 'TOTAL VALUE',
-//                           value:
-//                           '₹${_formatValue(int.tryParse(story.totalValue) ?? 0)}',
-//                         ),
-//                       ),
-//                       const SizedBox(width: 8),
-//
-//                       Expanded(
-//                         child: _buildPerformanceTile(
-//                           icon: Icons.star_outline,
-//                           iconColor: ColorRes.homeAmber,
-//                           bgColor: ColorRes.homeAmber.withOpacity(0.1),
-//                           label: 'AVG PER DEAL',
-//                           value:
-//                           '₹${_formatValue(((int.tryParse(story.totalValue) ?? 0) / story.totalDeals).round())}',
-//                         ),
-//                       ),
-//                     ],
-//                   )
-//                   ],
-//                 ),
-//               ),
-//
-//               const SizedBox(height: 8),
-//
-//               // 🔹 Action Buttons
-//               Padding(
-//                 padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
-//                 child: Row(
-//                   children: [
-//                     Expanded(
-//                       child: ElevatedButton(
-//                         onPressed: () {},
-//                         style: ElevatedButton.styleFrom(
-//                           backgroundColor: ColorRes.green.withOpacity(0.1),
-//                           foregroundColor: ColorRes.green,
-//                           elevation: 0,
-//                           padding: const EdgeInsets.symmetric(vertical: 12),
-//                           shape: RoundedRectangleBorder(
-//                             borderRadius: BorderRadius.circular(12),
-//                           ),
-//                         ),
-//                         child: const Text(
-//                           'Edit',
-//                           style: TextStyle(
-//                             fontSize: AppFontSizes.medium,
-//                             fontWeight: AppFontWeights.semiBold,
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-//                     const SizedBox(width: 12),
-//                     Expanded(
-//                       child: ElevatedButton(
-//                         onPressed: () {},
-//                         style: ElevatedButton.styleFrom(
-//                           backgroundColor: ColorRes.error.withOpacity(0.1),
-//                           foregroundColor: ColorRes.error,
-//                           elevation: 0,
-//                           padding: const EdgeInsets.symmetric(vertical: 12),
-//                           shape: RoundedRectangleBorder(
-//                             borderRadius: BorderRadius.circular(12),
-//                           ),
-//                         ),
-//                         child: const Text(
-//                           'Delete',
-//                           style: TextStyle(
-//                             fontSize: AppFontSizes.medium,
-//                             fontWeight: AppFontWeights.semiBold,
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-//
-//   Widget _buildPerformanceTile({
-//     required IconData icon,
-//     required Color iconColor,
-//     required Color bgColor,
-//     required String label,
-//     required String value,
-//   }) {
-//     return Container(
-//       padding: const EdgeInsets.all(8),
-//       decoration: BoxDecoration(
-//         color: ColorRes.background,
-//         borderRadius: BorderRadius.circular(12),
-//       ),
-//       child: Column(
-//         children: [
-//           Container(
-//             padding: const EdgeInsets.all(6),
-//             decoration: BoxDecoration(
-//               color: bgColor,
-//               borderRadius: BorderRadius.circular(8),
-//             ),
-//             child: Icon(icon, color: iconColor, size: 16),
-//           ),
-//           const SizedBox(height: 12),
-//           Text(
-//             label,
-//             style: TextStyle(
-//               color: ColorRes.leadGreyColor.shade600,
-//               fontSize: AppFontSizes.mini,
-//               fontWeight: AppFontWeights.medium,
-//             ),
-//           ),
-//           const SizedBox(height: 2),
-//           Text(
-//             value,
-//             style: const TextStyle(
-//               color: ColorRes.textColor,
-//               fontSize: AppFontSizes.medium,
-//               fontWeight: AppFontWeights.semiBold,
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   String _formatMonthYear(String dateString) {
-//     try {
-//       final date = DateTime.parse(dateString);
-//       return DateFormat('MMM yyyy').format(date);
-//     } catch (_) {
-//       return dateString;
-//     }
-//   }
-//
-//   String _formatValue(int value) {
-//     if (value >= 100000) {
-//       return '${(value / 100000).toStringAsFixed(0)}L';
-//     } else if (value >= 1000) {
-//       return '${(value / 1000).toStringAsFixed(0)}K';
-//     }
-//     return value.toString();
-//   }
-// }
+
 
 Widget buildTopPropertyForGoodCommission(
   DashboardController controller,
@@ -2615,9 +2089,10 @@ Widget buildTopPropertyForGoodCommission(
           height: 185, // enough to fit property cards
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: propertyList.length,
+            itemCount: controller.resellerInsightsModel.value?.data.leaderboard.topProperties.length,
             itemBuilder: (context, index) {
-              final property = propertyList[index];
+              final property = controller.resellerInsightsModel.value?.data.leaderboard.topProperties[index];
+
               return Container(
                 width: 280,
                 margin: EdgeInsets.only(
@@ -2644,21 +2119,18 @@ Widget buildTopPropertyForGoodCommission(
                               height: 80,
                               width: 80,
                               decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
                                 image: DecorationImage(
+                                  fit: BoxFit.cover,
                                   image: NetworkImage(
-                                    (property.propertyMedia?.images != null &&
-                                            property
-                                                .propertyMedia!
-                                                .images!
-                                                .isNotEmpty)
-                                        ? property.propertyMedia!.images!.first
+                                    (property?.image != null && property!.image.isNotEmpty)
+                                        ? property.image
                                         : 'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg',
                                   ),
-                                  fit: BoxFit.cover,
                                 ),
-                                borderRadius: BorderRadius.circular(10),
                               ),
-                            ),
+                            )
+
                           ],
                         ),
                         const SizedBox(width: 12),
@@ -2669,7 +2141,7 @@ Widget buildTopPropertyForGoodCommission(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                property.title ?? 'Luxury Apartment',
+                                property?.propertyType ?? 'Luxury Apartment',
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                                 style: TextStyle(
@@ -2680,7 +2152,7 @@ Widget buildTopPropertyForGoodCommission(
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                property.location ?? '123 Main St, City, State',
+                                '${property?.city}, ${property?.state}',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
@@ -2691,18 +2163,18 @@ Widget buildTopPropertyForGoodCommission(
                               ),
                               const SizedBox(height: 6),
                               Text(
-                                '${Formatter.formatPrice(property.propertyDetails?.financialInfo?.price ?? 0) ?? '1,00,000'}',
+                                '${Formatter.formatPrice(property?.price??0) ?? '1,00,000'}',
                                 style: TextStyle(
                                   color: ColorRes.textColor,
                                   fontSize: AppFontSizes.small,
                                   fontWeight: AppFontWeights.semiBold,
                                 ),
                               ),
-                              const SizedBox(height: 6),
+                            /*  const SizedBox(height: 6),
                               Row(
                                 children: [
                                   Text(
-                                    '${Formatter.formatNumber(property.totalViews ?? 0)} views',
+                                    '${Formatter.formatNumber(property?.totalViews ?? 0)} views',
                                     style: TextStyle(
                                       color: ColorRes.textColor,
                                       fontSize: AppFontSizes.extraSmall,
@@ -2711,7 +2183,7 @@ Widget buildTopPropertyForGoodCommission(
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
-                                    'Posted ${property.propertyDetails?.possessionInfo?.propertyAgeInYear ?? '2d'} ago',
+                                    'Posted ${property?.propertyDetails?.possessionInfo?.propertyAgeInYear ?? '2d'} ago',
                                     style: TextStyle(
                                       color: ColorRes.textColor,
                                       fontSize: AppFontSizes.extraSmall,
@@ -2719,7 +2191,7 @@ Widget buildTopPropertyForGoodCommission(
                                     ),
                                   ),
                                 ],
-                              ),
+                              ),*/
                             ],
                           ),
                         ),
@@ -2755,7 +2227,7 @@ Widget buildTopPropertyForGoodCommission(
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                '₹${property.totalCommissions ?? '0'}',
+                                '${Formatter.formatPrice(property?.commission??0) ?? '0'}',
                                 style: TextStyle(
                                   color: ColorRes.leadIndigoColor,
                                   fontSize: AppFontSizes.bodyMedium,
@@ -6759,7 +6231,9 @@ Widget buildMetricCard(String title, String value, IconData icon, Color color) {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,

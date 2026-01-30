@@ -285,7 +285,6 @@
 //   Map<String, dynamic> toMap() => toJson();
 // }
 
-
 class ContractorProjectModel {
   final bool success;
   final String message;
@@ -346,9 +345,13 @@ class ContractorProjectData {
 
     List<ContractorProjectItem> parsedItems = [];
     if (itemsData is List) {
-      parsedItems = itemsData
-          .map((e) => ContractorProjectItem.fromJson(e as Map<String, dynamic>))
-          .toList();
+      parsedItems =
+          itemsData
+              .map(
+                (e) =>
+                    ContractorProjectItem.fromJson(e as Map<String, dynamic>),
+              )
+              .toList();
     } else if (itemsData is Map<String, dynamic>) {
       parsedItems = [ContractorProjectItem.fromJson(itemsData)];
     }
@@ -592,12 +595,18 @@ class ContractorProjectMeta {
   final String serviceName;
   final String inquiryId;
   final List<ContractorEmployee> employees;
+  final List<ContractorProjectPhoto> beforePhoto;
+  final List<ContractorProjectPhoto> afterPhoto;
+
+
 
   ContractorProjectMeta({
     required this.serviceId,
     required this.serviceName,
     required this.inquiryId,
     required this.employees,
+    required this.beforePhoto,
+    required this.afterPhoto,
   });
 
   factory ContractorProjectMeta.fromJson(Map<String, dynamic> json) {
@@ -606,18 +615,33 @@ class ContractorProjectMeta {
         .toList() ??
         [];
 
+    final beforePhotos = (json['beforePhotos'] as List?)
+        ?.map((e) => ContractorProjectPhoto.fromJson(e))
+        .toList() ??
+        [];
+
+    final afterPhotos = (json['afterPhotos'] as List?)
+        ?.map((e) => ContractorProjectPhoto.fromJson(e))
+        .toList() ??
+        [];
+
     return ContractorProjectMeta(
       serviceId: json['serviceId'] ?? '',
       serviceName: json['serviceName'] ?? '',
       inquiryId: json['inquiryId'] ?? '',
       employees: empList,
+      beforePhoto: beforePhotos,
+      afterPhoto: afterPhotos,
     );
   }
+
 
   Map<String, dynamic> toJson() => {
     'serviceId': serviceId,
     'serviceName': serviceName,
     'inquiryId': inquiryId,
+    "beforePhotos": beforePhoto.map((e) => e.toJson()).toList(),
+    "afterPhotos": afterPhoto.map((e) => e.toJson()).toList(),
     'employees': employees.map((e) => e.toJson()).toList(),
   };
 
@@ -626,14 +650,48 @@ class ContractorProjectMeta {
     String? serviceName,
     String? inquiryId,
     List<ContractorEmployee>? employees,
+    List<ContractorProjectPhoto>? beforePhoto,
+    List<ContractorProjectPhoto>? afterPhoto,
   }) {
     return ContractorProjectMeta(
       serviceId: serviceId ?? this.serviceId,
       serviceName: serviceName ?? this.serviceName,
       inquiryId: inquiryId ?? this.inquiryId,
       employees: employees ?? this.employees,
+      beforePhoto: beforePhoto ?? this.beforePhoto,
+      afterPhoto: afterPhoto ?? this.afterPhoto,
     );
   }
+}
+
+class ContractorProjectPhoto {
+  final String uid;
+  final String name;
+  final String url;
+  final String uploadedAt;
+
+  ContractorProjectPhoto({
+    required this.uid,
+    required this.name,
+    required this.url,
+    required this.uploadedAt,
+  });
+
+  factory ContractorProjectPhoto.fromJson(Map<String, dynamic> json) {
+    return ContractorProjectPhoto(
+      uid: json['uid'] ?? '',
+      name: json['name'] ?? '',
+      url: json['url'] ?? '',
+      uploadedAt: json['uploadedAt'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'uid': uid,
+    'name': name,
+    'url': url,
+    'uploadedAt': uploadedAt,
+  };
 }
 
 class ContractorEmployee {

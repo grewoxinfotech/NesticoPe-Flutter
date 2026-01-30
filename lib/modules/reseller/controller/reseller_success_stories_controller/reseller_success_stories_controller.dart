@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/widgets/location_permission/location_permission_method.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -26,7 +27,7 @@ class ResellerSuccessStoryController
   final TextEditingController totalValueController = TextEditingController();
 
   // --- Dropdown & Slider ---
-  final List<String> statusOptions = ['published', 'draft'];
+  final List<String> statusOptions = ['draft','published'];
   RxString selectedStatus = 'draft'.obs;
 
   // ---------------- Reactive Variables ----------------
@@ -58,10 +59,15 @@ class ResellerSuccessStoryController
 
   @override
   Future<PaginationResponse<ResellerSuccessItem>> fetchItems(int page) async {
+    final user = await SecureStorage.getUserData();
+    final id = user?.user?.id;
     try {
       final response = await _service.fetchSuccessStories(
         page: page,
         filters: filters,
+        limit: 10,
+        resellerId: id,
+        module: "contractor",
       );
       debugPrint("📥 Fetched Success Stories: ${response.items.length}");
       return response;

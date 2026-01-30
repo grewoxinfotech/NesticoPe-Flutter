@@ -215,6 +215,51 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
                             fit: BoxFit.cover,
                           ),
                         ),
+                        if (property.propertyStatus?.toLowerCase() == 'sold')
+                          Positioned.fill(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.3),
+                                borderRadius: const BorderRadius.horizontal(
+                                  left: Radius.circular(11),
+                                ),
+                              ),
+                              alignment: Alignment.center,
+                              child: Transform.rotate(
+                                angle: 24.85,
+
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 2,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: ColorRes.white,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 40,
+                                      vertical: 8,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: const Text(
+                                      "SOLD",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 18,
+                                        letterSpacing: 1.8,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         // Status Badge
                         Positioned(
                           top: 12,

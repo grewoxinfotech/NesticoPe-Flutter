@@ -17,6 +17,7 @@ import '../../../../widgets/input/city_selection_widget.dart';
 import '../../../../widgets/messages/snack_bar.dart';
 import '../../../auth/views/delete_account.dart';
 import '../../../home/views/home_screen/home_screen.dart';
+import '../../../reseller/view/reseller_success_stories/reseller_success_stories.dart';
 import '../../controller/contractor_profile_controller.dart';
 import '../contractor_plan/contractor_plan_screen.dart';
 import '../employee/contractor_employee_screen.dart';
@@ -162,6 +163,14 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
 
                               onTap: () {
                                 Get.to(() => ContractorEmployeeScreen());
+                              },
+                            ),
+                            _buildActionButton(
+                              icon: Icons.person,
+                              label: "Success Story",
+
+                              onTap: () {
+                                Get.to(() => ContractorSuccessStoryScreen());
                               },
                             ),
                             _buildActionButton(

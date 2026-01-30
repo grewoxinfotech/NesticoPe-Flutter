@@ -321,97 +321,123 @@ class PropertyCardForCompare extends StatelessWidget {
                                 ),
                               ),
                               SizedBox(width: 10),
-                              GestureDetector(
-                                onTap:
-                                    (UserHelper.isGuest)
-                                        ? () => Get.to(() => LoginScreen())
-                                        : () async {
-                                          try {
-                                            final user =
-                                                await SecureStorage.getUserData();
+                             if(item.propertyStatus?.toLowerCase()=="sold")...[
+                               GestureDetector(
+                                 onTap:() {
+                                 },
+                                 child: Container(
+                                   padding: EdgeInsets.symmetric(
+                                     horizontal: 14,
+                                     vertical: 8,
+                                   ),
+                                   decoration: BoxDecoration(
+                                     color: ColorRes.primary,
+                                     borderRadius: BorderRadius.circular(6),
+                                   ),
+                                   child: Text(
+                                     'Property Sold',
+                                     style: TextStyle(
+                                       fontWeight: AppFontWeights.semiBold,
+                                       fontSize: AppFontSizes.small,
+                                       color: ColorRes.white,
+                                     ),
+                                   ),
+                                 ),
+                               ),
+                             ]else...[
+                               GestureDetector(
+                                 onTap:
+                                 (UserHelper.isGuest)
+                                     ? () => Get.to(() => LoginScreen())
+                                     : () async {
+                                   try {
+                                     final user =
+                                     await SecureStorage.getUserData();
 
-                                            if (user == null) {
-                                              NesticoPeSnackBar.showAwesomeSnackbar(
-                                                title: 'Error',
-                                                message:
-                                                    'No user data found. Please log in.',
-                                                contentType:
-                                                    ContentType.failure,
-                                              );
-                                              return;
-                                            }
+                                     if (user == null) {
+                                       NesticoPeSnackBar.showAwesomeSnackbar(
+                                         title: 'Error',
+                                         message:
+                                         'No user data found. Please log in.',
+                                         contentType:
+                                         ContentType.failure,
+                                       );
+                                       return;
+                                     }
 
-                                            final fullName =
-                                                user.user?.fullName ?? '';
-                                            final firstName =
-                                                user.user?.firstName ?? '';
-                                            final username =
-                                                user.user?.username ?? '';
-                                            final email =
-                                                user.user?.email ?? '';
-                                            final phone =
-                                                user.user?.phone ?? '';
+                                     final fullName =
+                                         user.user?.fullName ?? '';
+                                     final firstName =
+                                         user.user?.firstName ?? '';
+                                     final username =
+                                         user.user?.username ?? '';
+                                     final email =
+                                         user.user?.email ?? '';
+                                     final phone =
+                                         user.user?.phone ?? '';
 
-                                            final displayName =
-                                                (firstName.isEmpty
-                                                        ? username
-                                                        : fullName)
-                                                    .trim();
+                                     final displayName =
+                                     (firstName.isEmpty
+                                         ? username
+                                         : fullName)
+                                         .trim();
 
-                                            if (Get.context == null) {
-                                              NesticoPeSnackBar.showAwesomeSnackbar(
-                                                title: 'Error',
-                                                message:
-                                                    'UI not ready to show dialog.',
-                                                contentType:
-                                                    ContentType.failure,
-                                              );
-                                              return;
-                                            }
+                                     if (Get.context == null) {
+                                       NesticoPeSnackBar.showAwesomeSnackbar(
+                                         title: 'Error',
+                                         message:
+                                         'UI not ready to show dialog.',
+                                         contentType:
+                                         ContentType.failure,
+                                       );
+                                       return;
+                                     }
 
-                                            addInquiryFromApp(
-                                              displayName,
-                                              email,
-                                              phone,
-                                              item.id ?? '',
-                                              item.listingType ?? '',
-                                              'property' ?? '',
+                                     addInquiryFromApp(
+                                       displayName,
+                                       email,
+                                       phone,
+                                       item.id ?? '',
+                                       item.listingType ?? '',
+                                       'property' ?? '',
 
-                                              controller,
-                                            );
-                                          } catch (e, s) {
-                                            debugPrint(
-                                              '❌ Error in Get Offer button: $e',
-                                            );
-                                            debugPrint('$s');
+                                       controller,
+                                     );
+                                   } catch (e, s) {
+                                     debugPrint(
+                                       '❌ Error in Get Offer button: $e',
+                                     );
+                                     debugPrint('$s');
 
-                                            NesticoPeSnackBar.showAwesomeSnackbar(
-                                              title: 'Error',
-                                              message:
-                                                  'Something went wrong. Please try again.',
-                                              contentType: ContentType.failure,
-                                            );
-                                          }
-                                        },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 14,
-                                    vertical: 8,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: ColorRes.primary,
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Text(
-                                    'Contact Now',
-                                    style: TextStyle(
-                                      fontWeight: AppFontWeights.semiBold,
-                                      fontSize: AppFontSizes.small,
-                                      color: ColorRes.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                                     NesticoPeSnackBar.showAwesomeSnackbar(
+                                       title: 'Error',
+                                       message:
+                                       'Something went wrong. Please try again.',
+                                       contentType: ContentType.failure,
+                                     );
+                                   }
+                                 },
+                                 child: Container(
+                                   padding: EdgeInsets.symmetric(
+                                     horizontal: 14,
+                                     vertical: 8,
+                                   ),
+                                   decoration: BoxDecoration(
+                                     color: ColorRes.primary,
+                                     borderRadius: BorderRadius.circular(6),
+                                   ),
+                                   child: Text(
+                                     'Contact Now',
+                                     style: TextStyle(
+                                       fontWeight: AppFontWeights.semiBold,
+                                       fontSize: AppFontSizes.small,
+                                       color: ColorRes.white,
+                                     ),
+                                   ),
+                                 ),
+                               ),
+                             ],
+
                             ],
                           ),
                         ],
@@ -430,7 +456,7 @@ class PropertyCardForCompare extends StatelessWidget {
                     child: const Icon(
                       Icons.cancel,
                       color: ColorRes.error,
-                      size: 16,
+                      size: 20,
                     ),
                   ),
                 ),

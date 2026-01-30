@@ -44,6 +44,7 @@ class NesticoPeTextField extends StatelessWidget {
       fontSize: AppFontSizes.medium,
       color: ColorRes.textSecondary,
       fontWeight: AppFontWeights.bold,
+
     ),
     this.suffixIcon,
     this.prefixIcon,

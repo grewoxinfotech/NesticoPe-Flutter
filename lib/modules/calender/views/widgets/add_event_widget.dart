@@ -17,259 +17,7 @@ final CalenderCategoryController _categoryController = Get.put(
   CalenderCategoryController(),
 );
 
-// void showAddEventDialog({DateTime? date}) {
-//   final eventController = Get.find<CalenderEventController>();
-//
-//   // Text controllers
-//   final titleCtrl = TextEditingController();
-//   final detailsCtrl = TextEditingController();
-//   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-//   final dropdownKey = GlobalKey<_CustomDropdownWithAddState>();
-//   // Selected values
-//   Rx<DateTime> selectedDate = (date ?? DateTime.now()).obs;
-//
-//   Get.dialog(
-//     Dialog(
-//       backgroundColor: ColorRes.white,
-//       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-//       child: Container(
-//         constraints: BoxConstraints(
-//           maxHeight: Get.height * 0.8, // Maximum 80% of screen
-//           maxWidth: Get.width * 0.9,
-//         ),
-//         child: Column(
-//           mainAxisSize: MainAxisSize.min,
-//           children: [
-//             // Dialog Title
-//             Padding(
-//               padding: const EdgeInsets.all(16.0),
-//               child: Text(
-//                 "Add Event",
-//                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-//               ),
-//             ),
-//
-//             // Scrollable Content
-//             Flexible(
-//               child: SingleChildScrollView(
-//                 padding: const EdgeInsets.all(16.0),
-//                 child: Form(
-//                   key: _formKey,
-//                   child: Column(
-//                     mainAxisSize: MainAxisSize.min,
-//                     crossAxisAlignment: CrossAxisAlignment.start,
-//                     children: [
-//                       // ------------------ TITLE -------------------
-//                       NesticoPeTextField(
-//                         title: "Title",
-//                         hintText: "Enter title...",
-//                         autovalidateMode: AutovalidateMode.onUserInteraction,
-//                         validator: (value) => requiredField(value, 'Title'),
-//                         controller: titleCtrl,
-//                       ),
-//                       const SizedBox(height: 12),
-//
-//                       // ------------------ DATE PICKER -------------------
-//                       DatePickerTextField(
-//                         title: "Date",
-//                         hintText: "Select date",
-//                         selectedDate: selectedDate,
-//                         onDatePicked: (d) {},
-//                       ),
-//
-//                       const SizedBox(height: 12),
-//
-//                       // ------------------ CATEGORY DROPDOWN -------------------
-//                       Obx(() {
-//                         return CustomDropdownWithAdd<CalenderCategoryModel>(
-//                           key: dropdownKey,
-//                           title: "Category",
-//                           hintText: "Select category",
-//                           value: eventController.selectedCategory.value,
-//                           items: eventController.categories,
-//                           itemBuilder:
-//                               (c) => Row(
-//                                 children: [
-//                                   Expanded(
-//                                     child: Text(
-//                                       c.name ?? "-",
-//                                       overflow: TextOverflow.ellipsis,
-//                                     ),
-//                                   ),
-//                                   if (c.createdBy.toLowerCase() != 'system')
-//                                     Row(
-//                                       children: [
-//                                         GestureDetector(
-//                                           onTap: () async {
-//                                             dropdownKey.currentState
-//                                                 ?.closeDropdown();
-//                                             final category =
-//                                                 await openAddCategoryDialog(
-//                                                   initialText: c.name,
-//                                                   isEdit: true,
-//                                                 );
-//                                             if (category != null) {
-//                                               c.name = category;
-//                                               await _categoryController
-//                                                   .updateCategory(c);
-//                                               await eventController
-//                                                   .loadCategories();
-//                                               eventController
-//                                                   .selectedCategory
-//                                                   .value = eventController
-//                                                   .categories
-//                                                   .firstWhereOrNull(
-//                                                     (element) =>
-//                                                         element.name ==
-//                                                         category,
-//                                                   );
-//                                             }
-//                                           },
-//                                           child: Icon(
-//                                             Icons.edit_outlined,
-//                                             color: ColorRes.primary,
-//                                           ),
-//                                         ),
-//                                         SizedBox(width: 10),
-//                                         GestureDetector(
-//                                           onTap: () {
-//                                             dropdownKey.currentState
-//                                                 ?.closeDropdown();
-//
-//                                             showDeleteConfirmationDialog(
-//                                               onConfirm: () async {
-//                                                 // 1️⃣ If deleting selected category → switch to another one first
-//                                                 if (eventController
-//                                                         .selectedCategory
-//                                                         .value ==
-//                                                     c) {
-//                                                   if (eventController
-//                                                           .categories
-//                                                           .length >
-//                                                       1) {
-//                                                     eventController
-//                                                         .selectedCategory
-//                                                         .value = eventController
-//                                                         .categories
-//                                                         .firstWhere(
-//                                                           (item) =>
-//                                                               item.id != c.id,
-//                                                         );
-//                                                   } else {
-//                                                     // only one category exists
-//                                                     eventController
-//                                                         .selectedCategory
-//                                                         .value = null;
-//                                                   }
-//                                                 }
-//
-//                                                 // 2️⃣ Call API and delete category
-//                                                 await _categoryController
-//                                                     .deleteCategory(c.id);
-//
-//                                                 // 3️⃣ Remove from list
-//                                                 eventController.categories
-//                                                     .removeWhere(
-//                                                       (x) => x.id == c.id,
-//                                                     );
-//                                               },
-//                                               title: 'Delete',
-//                                               message:
-//                                                   "Are you sure to delete \"${c.name}\" category?",
-//                                               confirmText: 'Delete',
-//                                               cancelText: 'Cancel',
-//                                               confirmColor: ColorRes.error,
-//                                             );
-//                                           },
-//                                           child: Icon(
-//                                             Icons.delete_outline,
-//                                             color: ColorRes.error,
-//                                           ),
-//                                         ),
-//                                       ],
-//                                     ),
-//                                 ],
-//                               ),
-//                           onChanged: (value) {
-//                             eventController.selectedCategory.value = value;
-//                           },
-//                           onAddPressed: () async {
-//                             final category = await openAddCategoryDialog();
-//                             if (category != null) {
-//                               final categoryController =
-//                                   Get.find<CalenderCategoryController>();
-//                               await categoryController.addCategory(category);
-//                               await eventController.loadCategories();
-//                               eventController.selectedCategory.value =
-//                                   eventController.categories.firstWhereOrNull(
-//                                     (element) => element.name == category,
-//                                   );
-//                             }
-//                           },
-//                         );
-//                       }),
-//
-//                       const SizedBox(height: 12),
-//
-//                       // ------------------ DETAILS FIELD -------------------
-//                       NesticoPeTextField(
-//                         title: "Details",
-//                         hintText: "Enter details...",
-//                         autovalidateMode: AutovalidateMode.onUserInteraction,
-//                         validator: (value) => requiredField(value, 'Title'),
-//                         maxLines: 3,
-//                         controller: detailsCtrl,
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//             ),
-//
-//             // Action Buttons
-//             Padding(
-//               padding: const EdgeInsets.all(8.0),
-//               child: Row(
-//                 children: [
-//                   Expanded(
-//                     child: TextButton(
-//                       onPressed: () {
-//                         Get.back();
-//                       },
-//                       child: Text('Cancel'),
-//                     ),
-//                   ),
-//                   Expanded(
-//                     child: NesticoPeButton(
-//                       title: 'Add',
-//                       onTap: () async {
-//                         if (!_formKey.currentState!.validate()) {
-//                           return;
-//                         }
-//
-//                         final newEvent = CalenderEventModel(
-//                           title: titleCtrl.text.trim(),
-//                           date: selectedDate.value.toString(),
-//                           categoryId:
-//                               eventController.selectedCategory.value!.id,
-//                           details: detailsCtrl.text.trim(),
-//                         );
-//
-//                         final result = await eventController.addEvent(newEvent);
-//                         if (result) Get.back();
-//                       },
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     ),
-//     barrierDismissible: false,
-//   );
-// }
+
 
 void showEventDialog({CalenderEventModel? event, bool isEdit = false}) {
   final eventController = Get.find<CalenderEventController>();
@@ -362,6 +110,12 @@ void showEventDialog({CalenderEventModel? event, bool isEdit = false}) {
                       NesticoPeTextField(
                         title: "Title",
                         hintText: "Enter title...",
+                        style: TextStyle(
+                          fontSize: AppFontSizes.medium,
+                          color: ColorRes.textColor,
+                          fontWeight: AppFontWeights.semiBold,
+                        ),
+
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) => requiredField(value, 'Title'),
                         controller: titleCtrl,
@@ -373,6 +127,7 @@ void showEventDialog({CalenderEventModel? event, bool isEdit = false}) {
                         title: "Date",
                         hintText: "Select date",
                         selectedDate: selectedDate,
+
                         onDatePicked: (d) {},
                       ),
                       const SizedBox(height: 12),
@@ -499,6 +254,12 @@ void showEventDialog({CalenderEventModel? event, bool isEdit = false}) {
                       NesticoPeTextField(
                         title: "Details",
                         hintText: "Enter details...",
+                        style: TextStyle(
+                          fontSize: AppFontSizes.medium,
+                          color: ColorRes.textColor,
+                          fontWeight: AppFontWeights.semiBold,
+                        ),
+
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) => requiredField(value, 'Details'),
                         maxLines: 3,
@@ -620,6 +381,12 @@ Future<String?> openAddCategoryDialog({
                 ),
                 child: NesticoPeTextField(
                   title: "Category Name",
+                  style: TextStyle(
+                    fontSize: AppFontSizes.medium,
+                    color: ColorRes.textColor,
+                    fontWeight: AppFontWeights.semiBold,
+                  ),
+
                   hintText: "Enter category name...",
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (value) => requiredField(value, 'Category'),

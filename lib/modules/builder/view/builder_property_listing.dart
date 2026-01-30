@@ -771,7 +771,7 @@ class BuilderProjectCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<ProjectWizardController>(tag: "builder");
+    final controller = forHome ?Get.find<ProjectWizardController>() :Get.find<ProjectWizardController>(tag: "builder");
     // final propertyController = Get.put(PropertyController());
     final PropertyFavoriteController favoriteController =
         Get.find<PropertyFavoriteController>();

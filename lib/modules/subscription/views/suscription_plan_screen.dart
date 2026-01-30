@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
@@ -78,6 +80,8 @@ class SubscriptionPlansScreen extends StatelessWidget {
                             0);
 
                 final double percent = max <= 0 ? 0.0 : used / max;
+
+                log("Plan Usage ${percent}");
 
                 return Container(
                   padding: const EdgeInsets.all(16),
@@ -161,13 +165,14 @@ class SubscriptionPlansScreen extends StatelessWidget {
 
                       GridView.builder(
                         shrinkWrap: true,
+                        padding: EdgeInsets.zero,
                         physics: const NeverScrollableScrollPhysics(),
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
                               crossAxisSpacing: 10,
                               mainAxisSpacing: 10,
-                              mainAxisExtent: 100, // Fixed height for each card
+                              childAspectRatio:1.6, // Fixed height for each card
                             ),
                         itemCount: 4,
                         itemBuilder: (context, index) {
@@ -208,6 +213,7 @@ class SubscriptionPlansScreen extends StatelessWidget {
                           );
                         },
                       ),
+                      SizedBox(height: 10,),
                       const Text(
                         "Plan Usage",
                         style: TextStyle(

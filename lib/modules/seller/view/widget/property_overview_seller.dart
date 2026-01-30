@@ -243,117 +243,122 @@ class _PropertyOverviewSellerScreenState
         elevation: 0,
       ),
 
-      body: Obx(() {
-        if (_isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
+      body: SafeArea(
 
-        if (_property.value == null) {
-          return const Center(child: Text("Property not found"));
-        }
-        log('Rendering property overview for ID: ${_property.value!.toJson()}');
-
-        final property = _property.value!;
-
-        return SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 📌 Property Media
-              PropertyMediaGallery(
-                images: property.propertyMedia?.images,
-                videos: property.propertyMedia?.videos,
-                itemId: property.id,
-                showReraTag: !controller.isDeveloper.value,
-                showBackButton: false,
-                showFavorite: false,
-                showShare: false,
-              ),
-
-              Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-
-              _buildStatusSection(context, isCompact),
-              Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-
-              _buildPropertyOverviewSection(context, isCompact),
-              Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-
-              _buildFinancialSection(context, isCompact),
-              Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-
-              _buildPropertyDetailsSection(context, isCompact),
-              Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-
-              if (property.propertyDetails?.amenities?.isNotEmpty ?? false) ...[
-                _buildAmenitiesSection(context, isCompact),
+        child: Obx(() {
+          if (_isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          }
+        
+          if (_property.value == null) {
+            return const Center(child: Text("Property not found"));
+          }
+          log('Rendering property overview for ID: ${_property.value!.toJson()}');
+        
+          final property = _property.value!;
+        
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 📌 Property Media
+                PropertyMediaGallery(
+                  images: property.propertyMedia?.images,
+                  videos: property.propertyMedia?.videos,
+                  itemId: property.id,
+                  showReraTag: !controller.isDeveloper.value,
+                  showBackButton: false,
+                  showFavorite: false,
+                  showShare: false,
+                ),
+        
                 Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-              ],
-
-              _buildPerformanceSection(context, isCompact),
-              Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-
-              if (property.assignedTo != null) ...[
-                _buildAssignmentSection(context, isCompact),
+        
+                _buildStatusSection(context, isCompact),
                 Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-              ],
-
-              if (property.scoreBreakdown != null) ...[
-                PerformanceScoreWidget(score: property.scoreBreakdown!),
+        
+                _buildPropertyOverviewSection(context, isCompact),
                 Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+        
+                _buildFinancialSection(context, isCompact),
+                Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+        
+                _buildPropertyDetailsSection(context, isCompact),
+                Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+        
+                if (property.propertyDetails?.amenities?.isNotEmpty ?? false) ...[
+                  _buildAmenitiesSection(context, isCompact),
+                  Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+                ],
+        
+                _buildPerformanceSection(context, isCompact),
+                Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+        
+                if (property.assignedTo != null) ...[
+                  _buildAssignmentSection(context, isCompact),
+                  Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+                ],
+        
+                if (property.scoreBreakdown != null) ...[
+                  PerformanceScoreWidget(score: property.scoreBreakdown!),
+                  Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+                ],
+        
+                _buildMenuItem("Approval History", Icons.history, () {
+                  Get.to(
+                    () => SellerPropertyApprovalHistory(
+                      propertyId: property.id ?? '',
+                    ),
+                  );
+                }),
+                SizedBox(height: 10),
+                _buildMenuItem(
+                  "Property lead",
+                  Icons.label_important_outline,
+                  () {
+                    Get.to(() => SellerLeadScreen(propertyId: property.id ?? ''));
+                  },
+                ),
+                SizedBox(height: 10),
+                _buildMenuItem("Visit", Icons.history, () {
+                  Get.to(
+                    () => LeadVisit(
+                      leadVisitController: leadVisitController,
+                      propertyInquiryController: leadPropertyInquiryController,
+                      propertyId: property.id,
+                    ),
+                  );
+                }),
+                SizedBox(height: 10),
+                _buildMenuItem("Negotiable", Icons.currency_rupee_outlined, () {
+                  leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
+                    property.id ?? '',
+                  );
+                  log(
+                    'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
+                  );
+                  Get.to(
+                    () => LeadNegotiablePriceScreen(
+                      controller: leadPropertyNegotiablePriceController,
+                    ),
+                  );
+                }),
+        
+              if(property.propertyStatus?.toLowerCase()!="sold")...[
+                _buildActionButtons(
+                  context,
+                  isCompact,
+                  property,
+                  widget.onDelete,
+                ),
               ],
-
-              _buildMenuItem("Approval History", Icons.history, () {
-                Get.to(
-                  () => SellerPropertyApprovalHistory(
-                    propertyId: property.id ?? '',
-                  ),
-                );
-              }),
-              SizedBox(height: 10),
-              _buildMenuItem(
-                "Property lead",
-                Icons.label_important_outline,
-                () {
-                  Get.to(() => SellerLeadScreen(propertyId: property.id ?? ''));
-                },
-              ),
-              SizedBox(height: 10),
-              _buildMenuItem("Visit", Icons.history, () {
-                Get.to(
-                  () => LeadVisit(
-                    leadVisitController: leadVisitController,
-                    propertyInquiryController: leadPropertyInquiryController,
-                    propertyId: property.id,
-                  ),
-                );
-              }),
-              SizedBox(height: 10),
-              _buildMenuItem("Negotiable", Icons.currency_rupee_outlined, () {
-                leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
-                  property.id ?? '',
-                );
-                log(
-                  'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
-                );
-                Get.to(
-                  () => LeadNegotiablePriceScreen(
-                    controller: leadPropertyNegotiablePriceController,
-                  ),
-                );
-              }),
-
-              _buildActionButtons(
-                context,
-                isCompact,
-                property,
-                widget.onDelete,
-              ),
-
-              const SizedBox(height: 20),
-            ],
-          ),
-        );
-      }),
+        
+                const SizedBox(height: 20),
+              ],
+            ),
+          );
+        }),
+      ),
     );
   }
 
@@ -509,23 +514,44 @@ class _PropertyOverviewSellerScreenState
                   color: ColorRes.leadGreyColor[800],
                 ),
               ),
-              Container(
-                decoration: BoxDecoration(
-                  color: ColorRes.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  child: Text(
-                    ' ${property.propertyStatus?.toUpperCase() ?? 'N/A'} ',
-                    style: TextStyle(
-                      fontSize: AppFontSizes.extraSmall,
-                      color: ColorRes.primary,
-                      fontWeight: AppFontWeights.semiBold,
+              if(property.propertyStatus?.toLowerCase()=="sold")...[
+                Container(
+                  decoration: BoxDecoration(
+                    color: ColorRes.error.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    child: Text(
+                      ' ${property.propertyStatus?.toUpperCase() ?? 'N/A'} ',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.extraSmall,
+                        color: ColorRes.error,
+                        fontWeight: AppFontWeights.semiBold,
+                      ),
                     ),
                   ),
                 ),
-              ),
+              ]else...[
+                Container(
+                  decoration: BoxDecoration(
+                    color: ColorRes.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    child: Text(
+                      ' ${property.propertyStatus?.toUpperCase() ?? 'N/A'} ',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.extraSmall,
+                        color: ColorRes.primary,
+                        fontWeight: AppFontWeights.semiBold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+
             ],
           ),
           SizedBox(height: 16),

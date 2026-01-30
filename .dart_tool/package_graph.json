@@ -22,6 +22,7 @@
         "file_picker",
         "fl_chart",
         "flutter",
+        "flutter_image_compress",
         "flutter_rating_bar",
         "flutter_secure_storage",
         "flutter_svg",
@@ -145,6 +146,7 @@
       ]
     },
     {
+<<<<<<< Updated upstream
       "name": "package_info_plus",
       "version": "9.0.0",
       "dependencies": [
@@ -168,6 +170,8 @@
       ]
     },
     {
+=======
+>>>>>>> Stashed changes
       "name": "excel",
       "version": "4.0.6",
       "dependencies": [
@@ -179,7 +183,11 @@
     },
     {
       "name": "model_viewer_plus",
+<<<<<<< Updated upstream
       "version": "1.10.0",
+=======
+      "version": "1.9.3",
+>>>>>>> Stashed changes
       "dependencies": [
         "android_intent_plus",
         "flutter",
@@ -280,7 +288,11 @@
     {
       "name": "file_picker",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "version": "10.3.3",
+=======
+      "version": "10.3.10",
+>>>>>>> Stashed changes
 =======
       "version": "10.3.10",
 >>>>>>> Stashed changes
@@ -309,7 +321,11 @@
     {
       "name": "google_maps_flutter",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "version": "2.13.1",
+=======
+      "version": "2.14.0",
+>>>>>>> Stashed changes
 =======
       "version": "2.14.0",
 >>>>>>> Stashed changes
@@ -377,7 +393,11 @@
     {
       "name": "flutter_tts",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "version": "4.2.3",
+=======
+      "version": "4.2.5",
+>>>>>>> Stashed changes
 =======
       "version": "4.2.5",
 >>>>>>> Stashed changes
@@ -429,9 +449,16 @@
     {
       "name": "clipboard",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "version": "2.0.2",
       "dependencies": [
         "flutter"
+=======
+      "version": "3.0.14",
+      "dependencies": [
+        "flutter",
+        "web"
+>>>>>>> Stashed changes
 =======
       "version": "3.0.14",
       "dependencies": [
@@ -464,7 +491,11 @@
     {
       "name": "share_plus",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "version": "12.0.0",
+=======
+      "version": "12.0.1",
+>>>>>>> Stashed changes
 =======
       "version": "12.0.1",
 >>>>>>> Stashed changes
@@ -488,7 +519,11 @@
     {
       "name": "video_player",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "version": "2.10.0",
+=======
+      "version": "2.10.1",
+>>>>>>> Stashed changes
 =======
       "version": "2.10.1",
 >>>>>>> Stashed changes
@@ -504,7 +539,11 @@
     {
       "name": "smooth_page_indicator",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "version": "1.2.1",
+=======
+      "version": "2.0.1",
+>>>>>>> Stashed changes
 =======
       "version": "2.0.1",
 >>>>>>> Stashed changes
@@ -515,7 +554,11 @@
     {
       "name": "google_fonts",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "version": "6.3.1",
+=======
+      "version": "8.0.0",
+>>>>>>> Stashed changes
 =======
       "version": "8.0.0",
 >>>>>>> Stashed changes
@@ -528,6 +571,19 @@
     },
     {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+      "name": "geocoding",
+      "version": "4.0.0",
+      "dependencies": [
+        "flutter",
+        "geocoding_android",
+        "geocoding_ios",
+        "geocoding_platform_interface"
+      ]
+    },
+    {
+>>>>>>> Stashed changes
       "name": "geolocator",
       "version": "14.0.2",
       "dependencies": [
@@ -542,9 +598,13 @@
     },
     {
       "name": "flutter_svg",
+<<<<<<< Updated upstream
       "version": "2.2.1",
 =======
       "name": "flutter_svg",
+      "version": "2.2.3",
+>>>>>>> Stashed changes
+=======
       "version": "2.2.3",
 >>>>>>> Stashed changes
       "dependencies": [
@@ -593,7 +653,11 @@
     {
       "name": "internet_connection_checker_plus",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "version": "2.8.0",
+=======
+      "version": "2.9.1+2",
+>>>>>>> Stashed changes
 =======
       "version": "2.9.1+2",
 >>>>>>> Stashed changes
@@ -619,7 +683,11 @@
     {
       "name": "get",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "version": "4.7.2",
+=======
+      "version": "4.7.3",
+>>>>>>> Stashed changes
 =======
       "version": "4.7.3",
 >>>>>>> Stashed changes
@@ -683,7 +751,11 @@
     {
       "name": "image_picker",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "version": "1.2.0",
+=======
+      "version": "1.2.1",
+>>>>>>> Stashed changes
 =======
       "version": "1.2.1",
 >>>>>>> Stashed changes
@@ -717,7 +789,11 @@
     {
       "name": "syncfusion_flutter_charts",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "version": "31.2.18",
+=======
+      "version": "32.1.25",
+>>>>>>> Stashed changes
 =======
       "version": "32.1.25",
 >>>>>>> Stashed changes
@@ -769,10 +845,16 @@
     {
       "name": "flutter_secure_storage",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "version": "9.2.4",
+=======
+      "version": "10.0.0",
+>>>>>>> Stashed changes
       "dependencies": [
         "flutter",
+        "flutter_secure_storage_darwin",
         "flutter_secure_storage_linux",
+<<<<<<< Updated upstream
         "flutter_secure_storage_macos",
 =======
       "version": "10.0.0",
@@ -780,6 +862,8 @@
         "flutter",
         "flutter_secure_storage_darwin",
         "flutter_secure_storage_linux",
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         "flutter_secure_storage_platform_interface",
         "flutter_secure_storage_web",
@@ -790,7 +874,11 @@
     {
       "name": "alphabet_list_view",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "version": "1.1.6",
+=======
+      "version": "1.2.0",
+>>>>>>> Stashed changes
 =======
       "version": "1.2.0",
 >>>>>>> Stashed changes
@@ -800,9 +888,25 @@
       ]
     },
     {
+      "name": "flutter_image_compress",
+      "version": "2.4.0",
+      "dependencies": [
+        "flutter",
+        "flutter_image_compress_common",
+        "flutter_image_compress_macos",
+        "flutter_image_compress_ohos",
+        "flutter_image_compress_platform_interface",
+        "flutter_image_compress_web"
+      ]
+    },
+    {
       "name": "http",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "version": "1.5.0",
+=======
+      "version": "1.6.0",
+>>>>>>> Stashed changes
 =======
       "version": "1.6.0",
 >>>>>>> Stashed changes
@@ -1176,10 +1280,64 @@
       ]
     },
     {
+<<<<<<< Updated upstream
       "name": "win32",
       "version": "5.15.0",
       "dependencies": [
         "ffi"
+=======
+      "name": "equatable",
+      "version": "2.0.8",
+      "dependencies": [
+        "collection",
+        "meta"
+      ]
+    },
+    {
+      "name": "xml",
+      "version": "6.6.1",
+      "dependencies": [
+        "collection",
+        "meta",
+        "petitparser"
+      ]
+    },
+    {
+      "name": "archive",
+      "version": "3.6.1",
+      "dependencies": [
+        "crypto",
+        "path"
+      ]
+    },
+    {
+      "name": "webview_flutter_wkwebview",
+      "version": "3.23.5",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "path",
+        "webview_flutter_platform_interface"
+      ]
+    },
+    {
+      "name": "webview_flutter_android",
+      "version": "4.10.11",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "webview_flutter_platform_interface"
+      ]
+    },
+    {
+      "name": "webview_flutter",
+      "version": "4.13.1",
+      "dependencies": [
+        "flutter",
+        "webview_flutter_android",
+        "webview_flutter_platform_interface",
+        "webview_flutter_wkwebview"
+>>>>>>> Stashed changes
       ]
     },
     {
@@ -1188,6 +1346,7 @@
       "dependencies": []
     },
     {
+<<<<<<< Updated upstream
       "name": "package_info_plus_platform_interface",
       "version": "3.2.1",
       "dependencies": [
@@ -1265,6 +1424,10 @@
     {
       "name": "android_intent_plus",
       "version": "6.0.0",
+=======
+      "name": "android_intent_plus",
+      "version": "5.3.1",
+>>>>>>> Stashed changes
       "dependencies": [
         "flutter",
         "meta",
@@ -1281,6 +1444,23 @@
       ]
     },
     {
+<<<<<<< Updated upstream
+=======
+      "name": "win32",
+      "version": "5.15.0",
+      "dependencies": [
+        "ffi"
+      ]
+    },
+    {
+      "name": "flutter_web_plugins",
+      "version": "0.0.0",
+      "dependencies": [
+        "flutter"
+      ]
+    },
+    {
+>>>>>>> Stashed changes
       "name": "file",
       "version": "7.0.1",
       "dependencies": [
@@ -1289,6 +1469,14 @@
       ]
     },
     {
+<<<<<<< Updated upstream
+=======
+      "name": "ffi",
+      "version": "2.1.5",
+      "dependencies": []
+    },
+    {
+>>>>>>> Stashed changes
       "name": "device_info_plus_platform_interface",
       "version": "7.0.3",
       "dependencies": [
@@ -1576,7 +1764,11 @@
     },
     {
       "name": "url_launcher_web",
+<<<<<<< Updated upstream
       "version": "2.4.2",
+=======
+      "version": "2.4.1",
+>>>>>>> Stashed changes
       "dependencies": [
         "flutter",
         "flutter_web_plugins",
@@ -1650,7 +1842,7 @@
     },
     {
       "name": "video_player_platform_interface",
-      "version": "6.4.0",
+      "version": "6.6.0",
       "dependencies": [
         "flutter",
         "plugin_platform_interface"
@@ -1658,7 +1850,7 @@
     },
     {
       "name": "video_player_avfoundation",
-      "version": "2.8.4",
+      "version": "2.8.9",
       "dependencies": [
         "flutter",
         "video_player_platform_interface"
@@ -1666,7 +1858,7 @@
     },
     {
       "name": "video_player_android",
-      "version": "2.8.13",
+      "version": "2.9.1",
       "dependencies": [
         "flutter",
         "video_player_platform_interface"
@@ -1678,6 +1870,31 @@
       "dependencies": [
         "csslib",
         "source_span"
+      ]
+    },
+    {
+      "name": "geocoding_ios",
+      "version": "3.1.0",
+      "dependencies": [
+        "flutter",
+        "geocoding_platform_interface"
+      ]
+    },
+    {
+      "name": "geocoding_android",
+      "version": "4.0.1",
+      "dependencies": [
+        "flutter",
+        "geocoding_platform_interface"
+      ]
+    },
+    {
+      "name": "geocoding_platform_interface",
+      "version": "3.2.0",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "plugin_platform_interface"
       ]
     },
     {
@@ -1740,7 +1957,7 @@
     },
     {
       "name": "vector_graphics_compiler",
-      "version": "1.1.19",
+      "version": "1.1.20",
       "dependencies": [
         "args",
         "meta",
@@ -1768,10 +1985,20 @@
       "name": "flutter_localizations",
       "version": "0.0.0",
       "dependencies": [
+        "flutter",
+        "intl",
+        "path"
+      ]
+    },
+    {
+      "name": "flutter_reorderable_grid_view",
+      "version": "5.5.2",
+      "dependencies": [
         "flutter"
       ]
     },
     {
+<<<<<<< Updated upstream
       "name": "alphabet_list_view",
       "version": "1.2.0",
 =======
@@ -1907,11 +2134,66 @@
       "name": "shared_preferences_linux",
       "version": "2.4.1",
       "dependencies": [
+=======
+      "name": "nm",
+      "version": "0.5.0",
+      "dependencies": [
+        "dbus"
+      ]
+    },
+    {
+      "name": "connectivity_plus_platform_interface",
+      "version": "2.0.1",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "plugin_platform_interface"
+      ]
+    },
+    {
+      "name": "shared_preferences_windows",
+      "version": "2.4.1",
+      "dependencies": [
+>>>>>>> Stashed changes
         "file",
         "flutter",
         "path",
         "path_provider_linux",
         "path_provider_platform_interface",
+<<<<<<< Updated upstream
+=======
+        "path_provider_windows",
+        "shared_preferences_platform_interface"
+      ]
+    },
+    {
+      "name": "shared_preferences_web",
+      "version": "2.4.3",
+      "dependencies": [
+        "flutter",
+        "flutter_web_plugins",
+        "shared_preferences_platform_interface",
+        "web"
+      ]
+    },
+    {
+      "name": "shared_preferences_platform_interface",
+      "version": "2.4.1",
+      "dependencies": [
+        "flutter",
+        "plugin_platform_interface"
+      ]
+    },
+    {
+      "name": "shared_preferences_linux",
+      "version": "2.4.1",
+      "dependencies": [
+        "file",
+        "flutter",
+        "path",
+        "path_provider_linux",
+        "path_provider_platform_interface",
+>>>>>>> Stashed changes
         "shared_preferences_platform_interface"
       ]
     },
@@ -1963,11 +2245,9 @@
     },
     {
       "name": "path_provider_foundation",
-      "version": "2.6.0",
+      "version": "2.5.1",
       "dependencies": [
-        "ffi",
         "flutter",
-        "objective_c",
         "path_provider_platform_interface"
       ]
     },
@@ -2186,6 +2466,52 @@
       ]
     },
     {
+<<<<<<< Updated upstream
+=======
+      "name": "flutter_image_compress_ohos",
+      "version": "0.0.3",
+      "dependencies": [
+        "flutter",
+        "flutter_image_compress_platform_interface"
+      ]
+    },
+    {
+      "name": "flutter_image_compress_macos",
+      "version": "1.0.3",
+      "dependencies": [
+        "flutter",
+        "flutter_image_compress_platform_interface"
+      ]
+    },
+    {
+      "name": "flutter_image_compress_web",
+      "version": "0.1.5",
+      "dependencies": [
+        "flutter",
+        "flutter_image_compress_platform_interface",
+        "flutter_web_plugins",
+        "web"
+      ]
+    },
+    {
+      "name": "flutter_image_compress_common",
+      "version": "1.0.6",
+      "dependencies": [
+        "flutter",
+        "flutter_image_compress_platform_interface"
+      ]
+    },
+    {
+      "name": "flutter_image_compress_platform_interface",
+      "version": "1.0.5",
+      "dependencies": [
+        "cross_file",
+        "flutter",
+        "plugin_platform_interface"
+      ]
+    },
+    {
+>>>>>>> Stashed changes
       "name": "nested",
       "version": "1.0.0",
       "dependencies": [
@@ -2195,6 +2521,7 @@
     {
       "name": "sky_engine",
       "version": "0.0.0",
+<<<<<<< Updated upstream
       "dependencies": []
     },
     {
@@ -2219,6 +2546,8 @@
     {
       "name": "fixnum",
       "version": "1.1.1",
+=======
+>>>>>>> Stashed changes
       "dependencies": []
     },
     {
@@ -2321,9 +2650,10 @@
     },
     {
       "name": "_fe_analyzer_shared",
-      "version": "89.0.0",
+      "version": "93.0.0",
       "dependencies": [
-        "meta"
+        "meta",
+        "source_span"
       ]
     },
     {
@@ -2385,11 +2715,14 @@
     },
     {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "name": "sprintf",
       "version": "7.0.0",
       "dependencies": []
     },
     {
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
       "name": "sanitize_html",
@@ -2467,6 +2800,7 @@
     {
 <<<<<<< Updated upstream
       "name": "file_selector_windows",
+<<<<<<< Updated upstream
       "version": "0.9.3+4",
 =======
       "name": "objective_c",
@@ -2485,6 +2819,9 @@
       "name": "file_selector_windows",
       "version": "0.9.3+5",
 >>>>>>> Stashed changes
+=======
+      "version": "0.9.3+5",
+>>>>>>> Stashed changes
       "dependencies": [
         "cross_file",
         "file_selector_platform_interface",
@@ -2494,7 +2831,11 @@
     {
       "name": "file_selector_platform_interface",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "version": "2.6.2",
+=======
+      "version": "2.7.0",
+>>>>>>> Stashed changes
 =======
       "version": "2.7.0",
 >>>>>>> Stashed changes
@@ -2508,7 +2849,11 @@
     {
       "name": "file_selector_macos",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "version": "0.9.4+4",
+=======
+      "version": "0.9.5",
+>>>>>>> Stashed changes
 =======
       "version": "0.9.5",
 >>>>>>> Stashed changes
@@ -2521,7 +2866,11 @@
     {
       "name": "file_selector_linux",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "version": "0.9.3+2",
+=======
+      "version": "0.9.4",
+>>>>>>> Stashed changes
 =======
       "version": "0.9.4",
 >>>>>>> Stashed changes
@@ -2550,6 +2899,7 @@
     },
     {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       "name": "js",
       "version": "0.6.7",
       "dependencies": [
@@ -2557,6 +2907,8 @@
       ]
     },
     {
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
       "name": "value_layout_builder",
@@ -2652,6 +3004,7 @@
         "sqflite_platform_interface"
       ]
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     },
     {
       "name": "geocoding",
@@ -2687,6 +3040,8 @@
         "flutter",
         "geocoding_platform_interface"
       ]
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     }
