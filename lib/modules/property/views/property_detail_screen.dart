@@ -3269,6 +3269,7 @@
 //   }
 // }
 
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
@@ -4526,7 +4527,49 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                     height: 36,
                                     onTap:
                                     (UserHelper.isGuest)
-                                        ? () => Get.to(() => LoginScreen())
+                                        ? () async {
+                                      try {
+
+                                        if (Get.context == null) {
+                                          NesticoPeSnackBar.showAwesomeSnackbar(
+                                            title: "Error",
+                                            message:
+                                            'UI not ready to show dialog.',
+                                            contentType:
+                                            ContentType.failure,
+                                          );
+                                          return;
+                                        }
+
+                                        addInquiryFromApp(
+                                          '',
+                                          '',
+                                          '',
+                                          currentProperty.id ?? '',
+                                          currentProperty.listingType
+                                              ?.toLowerCase()
+                                              .replaceAll(
+                                            " ",
+                                            "_",
+                                          ) ??
+                                              '',
+                                          "property",
+                                        );
+                                      } catch (e, s) {
+                                        debugPrint(
+                                          '❌ Error in Get Offer button: $e',
+                                        );
+                                        debugPrint('$s');
+
+                                        NesticoPeSnackBar.showAwesomeSnackbar(
+                                          title: "Error",
+                                          message:
+                                          'Something went wrong. Please try again.',
+                                          contentType:
+                                          ContentType.failure,
+                                        );
+                                      }
+                                    }
                                         : () async {
                                       try {
                                         final user =
@@ -4872,9 +4915,9 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   ) {
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-    final _nameController = TextEditingController(text: name);
-    final _emailController = TextEditingController(text: email);
-    final _phoneController = TextEditingController(text: phone);
+    final nameController = TextEditingController(text: name);
+    final emailController = TextEditingController(text: email);
+    final phoneController = TextEditingController(text: phone);
 
     Get.dialog(
       Dialog(
@@ -4939,7 +4982,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         NesticoPeTextField(
-                          controller: _nameController,
+                          controller: nameController,
                           title: "Name",
                           hintText: 'Enter your name',
                           prefixIcon: Icons.person_outline,
@@ -4953,7 +4996,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                         const SizedBox(height: 16),
 
                         NesticoPeTextField(
-                          controller: _emailController,
+                          controller: emailController,
                           hintText: 'Enter your email',
                           prefixIcon: Icons.email_outlined,
                           title: "Email",
@@ -4972,7 +5015,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                         const SizedBox(height: 16),
 
                         NesticoPeTextField(
-                          controller: _phoneController,
+                          controller: phoneController,
                           hintText: 'Enter your phone number',
                           title: "Phone",
                           prefixIcon: Icons.phone_outlined,
@@ -5036,9 +5079,9 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                             if (_formKey.currentState!.validate()) {
                               // perform your submission logic here
                               final inquiry = {
-                                "name": name ?? "",
-                                "phone": phone ?? "",
-                                "email": email ?? "",
+                                "name": nameController.text ?? "",
+                                "phone": phoneController.text ?? "",
+                                "email": emailController.text ?? "",
                                 "agreeToContact": true,
                                 "meta": {
                                   "inquiryType": "$propertyType",
@@ -5053,13 +5096,31 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                 propertyID ?? '',
                               );
 
+
                               if (success) {
+                                if(UserHelper.isGuest)
+                                {
+
+                                  controller.hasSubmittedInquiry.value = true;
+                                  var inquiryData={
+                                    'property':propertyID,
+                                    "email": emailController.text ?? "",
+                                    "success":success
+
+                                  };
+                                  final exists = await SecureStorage.hasPropertyInquiry(propertyID);
+
+                                  if (!exists) {
+                                    await SecureStorage.addPropertyInquiry(inquiryData);
+                                  }
+
+                                }
                                 controller.hasSubmittedInquiry.value = true;
-                                CustomSnackBar.show(
+                             /*   CustomSnackBar.show(
                                   Get.overlayContext!,
                                   message: "Inquiry Added Successfully",
                                   type: SnackBarType.success,
-                                );
+                                );*/
                                 Get.back();
                                 await controller.getAllInQuireData(
                                   widget.propertyId ?? '',
@@ -5069,11 +5130,11 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                 );
                               } else {
                                 Get.back();
-                                CustomSnackBar.show(
+                               /* CustomSnackBar.show(
                                   Get.overlayContext!,
                                   message: "Failed to Submit Inquiry",
                                   type: SnackBarType.error,
-                                );
+                                );*/
                               }
                             }
                           },

@@ -348,7 +348,7 @@ class PropertyService {
       print("baseUrl : $baseUrl/$id/inquiry");
       final response = await http.post(
         Uri.parse("$baseUrl/$id/inquiry"),
-        headers: await headers(),
+        headers: await ApiConstants.getHeadersWithoutToken(),
         body: jsonEncode(data),
       );
       print("response : ${response.body}");

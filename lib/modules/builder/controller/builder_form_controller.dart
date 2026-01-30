@@ -604,7 +604,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       AddProjectModel(
         projectName: '',
         projectArea: 0,
-        projectSize: ProjectSize(totalBuildings: 1, totalUnits: 1),
+        projectSize: ProjectSize(totalBuildings: 0, totalUnits: 0),
         launchDate: DateTime.now(),
         possessionDate: DateTime.now(),
         configurations: [
@@ -619,8 +619,8 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
                 platformFees: 0,
                 brokerCommission: 0,
                 pricePerSqFt: 0,
-                totalUnits: 1,
-                availableUnits: 1,
+                totalUnits: 0,
+                availableUnits: 0,
                 specifications: [],
               ),
             ],

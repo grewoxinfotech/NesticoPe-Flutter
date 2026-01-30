@@ -54,6 +54,7 @@ class ResellerSuccessItem {
   final String status;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final ResellerInfo? reseller; // 👈 added field for nested reseller object
 
   ResellerSuccessItem({
     required this.id,
@@ -69,8 +70,9 @@ class ResellerSuccessItem {
     required this.rating,
     this.image,
     required this.status,
-     this.createdAt,
-     this.updatedAt,
+    this.createdAt,
+    this.updatedAt,
+    this.reseller,
   });
 
   factory ResellerSuccessItem.fromJson(Map<String, dynamic> json) =>
@@ -82,9 +84,10 @@ class ResellerSuccessItem {
         title: json["title"] ?? "",
         description: json["description"] ?? "",
         achievement: json["achievement"] ?? "",
-        monthYear: DateTime.tryParse(json["monthYear"] ?? "") ?? DateTime.now(),
+        monthYear:
+        DateTime.tryParse(json["monthYear"] ?? "") ?? DateTime.now(),
         totalDeals: json["totalDeals"] ?? 0,
-        totalValue: json["totalValue"] ?? "0",
+        totalValue: json["totalValue"]?.toString() ?? "0",
         rating: json["rating"] ?? 0,
         image: json["image"],
         status: json["status"] ?? "",
@@ -92,6 +95,9 @@ class ResellerSuccessItem {
         DateTime.tryParse(json["createdAt"] ?? "") ?? DateTime.now(),
         updatedAt:
         DateTime.tryParse(json["updatedAt"] ?? "") ?? DateTime.now(),
+        reseller: json["reseller"] != null
+            ? ResellerInfo.fromJson(json["reseller"])
+            : null,
       );
 
   Map<String, dynamic> toJson() => {
@@ -108,7 +114,34 @@ class ResellerSuccessItem {
     "rating": rating,
     "image": image,
     "status": status,
-    "createdAt": createdAt,
-    "updatedAt": updatedAt,
+    "createdAt": createdAt?.toIso8601String(),
+    "updatedAt": updatedAt?.toIso8601String(),
+    "reseller": reseller?.toJson(),
   };
 }
+
+/// 👇 Nested reseller model
+class ResellerInfo {
+  final String id;
+  final String username;
+  final String userType;
+
+  ResellerInfo({
+    required this.id,
+    required this.username,
+    required this.userType,
+  });
+
+  factory ResellerInfo.fromJson(Map<String, dynamic> json) => ResellerInfo(
+    id: json["id"] ?? "",
+    username: json["username"] ?? "",
+    userType: json["userType"] ?? "",
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "username": username,
+    "userType": userType,
+  };
+}
+

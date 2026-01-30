@@ -29,7 +29,7 @@ class ResellerSuccessStoryService {
   Future<PaginationResponse<ResellerSuccessItem>> fetchSuccessStories({
     int page = 1,
     Map<String, String>? filters,
-    int limit=10,
+    int limit = 10,
     String? resellerId,
     String? module,
   }) async {
@@ -129,7 +129,7 @@ class ResellerSuccessStoryService {
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Failed',
         message: "Failed to create success success",
-contentType: ContentType.failure,
+        contentType: ContentType.failure,
       );
       return false;
     } catch (e) {
@@ -179,7 +179,6 @@ contentType: ContentType.failure,
         }
       }
 
-
       // ===== Attach fields =====
       storyMap.forEach((key, value) {
         if (value == null) return;
@@ -201,44 +200,58 @@ contentType: ContentType.failure,
       debugPrint("📄 Response Body: ${response.body}");
 
       if (response.statusCode == 200) {
-        CustomSnackBar.show(
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: "Success success updated successfully",
+          contentType: ContentType.success,
+        );
+        /*       CustomSnackBar.show(
           Get.overlayContext!,
           message: "Success success updated successfully",
           type: SnackBarType.success,
-        );
+        );*/
         return true;
       }
-
-      CustomSnackBar.show(
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Failed',
+        message: "Failed to update success success",
+        contentType: ContentType.failure,
+      );
+      /*CustomSnackBar.show(
         Get.overlayContext!,
         message: "Failed to update success success",
         type: SnackBarType.error,
-      );
+      );*/
       return false;
     } catch (e) {
       debugPrint("❌ Update Success Story Exception: $e");
-      CustomSnackBar.show(
+      /*   CustomSnackBar.show(
         Get.overlayContext!,
         message: "Error while updating success success",
         type: SnackBarType.error,
+      );*/
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Failed',
+        message: "Error while updating success success",
+        contentType: ContentType.failure,
       );
       return false;
     }
   }
+
   Future<bool> deleteSuccessStory(String id) async {
     final uri = Uri.parse('$baseUrl/$id');
     debugPrint("📤 Deleting Success Story at: $uri");
     // Implementation for delete can be added here
-    final response=await http.delete(uri, headers: await headers());
-    if(response.statusCode==200){
-      final data= jsonDecode(response.body);
+    final response = await http.delete(uri, headers: await headers());
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
 
       debugPrint("✅ Success Story deleted successfully");
       return data['success'];
-    }else{
+    } else {
       debugPrint("❌ Failed to delete Success Story: ${response.statusCode}");
       return false;
     }
-
   }
 }

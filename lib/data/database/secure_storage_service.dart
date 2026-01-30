@@ -20,6 +20,72 @@ class SecureStorage {
   static const String _keyAadharVerified = 'isAadharVerified';
   static const String _keyHasLaunched = 'hasLaunchedApp';
   static const String _keyNotificationToken = 'notificationToken';
+  static const String _keyIsGuestUserPropertyInquiry = 'isGuestUserPropertyInquiry';
+
+
+ static Future <void> savePropertyInquiryData(String value) async {
+    await _storage.write(key: _keyIsGuestUserPropertyInquiry, value: value);
+  }
+  static Future<String?> getPropertyInquiryData() async {
+    return _storage.read(key: _keyIsGuestUserPropertyInquiry);
+  }
+
+  static Future<bool> hasPropertyInquiry(String propertyId) async {
+    try {
+      final data = await getPropertyInquiryData();
+      if (data == null || data.isEmpty) return false;
+
+
+      log('Property Inquiry Data: $data');
+
+      // Decode stored JSON (can be a single map or a list of inquiries)
+      final decoded = jsonDecode(data);
+
+      if (decoded is List) {
+        // 🧩 If multiple inquiries stored as a list
+        return decoded.any((item) => item['property'] == propertyId);
+      } else if (decoded is Map) {
+        // 🧩 If only one inquiry is stored as a map
+        return decoded['property'] == propertyId;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print('❌ Error reading property inquiry data: $e');
+      return false;
+    }
+  }
+
+  /// ✅ Add a new inquiry (only if not duplicate)
+  static Future<void> addPropertyInquiry(Map<String, dynamic> newInquiry) async {
+    try {
+      final data = await getPropertyInquiryData();
+      List<dynamic> inquiryList = [];
+
+      if (data != null && data.isNotEmpty) {
+        final decoded = jsonDecode(data);
+        if (decoded is List) {
+          inquiryList = decoded;
+        } else if (decoded is Map) {
+          inquiryList = [decoded];
+        }
+      }
+
+      final exists =
+      inquiryList.any((item) => item['property'] == newInquiry['property']);
+
+      if (!exists) {
+        inquiryList.add(newInquiry);
+        await savePropertyInquiryData(jsonEncode(inquiryList));
+        print('✅ New property inquiry saved');
+      } else {
+        print('⚠️ Property already in inquiry list, skipping duplicate');
+      }
+    } catch (e) {
+      print('❌ Error saving property inquiry: $e');
+    }
+  }
+
 
   // Notification Token
   static Future<void> saveNotificationToken(String token) async {

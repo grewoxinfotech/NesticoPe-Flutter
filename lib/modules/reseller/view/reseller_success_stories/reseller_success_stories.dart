@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
@@ -551,7 +553,7 @@ class ContractorSuccessStoryScreen extends StatelessWidget {
   }
 }
 
-class ContractorSuccessStoryCard extends StatelessWidget {
+class ContractorSuccessStoryCard extends StatefulWidget {
   final ResellerSuccessItem story;
   final DashboardController controller;
 
@@ -562,9 +564,15 @@ class ContractorSuccessStoryCard extends StatelessWidget {
   });
 
   @override
+  State<ContractorSuccessStoryCard> createState() => _ContractorSuccessStoryCardState();
+}
+
+class _ContractorSuccessStoryCardState extends State<ContractorSuccessStoryCard> {
+  @override
   Widget build(BuildContext context) {
-    final isPublished = story.status.toLowerCase() == 'published';
-    final formattedDate = _formatMonthYear(story.monthYear.toIso8601String());
+    final isPublished = widget.story.status.toLowerCase() == 'published';
+    final formattedDate = _formatMonthYear(widget.story.monthYear.toIso8601String());
+    log("Success Story Card ${widget.story.toJson()}");
 
     return Align(
       alignment: Alignment.center,
@@ -589,9 +597,9 @@ class ContractorSuccessStoryCard extends StatelessWidget {
                   AspectRatio(
                     aspectRatio: 16 / 9,
                     child:
-                        story.image != null && story.image!.isNotEmpty
+                        widget.story.image != null && widget.story.image!.isNotEmpty
                             ? Image.network(
-                              story.image!,
+                              widget.story.image!,
                               fit: BoxFit.cover,
 
                               // 🌀 Add loading indicator
@@ -735,7 +743,7 @@ class ContractorSuccessStoryCard extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            story.title,
+                            widget.story.title,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
@@ -768,7 +776,7 @@ class ContractorSuccessStoryCard extends StatelessWidget {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                story.rating.toStringAsFixed(1),
+                                widget.story.rating.toStringAsFixed(1),
                                 style: TextStyle(
                                   color: ColorRes.homeAmber.shade800,
                                   fontSize: AppFontSizes.caption,
@@ -792,7 +800,7 @@ class ContractorSuccessStoryCard extends StatelessWidget {
                       ),
                     ),*/
                     ReadMoreClass(
-                      description: story.description,
+                      description: widget.story.description,
                       trimLines: 3,
                       size: AppFontSizes.caption,
                       colorClickableText: ColorRes.primary,
@@ -827,7 +835,7 @@ class ContractorSuccessStoryCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 6),
                         ReadMoreClass(
-                          description: story.achievement,
+                          description: widget.story.achievement,
                           trimLines: 3,
                           size: AppFontSizes.caption,
                           colorClickableText: ColorRes.primary,
@@ -850,7 +858,7 @@ class ContractorSuccessStoryCard extends StatelessWidget {
                     const SizedBox(height: 8),
 
                     // Performance Section
-                    _buildPerformanceSection(),
+                    _buildPerformanceSection(widget.story),
                     const SizedBox(height: 8),
 
                     // Action Buttons
@@ -861,20 +869,20 @@ class ContractorSuccessStoryCard extends StatelessWidget {
                             onPressed: () {
                               ResellerSuccessItem storyData =
                                   ResellerSuccessItem(
-                                    id: story.id,
-                                    title: story.title,
-                                    description: story.description,
-                                    achievement: story.achievement,
-                                    totalDeals: story.totalDeals,
-                                    totalValue: story.totalValue,
+                                    id: widget.story.id,
+                                    title: widget.story.title,
+                                    description: widget.story.description,
+                                    achievement: widget.story.achievement,
+                                    totalDeals: widget.story.totalDeals,
+                                    totalValue: widget.story.totalValue,
                                     monthYear: DateTime.parse(
-                                      story.monthYear.toIso8601String(),
+                                      widget.story.monthYear.toIso8601String(),
                                     ),
 
-                                    rating: story.rating,
-                                    status: story.status,
-                                    image: story.image,
-                                    resellerId: story.resellerId,
+                                    rating: widget.story.rating,
+                                    status: widget.story.status,
+                                    image: widget.story.image,
+                                    resellerId: widget.story.resellerId,
                                   );
                               Get.to(
                                 () => AddResellerSuccessStoryScreen(
@@ -945,12 +953,12 @@ class ContractorSuccessStoryCard extends StatelessWidget {
                                     Obx(() {
                                       return ElevatedButton(
                                         onPressed:
-                                            controller.deleteSuccessStory.value
+                                            widget.controller.deleteSuccessStory.value
                                                 ? null // disable while deleting
                                                 : () {
                                                   Get.back(); // close dialog
-                                                  controller.deleteStory(
-                                                    story.id,
+                                                  widget.controller.deleteStory(
+                                                    widget.story.id,
                                                   );
                                                 },
                                         style: ElevatedButton.styleFrom(
@@ -963,7 +971,7 @@ class ContractorSuccessStoryCard extends StatelessWidget {
                                           ),
                                         ),
                                         child:
-                                            controller.deleteSuccessStory.value
+                                            widget.controller.deleteSuccessStory.value
                                                 ? const SizedBox(
                                                   height: 20,
                                                   width: 20,
@@ -1016,7 +1024,8 @@ class ContractorSuccessStoryCard extends StatelessWidget {
     );
   }
 
-  Widget _buildPerformanceSection() {
+  Widget _buildPerformanceSection(ResellerSuccessItem story) {
+    log("Success Story Performance ${story.toJson()}");
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1058,8 +1067,9 @@ class ContractorSuccessStoryCard extends StatelessWidget {
                 iconColor: ColorRes.green,
                 bgColor: ColorRes.green.withOpacity(0.1),
                 label: 'TOTAL VALUE',
-                value:
-                    '${Formatter.formatPrice(int.tryParse(story.totalValue) ?? 0)}',
+                value: Formatter.formatPrice(
+                  double.tryParse(story.totalValue)?.round() ?? 0,
+                ),
               ),
             ),
             const SizedBox(width: 8),
@@ -1069,10 +1079,13 @@ class ContractorSuccessStoryCard extends StatelessWidget {
                 iconColor: ColorRes.homeAmber,
                 bgColor: ColorRes.homeAmber.withOpacity(0.1),
                 label: 'AVG PER DEAL',
-                value:
-                    story.totalDeals > 0
-                        ? '${Formatter.formatPrice(((int.tryParse(story.totalValue) ?? 0) / story.totalDeals).round())}'
-                        : '₹0',
+                value: story.totalDeals > 0
+                    ? Formatter.formatPrice(
+                  ((double.tryParse(story.totalValue) ?? 0) /
+                      story.totalDeals)
+                      .round(),
+                )
+                    : '₹0',
               ),
             ),
           ],
@@ -1080,6 +1093,7 @@ class ContractorSuccessStoryCard extends StatelessWidget {
       ],
     );
   }
+
 
   Widget _buildPerformanceTile({
     required IconData icon,

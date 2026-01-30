@@ -179,7 +179,7 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
 
                               onTap: () {
                                 Get.to(
-                                  () => const ContractorQuotationListScreen(),
+                                  () => ContractorQuotationListScreen(),
                                 );
                               },
                             ),

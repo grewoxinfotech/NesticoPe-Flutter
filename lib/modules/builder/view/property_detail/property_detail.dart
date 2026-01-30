@@ -37,6 +37,8 @@ class StepConfigurations extends GetView<ProjectWizardController> {
     final theme = Theme.of(context);
     return Obx(() {
       final p = controller.project.value;
+      log("Logger of Total Unit ${controller.totalUnitsController.text}");
+      log("Logger of Total Unit ${p.projectSize.totalUnits}");
       return Form(
         key: formKey,
         // autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -45,6 +47,112 @@ class StepConfigurations extends GetView<ProjectWizardController> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(top: 16, bottom: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: ColorRes.primary.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: ColorRes.primary.withOpacity(0.2),
+                    width: 1.2,
+                  ),
+                ),
+                child: Builder(
+                  builder: (_) {
+                    final totalUnits = p.projectSize.totalUnits ?? 0;
+                    final usedUnits = p.configurations
+                        .expand((cfg) => cfg.variants)
+                        .fold<int>(0, (sum, v) => sum + (v.totalUnits ?? 0));
+                    final remainingUnits = totalUnits - usedUnits;
+
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.domain_outlined,
+                              size: 22,
+                              color: ColorRes.primary,
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              'Total Units:',
+                              style: TextStyle(
+                                fontSize: AppFontSizes.bodySmall,
+                                fontWeight: AppFontWeights.semiBold,
+                                color: ColorRes.textPrimary,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              '$totalUnits',
+                              style: TextStyle(
+                                fontSize: AppFontSizes.medium,
+                                fontWeight: AppFontWeights.bold,
+                                color: ColorRes.primary,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color:
+                                remainingUnits > 0
+                                    ? ColorRes.green.withOpacity(0.1)
+                                    : ColorRes.error.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color:
+                                  remainingUnits > 0
+                                      ? ColorRes.green.withOpacity(0.3)
+                                      : ColorRes.error.withOpacity(0.3),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                remainingUnits > 0
+                                    ? Icons.hourglass_bottom_rounded
+                                    : Icons.check_circle_outline_rounded,
+                                size: 16,
+                                color:
+                                    remainingUnits > 0
+                                        ? ColorRes.green
+                                        : ColorRes.error,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                remainingUnits > 0
+                                    ? 'Pending: $remainingUnits'
+                                    : 'All Assigned',
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.small,
+                                  fontWeight: AppFontWeights.medium,
+                                  color:
+                                      remainingUnits > 0
+                                          ? ColorRes.green
+                                          : ColorRes.error,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+
               SizedBox(height: 20),
               Row(
                 children: [
@@ -489,7 +597,7 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                                     ? ''
                                                     : v.price.toString(),
                                             keyboardType: TextInputType.number,
-                                            validator: (value) {
+                                            /*   validator: (value) {
                                               if (value == null ||
                                                   value.isEmpty) {
                                                 return 'Please enter monthly rent';
@@ -531,7 +639,51 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                               }
 
                                               return null;
+                                            },*/
+                                            validator: (value) {
+                                              if (value == null ||
+                                                  value.isEmpty) {
+                                                return 'Please enter monthly rent';
+                                              }
+
+                                              final rent =
+                                                  int.tryParse(value) ?? 0;
+
+                                              if (rent > 0) {
+                                                final platformFee = rent * 0.05;
+                                                final brokerCommission =
+                                                    platformFee * 0.02;
+
+                                                v.platformFees =
+                                                    double.tryParse(
+                                                      platformFee
+                                                          .toStringAsFixed(2),
+                                                    );
+                                                v.brokerCommission =
+                                                    double.tryParse(
+                                                      brokerCommission
+                                                          .toStringAsFixed(2),
+                                                    );
+
+                                                // 🔒 Schedule controller update AFTER build phase
+                                                WidgetsBinding.instance
+                                                    .addPostFrameCallback((_) {
+                                                      controller
+                                                          .platformFees
+                                                          .text = platformFee
+                                                          .toStringAsFixed(2);
+                                                      controller
+                                                          .brokerRageCommission
+                                                          .text = brokerCommission
+                                                          .toStringAsFixed(2);
+                                                    });
+
+                                                return null;
+                                              }
+
+                                              return null;
                                             },
+
                                             onSaved:
                                                 (
                                                   n,
@@ -683,13 +835,56 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                                     ? ''
                                                     : v.totalUnits.toString(),
                                             keyboardType: TextInputType.number,
-                                            validator:
+                                            /*  validator:
                                                 (n) =>
                                                     ProjectValidators.minNumber(
                                                       num.tryParse(n ?? ''),
                                                       1,
                                                       field: 'Total Units',
-                                                    ),
+                                                    ),*/
+                                            validator: (n) {
+                                              final entered =
+                                                  int.tryParse(n ?? '') ?? 0;
+                                              final config =
+                                                  p.configurations[ci]; // Current BHK configuration
+                                              final projectTotalUnits =
+                                                  p.projectSize.totalUnits ?? 0;
+
+                                              // Sum total units from all other variants
+                                              final otherUnits = config.variants
+                                                  .asMap()
+                                                  .entries
+                                                  .where(
+                                                    (entry) => entry.key != vi,
+                                                  )
+                                                  .map(
+                                                    (entry) =>
+                                                        entry
+                                                            .value
+                                                            .totalUnits ??
+                                                        0,
+                                                  )
+                                                  .fold<int>(
+                                                    0,
+                                                    (sum, val) => sum + val,
+                                                  );
+
+                                              // Remaining units available for this variant
+                                              final remaining =
+                                                  projectTotalUnits -
+                                                  otherUnits;
+
+                                              if (entered <= 0) {
+                                                return 'Please enter a valid number of units';
+                                              }
+
+                                              if (entered > remaining) {
+                                                return '⚠️ Only $remaining units are available (Total $projectTotalUnits)';
+                                              }
+
+                                              return null;
+                                            },
+
                                             onSaved:
                                                 (
                                                   n,
@@ -707,7 +902,7 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                           ),
                                         ),
                                         const SizedBox(width: 12),
-                                        Expanded(
+                                       /* Expanded(
                                           child: CommonTextField(
                                             hint: 'e.g 2500',
                                             label: 'Available Units',
@@ -743,7 +938,38 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                                           0,
                                                 ),
                                           ),
+                                        ),*/
+                                        Expanded(
+                                          child: CommonTextField(
+                                            hint: 'e.g 2500',
+                                            label: 'Available Units',
+                                            prefixIcon: const Icon(
+                                              Icons.inventory_2_outlined,
+                                              size: 16,
+                                            ),
+                                            initialValue: v.availableUnits == 0 ? '' : v.availableUnits.toString(),
+                                            keyboardType: TextInputType.number,
+                                            validator: (n) {
+                                              final available = int.tryParse(n ?? '') ?? 0;
+                                              final totalUnits = v.totalUnits ?? 0;
+
+                                              if (available < 0) {
+                                                return 'Available units cannot be negative';
+                                              }
+
+                                              if (available > totalUnits) {
+                                                return '⚠️ Cannot exceed total units ($totalUnits)';
+                                              }
+
+                                              return null;
+                                            },
+                                            onSaved: (n) => controller.project.update(
+                                                  (x) => x!.configurations[ci].variants[vi].availableUnits =
+                                                  int.tryParse(n ?? '') ?? 0,
+                                            ),
+                                          ),
                                         ),
+
                                       ],
                                     ),
                                     const SizedBox(height: 12),

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/widgets/snackbar/snackbar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../data/database/secure_storage_service.dart';
 import '../../../data/network/auth/model/user_model.dart';
 import '../../../data/network/builder/model/builder_model.dart'
@@ -116,40 +117,53 @@ class ProjectController extends GetxController {
   }
 
   Future<void> getAllInQuireData(String propertyId) async {
-    try {
-      final UserModel user = await SecureStorage.getUserData() ?? UserModel();
-      final userId = user.user?.id ?? '';
-      final inquiries = await _contactedService.fetchContactedInquiries(userId);
-      inquiryResponse.assignAll(inquiries);
+   if(UserHelper.isGuest)
+     {
+       final exists = await SecureStorage.hasPropertyInquiry(propertyId);
+       hasSubmittedInquiry.value = exists;
+     }
+   else{
+     try {
+       final UserModel user = await SecureStorage.getUserData() ?? UserModel();
+       final userId = user.user?.id ?? '';
+       final inquiries = await _contactedService.fetchContactedInquiries(userId);
+       inquiryResponse.assignAll(inquiries);
 
-      final result = inquiryResponse.any((e) => e.propertyId == propertyId);
+       final result = inquiryResponse.any((e) => e.propertyId == propertyId);
 
-      hasSubmittedInquiry.value = result;
-      print(
-        "Inquiry Data ** ${inquiryResponse.map((e) => e.toJson()).toList()}    ${result} ${hasSubmittedInquiry.value}",
-      );
-      print("Inquiry Response ** ${result} ${hasSubmittedInquiry.value}");
-    } catch (e) {
-      print("Error fetching inquiries: $e");
-    }
+       hasSubmittedInquiry.value = result;
+       print(
+         "Inquiry Data ** ${inquiryResponse.map((e) => e.toJson()).toList()}    ${result} ${hasSubmittedInquiry.value}",
+       );
+       print("Inquiry Response ** ${result} ${hasSubmittedInquiry.value}");
+     } catch (e) {
+       print("Error fetching inquiries: $e");
+     }
+   }
   }
 
   Future<void> getHasInQuireData(String propertyId) async {
-    try {
-      final UserModel user = await SecureStorage.getUserData() ?? UserModel();
-      final userId = user.user?.id ?? '';
-      final inquiries = await _contactedService.fetchHasInquiries(
-        userId,
-        itemId: propertyId,
-      );
+    if(UserHelper.isGuest) {
+      final exists = await SecureStorage.hasPropertyInquiry(propertyId);
+      hasSubmittedInquiry.value = exists;
+    }else{
+      try {
+        final UserModel user = await SecureStorage.getUserData() ?? UserModel();
+        final userId = user.user?.id ?? '';
+        final inquiries = await _contactedService.fetchHasInquiries(
+          userId,
+          itemId: propertyId,
+        );
 
-      hasSubmittedInquiry.value = inquiries;
-      print(
-        "Inquiry Data ** ${inquiryResponse.map((e) => e.toJson()).toList()}    ${inquiries} ${hasSubmittedInquiry.value}",
-      );
-      print("Inquiry Response ** ${inquiries} ${hasSubmittedInquiry.value}");
-    } catch (e) {
-      print("Error fetching inquiries: $e");
+        hasSubmittedInquiry.value = inquiries;
+        print(
+          "Inquiry Data ** ${inquiryResponse.map((e) => e.toJson()).toList()}    ${inquiries} ${hasSubmittedInquiry.value}",
+        );
+        print("Inquiry Response ** ${inquiries} ${hasSubmittedInquiry.value}");
+      } catch (e) {
+        print("Error fetching inquiries: $e");
+      }
     }
-  }
+    }
+
 }

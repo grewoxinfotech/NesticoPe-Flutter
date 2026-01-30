@@ -197,7 +197,7 @@ class ProjectCardForCompare extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final projectController = Get.find<ProjectController>();
+    final projectController = Get.find<ProjectController>();
     return Material(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(12),
@@ -318,7 +318,42 @@ class ProjectCardForCompare extends StatelessWidget {
                             GestureDetector(
                               onTap:
                                   (UserHelper.isGuest)
-                                      ? () => Get.to(() => LoginScreen())
+                                      ? () async {
+                                    try {
+
+
+                                      if (Get.context == null) {
+                                        NesticoPeSnackBar.showAwesomeSnackbar(
+                                          title: 'Error',
+                                          message:
+                                          'UI not ready to show dialog.',
+                                          contentType: ContentType.failure,
+                                        );
+                                        return;
+                                      }
+
+                                      addInquiryFromProject(
+                                        '',
+                                        '',
+                                        '',
+                                        item.id,
+                                        'sell',
+                                        "project",
+                                      );
+                                    } catch (e, s) {
+                                      debugPrint(
+                                        '❌ Error in Get Offer button: $e',
+                                      );
+                                      debugPrint('$s');
+
+                                      NesticoPeSnackBar.showAwesomeSnackbar(
+                                        title: 'Error',
+                                        message:
+                                        'Something went wrong. Please try again.',
+                                        contentType: ContentType.failure,
+                                      );
+                                    }
+                                  }
                                       : () async {
                                         try {
                                           final user =
@@ -391,7 +426,7 @@ class ProjectCardForCompare extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Text(
-                                  'Contact Now',
+                                  '${projectController.hasSubmittedInquiry.value ? 'Submitted' : 'Contact Now'}',
                                   style: TextStyle(
                                     fontWeight: AppFontWeights.semiBold,
                                     fontSize: AppFontSizes.small,
@@ -439,9 +474,9 @@ class ProjectCardForCompare extends StatelessWidget {
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     final controller = Get.find<ProjectController>();
 
-    final _nameController = TextEditingController(text: name);
-    final _emailController = TextEditingController(text: email);
-    final _phoneController = TextEditingController(text: phone);
+    final nameController = TextEditingController(text: name);
+    final emailController = TextEditingController(text: email);
+    final phoneController = TextEditingController(text: phone);
 
     Get.dialog(
       Dialog(
@@ -506,7 +541,7 @@ class ProjectCardForCompare extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         NesticoPeTextField(
-                          controller: _nameController,
+                          controller: nameController,
                           title: "Name",
                           hintText: 'Enter your name',
                           prefixIcon: Icons.person_outline,
@@ -520,7 +555,7 @@ class ProjectCardForCompare extends StatelessWidget {
                         const SizedBox(height: 16),
 
                         NesticoPeTextField(
-                          controller: _emailController,
+                          controller: emailController,
                           hintText: 'Enter your email',
                           prefixIcon: Icons.email_outlined,
                           title: "Email",
@@ -539,7 +574,7 @@ class ProjectCardForCompare extends StatelessWidget {
                         const SizedBox(height: 16),
 
                         NesticoPeTextField(
-                          controller: _phoneController,
+                          controller: phoneController,
                           hintText: 'Enter your phone number',
                           title: "Phone",
                           prefixIcon: Icons.phone_outlined,
@@ -603,9 +638,9 @@ class ProjectCardForCompare extends StatelessWidget {
                             if (_formKey.currentState!.validate()) {
                               // perform your submission logic here
                               final inquiry = {
-                                "name": name ?? "",
-                                "phone": phone ?? "",
-                                "email": email ?? "",
+                                "name": nameController.text ?? "",
+                                "phone": phoneController.text ?? "",
+                                "email": emailController.text ?? "",
                                 "agreeToContact": true,
                                 "meta": {
                                   "inquiryType": "$propertyType",
@@ -621,12 +656,29 @@ class ProjectCardForCompare extends StatelessWidget {
                               );
 
                               if (success) {
+                                if(UserHelper.isGuest)
+                                {
+
+                                  controller.hasSubmittedInquiry.value = true;
+                                  var inquiryData={
+                                    'property':propertyID,
+                                    "email": emailController.text ?? "",
+                                    "success":success
+
+                                  };
+                                  final exists = await SecureStorage.hasPropertyInquiry(propertyID);
+
+                                  if (!exists) {
+                                    await SecureStorage.addPropertyInquiry(inquiryData);
+                                  }
+
+                                }
                                 controller.hasSubmittedInquiry.value = true;
-                                CustomSnackBar.show(
+                              /*  CustomSnackBar.show(
                                   Get.overlayContext!,
                                   message: "Inquiry Added Successfully",
                                   type: SnackBarType.success,
-                                );
+                                );*/
                                 Get.back();
                                 await controller.getAllInQuireData(
                                   item.id ?? '',
@@ -636,11 +688,11 @@ class ProjectCardForCompare extends StatelessWidget {
                                 );
                               } else {
                                 Get.back();
-                                CustomSnackBar.show(
+                                /*CustomSnackBar.show(
                                   Get.overlayContext!,
                                   message: "Failed to Submit Inquiry",
                                   type: SnackBarType.error,
-                                );
+                                );*/
                               }
                             }
                           },
