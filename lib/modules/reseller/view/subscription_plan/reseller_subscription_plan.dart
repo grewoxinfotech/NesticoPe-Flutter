@@ -8,6 +8,9 @@ class ResellerSubscriptionPlanScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SubscriptionPlansScreen(role: Roles.reseller.name);
+    return SubscriptionPlansScreen(
+      role: Roles.reseller.name,
+      isShowCurrentPlan: true,
+    );
   }
 }

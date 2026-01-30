@@ -634,6 +634,190 @@ import '../property_share/reseller_property_share.dart';
 
 // Update FilterPanel (no changes needed, keeping for completeness)
 
+///
+
+// class ProductListingScreen extends StatefulWidget {
+//   ProductListingScreen({Key? key}) : super(key: key);
+//
+//   @override
+//   State<ProductListingScreen> createState() => _ProductListingScreenState();
+// }
+//
+// class _ProductListingScreenState extends State<ProductListingScreen> {
+//   final DashboardController controller = Get.put(DashboardController());
+//   final SharePropertyController sharePropertyController = Get.put(
+//     SharePropertyController(),
+//   );
+//
+//   /// ✅ USE RESELLER CONTROLLER
+//   late final ResellerPropertyController propertyController;
+//   late final resellerId;
+//
+//   // Multi-select state
+//   final RxBool isSelectionMode = false.obs;
+//   final RxList<String> selectedPropertyIds = <String>[].obs;
+//   final RxMap<String, String> selectedFilters = <String, String>{}.obs;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     WidgetsBinding.instance.addPostFrameCallback((_) async {
+//       _loadData();
+//
+//       // await fetchResellerAssignProperty();
+//     });
+//   }
+//
+//   Future<void> _loadData() async {
+//     final user = await SecureStorage.getUserData();
+//     if (user != null) {
+//       resellerId = user.user?.id;
+//     }
+//     propertyController = Get.put(
+//       ResellerPropertyController(resellerId: resellerId),
+//     );
+//   }
+//
+//   /// ✅ Assigned reseller properties
+//   // Future<void> fetchResellerAssignProperty() async {
+//   //   try {
+//   //     final user = await SecureStorage.getUserData();
+//   //     final userId = user?.user?.id;
+//   //
+//   //     if (userId != null && userId.isNotEmpty) {
+//   //       final filter = {"assignedTo": userId};
+//   //
+//   //       log("Applying reseller assigned filter → $filter");
+//   //
+//   //       await propertyController.applyFilters(filter);
+//   //     } else {
+//   //       print("⚠️ User ID is null or empty");
+//   //     }
+//   //   } catch (e) {
+//   //     print("❌ Error fetching reseller properties: $e");
+//   //   }
+//   // }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: ColorRes.white,
+//
+//       appBar: PreferredSize(
+//         preferredSize: const Size.fromHeight(kToolbarHeight),
+//         child: AppBar(
+//           backgroundColor: ColorRes.white,
+//           elevation: 0,
+//           automaticallyImplyLeading: false,
+//           title: Text(
+//             'Property Listing',
+//             style: TextStyle(
+//               color: ColorRes.textColor,
+//               fontWeight: AppFontWeights.bold,
+//               fontSize: getResponsiveFontSize(
+//                 context,
+//                 AppFontSizes.large,
+//                 AppFontSizes.body,
+//               ),
+//             ),
+//           ),
+//           bottom: PreferredSize(
+//             preferredSize: const Size.fromHeight(1),
+//             child: Container(color: ColorRes.leadGreyColor[200], height: 1),
+//           ),
+//           actions: [
+//             GestureDetector(
+//               onTap: () async {
+//                 if (!Get.isRegistered<PropertyController>())
+//                   Get.put(PropertyController());
+//                 final result = await Get.to(() => ResellerPropertyFilter());
+//
+//                 if (result != null) {
+//                   final newFilter = convertFiltersToString(result);
+//                   final user = await SecureStorage.getUserData();
+//                   final userId = user?.user?.id;
+//
+//                   if (userId != null && userId.isNotEmpty) {
+//                     newFilter["assignedTo"] = userId;
+//
+//                     log("Applying filter → $newFilter");
+//
+//                     selectedFilters
+//                       ..clear()
+//                       ..addAll(newFilter);
+//
+//                     await propertyController.applyFilters(
+//                       Map<String, String>.from(selectedFilters),
+//                     );
+//                   }
+//                 }
+//               },
+//               child: const Icon(Icons.filter_list),
+//             ),
+//             const SizedBox(width: 8),
+//           ],
+//         ),
+//       ),
+//
+//       body: Column(
+//         children: [
+//           /// Active Filter Chips
+//           Obx(() {
+//             return FilterChipsBar(
+//               filters: selectedFilters.value,
+//               onClearAll: () {
+//                 selectedFilters.clear();
+//                 propertyController.clearAllFilters();
+//               },
+//               onRemoveFilter: (key) {
+//                 selectedFilters.remove(key);
+//                 propertyController.applyFilters(
+//                   Map<String, String>.from(selectedFilters),
+//                 );
+//               },
+//               priceRangeFormatter: (min, max) => formatPriceRange(min, max),
+//             );
+//           }),
+//
+//           /// Products Grid
+//           Expanded(
+//             child: Obx(() {
+//               if (propertyController.isLoading.value &&
+//                   propertyController.items.isEmpty) {
+//                 return Center(
+//                   child: CircularProgressIndicator(color: ColorRes.primary),
+//                 );
+//               }
+//
+//               if (!propertyController.isLoading.value &&
+//                   propertyController.items.isEmpty) {
+//                 return const Center(child: Text("No Listing Yet."));
+//               }
+//
+//               return NotificationListener<ScrollEndNotification>(
+//                 onNotification: (scrollEnd) {
+//                   final metrics = scrollEnd.metrics;
+//                   if (metrics.atEdge && metrics.pixels != 0) {
+//                     propertyController.loadMore();
+//                   }
+//                   return false;
+//                 },
+//                 child: RefreshIndicator(
+//                   onRefresh: propertyController.refreshResellerProperties,
+//                   child: ProductsGrid(
+//                     isSelectionMode: isSelectionMode,
+//                     selectedPropertyIds: selectedPropertyIds,
+//                   ),
+//                 ),
+//               );
+//             }),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
 class ProductListingScreen extends StatefulWidget {
   ProductListingScreen({Key? key}) : super(key: key);
 
@@ -647,14 +831,15 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
     SharePropertyController(),
   );
 
-  /// ✅ USE RESELLER CONTROLLER
-  late final ResellerPropertyController propertyController;
-  late final resellerId;
+  /// ✅ USE RESELLER CONTROLLER - Changed to nullable
+  ResellerPropertyController? propertyController;
+  String? resellerId;
 
   // Multi-select state
   final RxBool isSelectionMode = false.obs;
   final RxList<String> selectedPropertyIds = <String>[].obs;
   final RxMap<String, String> selectedFilters = <String, String>{}.obs;
+  final RxBool isControllerReady = false.obs; // Track controller initialization
 
   @override
   void initState() {
@@ -672,8 +857,9 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
       resellerId = user.user?.id;
     }
     propertyController = Get.put(
-      ResellerPropertyController(resellerId: resellerId),
+      ResellerPropertyController(resellerId: resellerId ?? ''),
     );
+    isControllerReady.value = true; // Notify that controller is ready
   }
 
   /// ✅ Assigned reseller properties
@@ -744,7 +930,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                       ..clear()
                       ..addAll(newFilter);
 
-                    await propertyController.applyFilters(
+                    await propertyController?.applyFilters(
                       Map<String, String>.from(selectedFilters),
                     );
                   }
@@ -765,11 +951,11 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
               filters: selectedFilters.value,
               onClearAll: () {
                 selectedFilters.clear();
-                propertyController.clearAllFilters();
+                propertyController?.clearAllFilters();
               },
               onRemoveFilter: (key) {
                 selectedFilters.remove(key);
-                propertyController.applyFilters(
+                propertyController?.applyFilters(
                   Map<String, String>.from(selectedFilters),
                 );
               },
@@ -780,15 +966,22 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
           /// Products Grid
           Expanded(
             child: Obx(() {
-              if (propertyController.isLoading.value &&
-                  propertyController.items.isEmpty) {
+              // Check if controller is ready using observable
+              if (!isControllerReady.value) {
                 return Center(
                   child: CircularProgressIndicator(color: ColorRes.primary),
                 );
               }
 
-              if (!propertyController.isLoading.value &&
-                  propertyController.items.isEmpty) {
+              final controller = propertyController!;
+
+              if (controller.isLoading.value && controller.items.isEmpty) {
+                return Center(
+                  child: CircularProgressIndicator(color: ColorRes.primary),
+                );
+              }
+
+              if (!controller.isLoading.value && controller.items.isEmpty) {
                 return const Center(child: Text("No Listing Yet."));
               }
 
@@ -796,15 +989,16 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                 onNotification: (scrollEnd) {
                   final metrics = scrollEnd.metrics;
                   if (metrics.atEdge && metrics.pixels != 0) {
-                    propertyController.loadMore();
+                    controller.loadMore();
                   }
                   return false;
                 },
                 child: RefreshIndicator(
-                  onRefresh: propertyController.refreshResellerProperties,
+                  onRefresh: controller.refreshResellerProperties,
                   child: ProductsGrid(
                     isSelectionMode: isSelectionMode,
                     selectedPropertyIds: selectedPropertyIds,
+                    propertyController: controller,
                   ),
                 ),
               );
@@ -1148,14 +1342,13 @@ class ProductsGrid extends StatelessWidget {
   final RxList<String> selectedPropertyIds;
 
   final DashboardController controller = Get.find();
-  final ResellerPropertyController propertyController = Get.find(
-    // tag: reseller
-  );
+  final ResellerPropertyController propertyController;
 
   ProductsGrid({
     Key? key,
     required this.isSelectionMode,
     required this.selectedPropertyIds,
+    required this.propertyController,
   }) : super(key: key);
 
   @override

@@ -64,7 +64,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
   Rxn<Items> leadProperty = Rxn<Items>();
 
   RxBool isLoadingProperty = false.obs;
-  RxString markedBy="".obs;
+  RxString markedBy = "".obs;
 
   @override
   void initState() {
@@ -313,21 +313,22 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
               ),
 
               if (widget.property != null) ...[
-               if(widget.property?.propertyStatus?.toLowerCase()!="sold")...[
-                 Divider(thickness: 8, color: Colors.grey[100]),
-                 Padding(
-                   padding: const EdgeInsets.symmetric(
-                     horizontal: 16,
-                     vertical: 8,
-                   ),
-                   child: _buildSectionHeader(
-                     'Report',
-                     Icons.report_gmailerrorred_outlined,
-                     isCompact,
-                   ),
-                 ),
-                 ReportPropertyCard(propertyId: widget.property!.id!),
-               ]
+                if (widget.property?.propertyStatus?.toLowerCase() !=
+                    "sold") ...[
+                  Divider(thickness: 8, color: Colors.grey[100]),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    child: _buildSectionHeader(
+                      'Report',
+                      Icons.report_gmailerrorred_outlined,
+                      isCompact,
+                    ),
+                  ),
+                  ReportPropertyCard(propertyId: widget.property!.id!),
+                ],
               ],
 
               // 8. Notes Section (Only for Leads)
@@ -340,8 +341,13 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                 Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: _buildSectionHeader('Lead Status', Icons.leaderboard_sharp, true),
-                ), SizedBox(height: 16),
+                  child: _buildSectionHeader(
+                    'Lead Status',
+                    Icons.leaderboard_sharp,
+                    true,
+                  ),
+                ),
+                SizedBox(height: 16),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Container(
@@ -358,7 +364,11 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                       children: [
                         Row(
                           children: const [
-                            Icon(Icons.warning_amber_rounded, color: Colors.red, size: 20),
+                            Icon(
+                              Icons.warning_amber_rounded,
+                              color: Colors.red,
+                              size: 20,
+                            ),
                             SizedBox(width: 6),
                             Text(
                               "MARKED AS FAKE",
@@ -371,27 +381,42 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                           ],
                         ),
                         const SizedBox(height: 8),
-                         Text.rich(
+                        Text.rich(
                           TextSpan(
                             children: [
                               TextSpan(
                                 text: "Marked By: Adimn\n",
-                                style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black87,
+                                ),
                               ),
                               // TextSpan(text: "Admin\n"),
                               TextSpan(
                                 text: "On: ",
-                                style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black87,
+                                ),
                               ),
-                              TextSpan(text: "${Formatter.formatDateFromDateTime(DateTime.tryParse(widget.lead?.markedFakeAt??''))}\n"),
+                              TextSpan(
+                                text:
+                                    "${Formatter.formatDateFromDateTime(DateTime.tryParse(widget.lead?.markedFakeAt ?? ''))}\n",
+                              ),
 
                               TextSpan(
                                 text: "Reason: ",
-                                style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black87,
+                                ),
                               ),
                               TextSpan(
                                 text: "${widget.lead?.fakeReason}",
-                                style: TextStyle(color: Colors.red, fontStyle: FontStyle.italic),
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontStyle: FontStyle.italic,
+                                ),
                               ),
                             ],
                           ),
@@ -403,12 +428,17 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
               ],
 
               if ((widget.lead?.status?.toLowerCase() == "converted") &&
-                  (widget.lead?.stage?.toLowerCase() == "sell") ) ...[
+                  (widget.lead?.stage?.toLowerCase() == "sell")) ...[
                 Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: _buildSectionHeader('Lead Status', Icons.leaderboard_sharp, true),
-                ), SizedBox(height: 16),
+                  child: _buildSectionHeader(
+                    'Lead Status',
+                    Icons.leaderboard_sharp,
+                    true,
+                  ),
+                ),
+                SizedBox(height: 16),
                 GestureDetector(
                   onTap: () {
                     // 🟢 Add your action here
@@ -416,8 +446,14 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                   },
                   child: Container(
                     width: double.infinity,
-                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFE8FBE8),
                       borderRadius: BorderRadius.circular(8),
@@ -426,7 +462,11 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
-                        Icon(Icons.attach_money_rounded, color: Color(0xFF27AE60), size: 18),
+                        Icon(
+                          Icons.attach_money_rounded,
+                          color: Color(0xFF27AE60),
+                          size: 18,
+                        ),
                         SizedBox(width: 8),
                         Text(
                           "PAY PARTNER COMMISSION NOW",
@@ -442,7 +482,6 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                   ),
                 ),
               ],
-
 
               Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
               Obx(() {
@@ -533,7 +572,19 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
               Get.to(
                 () =>
                     widget.isReseller
-                        ? ResellerLeadScreen(propertyId: property.id ?? '')
+                        ? CommonLeadScreen(
+                          title: 'Property Buyer Leads',
+                          controllerTag: 'reseller',
+                          entityId: property.id,
+                          showDataMasking: true,
+                          onLoadMore: (controller, id) async {
+                            if (id != null) {
+                              controller.loadMorePropertyLeads(id);
+                            } else {
+                              controller.loadMore();
+                            }
+                          },
+                        )
                         : BuilderLeads(projectId: property.id ?? ''),
               );
             },
@@ -615,40 +666,40 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
           },
         ),
         const SizedBox(height: 8),
-       if(widget.isFromLead)...[
-         ListTile(
-           tileColor: ColorRes.white,
-           title: Text(
-             'Follow Ups',
-             style: TextStyle(
-               fontSize: AppFontSizes.medium,
-               fontWeight: AppFontWeights.semiBold,
-             ),
-           ),
-           leading: Icon(Icons.follow_the_signs, color: ColorRes.primary),
-           trailing: Icon(Icons.arrow_forward_ios_rounded),
-           onTap: () {
-             final selectedInquiry =
-                 propertyInquiryController?.selectedInquiry.value;
+        if (widget.isFromLead) ...[
+          ListTile(
+            tileColor: ColorRes.white,
+            title: Text(
+              'Follow Ups',
+              style: TextStyle(
+                fontSize: AppFontSizes.medium,
+                fontWeight: AppFontWeights.semiBold,
+              ),
+            ),
+            leading: Icon(Icons.follow_the_signs, color: ColorRes.primary),
+            trailing: Icon(Icons.arrow_forward_ios_rounded),
+            onTap: () {
+              final selectedInquiry =
+                  propertyInquiryController?.selectedInquiry.value;
 
-             // Set visit id
-             log(
-               'Setting visit ID for user ${selectedInquiry?.userId} and property ${selectedInquiry?.propertyId}',
-             );
-             leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
-               selectedInquiry?.propertyId ?? property.id ?? '',
-               buyerID: selectedInquiry?.userId ?? '',
-             );
-             log(
-               'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
-             );
+              // Set visit id
+              log(
+                'Setting visit ID for user ${selectedInquiry?.userId} and property ${selectedInquiry?.propertyId}',
+              );
+              leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
+                selectedInquiry?.propertyId ?? property.id ?? '',
+                buyerID: selectedInquiry?.userId ?? '',
+              );
+              log(
+                'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
+              );
 
-             log("Set the lead user ${widget.lead?.toJson()}");
-             leadVisitController.getLeadId(widget.lead?.id ?? '');
-             Get.to(() => LeadFollowUpScreen(controller: leadVisitController));
-           },
-         ),
-       ],
+              log("Set the lead user ${widget.lead?.toJson()}");
+              leadVisitController.getLeadId(widget.lead?.id ?? '');
+              Get.to(() => LeadFollowUpScreen(controller: leadVisitController));
+            },
+          ),
+        ],
         const SizedBox(height: 8),
       ],
     );

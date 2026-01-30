@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
 import 'package:housing_flutter_app/app/constants/api_constants.dart';
+import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/lead/model/lead_visit_model.dart';
 import 'package:housing_flutter_app/utils/logger/app_logger.dart';
@@ -39,7 +40,7 @@ class LeadService {
   Future<PaginationResponse<LeadItem>> fetchLeads({
     int page = 1,
     String? userId,
-    int limit=10,
+    int limit = 10,
     Map<String, String>? filters,
     bool fromReseller = false,
   }) async {
@@ -514,15 +515,27 @@ class LeadService {
     required String propertyId,
   }) async {
     try {
-      final queryParameters = {
-        'page': page.toString(),
-        'property_id': propertyId,
-        if (filters != null) ...filters,
-      };
-      final response = await http.get(
-        Uri.parse(baseUrl).replace(queryParameters: queryParameters),
-        headers: await headers(),
-      );
+      final Map<String, String> queryParameters;
+      if (UserHelper.isReseller) {
+        final user = await SecureStorage.getUserData();
+        final userId = user?.user?.id ?? '';
+        queryParameters = {
+          'page': page.toString(),
+          'property_id': propertyId,
+          if (userId.isNotEmpty) 'reseller_id': userId,
+          if (filters != null) ...filters,
+        };
+      } else {
+        queryParameters = {
+          'page': page.toString(),
+          'property_id': propertyId,
+          if (filters != null) ...filters,
+        };
+      }
+
+      final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
+      print("Lead Data URI: $uri");
+      final response = await http.get(uri, headers: await headers());
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         AppLogger.structured("Lead Data from seller", data);

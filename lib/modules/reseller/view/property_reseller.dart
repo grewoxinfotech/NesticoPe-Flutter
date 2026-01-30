@@ -12,6 +12,7 @@ import 'package:housing_flutter_app/app/utils/svg_widget.dart';
 import 'package:housing_flutter_app/data/network/reseller/reseller_success_stories/reseller_success_stories_model.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/widget/dashboard_layout.dart';
 import 'package:housing_flutter_app/modules/property_rating/view/widget/read_more_or_less.dart';
+import 'package:housing_flutter_app/modules/reseller/view/listing/project_listing_screen.dart';
 import 'package:housing_flutter_app/modules/reseller/view/profile/reseller_profile.dart';
 import 'package:housing_flutter_app/modules/reseller/view/reseller_success_stories/add_reseller_success_stories_screen.dart';
 import 'package:housing_flutter_app/modules/reseller/view/subscription_plan/reseller_subscription_plan.dart';
@@ -1658,7 +1659,7 @@ class SuccessStoryCard extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 8),
-                  /*  Text(
+                    /*  Text(
                       story.description,
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
@@ -1668,7 +1669,12 @@ class SuccessStoryCard extends StatelessWidget {
                         height: 1.4,
                       ),
                     ),*/
-                    ReadMoreClass(description: story.description, trimLines: 3, size:AppFontSizes.caption , colorClickableText: ColorRes.primary),
+                    ReadMoreClass(
+                      description: story.description,
+                      trimLines: 3,
+                      size: AppFontSizes.caption,
+                      colorClickableText: ColorRes.primary,
+                    ),
 
                     const SizedBox(height: 8),
                     Divider(height: 1, color: ColorRes.border),
@@ -1698,8 +1704,13 @@ class SuccessStoryCard extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 6),
-                        ReadMoreClass(description: story.achievement, trimLines: 3, size:AppFontSizes.caption , colorClickableText: ColorRes.primary),
-                       /* Text(
+                        ReadMoreClass(
+                          description: story.achievement,
+                          trimLines: 3,
+                          size: AppFontSizes.caption,
+                          colorClickableText: ColorRes.primary,
+                        ),
+                        /* Text(
                           story.achievement,
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
@@ -2011,8 +2022,6 @@ class SuccessStoryCard extends StatelessWidget {
   }
 }
 
-
-
 Widget buildTopPropertyForGoodCommission(
   DashboardController controller,
   RxList<Items> propertyList,
@@ -2033,7 +2042,6 @@ Widget buildTopPropertyForGoodCommission(
         Row(
           children: [
             TiltingIcon(
-
               icon: Icon(
                 Icons.apartment_outlined,
                 color: ColorRes.leadIndigoColor,
@@ -2089,9 +2097,22 @@ Widget buildTopPropertyForGoodCommission(
           height: 185, // enough to fit property cards
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: controller.resellerInsightsModel.value?.data.leaderboard.topProperties.length,
+            itemCount:
+                controller
+                    .resellerInsightsModel
+                    .value
+                    ?.data
+                    .leaderboard
+                    .topProperties
+                    .length,
             itemBuilder: (context, index) {
-              final property = controller.resellerInsightsModel.value?.data.leaderboard.topProperties[index];
+              final property =
+                  controller
+                      .resellerInsightsModel
+                      .value
+                      ?.data
+                      .leaderboard
+                      .topProperties[index];
 
               return Container(
                 width: 280,
@@ -2123,14 +2144,14 @@ Widget buildTopPropertyForGoodCommission(
                                 image: DecorationImage(
                                   fit: BoxFit.cover,
                                   image: NetworkImage(
-                                    (property?.image != null && property!.image.isNotEmpty)
+                                    (property?.image != null &&
+                                            property!.image.isNotEmpty)
                                         ? property.image
                                         : 'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg',
                                   ),
                                 ),
                               ),
-                            )
-
+                            ),
                           ],
                         ),
                         const SizedBox(width: 12),
@@ -2163,14 +2184,14 @@ Widget buildTopPropertyForGoodCommission(
                               ),
                               const SizedBox(height: 6),
                               Text(
-                                '${Formatter.formatPrice(property?.price??0) ?? '1,00,000'}',
+                                '${Formatter.formatPrice(property?.price ?? 0) ?? '1,00,000'}',
                                 style: TextStyle(
                                   color: ColorRes.textColor,
                                   fontSize: AppFontSizes.small,
                                   fontWeight: AppFontWeights.semiBold,
                                 ),
                               ),
-                            /*  const SizedBox(height: 6),
+                              /*  const SizedBox(height: 6),
                               Row(
                                 children: [
                                   Text(
@@ -2227,7 +2248,7 @@ Widget buildTopPropertyForGoodCommission(
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                '${Formatter.formatPrice(property?.commission??0) ?? '0'}',
+                                '${Formatter.formatPrice(property?.commission ?? 0) ?? '0'}',
                                 style: TextStyle(
                                   color: ColorRes.leadIndigoColor,
                                   fontSize: AppFontSizes.bodyMedium,
@@ -2368,11 +2389,11 @@ Widget buildLeadGraph(DashboardController controller) {
       children: [
         Row(
           children: [
-
             TiltingIcon(
               direction: TiltDirection.horizontal,
               icon: Icon(
-                Icons.area_chart_outlined, color: ColorRes.green,
+                Icons.area_chart_outlined,
+                color: ColorRes.green,
                 size: 24,
               ),
             ),
@@ -2861,8 +2882,8 @@ Widget buildReferralProgram({
         // Header Section
         Row(
           children: [
-           TiltingIcon(
-direction: TiltDirection.horizontal,
+            TiltingIcon(
+              direction: TiltDirection.horizontal,
               icon: Icon(
                 Icons.card_giftcard_outlined,
                 color: ColorRes.purpleColor,
@@ -3174,13 +3195,13 @@ Widget buildLeaderBoardRanking({
         // Header Section
         Row(
           children: [
-        /*    Icon(Icons.emoji_events_outlined, color: headerIconColor, size: 28),*/
+            /*    Icon(Icons.emoji_events_outlined, color: headerIconColor, size: 28),*/
             TiltingIcon(
-tiltAmount: 0.5,
+              tiltAmount: 0.5,
               direction: TiltDirection.vertical,
               icon: Icon(
                 Icons.emoji_events_outlined,
-                color:headerIconColor,
+                color: headerIconColor,
                 size: 24,
               ),
             ),
@@ -4413,10 +4434,10 @@ Widget buildDailyGoals({
           ),
           child: Row(
             children: [
-            AnimatedContainerScaler(
-            minScale: 0.95,
-            maxScale: 1.10,
-            duration: const Duration(seconds: 2),
+              AnimatedContainerScaler(
+                minScale: 0.95,
+                maxScale: 1.10,
+                duration: const Duration(seconds: 2),
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
@@ -4728,7 +4749,21 @@ Widget _buildRecentLeads(DashboardController controller) {
             ),
             TextButton(
               onPressed: () {
-                Get.to(() => ResellerLeadScreen(isViewAll: true));
+                Get.to(
+                  () => CommonLeadScreen(
+                    title: 'Property Buyer Leads',
+                    controllerTag: 'reseller',
+
+                    showDataMasking: true,
+                    onLoadMore: (controller, id) async {
+                      if (id != null) {
+                        controller.loadMorePropertyLeads(id);
+                      } else {
+                        controller.loadMore();
+                      }
+                    },
+                  ),
+                );
               },
               style: TextButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
@@ -5032,7 +5067,21 @@ Widget buildTopProducts(DashboardController controller) {
             ),
             TextButton(
               onPressed: () {
-                Get.to(() => ResellerLeadScreen(isViewAll: true));
+                Get.to(
+                  () => CommonLeadScreen(
+                    title: 'Property Buyer Leads',
+                    controllerTag: 'reseller',
+
+                    showDataMasking: true,
+                    onLoadMore: (controller, id) async {
+                      if (id != null) {
+                        controller.loadMorePropertyLeads(id);
+                      } else {
+                        controller.loadMore();
+                      }
+                    },
+                  ),
+                );
               },
               style: TextButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
@@ -6133,7 +6182,21 @@ class MainNavigationScreen extends StatelessWidget {
     final screens = [
       ResellerDashboardScreen(),
       ProductListingScreen(),
-      ResellerLeadScreen(isViewAll: true),
+      ProjectListingScreen(),
+      // ResellerLeadScreen(isViewAll: true),
+      CommonLeadScreen(
+        title: 'Property Buyer Leads',
+        controllerTag: 'reseller',
+        showDataMasking: true,
+        onLoadMore: (controller, id) async {
+          if (id != null) {
+            controller.loadMorePropertyLeads(id);
+          } else {
+            controller.loadMore();
+          }
+        },
+      ),
+
       ResellerSubscriptionPlanScreen(),
       ResellerProfileScreen(),
     ];
@@ -6177,6 +6240,14 @@ class MainNavigationScreen extends StatelessWidget {
                   child: Icon(Icons.inventory, size: 22),
                 ),
                 label: 'Property',
+              ),
+
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: EdgeInsets.only(bottom: 4),
+                  child: Icon(Icons.apartment, size: 22),
+                ),
+                label: 'Project',
               ),
               BottomNavigationBarItem(
                 icon: Padding(
@@ -6233,7 +6304,6 @@ Widget buildMetricCard(String title, String value, IconData icon, Color color) {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,

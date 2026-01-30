@@ -45,6 +45,7 @@ class BuilderService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        print("✅ Project API Response: $data");
 
         return PaginationResponse<ProjectItem>.fromJson(
           data,

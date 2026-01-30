@@ -921,10 +921,30 @@ class BuilderLeads extends StatefulWidget {
 }
 
 class _BuilderLeadState extends State<BuilderLeads> {
-  late final LeadController leadController;
+  // late final LeadController leadController;
 
-  final ProjectWizardController projectController =
-      Get.find<ProjectWizardController>(tag: "builder");
+  // final ProjectWizardController projectController =
+  //     Get.find<ProjectWizardController>(
+  //       tag: "project_detail_${widget.projectId}",
+  //     );
+  //
+  // final LeadPropertyInquiryController propertyInquiryController = Get.put(
+  //   LeadPropertyInquiryController(),
+  // );
+  //
+  // final LeadVisitController leadVisitController = Get.put(
+  //   LeadVisitController(),
+  // );
+  //
+  // final LeadPropertyNegotiablePriceController
+  // leadPropertyNegotiablePriceController = Get.put(
+  //   LeadPropertyNegotiablePriceController(),
+  // );
+  //
+  // final RxBool isLoadingLead = false.obs;
+
+  late final LeadController leadController;
+  late final ProjectWizardController projectController;
 
   final LeadPropertyInquiryController propertyInquiryController = Get.put(
     LeadPropertyInquiryController(),
@@ -940,17 +960,37 @@ class _BuilderLeadState extends State<BuilderLeads> {
   );
 
   final RxBool isLoadingLead = false.obs;
-
   // bool get isProjectView =>
   //     widget.projectId != null && widget.projectId!.isNotEmpty;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   leadController =
+  //       Get.isRegistered<LeadController>(tag: "builder")
+  //           ? Get.find<LeadController>(tag: "builder")
+  //           : Get.put(LeadController(), tag: "builder");
+  //   WidgetsBinding.instance.addPostFrameCallback((_) async {
+  //     await _loadData();
+  //   });
+  // }
 
   @override
   void initState() {
     super.initState();
+
     leadController =
         Get.isRegistered<LeadController>(tag: "builder")
             ? Get.find<LeadController>(tag: "builder")
             : Get.put(LeadController(), tag: "builder");
+
+    /// ✅ SAFE usage of widget.projectId here
+    if (widget.projectId != null && widget.projectId!.isNotEmpty) {
+      projectController = Get.find<ProjectWizardController>(
+        tag: "project_detail_${widget.projectId}",
+      );
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _loadData();
     });

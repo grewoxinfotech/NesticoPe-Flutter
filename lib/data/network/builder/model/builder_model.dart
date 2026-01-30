@@ -1161,7 +1161,7 @@ class ProjectItem {
   final String? approvedAt;
   final String? verifiedBy;
   final String? verifiedAt;
-  final String? assignedTo;
+  final List<AssignedUser> assignedTo;
   final int? totalViews;
   final int? totalInquiries;
   final int? totalShares;
@@ -1213,7 +1213,7 @@ class ProjectItem {
     this.approvedAt,
     this.verifiedBy,
     this.verifiedAt,
-    this.assignedTo,
+    required this.assignedTo,
     this.totalViews,
     this.totalInquiries,
     this.totalShares,
@@ -1288,7 +1288,11 @@ class ProjectItem {
     approvedAt: json['approved_at'],
     verifiedBy: json['verifiedBy'],
     verifiedAt: json['verifiedAt'],
-    assignedTo: json['assignedTo'],
+    assignedTo:
+        (json['assignedTo'] as List<dynamic>? ?? [])
+            .map((e) => AssignedUser.fromJson(e))
+            .toList(),
+
     totalViews: json['totalViews'],
     totalInquiries: json['totalInquiries'],
     totalShares: json['totalShares'],
@@ -1349,7 +1353,8 @@ class ProjectItem {
     'approved_at': approvedAt,
     'verifiedBy': verifiedBy,
     'verifiedAt': verifiedAt,
-    'assignedTo': assignedTo,
+    'assignedTo': assignedTo.map((e) => e.toJson()).toList(),
+
     'totalViews': totalViews,
     'totalInquiries': totalInquiries,
     'totalShares': totalShares,
@@ -1380,6 +1385,22 @@ extension ProjectItemPriceRange on ProjectItem {
     return minPrice == maxPrice
         ? Formatter.formatPrice(minPrice)
         : "${Formatter.formatPrice(minPrice)} - ${Formatter.formatNumber(maxPrice)}";
+  }
+
+  String getCommisionRange() {
+    final commissions =
+        configuration
+            .expand((config) => config.variants)
+            .map((variant) => variant.brokerCommission ?? 0)
+            .where((p) => p > 0)
+            .toList();
+    if (commissions.isEmpty) return "Commission not available";
+    final minCommission = commissions.reduce((a, b) => a < b ? a : b);
+    final maxCommission = commissions.reduce((a, b) => a > b ? a : b);
+
+    return minCommission == maxCommission
+        ? Formatter.formatPrice(minCommission)
+        : "${Formatter.formatPrice(minCommission)} - ${Formatter.formatNumber(maxCommission)}";
   }
 }
 
@@ -1493,4 +1514,38 @@ class MediaItem {
   String get path => file?.path ?? url ?? '';
   bool get isFile => file != null;
   bool get isUrl => url != null;
+}
+
+class AssignedUser {
+  final String id;
+  final String username;
+  final String assignedAt;
+  final String expiryDate;
+  final double commissionRate;
+
+  AssignedUser({
+    required this.id,
+    required this.username,
+    required this.assignedAt,
+    required this.expiryDate,
+    required this.commissionRate,
+  });
+
+  factory AssignedUser.fromJson(Map<String, dynamic> json) {
+    return AssignedUser(
+      id: json['id'] ?? '',
+      username: json['username'] ?? '',
+      assignedAt: json['assignedAt'] ?? '',
+      expiryDate: json['expiryDate'] ?? '',
+      commissionRate: (json['commissionRate'] ?? 0).toDouble(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'username': username,
+    'assignedAt': assignedAt,
+    'expiryDate': expiryDate,
+    'commissionRate': commissionRate,
+  };
 }

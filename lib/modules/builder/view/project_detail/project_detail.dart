@@ -43,6 +43,7 @@ import '../../../home/widgets/unified_comparison_floating_button.dart';
 import '../../../performance_score/views/performance_score_screen.dart';
 import '../../../property/views/property_detail_screen.dart';
 import '../../../property/views/widgets/overall_rating_widget.dart';
+import '../../../reseller/view/lead/lead_screen.dart';
 import '../../../review/controllers/review_controller.dart';
 import '../../../review/views/widget/property_project_review_section.dart';
 import '../../../review/views/widget/property_review_card.dart';
@@ -465,7 +466,19 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                           trailing: Icon(Icons.arrow_forward_ios_rounded),
                           onTap: () {
                             Get.to(
-                              () => BuilderLeads(projectId: project?.id ?? ''),
+                              () => CommonLeadScreen(
+                                title: 'Project Buyer Leads',
+                                controllerTag: 'project',
+                                entityId: widget.projectId,
+                                showDataMasking: false,
+                                onLoadMore: (controller, id) async {
+                                  if (id != null) {
+                                    controller.loadMorePropertyLeads(id);
+                                  } else {
+                                    controller.loadMore();
+                                  }
+                                },
+                              ),
                             );
                           },
                         ),
