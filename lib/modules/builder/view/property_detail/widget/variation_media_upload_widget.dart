@@ -1257,7 +1257,9 @@ class _VariantMediaUploadWidgetState extends State<VariantMediaUploadWidget> {
   void initState() {
     super.initState();
     _controller = Get.put(VariantMediaController());
-    _controller.loadExistingMedia(widget.variant);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _controller.loadExistingMedia(widget.variant);
+    });
   }
 
   @override

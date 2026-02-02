@@ -989,7 +989,18 @@ class _HireContractorCardState extends State<HireContractorCard> {
                 SizedBox(width: 8),
                 ElevatedButton(
                   onPressed: () {
-                    // Contact action
+                    contractorProfile?.username = widget.data.username ?? '';
+                    contractorProfile?.firstName = widget.data.firstName ?? '';
+                    contractorProfile?.lastName = widget.data.lastName ?? '';
+                    contractorProfile?.totalExperience = widget.data.totalExperience ?? 0;
+                    if (contractorProfile != null) {
+                      Get.to(
+                            () => ContractorProfileDetailsScreen(
+                          contractor: contractorProfile ?? Contractor.fromJson({}),
+                          isPremium: widget.data.subscription?.hasPremiumPlan ?? false,
+                        ),
+                      );
+                    }
                   },
                   // icon: const Icon(Icons.phone, size: 16),
                   child: const Text('Contact Now'),
@@ -1716,8 +1727,28 @@ class _AllContractorCardState extends State<AllContractorCard> {
                 ),
                 SizedBox(width: 8),
                 ElevatedButton(
-                  onPressed: () {
-                    // Contact action
+                  onPressed: () async {
+                    log("Tapped Contractor Profile Data: ${contractorProfile?.toJson()}");
+
+                    contractorProfile?.username = widget.data.username ?? '';
+                    contractorProfile?.firstName = widget.data.firstName ?? '';
+                    contractorProfile?.lastName = widget.data.lastName ?? '';
+                    contractorProfile?.totalExperience = widget.data.totalExperience ?? 0;
+                    // contractorProfile?.projectStats.totalProjects = data.profile.??  0;
+
+                    if (contractorProfile != null) {
+                      Get.to(
+                            () => ContractorProfileDetailsScreen(
+                          contractor: contractorProfile ?? Contractor.fromJson({}),
+                        ),
+                      );
+                    } else {
+                      NesticoPeSnackBar.showAwesomeSnackbar(
+                        title: 'Not Found',
+                        message: 'Contractor profile could not be loaded.',
+                        contentType: ContentType.failure,
+                      );
+                    }
                   },
                   // icon: const Icon(Icons.phone, size: 16),
                   child: const Text('Contact Now'),

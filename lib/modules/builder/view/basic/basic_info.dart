@@ -98,18 +98,24 @@ class StepBasicInfo extends GetView<ProjectWizardController> {
                               color: ColorRes.primary,
                             ),
                             textInputAction: TextInputAction.next,
+                            /*  onChanged: (v) {
+                      controller.generateBuildingFields(v);
+                    },*/
                             validator:
                                 (v) => ProjectValidators.minNumber(
                                   num.tryParse(v ?? ''),
                                   1,
                                   field: 'Total Buildings',
                                 ),
-                            onSaved:
-                                (v) => controller.project.update(
-                                  (x) =>
-                                      x!.projectSize.totalBuildings =
-                                          int.tryParse(v ?? '') ?? 1,
-                                ),
+                            onSaved: (v) {
+                              controller.generateBuildingFields(v ?? '0');
+
+                              controller.project.update(
+                                (x) =>
+                                    x!.projectSize.totalBuildings =
+                                        int.tryParse(v ?? '') ?? 1,
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -151,39 +157,55 @@ class StepBasicInfo extends GetView<ProjectWizardController> {
               ),
               const SizedBox(height: 12),
 
-              // Row(
-              //   children: [
-              //     Expanded(
-              //       child: _CommonDatePickerField(
-              //         label: 'Launch Date',
-              //         date: controller.project.value.launchDate,
-              //         onSaved: (pickedDate) {
-              //           controller.project.update(
-              //             (p) => p!.launchDate = pickedDate,
-              //           );
-              //         },
-              //       ),
-              //     ),
-              //     const SizedBox(width: 12),
-              //     Expanded(
-              //       child: _CommonDatePickerField(
-              //         label: 'Possession Date',
-              //         date: controller.project.value.possessionDate,
-              //         onSaved: (pickedDate) {
-              //           controller.project.update(
-              //             (p) => p!.possessionDate = pickedDate,
-              //           );
-              //         },
-              //         extraValidator:
-              //             (pickedDate) =>
-              //                 ProjectValidators.possessionAfterLaunch(
-              //                   pickedDate,
-              //                   controller.project.value.launchDate,
-              //                 ),
-              //       ),
-              //     ),
-              //   ],
-              // ),
+              // 🆕 Dynamic Building Name Fields (2 per row)
+              Obx(() {
+                final controllers = controller.buildingNameControllers;
+
+                if (controllers.isEmpty) return const SizedBox();
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Building Names", style: theme.textTheme.titleMedium),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 8,
+                      children: List.generate(controllers.length, (index) {
+                        return SizedBox(
+                          width: MediaQuery.of(context).size.width / 2 - 24,
+                          child: CommonTextField(
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Building name is required';
+                              }
+                              return null;
+                            },
+                            label: "Building Name #${index + 1}",
+                            controller: controllers[index],
+                            initialValue:
+                                p.buildingNames?['buildingName#$index'],
+
+                            hint:
+                                "e.g. Tower ${String.fromCharCode(65 + index)}",
+                            prefixIcon: const Icon(
+                              Icons.home_work_outlined,
+                              size: 18,
+                              color: ColorRes.primary,
+
+                            ),
+                            borderType: 'outline',
+                            onSaved: (v) {
+                              controller.saveBuildingNames();
+                            },
+                          ),
+                        );
+                      }),
+                    ),
+                  ],
+                );
+              }),
+
               Obx(() {
                 final project = controller.project.value;
 
@@ -343,7 +365,7 @@ class _CommonDatePickerFieldState extends State<_CommonDatePickerField> {
   }
 
   @override
-  void didUpdateWidget(covariant _CommonDatePickerField oldWidget) {
+  /*  void didUpdateWidget(covariant _CommonDatePickerField oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.date != oldWidget.date) {
       _selectedDate = widget.date;
@@ -351,6 +373,23 @@ class _CommonDatePickerFieldState extends State<_CommonDatePickerField> {
           _selectedDate != null
               ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
               : '';
+    }
+  }*/
+  @override
+  void didUpdateWidget(covariant _CommonDatePickerField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.date != oldWidget.date) {
+      _selectedDate = widget.date;
+
+      // ✅ Delay updating controller until after build is done
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _controller.text =
+            _selectedDate != null
+                ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
+                : '';
+      });
     }
   }
 

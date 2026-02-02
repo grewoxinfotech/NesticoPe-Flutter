@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -45,7 +46,7 @@ class BuilderService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print("✅ Project API Response: $data");
+        AppLogger.structured("✅ Project API Response: ",data);
 
         return PaginationResponse<ProjectItem>.fromJson(
           data,
@@ -166,7 +167,7 @@ class BuilderService {
       }
 
       // ====== Add all other fields ======
-      projectMap.forEach((key, value) {
+      /*projectMap.forEach((key, value) {
         if (value == null) return;
 
         if (key == 'brochure') return;
@@ -177,7 +178,27 @@ class BuilderService {
         } else {
           request.fields[key] = value.toString();
         }
+      });*/
+      // ====== Add all other fields ======
+      projectMap.forEach((key, value) {
+        if (value == null) return;
+        if (key == 'brochure' || key == 'documentList') return;
+
+        // Special handling for nested maps/lists
+        if (key == 'buildingNames' && value is Map) {
+          // 🔹 Flatten buildingNames
+          value.forEach((innerKey, innerValue) {
+            request.fields['buildingNames[$innerKey]'] = innerValue.toString();
+          });
+        } else if (value is Map || value is List) {
+          // 🔹 Encode other complex fields like projectSize/configurations
+          request.fields[key] = jsonEncode(value);
+        } else {
+          // 🔹 Normal flat field
+          request.fields[key] = value.toString();
+        }
       });
+
 
       // ==== Attach Project Images ====
       if (images != null && images.isNotEmpty) {
@@ -250,7 +271,7 @@ class BuilderService {
     }
   }
 
-  Future<bool> updateProject({
+  /*Future<bool> updateProject({
     required String projectId,
     required AddProjectModel projectData,
     List<File>? images,
@@ -344,11 +365,11 @@ class BuilderService {
       debugPrint("📄 Response Body: ${response.body}");
 
       if (response.statusCode == 200) {
-        /*CustomSnackBar.show(
+        *//*CustomSnackBar.show(
           Get.overlayContext!,
           message: "Project updated successfully",
           type: SnackBarType.success,
-        );*/
+        );*//*
         final data = jsonDecode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: 'Success',
@@ -358,11 +379,11 @@ class BuilderService {
         return true;
       }
 
-      /*  CustomSnackBar.show(
+      *//*  CustomSnackBar.show(
         Get.overlayContext!,
         message: "Failed to update project",
         type: SnackBarType.error,
-      );*/
+      );*//*
       final data = jsonDecode(response.body);
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Failed',
@@ -372,11 +393,11 @@ class BuilderService {
       return false;
     } catch (e) {
       debugPrint("❌ Update project exception: $e");
-      /* CustomSnackBar.show(
+      *//* CustomSnackBar.show(
         Get.overlayContext!,
         message: "Error while updating project",
         type: SnackBarType.error,
-      );*/
+      );*//*
       // NesticoPeSnackBar.showAwesomeSnackbar(
       //   title: 'Failed',
       //   message: "Error while updating project",
@@ -384,5 +405,140 @@ class BuilderService {
       // );
       return false;
     }
+  }*/
+  Future<bool> updateProject({
+    required String projectId,
+    required AddProjectModel projectData,
+    List<File>? images,
+    List<File>? videos,
+    File? documents,
+  }) async {
+    try {
+      AppLogger("🧾 Multipart fields1:", projectData.toJson());
+      final uri = Uri.parse('$baseUrl/$projectId');
+      debugPrint("📤 Updating project at: $uri");
+
+      final headerMap = await headers();
+
+      var request = http.MultipartRequest('PUT', uri);
+      request.headers.addAll({
+        ...headerMap,
+        'Content-Type': 'multipart/form-data',
+      });
+
+      // Convert model to Map
+      final projectMap = projectData.toJson();
+      debugPrint("Project Map: $projectMap");
+      debugPrint("Documents: $documents");
+      debugPrint("Images: $images");
+      debugPrint("Videos: $videos");
+
+      // ===== Attach brochure if local =====
+      if (documents != null) {
+        final isNetwork = Uri.tryParse(documents.path)?.isAbsolute ?? false;
+        if (!isNetwork) {
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              'brochure',
+              documents.path,
+              contentType: MediaType('application', 'pdf'),
+            ),
+          );
+        }
+      }
+
+      // ===== Attach other fields =====
+      projectMap.forEach((key, value) {
+        if (value == null) return;
+        if (key == 'brochure') return; // already handled
+
+        // 🧩 Special handling for buildingNames
+        if (key == 'buildingNames' && value is Map) {
+          value.forEach((innerKey, innerValue) {
+            request.fields['buildingNames[$innerKey]'] = innerValue.toString();
+          });
+        }
+        // Encode other nested structures normally
+        else if (value is Map || value is List) {
+          request.fields[key] = jsonEncode(value);
+        }
+        // Simple field
+        else {
+          request.fields[key] = value.toString();
+        }
+      });
+
+      // ===== Attach images if local =====
+      if (images != null && images.isNotEmpty) {
+        for (var image in images) {
+          final isNetwork = Uri.tryParse(image.path)?.isAbsolute ?? false;
+          if (!isNetwork) {
+            request.files.add(
+              await http.MultipartFile.fromPath(
+                'project_images',
+                image.path,
+                contentType: MediaType('image', 'jpeg'),
+              ),
+            );
+          }
+        }
+      }
+
+      // ===== Attach videos if local =====
+      if (videos != null && videos.isNotEmpty) {
+        for (var video in videos) {
+          final isNetwork = Uri.tryParse(video.path)?.isAbsolute ?? false;
+          if (!isNetwork) {
+            request.files.add(
+              await http.MultipartFile.fromPath(
+                'project_videos',
+                video.path,
+                contentType: MediaType('video', 'mp4'),
+              ),
+            );
+          }
+        }
+      }
+
+      // 🧾 Debug logs
+      log("🧩 Flattened buildingNames fields:");
+      request.fields.forEach((key, value) {
+        if (key.startsWith('buildingNames')) log("  $key = $value");
+      });
+      debugPrint("📎 Attached files: ${request.files.length}");
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      debugPrint("📩 Update Project Response: ${response.statusCode}");
+      debugPrint("📄 Response Body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: data['message'] ?? 'Project updated successfully',
+          contentType: ContentType.success,
+        );
+        return true;
+      }
+
+      final data = jsonDecode(response.body);
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Failed',
+        message: data['message'] ?? 'Failed to update project',
+        contentType: ContentType.failure,
+      );
+      return false;
+    } catch (e) {
+      debugPrint("❌ Update project exception: $e");
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Failed',
+        message: 'Error while updating project',
+        contentType: ContentType.failure,
+      );
+      return false;
+    }
   }
+
 }

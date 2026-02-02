@@ -13,6 +13,7 @@ import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
 import 'package:housing_flutter_app/modules/builder/view/project_detail/widgets/model_render_screen.dart';
 import 'package:housing_flutter_app/modules/property/controllers/overall_rating_controller.dart';
+import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
 import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
@@ -31,6 +32,7 @@ import '../../../../data/database/secure_storage_service.dart';
 import '../../../../data/network/builder/model/builder_model.dart';
 
 // import '../../../../data/network/builder/model/builder_projectModel.dart';
+import '../../../../utils/global.dart';
 import '../../../../widgets/New folder/inputs/text_field.dart';
 import '../../../../widgets/bar/bottom_bar/customer_bottom_bar.dart';
 import '../../../../widgets/button/button.dart';
@@ -500,11 +502,16 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                           ),
                           trailing: Icon(Icons.arrow_forward_ios_rounded),
                           onTap: () {
+                            log("Check it is from project pass project id ${project?.id}");
+
+
+
                             Get.to(
                               () => CommonLeadScreen(
                                 title: 'Project Buyer Leads',
                                 controllerTag: 'project',
-                                entityId: widget.projectId,
+                                entityId: project?.id,
+
                                 showDataMasking: false,
                                 onLoadMore: (controller, id) async {
                                   if (id != null) {
@@ -1003,18 +1010,20 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         background: Stack(
           fit: StackFit.expand,
           children: [
-            (project.mediaGallery?.images.first.isNotEmpty ?? false)
+            // ✅ Safely handle empty image list
+            (project.mediaGallery?.images.isNotEmpty ?? false)
                 ? CustomImage(
-                  type: CustomImageType.network,
-                  src: project.mediaGallery?.images.first ?? '',
-                  fit: BoxFit.cover,
-                )
+              type: CustomImageType.network,
+              src: project.mediaGallery!.images.first,
+              fit: BoxFit.cover,
+            )
                 : CustomImage(
-                  type: CustomImageType.network,
-                  src:
-                      'https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?cs=srgb&dl=pexels-binyaminmellish-186077.jpg&fm=jpg',
-                  fit: BoxFit.cover,
-                ),
+              type: CustomImageType.asset,
+              src: imageOfNotAvailable,
+              fit: BoxFit.cover,
+            ),
+
+            // Dark overlay
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -1024,6 +1033,8 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                 ),
               ),
             ),
+
+            // Project details
             Positioned(
               bottom: 16,
               left: 16,
@@ -1042,7 +1053,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                   const SizedBox(height: 4),
                   Text(
                     project.city,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: ColorRes.white,
                       fontSize: AppFontSizes.small,
                     ),
@@ -1057,32 +1068,18 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                   ),
                   Text(
                     'Last Updated : ${Formatter.formatDate(project.updatedAt)}',
-
                     style: const TextStyle(
                       color: ColorRes.white,
                       fontSize: AppFontSizes.small,
                     ),
                   ),
-                  // const SizedBox(height: 12),
-                  // SingleChildScrollView(
-                  //   scrollDirection: Axis.horizontal,
-                  //   child: Row(
-                  //     children: [
-                  //       _buildStatusChip(project.status, ColorRes.success),
-                  //       const SizedBox(width: 8),
-                  //       _buildStatusChip(
-                  //           project.propertyTypes, ColorRes.primary),
-                  //       const SizedBox(width: 8),
-                  //       _buildStatusChip(project.address, ColorRes.warning),
-                  //     ],
-                  //   ),
-                  // ),
                 ],
               ),
             ),
           ],
         ),
       ),
+
     );
   }
 
@@ -1851,16 +1848,18 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
             padding: EdgeInsets.zero,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
-              childAspectRatio: 0.84,
+              crossAxisCount: 3,
+              childAspectRatio: 0.99,
               crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
+              mainAxisSpacing: 1,
             ),
             itemCount: project.amenities.length,
             itemBuilder: (context, index) {
-              print("Project deatils ${project.amenities.map((e) => e)}");
 
-              return _buildAmenityItem(project.amenities[index], index);
+
+
+
+              return _buildAmenityItem(project.amenities[index].toLowerCase().replaceAll(" ", "_"), index);
             },
           ),
         ],
@@ -1869,32 +1868,36 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   }
 
   Widget _buildAmenityItem(String amenity, int index) {
+
+    log("build Amenities section method ${amenity}");
     final Map<String, String> amenityIcons = {
-      'Swimming Pool': AppSvgRes.swimming,
-      "Fire Safety": AppSvgRes.fire_extinguisher,
-      "CCTV": AppSvgRes.cctv,
-      "Club House": AppSvgRes.club,
-      "Gymnasium": AppSvgRes.gym,
-      "Children Play Area": AppSvgRes.playground,
-      "Power Backup": AppSvgRes.battery,
-      "Lift": AppSvgRes.elevator,
-      "Service Lift": AppSvgRes.elevator,
-      "Garden": AppSvgRes.garden,
-      "Ev Charging": AppSvgRes.dg,
-      "Wifi Connectivity": AppSvgRes.internet_connectivity,
-      "Covered Parking": AppSvgRes.covered_parking,
-      "Visitor Parking": AppSvgRes.visitor_parking,
-      "Maintenance Staff": AppSvgRes.maintenanace_staff,
-      "Meditation Area": AppSvgRes.meditation_area,
-      "MultiPurpose Hall": AppSvgRes.multi_purpose_hall,
-      "Solar Panel": AppSvgRes.solar_panel,
-      "Waste Disposal": AppSvgRes.waste_disposal,
-      "24x7 Security": AppSvgRes.security,
-      "Laundry Service": AppSvgRes.washing,
-      "Temple": AppSvgRes.hall,
-      "Jogging Track": AppSvgRes.sports,
-      "Amphitheatre Theater": AppSvgRes.home_theater,
+      'swimming_pool': AppSvgRes.swimming,
+      'gymnasium': AppSvgRes.gym,
+      'club_house': AppSvgRes.club,
+      'children_play_area': AppSvgRes.playground,
+      'multipurpose_hall': AppSvgRes.multi_purpose_hall,
+      'meditation_area': AppSvgRes.meditation_area,
+      'gardens': AppSvgRes.garden,
+      'jogging_track': AppSvgRes.jogging,
+      'amphitheatre': AppSvgRes.home_theater,
+      'temple': AppSvgRes.hall,
+      '24x7_security': AppSvgRes.security,
+      'cctv_surveillance': AppSvgRes.cctv,
+      'power_backup': AppSvgRes.battery,
+      'fire_safety': AppSvgRes.fire_extinguisher,
+      'covered_parking': AppSvgRes.covered_parking,
+      'visitor_parking': AppSvgRes.visitor_parking,
+      'lift': AppSvgRes.elevator,
+      'service_lift': AppSvgRes.elevator,
+      'waste_disposal': AppSvgRes.waste_disposal,
+      'solar_panels': AppSvgRes.solar_panel,
+      'ev_charging': AppSvgRes.dg,
+      'wi-fi_connectivity': AppSvgRes.internet_connectivity,
+      'maintenance_staff': AppSvgRes.maintenanace_staff,
+      'laundry_service': AppSvgRes.washing,
     };
+
+
 
     final List<Color> amenityColors = [
       ColorRes.blueColor,
@@ -1902,7 +1905,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       ColorRes.leadIndigoColor,
       ColorRes.orangeColor,
       ColorRes.leadTealColor,
-      ColorRes.lightpurple,
+      ColorRes.primary,
       ColorRes.purpleColor,
       ColorRes.green,
     ];
@@ -1925,7 +1928,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         ),
         const SizedBox(height: 8),
         Text(
-          amenity,
+          capitalizeEachWord(amenity),
           style: const TextStyle(
             fontSize: AppFontSizes.mini,
             fontWeight: AppFontWeights.medium,

@@ -551,6 +551,7 @@
 //
 // }
 
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
@@ -566,6 +567,7 @@ import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 import 'package:housing_flutter_app/data/network/builder/service/builder_service.dart';
 import 'package:housing_flutter_app/modules/builder/view/builder_dashboard.dart';
 import 'package:housing_flutter_app/utils/logger/app_logger.dart';
+import 'package:housing_flutter_app/widgets/location_permission/location_permission_method.dart';
 import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -604,6 +606,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       AddProjectModel(
         projectName: '',
         projectArea: 0,
+        buildingNames: {},
         projectSize: ProjectSize(totalBuildings: 0, totalUnits: 0),
         launchDate: DateTime.now(),
         possessionDate: DateTime.now(),
@@ -615,6 +618,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
                 name: '',
                 builtUpArea: 0,
                 carpetArea: 0,
+                buildingName: '',
                 price: 0,
                 platformFees: 0,
                 brokerCommission: 0,
@@ -646,7 +650,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
 
   late TextEditingController projectNameController;
   late TextEditingController projectAreaController;
-  late TextEditingController totalBuildingsController;
+  TextEditingController totalBuildingsController = TextEditingController();
   late TextEditingController totalUnitsController;
   late TextEditingController reraIdController;
   late TextEditingController addressController;
@@ -656,7 +660,9 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   late TextEditingController locationController;
   late TextEditingController brokerRageCommission;
   late TextEditingController platformFees;
+  final buildingNameControllers = <TextEditingController>[].obs;
   final bool isBuilderView;
+  var selectedBuilding = ''.obs;
 
   ProjectWizardController({required this.isBuilderView});
 
@@ -664,6 +670,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   void onInit() {
     super.onInit();
     getCity();
+
     if (isBuilderView) {
       print('isBuilderView');
       setUserIdFilter().then((_) => loadInitial());
@@ -674,6 +681,60 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       // loadTopProject();// buyer view, no filter
     }
     assignData();
+  }
+
+  void generateBuildingFields(String passTotalBuilding) {
+    final totalBuildings = int.tryParse(passTotalBuilding) ?? 0;
+
+    // Only regenerate if needed
+    if (buildingNameControllers.length != totalBuildings) {
+      // Dispose old controllers
+      for (final c in buildingNameControllers) {
+        c.dispose();
+      }
+      buildingNameControllers.clear();
+
+      // Create new ones
+      for (int i = 0; i < totalBuildings; i++) {
+        buildingNameControllers.add(TextEditingController());
+      }
+    }
+  }
+
+  /*  void saveBuildingNames() {
+    final map = <String, String>{};
+    for (int i = 0; i < buildingNameControllers.length; i++) {
+      final name = buildingNameControllers[i].text.trim();
+      map["buildingName#${i + 1}"] = name.isEmpty ? "Building ${i + 1}" : name;
+    }
+
+    project.update((p) {
+      p!.buildingNames = map;
+    });
+  }*/
+  void saveBuildingNames() {
+    final map = <String, String>{};
+
+    for (int i = 0; i < buildingNameControllers.length; i++) {
+      final name = buildingNameControllers[i].text.trim();
+      final key = "buildingName#${i + 1}";
+      final value = name.isEmpty ? "Building ${i + 1}" : name;
+
+      map[key] = value;
+
+      // 🧾 Log each building name as it’s processed
+      log("🏢 Saved: $key = $value");
+    }
+
+    project.update((p) {
+      p!.buildingNames = map;
+    });
+
+    // 🧠 Final summary log
+    log("✅ All building names updated: ${map.toString()}");
+    log(
+      "📦 Project model now has buildingNames: ${project.value.buildingNames}",
+    );
   }
 
   Future<void> assignData() async {
@@ -695,11 +756,21 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     stateController = TextEditingController(text: project.value.state);
     zipCodeController = TextEditingController(text: project.value.zipCode);
     locationController = TextEditingController(text: project.value.location);
+    generateBuildingFields(project.value.projectSize.totalBuildings.toString());
+    for (int i = 0; i < project.value.projectSize.totalBuildings; i++) {
+      buildingNameControllers[i].text =
+          project.value.buildingNames?["buildingName#${i + 1}"] ?? '';
+    }
     brokerRageCommission = TextEditingController(
       text:
           project.value.configurations.first.variants.first.brokerCommission
               .toString(),
     );
+    selectedListOfAmenities.value = List<String>.from(project.value.amenities);
+    builderPropertyType.value = project.value.propertyTypes ?? '';
+    selectedBuilding.value =
+        project.value.configurations.first.variants.first.buildingName ?? '';
+    selectedBuilding.refresh();
     selectedPropertyStatus.value = project.value.status;
     platformFees = TextEditingController(
       text:
@@ -936,86 +1007,92 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   }
 
   Future<void> builderImagePicker() async {
-    try {
-      List<XFile> files = await picker.pickMultiImage(
-        imageQuality: 80,
-        maxWidth: 1024,
-        maxHeight: 1024,
-        limit: 5,
-      );
+    final isGranted = await requestGalleryPermission();
+    if (isGranted) {
+      try {
+        List<XFile> files = await picker.pickMultiImage(
+          imageQuality: 80,
+          maxWidth: 1024,
+          maxHeight: 1024,
+          limit: 5,
+        );
 
-      if (files.isNotEmpty) {
-        if (project.value.imageList.length + files.length > 5) {
-          NesticoPeSnackBar.showAwesomeSnackbar(
-            title: 'Limit Exceeded',
-            message: 'You can only select up to 5 images in total',
-            contentType: ContentType.failure,
-          );
-          return;
-        }
-
-        project.update((p) {
-          if (p == null) return;
-          for (var file in files) {
-            p.imageList.add(file.path);
-            print('image added ${file.path}');
+        if (files.isNotEmpty) {
+          if (project.value.imageList.length + files.length > 5) {
+            NesticoPeSnackBar.showAwesomeSnackbar(
+              title: 'Limit Exceeded',
+              message: 'You can only select up to 5 images in total',
+              contentType: ContentType.failure,
+            );
+            return;
           }
-        });
-        project.refresh();
 
+          project.update((p) {
+            if (p == null) return;
+            for (var file in files) {
+              p.imageList.add(file.path);
+              print('image added ${file.path}');
+            }
+          });
+          project.refresh();
+
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Success',
+            message: '${files.length} image(s) added',
+            contentType: ContentType.success,
+          );
+        }
+      } catch (e) {
         NesticoPeSnackBar.showAwesomeSnackbar(
-          title: 'Success',
-          message: '${files.length} image(s) added',
-          contentType: ContentType.success,
+          title: "Error",
+          message: 'Failed to pick images: $e',
+          contentType: ContentType.failure,
         );
       }
-    } catch (e) {
-      NesticoPeSnackBar.showAwesomeSnackbar(
-        title: "Error",
-        message: 'Failed to pick images: $e',
-        contentType: ContentType.failure,
-      );
     }
   }
 
   Future<void> builderVideoPicker() async {
-    try {
-      List<XFile> videos = await picker.pickMultiVideo(
-        limit: 5,
-        maxDuration: Duration(seconds: 60),
-      );
+    final isGranted = await requestGalleryPermission();
+    if (isGranted) {
+      try {
+        List<XFile> videos = await picker.pickMultiVideo(
+          limit: 5,
+          maxDuration: Duration(seconds: 60),
+        );
 
-      if (videos.isNotEmpty) {
-        if (project.value.videoList.length + videos.length > 5) {
-          NesticoPeSnackBar.showAwesomeSnackbar(
-            title: "Limit Exceeded",
-            message: 'You can only select up to 5 videos in total',
-            contentType: ContentType.failure,
-          );
-          return;
-        }
-
-        project.update((p) {
-          if (p == null) return;
-          for (var video in videos) {
-            p.videoList.add(video.path);
-            print('Video added: ${video.path}');
+        if (videos.isNotEmpty) {
+          if (project.value.videoList.length + videos.length > 5) {
+            NesticoPeSnackBar.showAwesomeSnackbar(
+              title: "Limit Exceeded",
+              message: 'You can only select up to 5 videos in total',
+              contentType: ContentType.failure,
+            );
+            return;
           }
-        });
-        project.refresh();
 
+          project.update((p) {
+            if (p == null) return;
+            for (var video in videos) {
+              p.videoList.add(video.path);
+              print('Video added: ${video.path}');
+            }
+          });
+          project.refresh();
+
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: "Success",
+            message: '${videos.length} video(s) added',
+            contentType: ContentType.success,
+          );
+        }
+      } catch (e) {
         NesticoPeSnackBar.showAwesomeSnackbar(
-          title: "Success",
-          message: '${videos.length} video(s) added',
-          contentType: ContentType.success,
+          title: "Error",
+          message: 'Failed to pick videos: $e',
+          contentType: ContentType.failure,
         );
       }
-    } catch (e) {
-      NesticoPeSnackBar.showAwesomeSnackbar(
-        title: "Error",
-        message: 'Failed to pick videos: $e',
-        contentType: ContentType.failure,
-      );
     }
   }
 
@@ -1300,6 +1377,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
           carpetArea: 0,
           price: 0,
           totalUnits: 0,
+          buildingName: '',
           availableUnits: 0,
           brokerCommission: 0,
           platformFees: 0,
@@ -1340,6 +1418,10 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
 
   Future<void> createBuilderProject() async {
     try {
+      final jsonBody = jsonEncode(project.value.toJson());
+      log(
+        "📦 Final Payload:\n${const JsonEncoder.withIndent('  ').convert(project.value.toJson())}",
+      );
       final success = await _builderService.createProject(
         projectData: await _buildProjectPayload(),
         images: project.value.imageList.map((path) => File(path)).toList(),
@@ -1427,6 +1509,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     return AddProjectModel(
       projectName: p.projectName,
       projectArea: p.projectArea,
+      buildingNames: p.buildingNames,
       projectSize: ProjectSize(
         totalBuildings: p.projectSize.totalBuildings,
         totalUnits: p.projectSize.totalUnits,
@@ -1565,6 +1648,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
               : p.videoList;
       p.projectName = updatedData.projectName;
       p.projectArea = updatedData.projectArea;
+      p.buildingNames = updatedData.buildingNames;
       p.projectSize = ProjectSize(
         totalBuildings: updatedData.projectSize.totalBuildings,
         totalUnits: updatedData.projectSize.totalUnits,
@@ -1713,6 +1797,11 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     try {
       final projectData = project.value.toJson();
 
+      final jsonBody = jsonEncode(project.value.toJson());
+      log(
+        "📦 Final Payload:\n${const JsonEncoder.withIndent('  ').convert(project.value.toJson())}",
+      );
+
       // TODO: Add API call here
       print('Saving Project Data: $projectData');
 
@@ -1750,6 +1839,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     project.value = AddProjectModel(
       projectName: '',
       projectArea: 0,
+      buildingNames: {},
       projectSize: ProjectSize(totalBuildings: 1, totalUnits: 1),
       launchDate: DateTime.now(),
       possessionDate: DateTime.now(),
@@ -1760,6 +1850,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
             ProjectVariant(
               name: '',
               builtUpArea: 0,
+              buildingName: '',
               carpetArea: 0,
               price: 0,
               pricePerSqFt: 0,
@@ -1805,7 +1896,9 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     // Refresh observables
     project.refresh();
     uploadBrocherPath.refresh();
-
+    for (final c in buildingNameControllers) {
+      c.clear();
+    }
     print('✅ Form has been reset successfully');
   }
 }

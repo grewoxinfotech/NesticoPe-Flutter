@@ -11,6 +11,7 @@ import 'package:housing_flutter_app/data/network/builder/model/builder_model.dar
 import 'package:housing_flutter_app/modules/builder/controller/project_controller.dart';
 import 'package:housing_flutter_app/modules/builder/view/project_detail/project_detail.dart';
 import 'package:housing_flutter_app/utils/logger/app_logger.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../../app/constants/size_manager.dart';
 import '../../../app/manager/property/property_pricemanager.dart';
@@ -18,6 +19,7 @@ import '../../../app/manager/property_highlight_manager.dart';
 
 // import '../../../data/network/builder/model/builder_projectModel.dart';
 import '../../../data/database/secure_storage_service.dart';
+import '../../../utils/global.dart';
 import '../../../widgets/bar/filter_bar/filter_chip_bar.dart';
 import '../../propert_detail/view/property_details.dart';
 import '../../reseller/view/listing/property_listing.dart';
@@ -351,11 +353,13 @@ class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
                     controller.items.isEmpty) {
                   return RefreshIndicator(
                     onRefresh: controller.refreshProjects,
-                    child: ListView(
-                      children: const [
-                        SizedBox(height: 100),
-                        Center(child: Text('No projects found')),
-                      ],
+                    child: Center(
+                      child: ListView(
+                        children: const [
+                          SizedBox(height: 100),
+                          Center(child: Text('No projects found')),
+                        ],
+                      ),
                     ),
                   );
                 }
@@ -389,7 +393,7 @@ class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
                                   (data.mediaGallery?.images.isNotEmpty ??
                                           false)
                                       ? data.mediaGallery!.images.first
-                                      : IMGRes.home3,
+                                      : '',
                               projectName: data.projectName ?? 'N/A',
                               location: data.address ?? 'Not specified',
                               price: data.getPriceRange(),
@@ -771,7 +775,12 @@ class BuilderProjectCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = forHome ?Get.find<ProjectWizardController>() :Get.find<ProjectWizardController>(tag: "builder");
+    final controller =
+        forHome
+            ? Get.find<ProjectWizardController>()
+            : Get.find<ProjectWizardController>(tag: "builder");
+
+    log("Project Card Build ${project.toJson()}");
     // final propertyController = Get.put(PropertyController());
     final PropertyFavoriteController favoriteController =
         Get.find<PropertyFavoriteController>();
@@ -797,21 +806,46 @@ class BuilderProjectCard extends StatelessWidget {
             // Image Section
             Stack(
               children: [
-                Image.network(
-                  imageUrl ??
-                      'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg',
-                  height: 140,
-                  width: width,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Image.network(
-                      'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg',
-                      height: 140,
-                      width: width,
-                      fit: BoxFit.cover,
-                    );
-                  },
-                ),
+                if (imageUrl != null && imageUrl!.trim().isNotEmpty) ...[
+                  Image.network(
+                    (imageUrl != null && imageUrl!.trim().isNotEmpty)
+                        ? imageUrl!
+                        : 'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg',
+                    height: 140,
+                    width: width,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        imageOfNotAvailable,
+                        height: 140,
+                        width: width,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+
+                      // ✅ Add shimmer effect while loading
+                      return Shimmer.fromColors(
+                        baseColor: Colors.grey.shade300,
+                        highlightColor: Colors.grey.shade100,
+                        child: Container(
+                          height: 140,
+                          width: width,
+                          color: Colors.white,
+                        ),
+                      );
+                    },
+                  ),
+                ] else ...[
+                  Image.asset(
+                    imageOfNotAvailable,
+                    height: 140,
+                    width: width,
+                    fit: BoxFit.cover,
+                  ),
+                ],
+
                 Positioned.fill(
                   child: Container(
                     decoration: BoxDecoration(

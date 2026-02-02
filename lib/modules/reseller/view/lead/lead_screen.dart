@@ -625,7 +625,9 @@ class CommonLeadScreen extends StatefulWidget {
 
 class _CommonLeadScreenState extends State<CommonLeadScreen> {
   late final LeadController leadController;
-  final DashboardController dashboardController = Get.find();
+  final DashboardController dashboardController = Get.put(DashboardController());
+
+
 
   final LeadPropertyInquiryController propertyInquiryController = Get.put(
     LeadPropertyInquiryController(),
@@ -653,8 +655,13 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
     leadController.items.clear();
     leadController.filters.clear();
 
+
     /// Apply entity filter (property / project)
+    ///
     leadController.currentPropertyFilterId.value = widget.entityId;
+
+    log("Controller Lead Project ${leadController.currentPropertyFilterId.value}   ==================${widget.entityId}");
+
 
     /// Apply dashboard filters
     if (dashboardController.selectedLeadFilters.isNotEmpty) {
@@ -665,6 +672,7 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
     }
 
     await leadController.refreshList();
+    await leadController.loadInitial();
   }
 
   @override

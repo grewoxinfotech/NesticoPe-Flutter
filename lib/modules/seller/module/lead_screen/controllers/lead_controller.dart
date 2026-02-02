@@ -815,6 +815,7 @@
 // }
 
 import 'dart:developer';
+import 'dart:math' hide log;
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -827,6 +828,7 @@ import '../../../../../app/constants/color_res.dart';
 import '../../../../../data/database/secure_storage_service.dart';
 import '../../../../../data/network/lead/lead_service.dart';
 import '../../../../../data/network/property/services/property_service.dart';
+import '../../../../../utils/logger/app_logger.dart';
 import '../../../../../widgets/messages/snack_bar.dart';
 import '../../../../property/controllers/property_controller.dart';
 
@@ -917,7 +919,7 @@ class LeadController extends PaginatedController<LeadItem> {
     }
     fetchResellerAssignProperty();
     loadVariables();
-    loadInitial();
+    // loadInitial();
   }
 
   // ... [Keep existing fet chPropertyById and fetchResellerAssignProperty] ...
@@ -973,6 +975,13 @@ class LeadController extends PaginatedController<LeadItem> {
           propertyId: currentPropertyFilterId.value!,
           filters: filters.value,
         );
+        AppLogger.structured(
+          "Data Change from here :",
+          response.items.map((e) => e.toJson()),
+        );
+
+        // refreshList();
+        // items.refresh();
 
         if (response.items.isNotEmpty) {
           for (var item in response.items) {

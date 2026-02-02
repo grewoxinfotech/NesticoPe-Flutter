@@ -14,6 +14,7 @@ import 'package:video_thumbnail/video_thumbnail.dart';
 // import '../../../data/validators/project_validators.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
+import '../../../../widgets/New folder/inputs/dropdown_field.dart';
 import '../../controller/builder_form_controller.dart';
 
 // import '../../controllers/project_wizard_controller.dart';
@@ -39,6 +40,8 @@ class StepConfigurations extends GetView<ProjectWizardController> {
       final p = controller.project.value;
       log("Logger of Total Unit ${controller.totalUnitsController.text}");
       log("Logger of Total Unit ${p.projectSize.totalUnits}");
+      log("Logger of Total Unit ${p.configurations.map((e) => e.variants.map((e) => e.toJson(),),)}");
+
       return Form(
         key: formKey,
         // autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -973,6 +976,46 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                       ],
                                     ),
                                     const SizedBox(height: 12),
+                                  Obx(() {
+                                    final buildingMap = controller.project.value.buildingNames ?? {};
+                                    final buildingList = buildingMap.values.toList();
+
+                                    if (buildingList.isEmpty) return const SizedBox();
+
+                                    return NesticoPeDropdownField<String>(
+                                      title: "Select Building",
+                                      fontsize: 12,
+                                      fontWight: AppFontWeights.medium,
+                                      darkText: true,
+                                      value: v.buildingName ?? '',
+                                      hintText: "Choose a building",
+                                      prefixIcon: Icons.home_work_outlined,
+                                      items: buildingList.map((buildingName) {
+                                        return DropdownMenuItem<String>(
+                                          value: buildingName,
+                                          child: Text(buildingName),
+                                        );
+                                      }).toList(),
+                                      onChanged: (value) {
+                                        if (value != null) {
+                                          controller.project.update(
+                                                  (x) => x!.configurations[ci].variants[vi].buildingName = (value ?? '') ,
+                                          );
+
+
+                                          log("Selected Building: $value");
+                                        }
+                                      },
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please select a building';
+                                        }
+                                        return null;
+                                      },
+                                    );
+                                  }),
+
+                                  const SizedBox(height: 12),
                                     CommonTextField(
                                       label: 'Specifications (comma separated)',
 

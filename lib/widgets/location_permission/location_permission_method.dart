@@ -62,7 +62,26 @@ Future<bool> requestGalleryPermission() async {
 
   return false;
 }
+Future<bool> requestStoragePermission() async {
+  // Check current permission status
+  final status = await Permission.storage.status;
 
+  if (status.isGranted) {
+    return true; // already granted
+  }
+
+  // Request permission
+  final result = await Permission.storage.request();
+
+  if (result.isGranted) {
+    return true;
+  } else if (result.isPermanentlyDenied) {
+    // Open app settings if permission is permanently denied
+    await openAppSettings();
+  }
+
+  return false;
+}
 
 Future<bool> requestCameraPermission() async {
   // Check current permission status

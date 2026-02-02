@@ -726,6 +726,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/modules/add_property/view/create_property.dart';
+import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../app/manager/icon_manager.dart';
 import '../../../../app/services/string_manager.dart';
@@ -867,7 +868,7 @@ class StepAdditional extends GetView<ProjectWizardController> {
                                             ),
                                             const SizedBox(height: 4),
                                             Text(
-                                              e.title,
+                                              capitalizeEachWord(e.title),
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
                                                 color:

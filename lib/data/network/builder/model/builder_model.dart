@@ -477,6 +477,7 @@ class AddProjectModel {
   String projectName;
   double projectArea;
   ProjectSize projectSize;
+  Map<String, dynamic>? buildingNames;
   DateTime launchDate;
   DateTime possessionDate;
   List<ProjectConfiguration> configurations;
@@ -510,10 +511,11 @@ class AddProjectModel {
     required this.reraId,
     this.propertyTypes,
     this.status = 'upcoming',
+    required this.buildingNames,
     required this.address,
     required this.city,
     required this.state,
-    required this.zipCode,
+    this.zipCode,
     required this.location,
     this.nearbyLocations = const [],
     this.amenities = const [],
@@ -527,210 +529,41 @@ class AddProjectModel {
     this.projectContactInfo,
   });
 
-  Map<String, dynamic> toJson() => {
-    'projectName': projectName,
-    'projectArea': projectArea,
-    'projectSize': projectSize.toJson(),
-    'launchDate': launchDate.toIso8601String(),
-    'possessionDate': possessionDate.toIso8601String(),
-    'reraId': reraId,
-    'propertyTypes': propertyTypes,
-    'status': status,
-    'address': address,
-    'city': city,
-    'state': state,
-    'zipCode': zipCode,
-    'location': location,
-    'configurations': configurations.map((c) => c.toJson()).toList(),
-    'nearbyLocations': nearbyLocations,
-    'amenities':
-        amenities.map((e) => e.toLowerCase().replaceAll(" ", "_")).toList(),
-    'projectHighlights': projectHighlights,
-    'mediaGallery': mediaGallery?.toJson(),
-    'imageList': imageList,
-    'videoList': videoList,
-    'documentList': documentList,
-    'brochure': brochure,
-    'pdfPath': pdfPath,
-    'projectContactInfo': projectContactInfo?.toJson(),
-  };
+  Map<String, dynamic> toJson() {
+    return {
+      'projectName': projectName,
+      'projectArea': projectArea,
+      'projectSize': projectSize.toJson(),
+      'buildingNames': buildingNames ?? {}, // ✅ Always JSON object
+      'launchDate': launchDate.toIso8601String(),
+      'possessionDate': possessionDate.toIso8601String(),
+      'reraId': reraId,
+      'propertyTypes': propertyTypes,
+      'status': status,
+      'address': address,
+      'city': city,
+      'state': state,
+      'zipCode': zipCode,
+      'location': location,
+      'configurations': configurations.map((c) => c.toJson()).toList(),
+      'nearbyLocations': nearbyLocations,
+      'amenities': amenities
+          .map((e) => e.toLowerCase().replaceAll(" ", "_"))
+          .toList(),
+      'projectHighlights': projectHighlights,
+      'mediaGallery': mediaGallery?.toJson(),
+      'imageList': imageList,
+      'videoList': videoList,
+      'documentList': documentList,
+      'brochure': brochure,
+      'pdfPath': pdfPath,
+      'projectContactInfo': projectContactInfo?.toJson(),
+    };
+  }
 }
 
-// /// ===============================
-// /// 🔹 MODEL FOR FETCHING PROJECT (used for GET/List/Detail)
-// /// ===============================
-//
-// class ProjectItem {
-//   final String id;
-//   final String projectId;
-//   final String projectName;
-//   final String projectArea;
-//   final ProjectSize? projectSize;
-//   final String? launchDate;
-//   final String? possessionDate;
-//   final List<ProjectConfiguration> configuration;
-//   final String reraId;
-//   final String propertyTypes;
-//   final ProjectContactInfo? projectContactInfo;
-//   final String status;
-//   final String address;
-//   final String city;
-//   final String state;
-//   final String zipCode;
-//   final String? location;
-//   final List<NearbyLocation> nearbyLocations;
-//
-//   final List<String> amenities;
-//   final List<String> projectHighlights;
-//   final MediaGallery? mediaGallery;
-//   final List<Brochure> brochures;
-//   final bool isVerified;
-//   final bool isActive;
-//   final String? createdAt;
-//   final String? updatedAt;
-//
-//   ProjectItem({
-//     required this.id,
-//     required this.projectId,
-//     required this.projectName,
-//     required this.projectArea,
-//     required this.projectSize,
-//     required this.launchDate,
-//     required this.possessionDate,
-//     required this.configuration,
-//     required this.reraId,
-//     required this.propertyTypes,
-//     required this.projectContactInfo,
-//     required this.status,
-//     required this.address,
-//     required this.city,
-//     required this.state,
-//     required this.zipCode,
-//     required this.location,
-//     required this.nearbyLocations,
-//     required this.amenities,
-//     required this.projectHighlights,
-//     required this.mediaGallery,
-//     required this.brochures,
-//     required this.isVerified,
-//     required this.isActive,
-//     required this.createdAt,
-//     required this.updatedAt,
-//   });
-//
-//   factory ProjectItem.fromJson(Map<String, dynamic> json) => ProjectItem(
-//     id: json['id'] ?? '',
-//     projectId: json['projectId'] ?? '',
-//     projectName: json['projectName'] ?? '',
-//     projectArea: json['projectArea']?.toString() ?? '',
-//     projectSize:
-//         json['projectSize'] != null
-//             ? ProjectSize.fromJson(json['projectSize'])
-//             : null,
-//     launchDate: json['launchDate'],
-//     possessionDate: json['possessionDate'],
-//     configuration:
-//         (json['configurations'] as List<dynamic>? ?? [])
-//             .map((v) => ProjectConfiguration.fromJson(v))
-//             .toList(),
-//     reraId: json['reraId'] ?? '',
-//     propertyTypes: json['propertyTypes'] ?? '',
-//     projectContactInfo:
-//         json['projectContactInfo'] != null
-//             ? ProjectContactInfo.fromJson(json['projectContactInfo'])
-//             : null,
-//     status: json['status'] ?? '',
-//     address: json['address'] ?? '',
-//     city: json['city'] ?? '',
-//     state: json['state'] ?? '',
-//     zipCode: json['zipCode'] ?? '',
-//     location: json['location'],
-//     nearbyLocations: (json['nearbyLocations'] as List ?? [])
-//         .map((e) => NearbyLocation.fromJson(e))
-//         .toList(),
-//
-//     amenities: List<String>.from(json['amenities'] ?? []),
-//     projectHighlights: List<String>.from(json['projectHighlights'] ?? []),
-//     mediaGallery:
-//         json['mediaGallery'] != null
-//             ? MediaGallery.fromJson(json['mediaGallery'])
-//             : null,
-//     brochures:
-//         (json['brochures'] as List<dynamic>? ?? [])
-//             .map((e) => Brochure.fromJson(e))
-//             .toList(),
-//     isVerified: json['isVerified'] ?? false,
-//     isActive: json['isActive'] ?? false,
-//     createdAt: json['createdAt'],
-//     updatedAt: json['updatedAt'],
-//   );
-//
-//   Map<String, dynamic> toJson() => {
-//     'id': id,
-//     'projectId': projectId,
-//     'projectName': projectName,
-//     'projectArea': projectArea,
-//     'projectSize': projectSize?.toJson(),
-//     'launchDate': launchDate,
-//     'possessionDate': possessionDate,
-//     'configurations': configuration.map((v) => v.toJson()).toList(),
-//     'reraId': reraId,
-//     'propertyTypes': propertyTypes,
-//     'projectContactInfo': projectContactInfo?.toJson(),
-//     'status': status,
-//     'address': address,
-//     'city': city,
-//     'state': state,
-//     'zipCode': zipCode,
-//     'location': location,
-//     'nearbyLocations': nearbyLocations.map((e) => e.toJson()).toList(),
-//
-//     'amenities': amenities,
-//     'projectHighlights': projectHighlights,
-//     'mediaGallery': mediaGallery?.toJson(),
-//     'brochures': brochures.map((e) => e.toJson()).toList(),
-//     'isVerified': isVerified,
-//     'isActive': isActive,
-//     'createdAt': createdAt,
-//     'updatedAt': updatedAt,
-//   };
-//
-// }
-// extension ProjectItemPriceRange on ProjectItem {
-//   String getPriceRange() {
-//     final prices = configuration
-//         .expand((config) => config.variants)
-//         .map((variant) => variant.price)
-//         .where((p) => p > 0)
-//         .toList();
-//
-//     if (prices.isEmpty) return "Price not available";
-//
-//     final minPrice = prices.reduce((a, b) => a < b ? a : b);
-//     final maxPrice = prices.reduce((a, b) => a > b ? a : b);
-//
-//     return minPrice == maxPrice
-//         ? Formatter.formatPrice(minPrice)
-//         : "${Formatter.formatPrice(minPrice)} - ${Formatter.formatNumber(maxPrice)}";
-//   }
-// }
-//
-// class NearbyLocation {
-//   final String name;
-//   final String distance;
-//
-//   NearbyLocation({required this.name, required this.distance});
-//
-//   factory NearbyLocation.fromJson(Map<String, dynamic> json) => NearbyLocation(
-//     name: json['name'] ?? '',
-//     distance: json['distance'] ?? '',
-//   );
-//
-//   Map<String, dynamic> toJson() => {
-//     'name': name,
-//     'distance': distance,
-//   };
-// }
+
+
 
 /// ===============================
 /// 🔹 COMMON MODELS
@@ -896,88 +729,7 @@ class ScoreDetails {
   };
 }
 
-/// ===============================
-/// 🔹 VARIANTS / CONFIGURATIONS
-/// ===============================
 
-// class ProjectVariant {
-//   String name;
-//   double builtUpArea;
-//   double carpetArea;
-//   double price;
-//   double? pricePerSqFt;
-//   int totalUnits;
-//   double? platformFees;
-//   double? brokerCommission;
-//
-//   int availableUnits;
-//   List<String> specifications;
-//   List<String> images;
-//   List<String> videos;
-//   List<String> models;
-//   String? threeDModel;
-//   String? variantId;
-//
-//   ProjectVariant({
-//     required this.name,
-//     required this.builtUpArea,
-//     required this.carpetArea,
-//     this.platformFees,
-//     this.brokerCommission,
-//
-//     required this.price,
-//     this.pricePerSqFt,
-//     required this.totalUnits,
-//     required this.availableUnits,
-//     this.specifications = const [],
-//     this.images = const [],
-//     this.videos = const [],
-//     this.models = const [],
-//     this.threeDModel,
-//     this.variantId,
-//   });
-//
-//   factory ProjectVariant.fromJson(Map<String, dynamic> json) {
-//     final media = json['variantMedia'] ?? {};
-//     return ProjectVariant(
-//       name: json['name'] ?? '',
-//       builtUpArea: (json['builtUpArea'] ?? 0).toDouble(),
-//       platformFees: (json['platformFees'] ?? 0).toDouble(),
-//       brokerCommission: (json['brokerCommission'] ?? 0).toDouble(),
-//
-//       carpetArea: (json['carpetArea'] ?? 0).toDouble(),
-//       price: (json['price'] ?? 0).toDouble(),
-//       pricePerSqFt: json['pricePerSqFt']?.toDouble(),
-//       totalUnits: json['totalUnits'] ?? 0,
-//       availableUnits: json['availableUnits'] ?? 0,
-//       specifications: List<String>.from(json['specifications'] ?? []),
-//       images: List<String>.from(media['images'] ?? json['images'] ?? []),
-//       videos: List<String>.from(media['videos'] ?? json['videos'] ?? []),
-//       models: List<String>.from(media['models'] ?? []),
-//       threeDModel: json['threeDModel'],
-//       variantId: json['variantId'],
-//     );
-//   }
-//
-//   Map<String, dynamic> toJson() => {
-//     'name': name,
-//     'builtUpArea': builtUpArea,
-//     'carpetArea': carpetArea,
-//     'price': price,
-//     'pricePerSqFt': pricePerSqFt,
-//     'totalUnits': totalUnits,
-//     'availableUnits': availableUnits,
-//     'specifications': specifications,
-//     'platformFees': platformFees,
-//     'brokerCommission': brokerCommission,
-//
-//     'images': images,
-//     'videos': videos,
-//     'models': models,
-//     'threeDModel': threeDModel,
-//     'variantId': variantId,
-//   };
-// }
 
 class ProjectVariant {
   String name;
@@ -988,6 +740,7 @@ class ProjectVariant {
   int totalUnits;
   int availableUnits;
   double? platformFees;
+  String? buildingName;
   double? brokerCommission;
 
   List<String> specifications;
@@ -1001,6 +754,8 @@ class ProjectVariant {
     required this.name,
     required this.builtUpArea,
     required this.carpetArea,
+    required this.buildingName,
+
     required this.price,
     this.pricePerSqFt,
     required this.totalUnits,
@@ -1020,6 +775,8 @@ class ProjectVariant {
       name: json['name'] ?? '',
       builtUpArea: (json['builtUpArea'] ?? 0).toDouble(),
       carpetArea: (json['carpetArea'] ?? 0).toDouble(),
+      buildingName: json['buildingName'] ?? '',
+
       price: (json['price'] ?? 0).toDouble(),
       pricePerSqFt:
           json['pricePerSqFt'] != null
@@ -1060,6 +817,7 @@ class ProjectVariant {
     'totalUnits': totalUnits,
     'availableUnits': availableUnits,
     'platformFees': platformFees,
+    'buildingName': buildingName,
     'brokerCommission': brokerCommission,
     'specifications': specifications,
     'images': images,
@@ -1070,26 +828,7 @@ class ProjectVariant {
   };
 }
 
-// class ProjectConfiguration {
-//   int bhk;
-//   List<ProjectVariant> variants;
-//
-//   ProjectConfiguration({required this.bhk, this.variants = const []});
-//
-//   factory ProjectConfiguration.fromJson(Map<String, dynamic> json) =>
-//       ProjectConfiguration(
-//         bhk: json['bhk'] ?? 0,
-//         variants:
-//             (json['variants'] as List<dynamic>? ?? [])
-//                 .map((v) => ProjectVariant.fromJson(v))
-//                 .toList(),
-//       );
-//
-//   Map<String, dynamic> toJson() => {
-//     'bhk': bhk,
-//     'variants': variants.map((v) => v.toJson()).toList(),
-//   };
-// }
+
 
 class ProjectConfiguration {
   int bhk;
@@ -1113,16 +852,17 @@ class ProjectConfiguration {
   };
 }
 
-/// ===============================
-/// 🔹 MODEL FOR FETCHING PROJECT
-/// ===============================
+
 
 class ProjectItem {
   final String id;
   final String projectId;
   final String projectName;
   final String projectArea;
+  final Map<String, dynamic>? buildingNames;
   final ProjectSize? projectSize;
+
+
   final double? performanceScorePercent;
 
   final SizeRange? sizeRange;
@@ -1176,6 +916,7 @@ class ProjectItem {
     required this.id,
     required this.projectId,
     required this.projectName,
+    required this.buildingNames,
     required this.projectArea,
     required this.projectSize,
     this.sizeRange,
@@ -1229,6 +970,7 @@ class ProjectItem {
   factory ProjectItem.fromJson(Map<String, dynamic> json) => ProjectItem(
     id: json['id'] ?? '',
     projectId: json['projectId'] ?? '',
+    buildingNames: parseBuildingNames(json['buildingNames']),
     projectName: json['projectName'] ?? '',
     projectArea: json['projectArea']?.toString() ?? '',
     projectSize:
@@ -1319,6 +1061,7 @@ class ProjectItem {
     'projectArea': projectArea,
     'projectSize': projectSize?.toJson(),
     'sizeRange': sizeRange?.toJson(),
+    'buildingNames': buildingNames,
     'launchDate': launchDate,
     'possessionDate': possessionDate,
     'configurations': configuration.map((v) => v.toJson()).toList(),
@@ -1367,6 +1110,24 @@ class ProjectItem {
     'scoreBreakdown': scoreBreakdown?.toJson(),
   };
 }
+Map<String, String>? parseBuildingNames(dynamic value) {
+  if (value == null) return {};
+  if (value is Map) {
+    // ✅ Correct type
+    return value.map((k, v) => MapEntry(k.toString(), v.toString()));
+  } else if (value is List) {
+    // ✅ Convert List to Map
+    return {
+      for (int i = 0; i < value.length; i++)
+        "buildingName#${i + 1}": value[i].toString(),
+    };
+  } else if (value is String && value.isNotEmpty) {
+    // ⚠️ If backend sent a plain string (bad format), treat as single name
+    return {"buildingName#1": value};
+  }
+  // 🟢 Default empty map
+  return {};
+}
 
 extension ProjectItemPriceRange on ProjectItem {
   String getPriceRange() {
@@ -1410,6 +1171,7 @@ extension ProjectItemMapper on ProjectItem {
       id: id,
       projectName: projectName,
       projectArea: double.tryParse(projectArea) ?? 0.0,
+      buildingNames: buildingNames??{},
 
       projectSize: projectSize ?? ProjectSize(totalBuildings: 0, totalUnits: 0),
 
@@ -1436,6 +1198,7 @@ extension ProjectItemMapper on ProjectItem {
                       carpetArea: v.carpetArea,
                       price: v.price,
                       pricePerSqFt: v.pricePerSqFt,
+                      buildingName: v.buildingName,
                       totalUnits: v.totalUnits,
                       availableUnits: v.availableUnits,
                       platformFees: v.platformFees,

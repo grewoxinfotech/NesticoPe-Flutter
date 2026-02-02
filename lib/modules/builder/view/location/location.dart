@@ -109,7 +109,7 @@ class StepLocation extends GetView<ProjectWizardController> {
                       "Search City",
                       Icons.search,
                       controller.cityController,
-                      isEnable: false,
+                      isEnable: true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please select a city';
@@ -180,7 +180,7 @@ class StepLocation extends GetView<ProjectWizardController> {
                 "Search Locality",
                 Icons.area_chart_outlined,
                 controller.locationController,
-                isEnable: false,
+                isEnable: true,
 
                 validator: (value) {
                   if (value == null || value.isEmpty) {

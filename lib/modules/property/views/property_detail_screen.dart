@@ -4456,6 +4456,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        
                         const TitleWithViewAll(title: 'Limited Time Offer!'),
                         const SizedBox(height: 8),
 
@@ -6890,6 +6891,7 @@ class StatCard extends StatelessWidget {
                 const SizedBox(width: 4),
               ],
               buildCommonText(
+                
                 value,
                 AppFontSizes.extraSmall,
                 AppFontWeights.semiBold,

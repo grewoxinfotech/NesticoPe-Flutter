@@ -778,7 +778,6 @@ class _ContractorServicesCard extends StatelessWidget {
               ),
               SizedBox(width: 10,),
               Text(
-
                 value,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
