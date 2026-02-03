@@ -128,19 +128,19 @@ class SellerOverviewController extends GetxController {
     try {
       await getFetchSellerApi(selectedGraphYear.value);
 
-      NesticoPeSnackBar.showAwesomeSnackbar(
-        title: 'Success',
-        message: 'Dashboard refreshed successfully',
-        contentType: ContentType.success,
-      );
+      // NesticoPeSnackBar.showAwesomeSnackbar(
+      //   title: 'Success',
+      //   message: 'Dashboard refreshed successfully',
+      //   contentType: ContentType.success,
+      // );
     } catch (e) {
-      log('refreshSellerDashboard error: $e');
-
-      NesticoPeSnackBar.showAwesomeSnackbar(
-        title: 'Error',
-        message: 'Failed to refresh dashboard',
-        contentType: ContentType.failure,
-      );
+      debugPrint('refreshSellerDashboard error: $e');
+      //
+      // NesticoPeSnackBar.showAwesomeSnackbar(
+      //   title: 'Error',
+      //   message: 'Failed to refresh dashboard',
+      //   contentType: ContentType.failure,
+      // );
     }
   }
 

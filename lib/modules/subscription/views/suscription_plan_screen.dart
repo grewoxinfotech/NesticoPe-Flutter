@@ -5,6 +5,7 @@ import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_h
 import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
 import 'package:housing_flutter_app/modules/auth/views/role_convert/convert_to_seller/convert_to_seller.dart';
 import 'package:housing_flutter_app/modules/subscription/views/widgets/sign_up_subscription_card.dart';
+import 'package:housing_flutter_app/utils/shimmer/common_screen/plan_screen/plan_list_screen_shimmer.dart';
 
 import '../../../app/constants/color_res.dart';
 import '../../../app/utils/formater/formater.dart';
@@ -46,7 +47,7 @@ class SubscriptionPlansScreen extends StatelessWidget {
             if (currentPlanController != null && isShowCurrentPlan) ...[
               Obx(() {
                 if (currentPlanController!.isLoading.value) {
-                  return const Center(child: CircularProgressIndicator());
+                  return PlanListScreenShimmer(count: 1);
                 }
 
                 final item =
@@ -172,7 +173,8 @@ class SubscriptionPlansScreen extends StatelessWidget {
                               crossAxisCount: 2,
                               crossAxisSpacing: 10,
                               mainAxisSpacing: 10,
-                              childAspectRatio:1.6, // Fixed height for each card
+                              childAspectRatio:
+                                  1.6, // Fixed height for each card
                             ),
                         itemCount: 4,
                         itemBuilder: (context, index) {
@@ -213,7 +215,7 @@ class SubscriptionPlansScreen extends StatelessWidget {
                           );
                         },
                       ),
-                      SizedBox(height: 10,),
+                      SizedBox(height: 10),
                       const Text(
                         "Plan Usage",
                         style: TextStyle(

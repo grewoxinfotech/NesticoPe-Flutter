@@ -3783,7 +3783,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
               Text(
                 value,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: color,
                 ),

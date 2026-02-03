@@ -336,43 +336,42 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                       height: 36,
                                       onTap:
                                           (UserHelper.isGuest)
-                                              ? ()async {
-                                            try {
+                                              ? () async {
+                                                try {
+                                                  if (Get.context == null) {
+                                                    NesticoPeSnackBar.showAwesomeSnackbar(
+                                                      title: 'Error',
+                                                      message:
+                                                          'UI not ready to show dialog.',
+                                                      contentType:
+                                                          ContentType.failure,
+                                                    );
+                                                    return;
+                                                  }
 
-                                              if (Get.context == null) {
-                                                NesticoPeSnackBar.showAwesomeSnackbar(
-                                                  title: 'Error',
-                                                  message:
-                                                  'UI not ready to show dialog.',
-                                                  contentType:
-                                                  ContentType.failure,
-                                                );
-                                                return;
+                                                  addInquiryFromProject(
+                                                    '',
+                                                    '',
+                                                    '',
+                                                    project?.id ?? '',
+                                                    'sell',
+                                                    "project",
+                                                  );
+                                                } catch (e, s) {
+                                                  debugPrint(
+                                                    '❌ Error in Get Offer button: $e',
+                                                  );
+                                                  debugPrint('$s');
+
+                                                  NesticoPeSnackBar.showAwesomeSnackbar(
+                                                    title: 'Error',
+                                                    message:
+                                                        'Something went wrong. Please try again.',
+                                                    contentType:
+                                                        ContentType.failure,
+                                                  );
+                                                }
                                               }
-
-                                              addInquiryFromProject(
-                                                '',
-                                                '',
-                                                '',
-                                                project?.id ?? '',
-                                                'sell',
-                                                "project",
-                                              );
-                                            } catch (e, s) {
-                                              debugPrint(
-                                                '❌ Error in Get Offer button: $e',
-                                              );
-                                              debugPrint('$s');
-
-                                              NesticoPeSnackBar.showAwesomeSnackbar(
-                                                title: 'Error',
-                                                message:
-                                                'Something went wrong. Please try again.',
-                                                contentType:
-                                                ContentType.failure,
-                                              );
-                                            }
-                                          }
                                               : () async {
                                                 try {
                                                   final user =
@@ -452,7 +451,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                       if (project?.brochures.isNotEmpty ?? false) ...[
                         _buildDocuments(controller, project!),
                       ],
-                      _buildContactSection(controller, project!),
+                      // _buildContactSection(controller, project!),
                       if (widget.isBuilder) ...[
                         if (project?.scoreBreakdown != null) ...[
                           PerformanceScoreWidget(
@@ -502,9 +501,9 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                           ),
                           trailing: Icon(Icons.arrow_forward_ios_rounded),
                           onTap: () {
-                            log("Check it is from project pass project id ${project?.id}");
-
-
+                            log(
+                              "Check it is from project pass project id ${project?.id}",
+                            );
 
                             Get.to(
                               () => CommonLeadScreen(
@@ -888,25 +887,26 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                               );
 
                               if (success) {
-                                if(UserHelper.isGuest)
-                                {
-
+                                if (UserHelper.isGuest) {
                                   controller.hasSubmittedInquiry.value = true;
-                                  var inquiryData={
-                                    'property':propertyID,
+                                  var inquiryData = {
+                                    'property': propertyID,
                                     "email": emailController.text ?? "",
-                                    "success":success
-
+                                    "success": success,
                                   };
-                                  final exists = await SecureStorage.hasPropertyInquiry(propertyID);
+                                  final exists =
+                                      await SecureStorage.hasPropertyInquiry(
+                                        propertyID,
+                                      );
 
                                   if (!exists) {
-                                    await SecureStorage.addPropertyInquiry(inquiryData);
+                                    await SecureStorage.addPropertyInquiry(
+                                      inquiryData,
+                                    );
                                   }
-
                                 }
                                 controller.hasSubmittedInquiry.value = true;
-                          /*      CustomSnackBar.show(
+                                /*      CustomSnackBar.show(
                                   Get.overlayContext!,
                                   message: "Inquiry Added Successfully",
                                   type: SnackBarType.success,
@@ -920,7 +920,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                 );
                               } else {
                                 Get.back();
-                               /* CustomSnackBar.show(
+                                /* CustomSnackBar.show(
                                   Get.overlayContext!,
                                   message: "Failed to Submit Inquiry",
                                   type: SnackBarType.error,
@@ -1013,15 +1013,15 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
             // ✅ Safely handle empty image list
             (project.mediaGallery?.images.isNotEmpty ?? false)
                 ? CustomImage(
-              type: CustomImageType.network,
-              src: project.mediaGallery!.images.first,
-              fit: BoxFit.cover,
-            )
+                  type: CustomImageType.network,
+                  src: project.mediaGallery!.images.first,
+                  fit: BoxFit.cover,
+                )
                 : CustomImage(
-              type: CustomImageType.asset,
-              src: imageOfNotAvailable,
-              fit: BoxFit.cover,
-            ),
+                  type: CustomImageType.asset,
+                  src: imageOfNotAvailable,
+                  fit: BoxFit.cover,
+                ),
 
             // Dark overlay
             Container(
@@ -1079,7 +1079,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
           ],
         ),
       ),
-
     );
   }
 
@@ -1827,7 +1826,52 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     );
   }
 
+  // Widget _buildAmenities(ProjectItem project) {
+  //   return Container(
+  //     margin: const EdgeInsets.only(top: 8),
+  //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+  //     color: ColorRes.white,
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         const Text(
+  //           'Amenities',
+  //           style: TextStyle(
+  //             fontSize: AppFontSizes.medium,
+  //             fontWeight: AppFontWeights.semiBold,
+  //             color: ColorRes.textPrimary,
+  //           ),
+  //         ),
+  //         GridView.builder(
+  //           shrinkWrap: true,
+  //           padding: EdgeInsets.zero,
+  //           physics: const NeverScrollableScrollPhysics(),
+  //           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+  //             crossAxisCount: 3,
+  //             childAspectRatio: 0.99,
+  //             crossAxisSpacing: 10,
+  //             mainAxisSpacing: 1,
+  //           ),
+  //           itemCount: project.amenities.length,
+  //           itemBuilder: (context, index) {
+  //             return _buildAmenityItem(
+  //               project.amenities[index].toLowerCase().replaceAll(" ", "_"),
+  //               index,
+  //             );
+  //           },
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  bool _showAllAmenities = false;
+
   Widget _buildAmenities(ProjectItem project) {
+    final totalAmenities = project.amenities.length;
+    final visibleCount =
+        (!_showAllAmenities && totalAmenities > 6) ? 6 : totalAmenities;
+
     return Container(
       margin: const EdgeInsets.only(top: 8),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -1843,6 +1887,9 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
               color: ColorRes.textPrimary,
             ),
           ),
+
+          const SizedBox(height: 12),
+
           GridView.builder(
             shrinkWrap: true,
             padding: EdgeInsets.zero,
@@ -1851,53 +1898,86 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
               crossAxisCount: 3,
               childAspectRatio: 0.99,
               crossAxisSpacing: 10,
-              mainAxisSpacing: 1,
+              mainAxisSpacing: 10,
             ),
-            itemCount: project.amenities.length,
+            itemCount: visibleCount,
             itemBuilder: (context, index) {
-
-
-
-
-              return _buildAmenityItem(project.amenities[index].toLowerCase().replaceAll(" ", "_"), index);
+              return _buildAmenityItem(
+                project.amenities[index].toLowerCase().replaceAll(" ", "_"),
+                index,
+              );
             },
           ),
+
+          /// 👉 Show More / Show Less button
+          if (totalAmenities > 6)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _showAllAmenities = !_showAllAmenities;
+                  });
+                },
+                child: Center(
+                  child: Text(
+                    _showAllAmenities ? 'Show Less' : 'Show More',
+                    style: const TextStyle(
+                      fontSize: AppFontSizes.small,
+                      fontWeight: AppFontWeights.medium,
+                      color: ColorRes.primary,
+                    ),
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
   }
 
   Widget _buildAmenityItem(String amenity, int index) {
-
-    log("build Amenities section method ${amenity}");
     final Map<String, String> amenityIcons = {
+      // 🏊 Lifestyle
       'swimming_pool': AppSvgRes.swimming,
+      'gym': AppSvgRes.gym,
       'gymnasium': AppSvgRes.gym,
       'club_house': AppSvgRes.club,
-      'children_play_area': AppSvgRes.playground,
+      'community_hall': AppSvgRes.hall,
       'multipurpose_hall': AppSvgRes.multi_purpose_hall,
+      'children_play_area': AppSvgRes.playground,
       'meditation_area': AppSvgRes.meditation_area,
+      'garden': AppSvgRes.garden,
       'gardens': AppSvgRes.garden,
+      'gated_community': AppSvgRes.security,
       'jogging_track': AppSvgRes.jogging,
       'amphitheatre': AppSvgRes.home_theater,
-      'temple': AppSvgRes.hall,
+      'temple': AppSvgRes.temple ?? AppSvgRes.hall,
+
+      // 🔐 Safety & Security
       '24x7_security': AppSvgRes.security,
+      'cctv': AppSvgRes.cctv,
       'cctv_surveillance': AppSvgRes.cctv,
-      'power_backup': AppSvgRes.battery,
+      'intercom': AppSvgRes.intercom ?? AppSvgRes.security,
       'fire_safety': AppSvgRes.fire_extinguisher,
-      'covered_parking': AppSvgRes.covered_parking,
-      'visitor_parking': AppSvgRes.visitor_parking,
+
+      // ⚡ Utilities
+      'power_backup': AppSvgRes.battery,
       'lift': AppSvgRes.elevator,
       'service_lift': AppSvgRes.elevator,
-      'waste_disposal': AppSvgRes.waste_disposal,
       'solar_panels': AppSvgRes.solar_panel,
       'ev_charging': AppSvgRes.dg,
       'wi-fi_connectivity': AppSvgRes.internet_connectivity,
+
+      // 🚗 Parking
+      'covered_parking': AppSvgRes.covered_parking,
+      'visitor_parking': AppSvgRes.visitor_parking,
+
+      // 🧹 Services
       'maintenance_staff': AppSvgRes.maintenanace_staff,
+      'waste_disposal': AppSvgRes.waste_disposal,
       'laundry_service': AppSvgRes.washing,
     };
-
-
 
     final List<Color> amenityColors = [
       ColorRes.blueColor,

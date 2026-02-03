@@ -2824,24 +2824,27 @@ Widget buildTextField(
   String? Function(String?)? validator,
   Function(String)? onChanged,
 }) {
-  return NesticoPeTextField(
-    controller: controller,
-    hintText: label,
-    enabled: isEnable,
-    maxLines: maxLines,
-    keyboardType: isPhoneKey ? TextInputType.phone : inputType,
-    formatter: formatter,
-    validator: validator,
-    onChanged: onChanged,
+  return GestureDetector(
     onTap: onTap,
-    prefixIcon: isPhone ? null : icon,
-    suffixIcon:
-        isPhone
-            ? Padding(
-              padding: const EdgeInsets.only(right: 12),
-              child: buildPhonePrefix(),
-            )
-            : null,
+    child: NesticoPeTextField(
+      controller: controller,
+      hintText: label,
+      enabled: isEnable,
+      maxLines: maxLines,
+      keyboardType: isPhoneKey ? TextInputType.phone : inputType,
+      formatter: formatter,
+      validator: validator,
+      onChanged: onChanged,
+      // onTap: onTap,
+      prefixIcon: isPhone ? null : icon,
+      suffixIcon:
+          isPhone
+              ? Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: buildPhonePrefix(),
+              )
+              : null,
+    ),
   );
 }
 

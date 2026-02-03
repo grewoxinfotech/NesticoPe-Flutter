@@ -25,10 +25,11 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
           _buildProjectImagesSection(),
           const SizedBox(height: 16),
           _buildProjectVideosSection(),
-          const SizedBox(height: 16),
-          _buildProjectBrochureSection(),
+
           const SizedBox(height: 16),
           _buildProjectDocumentsSection(),
+          const SizedBox(height: 16),
+          _buildProjectBrochureSection(),
           const SizedBox(height: 80),
         ],
       ),
@@ -695,6 +696,149 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
     );
   }
 
+  // Widget _buildProjectDocumentsSection() {
+  //   return Container(
+  //     padding: const EdgeInsets.all(16),
+  //     decoration: BoxDecoration(
+  //       color: ColorRes.white,
+  //       borderRadius: BorderRadius.circular(12),
+  //       border: Border.all(color: ColorRes.leadGreyColor.shade200!),
+  //     ),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Row(
+  //           children: [
+  //             Icon(
+  //               Icons.folder_outlined,
+  //               size: 20,
+  //               color: ColorRes.success.shade700,
+  //             ),
+  //             const SizedBox(width: 10),
+  //             Expanded(
+  //               child: Column(
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   buildBuilderDefaultHeaderText('Project Documents'),
+  //                   Text(
+  //                     'Optional • Max 2 files • PDF, DOC, DOCX',
+  //                     style: TextStyle(
+  //                       fontSize: AppFontSizes.caption,
+  //                       color: ColorRes.leadGreyColor.shade600,
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //             Obx(
+  //               () => Container(
+  //                 padding: const EdgeInsets.symmetric(
+  //                   horizontal: 8,
+  //                   vertical: 4,
+  //                 ),
+  //                 decoration: BoxDecoration(
+  //                   color:
+  //                       controller.project.value.documentList.isEmpty
+  //                           ? ColorRes.leadGreyColor.shade100
+  //                           : ColorRes.success.shade50,
+  //                   borderRadius: BorderRadius.circular(12),
+  //                 ),
+  //                 child: Text(
+  //                   '${controller.project.value.documentList.length}/2',
+  //                   style: TextStyle(
+  //                     fontSize: AppFontSizes.caption,
+  //                     fontWeight: AppFontWeights.semiBold,
+  //                     color:
+  //                         controller.project.value.documentList.isEmpty
+  //                             ? ColorRes.leadGreyColor.shade700
+  //                             : ColorRes.success.shade700,
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //         const SizedBox(height: 16),
+  //         Obx(
+  //           () =>
+  //               controller.project.value.documentList.isEmpty
+  //                   ? _buildUploadBox(
+  //                     onTap: controller.builderDocumentPicker,
+  //                     icon: Icons.cloud_upload_outlined,
+  //                     title: 'Upload your documents here',
+  //                     subtitle: 'Browse',
+  //                     color: ColorRes.success,
+  //                   )
+  //                   : Column(
+  //                     children: [
+  //                       ...controller.project.value.documentList
+  //                           .asMap()
+  //                           .entries
+  //                           .map((entry) {
+  //                             final index = entry.key;
+  //                             final filePath = entry.value;
+  //                             return _buildDocumentTile(
+  //                               filePath: filePath,
+  //                               index: index,
+  //                               onRemove:
+  //                                   () =>
+  //                                       controller.removeBuilderDocument(index),
+  //                               onView: () async {
+  //                                 await controller.pdfPreviewByDefaultApp(
+  //                                   filePath,
+  //                                 );
+  //                               },
+  //                             );
+  //                           }),
+  //                       if (controller.project.value.documentList.length < 2)
+  //                         const SizedBox(height: 12),
+  //                       if (controller.project.value.documentList.length < 2)
+  //                         InkWell(
+  //                           onTap: controller.builderDocumentPicker,
+  //                           borderRadius: BorderRadius.circular(12),
+  //                           child: Container(
+  //                             width: double.infinity,
+  //                             padding: const EdgeInsets.all(16),
+  //                             decoration: BoxDecoration(
+  //                               color: ColorRes.success.shade50!.withOpacity(
+  //                                 0.3,
+  //                               ),
+  //                               borderRadius: BorderRadius.circular(12),
+  //                               border: Border.all(
+  //                                 color: ColorRes.success.shade300!,
+  //                                 width: 1.5,
+  //                                 style: BorderStyle.solid,
+  //                               ),
+  //                             ),
+  //                             child: Row(
+  //                               mainAxisAlignment: MainAxisAlignment.center,
+  //                               children: [
+  //                                 Icon(
+  //                                   Icons.add_circle_outline,
+  //                                   size: 20,
+  //                                   color: ColorRes.success.shade700,
+  //                                 ),
+  //                                 const SizedBox(width: 8),
+  //                                 Text(
+  //                                   'Add More Documents',
+  //                                   style: TextStyle(
+  //                                     fontSize: AppFontSizes.medium,
+  //                                     fontWeight: AppFontWeights.semiBold,
+  //                                     color: ColorRes.success.shade700,
+  //                                   ),
+  //                                 ),
+  //                               ],
+  //                             ),
+  //                           ),
+  //                         ),
+  //                     ],
+  //                   ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
   Widget _buildProjectDocumentsSection() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -706,6 +850,9 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          /// 🔹 Mandatory documents info (WEB → MOBILE)
+
+          /// 🔹 Header + counter
           Row(
             children: [
               Icon(
@@ -720,7 +867,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                   children: [
                     buildBuilderDefaultHeaderText('Project Documents'),
                     Text(
-                      'Optional • Max 2 files • PDF, DOC, DOCX',
+                      'PDF, DOC, JPG, PNG • Max 5 files • 5MB each',
                       style: TextStyle(
                         fontSize: AppFontSizes.caption,
                         color: ColorRes.leadGreyColor.shade600,
@@ -743,7 +890,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    '${controller.project.value.documentList.length}/2',
+                    '${controller.project.value.documentList.length}/5',
                     style: TextStyle(
                       fontSize: AppFontSizes.caption,
                       fontWeight: AppFontWeights.semiBold,
@@ -757,15 +904,54 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
               ),
             ],
           ),
+
           const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: ColorRes.primary.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: ColorRes.primary.withOpacity(0.2)),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.info_outline, size: 20, color: ColorRes.primary),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Mandatory Documents for Builder Project',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.medium,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.primary,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      _buildBulletText('RERA Registration Certificate'),
+                      _buildBulletText('Approved Layout / Building Plan'),
+                      _buildBulletText('Floor Plan'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          /// 🔹 Upload box / Documents list
           Obx(
             () =>
                 controller.project.value.documentList.isEmpty
                     ? _buildUploadBox(
                       onTap: controller.builderDocumentPicker,
                       icon: Icons.cloud_upload_outlined,
-                      title: 'Upload your documents here',
-                      subtitle: 'Browse',
+                      title: 'Upload property documents',
+                      subtitle: 'Tap to browse files',
                       color: ColorRes.success,
                     )
                     : Column(
@@ -776,6 +962,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                             .map((entry) {
                               final index = entry.key;
                               final filePath = entry.value;
+
                               return _buildDocumentTile(
                                 filePath: filePath,
                                 index: index,
@@ -789,9 +976,11 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                                 },
                               );
                             }),
-                        if (controller.project.value.documentList.length < 2)
+
+                        if (controller.project.value.documentList.length < 5)
                           const SizedBox(height: 12),
-                        if (controller.project.value.documentList.length < 2)
+
+                        if (controller.project.value.documentList.length < 5)
                           InkWell(
                             onTap: controller.builderDocumentPicker,
                             borderRadius: BorderRadius.circular(12),
@@ -806,7 +995,6 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                                 border: Border.all(
                                   color: ColorRes.success.shade300!,
                                   width: 1.5,
-                                  style: BorderStyle.solid,
                                 ),
                               ),
                               child: Row(
@@ -832,6 +1020,27 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                           ),
                       ],
                     ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBulletText(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('•  '),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: AppFontSizes.small,
+                color: ColorRes.leadGreyColor.shade700,
+              ),
+            ),
           ),
         ],
       ),

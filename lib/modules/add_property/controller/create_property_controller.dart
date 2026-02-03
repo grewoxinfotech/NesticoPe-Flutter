@@ -652,7 +652,7 @@ class CreatePropertyController extends GetxController {
 
       if (result != null && result.files.isNotEmpty) {
         // Check total limit
-        if (documentList.value.length + result.files.length > 2) {
+        if (documentList.value.length + result.files.length > 5) {
           NesticoPeSnackBar.showAwesomeSnackbar(
             title: 'Limit Exceeded',
             message: 'You can only select up to 2 documents in total',
@@ -1120,9 +1120,8 @@ class CreatePropertyController extends GetxController {
   }
 
   Future<void> pickImagesFromGallery() async {
-  bool isGranted = await requestGalleryPermission();
-  if(isGranted)
-    {
+    bool isGranted = await requestGalleryPermission();
+    if (isGranted) {
       if (isProcessing.value) return;
 
       try {

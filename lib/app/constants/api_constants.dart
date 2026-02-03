@@ -155,8 +155,8 @@ class ApiConstants {
       "$baseURL/contractorquotation";
 
   static String get contractorProject => "$baseURL/contractorProjects";
-  static String get contractorProjectPhotos => "$baseURL/contractor-project-photos";
-
+  static String get contractorProjectPhotos =>
+      "$baseURL/contractor-project-photos";
 
   static String get contractorProjectMilestone => "$baseURL/projectmilestone";
 

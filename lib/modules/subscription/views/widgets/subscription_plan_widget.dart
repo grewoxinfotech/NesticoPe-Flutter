@@ -12,6 +12,7 @@ import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/widgets/snack_bar/custom_snackbar.dart';
 import '../../../../data/database/secure_storage_service.dart';
 import '../../../../data/network/subscription/model/subscription_model.dart';
+import '../../../../utils/shimmer/common_screen/plan_screen/plan_list_screen_shimmer.dart';
 import '../../../../widgets/New folder/inputs/text_field.dart';
 import '../../../../widgets/display/ic.dart';
 import '../../../../widgets/messages/snack_bar.dart';
@@ -29,7 +30,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoading.value && controller.items.isEmpty) {
-        return const Center(child: CircularProgressIndicator());
+        return PlanListScreenShimmer();
       }
 
       final plans = controller.items;

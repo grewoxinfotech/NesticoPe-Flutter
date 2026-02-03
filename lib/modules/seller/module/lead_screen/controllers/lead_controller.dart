@@ -1,323 +1,11 @@
-// // import 'package:flutter/cupertino.dart';
-// // import 'package:get/get.dart';
-// //
-// // class LeadController extends GetxController {
-// //   final List<String> statusList = [
-// //     'Interested',
-// //     'New Lead',
-// //     'Contacted',
-// //     'Follow Up',
-// //     'Site Visit',
-// //     'Negotiation',
-// //     'Closed',
-// //     'Lost',
-// //   ];
-// //
-// //   RxString selectedFilterStatus = ''.obs;
-// //   RxString selectedStatus = ''.obs;
-// //
-// //   final List<String> leadTypeList = ["All Leads", "Residential", "Commercial"];
-// //
-// //   RxString selectedLeadType = ''.obs;
-// //   Rxn<DateTime> selectedDate = Rxn<DateTime>();
-// //   final TextEditingController dateController = TextEditingController();
-// //
-// //   // Add notes functionality
-// //   RxString notes = ''.obs;
-// //   final TextEditingController notesController = TextEditingController();
-// //
-// //   @override
-// //   void onInit() {
-// //     super.onInit();
-// //     loadVariables();
-// //   }
-// //
-// //   @override
-// //   void onClose() {
-// //     dateController.dispose();
-// //     notesController.dispose();
-// //     super.onClose();
-// //   }
-// //
-// //   void loadVariables() {
-// //     selectedFilterStatus.value = 'All Status'; // Changed to show all by default
-// //     selectedLeadType.value = leadTypeList.first; // This is "All Leads"
-// //     selectedStatus.value = statusList.first;
-// //     dateController.text = "";
-// //     selectedDate.value = null;
-// //     notes.value = '';
-// //   }
-// //
-// //   // Method to update lead status
-// //   void updateStatus(String newStatus) {
-// //     if (statusList.contains(newStatus)) {
-// //       selectedFilterStatus.value = newStatus;
-// //     }
-// //   }
-// //
-// //   // Method to update lead type filter
-// //   void updateLeadType(String newType) {
-// //     if (leadTypeList.contains(newType)) {
-// //       selectedLeadType.value = newType;
-// //     }
-// //   }
-// //
-// //   // Method to set follow-up date and time
-// //   void setFollowUpDateTime(DateTime dateTime) {
-// //     selectedDate.value = dateTime;
-// //     dateController.text = dateTime.toString();
-// //   }
-// //
-// //   // Method to clear follow-up date
-// //   void clearFollowUpDate() {
-// //     selectedDate.value = null;
-// //     dateController.text = "";
-// //   }
-// //
-// //   // Method to update notes
-// //   void updateNotes(String newNotes) {
-// //     notes.value = newNotes;
-// //     notesController.text = newNotes;
-// //   }
-// //
-// //   // Method to clear notes
-// //   void clearNotes() {
-// //     notes.value = '';
-// //     notesController.text = '';
-// //   }
-// //
-// //   // Method to reset all filters and data
-// //   void resetFilters() {
-// //     selectedFilterStatus.value = statusList.first;
-// //     selectedLeadType.value = leadTypeList.first;
-// //   }
-// //
-// //   // Method to check if lead has pending follow-up
-// //   bool hasUpcomingFollowUp() {
-// //     if (selectedDate.value == null) return false;
-// //     return selectedDate.value!.isAfter(DateTime.now());
-// //   }
-// //
-// //   // Method to check if follow-up is overdue
-// //   bool isFollowUpOverdue() {
-// //     if (selectedDate.value == null) return false;
-// //     return selectedDate.value!.isBefore(DateTime.now());
-// //   }
-// //
-// //   // Method to get formatted follow-up date
-// //   String getFormattedFollowUpDate() {
-// //     if (selectedDate.value == null) return "No follow-up set";
-// //     return dateController.text;
-// //   }
-// //
-// //   // Method to validate if all required fields are filled
-// //   bool isValid() {
-// //     return selectedFilterStatus.value.isNotEmpty;
-// //   }
-// // }
-//
-// // import 'package:flutter/material.dart';
-// // import 'package:get/get.dart';
-// // import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
-// // import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
-// //
-// // import '../../../../../data/network/lead/lead_service.dart';
-// // import '../model/lead_model.dart';
-// //
-// // class LeadController extends PaginatedController<LeadItem> {
-// //   final LeadService _service = LeadService();
-// //
-// //   // --- Form Controllers ---
-// //   final formKey = GlobalKey<FormState>();
-// //   final TextEditingController nameController = TextEditingController();
-// //   final TextEditingController phoneController = TextEditingController();
-// //   final TextEditingController emailController = TextEditingController();
-// //   final TextEditingController notesController = TextEditingController();
-// //   final TextEditingController dateController = TextEditingController();
-// //
-// //   // --- Lead Status & Type Lists ---
-// //   final List<String> statusList = [
-// //     'new',
-// //     'contacted',
-// //     'qualified',
-// //     'negotiation',
-// //     'lost',
-// //     'converted',
-// //   ];
-// //   final List<String> leadTypeList = ["All Leads", "Residential", "Commercial"];
-// //
-// //   // --- Reactive Fields ---
-// //   RxString selectedFilterStatus = 'All Status'.obs;
-// //   RxString selectedStatus = 'New Lead'.obs;
-// //   RxString selectedLeadType = 'All Leads'.obs;
-// //   Rxn<DateTime> selectedDate = Rxn<DateTime>();
-// //   RxString notes = ''.obs;
-// //
-// //   // --- Optional filters for API ---
-// //   Map<String, String>? filters;
-// //
-// //   @override
-// //   void onInit() {
-// //     super.onInit();
-// //     loadVariables();
-// //     loadInitial(); // Load first page of leads automatically
-// //   }
-// //
-// //   @override
-// //   void onClose() {
-// //     nameController.dispose();
-// //     phoneController.dispose();
-// //     emailController.dispose();
-// //     notesController.dispose();
-// //     dateController.dispose();
-// //     super.onClose();
-// //   }
-// //
-// //   // --- Pagination Fetch ---
-// //   @override
-// //   Future<PaginationResponse<LeadItem>> fetchItems(int page) async {
-// //     try {
-// //       final response = await _service.fetchLeads(page: page, filters: filters);
-// //       print("Fetched leads: ${response.items.length}");
-// //       return response;
-// //     } catch (e) {
-// //       print("Exception in fetchItems: $e");
-// //       rethrow;
-// //     }
-// //   }
-// //
-// //   // --- CRUD Methods ---
-// //   Future<bool> createLead(LeadItem lead) async {
-// //     try {
-// //       final success = await _service.createLead(lead);
-// //       if (success) await loadInitial();
-// //       return success;
-// //     } catch (e) {
-// //       print("Create lead error: $e");
-// //       return false;
-// //     }
-// //   }
-// //
-// //   Future<bool> updateLead(String id, LeadItem updatedLead) async {
-// //     try {
-// //       final success = await _service.updateLead(id, updatedLead);
-// //       if (success) {
-// //         int index = items.indexWhere((item) => item.id == id);
-// //         if (index != -1) {
-// //           items[index] = updatedLead;
-// //           items.refresh();
-// //         }
-// //       }
-// //       return success;
-// //     } catch (e) {
-// //       print("Update lead error: $e");
-// //       return false;
-// //     }
-// //   }
-// //
-// //   Future<bool> deleteLead(String id) async {
-// //     try {
-// //       final success = await _service.deleteLead(id);
-// //       if (success) items.removeWhere((item) => item.id == id);
-// //       return success;
-// //     } catch (e) {
-// //       print("Delete lead error: $e");
-// //       return false;
-// //     }
-// //   }
-// //
-// //   // --- Filters ---
-// //   Future<void> applyFilters(Map<String, String> newFilters) async {
-// //     filters = newFilters;
-// //     await refreshList();
-// //   }
-// //
-// //   void loadVariables() {
-// //     selectedFilterStatus.value = 'All Status';
-// //     selectedLeadType.value = leadTypeList.first;
-// //     selectedStatus.value = statusList.first;
-// //     dateController.text = "";
-// //     selectedDate.value = null;
-// //     notes.value = '';
-// //   }
-// //
-// //   // --- Lead Management Helpers ---
-// //   void updateStatus(String newStatus) {
-// //     if (statusList.contains(newStatus)) {
-// //       selectedStatus.value = newStatus;
-// //     }
-// //   }
-// //
-// //   void updateLeadType(String newType) {
-// //     if (leadTypeList.contains(newType)) {
-// //       selectedLeadType.value = newType;
-// //     }
-// //   }
-// //
-// //   void setFollowUpDateTime(DateTime dateTime) {
-// //     selectedDate.value = dateTime;
-// //     dateController.text = dateTime.toString();
-// //   }
-// //
-// //   void clearFollowUpDate() {
-// //     selectedDate.value = null;
-// //     dateController.text = "";
-// //   }
-// //
-// //   void updateNotes(String newNotes) {
-// //     notes.value = newNotes;
-// //     notesController.text = newNotes;
-// //   }
-// //
-// //   void clearNotes() {
-// //     notes.value = '';
-// //     notesController.clear();
-// //   }
-// //
-// //   void resetFilters() {
-// //     selectedFilterStatus.value = statusList.first;
-// //     selectedLeadType.value = leadTypeList.first;
-// //   }
-// //
-// //   bool hasUpcomingFollowUp() {
-// //     if (selectedDate.value == null) return false;
-// //     return selectedDate.value!.isAfter(DateTime.now());
-// //   }
-// //
-// //   bool isFollowUpOverdue() {
-// //     if (selectedDate.value == null) return false;
-// //     return selectedDate.value!.isBefore(DateTime.now());
-// //   }
-// //
-// //   String getFormattedFollowUpDate() {
-// //     if (selectedDate.value == null) return "No follow-up set";
-// //     return dateController.text;
-// //   }
-// //
-// //   bool isValid() {
-// //     return selectedStatus.value.isNotEmpty && nameController.text.isNotEmpty;
-// //   }
-// //
-// //   // --- Reset Form ---
-// //   void resetForm() {
-// //     nameController.clear();
-// //     phoneController.clear();
-// //     emailController.clear();
-// //     notesController.clear();
-// //     dateController.clear();
-// //     notes.value = '';
-// //     selectedDate.value = null;
-// //     selectedStatus.value = statusList.first;
-// //     selectedLeadType.value = leadTypeList.first;
-// //   }
-// // }
-//
 // import 'dart:developer';
+// import 'dart:math' hide log;
 //
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
 // import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
 // import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+// import 'package:housing_flutter_app/app/manager/property/property_name_manager.dart';
 // import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
 // import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
 //
@@ -325,6 +13,10 @@
 // import '../../../../../data/database/secure_storage_service.dart';
 // import '../../../../../data/network/lead/lead_service.dart';
 // import '../../../../../data/network/property/services/property_service.dart';
+// import '../../../../../utils/logger/app_logger.dart';
+// import '../../../../../widgets/messages/snack_bar.dart';
+// import '../../../../builder/controller/all_project_controller.dart';
+// import '../../../../builder/controller/project_controller.dart';
 // import '../../../../property/controllers/property_controller.dart';
 //
 // import '../model/lead_model.dart';
@@ -335,18 +27,25 @@
 //
 //   late final bool fromReseller;
 //   Items customFields = Items();
-//   RxList<Items> leadPropertiesList =
-//       <Items>[].obs; // Store all properties fetched for leads
+//   RxList<Items> leadPropertiesList = <Items>[].obs;
+//
+//   // ADDED: Track specific property ID for filtering
+//   RxnString currentPropertyFilterId = RxnString();
 //
 //   final PropertyController propertyController = Get.put(
 //     PropertyController(),
+//     tag: "reseller",
+//   );
+//   final AllProjectController projectController = Get.put(
+//     AllProjectController(),
 //     tag: "reseller",
 //   );
 //   Rxn<NewUpdatedLeadModel> newUpdatedLeadModel = Rxn<NewUpdatedLeadModel>();
 //
 //   DateTime startDate = DateTime.now();
 //   DateTime endDate = DateTime.now();
-//   // --- Form Controllers ---
+//
+//   // Form Controllers and Status Lists
 //   final formKey = GlobalKey<FormState>();
 //   final TextEditingController nameController = TextEditingController();
 //   final TextEditingController phoneController = TextEditingController();
@@ -360,7 +59,6 @@
 //   RxString selectedStatus = 'New Lead'.obs;
 //   RxString selectedStage = ''.obs;
 //
-//   // --- Lead Status & Type Lists ---
 //   final List<String> statusList = [
 //     'new',
 //     'contacted',
@@ -391,17 +89,13 @@
 //
 //   var selectedFilterValue = "".obs;
 //
-//   // --- Reactive Fields ---
 //   RxString selectedFilterStatus = 'All Status'.obs;
-//
-//   // RxString selectedStatus = 'New Lead'.obs;
 //   RxString selectedLeadType = 'All Leads'.obs;
 //   Rxn<DateTime> selectedDate = Rxn<DateTime>();
 //   RxString notes = ''.obs;
-//   RxList<Items> propertyList = <Items>[].obs;
-//   Rxn<Items> selectedProperty = Rxn<Items>();
+//   RxList<DisplayEntityModel> propertyList = <DisplayEntityModel>[].obs;
+//   Rxn<DisplayEntityModel> selectedProperty = Rxn<DisplayEntityModel>();
 //
-//   // --- Optional filters for API ---
 //   RxMap<String, String> filters = <String, String>{}.obs;
 //
 //   @override
@@ -409,25 +103,22 @@
 //     super.onInit();
 //     if (UserHelper.isReseller) {
 //       fromReseller = true;
-//       // fetchResellerLead();
 //     }
 //
 //     if (UserHelper.isSeller) {
 //       fromReseller = false;
-//       // fetchResellerLead();
 //     }
 //     fetchResellerAssignProperty();
+//     fetchResellerAssignProject();
 //     loadVariables();
-//
-//     loadInitial();
 //   }
 //
+//   /// Fetch property by ID without affecting loading state
 //   Future<void> fetchPropertyById(String propertyId) async {
 //     try {
 //       final property = await _serviceProperty.getPropertyById(propertyId);
 //       if (property != null) {
 //         customFields = property;
-//         // Add to list if not already present
 //         if (!leadPropertiesList.any((p) => p.id == property.id)) {
 //           leadPropertiesList.add(property);
 //         }
@@ -444,9 +135,37 @@
 //     if (user != null) {
 //       final filter = {"assignedTo": userId};
 //       await propertyController.applyFilters(filter);
-//       propertyList.value = propertyController.items;
+//       propertyList.addAll(
+//         propertyController.items
+//             .map(
+//               (element) => DisplayEntityModel(
+//                 id: element.id,
+//                 title: PropertyNameManager(element).displayName,
+//                 image: element.propertyMedia?.images?.firstOrNull,
+//               ),
+//             )
+//             .toList(),
+//       );
+//     }
+//   }
 //
-//       print("Property List for Lead: ${propertyList.length}");
+//   Future<void> fetchResellerAssignProject() async {
+//     final user = await SecureStorage.getUserData();
+//     final userId = user?.user?.id ?? '';
+//     if (user != null) {
+//       final filter = {"assignedTo": userId};
+//       await projectController.applyFilters(filter);
+//       propertyList.addAll(
+//         projectController.items
+//             .map(
+//               (element) => DisplayEntityModel(
+//                 id: element.id,
+//                 title: element.projectName,
+//                 image: element.mediaGallery?.images.firstOrNull,
+//               ),
+//             )
+//             .toList(),
+//       );
 //     }
 //   }
 //
@@ -460,45 +179,66 @@
 //     super.onClose();
 //   }
 //
-//   // --- Pagination Fetch ---
+//   /// FIXED: Proper pagination fetch with loading state management
 //   @override
 //   Future<PaginationResponse<LeadItem>> fetchItems(int page) async {
 //     try {
-//       if (fromReseller) {
+//       PaginationResponse<LeadItem> response;
+//
+//       // 1. Check if we have a specific Property ID set
+//       if (currentPropertyFilterId.value != null &&
+//           currentPropertyFilterId.value!.isNotEmpty) {
+//         print(
+//           "Fetching leads for Property ID: ${currentPropertyFilterId.value} with filters: ${filters.value}",
+//         );
+//
+//         // Fetch using the specific property service method
+//         response = await _service.getLeadsByProperty(
+//           page: page,
+//           propertyId: currentPropertyFilterId.value!,
+//           filters: filters.value,
+//         );
+//       }
+//       // 2. Fallback to Original Logic (Global Leads)
+//       else if (fromReseller) {
 //         final user = await SecureStorage.getUserData();
 //         final userId = user?.user?.id;
-//         final response = await _service.fetchLeads(
+//         response = await _service.fetchLeads(
 //           page: page,
 //           userId: userId,
 //           filters: filters.value,
 //           fromReseller: fromReseller,
 //         );
-//         if (response.items.isNotEmpty) {
-//           for (var item in response.items) {
-//             if (item.propertyId != null && item.propertyId!.isNotEmpty) {
-//               print("Fetching property with ID: ${item.propertyId}");
-//               await fetchPropertyById(item.propertyId!);
-//             }
-//           }
-//         }
-//
-//         return response;
 //       } else {
-//         final response = await _service.fetchLeads(
+//         response = await _service.fetchLeads(
 //           page: page,
 //           filters: filters.value,
 //           fromReseller: fromReseller,
 //         );
-//         if (response.items.isNotEmpty) {
-//           for (var item in response.items) {
-//             if (item.propertyId != null && item.propertyId!.isNotEmpty) {
-//               print("Fetching Seller property with ID: ${item.propertyId}");
-//               await fetchPropertyById(item.propertyId!);
-//             }
-//           }
-//         }
-//         return response;
 //       }
+//
+//       AppLogger.structured(
+//         "Data fetched from API:",
+//         response.items.map((e) => e.toJson()),
+//       );
+//
+//       // ✅ CRITICAL FIX: Fetch properties AFTER getting response
+//       // but BEFORE returning, so loading states stay consistent
+//       if (response.items.isNotEmpty) {
+//         // Use Future.wait to fetch all properties in parallel
+//         // This is faster and won't interfere with loading state
+//         await Future.wait(
+//           response.items
+//               .where(
+//                 (item) =>
+//                     item.propertyId != null && item.propertyId!.isNotEmpty,
+//               )
+//               .map((item) => fetchPropertyById(item.propertyId!))
+//               .toList(),
+//         );
+//       }
+//
+//       return response;
 //     } catch (e) {
 //       print("Exception in fetchItems: $e");
 //       rethrow;
@@ -508,23 +248,20 @@
 //   Future<void> refreshLead() async {
 //     try {
 //       isRefreshing.value = true;
-//       refreshList();
-//       await Future.delayed(const Duration(seconds: 1));
-//
-//       // Update metrics with new values
+//       await refreshList();
+//       await Future.delayed(const Duration(milliseconds: 500));
 //     } catch (e) {
-//       Get.snackbar(
-//         'Error',
-//         'Failed to refresh ',
-//         backgroundColor: Colors.red,
-//         colorText: ColorRes.white,
+//       NesticoPeSnackBar.showAwesomeSnackbar(
+//         title: 'Error',
+//         message: 'Failed to refresh',
+//         contentType: ContentType.failure,
 //       );
 //     } finally {
 //       isRefreshing.value = false;
 //     }
 //   }
 //
-//   // --- CRUD Methods ---
+//   // CRUD Methods
 //   Future<bool> createLead(LeadItem lead) async {
 //     try {
 //       isLoading.value = true;
@@ -542,10 +279,8 @@
 //   }
 //
 //   Future<void> getLeadDetailByID(String id) async {
-//     // log('Lead Details: ${lead.toJson()}');
 //     newUpdatedLeadModel.value = await _service.getLeadDataByID(id);
 //     newUpdatedLeadModel.refresh();
-//
 //     log('Lead Details From data : ${newUpdatedLeadModel.value?.toJson()}');
 //   }
 //
@@ -590,35 +325,13 @@
 //     }
 //   }
 //
-//   // --- Filters ---
+//   /// Apply filters and refresh the list
 //   Future<void> applyFilters(
 //     Map<String, String> newFilters, {
 //     String? propertyId,
 //   }) async {
 //     filters.value = newFilters;
 //     await refreshList();
-//     if (propertyId != null) {
-//       await getLeadsByProperty(propertyId);
-//     }
-//   }
-//
-//   /// ✅ Apply filters for GLOBAL lead list (no property)
-//   Future<void> applyGlobalLeadFilters(Map<String, String> newFilters) async {
-//     filters.value = newFilters;
-//     await refreshList();
-//   }
-//
-//   /// ✅ Apply filters ONLY for PROPERTY leads
-//   Future<void> applyPropertyLeadFilters(
-//     String propertyId,
-//     Map<String, String> newFilters,
-//   ) async {
-//     filters.value = {
-//       ...newFilters,
-//       "propertyId": propertyId, // 🔒 enforce property
-//     };
-//
-//     await getLeadsByProperty(propertyId, loadMore: false);
 //   }
 //
 //   void loadVariables() {
@@ -630,7 +343,6 @@
 //     notes.value = '';
 //   }
 //
-//   // --- Lead Management Helpers ---
 //   void updateStatus(String newStatus) {
 //     if (statusList.contains(newStatus)) {
 //       selectedStatus.value = newStatus;
@@ -687,7 +399,6 @@
 //     return selectedStatus.value.isNotEmpty && nameController.text.isNotEmpty;
 //   }
 //
-//   // --- Reset Form ---
 //   void resetForm() {
 //     nameController.clear();
 //     phoneController.clear();
@@ -700,7 +411,7 @@
 //     selectedStage.value = stageList.first;
 //     selectedSource.value = sourceList.first;
 //     if (propertyController.items.isNotEmpty) {
-//       selectedProperty.value = propertyController.items.first;
+//       selectedProperty.value = propertyList.first;
 //     }
 //     selectedLeadType.value = leadTypeList.first;
 //   }
@@ -725,16 +436,13 @@
 //     }
 //   }
 //
-//   // Add these properties to your LeadController class
-//
-//   // ============ Property-Specific Lead Pagination ============
+//   // Property-Specific Lead Pagination (Legacy support)
 //   RxList<LeadItem> propertyLeads = <LeadItem>[].obs;
 //   var isLoadingPropertyLeads = false.obs;
 //   var propertyLeadsCurrentPage = 1.obs;
 //   var propertyLeadsTotalPages = 1.obs;
 //   var propertyLeadsHasMore = true.obs;
 //
-//   /// Get leads by property with pagination and filters
 //   Future<void> getLeadsByProperty(
 //     String propertyId, {
 //     bool loadMore = false,
@@ -742,7 +450,6 @@
 //     await getLeadsByPropertyWithFilters(propertyId, loadMore: loadMore);
 //   }
 //
-//   /// Get leads by property with pagination and optional filters
 //   Future<void> getLeadsByPropertyWithFilters(
 //     String propertyId, {
 //     bool loadMore = false,
@@ -760,16 +467,20 @@
 //       final response = await _service.getLeadsByProperty(
 //         page: propertyLeadsCurrentPage.value,
 //         propertyId: propertyId,
-//         filters: filters ?? {}, // Pass filters to API
+//         filters: filters,
 //       );
 //
-//       // Fetch property details for each lead if needed
+//       // Fetch properties in parallel
 //       if (response.items.isNotEmpty) {
-//         for (var item in response.items) {
-//           if (item.propertyId != null && item.propertyId!.isNotEmpty) {
-//             await fetchPropertyById(item.propertyId!);
-//           }
-//         }
+//         await Future.wait(
+//           response.items
+//               .where(
+//                 (item) =>
+//                     item.propertyId != null && item.propertyId!.isNotEmpty,
+//               )
+//               .map((item) => fetchPropertyById(item.propertyId!))
+//               .toList(),
+//         );
 //       }
 //
 //       if (loadMore) {
@@ -780,11 +491,6 @@
 //
 //       propertyLeadsTotalPages.value = response.meta.totalPages;
 //       propertyLeadsHasMore.value = response.meta.hasMore;
-//
-//       print(
-//         "Property leads loaded: ${response.items.length}, Page: ${propertyLeadsCurrentPage.value}",
-//       );
-//       print("Applied filters: $filters");
 //     } catch (e) {
 //       print("Error loading property leads: $e");
 //     } finally {
@@ -792,26 +498,23 @@
 //     }
 //   }
 //
-//   /// Load more property leads (for scroll pagination)
 //   Future<void> loadMorePropertyLeads(String propertyId) async {
 //     if (propertyLeadsHasMore.value && !isLoadingPropertyLeads.value) {
 //       await getLeadsByProperty(propertyId, loadMore: true);
 //     }
 //   }
 //
-//   /// Refresh property leads (for pull-to-refresh)
 //   Future<void> refreshPropertyLeads(String propertyId) async {
 //     await getLeadsByProperty(propertyId, loadMore: false);
 //   }
+// }
 //
-//   /// Reset property leads state (call when navigating away)
-//   void resetPropertyLeads() {
-//     propertyLeads.clear();
-//     propertyLeadsCurrentPage.value = 1;
-//     propertyLeadsTotalPages.value = 1;
-//     propertyLeadsHasMore.value = true;
-//     isLoadingPropertyLeads.value = false;
-//   }
+// class DisplayEntityModel {
+//   final String? id;
+//   final String? title;
+//   final String? image;
+//
+//   DisplayEntityModel({this.id, this.title, this.image});
 // }
 
 import 'dart:developer';
@@ -821,6 +524,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+import 'package:housing_flutter_app/app/manager/property/property_name_manager.dart';
 import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
 
@@ -830,6 +534,8 @@ import '../../../../../data/network/lead/lead_service.dart';
 import '../../../../../data/network/property/services/property_service.dart';
 import '../../../../../utils/logger/app_logger.dart';
 import '../../../../../widgets/messages/snack_bar.dart';
+import '../../../../builder/controller/all_project_controller.dart';
+import '../../../../builder/controller/project_controller.dart';
 import '../../../../property/controllers/property_controller.dart';
 
 import '../model/lead_model.dart';
@@ -841,6 +547,7 @@ class LeadController extends PaginatedController<LeadItem> {
   late final bool fromReseller;
   Items customFields = Items();
   RxList<Items> leadPropertiesList = <Items>[].obs;
+  final RxBool isFilterLoading = false.obs;
 
   // ADDED: Track specific property ID for filtering
   RxnString currentPropertyFilterId = RxnString();
@@ -849,12 +556,16 @@ class LeadController extends PaginatedController<LeadItem> {
     PropertyController(),
     tag: "reseller",
   );
+  final AllProjectController projectController = Get.put(
+    AllProjectController(),
+    tag: "reseller",
+  );
   Rxn<NewUpdatedLeadModel> newUpdatedLeadModel = Rxn<NewUpdatedLeadModel>();
 
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
 
-  // ... [Keep existing Form Controllers and Status Lists] ...
+  // Form Controllers and Status Lists
   final formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
@@ -902,8 +613,8 @@ class LeadController extends PaginatedController<LeadItem> {
   RxString selectedLeadType = 'All Leads'.obs;
   Rxn<DateTime> selectedDate = Rxn<DateTime>();
   RxString notes = ''.obs;
-  RxList<Items> propertyList = <Items>[].obs;
-  Rxn<Items> selectedProperty = Rxn<Items>();
+  RxList<DisplayEntityModel> propertyList = <DisplayEntityModel>[].obs;
+  Rxn<DisplayEntityModel> selectedProperty = Rxn<DisplayEntityModel>();
 
   RxMap<String, String> filters = <String, String>{}.obs;
 
@@ -918,11 +629,11 @@ class LeadController extends PaginatedController<LeadItem> {
       fromReseller = false;
     }
     fetchResellerAssignProperty();
+    fetchResellerAssignProject();
     loadVariables();
-    // loadInitial();
   }
 
-  // ... [Keep existing fet chPropertyById and fetchResellerAssignProperty] ...
+  /// Fetch property by ID without affecting loading state
   Future<void> fetchPropertyById(String propertyId) async {
     try {
       final property = await _serviceProperty.getPropertyById(propertyId);
@@ -944,7 +655,37 @@ class LeadController extends PaginatedController<LeadItem> {
     if (user != null) {
       final filter = {"assignedTo": userId};
       await propertyController.applyFilters(filter);
-      propertyList.value = propertyController.items;
+      propertyList.addAll(
+        propertyController.items
+            .map(
+              (element) => DisplayEntityModel(
+                id: element.id,
+                title: PropertyNameManager(element).displayName,
+                image: element.propertyMedia?.images?.firstOrNull,
+              ),
+            )
+            .toList(),
+      );
+    }
+  }
+
+  Future<void> fetchResellerAssignProject() async {
+    final user = await SecureStorage.getUserData();
+    final userId = user?.user?.id ?? '';
+    if (user != null) {
+      final filter = {"assignedTo": userId};
+      await projectController.applyFilters(filter);
+      propertyList.addAll(
+        projectController.items
+            .map(
+              (element) => DisplayEntityModel(
+                id: element.id,
+                title: element.projectName,
+                image: element.mediaGallery?.images.firstOrNull,
+              ),
+            )
+            .toList(),
+      );
     }
   }
 
@@ -958,10 +699,12 @@ class LeadController extends PaginatedController<LeadItem> {
     super.onClose();
   }
 
-  // --- MODIFIED Pagination Fetch ---
+  /// FIXED: Proper pagination fetch with loading state management
   @override
   Future<PaginationResponse<LeadItem>> fetchItems(int page) async {
     try {
+      PaginationResponse<LeadItem> response;
+
       // 1. Check if we have a specific Property ID set
       if (currentPropertyFilterId.value != null &&
           currentPropertyFilterId.value!.isNotEmpty) {
@@ -970,81 +713,67 @@ class LeadController extends PaginatedController<LeadItem> {
         );
 
         // Fetch using the specific property service method
-        final response = await _service.getLeadsByProperty(
+        response = await _service.getLeadsByProperty(
           page: page,
           propertyId: currentPropertyFilterId.value!,
           filters: filters.value,
         );
-        AppLogger.structured(
-          "Data Change from here :",
-          response.items.map((e) => e.toJson()),
-        );
-
-        // refreshList();
-        // items.refresh();
-
-        if (response.items.isNotEmpty) {
-          for (var item in response.items) {
-            if (item.propertyId != null && item.propertyId!.isNotEmpty) {
-              await fetchPropertyById(item.propertyId!);
-            }
-          }
-        }
-        return response;
       }
-
       // 2. Fallback to Original Logic (Global Leads)
-      if (fromReseller) {
+      else if (fromReseller) {
         final user = await SecureStorage.getUserData();
         final userId = user?.user?.id;
-        final response = await _service.fetchLeads(
+        response = await _service.fetchLeads(
           page: page,
           userId: userId,
           filters: filters.value,
           fromReseller: fromReseller,
         );
-        if (response.items.isNotEmpty) {
-          for (var item in response.items) {
-            if (item.propertyId != null && item.propertyId!.isNotEmpty) {
-              print("Fetching property with ID: ${item.propertyId}");
-              await fetchPropertyById(item.propertyId!);
-            }
-          }
-        }
-        return response;
       } else {
-        final response = await _service.fetchLeads(
+        response = await _service.fetchLeads(
           page: page,
           filters: filters.value,
           fromReseller: fromReseller,
         );
-        if (response.items.isNotEmpty) {
-          for (var item in response.items) {
-            if (item.propertyId != null && item.propertyId!.isNotEmpty) {
-              print("Fetching Seller property with ID: ${item.propertyId}");
-              await fetchPropertyById(item.propertyId!);
-            }
-          }
-        }
-        return response;
       }
+
+      AppLogger.structured(
+        "Data fetched from API:",
+        response.items.map((e) => e.toJson()),
+      );
+
+      // ✅ CRITICAL FIX: Fetch properties AFTER getting response
+      // but BEFORE returning, so loading states stay consistent
+      if (response.items.isNotEmpty) {
+        // Use Future.wait to fetch all properties in parallel
+        // This is faster and won't interfere with loading state
+        await Future.wait(
+          response.items
+              .where(
+                (item) =>
+                    item.propertyId != null && item.propertyId!.isNotEmpty,
+              )
+              .map((item) => fetchPropertyById(item.propertyId!))
+              .toList(),
+        );
+      }
+
+      return response;
     } catch (e) {
       print("Exception in fetchItems: $e");
       rethrow;
     }
   }
 
-  // ... [Rest of the controller remains the same: refreshLead, createLead, updateLead, deleteLead, etc.] ...
-
   Future<void> refreshLead() async {
     try {
       isRefreshing.value = true;
-      refreshList();
-      await Future.delayed(const Duration(seconds: 1));
+      await refreshList();
+      await Future.delayed(const Duration(milliseconds: 500));
     } catch (e) {
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
-        message: 'Failed to refresh ',
+        message: 'Failed to refresh',
         contentType: ContentType.failure,
       );
     } finally {
@@ -1052,7 +781,7 @@ class LeadController extends PaginatedController<LeadItem> {
     }
   }
 
-  // ... [Keep CRUD Methods] ...
+  // CRUD Methods
   Future<bool> createLead(LeadItem lead) async {
     try {
       isLoading.value = true;
@@ -1116,18 +845,42 @@ class LeadController extends PaginatedController<LeadItem> {
     }
   }
 
-  // --- MODIFIED Filters ---
+  // /// Apply filters and refresh the list
+  // Future<void> applyFilters(
+  //     Map<String, String> newFilters, {
+  //       String? propertyId,
+  //     }) async {
+  //   filters.value = newFilters;
+  //   await refreshList();
+  // }
+
   Future<void> applyFilters(
     Map<String, String> newFilters, {
     String? propertyId,
   }) async {
-    // Just update the filters map.
-    // The active property ID should already be set in currentPropertyFilterId
-    filters.value = newFilters;
-    await refreshList();
+    try {
+      isFilterLoading.value = true;
+
+      filters.value = newFilters;
+
+      // Reset pagination properly
+      items.clear();
+      hasMore.value = true;
+      currentPage.value = 1;
+
+      // Property-based filtering
+      if (propertyId != null && propertyId.isNotEmpty) {
+        currentPropertyFilterId.value = propertyId;
+      } else {
+        currentPropertyFilterId.value = null;
+      }
+
+      await loadInitial(); // 👈 important (not refreshList)
+    } finally {
+      isFilterLoading.value = false;
+    }
   }
 
-  // ... [Keep loadVariables, updateStatus, updateLeadType, etc.] ...
   void loadVariables() {
     selectedFilterStatus.value = 'All Status';
     selectedLeadType.value = leadTypeList.first;
@@ -1205,7 +958,7 @@ class LeadController extends PaginatedController<LeadItem> {
     selectedStage.value = stageList.first;
     selectedSource.value = sourceList.first;
     if (propertyController.items.isNotEmpty) {
-      selectedProperty.value = propertyController.items.first;
+      selectedProperty.value = propertyList.first;
     }
     selectedLeadType.value = leadTypeList.first;
   }
@@ -1230,11 +983,7 @@ class LeadController extends PaginatedController<LeadItem> {
     }
   }
 
-  // --- Note: The previous logic for "Property-Specific Lead Pagination" using
-  // separate lists (propertyLeads) is no longer needed because fetchItems
-  // now handles switching logic. You can keep it if other screens rely on it,
-  // but for SellerLeadScreen, we use the main mechanism. ---
-
+  // Property-Specific Lead Pagination (Legacy support)
   RxList<LeadItem> propertyLeads = <LeadItem>[].obs;
   var isLoadingPropertyLeads = false.obs;
   var propertyLeadsCurrentPage = 1.obs;
@@ -1245,8 +994,6 @@ class LeadController extends PaginatedController<LeadItem> {
     String propertyId, {
     bool loadMore = false,
   }) async {
-    // This method is maintained for backward compatibility or direct calls,
-    // but fetchItems is preferred for the main list view.
     await getLeadsByPropertyWithFilters(propertyId, loadMore: loadMore);
   }
 
@@ -1254,7 +1001,6 @@ class LeadController extends PaginatedController<LeadItem> {
     String propertyId, {
     bool loadMore = false,
   }) async {
-    // ... [Original Implementation preserved] ...
     try {
       if (loadMore) {
         propertyLeadsCurrentPage.value += 1;
@@ -1268,15 +1014,20 @@ class LeadController extends PaginatedController<LeadItem> {
       final response = await _service.getLeadsByProperty(
         page: propertyLeadsCurrentPage.value,
         propertyId: propertyId,
-        filters: filters ?? {},
+        filters: filters,
       );
 
+      // Fetch properties in parallel
       if (response.items.isNotEmpty) {
-        for (var item in response.items) {
-          if (item.propertyId != null && item.propertyId!.isNotEmpty) {
-            await fetchPropertyById(item.propertyId!);
-          }
-        }
+        await Future.wait(
+          response.items
+              .where(
+                (item) =>
+                    item.propertyId != null && item.propertyId!.isNotEmpty,
+              )
+              .map((item) => fetchPropertyById(item.propertyId!))
+              .toList(),
+        );
       }
 
       if (loadMore) {
@@ -1303,4 +1054,29 @@ class LeadController extends PaginatedController<LeadItem> {
   Future<void> refreshPropertyLeads(String propertyId) async {
     await getLeadsByProperty(propertyId, loadMore: false);
   }
+
+  Future<void> clearFiltersAndReload() async {
+    try {
+      isFilterLoading.value = true;
+
+      filters.clear();
+      currentPropertyFilterId.value = null;
+
+      items.clear();
+      hasMore.value = true;
+      currentPage.value = 1;
+
+      await loadInitial();
+    } finally {
+      isFilterLoading.value = false;
+    }
+  }
+}
+
+class DisplayEntityModel {
+  final String? id;
+  final String? title;
+  final String? image;
+
+  DisplayEntityModel({this.id, this.title, this.image});
 }

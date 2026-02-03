@@ -168,9 +168,16 @@ class LeadItem {
   final String? fakeReason;
   final String? markedFakeBy;
   final String? markedFakeAt;
-   Items? customFields; // 👈 can hold either Map or String
+  Items? customFields; // 👈 can hold either Map or String
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final String? commissionStatus;
+  final String? projectName;
+  final String? city;
+  final String? propertyType;
+  final String? projectStatus;
+  final String? priceRange;
+  final int? price;
 
   LeadItem({
     this.id,
@@ -193,6 +200,13 @@ class LeadItem {
     this.customFields,
     this.createdAt,
     this.updatedAt,
+    this.commissionStatus,
+    this.projectName,
+    this.city,
+    this.propertyType,
+    this.projectStatus,
+    this.priceRange,
+    this.price,
   });
 
   factory LeadItem.fromJson(Map<String, dynamic> json) => LeadItem(
@@ -213,46 +227,55 @@ class LeadItem {
     fakeReason: json["fakeReason"],
     markedFakeBy: json["markedFakeBy"],
     markedFakeAt: json["markedFakeAt"],
-    customFields: (() {
-      final data = json["customFields"];
-      if (data == null) return null;
-      if (data is Items) return data;
-      if (data is Map<String, dynamic>) {
-        try {
-          return Items.fromJson(data);
-        } catch (e) {
-          log("Error parsing customFields as Map: $e");
+    customFields:
+        (() {
+          final data = json["customFields"];
+          if (data == null) return null;
+          if (data is Items) return data;
+          if (data is Map<String, dynamic>) {
+            try {
+              return Items.fromJson(data);
+            } catch (e) {
+              log("Error parsing customFields as Map: $e");
+              return null;
+            }
+          }
+
+          // if (data is String && data.isNotEmpty) {
+          //   // Try to parse JSON string
+          //   log("Parsing customFields from String: $data");
+          //   try {
+          //     // First, try to decode as JSON
+          //     final decoded = jsonDecode(data);
+          //     // Check if decoded result is a Map
+          //     if (decoded is Map) {
+          //       // Cast to Map<String, dynamic>
+          //       return Items.fromJson(Map<String, dynamic>.from(decoded));
+          //     } else {
+          //       // If not a Map, return null (string is not valid)
+          //       log("customFields String decoded to non-Map type: ${decoded.runtimeType}");
+          //       return null;
+          //     }
+          //   } catch (e) {
+          //     // If JSON decode fails, the string is just a plain value, not JSON
+          //     log("customFields is a plain String (not JSON): $data");
+          //     return null;
+          //   }
+          // }
           return null;
-        }
-      }
-      // if (data is String && data.isNotEmpty) {
-      //   // Try to parse JSON string
-      //   log("Parsing customFields from String: $data");
-      //   try {
-      //     // First, try to decode as JSON
-      //     final decoded = jsonDecode(data);
-      //     // Check if decoded result is a Map
-      //     if (decoded is Map) {
-      //       // Cast to Map<String, dynamic>
-      //       return Items.fromJson(Map<String, dynamic>.from(decoded));
-      //     } else {
-      //       // If not a Map, return null (string is not valid)
-      //       log("customFields String decoded to non-Map type: ${decoded.runtimeType}");
-      //       return null;
-      //     }
-      //   } catch (e) {
-      //     // If JSON decode fails, the string is just a plain value, not JSON
-      //     log("customFields is a plain String (not JSON): $data");
-      //     return null;
-      //   }
-      // }
-      return null;
-    })(),
+        })(),
 
     createdAt:
-    json["createdAt"] != null ? DateTime.parse(json["createdAt"]) : null,
+        json["createdAt"] != null ? DateTime.parse(json["createdAt"]) : null,
     updatedAt:
-    json["updatedAt"] != null ? DateTime.parse(json["updatedAt"]) : null,
+        json["updatedAt"] != null ? DateTime.parse(json["updatedAt"]) : null,
+    commissionStatus: json["commission_status"],
+    projectName: json["projectName"],
+    city: json["city"],
+    propertyType: json["propertyType"],
+    projectStatus: json["projectStatus"],
+    priceRange: json["priceRange"],
+    price: json["price"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -276,14 +299,21 @@ class LeadItem {
 
     // ✅ Serialize safely
     if (customFields != null)
-      "customFields": customFields is Items
-          ? customFields
-          : customFields.toString(),
+      "customFields":
+          customFields is Items ? customFields : customFields.toString(),
 
     if (createdAt != null) "createdAt": createdAt?.toIso8601String(),
     if (updatedAt != null) "updatedAt": updatedAt?.toIso8601String(),
+    if (commissionStatus != null) "commission_status": commissionStatus,
+    if (projectName != null) "projectName": projectName,
+    if (city != null) "city": city,
+    if (propertyType != null) "propertyType": propertyType,
+    if (projectStatus != null) "projectStatus": projectStatus,
+    if (priceRange != null) "priceRange": priceRange,
+    if (price != null) "price": price,
   };
 }
+
 extension LeadItemCopy on LeadItem {
   LeadItem copyWith({
     String? id,
@@ -306,6 +336,12 @@ extension LeadItemCopy on LeadItem {
     dynamic customFields, // can be Items or String
     DateTime? createdAt,
     DateTime? updatedAt,
+    String? commissionStatus,
+    String? projectName,
+    String? city,
+    String? propertyType,
+    String? projectStatus,
+    String? priceRange,
   }) {
     return LeadItem(
       id: id ?? this.id,
@@ -328,10 +364,16 @@ extension LeadItemCopy on LeadItem {
       customFields: customFields ?? this.customFields, // flexible
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      commissionStatus: commissionStatus ?? this.commissionStatus,
+      projectName: projectName ?? this.projectName,
+      city: city ?? this.city,
+      propertyType: propertyType ?? this.propertyType,
+      projectStatus: projectStatus ?? this.projectStatus,
+      priceRange: priceRange ?? this.priceRange,
+      price: price ?? this.price,
     );
   }
 }
-
 
 // import 'dart:developer';
 
@@ -384,27 +426,29 @@ class NewUpdatedLeadModel {
     this.updatedAt,
   });
 
-  factory NewUpdatedLeadModel.fromJson(Map<String, dynamic> json) =>
-      NewUpdatedLeadModel(
-        id: json["id"],
-        createdBy: json["created_by"],
-        updatedBy: json["updated_by"],
-        name: json["name"],
-        email: json["email"],
-        phone: json["phone"],
-        propertyId: json["property_id"],
-        resellerId: json["reseller_id"],
-        inquiryId: json["inquiry_id"], // ✅ map new field
-        source: json["source"],
-        status: json["status"],
-        stage: json["stage"],
-        notes: json["notes"],
-        lastContactedAt: json["lastContactedAt"],
-        isFake: json["isFake"],
-        fakeReason: json["fakeReason"],
-        markedFakeBy: json["markedFakeBy"],
-        markedFakeAt: json["markedFakeAt"],
-        customFields: (() {
+  factory NewUpdatedLeadModel.fromJson(
+    Map<String, dynamic> json,
+  ) => NewUpdatedLeadModel(
+    id: json["id"],
+    createdBy: json["created_by"],
+    updatedBy: json["updated_by"],
+    name: json["name"],
+    email: json["email"],
+    phone: json["phone"],
+    propertyId: json["property_id"],
+    resellerId: json["reseller_id"],
+    inquiryId: json["inquiry_id"], // ✅ map new field
+    source: json["source"],
+    status: json["status"],
+    stage: json["stage"],
+    notes: json["notes"],
+    lastContactedAt: json["lastContactedAt"],
+    isFake: json["isFake"],
+    fakeReason: json["fakeReason"],
+    markedFakeBy: json["markedFakeBy"],
+    markedFakeAt: json["markedFakeAt"],
+    customFields:
+        (() {
           final data = json["customFields"];
           if (data == null) return null;
           if (data is CustomFields) return data;
@@ -418,11 +462,11 @@ class NewUpdatedLeadModel {
           }
           return null;
         })(),
-        createdAt:
+    createdAt:
         json["createdAt"] != null ? DateTime.parse(json["createdAt"]) : null,
-        updatedAt:
+    updatedAt:
         json["updatedAt"] != null ? DateTime.parse(json["updatedAt"]) : null,
-      );
+  );
 
   Map<String, dynamic> toJson() => {
     if (id != null) "id": id,
@@ -444,9 +488,8 @@ class NewUpdatedLeadModel {
     if (markedFakeBy != null) "markedFakeBy": markedFakeBy,
     if (markedFakeAt != null) "markedFakeAt": markedFakeAt,
     if (customFields != null)
-      "customFields": customFields is CustomFields
-          ? customFields
-          : customFields.toString(),
+      "customFields":
+          customFields is CustomFields ? customFields : customFields.toString(),
     if (createdAt != null) "createdAt": createdAt?.toIso8601String(),
     if (updatedAt != null) "updatedAt": updatedAt?.toIso8601String(),
   };
@@ -527,13 +570,10 @@ class CustomFields {
     if (serviceId != null) "serviceId": serviceId,
     if (serviceName != null) "serviceName": serviceName,
     if (contractorId != null) "contractorId": contractorId,
-    if (contractorUsername != null)
-      "contractorUsername": contractorUsername,
-    if (serviceDescription != null)
-      "serviceDescription": serviceDescription,
+    if (contractorUsername != null) "contractorUsername": contractorUsername,
+    if (serviceDescription != null) "serviceDescription": serviceDescription,
   };
 }
-
 
 extension NewUpdatedLeadModelCopy on NewUpdatedLeadModel {
   NewUpdatedLeadModel copyWith({
@@ -584,7 +624,3 @@ extension NewUpdatedLeadModelCopy on NewUpdatedLeadModel {
     );
   }
 }
-
-
-
-

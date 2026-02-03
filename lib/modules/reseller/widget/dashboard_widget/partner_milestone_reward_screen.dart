@@ -38,7 +38,6 @@ class _PartnerMilestoneRewardScreenState
           Row(
             children: [
               TiltingIcon(
-
                 icon: Icon(
                   Icons.emoji_events_outlined,
                   color: ColorRes.orangeColor,
@@ -304,27 +303,41 @@ class _PartnerMilestoneRewardScreenState
             final RxInt unlockedCount = 0.obs;
             final RxInt lockedCount = 0.obs;
 
-            unlockedCount.value = m.allMilestones
-                .where((item) => m.bonuses.any(
-                  (b) => b.rewardUnlocked.toLowerCase() == item.gift.toLowerCase(),
-            ))
-                .length;
+            unlockedCount.value =
+                m.allMilestones
+                    .where(
+                      (item) => m.bonuses.any(
+                        (b) =>
+                            b.rewardUnlocked.toLowerCase() ==
+                            item.gift.toLowerCase(),
+                      ),
+                    )
+                    .length;
 
             lockedCount.value =
-                ((m.allMilestones.length - unlockedCount.value).clamp(0, m.allMilestones.length)).toInt();
+                ((m.allMilestones.length - unlockedCount.value).clamp(
+                  0,
+                  m.allMilestones.length,
+                )).toInt();
 
             return Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Expanded(child: _buildStatBox(unlockedCount.value.toString(), "Unlocked")),
+                Expanded(
+                  child: _buildStatBox(
+                    unlockedCount.value.toString(),
+                    "Unlocked",
+                  ),
+                ),
                 const SizedBox(width: 8),
-                Expanded(child: _buildStatBox(lockedCount.value.toString(), "Locked")),
+                Expanded(
+                  child: _buildStatBox(lockedCount.value.toString(), "Locked"),
+                ),
                 const SizedBox(width: 8),
                 Expanded(child: _buildStatBox("${m.progress}%", "Overall")),
               ],
             );
-          })
-
+          }),
         ],
       ),
     );
@@ -392,128 +405,4 @@ class _PartnerMilestoneRewardScreenState
       ),
     );
   }
-}
-Widget buildPartnerMilestoneRewardShimmer() {
-  return Shimmer.fromColors(
-    baseColor: Colors.grey.shade300,
-    highlightColor: Colors.grey.shade100,
-    child: Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade300, width: 1),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 🔹 Header
-          Row(
-            children: [
-              Container(height: 24, width: 24, color: Colors.white),
-              const SizedBox(width: 8),
-              Container(height: 18, width: 180, color: Colors.white),
-            ],
-          ),
-          const SizedBox(height: 20),
-
-          // 🔹 Total Revenue Section
-          Container(
-            height: 110,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          // 🔹 Next Reward Card
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(height: 12, width: 80, color: Colors.white),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(height: 30, color: Colors.white),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Container(height: 30, color: Colors.white),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Container(height: 16, width: double.infinity, color: Colors.white),
-                const SizedBox(height: 15),
-                Container(height: 8, width: double.infinity, color: Colors.white),
-                const SizedBox(height: 30),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: List.generate(
-                      4,
-                          (_) => Container(
-                        height: 28,
-                        width: 80,
-                        margin: const EdgeInsets.only(right: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          // 🔹 Stats Row
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  height: 70,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Container(
-                  height: 70,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Container(
-                  height: 70,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    ),
-  );
 }

@@ -11,6 +11,7 @@ import 'package:housing_flutter_app/data/network/builder/model/builder_model.dar
 import 'package:housing_flutter_app/modules/builder/controller/project_controller.dart';
 import 'package:housing_flutter_app/modules/builder/view/project_detail/project_detail.dart';
 import 'package:housing_flutter_app/utils/logger/app_logger.dart';
+import 'package:housing_flutter_app/utils/shimmer/seller/builder/project_screen/project_list_screen_shimmer.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../app/constants/size_manager.dart';
@@ -29,6 +30,7 @@ import '../controller/builder_form_controller.dart';
 import '../controller/builder_listed_project_controller.dart';
 import 'builder_form_screen.dart';
 
+//
 // class BuilderPropertyListing extends StatefulWidget {
 //   const BuilderPropertyListing({Key? key}) : super(key: key);
 //
@@ -37,16 +39,13 @@ import 'builder_form_screen.dart';
 // }
 //
 // class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
-//   final RxList<String> selectedPropertyIds = <String>[].obs;
 //   final RxMap<String, String> selectedFilters = <String, String>{}.obs;
-//   late final ProjectWizardController controller;
-//   late final ProjectController projectController;
+//   late final BuilderProjectListController controller;
+//
 //   @override
 //   void initState() {
-//     // TODO: implement initState
 //     super.initState();
-//     controller = Get.find<ProjectWizardController>(tag: "builder");
-//     projectController = Get.put(ProjectController(), permanent: true);
+//     controller = Get.put(BuilderProjectListController());
 //   }
 //
 //   @override
@@ -65,194 +64,122 @@ import 'builder_form_screen.dart';
 //           IconButton(icon: const Icon(Icons.search_rounded), onPressed: () {}),
 //           IconButton(
 //             icon: const Icon(Icons.filter_list_rounded),
+//
 //             onPressed: () async {
 //               final result = await Get.to(() => ResellerPropertyFilter());
-//               print("Filter Result: $result");
-//               if (result != null) {
-//                 // Use the filter result
-//                 final newFilter = convertFiltersToString(result);
-//                 print("Filter newFilter Result: $newFilter");
+//               if (result == null) return;
 //
-//                 final user = await SecureStorage.getUserData();
-//                 final userId = user?.user?.id;
-//
-//                 if (userId != null && userId.isNotEmpty) {
-//                   newFilter["created_by"] = userId;
-//                   log("New Filter ${newFilter}");
-//                   await controller.applyFilters(newFilter);
-//                   selectedFilters
-//                     ..clear()
-//                     ..addAll(newFilter);
-//
-//                   controller.applyFilters(
-//                     Map<String, String>.from(selectedFilters),
-//                   );
-//                   print(
-//                     "Filter Project applied: $result   t   ${selectedFilters.value}",
-//                   );
-//                   // Example: {'bhk': 5, 'city': 'Surat', 'state': 'Gujarat'}
+//               final newFilter = convertFiltersToString(result);
+//               if (newFilter.containsKey('propertyType')) {
+//                 final propertyType = newFilter['propertyType'];
+//                 newFilter.remove('propertyType');
+//                 if (propertyType != null) {
+//                   newFilter['propertyTypes'] = propertyType;
 //                 }
 //               }
+//               // Update UI filters
+//               selectedFilters
+//                 ..clear()
+//                 ..addAll(newFilter);
+//
+//               // Apply all filters at once to controller
+//               controller.applyFilters(newFilter);
 //             },
 //           ),
 //         ],
 //       ),
-//       // body: Obx(() {
-//       //   if (controller.isLoading.value && controller.items.isEmpty) {
-//       //     return const Center(child: CircularProgressIndicator());
-//       //   }
-//       //
-//       //   if (!controller.isLoading.value && controller.items.isEmpty) {
-//       //     return const Center(child: Text('No projects found'));
-//       //   }
-//       //
-//       //   return ListView.builder(
-//       //     itemCount: controller.items.length,
-//       //     itemBuilder: (context, index) {
-//       //       final ProjectItem data = controller.items[index];
-//       //
-//       //       return Padding(
-//       //         padding: const EdgeInsets.all(12),
-//       //         child: GestureDetector(
-//       //           onTap: () {
-//       //             Get.to(() => ProjectDetailsScreen(projectItem: data));
-//       //           },
-//       //           child: BuilderProjectCard(
-//       //             project: data,
-//       //             developersName: data.projectContactInfo?.name ?? 'Unknown',
-//       //             imageUrl:
-//       //                 (data.mediaGallery?.images?.isNotEmpty ?? false)
-//       //                     ? data.mediaGallery!.images.first
-//       //                     : IMGRes.home3,
-//       //             projectName:
-//       //                 (data.projectName ?? '').isNotEmpty
-//       //                     ? data.projectName!
-//       //                     : 'N/A',
-//       //             location:
-//       //                 (data.address ?? '').isNotEmpty
-//       //                     ? data.address!
-//       //                     : 'Not specified',
-//       //             price: '₹500',
-//       //             propertySize:
-//       //                 data.projectSize?.totalBuildings?.toString() ?? '',
-//       //           ),
-//       //         ),
-//       //       );
-//       //     },
-//       //   );
-//       // }),
 //       body: SafeArea(
 //         child: Column(
 //           children: [
-//             /// ---------------- FILTER BAR ----------------
+//             /// -------- FILTER BAR --------
 //             Obx(() {
 //               return FilterChipsBar(
 //                 filters: selectedFilters.value,
-//                 onClearAll: () {
+//                 onClearAll: () async {
 //                   selectedFilters.clear();
-//                   controller.applyFilters(<String, String>{});
+//                   await controller.clearAllFilters();
 //                 },
-//                 onRemoveFilter: (key) {
+//                 onRemoveFilter: (key) async {
 //                   selectedFilters.remove(key);
-//                   controller.applyFilters(
-//                     Map<String, String>.from(selectedFilters),
-//                   );
+//                   await controller.clearFilter(key);
 //                 },
 //                 priceRangeFormatter: formatPriceRange,
 //               );
 //             }),
 //
-//             /// ---------------- PROJECT LIST ----------------
+//             /// -------- PROJECT LIST --------
 //             Expanded(
 //               child: Obx(() {
-//                 final isLoading = controller.isLoading.value;
-//                 final items = controller.items;
-//
-//                 if (isLoading && items.isEmpty) {
-//                   return const Center(child: CircularProgressIndicator());
+//                 // Show loading only when initially loading and no items
+//                 if (controller.isLoading.value && controller.items.isEmpty) {
+//                   // return const Center(child: CircularProgressIndicator());
+//                   return ProjectListScreenShimmer();
 //                 }
 //
-//                 if (!isLoading && items.isEmpty) {
+//                 // Show empty state when not loading and no items
+//                 if (!controller.isLoading.value &&
+//                     !controller.isFilterLoading.value &&
+//                     controller.items.isEmpty) {
 //                   return RefreshIndicator(
-//                     onRefresh: controller.refreshLead,
+//                     onRefresh: controller.refreshProjects,
 //                     child: Center(
-//                       child: Text(
-//                         'No projects found',
-//                         style: TextStyle(
-//                           fontSize: 16,
-//                           color: ColorRes.textSecondary,
-//                           fontWeight: FontWeight.w500,
-//                         ),
+//                       child: ListView(
+//                         children: const [
+//                           SizedBox(height: 100),
+//                           Center(child: Text('No projects found')),
+//                         ],
 //                       ),
 //                     ),
 //                   );
 //                 }
 //
-//                 return RefreshIndicator(
-//                   onRefresh: controller.refreshLead,
-//                   child:
-//                       (items.isNotEmpty)
-//                           ? ListView.separated(
-//                             padding: const EdgeInsets.all(12),
-//                             itemCount: items.length,
-//                             separatorBuilder:
-//                                 (_, __) => const SizedBox(height: 8),
-//                             itemBuilder: (context, index) {
-//                               final data = items[index];
+//                 // Show data with optional filter loading overlay
+//                 return Stack(
+//                   children: [
+//                     RefreshIndicator(
+//                       onRefresh: controller.refreshProjects,
+//                       child: ListView.separated(
+//                         padding: const EdgeInsets.all(12),
+//                         itemCount: controller.items.length,
+//                         separatorBuilder: (_, __) => const SizedBox(height: 8),
+//                         itemBuilder: (context, index) {
+//                           final data = controller.items[index];
 //
-//                               return GestureDetector(
-//                                 onTap: () {
-//                                   log("Project Item Tapped: ${data.toJson()}");
-//                                   Get.to(
-//                                     () => ProjectDetailsScreen(
-//                                       projectItem: data,
-//                                       isBuilder: true,
-//                                     ),
-//                                   );
-//                                 },
-//                                 child: BuilderProjectCard(
-//                                   project: data,
-//                                   developersName:
-//                                       data.projectContactInfo?.name ??
-//                                       'Unknown',
-//                                   imageUrl:
-//                                       (data.mediaGallery?.images?.isNotEmpty ??
-//                                               false)
-//                                           ? data.mediaGallery!.images.first
-//                                           : IMGRes.home3,
-//                                   projectName:
-//                                       (data.projectName ?? '').isNotEmpty
-//                                           ? data.projectName!
-//                                           : 'N/A',
-//                                   location:
-//                                       (data.address ?? '').isNotEmpty
-//                                           ? data.address!
-//                                           : 'Not specified',
-//                                   price: data.getPriceRange(),
-//                                   propertySize:
-//                                       data.projectSize?.totalBuildings
-//                                           ?.toString() ??
-//                                       '',
+//                           return GestureDetector(
+//                             onTap: () {
+//                               Get.to(
+//                                 () => ProjectDetailsScreen(
+//                                   projectItem: data,
+//                                   isBuilder: true,
 //                                 ),
 //                               );
 //                             },
-//                           )
-//                           : SingleChildScrollView(
-//                             physics: const AlwaysScrollableScrollPhysics(),
-//                             child: SizedBox(
-//                               height: MediaQuery.of(context).size.height * 0.7,
-//                               child: Center(
-//                                 child: Text(
-//                                   "No projects Data found",
-//                                   style: TextStyle(
-//                                     fontSize: AppFontSizes.body,
-//                                     color: ColorRes.textSecondary,
-//                                     fontWeight: AppFontWeights.medium,
-//                                   ),
-//                                 ),
-//                               ),
+//                             child: BuilderProjectCard(
+//                               project: data,
+//                               developersName:
+//                                   data.projectContactInfo?.name ?? 'Unknown',
+//                               imageUrl:
+//                                   (data.mediaGallery?.images.isNotEmpty ??
+//                                           false)
+//                                       ? data.mediaGallery!.images.first
+//                                       : '',
+//                               projectName: data.projectName ?? 'N/A',
+//                               location: data.address ?? 'Not specified',
+//                               price: data.getPriceRange(),
+//                               propertySize:
+//                                   data.projectSize?.totalBuildings
+//                                       ?.toString() ??
+//                                   '',
 //                             ),
-//                           ),
+//                           );
+//                         },
+//                       ),
+//                     ),
+//
+//                     /// Filter loading overlay
+//                     if (controller.isFilterLoading.value)
+//                       const Center(child: CircularProgressIndicator()),
+//                   ],
 //                 );
 //               }),
 //             ),
@@ -272,6 +199,7 @@ class BuilderPropertyListing extends StatefulWidget {
 
 class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
   final RxMap<String, String> selectedFilters = <String, String>{}.obs;
+
   late final BuilderProjectListController controller;
 
   @override
@@ -285,7 +213,7 @@ class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
     return Scaffold(
       backgroundColor: ColorRes.leadGreyColor.shade100,
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'My Project',
           style: TextStyle(fontWeight: AppFontWeights.bold),
         ),
@@ -296,25 +224,23 @@ class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
           IconButton(icon: const Icon(Icons.search_rounded), onPressed: () {}),
           IconButton(
             icon: const Icon(Icons.filter_list_rounded),
-
             onPressed: () async {
               final result = await Get.to(() => ResellerPropertyFilter());
               if (result == null) return;
 
               final newFilter = convertFiltersToString(result);
+
               if (newFilter.containsKey('propertyType')) {
-                final propertyType = newFilter['propertyType'];
-                newFilter.remove('propertyType');
+                final propertyType = newFilter.remove('propertyType');
                 if (propertyType != null) {
                   newFilter['propertyTypes'] = propertyType;
                 }
               }
-              // Update UI filters
+
               selectedFilters
                 ..clear()
                 ..addAll(newFilter);
 
-              // Apply all filters at once to controller
               controller.applyFilters(newFilter);
             },
           ),
@@ -342,29 +268,30 @@ class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
             /// -------- PROJECT LIST --------
             Expanded(
               child: Obx(() {
-                // Show loading only when initially loading and no items
-                if (controller.isLoading.value && controller.items.isEmpty) {
-                  return const Center(child: CircularProgressIndicator());
+                final state = controller.loadingState.value;
+
+                /// Initial loading (shimmer)
+                if (state == BuilderProjectLoadingState.initialLoading &&
+                    controller.items.isEmpty) {
+                  return ProjectListScreenShimmer();
                 }
 
-                // Show empty state when not loading and no items
-                if (!controller.isLoading.value &&
-                    !controller.isFilterLoading.value &&
+                /// Empty state
+                if (state == BuilderProjectLoadingState.normal &&
                     controller.items.isEmpty) {
                   return RefreshIndicator(
                     onRefresh: controller.refreshProjects,
-                    child: Center(
-                      child: ListView(
-                        children: const [
-                          SizedBox(height: 100),
-                          Center(child: Text('No projects found')),
-                        ],
-                      ),
+                    child: ListView(
+                      children: const [
+                        SizedBox(height: 120),
+                        Center(child: Text('No projects found')),
+                      ],
                     ),
                   );
+                  // return ProjectListScreenShimmer();
                 }
 
-                // Show data with optional filter loading overlay
+                /// Main list with overlays
                 return Stack(
                   children: [
                     RefreshIndicator(
@@ -408,8 +335,8 @@ class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
                     ),
 
                     /// Filter loading overlay
-                    if (controller.isFilterLoading.value)
-                      const Center(child: CircularProgressIndicator()),
+                    if (state == BuilderProjectLoadingState.filterLoading)
+                      ProjectListScreenShimmer(),
                   ],
                 );
               }),
@@ -420,288 +347,6 @@ class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
     );
   }
 }
-
-// class BuilderPropertyListing extends StatefulWidget {
-//   const BuilderPropertyListing({Key? key}) : super(key: key);
-//
-//   @override
-//   State<BuilderPropertyListing> createState() => _BuilderPropertyListingState();
-// }
-//
-// class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
-//   final RxMap<String, String> selectedFilters = <String, String>{}.obs;
-//   late final BuilderProjectListController controller;
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     controller = Get.put(BuilderProjectListController());
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: ColorRes.leadGreyColor.shade100,
-//       appBar: AppBar(
-//         title: Text(
-//           'My Project',
-//           style: TextStyle(fontWeight: AppFontWeights.bold),
-//         ),
-//         backgroundColor: ColorRes.white,
-//         elevation: 0,
-//         automaticallyImplyLeading: false,
-//         actions: [
-//           IconButton(icon: const Icon(Icons.search_rounded), onPressed: () {}),
-//           IconButton(
-//             icon: const Icon(Icons.filter_list_rounded),
-//             onPressed: () async {
-//               final result = await Get.to(() => ResellerPropertyFilter());
-//               if (result == null) return;
-//
-//               final newFilter = convertFiltersToString(result);
-//               if (newFilter.containsKey('propertyType')) {
-//                 final propertyType = newFilter['propertyType'];
-//                 newFilter.remove('propertyType');
-//                 if (propertyType != null) {
-//                   newFilter['propertyTypes'] = propertyType;
-//                 }
-//               }
-//               // Update UI filters
-//               selectedFilters
-//                 ..clear()
-//                 ..addAll(newFilter);
-//
-//               // Apply all filters at once to controller
-//               controller.applyFilters(newFilter);
-//             },
-//           ),
-//         ],
-//       ),
-//       body: SafeArea(
-//         child: Column(
-//           children: [
-//             /// -------- FILTER BAR --------
-//             Obx(() {
-//               return FilterChipsBar(
-//                 filters: selectedFilters.value,
-//                 onClearAll: () {
-//                   selectedFilters.clear();
-//                   controller.clearAllFilters();
-//                 },
-//                 onRemoveFilter: (key) {
-//                   selectedFilters.remove(key);
-//                   controller.clearFilter(key);
-//                 },
-//                 priceRangeFormatter: formatPriceRange,
-//               );
-//             }),
-//
-//             /// -------- PROJECT LIST --------
-//             Expanded(
-//               child: Obx(() {
-//                 if (controller.isLoading.value && controller.items.isEmpty) {
-//                   return const Center(child: CircularProgressIndicator());
-//                 }
-//
-//                 if (!controller.isLoading.value && controller.items.isEmpty) {
-//                   return RefreshIndicator(
-//                     onRefresh: controller.refreshProjects,
-//                     child: ListView(
-//                       children: const [
-//                         SizedBox(height: 100),
-//                         Center(child: Text('No projects found')),
-//                       ],
-//                     ),
-//                   );
-//                 }
-//
-//                 return RefreshIndicator(
-//                   onRefresh: controller.refreshProjects,
-//                   child: ListView.separated(
-//                     padding: const EdgeInsets.all(12),
-//                     itemCount: controller.items.length,
-//                     separatorBuilder: (_, __) => const SizedBox(height: 8),
-//                     itemBuilder: (context, index) {
-//                       final data = controller.items[index];
-//
-//                       return GestureDetector(
-//                         onTap: () {
-//                           Get.to(
-//                             () => ProjectDetailsScreen(
-//                               projectItem: data,
-//                               isBuilder: true,
-//                             ),
-//                           );
-//                         },
-//                         child: BuilderProjectCard(
-//                           project: data,
-//                           developersName:
-//                               data.projectContactInfo?.name ?? 'Unknown',
-//                           imageUrl:
-//                               (data.mediaGallery?.images.isNotEmpty ?? false)
-//                                   ? data.mediaGallery!.images.first
-//                                   : IMGRes.home3,
-//                           projectName: data.projectName ?? 'N/A',
-//                           location: data.address ?? 'Not specified',
-//                           price: data.getPriceRange(),
-//                           propertySize:
-//                               data.projectSize?.totalBuildings?.toString() ??
-//                               '',
-//                         ),
-//                       );
-//                     },
-//                   ),
-//                 );
-//               }),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-// class BuilderPropertyListing extends StatefulWidget {
-//   const BuilderPropertyListing({Key? key}) : super(key: key);
-//
-//   @override
-//   State<BuilderPropertyListing> createState() => _BuilderPropertyListingState();
-// }
-//
-// class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
-//   final RxMap<String, String> selectedFilters = <String, String>{}.obs;
-//   late final BuilderProjectListController controller;
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     controller = Get.put(BuilderProjectListController());
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: ColorRes.leadGreyColor.shade100,
-//       appBar: AppBar(
-//         title: Text(
-//           'My Project',
-//           style: TextStyle(fontWeight: AppFontWeights.bold),
-//         ),
-//         backgroundColor: ColorRes.white,
-//         elevation: 0,
-//         automaticallyImplyLeading: false,
-//         actions: [
-//           IconButton(icon: const Icon(Icons.search_rounded), onPressed: () {}),
-//           IconButton(
-//             icon: const Icon(Icons.filter_list_rounded),
-//             onPressed: () async {
-//               final result = await Get.to(() => ResellerPropertyFilter());
-//               if (result == null) return;
-//
-//               final newFilter = convertFiltersToString(result);
-//               selectedFilters
-//                 ..clear()
-//                 ..addAll(newFilter);
-//
-//               controller.clearAllFilters();
-//
-//               newFilter.forEach((key, value) {
-//                 switch (key) {
-//                   case 'city':
-//                     controller.applyCity(value);
-//                     break;
-//                   case 'status':
-//                     controller.applyStatus(value);
-//                     break;
-//                   case 'propertyTypes':
-//                     controller.applyPropertyType(value);
-//                     break;
-//                   default:
-//                     controller.filters[key] = value;
-//                 }
-//               });
-//             },
-//           ),
-//         ],
-//       ),
-//       body: SafeArea(
-//         child: Column(
-//           children: [
-//             /// -------- FILTER BAR --------
-//             Obx(() {
-//               return FilterChipsBar(
-//                 filters: selectedFilters.value,
-//                 onClearAll: () {
-//                   selectedFilters.clear();
-//                   controller.clearAllFilters();
-//                 },
-//                 onRemoveFilter: (key) {
-//                   selectedFilters.remove(key);
-//                   controller.clearFilter(key);
-//                 },
-//                 priceRangeFormatter: formatPriceRange,
-//               );
-//             }),
-//
-//             /// -------- PROJECT LIST --------
-//             Expanded(
-//               child: Obx(() {
-//                 if (controller.isLoading.value && controller.items.isEmpty) {
-//                   return const Center(child: CircularProgressIndicator());
-//                 }
-//
-//                 if (!controller.isLoading.value && controller.items.isEmpty) {
-//                   return RefreshIndicator(
-//                     onRefresh: controller.refreshProjects,
-//                     child: const Center(child: Text('No projects found')),
-//                   );
-//                 }
-//
-//                 return RefreshIndicator(
-//                   onRefresh: controller.refreshProjects,
-//                   child: ListView.separated(
-//                     padding: const EdgeInsets.all(12),
-//                     itemCount: controller.items.length,
-//                     separatorBuilder: (_, __) => const SizedBox(height: 8),
-//                     itemBuilder: (context, index) {
-//                       final data = controller.items[index];
-//
-//                       return GestureDetector(
-//                         onTap: () {
-//                           Get.to(
-//                             () => ProjectDetailsScreen(
-//                               projectItem: data,
-//                               isBuilder: true,
-//                             ),
-//                           );
-//                         },
-//                         child: BuilderProjectCard(
-//                           project: data,
-//                           developersName:
-//                               data.projectContactInfo?.name ?? 'Unknown',
-//                           imageUrl:
-//                               (data.mediaGallery?.images.isNotEmpty ?? false)
-//                                   ? data.mediaGallery!.images.first
-//                                   : IMGRes.home3,
-//                           projectName: data.projectName ?? 'N/A',
-//                           location: data.address ?? 'Not specified',
-//                           price: data.getPriceRange(),
-//                           propertySize:
-//                               data.projectSize?.totalBuildings?.toString() ??
-//                               '',
-//                         ),
-//                       );
-//                     },
-//                   ),
-//                 );
-//               }),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 class BuilderProjectCard extends StatelessWidget {
   final bool forHome;

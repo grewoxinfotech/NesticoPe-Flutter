@@ -13,6 +13,7 @@ import '../../../builder/controller/project_controller.dart';
 import '../../../builder/view/project_detail/project_detail.dart';
 import '../../../builder/view/widget/project_filter_screen.dart';
 import '../../../propert_detail/view/property_details.dart';
+import '../../../property/controllers/share_property_controller.dart';
 import '../../../seller/module/lead_screen/views/lead_screen_enhanced.dart';
 import '../../controller/dashborad_controller/dashboard_controller.dart';
 import '../../controller/project/reseller_project_controller.dart';
@@ -313,6 +314,8 @@ class ProjectCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final SharePropertyController controller =
+        Get.find<SharePropertyController>();
     return Material(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(14),
@@ -409,7 +412,14 @@ class ProjectCard extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          const Icon(Icons.chevron_right, size: 18),
+                          GestureDetector(
+                            onTap: () async {
+                              await controller.getPropertyLinkByIdInReseller(
+                                project.id ?? '',
+                              );
+                            },
+                            child: const Icon(Icons.share, size: 16),
+                          ),
                         ],
                       ),
 

@@ -316,7 +316,7 @@ class PropertyService {
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: "Error",
           message: "Failed to Update property. Please try again.",
-          contentType: ContentType.success,
+          contentType: ContentType.failure,
         );
       }
 

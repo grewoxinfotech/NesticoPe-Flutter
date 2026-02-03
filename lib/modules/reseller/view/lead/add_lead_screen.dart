@@ -95,25 +95,24 @@ class AddLeadScreen extends StatelessWidget {
                     value: controller.selectedProperty.value,
                     items:
                         controller.propertyList.map((e) {
-                          final propertyManager = PropertyNameManager(e);
+                          final displayName = e.title;
                           return DropdownMenuItem(
                             value: e,
                             child: Row(
                               children: [
-                                if (e.propertyMedia?.images != null &&
-                                    e.propertyMedia!.images!.isNotEmpty) ...[
+                                if (e.image != null && e.image!.isNotEmpty) ...[
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(6),
                                     child: CustomImage(
                                       type: CustomImageType.network,
-                                      src: e.propertyMedia!.images!.first,
+                                      src: e.image,
                                       height: 30,
                                       width: 30,
                                     ),
                                   ),
                                   SizedBox(width: 12),
                                 ],
-                                Text(propertyManager.displayName),
+                                Text('${displayName}'),
                               ],
                             ),
                           );

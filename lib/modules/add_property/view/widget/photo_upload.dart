@@ -282,7 +282,6 @@ import '../../controller/create_property_controller.dart';
 //   );
 // }
 
-
 // void showImageSourceSheet(
 //   BuildContext context,
 //   CreatePropertyController controller,
@@ -319,19 +318,20 @@ import '../../controller/create_property_controller.dart';
 //   );
 // }
 
-
 class PhotoUpload extends StatelessWidget {
   final CreatePropertyController controller;
 
-  const PhotoUpload({super.key, required this.controller, required GlobalKey<
-      FormState> formKey});
+  const PhotoUpload({
+    super.key,
+    required this.controller,
+    required GlobalKey<FormState> formKey,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       print(
-        "vfsdgytgfgsdytfgydy ===========${controller.propertyType
-            .value}  djhfiuw ${controller.lookingTo.value}",
+        "vfsdgytgfgsdytfgydy ===========${controller.propertyType.value}  djhfiuw ${controller.lookingTo.value}",
       );
 
       return Column(
@@ -384,77 +384,71 @@ class PhotoUpload extends StatelessWidget {
                 ),
               ),
               Obx(
-                    () =>
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color:
+                () => Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color:
                         controller.imageList.value.isEmpty
                             ? ColorRes.orangeColor.shade50
                             : ColorRes.success.shade50,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        '${controller.imageList.value.length}/5',
-                        style: TextStyle(
-                          fontSize: AppFontSizes.caption,
-                          fontWeight: AppFontWeights.semiBold,
-                          color:
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '${controller.imageList.value.length}/5',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.caption,
+                      fontWeight: AppFontWeights.semiBold,
+                      color:
                           controller.imageList.value.isEmpty
                               ? ColorRes.orangeColor.shade700
                               : ColorRes.success.shade700,
-                        ),
-                      ),
                     ),
+                  ),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 16),
           Obx(
-                () =>
-            controller.imageList.value.isEmpty
-                ? _buildUploadBox(
-              onTap: controller.builderImagePicker,
-              icon: Icons.cloud_upload_outlined,
-              title: 'Upload your files here',
-              subtitle: 'Browse',
-              color: ColorRes.blueColor,
-            )
-                : Column(
-              children: [
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    ...controller.imageList.value
-                        .asMap()
-                        .entries
-                        .map((entry) {
-                      final index = entry.key;
-                      final filePath = entry.value;
-                      return _buildMediaThumbnail(
-                        filePath: filePath,
-                        isVideo: false,
-                        onRemove:
-                            () =>
-                            controller.removeBuilderImage(
-                              index,
-                            ),
-                      );
-                    }),
-                    if (controller.imageList.value.length < 5)
-
-                      _buildAddMoreButton(
-                        onTap: controller.builderImagePicker,
-                        icon: Icons.add_photo_alternate_outlined,
-                      ),
-                  ],
-                ),
-              ],
-            ),
+            () =>
+                controller.imageList.value.isEmpty
+                    ? _buildUploadBox(
+                      onTap: controller.builderImagePicker,
+                      icon: Icons.cloud_upload_outlined,
+                      title: 'Upload your files here',
+                      subtitle: 'Browse',
+                      color: ColorRes.blueColor,
+                    )
+                    : Column(
+                      children: [
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            ...controller.imageList.value.asMap().entries.map((
+                              entry,
+                            ) {
+                              final index = entry.key;
+                              final filePath = entry.value;
+                              return _buildMediaThumbnail(
+                                filePath: filePath,
+                                isVideo: false,
+                                onRemove:
+                                    () => controller.removeBuilderImage(index),
+                              );
+                            }),
+                            if (controller.imageList.value.length < 5)
+                              _buildAddMoreButton(
+                                onTap: controller.builderImagePicker,
+                                icon: Icons.add_photo_alternate_outlined,
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
           ),
         ],
       ),
@@ -502,70 +496,65 @@ class PhotoUpload extends StatelessWidget {
                 ),
               ),
               Obx(
-                    () =>
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: ColorRes.leadGreyColor[100],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        '${controller.videoList.value.length}/5',
-                        style: TextStyle(
-                          fontSize: AppFontSizes.caption,
-                          fontWeight: AppFontWeights.semiBold,
-                          color: ColorRes.leadGreyColor[700],
-                        ),
-                      ),
+                () => Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: ColorRes.leadGreyColor[100],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '${controller.videoList.value.length}/5',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.caption,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.leadGreyColor[700],
                     ),
+                  ),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 16),
           Obx(
-                () =>
-            controller.videoList.value.isEmpty
-                ? _buildUploadBox(
-              onTap: controller.builderVideoPicker,
-              icon: Icons.cloud_upload_outlined,
-              title: 'Upload your files here',
-              subtitle: 'Browse',
-              color: ColorRes.purpleColor,
-            )
-                : Column(
-              children: [
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    ...controller.videoList.value
-                        .asMap()
-                        .entries
-                        .map((entry) {
-                      final index = entry.key;
-                      final filePath = entry.value;
-                      return _buildMediaThumbnail(
-                        filePath: filePath,
-                        isVideo: true,
-                        onRemove:
-                            () =>
-                            controller.removeBuilderVideo(
-                              index,
-                            ),
-                      );
-                    }),
-                    if (controller.videoList.value.length < 5)
-                      _buildAddMoreButton(
-                        onTap: controller.builderVideoPicker,
-                        icon: Icons.add_photo_alternate_outlined,
-                      ),
-                  ],
-                ),
-              ],
-            ),
+            () =>
+                controller.videoList.value.isEmpty
+                    ? _buildUploadBox(
+                      onTap: controller.builderVideoPicker,
+                      icon: Icons.cloud_upload_outlined,
+                      title: 'Upload your files here',
+                      subtitle: 'Browse',
+                      color: ColorRes.purpleColor,
+                    )
+                    : Column(
+                      children: [
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            ...controller.videoList.value.asMap().entries.map((
+                              entry,
+                            ) {
+                              final index = entry.key;
+                              final filePath = entry.value;
+                              return _buildMediaThumbnail(
+                                filePath: filePath,
+                                isVideo: true,
+                                onRemove:
+                                    () => controller.removeBuilderVideo(index),
+                              );
+                            }),
+                            if (controller.videoList.value.length < 5)
+                              _buildAddMoreButton(
+                                onTap: controller.builderVideoPicker,
+                                icon: Icons.add_photo_alternate_outlined,
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
           ),
         ],
       ),
@@ -636,90 +625,88 @@ class PhotoUpload extends StatelessWidget {
           height: 90,
           decoration: BoxDecoration(
             color:
-            isVideo
-                ? ColorRes.purpleColor[50]
-                : ColorRes.leadGreyColor[100],
+                isVideo
+                    ? ColorRes.purpleColor[50]
+                    : ColorRes.leadGreyColor[100],
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
               color:
-              isVideo
-                  ? ColorRes.purpleColor[200]!
-                  : ColorRes.leadGreyColor[300]!,
+                  isVideo
+                      ? ColorRes.purpleColor[200]!
+                      : ColorRes.leadGreyColor[300]!,
             ),
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child:
-            isVideo
-                ? FutureBuilder<String?>(
-              future: generateVideoThumbnail(filePath),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState ==
-                    ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  );
-                }
-                final thumbPath = snapshot.data;
-                if (thumbPath == null ||
-                    !File(thumbPath).existsSync()) {
-                  return const Center(
-                    child: Icon(
-                      Icons.videocam,
-                      size: 32,
-                      color: ColorRes.leadGreyColor,
+                isVideo
+                    ? FutureBuilder<String?>(
+                      future: generateVideoThumbnail(filePath),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          );
+                        }
+                        final thumbPath = snapshot.data;
+                        if (thumbPath == null ||
+                            !File(thumbPath).existsSync()) {
+                          return const Center(
+                            child: Icon(
+                              Icons.videocam,
+                              size: 32,
+                              color: ColorRes.leadGreyColor,
+                            ),
+                          );
+                        }
+                        return Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            Image.file(File(thumbPath), fit: BoxFit.cover),
+                            const Center(
+                              child: Icon(
+                                Icons.play_circle_fill,
+                                color: ColorRes.white,
+                                size: 32,
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    )
+                    // : Image.file(
+                    //   File(filePath),
+                    //   fit: BoxFit.cover,
+                    //   errorBuilder:
+                    //       (_, __, ___) =>
+                    //           const Icon(Icons.broken_image, size: 32),
+                    // ),
+                    : Uri.tryParse(filePath)?.isAbsolute ?? false
+                    ? Image.network(
+                      filePath,
+                      fit: BoxFit.cover,
+                      width: 128,
+                      height: 128,
+                      loadingBuilder: (context, child, progress) {
+                        if (progress == null) return child;
+                        return const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        );
+                      },
+                      errorBuilder:
+                          (_, __, ___) =>
+                              const Icon(Icons.broken_image, size: 32),
+                    )
+                    : Image.file(
+                      File(filePath),
+                      fit: BoxFit.cover,
+                      width: 128,
+                      height: 128,
+                      errorBuilder:
+                          (_, __, ___) =>
+                              const Icon(Icons.broken_image, size: 32),
                     ),
-                  );
-                }
-                return Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Image.file(File(thumbPath), fit: BoxFit.cover),
-                    const Center(
-                      child: Icon(
-                        Icons.play_circle_fill,
-                        color: ColorRes.white,
-                        size: 32,
-                      ),
-                    ),
-                  ],
-                );
-              },
-            )
-            // : Image.file(
-            //   File(filePath),
-            //   fit: BoxFit.cover,
-            //   errorBuilder:
-            //       (_, __, ___) =>
-            //           const Icon(Icons.broken_image, size: 32),
-            // ),
-                : Uri
-                .tryParse(filePath)
-                ?.isAbsolute ?? false
-                ? Image.network(
-              filePath,
-              fit: BoxFit.cover,
-              width: 128,
-              height: 128,
-              loadingBuilder: (context, child, progress) {
-                if (progress == null) return child;
-                return const Center(
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                );
-              },
-              errorBuilder:
-                  (_, __, ___) =>
-              const Icon(Icons.broken_image, size: 32),
-            )
-                : Image.file(
-              File(filePath),
-              fit: BoxFit.cover,
-              width: 128,
-              height: 128,
-              errorBuilder:
-                  (_, __, ___) =>
-              const Icon(Icons.broken_image, size: 32),
-            ),
           ),
         ),
         // ❌ remove button
@@ -778,7 +765,9 @@ class PhotoUpload extends StatelessWidget {
       ),
     );
   }
+
   Widget _buildProjectDocumentsSection() {
+    print("jbdvksjfdbsknblkvfdjnvglskd: ${controller.selectedIndex.value}");
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -803,7 +792,7 @@ class PhotoUpload extends StatelessWidget {
                   children: [
                     buildBuilderDefaultHeaderText('Project Documents'),
                     Text(
-                      'Optional • Max 2 files • PDF, DOC, DOCX',
+                      'Max 5 files • PDF, DOC, DOCX',
                       style: TextStyle(
                         fontSize: AppFontSizes.caption,
                         color: ColorRes.leadGreyColor.shade600,
@@ -813,27 +802,27 @@ class PhotoUpload extends StatelessWidget {
                 ),
               ),
               Obx(
-                    () => Container(
+                () => Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
                     color:
-                    controller.documentList.value.isEmpty
-                        ? ColorRes.leadGreyColor.shade100
-                        : ColorRes.success.shade50,
+                        controller.documentList.value.isEmpty
+                            ? ColorRes.leadGreyColor.shade100
+                            : ColorRes.success.shade50,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    '${controller.documentList.value.length}/2',
+                    '${controller.documentList.value.length}/5',
                     style: TextStyle(
                       fontSize: AppFontSizes.caption,
                       fontWeight: AppFontWeights.semiBold,
                       color:
-                      controller.documentList.value.isEmpty
-                          ? ColorRes.leadGreyColor.shade700
-                          : ColorRes.success.shade700,
+                          controller.documentList.value.isEmpty
+                              ? ColorRes.leadGreyColor.shade700
+                              : ColorRes.success.shade700,
                     ),
                   ),
                 ),
@@ -841,79 +830,145 @@ class PhotoUpload extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          Obx(
-                () =>
-            controller.documentList.value.isEmpty
-                ? _buildUploadBox(
-              onTap: controller.builderDocumentPicker,
-              icon: Icons.cloud_upload_outlined,
-              title: 'Upload your documents here',
-              subtitle: 'Browse',
-              color: ColorRes.success,
-            )
-                : Column(
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: ColorRes.primary.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: ColorRes.primary.withOpacity(0.2)),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ...controller.documentList.value
-                    .asMap()
-                    .entries
-                    .map((entry) {
-                  final index = entry.key;
-                  final filePath = entry.value;
-                  return _buildDocumentTile(
-                    filePath: filePath,
-                    index: index,
-                    onRemove:
-                        () =>
-                        controller.removeBuilderDocument(index),
-                    onView: () async {
-                      await controller.pdfPreviewByDefaultApp(
-                        filePath,
-                      );
-                    },
-                  );
-                }),
-                if (controller.documentList.value.length < 2)
-                  const SizedBox(height: 12),
-                if (controller.documentList.value.length < 2)
-                  InkWell(
-                    onTap: controller.builderDocumentPicker,
-                    borderRadius: BorderRadius.circular(12),
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: ColorRes.success.shade50!.withOpacity(
-                          0.3,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: ColorRes.success.shade300!,
-                          width: 1.5,
-                          style: BorderStyle.solid,
+                Icon(Icons.info_outline, size: 20, color: ColorRes.primary),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Mandatory Documents for Builder Project',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.medium,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.primary,
                         ),
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.add_circle_outline,
-                            size: 20,
-                            color: ColorRes.success.shade700,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Add More Documents',
-                            style: TextStyle(
-                              fontSize: AppFontSizes.medium,
-                              fontWeight: AppFontWeights.semiBold,
-                              color: ColorRes.success.shade700,
+                      const SizedBox(height: 6),
+                      if (controller.selectedIndex.value.toLowerCase() ==
+                              'plot' ||
+                          controller.selectedIndex.value.toLowerCase() ==
+                              'agriculture_land') ...[
+                        _buildBulletText('Khata Copy'),
+                        _buildBulletText('Patta'),
+                        _buildBulletText('7/12'),
+                        _buildBulletText('RTC'),
+                        _buildBulletText(
+                          'Ownership Proof Document (PDF / Image)',
+                        ),
+                      ] else ...[
+                        _buildBulletText(
+                          'Ownership Proof Document (PDF / Image)',
+                        ),
+                        _buildBulletText('Registered Sale Deed Copy (PDF)'),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Obx(
+            () =>
+                controller.documentList.value.isEmpty
+                    ? _buildUploadBox(
+                      onTap: controller.builderDocumentPicker,
+                      icon: Icons.cloud_upload_outlined,
+                      title: 'Upload your documents here',
+                      subtitle: 'Browse',
+                      color: ColorRes.success,
+                    )
+                    : Column(
+                      children: [
+                        ...controller.documentList.value.asMap().entries.map((
+                          entry,
+                        ) {
+                          final index = entry.key;
+                          final filePath = entry.value;
+                          return _buildDocumentTile(
+                            filePath: filePath,
+                            index: index,
+                            onRemove:
+                                () => controller.removeBuilderDocument(index),
+                            onView: () async {
+                              await controller.pdfPreviewByDefaultApp(filePath);
+                            },
+                          );
+                        }),
+                        if (controller.documentList.value.length < 5)
+                          const SizedBox(height: 12),
+                        if (controller.documentList.value.length < 5)
+                          InkWell(
+                            onTap: controller.builderDocumentPicker,
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: ColorRes.success.shade50!.withOpacity(
+                                  0.3,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: ColorRes.success.shade300!,
+                                  width: 1.5,
+                                  style: BorderStyle.solid,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.add_circle_outline,
+                                    size: 20,
+                                    color: ColorRes.success.shade700,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Add More Documents',
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.medium,
+                                      fontWeight: AppFontWeights.semiBold,
+                                      color: ColorRes.success.shade700,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ],
-                      ),
+                      ],
                     ),
-                  ),
-              ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBulletText(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('•  '),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: AppFontSizes.small,
+                color: ColorRes.leadGreyColor.shade700,
+              ),
             ),
           ),
         ],
@@ -1039,4 +1094,3 @@ Future<String?> generateVideoThumbnail(String videoPath) async {
     return null;
   }
 }
-

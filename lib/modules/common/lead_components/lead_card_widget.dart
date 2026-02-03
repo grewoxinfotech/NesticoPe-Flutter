@@ -239,19 +239,19 @@ class LeadCardWidget extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color:
-                    (lead.isFake ?? false)
-                        ? ColorRes.error.withOpacity(0.08)
-                        : getStatusColor(
-                      getLeadStatusFromString(lead.status!),
-                    ).withOpacity(0.08),
+                        (lead.isFake ?? false)
+                            ? ColorRes.error.withOpacity(0.08)
+                            : getStatusColor(
+                              getLeadStatusFromString(lead.status!),
+                            ).withOpacity(0.08),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color:
-                      (lead.isFake ?? false)
-                          ? ColorRes.error.shade300
-                          : getStatusColor(
-                        getLeadStatusFromString(lead.status!),
-                      ).withOpacity(0.3),
+                          (lead.isFake ?? false)
+                              ? ColorRes.error.shade300
+                              : getStatusColor(
+                                getLeadStatusFromString(lead.status!),
+                              ).withOpacity(0.3),
                       width: 1,
                     ),
                   ),
@@ -261,15 +261,15 @@ class LeadCardWidget extends StatelessWidget {
                         : getStatusText(getLeadStatusFromString(lead.status!)),
                     style: TextStyle(
                       fontSize:
-                      isCompact
-                          ? AppFontSizes.extraSmall
-                          : AppFontSizes.small,
+                          isCompact
+                              ? AppFontSizes.extraSmall
+                              : AppFontSizes.small,
                       color:
-                      (lead.isFake ?? false)
-                          ? ColorRes.error
-                          : getStatusColor(
-                        getLeadStatusFromString(lead.status!),
-                      ),
+                          (lead.isFake ?? false)
+                              ? ColorRes.error
+                              : getStatusColor(
+                                getLeadStatusFromString(lead.status!),
+                              ),
                       fontWeight: AppFontWeights.bold,
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -317,36 +317,82 @@ class LeadCardWidget extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: getSourceColor(
-                      getSourceFromString(lead.source??''),
+                      getSourceFromString(lead.source ?? ''),
                     ).withOpacity(0.08),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color: getSourceColor(
-                        getSourceFromString(lead.source??''),
+                        getSourceFromString(lead.source ?? ''),
                       ).withOpacity(0.3),
                       width: 1,
                     ),
                   ),
                   child: Text(
-                    getSourceText(getSourceFromString(lead.source??'')),
+                    getSourceText(getSourceFromString(lead.source ?? '')),
                     style: TextStyle(
                       fontSize:
-                      isCompact
-                          ? AppFontSizes.extraSmall
-                          : AppFontSizes.small,
-                      color: getSourceColor(getSourceFromString(lead.source??'')),
+                          isCompact
+                              ? AppFontSizes.extraSmall
+                              : AppFontSizes.small,
+                      color: getSourceColor(
+                        getSourceFromString(lead.source ?? ''),
+                      ),
 
                       fontWeight: AppFontWeights.bold,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-
               ],
             ),
+            SizedBox(height: isCompact ? 8 : 12),
+            if (lead.status != null &&
+                lead.stage != null &&
+                lead.status!.toLowerCase() == 'converted' &&
+                lead.stage!.toLowerCase() == 'sell') ...[
+              if (lead.commissionStatus != null &&
+                  lead.commissionStatus!.isNotEmpty) ...[
+                buildCommissionStatus(isPaid: true),
+              ] else ...[
+                buildCommissionStatus(isPaid: false),
+              ],
+            ],
           ],
         ),
       ),
     );
   }
+}
+
+Widget buildCommissionStatus({required bool isPaid, VoidCallback? onTap}) {
+  final Color green = ColorRes.success;
+  final Color lightGreen = ColorRes.white;
+
+  return InkWell(
+    onTap: isPaid ? null : onTap,
+    borderRadius: BorderRadius.circular(8),
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: lightGreen,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: green),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Icon(Icons.currency_rupee, size: 14, color: ColorRes.success),
+          // const SizedBox(width: 6),
+          Text(
+            isPaid ? 'Commission Paid' : 'Pay Partner Commission Now',
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: ColorRes.success,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
