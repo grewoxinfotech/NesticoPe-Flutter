@@ -8,11 +8,12 @@ import '../../../data/network/property/services/property_service.dart';
 class SellerListedPropertyController extends PaginatedController<Items> {
   final PropertyService _service = PropertyService();
 
-  /// Seller-specific filters
-  Map<String, String> filters = {};
+  final Rx<PropertyListState> state = PropertyListState.initialLoading.obs;
 
-  final RxBool apiLoading = false.obs;
   final RxString sellerId = ''.obs;
+
+  /// Always-active filters (seller + user filters)
+  Map<String, String> filters = {};
 
   @override
   void onInit() {
@@ -20,91 +21,107 @@ class SellerListedPropertyController extends PaginatedController<Items> {
     _initSeller();
   }
 
-  /// Load seller ID and initial data
   Future<void> _initSeller() async {
     final user = await SecureStorage.getUserData();
     final id = user?.user?.id;
 
-    if (id == null) return;
+    if (id == null) {
+      state.value = PropertyListState.error;
+      return;
+    }
 
     sellerId.value = id.toString();
-    // Default filter → seller properties only
     filters = {'created_by': sellerId.value};
-    print("Seller seller listed controller ID: $sellerId");
+
     await loadInitial();
   }
 
-  /// Apply filters (keeps seller constraint)
-  Future<void> applyFilters(Map<String, String> newFilters) async {
+  /// FIRST LOAD / REFRESH
+  @override
+  Future<void> loadInitial() async {
+    state.value = PropertyListState.initialLoading;
+    items.clear();
+    currentPage.value = 1;
+    hasMore.value = true;
+
     try {
-      apiLoading.value = true;
+      await super.loadInitial();
 
-      // Merge new filters with the mandatory seller ID
-      filters = {...newFilters, 'created_by': sellerId.value};
-
-      currentPage.value = 1;
-      hasMore.value = true;
-      items.clear();
-      await refreshList();
-    } finally {
-      apiLoading.value = false;
+      state.value =
+          items.isEmpty ? PropertyListState.empty : PropertyListState.loaded;
+    } catch (_) {
+      state.value = PropertyListState.error;
     }
   }
 
-  /// Apply single filter
-  void applyFilter(String key, String value) {
-    filters[key] = value;
-    filters['created_by'] = sellerId.value;
+  /// APPLY FILTERS
+  Future<void> applyFilters(Map<String, String> newFilters) async {
+    state.value = PropertyListState.filtering;
 
+    filters = {...newFilters, 'created_by': sellerId.value};
+
+    items.clear();
     currentPage.value = 1;
     hasMore.value = true;
-    items.clear();
-    refreshList();
+
+    try {
+      await super.loadInitial();
+
+      state.value =
+          items.isEmpty ? PropertyListState.empty : PropertyListState.loaded;
+    } catch (_) {
+      state.value = PropertyListState.error;
+    }
   }
 
-  /// Clear all filters except seller
-  void clearAllFilters() {
-    filters = {'created_by': sellerId.value};
-    currentPage.value = 1;
-    hasMore.value = true;
-    items.clear();
-    refreshList();
+  /// CLEAR FILTERS
+  Future<void> clearAllFilters() async {
+    await applyFilters({});
   }
 
+  /// PAGINATION
+  @override
+  Future<void> loadMore() async {
+    if (state.value == PropertyListState.loadingMore || !hasMore.value) return;
+
+    state.value = PropertyListState.loadingMore;
+    await super.loadMore();
+    state.value = PropertyListState.loaded;
+  }
+
+  /// API
   @override
   Future<PaginationResponse<Items>> fetchItems(int page) async {
-    try {
-      // Ensure the seller constraint is ALWAYS there before
-      print('Seller fetch property called: 1');
+    filters['created_by'] = sellerId.value;
 
-      filters['created_by'] = sellerId.value;
-      print('Seller fetch property called:');
-      final response = await _service.fetchProperties(
-        page: page,
-        filters: filters,
+    final response = await _service.fetchProperties(
+      page: page,
+      filters: filters,
+    );
+    print("response of seller property: ${response.meta.toJson()}");
+    return response;
+  }
+
+  /// DELETE
+  Future<void> deleteProperty(String propertyId) async {
+    final success = await _service.deleteProperty(propertyId);
+    if (success) {
+      items.removeWhere(
+        (e) => e.id == propertyId || e.propertyId == propertyId,
       );
-      print("Fetched Seller Listed items: ${response.items.length}");
-      return response;
-    } catch (e) {
-      rethrow;
-    }
-  }
 
-  Future<bool> deleteProperty(String propertyId) async {
-    try {
-      isLoading.value = true;
-      final success = await _service.deleteProperty(propertyId);
-      if (success) {
-        items.removeWhere(
-          (e) => (e.id == propertyId || e.propertyId == propertyId),
-        );
-        items.refresh();
+      if (items.isEmpty) {
+        state.value = PropertyListState.empty;
       }
-      return success;
-    } catch (e) {
-      return false;
-    } finally {
-      isLoading.value = false;
     }
   }
+}
+
+enum PropertyListState {
+  initialLoading, // first time open
+  loadingMore, // pagination
+  filtering, // applying filters
+  loaded, // data available
+  empty, // no data (after filter or fresh)
+  error,
 }

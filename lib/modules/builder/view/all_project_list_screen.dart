@@ -265,6 +265,7 @@ import 'package:housing_flutter_app/widgets/bar/filter_bar/filter_chip_bar.dart'
 import 'package:housing_flutter_app/widgets/empty_state/empty_state.dart';
 
 import '../../../app/constants/img_res.dart';
+import '../../../utils/shimmer/buyer/project/buyer_project_list_screen_shimmer.dart';
 import '../../home/widgets/unified_comparison_floating_button.dart';
 import 'builder_property_listing.dart';
 
@@ -383,7 +384,7 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
                   child: Obx(() {
                     if (controller.isLoading.value &&
                         controller.items.isEmpty) {
-                      return const Center(child: CircularProgressIndicator());
+                      return BuyerProjectListScreenShimmer();
                     }
 
                     if (!controller.isLoading.value &&

@@ -97,31 +97,31 @@ class CreateTicketScreen extends StatelessWidget {
                 controller: controller.descriptionController,
                 maxLines: 4,
               ),
-              const SizedBox(height: 20),
 
-              Obx(
-                () => NesticoPeDropdownField<String>(
-                  value:
-                      controller.selectedPriority.value.isEmpty
-                          ? null
-                          : controller.selectedPriority.value,
-                  title: 'Priority',
-                  hintText: "Select Priority",
-                  items:
-                      controller.priorities
-                          .map(
-                            (e) => DropdownMenuItem(
-                              value: e,
-                              child: Text(
-                                e.replaceAll("_", " ").capitalize.toString(),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                  onChanged: (val) => controller.selectedPriority.value = val!,
-                ),
-              ),
-
+              // const SizedBox(height: 20),
+              //
+              // Obx(
+              //   () => NesticoPeDropdownField<String>(
+              //     value:
+              //         controller.selectedPriority.value.isEmpty
+              //             ? null
+              //             : controller.selectedPriority.value,
+              //     title: 'Priority',
+              //     hintText: "Select Priority",
+              //     items:
+              //         controller.priorities
+              //             .map(
+              //               (e) => DropdownMenuItem(
+              //                 value: e,
+              //                 child: Text(
+              //                   e.replaceAll("_", " ").capitalize.toString(),
+              //                 ),
+              //               ),
+              //             )
+              //             .toList(),
+              //     onChanged: (val) => controller.selectedPriority.value = val!,
+              //   ),
+              // ),
               const SizedBox(height: 30),
 
               // ---------------- Upload Image Section ----------------

@@ -81,7 +81,6 @@ class LeadService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        AppLogger.structured("Lead from the ", data);
 
         return PaginationResponse<LeadItem>.fromJson(
           data,

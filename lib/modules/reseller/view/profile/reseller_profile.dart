@@ -11,6 +11,7 @@ import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 import 'package:housing_flutter_app/modules/reseller/view/profile/success_story_screen.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
+import '../../../../utils/shimmer/reseller/profile_screen/reseller_profile_screen_shimmer.dart';
 import '../../../../widgets/input/city_selection_widget.dart';
 import '../../../../widgets/messages/snack_bar.dart';
 import '../../../auth/views/delete_account.dart';
@@ -69,7 +70,7 @@ class ResellerProfileScreen extends StatelessWidget {
       ),
       body: Obx(() {
         if (profileController.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return ResellerProfileScreenShimmer();
         }
 
         return RefreshIndicator(
@@ -110,7 +111,7 @@ class ResellerProfileScreen extends StatelessWidget {
                               Get.to(() => SuccessStoryScreen());
                             },
                           ),
-     /*                     const SizedBox(height: 16),
+                          /*                     const SizedBox(height: 16),
                           RequestDeleteAccount(),*/
                         ],
                       ],
@@ -235,15 +236,14 @@ class ResellerProfileScreen extends StatelessWidget {
               const SizedBox(height: 16),
               _buildDetailRow(
                 'Created At',
-             /*   '${Formatter.formatPrice(num.tryParse(controller.resellerProfile.value?.data.totalCommissions ?? '') ?? 0) ?? ''}',*/
-                '${Formatter.formatDate(controller.resellerProfile.value?.data.createdAt)}'
-
+                /*   '${Formatter.formatPrice(num.tryParse(controller.resellerProfile.value?.data.totalCommissions ?? '') ?? 0) ?? ''}',*/
+                '${Formatter.formatDate(controller.resellerProfile.value?.data.createdAt)}',
               ),
               const SizedBox(height: 12),
               Spacer(),
               _buildDetailRow(
                 'Last Updated',
-                  '${Formatter.formatDate(controller.resellerProfile.value?.data.updatedAt)}'
+                '${Formatter.formatDate(controller.resellerProfile.value?.data.updatedAt)}',
               ),
             ],
           ),
@@ -254,7 +254,7 @@ class ResellerProfileScreen extends StatelessWidget {
               const SizedBox(height: 16),
               _buildDetailRow(
                 'Verification Status',
-                '${(controller.profileData.value?.user?.isVerified??true)?"Verified":"Not Verified"} ',
+                '${(controller.profileData.value?.user?.isVerified ?? true) ? "Verified" : "Not Verified"} ',
               ),
               const SizedBox(height: 12),
             ],
@@ -266,7 +266,6 @@ class ResellerProfileScreen extends StatelessWidget {
       ),
     );
   }
-
 
   Widget _buildDetailRow(String label, String value) {
     return Column(
@@ -311,7 +310,7 @@ class ResellerProfileScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-SizedBox(width: 6,),
+              SizedBox(width: 6),
               Stack(
                 children: [
                   // Obx(() {
@@ -421,9 +420,10 @@ SizedBox(width: 6,),
                                               child: SizedBox(
                                                 width: 25,
                                                 height: 25,
-                                                child: CircularProgressIndicator(
-                                                  strokeWidth: 2,
-                                                ),
+                                                child:
+                                                    CircularProgressIndicator(
+                                                      strokeWidth: 2,
+                                                    ),
                                               ),
                                             );
                                           },
@@ -440,13 +440,14 @@ SizedBox(width: 6,),
                                         ))
                                     : CircleAvatar(
                                       radius: 35,
-                                      backgroundColor: ColorRes.primary.withOpacity(
-                                        0.1,
-                                      ),
+                                      backgroundColor: ColorRes.primary
+                                          .withOpacity(0.1),
                                       child: Icon(
                                         Icons.person,
                                         size: 25,
-                                        color: ColorRes.primary.withOpacity(0.8),
+                                        color: ColorRes.primary.withOpacity(
+                                          0.8,
+                                        ),
                                       ),
                                     ),
                           ),
@@ -514,7 +515,8 @@ SizedBox(width: 6,),
                         ),
                       ),
                       child: Text(
-                        '${(controller.profileData.value?.user?.userType=="reseller")?"Partner":""}'.toUpperCase(),
+                        '${(controller.profileData.value?.user?.userType == "reseller") ? "Partner" : ""}'
+                            .toUpperCase(),
                         style: TextStyle(
                           fontSize: AppFontSizes.extraSmall,
                           color: ColorRes.primary,
@@ -545,9 +547,9 @@ SizedBox(width: 6,),
               ),
             ],
           ),
-          SizedBox(height: 6,),
+          SizedBox(height: 6),
           Obx(
-                () => GestureDetector(
+            () => GestureDetector(
               onTap: () {
                 if (controller.isEditing.value) {
                   controller.saveProfile();
@@ -557,7 +559,10 @@ SizedBox(width: 6,),
               },
 
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   gradient: const LinearGradient(
@@ -583,9 +588,7 @@ SizedBox(width: 6,),
                 ),
               ),
             ),
-          )
-
-
+          ),
         ],
       ),
     );

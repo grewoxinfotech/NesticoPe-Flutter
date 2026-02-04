@@ -14,6 +14,7 @@ import 'package:housing_flutter_app/modules/seller/model/overview_model.dart';
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
 import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
 import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/views/widget/property_distribution_pie_graph.dart';
+import 'package:housing_flutter_app/utils/shimmer/dashboard/dashbard_shimmer.dart';
 
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/utils/formater/formater.dart';
@@ -212,9 +213,176 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
     }
   }
 
+  // @override
+  // Widget build(BuildContext context) {
+  //   Get.lazyPut(() => LeadController());
+  //   return DashboardLayout(
+  //     onRefresh: overviewController.refreshSellerDashboard,
+  //
+  //     floatingButton: FloatingActionButton.extended(
+  //       onPressed: () {
+  //         if (!UserHelper.isAadharVerified) {
+  //           Get.to(() => AadharAuthScreen());
+  //         } else {
+  //           Get.to(CreatePropertyScreen(isLogin: true));
+  //         }
+  //       },
+  //       label: Text(
+  //         '+ Add Property',
+  //         style: TextStyle(
+  //           color: ColorRes.white,
+  //           fontWeight: AppFontWeights.semiBold,
+  //         ),
+  //       ),
+  //     ),
+  //     child: Obx(() {
+  //       log(
+  //         'UI Obx rebuilding - isLoading: ${overviewController.isLoading.value}, overviewData: ${overviewController.overviewData.value != null ? "HAS DATA" : "NULL"}',
+  //       );
+  //
+  //       // Show loading indicator
+  //       if (overviewController.isLoading.value) {
+  //         log('Showing loading indicator');
+  //         return DashboardShimmer();
+  //       }
+  //       // Get overview data
+  //       final overview = overviewController.overviewData.value;
+  //       log('overview variable: ${overview != null ? "HAS DATA" : "NULL"}');
+  //
+  //       // Show empty state if no data
+  //       if (!overviewController.isLoading.value && overview == null) {
+  //         log('Showing empty state');
+  //         return RefreshIndicator(
+  //           onRefresh: overviewController.refreshSellerDashboard,
+  //           color: ColorRes.primary,
+  //           child: SingleChildScrollView(
+  //             physics: const AlwaysScrollableScrollPhysics(),
+  //             child: SizedBox(
+  //               height: MediaQuery.of(context).size.height * 0.7,
+  //               child: Center(
+  //                 child: Column(
+  //                   mainAxisAlignment: MainAxisAlignment.center,
+  //                   children: [
+  //                     Text(
+  //                       "No Dashboard Data available",
+  //                       style: TextStyle(
+  //                         fontSize: AppFontSizes.body,
+  //                         color: ColorRes.textSecondary,
+  //                         fontWeight: AppFontWeights.medium,
+  //                       ),
+  //                     ),
+  //                     const SizedBox(height: 16),
+  //                     ElevatedButton(
+  //                       onPressed: () {
+  //                         log('Retry button pressed');
+  //                         overviewController.getFetchSellerApi(
+  //                           overviewController.selectedGraphYear.value,
+  //                         );
+  //                       },
+  //                       child: const Text('Retry'),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //         );
+  //       }
+  //
+  //       log('Showing main content');
+  //
+  //       if (overview == null) {
+  //         return SizedBox.shrink();
+  //       }
+  //
+  //       // Main content
+  //       return RefreshIndicator(
+  //         onRefresh: overviewController.refreshSellerDashboard,
+  //         color: ColorRes.primary,
+  //         child: SingleChildScrollView(
+  //           physics: const NeverScrollableScrollPhysics(),
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                 children: [
+  //                   Text(
+  //                     "Overview",
+  //                     style: TextStyle(
+  //                       fontSize: AppFontSizes.medium,
+  //                       fontWeight: AppFontWeights.semiBold,
+  //                       color: ColorRes.textColor,
+  //                     ),
+  //                   ),
+  //                   Spacer(),
+  //                   Padding(
+  //                     padding: const EdgeInsets.only(right: 12),
+  //                     child: IconButton(
+  //                       onPressed: () async {
+  //                         // await exportContractorInsightsToExcel(contractorInsightsJson);
+  //                         await exportSellerInsightsToExcel(overview.toMap());
+  //                       },
+  //                       icon: const Icon(Icons.download, size: 18),
+  //
+  //                       style: IconButton.styleFrom(
+  //                         backgroundColor: Colors.green.shade600,
+  //                         foregroundColor: Colors.white,
+  //                         padding: const EdgeInsets.symmetric(
+  //                           horizontal: 12,
+  //                           vertical: 8,
+  //                         ),
+  //                         shape: RoundedRectangleBorder(
+  //                           borderRadius: BorderRadius.circular(8),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ),
+  //
+  //                   _buildYearDropdown(overviewController),
+  //                 ],
+  //               ),
+  //               const SizedBox(height: 10),
+  //               OverViewCard(property: controller.items, overview: overview),
+  //               const SizedBox(height: 20),
+  //               Padding(
+  //                 padding: const EdgeInsets.symmetric(vertical: 12),
+  //                 child: Column(
+  //                   children: [
+  //                     buildSellerLeadGraph(overviewController),
+  //                     const SizedBox(height: 12),
+  //                     buildSellerCommissionGraph(
+  //                       overviewController,
+  //                       'Properties Views',
+  //                     ),
+  //                     const SizedBox(height: 12),
+  //                     buildPropertyDistributionGraph(overviewController),
+  //                     const SizedBox(height: 12),
+  //                     buildLeadSourceDistributionGraph(overviewController),
+  //                     const SizedBox(height: 12),
+  //                     buildPropertyGrowthGraph(overviewController),
+  //                     const SizedBox(height: 12),
+  //                     buildSellerPropertyCreatedGraph(
+  //                       overviewController,
+  //                       'Properties Created',
+  //                     ),
+  //                     const SizedBox(height: 12),
+  //                     leadLifecycleFunnel(overviewController),
+  //                   ],
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     }),
+  //   );
+  // }
+
   @override
   Widget build(BuildContext context) {
     Get.lazyPut(() => LeadController());
+
     return DashboardLayout(
       onRefresh: overviewController.refreshSellerDashboard,
 
@@ -234,141 +402,170 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
           ),
         ),
       ),
-      child: Obx(() {
-        log(
-          'UI Obx rebuilding - isLoading: ${overviewController.isLoading.value}, overviewData: ${overviewController.overviewData.value != null ? "HAS DATA" : "NULL"}',
-        );
 
-        // Show loading indicator
-        if (overviewController.isLoading.value) {
-          log('Showing loading indicator');
-          return const Center(child: CircularProgressIndicator());
-        }
-        // Get overview data
-        final overview = overviewController.overviewData.value;
-        log('overview variable: ${overview != null ? "HAS DATA" : "NULL"}');
+      child: FutureBuilder(
+        future: overviewController.getFetchSellerApi(
+          overviewController.selectedGraphYear.value,
+        ),
+        builder: (context, snapshot) {
+          log('FutureBuilder state → ${snapshot.connectionState}');
 
-        // Show empty state if no data
-        if (!overviewController.isLoading.value && overview == null) {
-          log('Showing empty state');
+          // =============================
+          // LOADING
+          // =============================
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return DashboardShimmer();
+          }
+
+          // =============================
+          // ERROR
+          // =============================
+          if (snapshot.hasError) {
+            return RefreshIndicator(
+              onRefresh: overviewController.refreshSellerDashboard,
+              color: ColorRes.primary,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.7,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Something went wrong',
+                          style: TextStyle(
+                            fontSize: AppFontSizes.body,
+                            color: ColorRes.textSecondary,
+                            fontWeight: AppFontWeights.medium,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            overviewController.getFetchSellerApi(
+                              overviewController.selectedGraphYear.value,
+                            );
+                          },
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }
+
+          // =============================
+          // DATA
+          // =============================
+          final overview = overviewController.overviewData.value;
+
+          if (overview == null) {
+            return RefreshIndicator(
+              onRefresh: overviewController.refreshSellerDashboard,
+              color: ColorRes.primary,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.7,
+                  child: Center(
+                    child: Text(
+                      "No Dashboard Data available",
+                      style: TextStyle(
+                        fontSize: AppFontSizes.body,
+                        color: ColorRes.textSecondary,
+                        fontWeight: AppFontWeights.medium,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }
+
+          // =============================
+          // MAIN CONTENT
+          // =============================
           return RefreshIndicator(
             onRefresh: overviewController.refreshSellerDashboard,
             color: ColorRes.primary,
             child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height * 0.7,
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+              physics: const NeverScrollableScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "No Dashboard Data available",
+                        "Overview",
                         style: TextStyle(
-                          fontSize: AppFontSizes.body,
-                          color: ColorRes.textSecondary,
-                          fontWeight: AppFontWeights.medium,
+                          fontSize: AppFontSizes.medium,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.textColor,
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () {
-                          log('Retry button pressed');
-                          overviewController.getFetchSellerApi(
-                            overviewController.selectedGraphYear.value,
-                          );
-                        },
-                        child: const Text('Retry'),
+                      const Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 12),
+                        child: IconButton(
+                          onPressed: () async {
+                            await exportSellerInsightsToExcel(overview.toMap());
+                          },
+                          icon: const Icon(Icons.download, size: 18),
+                          style: IconButton.styleFrom(
+                            backgroundColor: Colors.green.shade600,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
                       ),
+                      _buildYearDropdown(overviewController),
                     ],
                   ),
-                ),
+                  const SizedBox(height: 10),
+                  OverViewCard(property: controller.items, overview: overview),
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Column(
+                      children: [
+                        buildSellerLeadGraph(overviewController),
+                        const SizedBox(height: 12),
+                        buildSellerCommissionGraph(
+                          overviewController,
+                          'Properties Views',
+                        ),
+                        const SizedBox(height: 12),
+                        buildPropertyDistributionGraph(overviewController),
+                        const SizedBox(height: 12),
+                        buildLeadSourceDistributionGraph(overviewController),
+                        const SizedBox(height: 12),
+                        buildPropertyGrowthGraph(overviewController),
+                        const SizedBox(height: 12),
+                        buildSellerPropertyCreatedGraph(
+                          overviewController,
+                          'Properties Created',
+                        ),
+                        const SizedBox(height: 12),
+                        leadLifecycleFunnel(overviewController),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           );
-        }
-
-        log('Showing main content');
-
-        if (overview == null) {
-          return SizedBox.shrink();
-        }
-
-        // Main content
-        return RefreshIndicator(
-          onRefresh: overviewController.refreshSellerDashboard,
-          color: ColorRes.primary,
-          child: SingleChildScrollView(
-            physics: const NeverScrollableScrollPhysics(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Overview",
-                      style: TextStyle(
-                        fontSize: AppFontSizes.medium,
-                        fontWeight: AppFontWeights.semiBold,
-                        color: ColorRes.textColor,
-                      ),
-                    ),
-                    Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 12),
-                      child: IconButton(
-                        onPressed: () async {
-                          // await exportContractorInsightsToExcel(contractorInsightsJson);
-                          await exportSellerInsightsToExcel(overview.toMap());
-                        },
-                        icon: const Icon(Icons.download, size: 18),
-
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.green.shade600,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 8,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    _buildYearDropdown(overviewController),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                OverViewCard(property: controller.items, overview: overview),
-                const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Column(
-                    children: [
-                      buildSellerLeadGraph(overviewController),
-                      const SizedBox(height: 12),
-                      buildSellerCommissionGraph(overviewController,'Properties Views'),
-                      const SizedBox(height: 12),
-                      buildPropertyDistributionGraph(overviewController),
-                      const SizedBox(height: 12),
-                      buildLeadSourceDistributionGraph(overviewController),
-                      const SizedBox(height: 12),
-                      buildPropertyGrowthGraph(overviewController),
-                      const SizedBox(height: 12),
-                      buildSellerPropertyCreatedGraph(overviewController,'Properties Created'),
-                      const SizedBox(height: 12),
-                      leadLifecycleFunnel(overviewController),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      }),
+        },
+      ),
     );
   }
 
@@ -1694,7 +1891,10 @@ Widget buildSellerLeadGraph(SellerOverviewController overviewController) {
   );
 }
 
-Widget buildSellerCommissionGraph(SellerOverviewController overviewController,String title) {
+Widget buildSellerCommissionGraph(
+  SellerOverviewController overviewController,
+  String title,
+) {
   final leadsTrend =
       overviewController.overviewData.value?.data?.propertyMetrics?.viewsHistory
           .map<Map<String, dynamic>>(
@@ -1802,9 +2002,18 @@ Widget buildSellerCommissionGraph(SellerOverviewController overviewController,St
     ),
   );
 }
-Widget buildSellerPropertyCreatedGraph(SellerOverviewController overviewController,String title) {
+
+Widget buildSellerPropertyCreatedGraph(
+  SellerOverviewController overviewController,
+  String title,
+) {
   final leadsTrend =
-      overviewController.overviewData.value?.data?.propertyMetrics?.propertyTimeline
+      overviewController
+          .overviewData
+          .value
+          ?.data
+          ?.propertyMetrics
+          ?.propertyTimeline
           .map<Map<String, dynamic>>(
             (e) => {"month": e.month ?? '', "count": e.count ?? 0},
           )
@@ -1861,11 +2070,7 @@ Widget buildSellerPropertyCreatedGraph(SellerOverviewController overviewControll
       children: [
         Row(
           children: [
-            Icon(
-              Icons.home_work,
-              color: ColorRes.reportCardblue,
-              size: 24,
-            ),
+            Icon(Icons.home_work, color: ColorRes.reportCardblue, size: 24),
             const SizedBox(width: 12),
             Expanded(
               child: Column(

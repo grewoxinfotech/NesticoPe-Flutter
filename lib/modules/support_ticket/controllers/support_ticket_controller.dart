@@ -26,7 +26,7 @@ class SupportTicketController extends PaginatedController<TicketItem> {
   // Dropdown Values
   final selectedCategory = ''.obs;
   final selectedTicketType = ''.obs;
-  final selectedPriority = ''.obs;
+  // final selectedPriority = ''.obs;
   final Rx<File> pickedImages = Rx<File>(File(""));
 
   // Dropdown Data
@@ -87,7 +87,7 @@ class SupportTicketController extends PaginatedController<TicketItem> {
         description: descriptionController.text,
         category: selectedCategory.value,
         ticketType: selectedTicketType.value,
-        priority: selectedPriority.value,
+        // priority: selectedPriority.value,
       );
 
       final success = await _service.createTicket(ticket, pickedImages.value);
@@ -108,7 +108,7 @@ class SupportTicketController extends PaginatedController<TicketItem> {
     descriptionController.clear();
     selectedCategory.value = categories.first;
     selectedTicketType.value = ticketTypes.first;
-    selectedPriority.value = priorities.first;
+    // selectedPriority.value = priorities.first;
     pickedImages.value = File('');
   }
 

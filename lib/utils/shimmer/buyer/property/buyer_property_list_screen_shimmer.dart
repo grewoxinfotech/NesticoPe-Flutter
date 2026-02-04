@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
-class PropertyListScreenShimmer extends StatelessWidget {
-  const PropertyListScreenShimmer({super.key});
+class BuyerPropertyListScreenShimmer extends StatelessWidget {
+  const BuyerPropertyListScreenShimmer({super.key});
 
   @override
   Widget build(BuildContext context) {

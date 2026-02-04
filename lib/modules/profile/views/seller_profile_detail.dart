@@ -7,7 +7,7 @@ import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_h
 import 'package:housing_flutter_app/app/widgets/expandable_tile/expandable_widget.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
-import 'package:housing_flutter_app/utils/shimmer/seller/builder/profile_screen/profile_screen_shimmer.dart';
+import 'package:housing_flutter_app/utils/shimmer/seller/builder/profile_screen/seller_profile_screen_shimmer.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 
@@ -76,7 +76,7 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
       body: SafeArea(
         child: Obx(() {
           if (profileController.isLoading.value) {
-            return ProfileScreenShimmer();
+            return SellerProfileScreenShimmer();
           }
 
           return RefreshIndicator(

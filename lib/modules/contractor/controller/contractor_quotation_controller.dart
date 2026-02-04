@@ -18,7 +18,7 @@ class ContractorQuotationController
     extends PaginatedController<ContractorQuotation> {
   RxMap<String, String> filters = <String, String>{}.obs;
 
-  ContractorLeadController controllerLead=ContractorLeadController();
+  ContractorLeadController controllerLead = ContractorLeadController();
   @override
   void onInit() async {
     super.onInit();
@@ -219,7 +219,7 @@ class ContractorQuotationController
     required String note,
     required String userId,
     required int discountedPrice,
-    required String date
+    required String date,
   }) async {
     try {
       Get.dialog(
@@ -229,7 +229,7 @@ class ContractorQuotationController
 
       final quotationData = {
         "id": "${quotationId.id}",
-        "created_by": "${quota tionId.user.id}",
+        "created_by": "${quotationId.user.id}",
         "updated_by": null,
         "related_id": "${quotationId.relatedId}",
         "user": {
@@ -244,7 +244,6 @@ class ContractorQuotationController
           "originalPrice": price,
           "expectedStartDate": date,
           "inquiryCustomerId": userId,
-
         },
         "price": discountedPrice,
         "is_converted": false,

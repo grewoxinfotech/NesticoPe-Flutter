@@ -393,6 +393,7 @@ import 'package:housing_flutter_app/app/constants/size_manager.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/modules/filter_property/view/filter_screen.dart';
 import 'package:housing_flutter_app/modules/propert_detail/view/widget/property_card_widget.dart';
+import 'package:housing_flutter_app/utils/shimmer/buyer/property/buyer_property_list_screen_shimmer.dart';
 import 'package:housing_flutter_app/widgets/bar/app_bar/list_screen_appbar.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
@@ -539,7 +540,7 @@ class _PropertyDetailState extends State<PropertyDetail> {
                   child: Obx(() {
                     if (controller.isLoading.value &&
                         controller.items.isEmpty) {
-                      return const Center(child: CircularProgressIndicator());
+                      return BuyerPropertyListScreenShimmer();
                     }
 
                     if (!controller.isLoading.value &&

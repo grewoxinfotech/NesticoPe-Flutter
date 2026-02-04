@@ -13,6 +13,7 @@ import 'package:housing_flutter_app/modules/property/controllers/property_contro
 import 'package:housing_flutter_app/modules/property/controllers/share_property_controller.dart';
 import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
 import 'package:housing_flutter_app/modules/reseller/controller/property_share/reseller_property_share_controller.dart';
+import 'package:housing_flutter_app/utils/shimmer/reseller/entity_screen/reseller_entity_list_screen_shimmer.dart';
 import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/manager/property/property_name_manager.dart';
@@ -1355,6 +1356,10 @@ class ProductsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       final displayProducts = propertyController.items.value;
+
+      if (propertyController.isLoading.value && displayProducts.isEmpty) {
+        return ResellerEntityListScreenShimmer();
+      }
 
       if (displayProducts.isEmpty) {
         return Center(

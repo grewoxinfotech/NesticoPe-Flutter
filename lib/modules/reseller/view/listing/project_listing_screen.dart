@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
 import 'package:housing_flutter_app/modules/reseller/view/listing/property_listing.dart';
+import 'package:housing_flutter_app/utils/shimmer/reseller/entity_screen/reseller_entity_list_screen_shimmer.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
@@ -30,28 +31,212 @@ class ProjectListingScreen extends StatefulWidget {
   State<ProjectListingScreen> createState() => _ProjectListingScreenState();
 }
 
+// class _ProjectListingScreenState extends State<ProjectListingScreen> {
+//   final DashboardController controller = Get.put(DashboardController());
+//   // final ShareProjectController shareProjectController = Get.put(
+//   //   ShareProjectController(),
+//   // );
+//
+//   /// ✅ USE RESELLER CONTROLLER
+//   late final ResellerProjectController projectController;
+//   late final resellerId;
+//
+//   // Multi-select state
+//   final RxBool isSelectionMode = false.obs;
+//   final RxList<String> selectedProjectIds = <String>[].obs;
+//   final RxMap<String, String> selectedFilters = <String, String>{}.obs;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     WidgetsBinding.instance.addPostFrameCallback((_) async {
+//       _loadData();
+//
+//       // await fetchResellerAssignProject();
+//     });
+//   }
+//
+//   Future<void> _loadData() async {
+//     final user = await SecureStorage.getUserData();
+//     if (user != null) {
+//       resellerId = user.user?.id;
+//     }
+//     projectController = Get.put(
+//       ResellerProjectController(resellerId: resellerId),
+//     );
+//   }
+//
+//   /// ✅ Assigned reseller projects
+//   // Future<void> fetchResellerAssignProject() async {
+//   //   try {
+//   //     final user = await SecureStorage.getUserData();
+//   //     final userId = user?.user?.id;
+//   //
+//   //     if (userId != null && userId.isNotEmpty) {
+//   //       final filter = {"assignedTo": userId};
+//   //
+//   //       log("Applying reseller assigned filter → $filter");
+//   //
+//   //       await projectController.applyFilters(filter);
+//   //     } else {
+//   //       print("⚠️ User ID is null or empty");
+//   //     }
+//   //   } catch (e) {
+//   //     print("❌ Error fetching reseller projects: $e");
+//   //   }
+//   // }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: ColorRes.white,
+//
+//       appBar: PreferredSize(
+//         preferredSize: const Size.fromHeight(kToolbarHeight),
+//         child: AppBar(
+//           backgroundColor: ColorRes.white,
+//           elevation: 0,
+//           automaticallyImplyLeading: false,
+//           title: Text(
+//             'Project Listing',
+//             style: TextStyle(
+//               color: ColorRes.textColor,
+//               fontWeight: AppFontWeights.bold,
+//               fontSize: getResponsiveFontSize(
+//                 context,
+//                 AppFontSizes.large,
+//                 AppFontSizes.body,
+//               ),
+//             ),
+//           ),
+//           bottom: PreferredSize(
+//             preferredSize: const Size.fromHeight(1),
+//             child: Container(color: ColorRes.leadGreyColor[200], height: 1),
+//           ),
+//           actions: [
+//             GestureDetector(
+//               onTap: () async {
+//                 if (!Get.isRegistered<ProjectController>())
+//                   Get.put(ProjectController());
+//                 // final result = await Get.to(() => ResellerProjectFilter());
+//                 final result = await Get.to<Map<String, String>>(
+//                   () => ProjectFilterScreen(
+//                     initialFilters: selectedFilters.value,
+//                     onApply: (filterData) {
+//                       // Return selected filters to previous screen
+//                       Get.back(result: filterData);
+//                     },
+//                   ),
+//                   transition: Transition.downToUp,
+//                   // optional for sheet-like slide-up effect
+//                   duration: const Duration(milliseconds: 300),
+//                 );
+//
+//                 if (result != null) {
+//                   final newFilter = convertFiltersToString(result);
+//                   final user = await SecureStorage.getUserData();
+//                   final userId = user?.user?.id;
+//
+//                   if (userId != null && userId.isNotEmpty) {
+//                     newFilter["assignedTo"] = userId;
+//
+//                     log("Applying filter → $newFilter");
+//
+//                     selectedFilters
+//                       ..clear()
+//                       ..addAll(newFilter);
+//
+//                     await projectController.applyFilters(
+//                       Map<String, String>.from(selectedFilters),
+//                     );
+//                   }
+//                 }
+//               },
+//               child: const Icon(Icons.filter_list),
+//             ),
+//             const SizedBox(width: 8),
+//           ],
+//         ),
+//       ),
+//
+//       body: Column(
+//         children: [
+//           /// Active Filter Chips
+//           Obx(() {
+//             return FilterChipsBar(
+//               filters: selectedFilters.value,
+//               onClearAll: () {
+//                 selectedFilters.clear();
+//                 projectController.clearAllFilters();
+//               },
+//               onRemoveFilter: (key) {
+//                 selectedFilters.remove(key);
+//                 projectController.applyFilters(
+//                   Map<String, String>.from(selectedFilters),
+//                 );
+//               },
+//               priceRangeFormatter: (min, max) => formatPriceRange(min, max),
+//             );
+//           }),
+//
+//           /// Projects Grid
+//           Expanded(
+//             child: Obx(() {
+//               if (projectController.isLoading.value &&
+//                   projectController.items.isEmpty) {
+//                 return Center(
+//                   child: CircularProgressIndicator(color: ColorRes.primary),
+//                 );
+//               }
+//
+//               if (!projectController.isLoading.value &&
+//                   projectController.items.isEmpty) {
+//                 return const Center(child: Text("No Listing Yet."));
+//               }
+//
+//               return NotificationListener<ScrollEndNotification>(
+//                 onNotification: (scrollEnd) {
+//                   final metrics = scrollEnd.metrics;
+//                   if (metrics.atEdge && metrics.pixels != 0) {
+//                     projectController.loadMore();
+//                   }
+//                   return false;
+//                 },
+//                 child: RefreshIndicator(
+//                   onRefresh: projectController.refreshResellerProjects,
+//                   child: ProjectsGrid(
+//                     isSelectionMode: isSelectionMode,
+//                     selectedProjectIds: selectedProjectIds,
+//                     resellerProjectController: projectController,
+//                   ),
+//                 ),
+//               );
+//             }),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
 class _ProjectListingScreenState extends State<ProjectListingScreen> {
   final DashboardController controller = Get.put(DashboardController());
-  // final ShareProjectController shareProjectController = Get.put(
-  //   ShareProjectController(),
-  // );
 
-  /// ✅ USE RESELLER CONTROLLER
-  late final ResellerProjectController projectController;
-  late final resellerId;
+  /// ✅ USE RESELLER CONTROLLER - Make it nullable initially
+  ResellerProjectController? projectController;
+  String? resellerId;
 
   // Multi-select state
   final RxBool isSelectionMode = false.obs;
   final RxList<String> selectedProjectIds = <String>[].obs;
   final RxMap<String, String> selectedFilters = <String, String>{}.obs;
+  final RxBool isInitialized = false.obs; // Add this to track initialization
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _loadData();
-
-      // await fetchResellerAssignProject();
+      await _loadData();
     });
   }
 
@@ -61,35 +246,15 @@ class _ProjectListingScreenState extends State<ProjectListingScreen> {
       resellerId = user.user?.id;
     }
     projectController = Get.put(
-      ResellerProjectController(resellerId: resellerId),
+      ResellerProjectController(resellerId: resellerId ?? ''),
     );
+    isInitialized.value = true; // Mark as initialized
   }
-
-  /// ✅ Assigned reseller projects
-  // Future<void> fetchResellerAssignProject() async {
-  //   try {
-  //     final user = await SecureStorage.getUserData();
-  //     final userId = user?.user?.id;
-  //
-  //     if (userId != null && userId.isNotEmpty) {
-  //       final filter = {"assignedTo": userId};
-  //
-  //       log("Applying reseller assigned filter → $filter");
-  //
-  //       await projectController.applyFilters(filter);
-  //     } else {
-  //       print("⚠️ User ID is null or empty");
-  //     }
-  //   } catch (e) {
-  //     print("❌ Error fetching reseller projects: $e");
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorRes.white,
-
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppBar(
@@ -145,7 +310,7 @@ class _ProjectListingScreenState extends State<ProjectListingScreen> {
                       ..clear()
                       ..addAll(newFilter);
 
-                    await projectController.applyFilters(
+                    await projectController?.applyFilters(
                       Map<String, String>.from(selectedFilters),
                     );
                   }
@@ -158,62 +323,69 @@ class _ProjectListingScreenState extends State<ProjectListingScreen> {
         ),
       ),
 
-      body: Column(
-        children: [
-          /// Active Filter Chips
-          Obx(() {
-            return FilterChipsBar(
+      body: Obx(() {
+        // Check if controller is initialized
+        if (!isInitialized.value || projectController == null) {
+          return Center(
+            child: CircularProgressIndicator(color: ColorRes.primary),
+          );
+        }
+
+        return Column(
+          children: [
+            /// Active Filter Chips
+            FilterChipsBar(
               filters: selectedFilters.value,
               onClearAll: () {
                 selectedFilters.clear();
-                projectController.clearAllFilters();
+                projectController!.clearAllFilters();
               },
               onRemoveFilter: (key) {
                 selectedFilters.remove(key);
-                projectController.applyFilters(
+                projectController!.applyFilters(
                   Map<String, String>.from(selectedFilters),
                 );
               },
               priceRangeFormatter: (min, max) => formatPriceRange(min, max),
-            );
-          }),
+            ),
 
-          /// Projects Grid
-          Expanded(
-            child: Obx(() {
-              if (projectController.isLoading.value &&
-                  projectController.items.isEmpty) {
-                return Center(
-                  child: CircularProgressIndicator(color: ColorRes.primary),
-                );
-              }
+            /// Projects Grid
+            Expanded(
+              child: Obx(() {
+                if (projectController!.isLoading.value &&
+                    projectController!.items.isEmpty) {
+                  return Center(
+                    child: CircularProgressIndicator(color: ColorRes.primary),
+                  );
+                }
 
-              if (!projectController.isLoading.value &&
-                  projectController.items.isEmpty) {
-                return const Center(child: Text("No Listing Yet."));
-              }
+                if (!projectController!.isLoading.value &&
+                    projectController!.items.isEmpty) {
+                  return const Center(child: Text("No Listing Yet."));
+                }
 
-              return NotificationListener<ScrollEndNotification>(
-                onNotification: (scrollEnd) {
-                  final metrics = scrollEnd.metrics;
-                  if (metrics.atEdge && metrics.pixels != 0) {
-                    projectController.loadMore();
-                  }
-                  return false;
-                },
-                child: RefreshIndicator(
-                  onRefresh: projectController.refreshResellerProjects,
-                  child: ProjectsGrid(
-                    isSelectionMode: isSelectionMode,
-                    selectedProjectIds: selectedProjectIds,
-                    resellerProjectController: projectController,
+                return NotificationListener<ScrollEndNotification>(
+                  onNotification: (scrollEnd) {
+                    final metrics = scrollEnd.metrics;
+                    if (metrics.atEdge && metrics.pixels != 0) {
+                      projectController!.loadMore();
+                    }
+                    return false;
+                  },
+                  child: RefreshIndicator(
+                    onRefresh: projectController!.refreshResellerProjects,
+                    child: ProjectsGrid(
+                      isSelectionMode: isSelectionMode,
+                      selectedProjectIds: selectedProjectIds,
+                      resellerProjectController: projectController!,
+                    ),
                   ),
-                ),
-              );
-            }),
-          ),
-        ],
-      ),
+                );
+              }),
+            ),
+          ],
+        );
+      }),
     );
   }
 }
@@ -241,7 +413,7 @@ class ProjectsGrid extends StatelessWidget {
       // Loading state
       if (resellerProjectController.isLoading.value &&
           resellerProjectController.items.isEmpty) {
-        return const Center(child: CircularProgressIndicator());
+        return ResellerEntityListScreenShimmer();
       }
 
       // Empty state

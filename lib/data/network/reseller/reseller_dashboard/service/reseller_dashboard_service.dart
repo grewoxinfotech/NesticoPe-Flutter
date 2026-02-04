@@ -89,7 +89,7 @@ class ResellerDashboardService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
-        AppLogger.structured("✅ City Wise data fetched", data);
+
         return data;
       } else {
         log("⚠️ City Wise API failed: ${response.statusCode}");
@@ -109,11 +109,6 @@ class ResellerDashboardService {
       log("fetch City wise data from api Url $url");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        AppLogger.structured(
-          "City Wise data fetch data ",
-          jsonDecode(response.body),
-        );
-
         final data = jsonDecode(response.body);
 
         return data;

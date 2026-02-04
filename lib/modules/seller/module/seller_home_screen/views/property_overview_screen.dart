@@ -7,6 +7,7 @@ import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
 import 'package:housing_flutter_app/modules/seller/view/widget/property_overview_seller.dart';
 import 'package:housing_flutter_app/utils/property_mapper/property_mapper.dart';
+import 'package:housing_flutter_app/utils/shimmer/seller/owner/property_screen/proeprty_list_screen_shimmer.dart';
 
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/manager/property/property_pricemanager.dart';
@@ -91,64 +92,122 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
           }),
 
           /// 🔹 Property List with Pagination
+          // Expanded(
+          //   child: Obx(() {
+          //     // Initial Loading State
+          //     if (propertyController.isLoading.value &&
+          //         propertyController.items.isEmpty) {
+          //       // return const Center(child: CircularProgressIndicator());
+          //       return PropertyListScreenShimmer();
+          //     }
+          //
+          //     // Empty State
+          //     if (propertyController.items.isEmpty) {
+          //       return Center(
+          //         child: Column(
+          //           mainAxisAlignment: MainAxisAlignment.center,
+          //           children: [
+          //             const Text("No Property found."),
+          //             TextButton(
+          //               onPressed: () {
+          //                 selectedFilters.clear();
+          //                 propertyController.clearAllFilters();
+          //               },
+          //               child: const Text("Clear Filters"),
+          //             ),
+          //           ],
+          //         ),
+          //       );
+          //     }
+          //
+          //     return RefreshIndicator(
+          //       onRefresh: () => propertyController.refreshList(),
+          //       child: NotificationListener<ScrollNotification>(
+          //         onNotification: (ScrollNotification scrollInfo) {
+          //           if (scrollInfo.metrics.pixels ==
+          //               scrollInfo.metrics.maxScrollExtent) {
+          //             propertyController.loadMore();
+          //           }
+          //           return false;
+          //         },
+          //         child: ListView.builder(
+          //           padding: const EdgeInsets.all(16),
+          //           itemCount:
+          //               propertyController.items.length +
+          //               (propertyController.hasMore.value ? 1 : 0),
+          //           itemBuilder: (context, index) {
+          //             if (index == propertyController.items.length) {
+          //               return const Padding(
+          //                 padding: EdgeInsets.all(16.0),
+          //                 child: Center(child: CircularProgressIndicator()),
+          //               );
+          //             }
+          //
+          //             final property = propertyController.items[index];
+          //             return _buildPropertyCard(property, () {
+          //               propertyController.refreshList();
+          //             });
+          //           },
+          //         ),
+          //       ),
+          //     );
+          //   }),
+          // ),
           Expanded(
             child: Obx(() {
-              // Initial Loading State
-              if (propertyController.isLoading.value &&
-                  propertyController.items.isEmpty) {
-                return const Center(child: CircularProgressIndicator());
-              }
+              switch (propertyController.state.value) {
+                case PropertyListState.initialLoading:
+                case PropertyListState.filtering:
+                  return const PropertyListScreenShimmer();
 
-              // Empty State
-              if (propertyController.items.isEmpty) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("No Property found."),
-                      TextButton(
-                        onPressed: () {
-                          selectedFilters.clear();
-                          propertyController.clearAllFilters();
-                        },
-                        child: const Text("Clear Filters"),
-                      ),
-                    ],
-                  ),
-                );
-              }
-
-              return RefreshIndicator(
-                onRefresh: () => propertyController.refreshList(),
-                child: NotificationListener<ScrollNotification>(
-                  onNotification: (ScrollNotification scrollInfo) {
-                    if (scrollInfo.metrics.pixels ==
-                        scrollInfo.metrics.maxScrollExtent) {
-                      propertyController.loadMore();
-                    }
-                    return false;
-                  },
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount:
-                        propertyController.items.length +
-                        (propertyController.hasMore.value ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == propertyController.items.length) {
-                        return const Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Center(child: CircularProgressIndicator()),
-                        );
-                      }
-
-                      final property = propertyController.items[index];
-                      return _buildPropertyCard(property, () {
-                        propertyController.refreshList();
-                      });
+                case PropertyListState.empty:
+                  return _EmptyState(
+                    onClear: () {
+                      selectedFilters.clear();
+                      propertyController.clearAllFilters();
                     },
-                  ),
-                ),
-              );
+                  );
+
+                case PropertyListState.error:
+                  return const Center(child: Text("Something went wrong"));
+
+                case PropertyListState.loaded:
+                case PropertyListState.loadingMore:
+                  return NotificationListener<ScrollEndNotification>(
+                    onNotification: (notification) {
+                      if (notification.metrics.pixels ==
+                          notification.metrics.maxScrollExtent) {
+                        propertyController.loadMore();
+                      }
+                      return false;
+                    },
+                    child: RefreshIndicator(
+                      onRefresh: propertyController.loadInitial,
+                      child: ListView.builder(
+                        padding: const EdgeInsets.all(16),
+                        itemCount:
+                            propertyController.items.length +
+                            (propertyController.state.value ==
+                                    PropertyListState.loadingMore
+                                ? 1
+                                : 0),
+                        itemBuilder: (context, index) {
+                          if (index == propertyController.items.length) {
+                            return const Padding(
+                              padding: EdgeInsets.all(16),
+                              child: Center(child: CircularProgressIndicator()),
+                            );
+                          }
+
+                          final property = propertyController.items[index];
+                          return _buildPropertyCard(property, () {
+                            propertyController.loadInitial();
+                          });
+                        },
+                      ),
+                    ),
+                  );
+              }
             }),
           ),
         ],
@@ -554,5 +613,28 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
   String _formatNumber(int number) {
     if (number >= 1000) return '${(number / 1000).toStringAsFixed(1)}K';
     return number.toString();
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  final VoidCallback onClear;
+
+  const _EmptyState({required this.onClear});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            "No properties found",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 12),
+          TextButton(onPressed: onClear, child: const Text("Clear Filters")),
+        ],
+      ),
+    );
   }
 }
