@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 // import 'package:housing_flutter_app/app/care/pagination/view/pagination_list_view.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
@@ -8,6 +9,7 @@ import 'package:housing_flutter_app/data/network/contractor/model/contractor_quo
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_quotation_controller.dart';
 import 'package:housing_flutter_app/modules/contractor/view/widget/contractor_quotation_screen.dart';
 import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 
 /// Screen for displaying list of contractor quotations
 class ContractorQuotationListScreen extends StatelessWidget {
@@ -37,9 +39,7 @@ class ContractorQuotationListScreen extends StatelessWidget {
       body: Obx(() {
         // 1. Loading state
         if (controller.isLoading.value) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const Center(child: CircularProgressIndicator());
         }
 
         // 2. Empty state (RefreshIndicator must still work)
@@ -65,6 +65,10 @@ class ContractorQuotationListScreen extends StatelessWidget {
             itemCount: controller.items.length,
             itemBuilder: (context, index) {
               final quotation = controller.items[index];
+              AppLogger.structured(
+                "Quotation of Contractor ",
+                quotation.toMap(),
+              );
               return _QuotationListItem(quotation: quotation);
             },
           ),
@@ -73,7 +77,6 @@ class ContractorQuotationListScreen extends StatelessWidget {
     );
   }
 }
-
 
 class _QuotationListItem extends StatelessWidget {
   final ContractorQuotation quotation;
@@ -87,15 +90,16 @@ class _QuotationListItem extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: ColorRes.leadGreyColor.shade300,
-          width: 1,
-        ),
+        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: () {
+            AppLogger.structured(
+              "Check Contractor Inquiry ",
+              quotation.toMap(),
+            );
             Get.to(() => ContractorQuotationScreen(quotation: quotation));
           },
           borderRadius: BorderRadius.circular(12),
@@ -122,7 +126,7 @@ class _QuotationListItem extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '#${quotation.id.toUpperCase().substring(0, 8)}',
+                            '#${quotation.quotationNumber.toUpperCase()}',
                             style: const TextStyle(
                               fontSize: AppFontSizes.small,
                               color: ColorRes.textPrimary,
@@ -133,6 +137,9 @@ class _QuotationListItem extends StatelessWidget {
                       ),
                     ),
                     _buildStatusBadge(quotation.status),
+                    /*skjcnkksmniolso kkks ioi jsiuswnios
+                    dskofcdko mmsm nshaunhsuen chuidhjeunaksdm ksds  hdujnnnjhduibnbnbnxnj   hdh mdkd kowedmwek kdksdos jsudebn ld ndjc ncjn
+                    * jisj sjn jhduinusje hshu uehhsuien nfjkden hduenn hdhyuwn   uuneujalen   siiismn iiks dn d */
                   ],
                 ),
 
@@ -213,10 +220,7 @@ class _QuotationListItem extends StatelessWidget {
                 const SizedBox(height: 16),
 
                 // Divider
-                Container(
-                  height: 1,
-                  color: ColorRes.border,
-                ),
+                Container(height: 1, color: ColorRes.border),
 
                 const SizedBox(height: 16),
 
@@ -238,7 +242,7 @@ class _QuotationListItem extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '${Formatter.formatPrice(num.tryParse(quotation.price)??0)}',
+                          '${Formatter.formatPrice(num.tryParse(quotation.price) ?? 0)}',
                           style: const TextStyle(
                             fontSize: AppFontSizes.medium,
                             color: ColorRes.primary,
@@ -341,23 +345,16 @@ class _QuotationListItem extends StatelessWidget {
     }
 
     return Container(
-      padding:  EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: statusColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: statusColor.withOpacity(0.3),
-          width: 1,
-        ),
+        border: Border.all(color: statusColor.withOpacity(0.3), width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            statusIcon,
-            color: statusColor,
-            size: 14,
-          ),
+          Icon(statusIcon, color: statusColor, size: 14),
           const SizedBox(width: 6),
           Text(
             capitalizeEachWord(status),

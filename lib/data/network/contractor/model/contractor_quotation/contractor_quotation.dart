@@ -186,6 +186,7 @@ class ContractorQuotation {
   final QuotationUser user;
   final String price;
   final String status;
+  final String quotationNumber;
   final QuotationMeta meta;
   final bool isConverted;
   final DateTime createdAt;
@@ -195,11 +196,13 @@ class ContractorQuotation {
     required this.id,
     required this.createdBy,
     this.updatedBy,
+    required this.quotationNumber,
     required this.relatedId,
     required this.user,
     required this.price,
     required this.status,
     required this.meta,
+
     required this.isConverted,
     required this.createdAt,
     required this.updatedAt,
@@ -211,6 +214,7 @@ class ContractorQuotation {
       createdBy: map['created_by'] ?? '',
       updatedBy: map['updated_by'],
       relatedId: map['related_id'] ?? '',
+      quotationNumber: map['quotation_number'] ?? '',
       user: QuotationUser.fromMap(
         map['user'] as Map<String, dynamic>,
       ),
@@ -236,6 +240,7 @@ class ContractorQuotation {
       'user': user.toMap(),
       'price': price,
       'status': status,
+      'quotation_number':quotationNumber,
       'meta': meta.toMap(),
       'is_converted': isConverted,
       'createdAt': createdAt.toIso8601String(),
@@ -243,7 +248,7 @@ class ContractorQuotation {
     };
   }
 }
-class QuotationMeta {
+/*class QuotationMeta {
   final String notes;
   final PropertyDetails? propertyDetails;
   final List<InquiryService>? inquiryServices;
@@ -295,7 +300,253 @@ class QuotationMeta {
       'serviceNames': serviceNames,
     };
   }
+}*/
+class QuotationMeta {
+  final String notes;
+  final double? originalPrice;
+  final String inquiryCustomerId;
+  final DateTime expectedStartDate;
+  final PropertyDetails? propertyDetails;
+  final List<InquiryService> inquiryServices;
+  final String serviceNames;
+  final int advanceRequiredPercentage;
+  final ReferralInfo? referralInfo;
+
+  // New fields for brands and types
+  final List<String>? cementBrand;
+  final List<String>? steelBrand;
+  final List<String>? brickType;
+  final List<String>? sandSource;
+  final List<String>? electricalWiresBrand;
+  final List<String>? electricalSwitchesBrand;
+  final List<String>? plumbingPipesBrand;
+  final List<String>? sanitaryFittingsBrand;
+  final List<String>? waterTankBrand;
+  final List<String>? flooringTilesBrand;
+  final List<String>? interiorPaintBrand;
+  final List<String>? exteriorPaintBrand;
+  final List<String>? doorsType;
+  final List<String>? windowsType;
+  final List<String>? fabricationWork;
+  final List<String>? structure;
+  final List<String>? plasterType;
+  final List<String>? waterproofing;
+  final List<String>? chokhatType;
+  final List<String>? railingType;
+  final List<String>? falseCeiling;
+  final String? modularKitchen;
+  final String? boreAndPump;
+  final String? securitySystems;
+  final String? homeAutomation;
+  final String? solarSolutions;
+  final String? design3D;
+
+  QuotationMeta({
+    required this.notes,
+    this.originalPrice,
+    required this.inquiryCustomerId,
+    required this.expectedStartDate,
+    required this.propertyDetails,
+    required this.inquiryServices,
+    required this.serviceNames,
+    required this.advanceRequiredPercentage,
+    required this.referralInfo,
+    this.cementBrand,
+    this.steelBrand,
+    this.brickType,
+    this.sandSource,
+    this.electricalWiresBrand,
+    this.electricalSwitchesBrand,
+    this.plumbingPipesBrand,
+    this.sanitaryFittingsBrand,
+    this.waterTankBrand,
+    this.flooringTilesBrand,
+    this.interiorPaintBrand,
+    this.exteriorPaintBrand,
+    this.doorsType,
+    this.windowsType,
+    this.design3D,
+    this.fabricationWork,
+    this.structure,
+    this.plasterType,
+    this.waterproofing,
+    this.chokhatType,
+    this.railingType,
+    this.falseCeiling,
+    this.modularKitchen,
+    this.boreAndPump,
+    this.securitySystems,
+    this.homeAutomation,
+    this.solarSolutions,
+  });
+
+  factory QuotationMeta.fromMap(Map<String, dynamic> map) {
+    return QuotationMeta(
+     /* notes: map['notes'],
+      originalPrice: map['originalPrice']?.toDouble(),
+      inquiryCustomerId: map['inquiryCustomerId'],
+      expectedStartDate: DateTime.parse(map['expectedStartDate']),
+      propertyDetails: PropertyDetails.fromMap(map['propertyDetails']),
+      inquiryServices: List<InquiryService>.from(
+          map['inquiryServices']?.map((x) => InquiryService.fromMap(x)) ?? []),
+      serviceNames: map['serviceNames'],
+      advanceRequiredPercentage: map['advanceRequiredPercentage']??0,
+      referralInfo: ReferralInfo.fromMap(map['referralInfo']),
+
+      // Map all brand/type lists
+      cementBrand: List<String>.from(map['cementBrand'] ?? []),
+      steelBrand: List<String>.from(map['steelBrand'] ?? []),
+      brickType: List<String>.from(map['brickType'] ?? []),
+      sandSource: List<String>.from(map['sandSource'] ?? []),
+      electricalWiresBrand: List<String>.from(map['electricalWiresBrand'] ?? []),
+      electricalSwitchesBrand: List<String>.from(map['electricalSwitchesBrand'] ?? []),
+      plumbingPipesBrand: List<String>.from(map['plumbingPipesBrand'] ?? []),
+      sanitaryFittingsBrand: List<String>.from(map['sanitaryFittingsBrand'] ?? []),
+      waterTankBrand: List<String>.from(map['waterTankBrand'] ?? []),
+      flooringTilesBrand: List<String>.from(map['flooringTilesBrand'] ?? []),
+      interiorPaintBrand: List<String>.from(map['interiorPaintBrand'] ?? []),
+      exteriorPaintBrand: List<String>.from(map['exteriorPaintBrand'] ?? []),
+      doorsType: List<String>.from(map['doorsType'] ?? []),
+      windowsType: List<String>.from(map['windowsType'] ?? []),
+      fabricationWork: List<String>.from(map['fabricationWork'] ?? []),
+      structure: List<String>.from(map['structure'] ?? []),
+      plasterType: List<String>.from(map['plasterType'] ?? []),
+      waterproofing: List<String>.from(map['waterproofing'] ?? []),
+      chokhatType: List<String>.from(map['chokhatType'] ?? []),
+      railingType: List<String>.from(map['railingType'] ?? []),
+      falseCeiling: List<String>.from(map['falseCeiling'] ?? []),*/
+      notes: map['notes'] ?? '',
+      originalPrice: map['originalPrice']?.toDouble(),
+      inquiryCustomerId: map['inquiryCustomerId'] ?? '',
+      expectedStartDate: map['expectedStartDate'] != null
+          ? DateTime.parse(map['expectedStartDate'])
+          : DateTime.now(),
+      propertyDetails: map['propertyDetails'] != null
+          ? PropertyDetails.fromMap(map['propertyDetails'])
+          : null,
+      inquiryServices: map['inquiryServices'] != null
+          ? List<InquiryService>.from(
+          map['inquiryServices']?.map((x) => InquiryService.fromMap(x)) ?? [])
+          : [],
+      serviceNames: map['serviceNames'] ?? '',
+      advanceRequiredPercentage: map['advanceRequiredPercentage'] ?? 0,
+      referralInfo: map['referralInfo'] != null
+          ? ReferralInfo.fromMap(map['referralInfo'])
+          : null,
+
+      // Map all brand/type lists
+      cementBrand: map['cementBrand'] != null ? List<String>.from(map['cementBrand']) : [],
+      steelBrand: map['steelBrand'] != null ? List<String>.from(map['steelBrand']) : [],
+      brickType: map['brickType'] != null ? List<String>.from(map['brickType']) : [],
+      sandSource: map['sandSource'] != null ? List<String>.from(map['sandSource']) : [],
+      electricalWiresBrand: map['electricalWiresBrand'] != null ? List<String>.from(map['electricalWiresBrand']) : [],
+      electricalSwitchesBrand: map['electricalSwitchesBrand'] != null ? List<String>.from(map['electricalSwitchesBrand']) : [],
+      plumbingPipesBrand: map['plumbingPipesBrand'] != null ? List<String>.from(map['plumbingPipesBrand']) : [],
+      sanitaryFittingsBrand: map['sanitaryFittingsBrand'] != null ? List<String>.from(map['sanitaryFittingsBrand']) : [],
+      waterTankBrand: map['waterTankBrand'] != null ? List<String>.from(map['waterTankBrand']) : [],
+      flooringTilesBrand: map['flooringTilesBrand'] != null ? List<String>.from(map['flooringTilesBrand']) : [],
+      interiorPaintBrand: map['interiorPaintBrand'] != null ? List<String>.from(map['interiorPaintBrand']) : [],
+      exteriorPaintBrand: map['exteriorPaintBrand'] != null ? List<String>.from(map['exteriorPaintBrand']) : [],
+      doorsType: map['doorsType'] != null ? List<String>.from(map['doorsType']) : [],
+      windowsType: map['windowsType'] != null ? List<String>.from(map['windowsType']) : [],
+      fabricationWork: map['fabricationWork'] != null ? List<String>.from(map['fabricationWork']) : [],
+      structure: map['structure'] != null ? List<String>.from(map['structure']) : [],
+      plasterType: map['plasterType'] != null ? List<String>.from(map['plasterType']) : [],
+      waterproofing: map['waterproofing'] != null ? List<String>.from(map['waterproofing']) : [],
+      chokhatType: map['chokhatType'] != null ? List<String>.from(map['chokhatType']) : [],
+      railingType: map['railingType'] != null ? List<String>.from(map['railingType']) : [],
+      falseCeiling: map['falseCeiling'] != null ? List<String>.from(map['falseCeiling']) : [],
+      modularKitchen: map['modularKitchen'],
+      boreAndPump: map['boreAndPump'],
+      securitySystems: map['securitySystems'],
+      homeAutomation: map['homeAutomation'],
+      solarSolutions: map['solarSolutions'],
+      design3D: map['threeDDesign'],
+    );
+  }
+  factory QuotationMeta.empty() {
+    return QuotationMeta(
+      notes: '',
+      originalPrice: null,
+      inquiryCustomerId: '',
+      expectedStartDate: DateTime.now(),
+      propertyDetails: null,
+      inquiryServices: [],
+      serviceNames: '',
+      advanceRequiredPercentage: 0,
+      referralInfo: null,
+      cementBrand: [],
+      steelBrand: [],
+      brickType: [],
+      sandSource: [],
+      electricalWiresBrand: [],
+      electricalSwitchesBrand: [],
+      plumbingPipesBrand: [],
+      sanitaryFittingsBrand: [],
+      waterTankBrand: [],
+      flooringTilesBrand: [],
+      interiorPaintBrand: [],
+      exteriorPaintBrand: [],
+      doorsType: [],
+      windowsType: [],
+      fabricationWork: [],
+      structure: [],
+      plasterType: [],
+      waterproofing: [],
+      chokhatType: [],
+      railingType: [],
+      falseCeiling: [],
+      modularKitchen: '',
+      boreAndPump: '',
+      securitySystems: '',
+      homeAutomation: '',
+      solarSolutions: '',
+      design3D: ''
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'notes': notes,
+      'originalPrice': originalPrice,
+      'inquiryCustomerId': inquiryCustomerId,
+      'expectedStartDate': expectedStartDate.toIso8601String(),
+      'propertyDetails': propertyDetails?.toMap(),
+      'inquiryServices': inquiryServices.map((x) => x.toMap()).toList(),
+      'serviceNames': serviceNames,
+      'advanceRequiredPercentage': advanceRequiredPercentage,
+      'referralInfo': referralInfo?.toMap(),
+      'cementBrand': cementBrand,
+      'steelBrand': steelBrand,
+      'brickType': brickType,
+      'sandSource': sandSource,
+      'electricalWiresBrand': electricalWiresBrand,
+      'electricalSwitchesBrand': electricalSwitchesBrand,
+      'plumbingPipesBrand': plumbingPipesBrand,
+      'sanitaryFittingsBrand': sanitaryFittingsBrand,
+      'threeDDesign':design3D,
+      'waterTankBrand': waterTankBrand,
+      'flooringTilesBrand': flooringTilesBrand,
+      'interiorPaintBrand': interiorPaintBrand,
+      'exteriorPaintBrand': exteriorPaintBrand,
+      'doorsType': doorsType,
+      'windowsType': windowsType,
+      'fabricationWork': fabricationWork,
+      'structure': structure,
+      'plasterType': plasterType,
+      'waterproofing': waterproofing,
+      'chokhatType': chokhatType,
+      'railingType': railingType,
+      'falseCeiling': falseCeiling,
+      'modularKitchen': modularKitchen,
+      'boreAndPump': boreAndPump,
+      'securitySystems': securitySystems,
+      'homeAutomation': homeAutomation,
+      'solarSolutions': solarSolutions,
+    };
+  }
 }
+
 class InquiryService {
   final String serviceId;
   final String serviceName;
@@ -359,6 +610,48 @@ class PropertyDetails {
       'carpetArea': carpetArea,
       'bhk': bhk,
       'serviceDescription': serviceDescription,
+    };
+  }
+}
+class ReferralInfo {
+  final String userId;
+  final String userType;
+  final int totalReferralPoints;
+  final int pointsUsed;
+  final double discountApplied;
+  final double discountedPrice;
+
+  ReferralInfo({
+    required this.userId,
+    required this.userType,
+    required this.totalReferralPoints,
+    required this.pointsUsed,
+    required this.discountApplied,
+    required this.discountedPrice,
+  });
+
+  factory ReferralInfo.fromMap(Map<String, dynamic> map) {
+    return ReferralInfo(
+      userId: map['userId'] ?? '',
+      // default empty string
+      userType: map['userType'] ?? '',
+      totalReferralPoints: map['totalReferralPoints'] ?? 0,
+      // default 0
+      pointsUsed: map['pointsUsed'] ?? 0,
+      // default 0
+      discountApplied: (map['discountApplied'] ?? 0).toDouble(),
+      discountedPrice: (map['discountedPrice'] ?? 0).toDouble(),
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'userId': userId,
+      'userType': userType,
+      'totalReferralPoints': totalReferralPoints,
+      'pointsUsed': pointsUsed,
+      'discountApplied': discountApplied,
+      'discountedPrice': discountedPrice,
     };
   }
 }

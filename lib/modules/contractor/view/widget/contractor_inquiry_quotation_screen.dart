@@ -51,13 +51,19 @@ class _ContractorInquiryQuotationScreenState
     super.initState();
     // Format the status to match dropdown items (Title Case)
     AppLogger.structured("Edit quotation and data", widget.quotation?.toMap());
-    _quotationNoteController.text = 'Generated from inquiry for: ${widget.inquiry?.services.map((e) => e.serviceName,).toString()??''}';
+    _quotationNoteController.text = 'Generated from inquiry for: ${widget.inquiry?.services.map((e) => e.serviceName).join(', ') ?? ''}';
+
     if (widget.isEditMode && widget.quotation != null) {
       // Pre-fill form with existing quotation data
       _quotationController.text =
           double.parse(widget.quotation!.price).toInt().toString();
 
-      _quotationNoteController.text = widget.quotation!.meta.notes;
+      _quotationNoteController.text = widget.quotation!.meta.notes??'';
+      _expectedStartDate=widget.quotation?.meta.expectedStartDate;
+      _expectedStartDateController.text = DateFormat('dd MMM yyyy').format(_expectedStartDate??DateTime.now());
+
+
+
       // Capitalize first letter to match dropdown items
       _selectedStatus =
           widget.quotation!.status.isNotEmpty
@@ -759,7 +765,7 @@ class _ContractorInquiryQuotationScreenState
           price: quotationPrice ?? 0,
           status: _selectedStatus,
           note: _quotationNoteController.text,
-          userId: widget.inquiry!.userId,
+          userId: widget.inquiry?.userId??'',
           discountedPrice: discountPrice,
           date: expectedStartDateForApi??''
         );

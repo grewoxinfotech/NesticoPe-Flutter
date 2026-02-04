@@ -9,6 +9,7 @@ import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/contractor/model/contractor_quotation/contractor_quotation.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_quotation_controller.dart';
 import 'package:housing_flutter_app/modules/contractor/view/widget/contractor_inquiry_quotation_screen.dart';
+import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -33,6 +34,8 @@ class ContractorQuotationScreen extends StatefulWidget {
 class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
   String? _selectedStatus;
   String _currentStatus = '';
+  int advanceAmount = 0;
+  int advancePercentage = 0;
 
   final List<String> _statusOptions = ['Pending', 'Accepted', 'Rejected'];
 
@@ -40,6 +43,11 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
   void initState() {
     super.initState();
     // Capitalize first letter to match dropdown items
+    setState(() {
+      advancePercentage = widget.quotation.meta.advanceRequiredPercentage;
+      double price = double.tryParse(widget.quotation.price) ?? 0;
+      advanceAmount = ((price * advancePercentage) / 100).round();
+    });
     _currentStatus =
         widget.quotation.status.isNotEmpty
             ? capitalizeEachWord(widget.quotation.status)
@@ -147,6 +155,245 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
                     widget.quotation.meta.propertyDetails?.serviceDescription ??
                         '',
                   ),
+                  // const SizedBox(height: 12),
+                   Divider(color:ColorRes.leadGreyColor.shade400 ,),
+                  const SizedBox(height: 12),
+
+                  // Material Specifications
+                  Text(
+                    'Material Specifications',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  if (widget.quotation.meta.cementBrand?.isNotEmpty ?? false)
+                    _buildInfoRow(
+                      'Cement Brand:',
+                      widget.quotation.meta.cementBrand!.join(', '),
+                    ),
+                  const SizedBox(height: 12),
+                  if (widget.quotation.meta.steelBrand?.isNotEmpty ?? false)
+                    _buildInfoRow(
+                      'Steel Brand:',
+                      widget.quotation.meta.steelBrand!.join(', '),
+                    ),
+                  const SizedBox(height: 12),
+                  if (widget.quotation.meta.brickType?.isNotEmpty ?? false)
+                    _buildInfoRow(
+                      'Bricks Type:',
+                      widget.quotation.meta.brickType!.join(', '),
+                    ),
+                  const SizedBox(height: 12),
+                  if (widget.quotation.meta.sandSource?.isNotEmpty ?? false)
+                    _buildInfoRow(
+                      'Sand Source:',
+                      widget.quotation.meta.sandSource!.join(', '),
+                    ),
+                  const SizedBox(height: 12),
+                  if (widget.quotation.meta.electricalWiresBrand?.isNotEmpty ??
+                      false)
+                    _buildInfoRow(
+                      'Electrical Wires:',
+                      widget.quotation.meta.electricalWiresBrand!.join(', '),
+                    ),
+                  const SizedBox(height: 12),
+                  if (widget
+                          .quotation
+                          .meta
+                          .electricalSwitchesBrand
+                          ?.isNotEmpty ??
+                      false)
+                    _buildInfoRow(
+                      'Switches/Sockets:',
+                      widget.quotation.meta.electricalSwitchesBrand!.join(', '),
+                    ),
+                  const SizedBox(height: 12),
+                  if (widget.quotation.meta.plumbingPipesBrand?.isNotEmpty ??
+                      false)
+                    _buildInfoRow(
+                      'Plumbing Pipes:',
+                      widget.quotation.meta.plumbingPipesBrand!.join(', '),
+                    ),
+                  const SizedBox(height: 12),
+                  if (widget.quotation.meta.sanitaryFittingsBrand?.isNotEmpty ??
+                      false)
+                    _buildInfoRow(
+                      'Sanitary/WC:',
+                      widget.quotation.meta.sanitaryFittingsBrand!.join(', '),
+                    ),
+                  const SizedBox(height: 12),
+                  if (widget.quotation.meta.waterTankBrand?.isNotEmpty ?? false)
+                    _buildInfoRow(
+                      'Water Tank:',
+                      widget.quotation.meta.waterTankBrand!.join(', '),
+                    ),
+                  const SizedBox(height: 12),
+                  if (widget.quotation.meta.flooringTilesBrand?.isNotEmpty ??
+                      false)
+                    _buildInfoRow(
+                      'Flooring Tiles:',
+                      widget.quotation.meta.flooringTilesBrand!.join(', '),
+                    ),
+                  const SizedBox(height: 12),
+                  if (widget.quotation.meta.interiorPaintBrand?.isNotEmpty ??
+                      false)
+                    _buildInfoRow(
+                      'Interior Paint:',
+                      widget.quotation.meta.interiorPaintBrand!.join(', '),
+                    ),
+                  const SizedBox(height: 12),
+                  if (widget.quotation.meta.exteriorPaintBrand?.isNotEmpty ??
+                      false)
+                    _buildInfoRow(
+                      'Exterior Paint:',
+                      widget.quotation.meta.exteriorPaintBrand!.join(', '),
+                    ),
+                  const SizedBox(height: 12),
+                  if (widget.quotation.meta.doorsType?.isNotEmpty ?? false)
+                    _buildInfoRow(
+                      'Doors Type:',
+                      widget.quotation.meta.doorsType!.join(', '),
+                    ),
+                  const SizedBox(height: 12),
+                  if (widget.quotation.meta.windowsType?.isNotEmpty ?? false)
+                    _buildInfoRow(
+                      'Windows Type:',
+                      widget.quotation.meta.windowsType!.join(', '),
+                    ),
+                  const SizedBox(height: 12),
+                  if (widget.quotation.meta.structure?.isNotEmpty ?? false)
+                    _buildInfoRow(
+                      'Structure:',
+                      widget.quotation.meta.structure!.join(', '),
+                    ),
+                  const SizedBox(height: 12),
+                  if (widget.quotation.meta.plasterType?.isNotEmpty ?? false)
+                    _buildInfoRow(
+                      'Plaster:',
+                      widget.quotation.meta.plasterType!.join(', '),
+                    ),
+                  const SizedBox(height: 12),
+                  if (widget.quotation.meta.waterproofing?.isNotEmpty ?? false)
+                    _buildInfoRow(
+                      'Waterproofing:',
+                      widget.quotation.meta.waterproofing!.join(', '),
+                    ),
+                  const SizedBox(height: 12),
+                  if (widget.quotation.meta.chokhatType?.isNotEmpty ?? false)
+                    _buildInfoRow(
+                      'Chokhat Type:',
+                      widget.quotation.meta.chokhatType!.join(', '),
+                    ),
+                  const SizedBox(height: 12),
+                  if (widget.quotation.meta.railingType?.isNotEmpty ?? false)
+                    _buildInfoRow(
+                      'Railing Type:',
+                      widget.quotation.meta.railingType!.join(', '),
+                    ),
+                  const SizedBox(height: 12),
+                  if (widget.quotation.meta.falseCeiling?.isNotEmpty ?? false)
+                    _buildInfoRow(
+                      'False Ceiling:',
+                      widget.quotation.meta.falseCeiling!.join(', '),
+                    ),
+                  const SizedBox(height: 12),
+                  if (widget.quotation.meta.fabricationWork?.isNotEmpty ??
+                      false)
+                    _buildInfoRow(
+                      'Fabrication Work:',
+                      widget.quotation.meta.fabricationWork!.join(', '),
+                    ),
+
+                  const SizedBox(height: 12),
+                  Divider(color:ColorRes.leadGreyColor.shade400 ,),
+                  const SizedBox(height: 12),
+
+                  // Additional Services
+                  Text(
+                    'Additional Services',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  if (widget.quotation.meta.modularKitchen != null)
+                    _buildInfoRow(
+                      'Modular Kitchen:',
+                      widget.quotation.meta.modularKitchen!,
+                    ),
+                  const SizedBox(height: 12),
+                  if (widget.quotation.meta.boreAndPump != null)
+                    _buildInfoRow(
+                      'Bore and Pump:',
+                      widget.quotation.meta.boreAndPump!,
+                    ),
+                  const SizedBox(height: 12),
+                  if (widget.quotation.meta.securitySystems != null)
+                    _buildInfoRow(
+                      'Security Systems:',
+                      widget.quotation.meta.securitySystems!,
+                    ),
+                  const SizedBox(height: 12),
+                  if (widget.quotation.meta.homeAutomation != null)
+                    _buildInfoRow(
+                      'Home Automation:',
+                      widget.quotation.meta.homeAutomation!,
+                    ),
+                  const SizedBox(height: 12),
+                  if (widget.quotation.meta.solarSolutions != null)
+                    _buildInfoRow(
+                      'Solar Solutions:',
+                      widget.quotation.meta.solarSolutions!,
+                    ),
+
+                  const SizedBox(height: 12),
+                  _buildInfoRow(
+                    'Expected Start Date:',
+                    DateFormat(
+                      'MM/dd/yyyy',
+                    ).format(widget.quotation.meta.expectedStartDate),
+                  ),
+                  const SizedBox(height: 12),
+                  // Add this where you want to show the advance payment info
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade50,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.green.shade200),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'ADVANCE PAYMENT REQUIRED',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.green.shade700,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          '$advancePercentage% (${Formatter.formatPrice(advanceAmount)})',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.green.shade800,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
 
@@ -162,7 +409,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
                     '${Formatter.formatPrice(num.tryParse(widget.quotation.price) ?? 0)}',
                   ),
                   const SizedBox(height: 12),
-                  _buildInfoRow('Notes:', widget.quotation.meta.notes),
+                  _buildInfoRow('Notes:', widget.quotation.meta.notes ?? ''),
                   const SizedBox(height: 12),
                   _buildInfoRow(
                     'Created At:',
@@ -1240,11 +1487,13 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
     // Build description
     String description = widget.quotation.meta.serviceNames ?? '';
 
-    if (widget.quotation.meta.notes.isNotEmpty) {
-      String cleanNotes = widget.quotation.meta.notes.replaceAll(
-        'Generated from inquiry for: ',
-        '',
-      );
+    if (widget.quotation.meta.notes?.isNotEmpty ?? false) {
+      String cleanNotes =
+          widget.quotation.meta.notes?.replaceAll(
+            'Generated from inquiry for: ',
+            '',
+          ) ??
+          '';
       if (!description.contains(cleanNotes) && cleanNotes.isNotEmpty) {
         description +=
             description.isNotEmpty ? '\n\nNote: $cleanNotes' : cleanNotes;
