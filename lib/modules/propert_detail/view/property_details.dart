@@ -405,13 +405,31 @@ import '../../builder/view/builder_leads.dart';
 import '../../home/widgets/unified_comparison_floating_button.dart';
 import '../../property/controllers/property_controller.dart';
 
+import 'dart:developer';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/app/constants/size_manager.dart';
+import 'package:housing_flutter_app/app/utils/formater/formater.dart';
+import 'package:housing_flutter_app/modules/filter_property/view/filter_screen.dart';
+import 'package:housing_flutter_app/modules/propert_detail/view/widget/property_card_widget.dart';
+import 'package:housing_flutter_app/widgets/bar/app_bar/list_screen_appbar.dart';
+
+import '../../../app/manager/compare_manager.dart';
+import '../../../data/network/property/models/property_model.dart';
+import '../../../widgets/bar/filter_bar/filter_chip_bar.dart';
+import '../../../widgets/empty_state/empty_state.dart';
+import '../../home/widgets/unified_comparison_floating_button.dart';
+import '../../property/controllers/property_controller.dart';
+
 class PropertyDetail extends StatefulWidget {
   final List<Map<String, String>>? filters;
   final bool isAppBarShow;
   final Color backgroundColor;
   final bool isFromSeeAll;
 
-  PropertyDetail({
+  const PropertyDetail({
     super.key,
     this.isAppBarShow = true,
     this.backgroundColor = ColorRes.white,
@@ -424,34 +442,43 @@ class PropertyDetail extends StatefulWidget {
 }
 
 class _PropertyDetailState extends State<PropertyDetail> {
-  // ✅ FIX: Added tag 'listing_view' to separate this instance from HomeScreen's controller
   final PropertyController controller = Get.put(
     PropertyController(),
     tag: 'listing_view',
   );
 
+  /// 🔹 User-visible filters only
   final RxMap<String, String> selectedFilters = <String, String>{}.obs;
+
   final CompareManager compare = Get.find<CompareManager>();
+
+  /// 🔒 Hard-locked filter (never visible, never removable)
+  static const Map<String, String> _lockedFilters = {
+    "approval_status": "approved",
+  };
 
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.filters != null) {
-        final Map<String, String> filterMap = {};
-        for (var filter in widget.filters!) {
-          filterMap.addAll(filter);
-        }
-        selectedFilters.addAll(filterMap);
-        controller.applyFilters(filterMap);
-      } else {
-        // Only load initial if we aren't maintaining state from a previous session
-        // or if you want to reset every time, call controller.resetFilters() here.
-        if (controller.items.isEmpty) {
-          controller.loadInitial();
+      final Map<String, String> uiFilters = {};
+
+      if (widget.filters != null && widget.filters!.isNotEmpty) {
+        for (final filter in widget.filters!) {
+          uiFilters.addAll(filter);
         }
       }
+
+      selectedFilters.addAll(uiFilters);
+      _applyFilters();
+    });
+  }
+
+  void _applyFilters() {
+    controller.applyFilters({
+      ..._lockedFilters, // 🔒 always applied
+      ...selectedFilters, // user filters
     });
   }
 
@@ -463,16 +490,14 @@ class _PropertyDetailState extends State<PropertyDetail> {
         showAppBar: widget.isAppBarShow,
         title: "Property List",
         isFormScreen: widget.isFromSeeAll,
-        onBack: () {
-          // Log logic remains the same, but it affects only this tagged controller
-          log("Selected City foback ${controller.selectedCity.value}");
-          controller.filters = {'city': controller.selectedCity.value};
-          Get.back();
-        },
+        onBack: () => Get.back(),
+
         onFilterTap: () async {
           final result = await Get.to<Map<String, String>>(
             () => RealEstateFilterScreen(
-              initialFilters: Map<String, String>.from(selectedFilters),
+              initialFilters: Map<String, String>.from(
+                selectedFilters.value, // ✅ READ VALUE
+              ),
             ),
             transition: Transition.rightToLeft,
           );
@@ -481,8 +506,7 @@ class _PropertyDetailState extends State<PropertyDetail> {
             selectedFilters
               ..clear()
               ..addAll(result);
-
-            controller.applyFilters(Map<String, String>.from(selectedFilters));
+            _applyFilters();
           }
         },
       ),
@@ -492,25 +516,25 @@ class _PropertyDetailState extends State<PropertyDetail> {
           children: [
             Column(
               children: [
+                /// ✅ FIXED Obx — observable is READ
                 Obx(() {
+                  final filters = selectedFilters.value;
+
                   return FilterChipsBar(
-                    filters: selectedFilters.value,
+                    filters: filters, // plain Map now
                     onClearAll: () {
                       selectedFilters.clear();
-                      controller.applyFilters(<String, String>{});
+                      _applyFilters();
                     },
                     onRemoveFilter: (key) {
                       selectedFilters.remove(key);
-                      controller.applyFilters(
-                        Map<String, String>.from(selectedFilters),
-                      );
+                      _applyFilters();
                     },
                     priceRangeFormatter:
                         (min, max) => formatPriceRange(min, max),
                   );
                 }),
 
-                // property list
                 Expanded(
                   child: Obx(() {
                     if (controller.isLoading.value &&
@@ -520,26 +544,17 @@ class _PropertyDetailState extends State<PropertyDetail> {
 
                     if (!controller.isLoading.value &&
                         controller.items.isEmpty) {
-                      return EmptyStateWidget(
+                      return const EmptyStateWidget(
                         icon: Icons.search_off_rounded,
                         title: "No properties found",
-                        subtitle: "Try adjusting your search criteria",
+                        subtitle: "No approved properties available",
                       );
                     }
 
-                    final List<Items> approvedProperty =
-                        controller.items.value
-                            .where(
-                              (element) =>
-                                  element.approvalStatus!.toLowerCase() ==
-                                  "approved",
-                            )
-                            .toList();
-
                     return NotificationListener<ScrollNotification>(
-                      onNotification: (scrollEnd) {
-                        final metrics = scrollEnd.metrics;
-                        if (metrics.atEdge && metrics.pixels != 0) {
+                      onNotification: (notification) {
+                        if (notification.metrics.pixels >=
+                            notification.metrics.maxScrollExtent - 200) {
                           controller.loadMore();
                         }
                         return false;
@@ -551,10 +566,9 @@ class _PropertyDetailState extends State<PropertyDetail> {
                             vertical: AppPadding.small,
                             horizontal: AppPadding.small,
                           ),
-                          itemCount: approvedProperty.length,
+                          itemCount: controller.items.length,
                           itemBuilder: (context, index) {
-                            final data = approvedProperty[index];
-
+                            final Items data = controller.items[index];
                             return PropertyCardWidget(
                               property: data,
                               role: 'Developer',
@@ -567,7 +581,8 @@ class _PropertyDetailState extends State<PropertyDetail> {
                 ),
               ],
             ),
-            UnifiedComparisonFloatingButton(bottom: 16),
+
+            const UnifiedComparisonFloatingButton(bottom: 16),
           ],
         ),
       ),

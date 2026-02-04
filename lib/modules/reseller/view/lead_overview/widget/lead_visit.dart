@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_lead_controller.dart';
+import 'package:housing_flutter_app/utils/shimmer/common_screen/visit_screen/visit_list_screen_shimmer.dart';
 import 'package:intl/intl.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
@@ -57,8 +58,8 @@ class _LeadVisitState extends State<LeadVisit> {
   late final leadVisitController = widget.leadVisitController;
   late final propertyInquiryController = widget.propertyInquiryController;
 
- /* @override*/
-/*  void initState() {
+  /* @override*/
+  /*  void initState() {
     // TODO: implement initState
     super.initState();
     final selectedInquiry = propertyInquiryController?.selectedInquiry.value;
@@ -98,7 +99,9 @@ class _LeadVisitState extends State<LeadVisit> {
         );
 
         leadVisitController.setLeadVisitId(widget.buyerID, widget.propertyId);
-        print('Visit ID set: ${leadVisitController.items.map((e) => e.toMap())}');
+        print(
+          'Visit ID set: ${leadVisitController.items.map((e) => e.toMap())}',
+        );
       } else if (widget.propertyId != null) {
         print(
           'Setting Buyer ID for user ${widget.buyerID} and property ${widget.propertyId}',
@@ -107,7 +110,6 @@ class _LeadVisitState extends State<LeadVisit> {
       }
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +128,7 @@ class _LeadVisitState extends State<LeadVisit> {
       ),
       body: Obx(() {
         if (leadVisitController.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return VisitListScreenShimmer();
         } else if (leadVisitController.items.isEmpty) {
           return Center(
             child: Text(
@@ -140,23 +142,25 @@ class _LeadVisitState extends State<LeadVisit> {
           );
         } else {
           // Convert all visit items to a list of buyerIds (non-null, non-empty)
-          final buyerIds = leadVisitController.items
-              .map((element) => element.buyerId)
-              .where((id) => id != null && id!.isNotEmpty)
-              .cast<String>()
-              .toList();
+          final buyerIds =
+              leadVisitController.items
+                  .map((element) => element.buyerId)
+                  .where((id) => id != null && id!.isNotEmpty)
+                  .cast<String>()
+                  .toList();
 
           // Fetch visitors’ profiles using the collected buyerIds
           // if (buyerIds.isNotEmpty) {
           //   leadVisitController.getTheVisitersProfile(buyerIds);
           // }
-          for(var visit in buyerIds)
-            {
-              log("Selected Data From Visit ${visit}");
-              leadVisitController.getTheVisitersProfile(visit);
-            }
+          for (var visit in buyerIds) {
+            log("Selected Data From Visit ${visit}");
+            leadVisitController.getTheVisitersProfile(visit);
+          }
 
-          log("Selected Visit: ${leadVisitController.selectedVisit.value?.toJson()}");
+          log(
+            "Selected Visit: ${leadVisitController.selectedVisit.value?.toJson()}",
+          );
 
           return RefreshIndicator(
             onRefresh: leadVisitController.refreshLead,
@@ -172,12 +176,16 @@ class _LeadVisitState extends State<LeadVisit> {
                 final user = leadVisitController.userProfiles[visit.buyerId];
                 log("USrtr Data From Visit ${user?.toJson()}");
 
-                return _buildVisitCard(context, visit, leadVisitController, user);
+                return _buildVisitCard(
+                  context,
+                  visit,
+                  leadVisitController,
+                  user,
+                );
               },
             ),
           );
         }
-
       }),
     );
   }
@@ -185,9 +193,8 @@ class _LeadVisitState extends State<LeadVisit> {
   Widget _buildVisitCard(
     BuildContext context,
     LeadVisitItem visit,
-    LeadVisitController controller, User? user,
-
-
+    LeadVisitController controller,
+    User? user,
   ) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -204,17 +211,16 @@ class _LeadVisitState extends State<LeadVisit> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               StatefulBuilder(
-                builder: (context, setState) =>  Expanded(
-                  child: _buildPersonTile(
-                    title: "Buyer",
-                    name:
-                        user?.username ??
-                        "Unknown Buyer",
-                    id: "${user?.email}",
+                builder:
+                    (context, setState) => Expanded(
+                      child: _buildPersonTile(
+                        title: "Buyer",
+                        name: user?.username ?? "Unknown Buyer",
+                        id: "${user?.email}",
 
-                    avatarColor: Colors.blueAccent,
-                  ),
-                ),
+                        avatarColor: Colors.blueAccent,
+                      ),
+                    ),
               ),
               const SizedBox(width: 12),
               Container(
@@ -532,7 +538,7 @@ class _LeadVisitState extends State<LeadVisit> {
         return ColorRes.green;
       case 'rescheduled':
         return ColorRes.homeAmber;
-        case 'cancelled':
+      case 'cancelled':
         return ColorRes.error;
       default:
         return Colors.grey;

@@ -992,12 +992,15 @@ class _HireContractorCardState extends State<HireContractorCard> {
                     contractorProfile?.username = widget.data.username ?? '';
                     contractorProfile?.firstName = widget.data.firstName ?? '';
                     contractorProfile?.lastName = widget.data.lastName ?? '';
-                    contractorProfile?.totalExperience = widget.data.totalExperience ?? 0;
+                    contractorProfile?.totalExperience =
+                        widget.data.totalExperience ?? 0;
                     if (contractorProfile != null) {
                       Get.to(
-                            () => ContractorProfileDetailsScreen(
-                          contractor: contractorProfile ?? Contractor.fromJson({}),
-                          isPremium: widget.data.subscription?.hasPremiumPlan ?? false,
+                        () => ContractorProfileDetailsScreen(
+                          contractor:
+                              contractorProfile ?? Contractor.fromJson({}),
+                          isPremium:
+                              widget.data.subscription?.hasPremiumPlan ?? false,
                         ),
                       );
                     }
@@ -1728,18 +1731,22 @@ class _AllContractorCardState extends State<AllContractorCard> {
                 SizedBox(width: 8),
                 ElevatedButton(
                   onPressed: () async {
-                    log("Tapped Contractor Profile Data: ${contractorProfile?.toJson()}");
+                    log(
+                      "Tapped Contractor Profile Data: ${contractorProfile?.toJson()}",
+                    );
 
                     contractorProfile?.username = widget.data.username ?? '';
                     contractorProfile?.firstName = widget.data.firstName ?? '';
                     contractorProfile?.lastName = widget.data.lastName ?? '';
-                    contractorProfile?.totalExperience = widget.data.totalExperience ?? 0;
+                    contractorProfile?.totalExperience =
+                        widget.data.totalExperience ?? 0;
                     // contractorProfile?.projectStats.totalProjects = data.profile.??  0;
 
                     if (contractorProfile != null) {
                       Get.to(
-                            () => ContractorProfileDetailsScreen(
-                          contractor: contractorProfile ?? Contractor.fromJson({}),
+                        () => ContractorProfileDetailsScreen(
+                          contractor:
+                              contractorProfile ?? Contractor.fromJson({}),
                         ),
                       );
                     } else {

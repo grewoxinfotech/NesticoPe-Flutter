@@ -952,6 +952,7 @@ import 'package:housing_flutter_app/modules/seller/module/lead_screen/controller
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_property_inquiry_controller.dart';
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_visit_controller.dart';
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
+import 'package:housing_flutter_app/utils/shimmer/common_screen/lead_screen/lead_list_screen_shimmer.dart';
 
 import '../../../../widgets/bottom_sheet/widgets/lead_filter_chips.dart';
 import '../../../../widgets/messages/snack_bar.dart';
@@ -965,6 +966,7 @@ class CommonLeadScreen extends StatefulWidget {
   final String title;
   final String controllerTag;
   final bool showDataMasking;
+  final Widget Function(LeadItem lead, VoidCallback onTap)? leadCardBuilder;
 
   /// Pagination handler
   final Future<void> Function(LeadController controller, String? entityId)
@@ -978,6 +980,7 @@ class CommonLeadScreen extends StatefulWidget {
     this.isViewAll = false,
     this.entityId,
     this.showDataMasking = false,
+    this.leadCardBuilder,
   });
 
   @override
@@ -1101,7 +1104,7 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
 
         // 🔹 INITIAL LOAD (no data yet) - show centered loader
         if (isLoading && leads.isEmpty && !isRefreshing) {
-          return const Center(child: CircularProgressIndicator());
+          return LeadListScreenShimmer();
         }
 
         return Column(
@@ -1181,13 +1184,15 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
                               }
 
                               final lead = leads[index];
-                              return LeadCardWidget(
-                                lead: lead,
-                                showDataMasking: widget.showDataMasking,
-                                isCompact:
-                                    MediaQuery.of(context).size.width < 600,
-                                onTap: () => _openLead(lead),
-                              );
+                              return widget.leadCardBuilder != null
+                                  ? widget.leadCardBuilder!(lead, () {})
+                                  : LeadCardWidget(
+                                    lead: lead,
+                                    showDataMasking: widget.showDataMasking,
+                                    isCompact:
+                                        MediaQuery.of(context).size.width < 600,
+                                    onTap: () => _openLead(lead),
+                                  );
                             },
                           ),
                         ),

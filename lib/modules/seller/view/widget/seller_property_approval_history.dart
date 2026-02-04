@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/utils/shimmer/common_screen/lead_screen/lead_list_screen_shimmer.dart';
 import 'package:housing_flutter_app/widgets/dialogs/show_long_text_dialog.dart';
 import 'package:intl/intl.dart';
 
@@ -38,7 +39,7 @@ class SellerPropertyApprovalHistory extends StatelessWidget {
 
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return LeadListScreenShimmer();
         }
 
         if (controller.approvalHistory.isEmpty) {

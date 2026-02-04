@@ -254,6 +254,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
 import 'package:housing_flutter_app/modules/builder/controller/all_project_controller.dart';
@@ -265,7 +266,6 @@ import 'package:housing_flutter_app/widgets/empty_state/empty_state.dart';
 
 import '../../../app/constants/img_res.dart';
 import '../../home/widgets/unified_comparison_floating_button.dart';
-import '../controller/project_controller.dart';
 import 'builder_property_listing.dart';
 
 class AllProjectListScreen extends StatefulWidget {
@@ -287,33 +287,41 @@ class AllProjectListScreen extends StatefulWidget {
 }
 
 class _AllProjectListScreenState extends State<AllProjectListScreen> {
-  // ✅ FIX: Added tag 'project_list_view' to isolate this controller instance
-  // This prevents filters here from affecting the Home Screen project list
+  /// ✅ Isolated controller instance
   final AllProjectController controller = Get.put(
     AllProjectController(),
     tag: 'project_list_view',
   );
 
-  RxMap<String, String> selectedFilters = <String, String>{}.obs;
+  /// 🔹 User-visible filters only
+  final RxMap<String, String> selectedFilters = <String, String>{}.obs;
+
+  /// 🔒 Hard-locked filter (never shown, never removed)
+  static const Map<String, String> _lockedFilters = {
+    "approval_status": "approved",
+  };
 
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.filters != null) {
-        final Map<String, String> filterMap = {};
-        for (var filter in widget.filters!) {
-          filterMap.addAll(filter);
+      final Map<String, String> uiFilters = {};
+
+      if (widget.filters != null && widget.filters!.isNotEmpty) {
+        for (final filter in widget.filters!) {
+          uiFilters.addAll(filter);
         }
-        selectedFilters.addAll(filterMap);
-        controller.applyFilters(filterMap);
-      } else {
-        // Only load initial if list is empty to avoid re-fetching on every build if we want persistence,
-        // otherwise, for a fresh list every time (which is usually desired for "View All"), force load.
-        controller.loadInitial();
       }
+
+      selectedFilters.addAll(uiFilters);
+      _applyFilters();
     });
+  }
+
+  /// 🔁 Always merges locked + user filters
+  void _applyFilters() {
+    controller.applyFilters({..._lockedFilters, ...selectedFilters});
   }
 
   @override
@@ -324,28 +332,27 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
         showAppBar: widget.isAppBarShow,
         isFormScreen: widget.isFromSeeAll,
         title: "Project List",
-        onBack: () {
-          Get.back();
-        },
+        onBack: () => Get.back(),
+
         onFilterTap: () async {
-          // ✅ Navigate using Get.to and await result
-          final filters = await Get.to<Map<String, String>>(
+          final result = await Get.to<Map<String, String>>(
             () => ProjectFilterScreen(
-              initialFilters: selectedFilters.value,
+              initialFilters: Map<String, String>.from(
+                selectedFilters.value, // ✅ read observable
+              ),
               onApply: (filterData) {
-                // Return selected filters to previous screen
                 Get.back(result: filterData);
               },
             ),
             transition: Transition.downToUp,
-            // optional for sheet-like slide-up effect
             duration: const Duration(milliseconds: 300),
           );
 
-          // ✅ Apply filters if returned
-          if (filters != null) {
-            selectedFilters.value = filters;
-            controller.applyFilters(filters);
+          if (result != null) {
+            selectedFilters
+              ..clear()
+              ..addAll(result);
+            _applyFilters();
           }
         },
       ),
@@ -355,18 +362,19 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
           children: [
             Column(
               children: [
+                /// ✅ Safe Obx usage
                 Obx(() {
+                  final filters = selectedFilters.value;
+
                   return FilterChipsBar(
-                    filters: selectedFilters.value,
+                    filters: filters, // no locked filters here
                     onClearAll: () {
                       selectedFilters.clear();
-                      controller.applyFilters(<String, String>{});
+                      _applyFilters();
                     },
                     onRemoveFilter: (key) {
                       selectedFilters.remove(key);
-                      controller.applyFilters(
-                        Map<String, String>.from(selectedFilters),
-                      );
+                      _applyFilters();
                     },
                   );
                 }),
@@ -383,7 +391,7 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
                       return const EmptyStateWidget(
                         icon: Icons.search_off_rounded,
                         title: "No projects found",
-                        subtitle: "Try adjusting your search criteria",
+                        subtitle: "No approved projects available",
                       );
                     }
 
@@ -400,10 +408,10 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
                         child: ListView.separated(
                           padding: const EdgeInsets.all(12),
                           separatorBuilder:
-                              (context, index) => SizedBox(height: 12),
+                              (_, __) => const SizedBox(height: 12),
                           itemCount: controller.items.length,
                           itemBuilder: (context, index) {
-                            final data = controller.items[index];
+                            final ProjectItem data = controller.items[index];
 
                             return GestureDetector(
                               onTap: () {
@@ -419,7 +427,6 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
                                 project: data,
                                 width: double.infinity,
                                 height: 150,
-                                // ✅ Explicitly set height
                                 developersName:
                                     data.projectContactInfo?.name ?? 'Unknown',
                                 imageUrl:
@@ -450,7 +457,8 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
                 ),
               ],
             ),
-            UnifiedComparisonFloatingButton(bottom: 16),
+
+            const UnifiedComparisonFloatingButton(bottom: 16),
           ],
         ),
       ),

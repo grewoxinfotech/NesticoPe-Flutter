@@ -16,8 +16,12 @@ class HireContractorScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(HireContractorController());
     final controllerNew = Get.put(HireContractorNewController());
-    final controllerProfileData = Get.put(HireContractorListOfProfileController());
-    final controllerFilterData = Get.put(HireContractorFilterProfileController());
+    final controllerProfileData = Get.put(
+      HireContractorListOfProfileController(),
+    );
+    final controllerFilterData = Get.put(
+      HireContractorFilterProfileController(),
+    );
 
     return Scaffold(
       backgroundColor: ColorRes.background,
@@ -36,9 +40,7 @@ class HireContractorScreen extends StatelessWidget {
       ),
       body: Obx(() {
         if (controller.isLoading.value && controller.items.isEmpty) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const Center(child: CircularProgressIndicator());
         }
 
         if (controller.items.isEmpty) {
@@ -77,9 +79,11 @@ class HireContractorScreen extends StatelessWidget {
                   onTap: () {
                     // _showCategoryDialog(context, category);
                     // controllerFilterData.fetchHireContractorByCategoryID(category.id, category.name);
-                    controllerFilterData.fetchHireContractorCategories(category.id,category.name);
-                    Get.to(()=>HireContractorProfileList());
-
+                    controllerFilterData.fetchHireContractorCategories(
+                      category.id,
+                      category.name,
+                    );
+                    Get.to(() => HireContractorProfileList());
                   },
                   child: _buildCategoryCard(category),
                 );
@@ -91,7 +95,10 @@ class HireContractorScreen extends StatelessWidget {
     );
   }
 
-  void _showCategoryDialog(BuildContext context, ContractorServiceCategory category) {
+  void _showCategoryDialog(
+    BuildContext context,
+    ContractorServiceCategory category,
+  ) {
     showDialog(
       context: context,
       builder: (context) {
@@ -100,7 +107,10 @@ class HireContractorScreen extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 24,
+            vertical: 24,
+          ),
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -127,9 +137,10 @@ class HireContractorScreen extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: category.isActive
-                            ? ColorRes.success.withOpacity(0.1)
-                            : ColorRes.error.withOpacity(0.1),
+                        color:
+                            category.isActive
+                                ? ColorRes.success.withOpacity(0.1)
+                                : ColorRes.error.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -137,9 +148,10 @@ class HireContractorScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: AppFontSizes.small,
                           fontWeight: AppFontWeights.medium,
-                          color: category.isActive
-                              ? ColorRes.success
-                              : ColorRes.error,
+                          color:
+                              category.isActive
+                                  ? ColorRes.success
+                                  : ColorRes.error,
                         ),
                       ),
                     ),
@@ -188,10 +200,7 @@ class HireContractorScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorRes.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: ColorRes.leadGreyColor.shade300,
-          width: 1,
-        ),
+        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -219,9 +228,10 @@ class HireContractorScreen extends StatelessWidget {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: category.isActive
-                      ? ColorRes.success.withOpacity(0.1)
-                      : ColorRes.error.withOpacity(0.1),
+                  color:
+                      category.isActive
+                          ? ColorRes.success.withOpacity(0.1)
+                          : ColorRes.error.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
@@ -229,9 +239,8 @@ class HireContractorScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: AppFontSizes.small,
                     fontWeight: AppFontWeights.medium,
-                    color: category.isActive
-                        ? ColorRes.success
-                        : ColorRes.error,
+                    color:
+                        category.isActive ? ColorRes.success : ColorRes.error,
                   ),
                 ),
               ),
@@ -280,7 +289,7 @@ class HireContractorScreen extends StatelessWidget {
       'Sep',
       'Oct',
       'Nov',
-      'Dec'
+      'Dec',
     ];
     return '${date.day.toString().padLeft(2, '0')} ${months[date.month - 1]} ${date.year}';
   }

@@ -425,7 +425,6 @@ class BuilderProjectCard extends StatelessWidget {
             ? Get.find<ProjectWizardController>()
             : Get.find<ProjectWizardController>(tag: "builder");
 
-    log("Project Card Build ${project.toJson()}");
     // final propertyController = Get.put(PropertyController());
     final PropertyFavoriteController favoriteController =
         Get.find<PropertyFavoriteController>();

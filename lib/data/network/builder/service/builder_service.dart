@@ -46,7 +46,6 @@ class BuilderService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        AppLogger.structured("✅ Project API Response: ",data);
 
         return PaginationResponse<ProjectItem>.fromJson(
           data,
@@ -198,7 +197,6 @@ class BuilderService {
           request.fields[key] = value.toString();
         }
       });
-
 
       // ==== Attach Project Images ====
       if (images != null && images.isNotEmpty) {
@@ -365,11 +363,11 @@ class BuilderService {
       debugPrint("📄 Response Body: ${response.body}");
 
       if (response.statusCode == 200) {
-        *//*CustomSnackBar.show(
+        */ /*CustomSnackBar.show(
           Get.overlayContext!,
           message: "Project updated successfully",
           type: SnackBarType.success,
-        );*//*
+        );*/ /*
         final data = jsonDecode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: 'Success',
@@ -379,11 +377,11 @@ class BuilderService {
         return true;
       }
 
-      *//*  CustomSnackBar.show(
+      */ /*  CustomSnackBar.show(
         Get.overlayContext!,
         message: "Failed to update project",
         type: SnackBarType.error,
-      );*//*
+      );*/ /*
       final data = jsonDecode(response.body);
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Failed',
@@ -393,11 +391,11 @@ class BuilderService {
       return false;
     } catch (e) {
       debugPrint("❌ Update project exception: $e");
-      *//* CustomSnackBar.show(
+      */ /* CustomSnackBar.show(
         Get.overlayContext!,
         message: "Error while updating project",
         type: SnackBarType.error,
-      );*//*
+      );*/ /*
       // NesticoPeSnackBar.showAwesomeSnackbar(
       //   title: 'Failed',
       //   message: "Error while updating project",
@@ -540,5 +538,4 @@ class BuilderService {
       return false;
     }
   }
-
 }

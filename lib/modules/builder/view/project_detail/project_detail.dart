@@ -41,6 +41,7 @@ import '../../../../widgets/map/address_and_map_detail.dart';
 import '../../../../widgets/map/near_by_location_map_section.dart';
 import '../../../../widgets/messages/snack_bar.dart';
 import '../../../auth/views/login_screen.dart';
+import '../../../common/lead_components/lead_card_widget.dart';
 import '../../../home/widgets/unified_comparison_floating_button.dart';
 import '../../../performance_score/views/performance_score_screen.dart';
 import '../../../property/views/property_detail_screen.dart';
@@ -510,7 +511,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                 title: 'Project Buyer Leads',
                                 controllerTag: 'project',
                                 entityId: project?.id,
-
                                 showDataMasking: false,
                                 onLoadMore: (controller, id) async {
                                   if (id != null) {
@@ -518,6 +518,17 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                   } else {
                                     controller.loadMore();
                                   }
+                                },
+
+                                /// 👇 Custom lead card builder
+                                leadCardBuilder: (lead, onTap) {
+                                  return LeadCardWidget(
+                                    lead: lead,
+                                    isCompact:
+                                        MediaQuery.of(context).size.width < 600,
+                                    showDataMasking: false,
+                                    onTap: onTap,
+                                  );
                                 },
                               ),
                             );
