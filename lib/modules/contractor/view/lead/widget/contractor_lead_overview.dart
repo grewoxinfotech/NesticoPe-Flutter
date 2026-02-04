@@ -160,12 +160,12 @@ class ContractorLeadOverview extends StatelessWidget {
             ),
 
             _rowTwoColumns("Price", "${capitalizeEachWord(meta.priceModel)}"),
-            _rowTwoColumns("Minimum Price", "${Formatter.formatPrice(meta.minPriceRange)}"),
-            _rowTwoColumns("Maximum Price", "${Formatter.formatPrice(meta.maxPriceRange)}"),
+            _rowTwoColumns("Minimum Price", "${Formatter.formatPrice(meta.minPriceRange??0)}"),
+            _rowTwoColumns("Maximum Price", "${Formatter.formatPrice(meta.maxPriceRange??0)}"),
             _rowTwoColumns("Availability", capitalizeEachWord(meta.workAvailability),),
-            _rowTwoColumns("Provides Materials", meta.provideMaterials ? "Yes" : "No"),
-            _rowTwoColumns("Equipment", meta.equipmentProvided ? "Yes" : "No"),
-            _rowTwoColumns("Insurance", meta.insuranceAvailable ? "Yes" : "No"),
+            _rowTwoColumns("Provides Materials", (meta.provideMaterials??false) ? "Yes" : "No"),
+            _rowTwoColumns("Equipment", (meta.equipmentProvided??false) ? "Yes" : "No"),
+            _rowTwoColumns("Insurance", (meta.insuranceAvailable??false) ? "Yes" : "No"),
 
             const SizedBox(height: 8),
              Divider(
@@ -180,7 +180,7 @@ class ContractorLeadOverview extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              meta.acceptedPaymentModes.map((e) => e.toUpperCase().split("_").join(" ")).join(", "),
+              meta.acceptedPaymentModes?.map((e) => e.toUpperCase().split("_").join(" ")).join(", ")??'',
               style:  TextStyle(
                 color: ColorRes.textPrimary,
                 fontSize: AppFontSizes.medium,

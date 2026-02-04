@@ -35,6 +35,7 @@ class ContractorProjectController
 
   RxString statusChange = "".obs;
   DateTime? selectedDate;
+
   void toggleCard(String id) {
     expandedCards[id] = !(expandedCards[id] ?? false);
     print("toggle Card $id");
@@ -92,16 +93,15 @@ class ContractorProjectController
     }
   }
 
-
   final picker = ImagePicker();
 
   bool isUploading = false;
 
   Future<void> pickAndUploadPhotos(
-      String projectId,
-      String key,
-      int imageLength,
-      ) async {
+    String projectId,
+    String key,
+    int imageLength,
+  ) async {
     bool isGranted = await requestGalleryPermission();
     if (!isGranted) return;
 
@@ -113,7 +113,9 @@ class ContractorProjectController
     if (remaining <= 0) {
       ScaffoldMessenger.of(Get.context!).showSnackBar(
         const SnackBar(
-          content: Text("⚠️ You have already uploaded the maximum of 3 photos."),
+          content: Text(
+            "⚠️ You have already uploaded the maximum of 3 photos.",
+          ),
         ),
       );
       return;
@@ -138,7 +140,10 @@ class ContractorProjectController
     final files = <File>[];
     for (final e in picked) {
       File file = File(e.path);
-      file = await compressImageIfNeeded(file, maxSizeInMB: 3); // compress if needed
+      file = await compressImageIfNeeded(
+        file,
+        maxSizeInMB: 3,
+      ); // compress if needed
       files.add(file);
     }
 
@@ -149,11 +154,12 @@ class ContractorProjectController
         barrierDismissible: false,
       );
 
-      final success = await ContractorProjectService.contractorProjectService.uploadBeforePhotos(
-        projectId: projectId,
-        beforePhotos: files,
-        key: key,
-      );
+      final success = await ContractorProjectService.contractorProjectService
+          .uploadBeforePhotos(
+            projectId: projectId,
+            beforePhotos: files,
+            key: key,
+          );
 
       Get.back(); // close loader
 
@@ -164,26 +170,26 @@ class ContractorProjectController
           const SnackBar(content: Text("✅ Photos uploaded successfully")),
         );
       } else {
-        ScaffoldMessenger.of(Get.context!).showSnackBar(
-          const SnackBar(content: Text("❌ Upload failed")),
-        );
+        ScaffoldMessenger.of(
+          Get.context!,
+        ).showSnackBar(const SnackBar(content: Text("❌ Upload failed")));
       }
     } catch (e) {
       Get.back(); // ensure loader closes on error
-      ScaffoldMessenger.of(Get.context!).showSnackBar(
-        SnackBar(content: Text("❌ Error: $e")),
-      );
+      ScaffoldMessenger.of(
+        Get.context!,
+      ).showSnackBar(SnackBar(content: Text("❌ Error: $e")));
     } finally {
       isUploading = false;
     }
   }
 
   void showImagePickerOptions(
-      BuildContext context, {
-        required String projectId,
-        required String key,
-        required int imageLength,
-      }) {
+    BuildContext context, {
+    required String projectId,
+    required String key,
+    required int imageLength,
+  }) {
     showModalBottomSheet(
       context: context,
       backgroundColor: ColorRes.transparentColor,
@@ -224,7 +230,10 @@ class ContractorProjectController
                     ),
                     child: const Icon(Icons.photo_library, color: Colors.blue),
                   ),
-                  title: const Text('Choose from Gallery', style: TextStyle(fontSize: 16)),
+                  title: const Text(
+                    'Choose from Gallery',
+                    style: TextStyle(fontSize: 16),
+                  ),
                   onTap: () {
                     Navigator.pop(context);
                     pickAndUploadPhotos(projectId, key, imageLength);
@@ -239,10 +248,17 @@ class ContractorProjectController
                     ),
                     child: const Icon(Icons.camera_alt, color: Colors.green),
                   ),
-                  title: const Text('Take a Photo', style: TextStyle(fontSize: 16)),
+                  title: const Text(
+                    'Take a Photo',
+                    style: TextStyle(fontSize: 16),
+                  ),
                   onTap: () {
                     Navigator.pop(context);
-                    pickAndUploadSinglePhotoFromCamera(projectId, key, imageLength);
+                    pickAndUploadSinglePhotoFromCamera(
+                      projectId,
+                      key,
+                      imageLength,
+                    );
                   },
                 ),
               ],
@@ -252,66 +268,75 @@ class ContractorProjectController
       },
     );
   }
+
   Future<void> pickAndUploadSinglePhotoFromCamera(
-      String projectId, String key, int imageLength) async {
+    String projectId,
+    String key,
+    int imageLength,
+  ) async {
     bool isGranted = await requestCameraPermission();
-   if(isGranted)
-     {
-       final picker = ImagePicker();
-       final picked = await picker.pickImage(source: ImageSource.camera);
+    if (isGranted) {
+      final picker = ImagePicker();
+      final picked = await picker.pickImage(source: ImageSource.camera);
 
-       if (picked == null) return;
+      if (picked == null) return;
 
-       if (imageLength >= 3) {
-         ScaffoldMessenger.of(Get.context!).showSnackBar(
-           const SnackBar(content: Text("⚠️ You already have 3 photos uploaded.")),
-         );
-         return;
-       }
+      if (imageLength >= 3) {
+        ScaffoldMessenger.of(Get.context!).showSnackBar(
+          const SnackBar(
+            content: Text("⚠️ You already have 3 photos uploaded."),
+          ),
+        );
+        return;
+      }
 
-       final file = File(picked.path);
+      final file = File(picked.path);
 
-       try {
-         isUploading = true;
+      try {
+        isUploading = true;
 
-         // 🌀 Show loader
-         Get.dialog(
-           const Center(child: CircularProgressIndicator()),
-           barrierDismissible: false,
-         );
-         File finalPhoto = await compressImageIfNeeded(file);
-         final success = await ContractorProjectService.contractorProjectService.uploadBeforePhotos(
-           projectId: projectId,
-           beforePhotos: [finalPhoto],
-           key: key,
-         );
+        // 🌀 Show loader
+        Get.dialog(
+          const Center(child: CircularProgressIndicator()),
+          barrierDismissible: false,
+        );
+        File finalPhoto = await compressImageIfNeeded(file);
+        final success = await ContractorProjectService.contractorProjectService
+            .uploadBeforePhotos(
+              projectId: projectId,
+              beforePhotos: [finalPhoto],
+              key: key,
+            );
 
-         Get.back(); // close loader
+        Get.back(); // close loader
 
-         if (success) {
-           refreshList();
-           items.refresh();
-           ScaffoldMessenger.of(Get.context!).showSnackBar(
-             const SnackBar(content: Text("✅ Photo uploaded successfully")),
-           );
-         } else {
-           ScaffoldMessenger.of(Get.context!).showSnackBar(
-             const SnackBar(content: Text("❌ Upload failed")),
-           );
-         }
-       } catch (e) {
-         Get.back();
-         ScaffoldMessenger.of(Get.context!).showSnackBar(
-           SnackBar(content: Text("❌ Error: $e")),
-         );
-       } finally {
-         isUploading = false;
-       }
-     }
+        if (success) {
+          refreshList();
+          items.refresh();
+          ScaffoldMessenger.of(Get.context!).showSnackBar(
+            const SnackBar(content: Text("✅ Photo uploaded successfully")),
+          );
+        } else {
+          ScaffoldMessenger.of(
+            Get.context!,
+          ).showSnackBar(const SnackBar(content: Text("❌ Upload failed")));
+        }
+      } catch (e) {
+        Get.back();
+        ScaffoldMessenger.of(
+          Get.context!,
+        ).showSnackBar(SnackBar(content: Text("❌ Error: $e")));
+      } finally {
+        isUploading = false;
+      }
+    }
   }
 
-
-  Future<File> compressImageIfNeeded(File file, {int maxSizeInMB = 3, int quality = 70}) async {
+  Future<File> compressImageIfNeeded(
+    File file, {
+    int maxSizeInMB = 3,
+    int quality = 70,
+  }) async {
     // Get file size in MB
     final fileSizeInMB = file.lengthSync() / (1024 * 1024);
 
@@ -323,7 +348,8 @@ class ContractorProjectController
     try {
       // Generate a unique path for compressed image
       final dir = file.parent.path;
-      final targetPath = '$dir/${DateTime.now().millisecondsSinceEpoch}_compressed.jpg';
+      final targetPath =
+          '$dir/${DateTime.now().millisecondsSinceEpoch}_compressed.jpg';
 
       // Compress the image
       final compressedFile = await FlutterImageCompress.compressAndGetFile(
@@ -347,10 +373,6 @@ class ContractorProjectController
     }
   }
 
-
-
-
-
   Future<void> deleteProjectPhoto({
     required String projectId,
     required String photoId,
@@ -365,10 +387,10 @@ class ContractorProjectController
 
       final success = await ContractorProjectService.contractorProjectService
           .deletedProjectPhoto({
-        "projectId": projectId,
-        "photoUid": photoId,
-        "type": key,
-      });
+            "projectId": projectId,
+            "photoUid": photoId,
+            "type": key,
+          });
 
       // ✅ Close loader
       Get.back();
@@ -387,13 +409,11 @@ class ContractorProjectController
     } catch (e, stack) {
       Get.back(); // Close loader if error occurs
       log("🚨 Error deleting photo: $e\n$stack");
-      ScaffoldMessenger.of(Get.context!).showSnackBar(
-        SnackBar(content: Text("❌ Error: $e")),
-      );
+      ScaffoldMessenger.of(
+        Get.context!,
+      ).showSnackBar(SnackBar(content: Text("❌ Error: $e")));
     }
   }
-
-
 
   Future<void> applyFilters(Map<String, String> filter) async {
     filters.assignAll(filter);
@@ -574,7 +594,10 @@ class ContractorProjectController
     final response = await ContractorProjectService.contractorProjectService
         .getContractorProjectData(contractorId: userId ?? '', filter: filters);
 
-    AppLogger.structured("App Logger for Contractor Project", response.items.map((e) => e.toJson(),));
+    AppLogger.structured(
+      "App Logger for Contractor Project",
+      response.items.map((e) => e.toJson()),
+    );
 
     return response;
   }

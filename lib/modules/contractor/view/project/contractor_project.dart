@@ -18,14 +18,30 @@ import '../../../add_property/view/create_property.dart';
 import '../../../reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 import '../../controller/contractor_project_controller.dart';
 
-class ContractorProjectScreen extends StatelessWidget {
+class ContractorProjectScreen extends StatefulWidget {
   const ContractorProjectScreen({super.key});
 
   @override
+  State<ContractorProjectScreen> createState() =>
+      _ContractorProjectScreenState();
+}
+
+class _ContractorProjectScreenState extends State<ContractorProjectScreen> {
+  final ContractorProjectController controller = Get.put(
+    ContractorProjectController(),
+  );
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      controller.refreshList();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final ContractorProjectController controller = Get.put(
-      ContractorProjectController(),
-    );
     RxMap<String, String> selectedFilters = <String, String>{}.obs;
 
     return Scaffold(

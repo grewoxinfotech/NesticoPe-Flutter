@@ -734,7 +734,7 @@ class ServiceCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
 
-                _detailColumn("AVAILABILITY", service.meta.workAvailability),
+                _detailColumn("AVAILABILITY", service.meta.workAvailability??''),
                 _detailColumn(
                   "Visiting Charge",
                   '₹${service.meta.visitCharge.toString()}',
@@ -754,12 +754,12 @@ class ServiceCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Column(
               children: [
-                _feature(service.meta.provideMaterials, "Materials Provided"),
+                _feature(service.meta.provideMaterials??false, "Materials Provided"),
                 const SizedBox(height: 6),
-                _feature(service.meta.equipmentProvided, "Equipment Provided"),
+                _feature(service.meta.equipmentProvided??false, "Equipment Provided"),
                 const SizedBox(height: 6),
                 _feature(
-                  service.meta.insuranceAvailable,
+                  service.meta.insuranceAvailable??false,
                   "Insurance Available",
                 ),
               ],
@@ -782,8 +782,8 @@ class ServiceCard extends StatelessWidget {
                   child: _detailColumn(
                     "PAYMENT MODES",
                     service.meta.acceptedPaymentModes
-                        .map((e) => e.replaceAll("_", " ").capitalize)
-                        .join(", "),
+                        ?.map((e) => e.replaceAll("_", " ").capitalize)
+                        .join(", ")??'',
                   ),
                 ),
               ],

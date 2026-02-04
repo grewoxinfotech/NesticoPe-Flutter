@@ -87,6 +87,9 @@ class AddPropertyModel {
 
 class PropertyDetails {
   final PgInfo? pgInfo;
+  final String? subRegistrarOfficeName;
+  final String? saleDeedDocumentNumber;
+  final int? yearOfRegistration;
   final int? bhk;
   final int? balcony;
   final int? bathroom;
@@ -103,8 +106,16 @@ class PropertyDetails {
   final String? propertyCondition;
   final String? propertyCarpetAreaUnit;
   final String? propertyBuiltUpAreaUnit;
+
+  final String? khataNumberPlot;
+  final String? surveyNumber;
+
+
   final PlotInfo? plotInfo;
   final bool? petFriendly;
+  final String? tenantType;
+  final String? availableFrom;
+
   final FacilitiesInfo? facilitiesInfo;
   final LiftInfo? lifInfo;
   final bool? serventRoom;
@@ -116,11 +127,19 @@ class PropertyDetails {
     this.balcony,
     this.bathroom,
     this.amenities,
+    this.tenantType,
+    this.availableFrom,
     this.floorInfo,
+    this.surveyNumber,
+    this.khataNumberPlot,
     this.furnishInfo,
     this.parkingInfo,
     this.financialInfo,
     this.possessionInfo,
+    this.saleDeedDocumentNumber,
+    this.yearOfRegistration,
+    this.subRegistrarOfficeName,
+
     this.propertyFacing,
     this.propertyCarpetArea,
     this.propertyBuiltUpArea,
@@ -144,6 +163,13 @@ class PropertyDetails {
     if (bathroom != null) data['bathroom'] = bathroom;
     if (amenities != null) data['amenities'] = amenities;
     if (floorInfo != null) data['floor_info'] = floorInfo!.toJson();
+    if(subRegistrarOfficeName!=null) data['sub_registrar_office_name']=subRegistrarOfficeName;
+    if(saleDeedDocumentNumber!=null) data['sale_deed_document_number']=saleDeedDocumentNumber;
+    if(yearOfRegistration!=null) data['year_of_registration']=yearOfRegistration;
+    if(tenantType!=null) data['tenant_type']=tenantType;
+    if(availableFrom!=null) data['available_from']=availableFrom;
+    if(khataNumberPlot!=null) data['khata_number']=khataNumberPlot;
+    if(surveyNumber!=null) data['survey_number']=surveyNumber;
     if (furnishInfo != null)
       data['property_furnish_info'] = furnishInfo!.toJson();
     if (parkingInfo != null) data['parking_info'] = parkingInfo!.toJson();
@@ -469,6 +495,7 @@ class FinancialInfo {
   final int? noticePeriod;
   final bool? negotiable;
   final double? maintenanceCharges;
+
   final List<PropertyPriceYearly>? propertyPriceTrend;
 
   final dynamic parkingCharges; // can be string or number
@@ -476,6 +503,7 @@ class FinancialInfo {
   FinancialInfo({
     this.platformFees,
     this.is_for_sellorrent,
+
     this.propertyPrice,
     this.propertyRentPerMonth,
     this.monthlyRent,
@@ -831,12 +859,16 @@ class PlotInfo {
   final double? plotWidth;
   final String? possessionStatus;
   final String? possessionDate;
+  final String? zoneType;
+  final String? ownership;
 
   PlotInfo({
     this.plotArea,
     this.plotAreaUnit,
     this.plotLength,
     this.plotWidth,
+    this.ownership,
+    this.zoneType,
     this.possessionStatus,
     this.possessionDate,
   });
@@ -849,6 +881,8 @@ class PlotInfo {
       data['plot_area_unit'] = removeDots(plotAreaUnit!);
     if (plotLength != null) data['plot_length'] = plotLength;
     if (plotWidth != null) data['plot_width'] = plotWidth;
+    if (ownership != null) data['ownership'] = ownership;
+    if (zoneType != null) data['zone_type'] = zoneType;
 
     if (possessionStatus != null)
       data['possession_status'] =

@@ -289,6 +289,9 @@
 //     ));
 //   }
 // }
+import 'dart:developer';
+import 'dart:math' hide log;
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/modules/add_property/view/create_property.dart';
@@ -301,28 +304,333 @@ import '../../../../data/network/contractor/model/contractot_service_model/contr
 import '../../../../widgets/New folder/inputs/dropdown_field.dart';
 import '../../controller/contractor_my_service_controller.dart';
 
-class AddServiceScreen extends StatelessWidget {
+class AddServiceScreen extends StatefulWidget {
   final ContractorServiceItem? serviceToEdit;
+
   AddServiceScreen({super.key, this.serviceToEdit});
 
+  @override
+  State<AddServiceScreen> createState() => _AddServiceScreenState();
+}
+
+class _AddServiceScreenState extends State<AddServiceScreen> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final isShowAllSubCategory = false;
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ContractorMyServiceController>();
-    if (serviceToEdit != null) {
+    if (widget.serviceToEdit != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (serviceToEdit != null) {
-          controller.populateFormForEdit(serviceToEdit!);
+        if (widget.serviceToEdit != null) {
+          controller.populateFormForEdit(widget.serviceToEdit!);
         } else {
           controller.clearForm(); // Clear form for new service
         }
       });
     }
+    final materialRows = [
+
+      Row(
+        children: [
+          Expanded(
+            child: buildSelectableDropdown(
+              title: "Cement Brand",
+              options: controller.cementOptions,
+
+              selectedValues: controller.selectedCement,
+              context: context,
+            ),
+          ),
+          SizedBox(width: 8),
+          Expanded(
+            child: buildSelectableDropdown(
+              title: "Steel Brand",
+              options: controller.steelOptions,
+              selectedValues: controller.selectedSteel,
+              context: context,
+            ),
+          ),
+        ],
+      ),
+
+      Row(
+        children: [
+          Expanded(
+            child: buildSelectableDropdown(
+              title: "Bricks",
+              options: controller.brickOptions,
+              selectedValues: controller.selectedBrick,
+              context: context,
+            ),
+          ),
+          SizedBox(width: 8),
+          Expanded(
+            child: buildSelectableDropdown(
+              title: "Sand",
+              options: controller.sandOptions,
+              selectedValues: controller.selectedSand,
+              context: context,
+            ),
+          ),
+        ],
+      ),
+
+      Row(
+        children: [
+          Expanded(
+            child: buildSelectableDropdown(
+              title: "Electrical Wires Brand",
+              options: controller.wireOptions,
+              selectedValues: controller.selectedWire,
+              context: context,
+            ),
+          ),
+          SizedBox(width: 8),
+          Expanded(
+            child: buildSelectableDropdown(
+              title: "Switches Brand",
+              options: controller.switchOptions,
+              selectedValues: controller.selectedSwitch,
+              context: context,
+            ),
+          ),
+        ],
+      ),
+
+      Row(
+        children: [
+          Expanded(
+            child: buildSelectableDropdown(
+              title: "Plumbing Pipes Brand",
+              options: controller.pipeOptions,
+              selectedValues: controller.selectedPipe,
+              context: context,
+            ),
+          ),
+          SizedBox(width: 8),
+          Expanded(
+            child: buildSelectableDropdown(
+              title: "Sanitary/WC Brand",
+              options: controller.sanitaryOptions,
+              selectedValues: controller.selectedSanitary,
+              context: context,
+            ),
+          ),
+        ],
+      ),
+
+      Row(
+        children: [
+          Expanded(
+            child: buildSelectableDropdown(
+              title: "Water Tank Brand",
+              options: controller.tankOptions,
+              selectedValues: controller.selectedTank,
+              context: context,
+            ),
+          ),
+          SizedBox(width: 8),
+          Expanded(
+            child: buildSelectableDropdown(
+              title: "Flooring Tiles Brand",
+              options: controller.tileOptions,
+              selectedValues: controller.selectedTile,
+              context: context,
+            ),
+          ),
+        ],
+      ),
+
+      Row(
+        children: [
+          Expanded(
+            child: buildSelectableDropdown(
+              title: "Interior Paint Brand",
+              options: controller.interiorPaintOptions,
+              selectedValues: controller.selectedInteriorPaint,
+              context: context,
+            ),
+          ),
+          SizedBox(width: 8),
+          Expanded(
+            child: buildSelectableDropdown(
+              title: "Exterior Paint Brand",
+              options: controller.exteriorPaintOptions,
+              selectedValues: controller.selectedExteriorPaint,
+              context: context,
+            ),
+          ),
+        ],
+      ),
+
+      Row(
+        children: [
+          Expanded(
+            child: buildSelectableDropdown(
+              title: "Doors Type/Brand",
+              options: controller.doorOptions,
+              selectedValues: controller.selectedDoor,
+              context: context,
+            ),
+          ),
+          SizedBox(width: 8),
+          Expanded(
+            child: buildSelectableDropdown(
+              title: "Windows Type/Brand",
+              options: controller.windowOptions,
+              selectedValues: controller.selectedWindow,
+              context: context,
+            ),
+          ),
+        ],
+      ),
+
+      Row(
+        children: [
+          Expanded(
+            child: buildSelectableDropdown(
+              title: "Structure",
+              options: controller.structureOptions,
+              selectedValues: controller.selectedStructure,
+              context: context,
+            ),
+          ),
+          SizedBox(width: 8),
+          Expanded(
+            child: buildSelectableDropdown(
+              title: "Plaster",
+              options: controller.plasterOptions,
+              selectedValues: controller.selectedPlaster,
+              context: context,
+            ),
+          ),
+        ],
+      ),
+
+      Row(
+        children: [
+          Expanded(
+            child: buildSelectableDropdown(
+              title: "Waterproofing",
+              options: controller.waterproofingOptions,
+              selectedValues: controller.selectedWaterproofing,
+              context: context,
+            ),
+          ),
+          SizedBox(width: 8),
+          Expanded(
+            child: buildSelectableDropdown(
+              title: "Chokhat",
+              options: controller.chokhatOptions,
+              selectedValues: controller.selectedChokhat,
+              context: context,
+            ),
+          ),
+        ],
+      ),
+
+      Row(
+        children: [
+          Expanded(
+            child: buildSelectableDropdown(
+              title: "Railing",
+              options: controller.railingOptions,
+              selectedValues: controller.selectedRailing,
+              context: context,
+            ),
+          ),
+          SizedBox(width: 8),
+          Expanded(
+            child: buildSelectableDropdown(
+              title: "False Ceiling",
+              options: controller.ceilingOptions,
+              selectedValues: controller.selectedCeiling,
+              context: context,
+            ),
+          ),
+        ],
+      ),
+
+      Row(
+        children: [
+          Expanded(
+            child: buildSelectableDropdown(
+              title: "Fabrication Work",
+              options: controller.fabricationOptions,
+              selectedValues: controller.selectedFabrication,
+              context: context,
+            ),
+          ),
+          SizedBox(width: 8),
+          Expanded(
+            child: buildSelectableNormalDropdown(
+              title: "3D Design",
+              options: ['Yes', "No"].obs,
+              selectedValue: controller.selected3D,
+
+            ),
+          ),
+        ],
+      ),
+
+      Row(
+        children: [
+          Expanded(
+            child: buildSelectableNormalDropdown(
+              title: "Modular Kitchen",
+              options: ['Yes', "No"].obs,
+              selectedValue: controller.selectedModularKitchen,
+
+            ),
+          ),
+          SizedBox(width: 8),
+          Expanded(
+            child: buildSelectableNormalDropdown(
+              title: "Bore and Pump",
+              options: ['Yes', "No"].obs,
+              selectedValue: controller.selectedBoreAndPump,
+
+            ),
+          ),
+        ],
+      ),
+
+      Row(
+        children: [
+          Expanded(
+            child: buildSelectableNormalDropdown(
+              title: "Security Systems",
+              options: ['Yes', "No"].obs,
+              selectedValue: controller.selectedSecuritySystems,
+
+            ),
+          ),
+          SizedBox(width: 8),
+          Expanded(
+            child: buildSelectableNormalDropdown(
+              title: "Home Automation",
+              options: ['Yes', "No"].obs,
+              selectedValue: controller.selectedHomeAutomation,
+
+            ),
+          ),
+        ],
+      ),
+
+      buildSelectableNormalDropdown(
+        title: "Solar Solutions",
+        options: ['Yes', "No"].obs,
+        selectedValue: controller.selectedSolarSolutions,
+
+      ),
+    ];
+
     return Scaffold(
       backgroundColor: ColorRes.white,
       appBar: AppBar(
         title: Text(
-          serviceToEdit == null ? "Add New Service" : "Edit Service",
+          widget.serviceToEdit == null ? "Add New Service" : "Edit Service",
           style: TextStyle(
             color: ColorRes.textPrimary,
             fontWeight: AppFontWeights.semiBold,
@@ -367,10 +675,71 @@ class AddServiceScreen extends StatelessWidget {
                           )
                           .toList() ??
                       [],
-                  onChanged:
-                      (val) => controller.selectedCategory.value = val ?? '',
+                  onChanged: (val) {
+                    if (val == null) return;
+
+                    controller.selectedCategory.value = val;
+
+                    final category =
+                    controller.contractorServiceCategory.value?.data.items
+                        .firstWhere(
+                          (e) => e.id == val,
+                    );
+
+                    controller.selectedCategoryName.value = category?.name ?? '';
+
+                    log("Category ID: ${controller.selectedCategory.value}");
+                    log("Category Name: ${controller.selectedCategoryName.value}");
+                  },
+
                   darkText: true,
                 ),
+
+                if (controller.selectedCategoryName.value ==
+                    "Home Construction") ...[
+
+                  SizedBox(height: 16),
+                  Obx(() {
+                    final visibleCount =
+                        controller.showAllMaterials.value
+                            ? materialRows.length
+                            : 2;
+
+                    return Column(
+                      children: [
+                        ...materialRows
+                            .take(visibleCount)
+                            .map(
+                              (e) => Padding(
+                                padding: const EdgeInsets.only(bottom: 16),
+                                child: e,
+                              ),
+                            )
+                            .toList(),
+
+                        // Show More / Less button
+                        if (materialRows.length > 2)
+                          GestureDetector(
+                            onTap: () {
+                              controller.showAllMaterials.toggle();
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              child: Text(
+                                controller.showAllMaterials.value
+                                    ? "Show less ▲"
+                                    : "Show more ▼",
+                                style: TextStyle(
+                                  color: ColorRes.primary,
+                                  fontWeight: AppFontWeights.semiBold,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  }),
+                ],
 
                 SizedBox(height: 16),
                 buildSectionTitle("Description *"),
@@ -400,7 +769,6 @@ class AddServiceScreen extends StatelessWidget {
                   onChanged: (val) => controller.selectedPriceModel.value = val,
                   darkText: true,
                 ),
-
                 // if(controller.selectedPriceModel.value!="Custom")...[
                 //   SizedBox(height: 16),
                 //   buildSectionTitle("Price (₹) *"),
@@ -628,6 +996,7 @@ class AddServiceScreen extends StatelessWidget {
                     ],
                   ),
                 ),
+                const SizedBox(height: 12),
               ],
             ),
           ),
@@ -636,8 +1005,162 @@ class AddServiceScreen extends StatelessWidget {
     );
   }
 
-  // ---------- Helper Widgets ----------
+  Widget buildSelectableNormalDropdown({
+    required String title,
+    required RxList<String> options,
+    required RxString selectedValue,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        buildSectionTitle(title),
+        Obx(() {
+          return NesticoPeDropdownField<String>(
+            isRequired: true,
+            value: selectedValue.value.isEmpty ? null : selectedValue.value,
+            hintText: "Select",
+            items: options
+                .map(
+                  (e) => DropdownMenuItem(
+                value: e,
+                child: Text(e),
+              ),
+            )
+                .toList(),
+            onChanged: (val) {
+              selectedValue.value = val ?? '';
+            },
+            darkText: true,
+          );
+        }),
+      ],
+    );
+  }
 
+  Widget buildSelectableDropdown({
+    required String title,
+    required RxList<String> options,
+    required RxList<String> selectedValues,
+    required BuildContext context,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        buildSectionTitle(title),
+
+        // 🔹 Selected chips
+        Obx(() => Wrap(
+          spacing: 4,
+          // runSpacing: 2,
+          children: selectedValues
+              .map(
+                (e) => Chip(
+              label: Text(e,style: TextStyle(fontSize: AppFontSizes.caption),),
+              deleteIcon: const Icon(Icons.close, size: 14),
+              onDeleted: () => selectedValues.remove(e),
+            ),
+          )
+              .toList(),
+        )),
+
+        const SizedBox(height: 8),
+
+        // 🔹 Dropdown adder
+        Obx(() {
+          return NesticoPeDropdownField<String>(
+            value: null, // 👈 IMPORTANT (reset every time)
+            hintText: "Select or add",
+            key: ValueKey(selectedValues.length), // 🔥 FORCE REBUILD
+            items: [
+              ...options.map(
+                    (e) => DropdownMenuItem(value: e, child: Text(e)),
+              ),
+              const DropdownMenuItem(
+                value: "__add_new__",
+                child: Text(
+                  "+ Add custom",
+                  style: TextStyle(
+                    color: ColorRes.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+            onChanged: (val) async {
+              if (val == null) return;
+              if(selectedValues.isEmpty)
+                {
+                  selectedValues.clear();
+                }
+
+              if (val == "__add_new__") {
+                final customValue = await showCustomInputDialog(context);
+                if (customValue != null && customValue.trim().isNotEmpty) {
+                  if (!options.contains(customValue)) {
+                    options.add(customValue);
+                  }
+                  if (!selectedValues.contains(customValue)) {
+                    selectedValues.add(customValue);
+
+                  }
+                }
+              } else {
+                if (!selectedValues.contains(val)) {
+
+                  selectedValues.add(val);
+
+                  log("Catgory ${selectedValues.map((element) => element,)}");
+                }
+              }
+            },
+          );
+        }),
+      ],
+    );
+  }
+
+
+  Future<String?> showCustomInputDialog(BuildContext context) async {
+    final controller = TextEditingController();
+
+    return showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: ColorRes.white,
+          title: Text(
+            "Add custom option",
+            style: TextStyle(
+              fontWeight: AppFontWeights.semiBold,
+              fontSize: AppFontSizes.body,
+            ),
+          ),
+
+          content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(hintText: "Enter value"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                controller.clear();
+              },
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context, controller.text);
+              },
+              child: const Text("Add"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // ---------- Helper Widgets ----------
   Widget _buildToggle(String label, RxBool observable) {
     return Obx(
       () => Row(

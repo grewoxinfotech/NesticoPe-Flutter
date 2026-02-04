@@ -437,7 +437,7 @@ class RentPriceDetail extends StatelessWidget {
               ),
 
               SizedBox(height: 16),
-              buildSectionTitle('Price  Negotiable'),
+              buildSectionTitle('Price Negotiable'),
               SizedBox(height: 8),
               Wrap(
                 spacing: 12,

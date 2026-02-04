@@ -824,8 +824,17 @@ class DashboardController extends GetxController {
     }
 
     // --- Add current month only ---
-    final currentMonth = DateFormat('MMMM yyyy').format(now);
-    monthlyRanges.add(currentMonth);
+    if (now.month > 1) {
+      for (int i = 1; i <= now.month; i++) {
+        final monthDate = DateTime(now.year, i, 1);
+        final monthName = DateFormat('MMMM yyyy').format(monthDate);
+        monthlyRanges.add(monthName);
+      }
+    }else{
+      final currentMonth = DateFormat('MMMM yyyy').format(now);
+      monthlyRanges.add(currentMonth);
+    }
+
 
     // Default selection
     selectedPeriod.value = weeklyRanges.first;

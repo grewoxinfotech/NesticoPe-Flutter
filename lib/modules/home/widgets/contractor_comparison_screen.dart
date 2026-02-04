@@ -21,7 +21,7 @@ class ContractorComparisonScreen extends StatefulWidget {
 class _ContractorComparisonScreenState
     extends State<ContractorComparisonScreen> {
   final ContractorCompareManager _compareManager =
-  Get.find<ContractorCompareManager>();
+      Get.find<ContractorCompareManager>();
 
   final RxBool _isLoading = false.obs;
   final RxMap<String, ContractorDataResponse> _contractorData =
@@ -52,8 +52,9 @@ class _ContractorComparisonScreenState
           final response = await ContractorCompareService.service
               .getContractorById(contractor.userId);
           if (response.isNotEmpty) {
-            final contractorResponse =
-            ContractorDataResponse.fromJson(response);
+            final contractorResponse = ContractorDataResponse.fromJson(
+              response,
+            );
             _contractorData[contractor.userId] = contractorResponse;
           }
         } catch (e) {
@@ -114,8 +115,11 @@ class _ContractorComparisonScreenState
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.error_outline,
-                        size: 64, color: ColorRes.leadGreyColor[400]),
+                    Icon(
+                      Icons.error_outline,
+                      size: 64,
+                      color: ColorRes.leadGreyColor[400],
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       _error.value,
@@ -172,9 +176,10 @@ class _ContractorComparisonScreenState
                     _ContractorCardForCompare(
                       contractor: contractors[0],
                       onRemove: () {
-                        final userId = _contractorData.entries
-                            .firstWhere((e) => e.value == contractors[0])
-                            .key;
+                        final userId =
+                            _contractorData.entries
+                                .firstWhere((e) => e.value == contractors[0])
+                                .key;
                         _contractorData.remove(userId);
                       },
                     ),
@@ -217,9 +222,10 @@ class _ContractorComparisonScreenState
                   _ContractorCardForCompare(
                     contractor: a,
                     onRemove: () {
-                      final userId = _contractorData.entries
-                          .firstWhere((e) => e.value == a)
-                          .key;
+                      final userId =
+                          _contractorData.entries
+                              .firstWhere((e) => e.value == a)
+                              .key;
                       _contractorData.remove(userId);
                     },
                   ),
@@ -227,9 +233,10 @@ class _ContractorComparisonScreenState
                   _ContractorCardForCompare(
                     contractor: b,
                     onRemove: () {
-                      final userId = _contractorData.entries
-                          .firstWhere((e) => e.value == b)
-                          .key;
+                      final userId =
+                          _contractorData.entries
+                              .firstWhere((e) => e.value == b)
+                              .key;
                       _contractorData.remove(userId);
                     },
                   ),
@@ -259,10 +266,7 @@ class _ContractorCardForCompare extends StatelessWidget {
   final ContractorDataResponse contractor;
   final VoidCallback? onRemove;
 
-  const _ContractorCardForCompare({
-    required this.contractor,
-    this.onRemove,
-  });
+  const _ContractorCardForCompare({required this.contractor, this.onRemove});
 
   @override
   Widget build(BuildContext context) {
@@ -305,7 +309,6 @@ class _ContractorCardForCompare extends StatelessWidget {
                     ),
                   ),
                 ),
-
 
                 // Content Section
                 Expanded(
@@ -370,8 +373,9 @@ class _ContractorCardForCompare extends StatelessWidget {
                                   (p.totalServices != null &&
                                       p.totalServices > 0))
                                 Padding(
-                                  padding:
-                                  const EdgeInsets.symmetric(horizontal: 8),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                  ),
                                   child: Container(
                                     width: 3,
                                     height: 3,
@@ -447,8 +451,6 @@ class _ContractorCardForCompare extends StatelessWidget {
     );
   }
 }
-
-
 
 class _ContractorComparisonTable extends StatefulWidget {
   final ContractorDataResponse a;
@@ -533,9 +535,11 @@ class _ContractorComparisonTableState
                   servicesByCategory: servicesByCategory,
                   totalServices: widget.a.data.totalServices.toString(),
                   contractorType: widget.a.data.profile.contractorType,
-                  location:widget.a.data.contractor.city??'' ,
+                  location: widget.a.data.contractor.city ?? '',
                   title: widget.a.data.contractor.username,
-                  membershipSince: formatMemberSince(widget.a.data.contractor.memberSince.toIso8601String()),
+                  membershipSince: formatMemberSince(
+                    widget.a.data.contractor.memberSince.toIso8601String(),
+                  ),
                 ),
               ),
               // Contractor B Card
@@ -547,9 +551,11 @@ class _ContractorComparisonTableState
                   servicesByCategory: servicesByCategory,
                   totalServices: widget.b.data.totalServices.toString(),
                   contractorType: widget.b.data.profile.contractorType,
-                  location:widget.b.data.contractor.city??'' ,
+                  location: widget.b.data.contractor.city ?? '',
 
-                  membershipSince: formatMemberSince(widget.b.data.contractor.memberSince.toIso8601String()),
+                  membershipSince: formatMemberSince(
+                    widget.b.data.contractor.memberSince.toIso8601String(),
+                  ),
                   title: widget.b.data.contractor.username,
                 ),
               ),
@@ -562,7 +568,7 @@ class _ContractorComparisonTableState
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(
             2,
-                (index) => GestureDetector(
+            (index) => GestureDetector(
               onTap: () {
                 _pageController.animateToPage(
                   index,
@@ -575,9 +581,10 @@ class _ContractorComparisonTableState
                 width: _currentPage == index ? 24 : 8,
                 height: 8,
                 decoration: BoxDecoration(
-                  color: _currentPage == index
-                      ? ColorRes.primary
-                      : ColorRes.leadGreyColor[300],
+                  color:
+                      _currentPage == index
+                          ? ColorRes.primary
+                          : ColorRes.leadGreyColor[300],
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
@@ -603,7 +610,12 @@ class _ContractorServicesCard extends StatelessWidget {
   const _ContractorServicesCard({
     required this.contractor,
     required this.servicesByCategory,
-    required this.title, required this.totalServices, required this.activeServices, required this.contractorType, required this.location, required this.membershipSince,
+    required this.title,
+    required this.totalServices,
+    required this.activeServices,
+    required this.contractorType,
+    required this.location,
+    required this.membershipSince,
   });
 
   Service _findService(String serviceName) {
@@ -657,26 +669,21 @@ class _ContractorServicesCard extends StatelessWidget {
             ),
           ),
 
-
-
-
-
           // Services List in Slider
           SizedBox(
             height: 500,
             child: ListView(
               padding: const EdgeInsets.all(0),
               children: [
-                contractorBasicDetails('Total Services',totalServices),
-                Divider(color: ColorRes.leadGreyColor.shade300,),
-                contractorBasicDetails('Active Services',activeServices),
-                Divider(color: ColorRes.leadGreyColor.shade300,),
-                contractorBasicDetails('Contractor Type',contractorType),
-                Divider(color: ColorRes.leadGreyColor.shade300,),
-                contractorBasicDetails('Location',location),
-                Divider(color: ColorRes.leadGreyColor.shade300,),
-                contractorBasicDetails('Member Since',membershipSince),
-
+                contractorBasicDetails('Total Services', totalServices),
+                Divider(color: ColorRes.leadGreyColor.shade300),
+                contractorBasicDetails('Active Services', activeServices),
+                Divider(color: ColorRes.leadGreyColor.shade300),
+                contractorBasicDetails('Contractor Type', contractorType),
+                Divider(color: ColorRes.leadGreyColor.shade300),
+                contractorBasicDetails('Location', location),
+                Divider(color: ColorRes.leadGreyColor.shade300),
+                contractorBasicDetails('Member Since', membershipSince),
 
                 ...servicesByCategory.entries.expand((categoryEntry) {
                   String categoryName = categoryEntry.key;
@@ -688,12 +695,16 @@ class _ContractorServicesCard extends StatelessWidget {
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 10),
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
                       decoration: BoxDecoration(
                         color: ColorRes.primary.withOpacity(0.1),
                         border: Border(
                           bottom: BorderSide(
-                              color: ColorRes.leadGreyColor[200]!, width: 1),
+                            color: ColorRes.leadGreyColor[200]!,
+                            width: 1,
+                          ),
                         ),
                       ),
                       child: Text(
@@ -710,18 +721,25 @@ class _ContractorServicesCard extends StatelessWidget {
                     ...services.map((serviceEntry) {
                       String serviceName = serviceEntry.value['serviceName'];
                       final service = _findService(serviceName);
-                      bool isLast = services.last == serviceEntry &&
+                      bool isLast =
+                          services.last == serviceEntry &&
                           categoryEntry.key ==
                               servicesByCategory.entries.last.key;
 
                       return Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 14),
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
                         decoration: BoxDecoration(
-                          border: isLast
-                              ? null
-                              : Border(
-                              bottom: BorderSide(color: Colors.grey[300]!)),
+                          border:
+                              isLast
+                                  ? null
+                                  : Border(
+                                    bottom: BorderSide(
+                                      color: Colors.grey[300]!,
+                                    ),
+                                  ),
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -757,39 +775,39 @@ class _ContractorServicesCard extends StatelessWidget {
     );
   }
 
-  Padding contractorBasicDetails(String title,String value) {
+  Padding contractorBasicDetails(String title, String value) {
     return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                flex: 2,
-                child: Text(
-                title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: AppFontSizes.caption,
-                    fontWeight: AppFontWeights.medium,
-                    color: ColorRes.leadGreyColor[700],
-                  ),
-                ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: AppFontSizes.caption,
+                fontWeight: AppFontWeights.medium,
+                color: ColorRes.leadGreyColor[700],
               ),
-              SizedBox(width: 10,),
-              Text(
-                value,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: AppFontSizes.small,
-                  fontWeight: AppFontWeights.semiBold,
-                  color: ColorRes.textColor,
-                ),
-              ),
-            ],
+            ),
           ),
-        );
+          SizedBox(width: 10),
+          Text(
+            value,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: AppFontSizes.small,
+              fontWeight: AppFontWeights.semiBold,
+              color: ColorRes.textColor,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildServiceDetails(Service service) {
@@ -816,11 +834,7 @@ class _ContractorServicesCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              Icons.star,
-              color: ColorRes.homeYellow,
-              size: 13,
-            ),
+            const Icon(Icons.star, color: ColorRes.homeYellow, size: 13),
             const SizedBox(width: 3),
             Text(
               '${service.rating}',
@@ -840,7 +854,7 @@ class _ContractorServicesCard extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 4,),
+        SizedBox(height: 4),
 
         // Price
         Text.rich(
@@ -863,15 +877,32 @@ class _ContractorServicesCard extends StatelessWidget {
               ),
             ],
           ),
-        )
-
+        ),
+        SizedBox(height: 4),
+       if((service.meta.brandsUsed?.isNotEmpty??false) && (service.meta.brandsUsed!=null))...[
+         Container(
+           padding: EdgeInsets.symmetric(horizontal: 8,vertical: 4),
+           decoration: BoxDecoration(
+             borderRadius: BorderRadius.circular(6),
+             border: Border.all(
+               color: ColorRes.leadGreyColor.shade300,
+               width: 1,
+             ),
+           ),
+           child: Row(
+             children: [Text("Brand : ",style: TextStyle(
+               fontSize: AppFontSizes.small,
+               fontWeight: AppFontWeights.semiBold,
+               color: ColorRes.textColor,
+             ),), Text("${service.meta.brandsUsed}",style: TextStyle( fontSize: AppFontSizes.extraSmall,
+               color: ColorRes.textSecondary,),)],
+           ),
+         ),
+       ]
       ],
     );
   }
 }
-
-
-
 
 String formatMemberSince(String dateString) {
   try {

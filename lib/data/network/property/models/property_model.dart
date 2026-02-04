@@ -563,6 +563,9 @@ class PropertyDetails {
   int? balcony;
   int? bathroom;
   List<String>? amenities;
+   String? subRegistrarOfficeName;
+   String? saleDeedDocumentNumber;
+   int? yearOfRegistration;
   String? zoneType;
   FloorInfo? floorInfo;
   FurnishInfo? furnishInfo;
@@ -582,6 +585,8 @@ class PropertyDetails {
   String? propertyCondition;
   double? propertyCarpetArea;
   double? propertyBuiltUpArea;
+  String? khataNumberPlot;
+   String? surveyNumber;
   String? propertyCarpetAreaUnit;
   String? propertyBuiltUpAreaUnit;
   PgInfo? pgInfo;
@@ -607,9 +612,14 @@ class PropertyDetails {
     this.transactionType,
     this.plotInfo,
     this.possessionInfo,
+    this.surveyNumber,
+    this.khataNumberPlot,
     this.propertyFacing,
     this.propertyCondition,
     this.propertyCarpetArea,
+    this.saleDeedDocumentNumber,
+    this.yearOfRegistration,
+    this.subRegistrarOfficeName,
     this.propertyBuiltUpArea,
     this.propertyBuiltUpAreaUnit,
     this.propertyCarpetAreaUnit,
@@ -637,6 +647,7 @@ class PropertyDetails {
         json['parking_info'] != null
             ? ParkingInfo.fromJson(json['parking_info'] as Map<String, dynamic>)
             : null;
+
     financialInfo =
         json['financial_info'] != null
             ? FinancialInfo.fromJson(
@@ -651,6 +662,11 @@ class PropertyDetails {
             : null;
     propertyFacing = json['property_facing'] as String?;
     propertyCondition = json['property_condition'] as String?;
+    subRegistrarOfficeName=json['sub_registrar_office_name']as String?;
+    saleDeedDocumentNumber=json['sale_deed_document_number']as String?;
+    surveyNumber=json['survey_number']as String?;
+    khataNumberPlot=json['khata_number']as String?;
+    yearOfRegistration=json['year_of_registration']as int?;
     propertyCarpetArea = TypeConverter.parseDouble(
       json['property_carpet_area'],
     );
@@ -703,6 +719,9 @@ class PropertyDetails {
     if (availableFrom != null) data['available_from'] = availableFrom;
     if (transactionType != null) data['transaction_type'] = transactionType;
     if (plotInfo != null) data['plot_info'] = plotInfo!.toJson();
+    if(subRegistrarOfficeName!=null) data['sub_registrar_office_name']=subRegistrarOfficeName;
+    if(saleDeedDocumentNumber!=null) data['sale_deed_document_number']=saleDeedDocumentNumber;
+    if(yearOfRegistration!=null) data['year_of_registration']=yearOfRegistration;
     if (parkingInfo != null) {
       final parking = parkingInfo!.toJson();
       parking.removeWhere((key, value) => value == null);
@@ -753,10 +772,12 @@ class PlotInfo {
   String? ownership;
   String? zoneType;
   String? possessionStatus;
+   String? possessionDate;
 
   PlotInfo({
     this.plotArea,
     this.plotAreaUnit,
+    this.possessionDate,
     this.plotLength,
     this.plotWidth,
     this.ownership,
@@ -771,6 +792,7 @@ class PlotInfo {
     plotWidth = TypeConverter.parseDouble(json['plot_width']);
     ownership = json['ownership'] as String?;
     zoneType = json['zone_type'] as String?;
+    possessionDate = json['possession_date'] as String?;
     possessionStatus = json['possession_status'] as String?;
   }
 
@@ -780,8 +802,10 @@ class PlotInfo {
     'plot_length': plotLength,
     'plot_width': plotWidth,
     'ownership': ownership,
+
     'zone_type': zoneType,
     'possession_status': possessionStatus,
+    'possession_date': possessionDate,
   };
 }
 
@@ -805,29 +829,18 @@ class FloorInfo {
 class FurnishInfo {
   final String? furnishType;
   final FurnishDetails? furnishDetails;
-  bool? brokerNegotiable;
-  String? parkingCharges;
-  String? paintingCharges;
-  double? maintenanceCharges;
+
 
   FurnishInfo({
     this.furnishType,
     this.furnishDetails,
-    this.brokerNegotiable,
-    this.parkingCharges,
-    this.paintingCharges,
-    this.maintenanceCharges,
+
   });
 
   factory FurnishInfo.fromJson(Map<String, dynamic> json) {
     return FurnishInfo(
       furnishType: json['furnish_type'] as String?,
-      brokerNegotiable: json['broker_negotiable'] as bool?,
-      parkingCharges: json['parking_charges'] as String?,
-      paintingCharges: json['painting_charges'] as String?,
-      maintenanceCharges: TypeConverter.parseDouble(
-        json['maintenance_charges'],
-      ),
+
       furnishDetails:
           json['furnish_details'] != null
               ? FurnishDetails.fromJson(json['furnish_details'])
@@ -844,18 +857,7 @@ class FurnishInfo {
     if (furnishDetails != null) {
       data['furnish_details'] = furnishDetails!.toJson();
     }
-    if (brokerNegotiable != null) {
-      data['broker_negotiable'] = brokerNegotiable;
-    }
-    if (parkingCharges != null) {
-      data['parking_charges'] = parkingCharges;
-    }
-    if (paintingCharges != null) {
-      data['painting_charges'] = paintingCharges;
-    }
-    if (maintenanceCharges != null) {
-      data['maintenance_charges'] = maintenanceCharges;
-    }
+
 
     return data;
   }
@@ -1078,7 +1080,7 @@ class FinancialInfo {
 
   /// Rent per month
   double propertyRentPerMonth;
-
+  bool? brokerNegotiable;
   /// Optional monthly rent (PG / alternate use)
   final double? monthlyRent;
   final double? maintenanceCharges;
@@ -1088,6 +1090,7 @@ class FinancialInfo {
 
   /// Price per sqft
   double pricePerSqft;
+
 
   /// Broker commission
   double brokerCommission;
@@ -1107,6 +1110,7 @@ class FinancialInfo {
 
   /// Property price trend (past + future combined)
   final List<PropertyPriceYear> propertyPriceTrend;
+  String? parkingCharges;
 
   final bool? is_for_sellorrent;
   final bool? isForSellOrRent;
@@ -1118,6 +1122,7 @@ class FinancialInfo {
     this.monthlyRent,
     this.maintenance,
     this.pricePerSqft = 0,
+    this.parkingCharges,
     this.brokerCommission = 0,
     this.plateFromFees = 0,
     this.propertySecurityDeposit = 0,
@@ -1127,13 +1132,14 @@ class FinancialInfo {
 
     this.isForSellOrRent = false,
     this.propertyPriceTrend = const [],
-
+    this.brokerNegotiable,
     this.is_for_sellorrent,
   });
 
   factory FinancialInfo.fromJson(Map<String, dynamic> json) {
     return FinancialInfo(
       price: TypeConverter.parseDouble(json['property_price']) ?? 0,
+      brokerNegotiable: json['broker_negotiable'] as bool?,
       is_for_sellorrent:
           json['is_for_sellorrent'] is bool
               ? json['is_for_sellorrent']
@@ -1150,6 +1156,7 @@ class FinancialInfo {
       propertySecurityDeposit:
           TypeConverter.parseDouble(json['property_security_deposit']) ?? 0,
       negotiable: json['negotiable'] ?? false,
+      parkingCharges: json['parking_charges']?.toString(),
       noticePeriod: TypeConverter.parseInt(json['notice_period']),
       lockInPeriod: TypeConverter.parseInt(json['lock_in_period']),
 
@@ -1169,6 +1176,8 @@ class FinancialInfo {
       "monthlyRent": monthlyRent,
       "maintenance": maintenance,
       "price_per_sqft": pricePerSqft,
+      "broker_negotiable": brokerNegotiable,
+
       "broker_commission": brokerCommission,
       "platform_fees": plateFromFees,
       "property_security_deposit": propertySecurityDeposit,

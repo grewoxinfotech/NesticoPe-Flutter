@@ -12,10 +12,13 @@ import '../../../data/network/contractor/model/contractor_quotation/contractor_q
 import '../../../data/network/contractor/model/contractot_service_model/contractor_inquiry_model.dart';
 import '../../../data/network/contractor/service/contractor_inquiry_service.dart';
 import '../../../widgets/messages/snack_bar.dart';
+import 'contractor_lead_controller.dart';
 
 class ContractorQuotationController
     extends PaginatedController<ContractorQuotation> {
   RxMap<String, String> filters = <String, String>{}.obs;
+
+  ContractorLeadController controllerLead=ContractorLeadController();
   @override
   void onInit() async {
     super.onInit();
@@ -216,6 +219,7 @@ class ContractorQuotationController
     required String note,
     required String userId,
     required int discountedPrice,
+    required String date
   }) async {
     try {
       Get.dialog(
@@ -225,7 +229,7 @@ class ContractorQuotationController
 
       final quotationData = {
         "id": "${quotationId.id}",
-        "created_by": "${quotationId.user.id}",
+        "created_by": "${quota tionId.user.id}",
         "updated_by": null,
         "related_id": "${quotationId.relatedId}",
         "user": {
@@ -236,9 +240,11 @@ class ContractorQuotationController
         },
         "status": status.toLowerCase().replaceAll(" ", '_'),
         "meta": {
-          "notes": 'Generated from inquiry for: $note',
+          "notes": note,
           "originalPrice": price,
+          "expectedStartDate": date,
           "inquiryCustomerId": userId,
+
         },
         "price": discountedPrice,
         "is_converted": false,
@@ -332,6 +338,10 @@ class ContractorQuotationController
     final response = await ContractorInquiryService.contractorInquiryService
         .convertInquiryIntoLead(payload);
     if (response) {
+      print("Check to plau ");
+      controllerLead.loadInitial();
+      controllerLead.refreshLead();
+      controllerLead.items.refresh();
       refreshList();
       Navigator.pop(Get.context!);
     }

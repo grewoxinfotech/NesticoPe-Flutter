@@ -31,6 +31,16 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
     ContractorDashboardController(),
   );
   final controller = Get.put(ContractorMyServiceController());
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      contractorDashboardController.getContractorDashboard(
+        leadsYear: contractorDashboardController.selectedGraphYear.value,
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

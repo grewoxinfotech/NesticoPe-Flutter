@@ -39,6 +39,8 @@ final _basurl=ApiConstants.leads;
        {
          log("Contractor lead Response");
          final data =jsonDecode(response.body);
+
+         AppLogger.structured('Contractor Lead ResponseData ', data);
          return PaginationResponse<ContractorLeadItem>.fromJson(data, (json) =>ContractorLeadItem.fromMap(json) ,);
        }
      else{

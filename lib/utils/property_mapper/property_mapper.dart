@@ -1,3 +1,5 @@
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
+
 import '../../data/network/property/models/property_model.dart' as Items;
 import '../../modules/add_property/model/add_property_model.dart'
     as AddPropertyModel;
@@ -45,6 +47,14 @@ extension ItemsMapper on Items.Items {
       balcony: source.balcony,
       bathroom: source.bathroom,
       amenities: source.amenities,
+      tenantType: source.tenantType,
+      availableFrom: source.availableFrom,
+      surveyNumber: source.surveyNumber,
+      khataNumberPlot: source.khataNumberPlot,
+
+      saleDeedDocumentNumber: source.saleDeedDocumentNumber,
+      subRegistrarOfficeName: source.subRegistrarOfficeName,
+      yearOfRegistration: source.yearOfRegistration,
       floorInfo:
           source.floorInfo != null ? _mapFloorInfo(source.floorInfo!) : null,
       furnishInfo:
@@ -192,11 +202,14 @@ extension ItemsMapper on Items.Items {
   }
 
   AddPropertyModel.FinancialInfo _mapFinancialInfo(Items.FinancialInfo source) {
+    AppLogger.structured("Financial Info in edit section ", source.toJson());
     return AddPropertyModel.FinancialInfo(
       propertyPrice: source.price,
       propertyRentPerMonth: source.propertyRentPerMonth,
       monthlyRent: source.monthlyRent,
+      parkingCharges: source.parkingCharges,
       pricePerSqft: source.pricePerSqft,
+
       platformFees: source.plateFromFees,
 
       brokerCommission: source.brokerCommission,
@@ -240,14 +253,21 @@ extension ItemsMapper on Items.Items {
   }
 
   AddPropertyModel.PlotInfo _mapPlotInfo(Items.PlotInfo source) {
-    return AddPropertyModel.PlotInfo(
+    // AppLogger.structured("Plot from Api ", source.toJson());
+    final data= AddPropertyModel.PlotInfo(
       plotArea: source.plotArea,
       plotAreaUnit: source.plotAreaUnit,
       plotLength: source.plotLength,
       plotWidth: source.plotWidth,
       possessionStatus: source.possessionStatus,
+      ownership: source.ownership,
+      zoneType: source.zoneType,
+      possessionDate: source.possessionDate,
+
       // possessionDate: source.possessionDate,
     );
+    AppLogger.structured("Plot from Api ", data.toJson());
+    return data;
   }
 
   AddPropertyModel.FacilitiesInfo _mapFacilitiesInfo(
@@ -257,6 +277,7 @@ extension ItemsMapper on Items.Items {
       minSeats: source.minSeats,
       numberOfCabins: source.numberOfCabins,
       numberOfMeetingRooms: source.numberOfMeetingRooms,
+
       minSeatsCamel: source.minSeatsCamel,
       numberOfCabinsCamel: source.numberOfCabinsCamel,
       numberOfMeetingRoomsCamel: source.numberOfMeetingRoomsCamel,

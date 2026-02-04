@@ -1500,8 +1500,7 @@ class CreatePropertyScreen extends StatelessWidget {
         if (property != null) {
           controller.isEdited.value = isEdit;
           log('Editing value : ${controller.isEdited.value}');
-          editController.onLoad(controller, property!);
-        }
+          editController.onLoad(controller, property??AddPropertyModel()); }
       });
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {

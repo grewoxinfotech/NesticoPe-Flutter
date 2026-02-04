@@ -37,6 +37,7 @@ class DashboardLayout extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Dashboard'),
         backgroundColor: ColorRes.white,
+
         automaticallyImplyLeading: false,
         elevation: 0,
         actions: [

@@ -117,7 +117,7 @@ class RentAdvanceDetail extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (controller.rent_propertyType.value != "Plot" &&
+              if (controller.rent_propertyType.value.toLowerCase() != "plot" &&
                   controller.rent_propertyType.value.toLowerCase() !=
                       "agricultural land") ...[
                 SizedBox(height: 16),
@@ -701,6 +701,97 @@ class RentAdvanceDetail extends StatelessWidget {
                           );
                         }).toList(),
                   ),
+                ),
+                SizedBox(height: 16),
+                buildSectionTitle("Sub-Registrar Office (SRO) Name"),
+
+                SizedBox(height: 8),
+                buildTextField(
+                  "Enter SRO Name",
+                  Icons.apartment_outlined,
+                  controller.subRegistrarOffice,
+                ),
+                SizedBox(height: 16),
+                buildSectionTitle("Sale Deed Document Number"),
+
+                SizedBox(height: 8),
+                buildTextField(
+                  "Enter Sale Deed Document Number",
+                  Icons.edit_document,
+                  controller.saleDeedDocumentNumber,
+                ),
+                SizedBox(height: 16),
+                buildSectionTitle("Year of Registration"),
+
+                SizedBox(height: 8),
+                buildTextField(
+                  "Enter year of registration",
+                  Icons.edit_document,
+                  controller.yearOfRegistration,
+                  isEnable: false,
+                  onTap: () async {
+                    FocusScope.of(context).unfocus();
+
+                    DateTime now = DateTime.now();
+
+                    DateTime? picked = await showDatePicker(
+                      context: context,
+                      initialDate: now,
+                      firstDate: DateTime(1),
+                      // 👈 Year 1 (earliest possible)
+                      lastDate: now,
+                      // 👈 No future year
+                      initialDatePickerMode: DatePickerMode.year,
+                      builder: (context, child) {
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                            colorScheme: ColorScheme.light(
+                              primary: ColorRes.primary,
+                              onPrimary: ColorRes.white,
+                              onSurface: ColorRes.black,
+                            ),
+                            textButtonTheme: TextButtonThemeData(
+                              style: TextButton.styleFrom(
+                                foregroundColor: ColorRes.primary,
+                              ),
+                            ),
+                          ),
+                          child: child!,
+                        );
+                      },
+                    );
+
+                    if (picked != null) {
+                      controller.yearOfRegistration.text =
+                          picked.year.toString();
+                    }
+                  },
+                ),
+              ],
+
+
+              if(controller.rent_propertyType.value.toLowerCase() == "plot" ||
+                  controller.rent_propertyType.value.toLowerCase() ==
+                      "agricultural land")...[
+                SizedBox(height: 16),
+                buildSectionTitle("Survey Number"),
+
+                SizedBox(height: 8),
+                buildTextField(
+                  "Enter Survey Number",
+                  Icons.app_registration,
+                  isPhoneKey: true,
+                  controller.surveyNumberPlotAndLand,
+                ),
+                SizedBox(height: 16),
+                buildSectionTitle("Khata Number"),
+
+                SizedBox(height: 8),
+                buildTextField(
+                  "Enter Khata Number",
+                  Icons.numbers_outlined,
+                  isPhoneKey: true,
+                  controller.khataNumberPlotAndLand,
                 ),
               ],
               SizedBox(height: 16),

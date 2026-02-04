@@ -1169,7 +1169,7 @@ class PostProperty extends StatelessWidget {
                         controller.zoneType
                             .map(
                               (e) => buildChoice(
-                                title: e.capitalize.toString(),
+                                title: e.replaceAll("_"," ").capitalize.toString(),
                                 selected:
                                     controller.commercial_ZoneType.value == e,
                                 onTap: () {
@@ -1984,7 +1984,7 @@ class PostProperty extends StatelessWidget {
                         controller.zoneType
                             .map(
                               (e) => buildChoice(
-                                title: e.capitalize.toString(),
+                                title: e.replaceAll("_"," ").capitalize.toString(),
                                 selected:
                                     controller.commercial_ZoneType.value == e,
                                 onTap: () {
@@ -2907,7 +2907,7 @@ class PostProperty extends StatelessWidget {
                         controller.zoneType
                             .map(
                               (e) => buildChoice(
-                                title: e.capitalize.toString(),
+                                title: e.replaceAll("_", " ").capitalize.toString(),
                                 selected:
                                     controller.commercial_ZoneType.value == e,
                                 onTap: () {

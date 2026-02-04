@@ -537,6 +537,16 @@ class CreatePropertyController extends GetxController {
   var platformFees = TextEditingController();
   var brokerRageCommission = TextEditingController();
 
+  ////========================== Advance DetailsVariables====================
+  var subRegistrarOffice = TextEditingController();
+  var saleDeedDocumentNumber = TextEditingController();
+  var yearOfRegistration = TextEditingController();
+
+
+  /////================================ PlotAdvance details Variables ===============
+  var khataNumberPlotAndLand=TextEditingController();
+  var surveyNumberPlotAndLand=TextEditingController();
+
   @override
   void onInit() {
     checkSellerAuthentication();
@@ -1888,6 +1898,7 @@ class CreatePropertyController extends GetxController {
   Future<void> updateProperty(String propertyId) async {
     try {
       isLoading.value = true;
+      final subtypeSection = rent_propertyType.value.toLowerCase();
 
       final type = propertyType.value.toLowerCase();
       final action = lookingTo.value.toLowerCase();
@@ -1897,6 +1908,7 @@ class CreatePropertyController extends GetxController {
         print("Error: Property type or action is empty.");
         return;
       }
+      log(" Plot type check ${type} ====== $action============$subtype");
 
       bool success = false;
 
@@ -1908,11 +1920,25 @@ class CreatePropertyController extends GetxController {
               propertyId: propertyId,
             );
             break;
-          case "sell":
+       /*   case "sell":
             success = await _addPropertyResidentialSell(
               isEdit: true,
               propertyId: propertyId,
             );
+            break;*/
+          case "sell":
+            if ((subtypeSection == "plot") ||
+                (subtypeSection == "agricultural land")) {
+              success = await _addPropertyResidentialSellPlot(
+                isEdit: true,
+                propertyId: propertyId,
+              );
+            } else {
+              success = await _addPropertyResidentialSell(
+                isEdit: true,
+                propertyId: propertyId,
+              );
+            }
             break;
           case "pg/co-living":
             success = await _addPropertyResidentialPg(
@@ -1974,7 +2000,7 @@ class CreatePropertyController extends GetxController {
       final action = lookingTo.value.toLowerCase();
 
       final subtype = selectedIndex.value.toLowerCase(); // For commercial cases
-
+log(" Plot type check ${type} ====== $action============$subtype");
       if (type.isEmpty || action.isEmpty) {
         print("Error: Property type or action is empty.");
         return;
@@ -2036,7 +2062,7 @@ class CreatePropertyController extends GetxController {
   }) async {
     try {
       final payload = await buildPropertyPayloadResidentialSellPlot();
-      AppLogger.structured("Payload : ", payload.toJson());
+      AppLogger.structured("Payload Plot : ", payload.toJson());
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2068,7 +2094,7 @@ class CreatePropertyController extends GetxController {
   }) async {
     try {
       final payload = await buildPropertyPayloadResidentialRent();
-      debugPrint("Payload : ${payload.toJson()}");
+      AppLogger.structured("Payload of Residential Rent:", payload.toJson());
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2994,10 +3020,18 @@ class CreatePropertyController extends GetxController {
   Future<AddPropertyModel> buildPropertyPayloadResidentialRent() async {
     final user = await SecureStorage.getUserData();
     final userId = user?.user?.id ?? "";
-    final parsedDate = DateFormat(
-      'dd/MM/yyyy',
-    ).parse(rent_AvailableFrom.text.trim());
-    final formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
+    DateTime? parsedDate;
+
+    if (rent_AvailableFrom.text.trim().isNotEmpty) {
+      parsedDate = DateTime.parse(rent_AvailableFrom.text.trim());
+    }
+
+    final formattedDate =
+    parsedDate != null
+        ? DateFormat('yyyy-MM-dd').format(parsedDate)
+        : null;
+
+
     return AddPropertyModel(
       type:
           propertyType.value.isNotEmpty
@@ -3014,7 +3048,24 @@ class CreatePropertyController extends GetxController {
               : null,
       propertyDetails: PropertyDetails(
         bhk: int.tryParse(bhkType.value.substring(0, 1)),
+
         bathroom: rent_Bathroom.value,
+        availableFrom: rent_AvailableFrom.text,
+        tenantType: tenantType.value.toLowerCase(),
+
+        saleDeedDocumentNumber:
+            saleDeedDocumentNumber.text.trim().isNotEmpty
+                ? saleDeedDocumentNumber.text.trim()
+                : null,
+        subRegistrarOfficeName:
+            subRegistrarOffice.text.trim().isNotEmpty
+                ? subRegistrarOffice.text.trim()
+                : null,
+        yearOfRegistration:
+            yearOfRegistration.text.trim().isNotEmpty
+                ? int.tryParse(yearOfRegistration.text.trim())
+                : null,
+
         balcony: rent_Balcony.value,
 
         petFriendly:
@@ -3043,7 +3094,7 @@ class CreatePropertyController extends GetxController {
                 : null,
         possessionInfo: PossessionInfo(
           possessionDate:
-              rent_AvailableFrom.text.trim().isNotEmpty ? formattedDate : null,
+          formattedDate,
         ),
         lifInfo: LiftInfo(
           serviceLift:
@@ -3117,7 +3168,7 @@ class CreatePropertyController extends GetxController {
                   parkingCharges:
                       rent_Parking_Charges.value.toLowerCase() == "separate"
                           ? rent_Custom_Parking_Charges.text.trim()
-                          : null,
+                          : 'include',
                 )
                 : null,
         furnishInfo:
@@ -3229,9 +3280,10 @@ class CreatePropertyController extends GetxController {
   Future<AddPropertyModel> buildPropertyPayloadResidentialSell() async {
     final user = await SecureStorage.getUserData();
     final userId = user?.user?.id ?? "";
-    final parsedDate = DateFormat(
-      'dd/MM/yyyy',
-    ).tryParse(sell_AvailableFrom.text.trim());
+    DateTime? parsedDate;
+    if (sell_AvailableFrom.text.trim().isNotEmpty) {
+      parsedDate = DateTime.parse(rent_AvailableFrom.text.trim());
+    }
     final formattedDate =
         (parsedDate != null)
             ? DateFormat('yyyy-MM-dd').format(parsedDate)
@@ -3245,6 +3297,7 @@ class CreatePropertyController extends GetxController {
 
       propertyType:
           rent_propertyType.value.isNotEmpty
+
               ? rent_propertyType.value.toLowerCase().replaceAll(" ", "_")
               : null,
       propertyDescription:
@@ -3252,6 +3305,26 @@ class CreatePropertyController extends GetxController {
               ? sell_rent_propertyDescriptionController.text.trim()
               : null,
       propertyDetails: PropertyDetails(
+        saleDeedDocumentNumber:
+            saleDeedDocumentNumber.text.trim().isNotEmpty
+                ? saleDeedDocumentNumber.text.trim()
+                : null,
+        khataNumberPlot:   khataNumberPlotAndLand.text.trim().isNotEmpty
+            ? khataNumberPlotAndLand.text.trim()
+            : null ,
+        surveyNumber:   surveyNumberPlotAndLand.text.trim().isNotEmpty
+            ? surveyNumberPlotAndLand.text.trim()
+            : null ,
+        subRegistrarOfficeName:
+            subRegistrarOffice.text.trim().isNotEmpty
+                ? subRegistrarOffice.text.trim()
+                : null,
+        yearOfRegistration:
+            yearOfRegistration.text.trim().isNotEmpty
+                ? int.tryParse(yearOfRegistration.text.trim())
+                : null,
+        availableFrom: rent_AvailableFrom.text,
+        tenantType: tenantType.value.toLowerCase(),
         bhk: int.tryParse(
           bhkType.value
               .split(RegExp(r'\D'))
@@ -3338,6 +3411,22 @@ class CreatePropertyController extends GetxController {
                   propertyRentPerMonth: double.tryParse(
                     rent_MonthilyRent.text.trim(),
                   ),
+                  platformFees: double.tryParse(platformFees.text.trim()),
+                  maintenanceCharges:
+                      rent_maintenanceChargeType.value.toLowerCase() ==
+                              "separate"
+                          ? double.tryParse(
+                            sell_rent_Maintenance_Charges.text.trim(),
+                          )
+                          : null,
+                  brokerNegotiable:
+                      brokerageChargeNegotiable.value.toLowerCase() == 'yes'
+                          ? true
+                          : false,
+                  parkingCharges:
+                      rent_Parking_Charges.value.toLowerCase() == "separate"
+                          ? rent_Custom_Parking_Charges.text.trim()
+                          : 'include',
                   // propertyPricePast: List.generate(5, (index) {
                   //   final currentYear = DateTime.now().year;
                   //   final year = currentYear - (index + 1);
@@ -3370,21 +3459,9 @@ class CreatePropertyController extends GetxController {
                           ? true
                           : false,
 
-                  maintenanceCharges:
-                      sell_rent_Maintenance_Charges.text.trim().isNotEmpty
-                          ? double.tryParse(
-                            sell_rent_Maintenance_Charges.text.trim(),
-                          )
-                          : null,
                   brokerCommission: double.tryParse(
                     brokerRageCommission.text.trim(),
                   ),
-                  platformFees: double.tryParse(platformFees.text.trim()),
-                  brokerNegotiable:
-                      doYouWantBrokerage.value.toLowerCase() == 'yes'
-                          ? brokerageChargeNegotiable.value.toLowerCase() ==
-                              'yes'
-                          : null,
                 )
                 : null,
         furnishInfo:
@@ -3528,7 +3605,12 @@ class CreatePropertyController extends GetxController {
               .split(RegExp(r'\D'))
               .firstWhere((e) => e.isNotEmpty, orElse: () => ''),
         ),
-
+        khataNumberPlot:   khataNumberPlotAndLand.text.trim().isNotEmpty
+            ? khataNumberPlotAndLand.text.trim()
+            : null ,
+        surveyNumber:   surveyNumberPlotAndLand.text.trim().isNotEmpty
+            ? surveyNumberPlotAndLand.text.trim()
+            : null ,
         transactionType:
             transactionType.value.isNotEmpty
                 ? transactionType.value.toLowerCase().replaceAll(" ", "_")
@@ -3650,7 +3732,7 @@ class CreatePropertyController extends GetxController {
               plotWidth.text.trim().isNotEmpty
                   ? double.tryParse(plotWidth.text.trim())
                   : null,
-          possessionStatus: sell_constructionStatus.value,
+          possessionStatus: sell_constructionStatus.value.isNotEmpty?sell_constructionStatus.value:null,
 
           plotArea:
               commercial_plot.text.trim().isNotEmpty
@@ -3660,12 +3742,17 @@ class CreatePropertyController extends GetxController {
               commercial_plotArea.value.isNotEmpty
                   ? commercial_plotArea.value
                   : null,
+          ownership:commercial_ownerShipList.value.isNotEmpty?commercial_ownerShipList.value.toLowerCase().replaceAll(" ","_"):null ,
+          zoneType:commercial_ZoneType.value.isNotEmpty?commercial_ZoneType.value.toLowerCase().replaceAll(" ","_"):null ,
+
+
 
           possessionDate:
               sell_constructionStatus.value.toLowerCase() == 'in future' &&
                       sell_AvailableFrom.text.trim().isNotEmpty
                   ? formatDateForBackend(sell_AvailableFrom.text.trim())
                   : null,
+
         ),
         furnishInfo:
             furnishingType.value.isNotEmpty
@@ -4023,6 +4110,12 @@ class CreatePropertyController extends GetxController {
             selectedCommercialAmenities.value.isNotEmpty
                 ? selectedCommercialAmenities.value
                 : null,
+        khataNumberPlot:   khataNumberPlotAndLand.text.trim().isNotEmpty
+            ? khataNumberPlotAndLand.text.trim()
+            : null ,
+        surveyNumber:   surveyNumberPlotAndLand.text.trim().isNotEmpty
+            ? surveyNumberPlotAndLand.text.trim()
+            : null ,
 
         financialInfo: FinancialInfo(
           monthlyRent:
@@ -4706,6 +4799,12 @@ class CreatePropertyController extends GetxController {
             commercial_ZoneType.value.isNotEmpty
                 ? commercial_ZoneType.value
                 : null,
+        khataNumberPlot:   khataNumberPlotAndLand.text.trim().isNotEmpty
+            ? khataNumberPlotAndLand.text.trim()
+            : null ,
+        surveyNumber:   surveyNumberPlotAndLand.text.trim().isNotEmpty
+            ? surveyNumberPlotAndLand.text.trim()
+            : null ,
         amenities:
             selectedCommercialAmenities.value.isNotEmpty
                 ? selectedCommercialAmenities.value

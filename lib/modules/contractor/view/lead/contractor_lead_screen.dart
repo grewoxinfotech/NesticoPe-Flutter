@@ -20,12 +20,27 @@ import '../../../add_property/view/create_property.dart';
 import '../../controller/contractor_my_service_controller.dart';
 import '../../controller/contractot_employee_controller.dart';
 
-class ContractorLeadScreen extends StatelessWidget {
+class ContractorLeadScreen extends StatefulWidget {
   const ContractorLeadScreen({super.key});
 
   @override
+  State<ContractorLeadScreen> createState() => _ContractorLeadScreenState();
+}
+
+class _ContractorLeadScreenState extends State<ContractorLeadScreen> {
+  final controller = Get.put(ContractorLeadController());
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      controller.loadInitial();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final controller = Get.put(ContractorLeadController());
     var contractorEmployee = Get.put(ContractorEmployeeController());
     RxMap<String, String> selectedFilters = <String, String>{}.obs;
     final serviceController = Get.find<ContractorMyServiceController>();

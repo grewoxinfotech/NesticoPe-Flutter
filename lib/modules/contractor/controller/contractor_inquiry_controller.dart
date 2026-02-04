@@ -445,6 +445,7 @@ class ContractorInquiryController
     required ContractorInquiryItem inquiry,
     required String userId,
     required int discountedPrice,
+    required String date
   }) async {
     try {
       // TODO: Implement API call to save quotation
@@ -458,9 +459,19 @@ class ContractorInquiryController
           "phone": inquiry.phone,
         },
         "meta": {
-          "notes": 'Generated from inquiry for: $note',
+          "notes": note,
           "originalPrice": quotationPrice,
+          "propertyDetails": {
+            "propertyType": inquiry.meta.propertyType,
+            "city": inquiry.meta.city,
+            "location": inquiry.meta.location,
+            "state": inquiry.meta.state,
+            "bhk": inquiry.meta.bhk,
+            "carpetArea": inquiry.meta.carpetArea,
+            "serviceDescription": inquiry.meta.serviceDescription
+          },
           "inquiryCustomerId": userId,
+          "expectedStartDate": date,
         },
         "price": discountedPrice,
         "status": status.toLowerCase().replaceAll(" ", "_"),

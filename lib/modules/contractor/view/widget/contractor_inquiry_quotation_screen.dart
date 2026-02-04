@@ -11,6 +11,7 @@ import 'package:housing_flutter_app/modules/contractor/controller/contractor_inq
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_quotation_controller.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_referral_controller.dart';
 import 'package:housing_flutter_app/utils/logger/app_logger.dart';
+import 'package:intl/intl.dart';
 
 /// Screen for submitting or editing quotation for a contractor inquiry
 class ContractorInquiryQuotationScreen extends StatefulWidget {
@@ -35,6 +36,12 @@ class _ContractorInquiryQuotationScreenState
   final _formKey = GlobalKey<FormState>();
   final _quotationController = TextEditingController();
   final _quotationNoteController = TextEditingController();
+  final TextEditingController _expectedStartDateController =
+  TextEditingController();
+
+  DateTime? _expectedStartDate;
+
+
   String _selectedStatus = 'Pending';
 
   final List<String> _statusOptions = ['Pending', 'Accepted', 'Rejected'];
@@ -44,6 +51,7 @@ class _ContractorInquiryQuotationScreenState
     super.initState();
     // Format the status to match dropdown items (Title Case)
     AppLogger.structured("Edit quotation and data", widget.quotation?.toMap());
+    _quotationNoteController.text = 'Generated from inquiry for: ${widget.inquiry?.services.map((e) => e.serviceName,).toString()??''}';
     if (widget.isEditMode && widget.quotation != null) {
       // Pre-fill form with existing quotation data
       _quotationController.text =
@@ -242,15 +250,15 @@ class _ContractorInquiryQuotationScreenState
                       fillColor: ColorRes.white,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: ColorRes.border,
+                        borderSide:  BorderSide(
+                          color: ColorRes.leadGreyColor.shade300,
                           width: 1.5,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: ColorRes.border,
+                        borderSide:  BorderSide(
+                          color: ColorRes.leadGreyColor.shade300,
                           width: 1.5,
                         ),
                       ),
@@ -300,28 +308,6 @@ class _ContractorInquiryQuotationScreenState
                   ),
                 ),
 
-                // Obx(
-                //   () => Text(
-                //     'Special Offer: ${referralController.discountPercentage}% discount available based on referral points!',
-                //     style: TextStyle(
-                //       fontSize: AppFontSizes.small,
-                //       color: ColorRes.primary,
-                //     ),
-                //   ),
-                // ),
-
-                // Obx(
-                //   () => Text(
-                //     'Calculated Price after ${referralController.discountPercentage}% discount: '
-                //     '₹${referralController.originalPrice.value} → '
-                //     '₹${referralController.discountedPriceObs.value} '
-                //     '(Save ₹${referralController.savedPriceObs.value})',
-                //     style: TextStyle(
-                //       fontSize: AppFontSizes.small,
-                //       color: ColorRes.success,
-                //     ),
-                //   ),
-                // ),
                 Obx(() {
                   if (referralController.discountPercentage <= 0) {
                     return SizedBox.shrink();
@@ -393,6 +379,88 @@ class _ContractorInquiryQuotationScreenState
 
                 const SizedBox(height: 20),
                 _buildInputField(
+                  label: 'Expected Start Date',
+                  isRequired: true,
+                  child: TextFormField(
+                    controller: _expectedStartDateController,
+                    readOnly: true,
+                    onTap: () async {
+                      FocusScope.of(context).unfocus();
+
+                      final DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime(2100),
+                      );
+
+                      if (pickedDate != null) {
+                        _expectedStartDate = pickedDate;
+
+                        _expectedStartDateController.text =
+                            DateFormat('dd MMM yyyy').format(pickedDate);
+                      }
+                    },
+                    decoration: InputDecoration(
+                      hintText: 'Select date',
+                      prefixIcon: const Icon(
+                        Icons.calendar_today,
+                        color: ColorRes.primary,
+                        size: 20,
+                      ),
+                      filled: true,
+                      fillColor: ColorRes.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide:  BorderSide(
+                          color: ColorRes.leadGreyColor.shade300,
+                          width: 1.5,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide:  BorderSide(
+                          color: ColorRes.leadGreyColor.shade300,
+                          width: 1.5,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: ColorRes.primary,
+                          width: 2,
+                        ),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: ColorRes.error,
+                          width: 1.5,
+                        ),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: ColorRes.error,
+                          width: 2,
+                        ),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 16,
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please select expected start date';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+                _buildInputField(
                   label: 'Status',
                   isRequired: true,
                   child: DropdownButtonFormField<String>(
@@ -407,15 +475,15 @@ class _ContractorInquiryQuotationScreenState
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: ColorRes.border,
+                        borderSide:  BorderSide(
+                          color: ColorRes.leadGreyColor.shade300,
                           width: 1.5,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: ColorRes.border,
+                        borderSide:  BorderSide(
+                          color: ColorRes.leadGreyColor.shade300,
                           width: 1.5,
                         ),
                       ),
@@ -482,15 +550,15 @@ class _ContractorInquiryQuotationScreenState
                       fillColor: ColorRes.white,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: ColorRes.border,
+                        borderSide:  BorderSide(
+                          color: ColorRes.leadGreyColor.shade300,
                           width: 1.5,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: ColorRes.border,
+                        borderSide:  BorderSide(
+                          color: ColorRes.leadGreyColor.shade300,
                           width: 1.5,
                         ),
                       ),
@@ -676,6 +744,12 @@ class _ContractorInquiryQuotationScreenState
   void _submitQuotation(int discountPrice) {
     if (_formKey.currentState!.validate()) {
       final quotationPrice = int.tryParse(_quotationController.text);
+      String? expectedStartDateForApi;
+
+      if (_expectedStartDate != null) {
+        expectedStartDateForApi =
+            _expectedStartDate!.toUtc().toIso8601String();
+      }
 
       if (widget.isEditMode && widget.quotation != null) {
         // Update existing quotation
@@ -687,6 +761,7 @@ class _ContractorInquiryQuotationScreenState
           note: _quotationNoteController.text,
           userId: widget.inquiry!.userId,
           discountedPrice: discountPrice,
+          date: expectedStartDateForApi??''
         );
       } else {
         // Create new quotation
@@ -699,6 +774,7 @@ class _ContractorInquiryQuotationScreenState
           note: _quotationNoteController.text,
           userId: widget.inquiry!.userId,
           discountedPrice: discountPrice,
+          date: expectedStartDateForApi??''
         );
       }
 

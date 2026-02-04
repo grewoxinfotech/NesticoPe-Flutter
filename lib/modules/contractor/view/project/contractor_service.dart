@@ -302,6 +302,7 @@ import '../../../../app/constants/color_res.dart';
 import '../../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../../data/network/contractor/model/contractot_service_model/contractor_service_model.dart';
 import '../../../aadhar_auth/screens/aadhar_auth_screen.dart';
+import '../../controller/contractor_dashboard_controller.dart';
 import '../../controller/contractor_my_service_controller.dart';
 import '../widget/cotractor_active_switch.dart';
 import '../widget/create_service_from.dart';
@@ -317,9 +318,12 @@ class ContractorService extends StatelessWidget {
       backgroundColor: ColorRes.background,
       appBar: AppBar(
         backgroundColor: ColorRes.surface,
-        leading: IconButton(onPressed: () {
-          Get.back();
-        }, icon: Icon(Icons.arrow_back)),
+        leading: IconButton(
+          onPressed: () {
+            Get.back();
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
         elevation: 0,
         title: Text(
           'My Services',
@@ -436,30 +440,137 @@ class ServiceCard extends StatefulWidget {
 }
 
 class _ServiceCardState extends State<ServiceCard> {
+  final contractorDashboardController =
+      Get.find<ContractorDashboardController>();
+
+  bool showAllMeta = false;
+
   bool expanded = false;
   String categoryName = "";
   bool isCategoryLoading = true;
+
   @override
   void initState() {
     super.initState();
     // loadCategory();
   }
 
-/*  void loadCategory() async {
-    final id = widget.item.category ?? "";
-    if (id.isEmpty) return;
-
-    final name = await widget.controller.getTheContractorByID(id);
-    setState(() {
-      categoryName = name;
-      isCategoryLoading = false;
-    });
-  }*/
-
   @override
   Widget build(BuildContext context) {
     final meta = widget.item.meta;
     final acceptedPayments = meta.acceptedPaymentModes;
+   /* final metaSections = [
+      _metaSection(
+        icon: Icons.home_work,
+        title: "Construction Materials",
+        data: cleanMetaMap({
+          "Cement": meta.cementBrand,
+          "Steel": meta.steelBrand,
+          "Bricks": meta.brickType,
+          "Sand": meta.sandSource,
+          "Tank": meta.waterTankBrand,
+        }),
+      ),
+
+      _metaSection(
+        icon: Icons.electrical_services,
+        title: "Electrical & Plumbing",
+        data: cleanMetaMap({
+          "Wires": meta.electricalWiresBrand,
+          "Switches": meta.electricalSwitchesBrand,
+          "Pipes": meta.plumbingPipesBrand,
+          "Sanitary": meta.sanitaryFittingsBrand,
+        }),
+      ),
+
+      _metaSection(
+        icon: Icons.format_paint,
+        title: "Finishing",
+        data: cleanMetaMap({
+          "Flooring": meta.flooringTilesBrand,
+          "Interior Paint": meta.interiorPaintBrand,
+          "Exterior Paint": meta.exteriorPaintBrand,
+          "False Ceiling": meta.falseCeiling,
+          "Fabrication": meta.fabricationWork,
+        }),
+      ),
+
+      _metaSection(
+        icon: Icons.apartment,
+        title: "Structure & Safety",
+        data: cleanMetaMap({
+          "Doors": meta.doorsType,
+          "Windows": meta.windowsType,
+          "Structure": meta.structure,
+          "Plaster": meta.plasterType,
+          "Waterproofing": meta.waterproofing,
+          "Railing": meta.railingType,
+          "Chokhat": meta.chokhatType,
+        }),
+      ),
+    ];*/
+
+    final metaMaps = [
+      cleanMetaMap({
+        "Cement": meta.cementBrand,
+        "Steel": meta.steelBrand,
+        "Bricks": meta.brickType,
+        "Sand": meta.sandSource,
+        "Tank": meta.waterTankBrand,
+      }),
+      cleanMetaMap({
+        "Wires": meta.electricalWiresBrand,
+        "Switches": meta.electricalSwitchesBrand,
+        "Pipes": meta.plumbingPipesBrand,
+        "Sanitary": meta.sanitaryFittingsBrand,
+      }),
+      cleanMetaMap({
+        "Flooring": meta.flooringTilesBrand,
+        "Interior Paint": meta.interiorPaintBrand,
+        "Exterior Paint": meta.exteriorPaintBrand,
+        "False Ceiling": meta.falseCeiling,
+        "Fabrication": meta.fabricationWork,
+      }),
+      cleanMetaMap({
+        "Doors": meta.doorsType,
+        "Windows": meta.windowsType,
+        "Structure": meta.structure,
+        "Plaster": meta.plasterType,
+        "Waterproofing": meta.waterproofing,
+        "Railing": meta.railingType,
+        "Chokhat": meta.chokhatType,
+      }),
+    ];
+    final metaSections = [
+      if (metaMaps[0].isNotEmpty)
+        _metaSection(
+          icon: Icons.home_work,
+          title: "Construction Materials",
+          data: metaMaps[0],
+        ),
+      if (metaMaps[1].isNotEmpty)
+        _metaSection(
+          icon: Icons.electrical_services,
+          title: "Electrical & Plumbing",
+          data: metaMaps[1],
+        ),
+      if (metaMaps[2].isNotEmpty)
+        _metaSection(
+          icon: Icons.format_paint,
+          title: "Finishing",
+          data: metaMaps[2],
+        ),
+      if (metaMaps[3].isNotEmpty)
+        _metaSection(
+          icon: Icons.apartment,
+          title: "Structure & Safety",
+          data: metaMaps[3],
+        ),
+    ];
+
+    final safeMetaSections =
+        metaSections?.where((e) => e != null).toList() ?? [];
+    final hasAnyMetaData = metaMaps.any((map) => map.isNotEmpty);
 
     return GestureDetector(
       onTap: () => setState(() => expanded = !expanded),
@@ -535,7 +646,7 @@ class _ServiceCardState extends State<ServiceCard> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "${_getPriceModel(meta.priceModel)} • ${Formatter.formatPrice(meta.minPriceRange)}- ${Formatter.formatPrice(meta.maxPriceRange)}",
+                    "${_getPriceModel(meta.priceModel ?? '')} • ${Formatter.formatPrice(meta.minPriceRange ?? 0)}- ${Formatter.formatPrice(meta.maxPriceRange ?? 0)}",
                     style: TextStyle(
                       fontSize: AppFontSizes.small,
                       color: ColorRes.textSecondary,
@@ -586,7 +697,9 @@ class _ServiceCardState extends State<ServiceCard> {
               ),
               const SizedBox(height: 8),
               Obx(() {
-                final name = widget.controller.categoryNames[widget.item.category] ?? "Loading...";
+                final name =
+                    widget.controller.categoryNames[widget.item.category] ??
+                    "Loading...";
                 return Text(
                   name,
                   style: TextStyle(
@@ -605,7 +718,7 @@ class _ServiceCardState extends State<ServiceCard> {
                 Row(
                   children: [
                     _buildTag(
-                      meta.workAvailability.capitalizeFirst
+                      meta.workAvailability?.capitalizeFirst
                               ?.split("_")
                               .join(" ") ??
                           "Immediate",
@@ -693,11 +806,11 @@ class _ServiceCardState extends State<ServiceCard> {
                   children: [
                     _infoTile(
                       "Min Price",
-                      Formatter.formatPrice(meta.minPriceRange),
+                      Formatter.formatPrice(meta.minPriceRange ?? 0),
                     ),
                     _infoTile(
                       "Max Price",
-                      Formatter.formatPrice(meta.maxPriceRange),
+                      Formatter.formatPrice(meta.maxPriceRange ?? 0),
                     ),
                   ],
                 ),
@@ -707,7 +820,8 @@ class _ServiceCardState extends State<ServiceCard> {
                   children: [
                     _infoTile(
                       "Billing",
-                      meta.billingType.toUpperCase().split("_").join(" "),
+                      meta.billingType?.toUpperCase().split("_").join(" ") ??
+                          '',
                     ),
                     _infoTile("Advance", "${meta.advanceRequiredPercentage}%"),
                   ],
@@ -731,9 +845,9 @@ class _ServiceCardState extends State<ServiceCard> {
                     border: Border.all(color: ColorRes.border, width: 1),
                   ),
                   child: Text(
-                    meta.brandsUsed.isEmpty
+                    (meta.brandsUsed?.isEmpty ?? false)
                         ? "No description provided"
-                        : meta.brandsUsed,
+                        : meta.brandsUsed ?? 'No description provided',
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -744,10 +858,100 @@ class _ServiceCardState extends State<ServiceCard> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 16),
 
-                if ((meta.provideMaterials) ||
-                    (meta.equipmentProvided) ||
-                    (meta.insuranceAvailable)) ...[
+              /*  if (safeMetaSections.isNotEmpty) ...[
+
+                  ...safeMetaSections
+                      .take(showAllMeta ? safeMetaSections.length : 2)
+                      .toList(),
+
+                 if(safeMetaSections.isNotEmpty)...[
+                   if (safeMetaSections.length > 2)
+                     Center(
+                       child: TextButton.icon(
+                         onPressed: () {
+                           setState(() => showAllMeta = !showAllMeta);
+                         },
+                         icon: Icon(
+                           showAllMeta ? Icons.expand_less : Icons.expand_more,
+                         ),
+                         label: Text(
+                           showAllMeta
+                               ? "Show less details"
+                               : "Show more details",
+                         ),
+                       ),
+                     ),
+                 ]
+                ],*/
+                if (hasAnyMetaData) ...[
+                  ...metaSections
+                      .take(showAllMeta ? metaSections.length : 2)
+                      .toList(),
+
+                  if (metaSections.length > 2)
+                    Center(
+                      child: TextButton.icon(
+                        onPressed: () {
+                          setState(() => showAllMeta = !showAllMeta);
+                        },
+                        icon: Icon(
+                          showAllMeta ? Icons.expand_less : Icons.expand_more,
+                        ),
+                        label: Text(
+                          showAllMeta ? "Show less details" : "Show more details",
+                        ),
+                      ),
+                    ),
+                ],
+
+
+                if ([
+                  meta.threeDDesign,
+                  meta.modularKitchen,
+                  meta.boreAndPump,
+                  meta.securitySystems,
+                  meta.homeAutomation,
+                  meta.solarSolutions,
+                ].any((e) => e != null)) ...[
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.add_box_outlined,
+                        color: ColorRes.primary,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        "Additional Services",
+                        style: TextStyle(
+                          fontSize: AppFontSizes.medium,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      _yesNoChip("3D Design", meta.threeDDesign),
+                      _yesNoChip("Modular Kitchen", meta.modularKitchen),
+                      _yesNoChip("Bore & Pump", meta.boreAndPump),
+                      _yesNoChip("Security", meta.securitySystems),
+                      _yesNoChip("Home Auto.", meta.homeAutomation),
+                      _yesNoChip("Solar", meta.solarSolutions),
+                    ],
+                  ),
+                ],
+
+                if ((meta.provideMaterials ?? false) ||
+                    (meta.equipmentProvided ?? false) ||
+                    (meta.insuranceAvailable ?? false)) ...[
                   const SizedBox(height: 16),
                   Text(
                     "Service Includes",
@@ -762,11 +966,11 @@ class _ServiceCardState extends State<ServiceCard> {
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      if (meta.provideMaterials)
+                      if (meta.provideMaterials ?? false)
                         _chip("Materials", ColorRes.success),
-                      if (meta.equipmentProvided)
+                      if (meta.equipmentProvided ?? false)
                         _chip("Equipment", ColorRes.success),
-                      if (meta.insuranceAvailable)
+                      if (meta.insuranceAvailable ?? false)
                         _chip("Insurance", ColorRes.success),
                     ],
                   ),
@@ -787,13 +991,14 @@ class _ServiceCardState extends State<ServiceCard> {
                   runSpacing: 8,
                   children:
                       acceptedPayments
-                          .map(
+                          ?.map(
                             (e) => _chip(
                               e.toUpperCase().split("_").join(" "),
                               ColorRes.primary,
                             ),
                           )
-                          .toList(),
+                          .toList() ??
+                      [],
                 ),
 
                 const SizedBox(height: 16),
@@ -836,6 +1041,138 @@ class _ServiceCardState extends State<ServiceCard> {
         ),
       ),
     );
+  }
+
+  Widget _metaSection({
+    required IconData icon,
+    required String title,
+    required Map<String, List<String>?> data,
+  }) {
+    if (data.values.every((v) => v == null || v.isEmpty)) {
+      return const SizedBox();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(icon, size: 18, color: ColorRes.primary),
+            const SizedBox(width: 8),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: AppFontSizes.medium,
+                fontWeight: AppFontWeights.semiBold,
+                color: ColorRes.textPrimary,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        ...data.entries.map((e) => _infoRow(e.key, e.value)),
+        const SizedBox(height: 12),
+      ],
+    );
+  }
+
+  Widget _infoRow(String label, List<String>? values) {
+    if (values == null || values.isEmpty) return const SizedBox();
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: ColorRes.background,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: ColorRes.border),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: ColorRes.textSecondary,
+              fontSize: AppFontSizes.extraSmall,
+              fontWeight: AppFontWeights.medium,
+            ),
+          ),
+          Flexible(
+            child: Text(
+              values.join(", "),
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                color: ColorRes.textPrimary,
+                fontSize: AppFontSizes.caption,
+                fontWeight: AppFontWeights.semiBold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _yesNoChip(String label, String? value) {
+    if (value == null) return const SizedBox();
+
+    final isYes = value.toUpperCase() == "YES";
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color:
+            isYes
+                ? ColorRes.success.withOpacity(0.08)
+                : ColorRes.error.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isYes ? ColorRes.success.shade100 : ColorRes.error.shade100,
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: AppFontSizes.extraSmall,
+              fontWeight: AppFontWeights.medium,
+            ),
+          ),
+          const SizedBox(width: 6),
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              color: isYes ? ColorRes.success : ColorRes.error,
+            ),
+            child: Text(
+              value,
+              style: TextStyle(
+                fontWeight: AppFontWeights.semiBold,
+                fontSize: AppFontSizes.small,
+                color: ColorRes.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Map<String, List<String>> cleanMetaMap(Map<String, List<String>?> raw) {
+    final map = <String, List<String>>{};
+
+    raw.forEach((key, value) {
+      if (value != null && value.isNotEmpty) {
+        map[key] = value;
+      }
+    });
+
+    return map;
   }
 
   Widget _buildStatusBadge(bool isActive, ValueChanged<bool> onChanged) {

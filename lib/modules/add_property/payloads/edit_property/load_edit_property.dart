@@ -41,6 +41,45 @@ class LoadEditPropertyPayload extends GetxController {
                     .toString()
             : "";
 
+    controller.commercial_plotArea.value =
+        (((property.propertyDetails?.plotInfo?.plotAreaUnit?.isNotEmpty ??
+                    false) &&
+                property.propertyDetails?.plotInfo?.plotAreaUnit != null)
+            ? property.propertyDetails?.plotInfo?.plotAreaUnit
+            : null) ??
+        '';
+
+    controller.commercial_ZoneType.value =
+        (((property.propertyDetails?.plotInfo?.zoneType?.isNotEmpty ??
+            false) &&
+            property.propertyDetails?.plotInfo?.zoneType != null)
+            ? property.propertyDetails?.plotInfo?.zoneType
+            : null) ??
+            '';
+    controller.plotLength.text =
+        ((property.propertyDetails?.plotInfo?.plotLength != null)
+                ? property.propertyDetails?.plotInfo?.plotLength
+                : null)
+            .toString() ??
+        '';
+    controller.commercial_ownerShipList.value =
+        mapOwnership(property.propertyDetails?.plotInfo?.ownership);
+
+    controller.plotWidth.text =
+        ((property.propertyDetails?.plotInfo?.plotWidth != null)
+                ? property.propertyDetails?.plotInfo?.plotWidth
+                : null)
+            .toString() ??
+        '';
+    controller.commercial_plot.text =
+        ((property.propertyDetails?.plotInfo?.plotArea != null)
+                ? property.propertyDetails?.plotInfo?.plotArea
+                : null)
+            .toString() ??
+        '';
+    controller.commercial_plotArea.value =
+        normalizeUnit(property.propertyDetails?.plotInfo?.plotAreaUnit)??'';
+
     controller.rent_propertyType.value =
         (property.propertyType != null && property.propertyType!.isNotEmpty)
             ? property.propertyType!.replaceAll("_", " ").capitalize.toString()
@@ -50,12 +89,27 @@ class LoadEditPropertyPayload extends GetxController {
                 property.propertyDescription!.isNotEmpty)
             ? property.propertyDescription!
             : "";
+    controller.surveyNumberPlotAndLand.text =
+        (property.propertyDetails?.surveyNumber != null &&
+                (property.propertyDetails?.surveyNumber?.isNotEmpty ?? false))
+            ? property.propertyDetails?.surveyNumber ?? ''
+            : "";
+    controller.khataNumberPlotAndLand.text =
+        (property.propertyDetails?.khataNumberPlot != null &&
+                (property.propertyDetails?.khataNumberPlot?.isNotEmpty ??
+                    false))
+            ? property.propertyDetails?.khataNumberPlot ?? ''
+            : "";
 
     controller.bhkType.value =
         (property.propertyDetails?.bhk != null &&
                 property.propertyDetails!.bhk! != 0)
             ? "${property.propertyDetails!.bhk!} BHK"
             : "";
+    controller.tenantType.value =
+        capitalizeEachWord(property.propertyDetails?.tenantType) ?? '';
+    controller.rent_AvailableFrom.text =
+        property.propertyDetails?.availableFrom ?? '';
 
     controller.rent_Bathroom.value =
         (property.propertyDetails?.bathroom != null &&
@@ -87,6 +141,25 @@ class LoadEditPropertyPayload extends GetxController {
         (property.address != null && property.address!.isNotEmpty)
             ? property.address!
             : '';
+    controller.yearOfRegistration.text =
+        ((property.propertyDetails?.yearOfRegistration != null)
+            ? property.propertyDetails?.yearOfRegistration.toString() ?? ''
+            : null) ??
+        '';
+    controller.saleDeedDocumentNumber.text =
+        (((property.propertyDetails?.saleDeedDocumentNumber != null) &&
+                (property.propertyDetails?.saleDeedDocumentNumber?.isNotEmpty ??
+                    false))
+            ? property.propertyDetails?.saleDeedDocumentNumber
+            : null) ??
+        '';
+    controller.subRegistrarOffice.text =
+        (((property.propertyDetails?.subRegistrarOfficeName != null) &&
+                (property.propertyDetails?.subRegistrarOfficeName?.isNotEmpty ??
+                    false))
+            ? property.propertyDetails?.subRegistrarOfficeName
+            : null) ??
+        '';
 
     controller.areaController.text =
         (property.propertyDetails?.propertyBuiltUpArea != null &&
@@ -141,8 +214,9 @@ class LoadEditPropertyPayload extends GetxController {
     controller.transactionType.value =
         (property.propertyDetails?.transactionType != null &&
                 property.propertyDetails!.transactionType!.isNotEmpty)
-            ? capitalizeEachWord(property.propertyDetails!.transactionType!
-            .replaceAll("_", " "))
+            ? capitalizeEachWord(
+              property.propertyDetails!.transactionType!.replaceAll("_", " "),
+            )
             : "Resale";
 
     controller.lift_info.value =
@@ -150,7 +224,17 @@ class LoadEditPropertyPayload extends GetxController {
                 property.propertyDetails!.lifInfo!.serviceLift!)
             ? 'Yes'
             : 'No';
+    final possessionStatus =
+        property.propertyDetails?.plotInfo?.possessionStatus;
 
+    log("Log of possession datatusedfgefgeyh $possessionStatus");
+
+    controller.sell_constructionStatus.value =
+    (possessionStatus != null && possessionStatus.trim().isNotEmpty)
+        ? (possessionStatus=="Immediate")?"Immediate":"In Future"
+        : "";
+
+    log('possession status:dfkdnlsf ${controller.sell_constructionStatus.value}');
     loadFinancialData(controller, property);
     loadPossessionInfo(controller, property);
     loadMedia(controller, property);
@@ -273,6 +357,16 @@ class LoadEditPropertyPayload extends GetxController {
     CreatePropertyController controller,
     AddPropertyModel property,
   ) {
+    final possessionStatus =
+        property.propertyDetails?.plotInfo?.possessionStatus;
+
+    log("Log of possession datatus ${property.propertyDetails?.plotInfo?.toJson()}");
+
+    controller.sell_constructionStatus.value =
+    (possessionStatus != null && possessionStatus.trim().isNotEmpty)
+        ? capitalizeEachWord(possessionStatus.replaceAll("_", " "))
+        : "";
+
     controller.commercial_plot.text =
         (property.propertyDetails?.plotInfo?.plotArea != null &&
                 property.propertyDetails!.plotInfo!.plotArea != 0)
@@ -284,6 +378,13 @@ class LoadEditPropertyPayload extends GetxController {
                 property.propertyDetails!.plotInfo!.plotLength != 0)
             ? property.propertyDetails!.plotInfo!.plotLength!.toStringAsFixed(0)
             : '0';
+    controller.commercial_ZoneType.value =
+        (((property.propertyDetails?.plotInfo?.zoneType?.isNotEmpty ??
+            false) &&
+            property.propertyDetails?.plotInfo?.zoneType != null)
+            ? property.propertyDetails?.plotInfo?.zoneType
+            : null) ??
+            '';
 
     controller.commercial_rent_posessionStatus.value =
         property.propertyDetails?.plotInfo?.possessionStatus ?? '';
@@ -296,6 +397,8 @@ class LoadEditPropertyPayload extends GetxController {
               )!,
             )
             : '0';
+    controller.commercial_ownerShipList.value =
+        mapOwnership(property.propertyDetails?.plotInfo?.ownership);
 
     controller.plotWidth.text =
         (property.propertyDetails?.plotInfo?.plotWidth != null &&
@@ -481,6 +584,12 @@ class LoadEditPropertyPayload extends GetxController {
 
     /// Other Charges
     // maintenance Charge
+    controller.rent_maintenanceChargeType.value =
+        (property.propertyDetails?.financialInfo?.maintenanceCharges != null &&
+                property.propertyDetails!.financialInfo!.maintenanceCharges !=
+                    0)
+            ? 'Separate'
+            : 'Included in rent';
     controller.sell_rent_Maintenance_Charges.text =
         (property.propertyDetails?.financialInfo?.maintenanceCharges != null &&
                 property.propertyDetails!.financialInfo!.maintenanceCharges !=
@@ -489,6 +598,19 @@ class LoadEditPropertyPayload extends GetxController {
                 .toStringAsFixed(0)
             : '0';
     log('Maintenance Charge: ${controller.sell_rent_Maintenance_Charges.text}');
+
+    controller.rent_Parking_Charges.value =
+        ((property.propertyDetails?.financialInfo?.parkingCharges == "include"))
+            ? "Included in rent"
+            : "Separate";
+
+    if (property.propertyDetails?.financialInfo?.parkingCharges == "include") {
+      controller.rent_Custom_Parking_Charges.clear();
+    } else {
+      controller.rent_Custom_Parking_Charges.text =
+          property.propertyDetails?.financialInfo?.parkingCharges ?? '';
+    }
+
 
     // broker charges
     controller.doYouWantBrokerage.value =
@@ -593,7 +715,6 @@ class LoadEditPropertyPayload extends GetxController {
                   ? 'Ready to move'
                   : 'Under Construction'
               : " ";
-
     } else {
       controller.ageOfPropertyController.text =
           (property.propertyDetails?.possessionInfo?.propertyAgeInYear !=
@@ -609,7 +730,7 @@ class LoadEditPropertyPayload extends GetxController {
 
       if (property.listingType != null &&
           property.listingType!.toLowerCase() == 'rent') {
-        controller.rent_AvailableFrom.text =
+        controller.commercial_rent_AvailableFrom.text =
             (property.propertyDetails?.possessionInfo?.possessionDate != null &&
                     property
                         .propertyDetails!
@@ -624,7 +745,7 @@ class LoadEditPropertyPayload extends GetxController {
                 )
                 : '0';
       } else {
-        controller.sell_AvailableFrom.text =
+        controller.commercial_rent_AvailableFrom.text =
             (property.propertyDetails?.possessionInfo?.possessionDate != null &&
                     property
                         .propertyDetails!
@@ -640,16 +761,17 @@ class LoadEditPropertyPayload extends GetxController {
                 : '0';
       }
 
-      final possessionStatus = property.propertyDetails?.possessionInfo?.possessionStatus;
+      final possessionStatus =
+          property.propertyDetails?.possessionInfo?.possessionStatus;
+
+      log("Log of possession datatus $possessionStatus");
 
       controller.sell_constructionStatus.value =
-      (possessionStatus != null && possessionStatus.trim().isNotEmpty)
-          ? capitalizeEachWord(possessionStatus.replaceAll("_", " "))
-          : "";
+          (possessionStatus != null && possessionStatus.trim().isNotEmpty)
+              ? capitalizeEachWord(possessionStatus.replaceAll("_", " "))
+              : "";
 
       log('possession status: ${controller.sell_constructionStatus.value}');
-
-
     }
   }
 
@@ -1062,4 +1184,28 @@ class LoadEditPropertyPayload extends GetxController {
     }
     return null;
   }
+}
+String? normalizeUnit(String? unit) {
+  switch (unit) {
+    case 'sqft':
+      return 'sq.ft.';
+    case 'sqyd':
+      return 'sq.yd.';
+    case 'sqmt':
+      return 'sq.mt.';
+    default:
+      return null;
+  }
+}
+String mapOwnership(String? value) {
+  if (value == null || value.trim().isEmpty) return '';
+
+  final v = value.toLowerCase().trim();
+
+  if (v.contains('free')) return 'Freehold';
+  if (v.contains('lease')) return 'Leaser hold';
+  if (v.contains('cooperative')) return 'Cooperative';
+  if (v.contains('power')) return 'Power of attorney';
+
+  return ''; // must be dropdown-safe
 }

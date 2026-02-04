@@ -55,6 +55,7 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
   Rx<DateTime?> deadline = Rx<DateTime?>(null);
 
   RxString selectedService = ''.obs;
+  ContractorProjectController controller = ContractorProjectController();
 
   /// ---------------- Controllers ----------------
   final txtName = TextEditingController();
@@ -188,10 +189,9 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
 
       // Update metrics with new values
     } catch (e) {
-
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
-        message:   'Failed to refresh',
+        message: 'Failed to refresh',
         contentType: ContentType.failure,
       );
     } finally {
@@ -272,10 +272,9 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
   Future<void> convertIntoProject(String id) async {
     debugPrint("📦 Project Payload => $id");
     if (deadline.value == null || startDate.value == null) {
-
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
-        message:  "Please fill required fields",
+        message: "Please fill required fields",
         contentType: ContentType.failure,
       );
       return;
@@ -288,6 +287,9 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
     if (response) {
       items.removeWhere((element) => element.id == id);
       items.refresh();
+
+      controller.items.refresh();
+      controller.refreshList();
       // refreshList();
       try {
         final projectController = Get.find<ContractorProjectController>();
@@ -305,10 +307,9 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
   Future<void> updateProject(String id) async {
     debugPrint("📦 Project Payload => $id");
     if (deadline.value == null || startDate.value == null) {
-
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
-        message:   "Please fill required fields",
+        message: "Please fill required fields",
         contentType: ContentType.failure,
       );
       return;
@@ -472,7 +473,7 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
 
               NesticoPeSnackBar.showAwesomeSnackbar(
                 title: "Converted",
-                message:  "'${item.name}' converted successfully!",
+                message: "'${item.name}' converted successfully!",
                 contentType: ContentType.success,
               );
             },
@@ -509,7 +510,7 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
 
               NesticoPeSnackBar.showAwesomeSnackbar(
                 title: "Deleted",
-                message:  'Lead deleted successfully',
+                message: 'Lead deleted successfully',
                 contentType: ContentType.success,
               );
             },
@@ -563,20 +564,18 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
           .updateContractorLead(leadId, payload);
 
       if (response) {
-
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: "Success",
-          message:   "Lead updated successfully!",
+          message: "Lead updated successfully!",
           contentType: ContentType.success,
         );
         refreshList();
         Get.back();
         resetForm();
       } else {
-
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: "Error",
-          message:  "Failed to update lead.",
+          message: "Failed to update lead.",
           contentType: ContentType.failure,
         );
       }
@@ -585,7 +584,7 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
 
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: "Error",
-        message:  "Something went wrong while updating.",
+        message: "Something went wrong while updating.",
         contentType: ContentType.failure,
       );
     }
@@ -627,17 +626,15 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
       if (success) {
         print("✅ Lead updated successfully with $payload");
 
-
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: "Updated",
-          message:"Lead status/stage updated successfully.",
+          message: "Lead status/stage updated successfully.",
           contentType: ContentType.success,
         );
 
         refreshList(); // reloads data from API
       } else {
         print("🔴 Failed to update lead with $payload");
-
 
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: "Error",
