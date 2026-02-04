@@ -8,6 +8,7 @@ import 'package:housing_flutter_app/modules/support_ticket/views/widgets/support
 import 'package:intl/intl.dart';
 
 import '../../../data/network/support_ticket/models/ticket_model/support_ticket_model.dart';
+import '../../../utils/shimmer/common_screen/support_ticket/support_ticket_screen_shimmer.dart';
 import '../controllers/chat_socket_controller.dart';
 import '../controllers/support_ticket_controller.dart';
 
@@ -94,8 +95,9 @@ class SupportTicketScreen extends StatelessWidget {
           // Ticket list
           Expanded(
             child: Obx(() {
+              
               if (controller.isLoading.value && controller.items.isEmpty) {
-                return const Center(child: CircularProgressIndicator());
+                return SupportTicketScreenShimmer();
               }
               if (controller.items.isEmpty && !controller.isLoading.value) {
                 return const Center(child: Text('No tickets found'));

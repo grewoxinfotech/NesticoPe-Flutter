@@ -3022,12 +3022,13 @@ log(" Plot type check ${type} ====== $action============$subtype");
     final userId = user?.user?.id ?? "";
     DateTime? parsedDate;
 
+
     if (rent_AvailableFrom.text.trim().isNotEmpty) {
-      parsedDate = DateTime.parse(rent_AvailableFrom.text.trim());
+      parsedDate = DateFormat('d/M/yyyy')
+          .parse(rent_AvailableFrom.text.trim());
     }
 
-    final formattedDate =
-    parsedDate != null
+    final formattedDate = parsedDate != null
         ? DateFormat('yyyy-MM-dd').format(parsedDate)
         : null;
 
@@ -3050,7 +3051,7 @@ log(" Plot type check ${type} ====== $action============$subtype");
         bhk: int.tryParse(bhkType.value.substring(0, 1)),
 
         bathroom: rent_Bathroom.value,
-        availableFrom: rent_AvailableFrom.text,
+        availableFrom: formattedDate,
         tenantType: tenantType.value.toLowerCase(),
 
         saleDeedDocumentNumber:
@@ -3092,6 +3093,7 @@ log(" Plot type check ${type} ====== $action============$subtype");
             selectedRoomAmenities.value.isNotEmpty
                 ? selectedRoomAmenities.value
                 : null,
+
         possessionInfo: PossessionInfo(
           possessionDate:
           formattedDate,
@@ -3323,7 +3325,7 @@ log(" Plot type check ${type} ====== $action============$subtype");
             yearOfRegistration.text.trim().isNotEmpty
                 ? int.tryParse(yearOfRegistration.text.trim())
                 : null,
-        availableFrom: rent_AvailableFrom.text,
+        availableFrom: formattedDate,
         tenantType: tenantType.value.toLowerCase(),
         bhk: int.tryParse(
           bhkType.value
