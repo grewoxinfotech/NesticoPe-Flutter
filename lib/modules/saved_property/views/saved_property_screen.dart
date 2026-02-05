@@ -220,6 +220,7 @@ import '../../../app/constants/img_res.dart';
 import '../../../app/constants/size_manager.dart';
 import '../../../data/network/property/models/property_model.dart';
 import '../../../data/network/property/models/viewed_item_model.dart';
+import '../../../utils/shimmer/buyer/my_activity/buyer_my_activity_list_screen_shimmer.dart';
 import '../../feedback/views/feedback_and_report.dart';
 import '../../propert_detail/view/property_details.dart';
 import '../../propert_detail/view/widget/property_card_widget.dart';
@@ -298,13 +299,19 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
                 final seenCount = viewController.viewedProperties.length;
                 final contactedCount =
                     contactedController.contactedPropertyIds.length;
-                final recentCount = searchHistoryController.searchHistoryResponse.value?.data.item.length; // TODO: link with recent searches
+                final recentCount =
+                    searchHistoryController
+                        .searchHistoryResponse
+                        .value
+                        ?.data
+                        .item
+                        .length; // TODO: link with recent searches
 
                 final List<int> tabsCount = [
                   savedCount,
                   seenCount,
                   contactedCount,
-                  recentCount??0,
+                  recentCount ?? 0,
                 ];
 
                 return Row(
@@ -410,17 +417,18 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
   @override
   void initState() {
     super.initState();
-   manager.loadViews(controller.viewedProperties);
+    manager.loadViews(controller.viewedProperties);
     // Listen to favorite changes globally
     // ever(manager.favorites, (_) => loadFavorite());
   }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
       child: Obx(() {
         if (controller.isLoading.value && controller.viewedProperties.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return BuyerMyActivityListScreenShimmer();
         }
 
         if (controller.viewedProperties.isEmpty) {
@@ -444,8 +452,7 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
             return false;
           },
           child: RefreshIndicator(
-            onRefresh:
-              controller.fetchViewedProperties,
+            onRefresh: controller.fetchViewedProperties,
             color: ColorRes.primary,
             child: ListView.builder(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -529,7 +536,7 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
                     return HorizontalPropertyCard(
                       // Image
                       imageUrl: property.details?.images ?? '',
-                      propertyId: property.details?.id??'',
+                      propertyId: property.details?.id ?? '',
 
                       // Basic info
                       isForRent: property.details?.listingType == 'Rent',
@@ -578,9 +585,13 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
                           property.details?.id ?? '',
                           favoriteController,
                         );
-                        await favoriteController.getAllInQuireData(property.details?.id ?? '');
+                        await favoriteController.getAllInQuireData(
+                          property.details?.id ?? '',
+                        );
 
-                        await favoriteController.getHasInQuireData(property.details?.id ?? '');
+                        await favoriteController.getHasInQuireData(
+                          property.details?.id ?? '',
+                        );
                       },
                     );
                   });
@@ -619,13 +630,9 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
     // loadFavorite();
     manager.loadData();
 
-
     // Listen to favorite changes globally
     // ever(manager.favorites, (_) => loadFavorite());
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -633,7 +640,7 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
       top: false,
       child: Obx(() {
         if (manager.isLoading.value && manager.favorites.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return BuyerMyActivityListScreenShimmer();
         }
 
         if (!manager.isLoading.value && manager.favorites.isEmpty) {
@@ -733,13 +740,12 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
                   return HorizontalPropertyCard(
                     // Image
                     imageUrl: property.details.images ?? '',
-                    propertyId: property.details?.id??'',
+                    propertyId: property.details?.id ?? '',
 
                     // Basic info
                     isForRent: property.details.listingType == 'Rent',
                     location: property.details.location ?? '',
                     price: formattedPrice,
-
 
                     // Entity type and names
                     entityType: property.entityType,
@@ -777,9 +783,13 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
                     },
                     onContactPressed: () async {
                       generateInquiry(property.details.id, favoriteController);
-                      await favoriteController.getAllInQuireData(property.details?.id ?? '');
+                      await favoriteController.getAllInQuireData(
+                        property.details?.id ?? '',
+                      );
 
-                      await favoriteController.getHasInQuireData(property.details?.id ?? '');
+                      await favoriteController.getHasInQuireData(
+                        property.details?.id ?? '',
+                      );
                     },
                   );
                 }),
@@ -871,7 +881,7 @@ class _ContactedPropertiesTabState extends State<ContactedPropertiesTab> {
       top: false,
       child: Obx(() {
         if (controller.isLoading.value && controller.inquiries.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return BuyerMyActivityListScreenShimmer();
         }
 
         if (!controller.isLoading.value && controller.inquiries.isEmpty) {
@@ -979,7 +989,7 @@ class _ContactedPropertiesTabState extends State<ContactedPropertiesTab> {
                     return HorizontalPropertyCard(
                       // Image
                       imageUrl: property.details?.images ?? '',
-                      propertyId: property.details?.id??'',
+                      propertyId: property.details?.id ?? '',
                       // Basic info
                       isForRent: property.details?.listingType == 'Rent',
                       location: property.details?.location ?? '',
@@ -1058,24 +1068,27 @@ class RecentSearchesTab extends StatefulWidget {
 }
 
 class _RecentSearchesTabState extends State<RecentSearchesTab> {
-  final SearchHistoryController controller = Get.find<
-    SearchHistoryController>();
+  final SearchHistoryController controller =
+      Get.find<SearchHistoryController>();
   @override
   initState() {
     super.initState();
     controller.fetchSearchHistory();
   }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
       child: Obx(() {
         if (controller.isLoading.value &&
-            (controller.searchHistoryResponse.value?.data.item.isEmpty ?? false)) {
-          return const Center(child: CircularProgressIndicator());
+            (controller.searchHistoryResponse.value?.data.item.isEmpty ??
+                false)) {
+          return BuyerMyActivityListScreenShimmer();
         }
 
-        if (controller.searchHistoryResponse.value?.data.item.isEmpty ?? false) {
+        if (controller.searchHistoryResponse.value?.data.item.isEmpty ??
+            false) {
           return const Center(
             child: Text(
               "No viewed properties yet",
@@ -1093,7 +1106,10 @@ class _RecentSearchesTabState extends State<RecentSearchesTab> {
             children: [
               // 🔹 "Clear All" button section
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -1108,10 +1124,17 @@ class _RecentSearchesTabState extends State<RecentSearchesTab> {
                       onPressed: () {
                         controller.deleteAllHistory(); // 🧹 add this function
                       },
-                      icon: const Icon(Icons.delete_outline, size: 18, color: Colors.red),
+                      icon: const Icon(
+                        Icons.delete_outline,
+                        size: 18,
+                        color: Colors.red,
+                      ),
                       label: const Text(
                         "Clear All",
-                        style: TextStyle(color: Colors.red, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ],
@@ -1123,20 +1146,27 @@ class _RecentSearchesTabState extends State<RecentSearchesTab> {
                 child: NotificationListener<ScrollNotification>(
                   onNotification: (scrollInfo) {
                     if (scrollInfo.metrics.pixels >=
-                        scrollInfo.metrics.maxScrollExtent - 100 &&
+                            scrollInfo.metrics.maxScrollExtent - 100 &&
                         !controller.isLoadingMore.value &&
                         controller.currentIndex <
-                            controller.searchHistoryResponse.value!.data.item.length) {
+                            controller
+                                .searchHistoryResponse
+                                .value!
+                                .data
+                                .item
+                                .length) {
                       // controller.loadNextBatch();
                     }
                     return false;
                   },
                   child: ListView.builder(
                     physics: const AlwaysScrollableScrollPhysics(),
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                    itemCount: items.length +
-                        (controller.isLoadingMore.value ? 1 : 0),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 8,
+                    ),
+                    itemCount:
+                        items.length + (controller.isLoadingMore.value ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index >= items.length) {
                         return const Padding(
@@ -1146,32 +1176,38 @@ class _RecentSearchesTabState extends State<RecentSearchesTab> {
                       }
 
                       final property = items[index];
-                      final keywords = (property.keywords != null &&
-                          property.keywords.isNotEmpty)
-                          ? property.keywords.join(', ')
-                          : 'No keywords found';
+                      final keywords =
+                          (property.keywords != null &&
+                                  property.keywords.isNotEmpty)
+                              ? property.keywords.join(', ')
+                              : 'No keywords found';
 
                       return Card(
                         color: ColorRes.white,
                         elevation: 2,
                         margin: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 6),
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                           side: BorderSide(
-                              color: Colors.grey.shade300, width: 1),
+                            color: Colors.grey.shade300,
+                            width: 1,
+                          ),
                         ),
                         child: ListTile(
                           contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                           leading: Container(
                             decoration: BoxDecoration(
                               color: Colors.grey.shade100,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             padding: const EdgeInsets.all(8),
-                            child:
-                            const Icon(Icons.search, color: Colors.grey),
+                            child: const Icon(Icons.search, color: Colors.grey),
                           ),
                           title: Text(
                             keywords,
@@ -1183,8 +1219,11 @@ class _RecentSearchesTabState extends State<RecentSearchesTab> {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          trailing: const Icon(Icons.arrow_forward_ios,
-                              size: 14, color: Colors.grey),
+                          trailing: const Icon(
+                            Icons.arrow_forward_ios,
+                            size: 14,
+                            color: Colors.grey,
+                          ),
                           onTap: () {
                             // handle tap
                           },
@@ -1299,7 +1338,6 @@ class _RecentSearchesTabState extends State<RecentSearchesTab> {
   }
 }
 
-
 Future<void> generateInquiry(
   String propertyId,
   PropertyFavoriteController controller,
@@ -1318,6 +1356,5 @@ Future<void> generateInquiry(
             ? Get.find<PropertyContactedController>()
             : Get.put(PropertyContactedController());
     contactedCtrl.addInquiry(inquiry, propertyId);
-
   }
 }

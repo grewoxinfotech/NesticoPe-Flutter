@@ -11,6 +11,8 @@ import 'package:housing_flutter_app/modules/contractor/view/widget/contractor_qu
 import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 
+import '../../../../utils/shimmer/contractor/my_quotations/contractor_my_quotation_list_screen_shimmer.dart';
+
 /// Screen for displaying list of contractor quotations
 
 class ContractorQuotationListScreen extends StatelessWidget {
@@ -40,7 +42,7 @@ class ContractorQuotationListScreen extends StatelessWidget {
       body: Obx(() {
         // 1. Loading state
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return ContractorMyQuotationListScreenShimmer();
         }
 
         // 2. Empty state (RefreshIndicator must still work)

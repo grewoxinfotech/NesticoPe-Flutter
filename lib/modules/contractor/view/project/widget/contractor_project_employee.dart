@@ -1,19 +1,20 @@
-  import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/constants/color_res.dart';
 import '../../../../../data/network/contractor/model/contractor_project_model/contracto_project_model.dart';
 import '../../../../../data/network/contractor/model/employee/contractor_employee_model.dart';
+import '../../../../../utils/shimmer/contractor/employee/contractor_project_employee_list_screen_shimmer.dart';
 import '../../../controller/contractot_employee_controller.dart';
 
 class ContractorProjectEmployee extends StatefulWidget {
   final List<ContractorEmployee> employeeList;
-   ContractorProjectEmployee({super.key, required this.employeeList});
-  
+  ContractorProjectEmployee({super.key, required this.employeeList});
 
   @override
-  State<ContractorProjectEmployee> createState() => _ContractorProjectEmployeeState();
+  State<ContractorProjectEmployee> createState() =>
+      _ContractorProjectEmployeeState();
 }
 
 class _ContractorProjectEmployeeState extends State<ContractorProjectEmployee> {
@@ -40,13 +41,15 @@ class _ContractorProjectEmployeeState extends State<ContractorProjectEmployee> {
         elevation: 1,
       ),
       body: Obx(() {
-        controller.items.value = controller.items
-            .where((item) => widget.employeeList.any((emp) => emp.id == item.id))
-            .toList();
-
+        controller.items.value =
+            controller.items
+                .where(
+                  (item) => widget.employeeList.any((emp) => emp.id == item.id),
+                )
+                .toList();
 
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return ContractorProjectEmployeeListScreenShimmer();
         }
 
         // ✅ Always wrap content inside RefreshIndicator
@@ -55,47 +58,49 @@ class _ContractorProjectEmployeeState extends State<ContractorProjectEmployee> {
             await controller.refreshEmployee();
           },
           child:
-          controller.items.isEmpty
-              ? ListView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            children: const [
-              SizedBox(height: 250),
-              Center(
-                child: Text(
-                  "No employees found.\nPull down to refresh 🔄",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: ColorRes.leadGreyColor,
-                    fontSize: 14,
+              controller.items.isEmpty
+                  ? ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: const [
+                      SizedBox(height: 250),
+                      Center(
+                        child: Text(
+                          "No employees found.\nPull down to refresh 🔄",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: ColorRes.leadGreyColor,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                  : ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: controller.items.length,
+                    itemBuilder: (context, index) {
+                      final employee = controller.items[index];
+                      return GestureDetector(
+                        onTap: () {
+                          _showServiceDialog(context, employee);
+                        },
+                        child: _buildEmployeeCard(employee, controller),
+                      );
+                    },
                   ),
-                ),
-              ),
-            ],
-          )
-              : ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: controller.items.length,
-            itemBuilder: (context, index) {
-              final employee = controller.items[index];
-              return GestureDetector(onTap: () {
-                _showServiceDialog(context,employee);
-
-              },child: _buildEmployeeCard(employee, controller));
-            },
-          ),
         );
       }),
     );
   }
 }
+
 void _showServiceDialog(BuildContext context, ContractorEmployeeItem service) {
   showDialog(
     context: context,
     builder: (context) {
       return Dialog(
         backgroundColor: ColorRes.white,
-        shape:
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -152,9 +157,9 @@ void _showServiceDialog(BuildContext context, ContractorEmployeeItem service) {
 
 // EMPLOYEE CARD
 Widget _buildEmployeeCard(
-    ContractorEmployeeItem employee,
-    ContractorEmployeeController controller,
-    ) {
+  ContractorEmployeeItem employee,
+  ContractorEmployeeController controller,
+) {
   return Container(
     margin: const EdgeInsets.only(bottom: 16),
     decoration: BoxDecoration(
@@ -221,14 +226,14 @@ Widget _buildEmployeeCard(
 
           // Phone
           Container(
-            padding: EdgeInsets.symmetric(vertical: 6,horizontal: 8),
+            padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
             decoration: BoxDecoration(
               color: ColorRes.leadGreyColor.shade200,
-              borderRadius: BorderRadius.circular(16)
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
               children: [
-                 Icon(Icons.phone, size: 16, color: ColorRes.primary),
+                Icon(Icons.phone, size: 16, color: ColorRes.primary),
                 const SizedBox(width: 6),
                 Text(
                   employee.phone.isEmpty ? "-" : employee.phone,
@@ -237,7 +242,7 @@ Widget _buildEmployeeCard(
                   style: TextStyle(
                     color: ColorRes.textPrimary,
                     fontSize: AppFontSizes.small,
-                    fontWeight: AppFontWeights.medium
+                    fontWeight: AppFontWeights.medium,
                   ),
                 ),
               ],
@@ -247,14 +252,14 @@ Widget _buildEmployeeCard(
 
           // Experience
           Container(
-            padding: EdgeInsets.symmetric(vertical: 6,horizontal: 8),
+            padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
             decoration: BoxDecoration(
-                color: ColorRes.leadGreyColor.shade200,
-                borderRadius: BorderRadius.circular(16)
+              color: ColorRes.leadGreyColor.shade200,
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
               children: [
-                 Icon(Icons.work_outline, size: 16, color: ColorRes.primary),
+                Icon(Icons.work_outline, size: 16, color: ColorRes.primary),
 
                 const SizedBox(width: 6),
                 Expanded(
@@ -265,9 +270,9 @@ Widget _buildEmployeeCard(
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                        color: ColorRes.textPrimary,
-                        fontSize: AppFontSizes.small,
-                        fontWeight: AppFontWeights.medium
+                      color: ColorRes.textPrimary,
+                      fontSize: AppFontSizes.small,
+                      fontWeight: AppFontWeights.medium,
                     ),
                   ),
                 ),
@@ -275,7 +280,6 @@ Widget _buildEmployeeCard(
             ),
           ),
           const SizedBox(height: 8),
-
         ],
       ),
     ),

@@ -388,12 +388,12 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
 
       floatingButton: FloatingActionButton.extended(
         onPressed: () {
-          // if (!UserHelper.isAadharVerified) {
-          //   Get.to(() => AadharAuthScreen());
-          // } else {
-          //   Get.to(CreatePropertyScreen(isLogin: true));
-          // }
-          Get.to(CreatePropertyScreen(isLogin: true));
+          if (!UserHelper.isAadharVerified) {
+            Get.to(() => AadharAuthScreen());
+          } else {
+            Get.to(CreatePropertyScreen(isLogin: true));
+          }
+          // Get.to(CreatePropertyScreen(isLogin: true));
         },
         label: Text(
           '+ Add Property',

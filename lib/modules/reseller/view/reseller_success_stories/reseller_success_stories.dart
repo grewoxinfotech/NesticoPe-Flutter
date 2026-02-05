@@ -10,6 +10,7 @@ import 'package:readmore/readmore.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../app/utils/formater/formater.dart';
 import '../../../../data/network/reseller/reseller_success_stories/reseller_success_stories_model.dart';
+import '../../../../utils/shimmer/contractor/success_story/contractor_success_story_screen_shimmer.dart';
 import '../../../property_rating/view/widget/read_more_or_less.dart';
 import '../../controller/reseller_success_stories_controller/reseller_success_stories_controller.dart';
 
@@ -27,7 +28,7 @@ class ContractorSuccessStoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorRes.white,
+      // backgroundColor: ColorRes.white,
       appBar: AppBar(
         backgroundColor: ColorRes.bgColor,
         title: Text(
@@ -35,33 +36,29 @@ class ContractorSuccessStoryScreen extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      body: CustomScrollView(
-        slivers: [
-          Obx(() {
-            if (controller.isLoading.value) {
-              return SliverFillRemaining(child: _buildLoadingState());
-            }
+      body: Obx(() {
+        // return ContractorSuccessStoryScreenShimmer();
 
-            if (controller.items.isEmpty && !controller.isLoading.value) {
-              return SliverFillRemaining(child: _buildEmptyState());
-            }
+        if (controller.isLoading.value) {
+          return ContractorSuccessStoryScreenShimmer();
+        }
 
-            return SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 4),
-              sliver: SliverToBoxAdapter(
-                child: ContractorSuccessStoryCard(
-                  story:
-                      controller.items.isNotEmpty
-                          ? controller.items.first
-                          : ResellerSuccessItem.fromJson({}),
-                  // fallback if list is empty
-                  controller: dashboardController,
-                ),
-              ),
-            );
-          }),
-        ],
-      ),
+        if (controller.items.isEmpty && !controller.isLoading.value) {
+          return Center(child: _buildEmptyState());
+        }
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          child: ContractorSuccessStoryCard(
+            story:
+                controller.items.isNotEmpty
+                    ? controller.items.first
+                    : ResellerSuccessItem.fromJson({}),
+            // fallback if list is empty
+            controller: dashboardController,
+          ),
+        );
+      }),
     );
   }
 
@@ -118,13 +115,10 @@ class ContractorSuccessStoryScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: ColorRes.white,
                 border: Border.all(
-                  color:
-                  ColorRes.leadGreyColor.shade300,
+                  color: ColorRes.leadGreyColor.shade300,
                   width: 1,
                 ),
-                borderRadius: BorderRadius.circular(
-                  20,
-                ),
+                borderRadius: BorderRadius.circular(20),
               ),
               padding: EdgeInsets.all(40),
               child: Column(
@@ -134,8 +128,7 @@ class ContractorSuccessStoryScreen extends StatelessWidget {
                     'Share Your Success',
                     style: TextStyle(
                       fontSize: AppFontSizes.body,
-                      fontWeight:
-                      AppFontWeights.semiBold,
+                      fontWeight: AppFontWeights.semiBold,
                       color: ColorRes.textColor,
                     ),
                   ),
@@ -146,10 +139,7 @@ class ContractorSuccessStoryScreen extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: AppFontSizes.small,
-                      color:
-                      ColorRes
-                          .leadGreyColor
-                          .shade700,
+                      color: ColorRes.leadGreyColor.shade700,
                       height: 1.5,
                     ),
                   ),
@@ -158,46 +148,31 @@ class ContractorSuccessStoryScreen extends StatelessWidget {
                   Container(
                     decoration: BoxDecoration(
                       color: ColorRes.primary,
-                      borderRadius:
-                      BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: ElevatedButton.icon(
                       onPressed: () {
                         Get.to(
-                              () =>
-                              AddResellerSuccessStoryScreen(
-                                isEditMode: false,
-                              ),
+                          () =>
+                              AddResellerSuccessStoryScreen(isEditMode: false),
                         );
                       },
-                      icon: Icon(
-                        Icons.add_circle_outline,
-                        size: 22,
-                      ),
-                      label: Text(
-                        'Add Success Story',
-                      ),
+                      icon: Icon(Icons.add_circle_outline, size: 22),
+                      label: Text('Add Success Story'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                        Colors.transparent,
+                        backgroundColor: Colors.transparent,
                         foregroundColor: Colors.white,
-                        shadowColor:
-                        Colors.transparent,
+                        shadowColor: Colors.transparent,
                         padding: EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 12,
                         ),
                         textStyle: TextStyle(
-                          fontSize:
-                          AppFontSizes.medium,
-                          fontWeight:
-                          AppFontWeights.semiBold,
+                          fontSize: AppFontSizes.medium,
+                          fontWeight: AppFontWeights.semiBold,
                         ),
                         shape: RoundedRectangleBorder(
-                          borderRadius:
-                          BorderRadius.circular(
-                            12,
-                          ),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                     ),
@@ -207,7 +182,7 @@ class ContractorSuccessStoryScreen extends StatelessWidget {
             ),
           ],
         ),
-      )
+      ),
     );
   }
 
@@ -564,18 +539,22 @@ class ContractorSuccessStoryCard extends StatefulWidget {
   });
 
   @override
-  State<ContractorSuccessStoryCard> createState() => _ContractorSuccessStoryCardState();
+  State<ContractorSuccessStoryCard> createState() =>
+      _ContractorSuccessStoryCardState();
 }
 
-class _ContractorSuccessStoryCardState extends State<ContractorSuccessStoryCard> {
+class _ContractorSuccessStoryCardState
+    extends State<ContractorSuccessStoryCard> {
   @override
   Widget build(BuildContext context) {
     final isPublished = widget.story.status.toLowerCase() == 'published';
-    final formattedDate = _formatMonthYear(widget.story.monthYear.toIso8601String());
+    final formattedDate = _formatMonthYear(
+      widget.story.monthYear.toIso8601String(),
+    );
     log("Success Story Card ${widget.story.toJson()}");
 
     return Align(
-      alignment: Alignment.center,
+      alignment: Alignment.topCenter,
       child: FractionallySizedBox(
         widthFactor: 1,
         child: Card(
@@ -589,6 +568,8 @@ class _ContractorSuccessStoryCardState extends State<ContractorSuccessStoryCard>
           clipBehavior: Clip.hardEdge,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               // 🔹 Image Stack Section
               Stack(
@@ -597,7 +578,8 @@ class _ContractorSuccessStoryCardState extends State<ContractorSuccessStoryCard>
                   AspectRatio(
                     aspectRatio: 16 / 9,
                     child:
-                        widget.story.image != null && widget.story.image!.isNotEmpty
+                        widget.story.image != null &&
+                                widget.story.image!.isNotEmpty
                             ? Image.network(
                               widget.story.image!,
                               fit: BoxFit.cover,
@@ -953,7 +935,10 @@ class _ContractorSuccessStoryCardState extends State<ContractorSuccessStoryCard>
                                     Obx(() {
                                       return ElevatedButton(
                                         onPressed:
-                                            widget.controller.deleteSuccessStory.value
+                                            widget
+                                                    .controller
+                                                    .deleteSuccessStory
+                                                    .value
                                                 ? null // disable while deleting
                                                 : () {
                                                   Get.back(); // close dialog
@@ -971,7 +956,10 @@ class _ContractorSuccessStoryCardState extends State<ContractorSuccessStoryCard>
                                           ),
                                         ),
                                         child:
-                                            widget.controller.deleteSuccessStory.value
+                                            widget
+                                                    .controller
+                                                    .deleteSuccessStory
+                                                    .value
                                                 ? const SizedBox(
                                                   height: 20,
                                                   width: 20,
@@ -1079,13 +1067,14 @@ class _ContractorSuccessStoryCardState extends State<ContractorSuccessStoryCard>
                 iconColor: ColorRes.homeAmber,
                 bgColor: ColorRes.homeAmber.withOpacity(0.1),
                 label: 'AVG PER DEAL',
-                value: story.totalDeals > 0
-                    ? Formatter.formatPrice(
-                  ((double.tryParse(story.totalValue) ?? 0) /
-                      story.totalDeals)
-                      .round(),
-                )
-                    : '₹0',
+                value:
+                    story.totalDeals > 0
+                        ? Formatter.formatPrice(
+                          ((double.tryParse(story.totalValue) ?? 0) /
+                                  story.totalDeals)
+                              .round(),
+                        )
+                        : '₹0',
               ),
             ),
           ],
@@ -1093,7 +1082,6 @@ class _ContractorSuccessStoryCardState extends State<ContractorSuccessStoryCard>
       ],
     );
   }
-
 
   Widget _buildPerformanceTile({
     required IconData icon,

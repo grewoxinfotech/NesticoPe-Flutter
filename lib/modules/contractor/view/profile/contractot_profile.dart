@@ -13,6 +13,7 @@ import '../../../../app/constants/app_font_sizes.dart';
 
 import 'package:get/get.dart';
 
+import '../../../../utils/shimmer/contractor/profile/contractor_profile_screen_shimmer.dart';
 import '../../../../widgets/input/city_selection_widget.dart';
 import '../../../../widgets/messages/snack_bar.dart';
 import '../../../auth/views/delete_account.dart';
@@ -82,7 +83,7 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
       body: SafeArea(
         child: Obx(() {
           if (profileController.isLoading.value) {
-            return const Center(child: CircularProgressIndicator());
+            return ContractorProfileScreenShimmer();
           }
 
           return RefreshIndicator(
@@ -178,9 +179,7 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                               label: "My Quotations",
 
                               onTap: () {
-                                Get.to(
-                                  () => ContractorQuotationListScreen(),
-                                );
+                                Get.to(() => ContractorQuotationListScreen());
                               },
                             ),
                           ],
@@ -201,17 +200,20 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
     required VoidCallback onTap,
     Widget? trailing,
   }) {
-    return ListTile(
-      leading: Icon(icon, size: 28, color: ColorRes.primary),
-      title: Text(
-        label,
-        style: TextStyle(
-          fontSize: AppFontSizes.medium,
-          fontWeight: AppFontWeights.semiBold,
-        ),
-      ),
-      trailing: trailing ?? const Icon(Icons.chevron_right),
+    return GestureDetector(
       onTap: onTap,
+      child: ListTile(
+        leading: Icon(icon, size: 28, color: ColorRes.primary),
+        title: Text(
+          label,
+          style: TextStyle(
+            fontSize: AppFontSizes.medium,
+            fontWeight: AppFontWeights.semiBold,
+          ),
+        ),
+        trailing: trailing ?? const Icon(Icons.chevron_right),
+        // onTap: onTap,
+      ),
     );
   }
 
@@ -232,7 +234,7 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              SizedBox(width: 6,),
+              SizedBox(width: 6),
               Stack(
                 children: [
                   Obx(() {
@@ -295,9 +297,10 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                                               child: SizedBox(
                                                 width: 25,
                                                 height: 25,
-                                                child: CircularProgressIndicator(
-                                                  strokeWidth: 2,
-                                                ),
+                                                child:
+                                                    CircularProgressIndicator(
+                                                      strokeWidth: 2,
+                                                    ),
                                               ),
                                             );
                                           },
@@ -314,13 +317,14 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                                         ))
                                     : CircleAvatar(
                                       radius: 35,
-                                      backgroundColor: ColorRes.primary.withOpacity(
-                                        0.1,
-                                      ),
+                                      backgroundColor: ColorRes.primary
+                                          .withOpacity(0.1),
                                       child: Icon(
                                         Icons.person,
                                         size: 25,
-                                        color: ColorRes.primary.withOpacity(0.8),
+                                        color: ColorRes.primary.withOpacity(
+                                          0.8,
+                                        ),
                                       ),
                                     ),
                           ),
@@ -465,9 +469,9 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
               ),
             ],
           ),
-          SizedBox(height: 6,),
+          SizedBox(height: 6),
           Obx(
-                () => GestureDetector(
+            () => GestureDetector(
               onTap: () {
                 if (controller.isEditing.value) {
                   controller.saveProfile();
@@ -477,7 +481,10 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
               },
 
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   gradient: const LinearGradient(
@@ -503,7 +510,7 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -1088,14 +1095,18 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
               Expanded(
                 child: _buildDetailRow(
                   'CREATED AT',
-                  Formatter.formatDate(controller.profileData.value?.user?.createdAt),
+                  Formatter.formatDate(
+                    controller.profileData.value?.user?.createdAt,
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: _buildDetailRow(
                   'LAST UPDATED',
-                  Formatter.formatDate(controller.profileData.value?.user?.updatedAt),
+                  Formatter.formatDate(
+                    controller.profileData.value?.user?.updatedAt,
+                  ),
                 ),
               ),
             ],
@@ -1107,7 +1118,7 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
               const SizedBox(height: 16),
               _buildDetailRow(
                 'Verification Status',
-                '${(controller.profileData.value?.user?.isVerified??true)?"Verified":"Not Verified"}',
+                '${(controller.profileData.value?.user?.isVerified ?? true) ? "Verified" : "Not Verified"}',
               ),
               const SizedBox(height: 12),
             ],

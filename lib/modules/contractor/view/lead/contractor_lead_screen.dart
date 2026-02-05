@@ -10,6 +10,7 @@ import 'package:housing_flutter_app/modules/contractor/view/lead/follow_up/contr
 import 'package:housing_flutter_app/modules/contractor/view/lead/widget/contractor_lead_edit_screen.dart';
 import 'package:housing_flutter_app/modules/contractor/view/lead/widget/contractor_lead_overview.dart';
 import 'package:housing_flutter_app/modules/contractor/view/lead/widget/convert_to_project_form.dart';
+import 'package:housing_flutter_app/utils/shimmer/common_screen/lead_screen/lead_list_screen_shimmer.dart';
 
 import '../../../../app/utils/formater/formater.dart';
 import '../../../../data/network/contractor/model/contractot_service_model/contractor_service_model.dart';
@@ -107,7 +108,7 @@ class _ContractorLeadScreenState extends State<ContractorLeadScreen> {
               child: Obx(() {
                 final items = controller.items;
                 if (controller.isLoading.value) {
-                  return const Center(child: CircularProgressIndicator());
+                  return LeadListScreenShimmer(isContractor: true);
                 }
 
                 if (controller.items.isEmpty) {

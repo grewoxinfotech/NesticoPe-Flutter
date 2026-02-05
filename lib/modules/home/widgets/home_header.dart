@@ -18,6 +18,7 @@ import 'package:housing_flutter_app/modules/builder/view/builder_dashboard.dart'
 import 'package:housing_flutter_app/modules/contractor/view/dashboard/contractor_dashboard.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/seller_dashboard_screen.dart';
 import 'package:housing_flutter_app/modules/history/controller/search_history_controller.dart';
+import 'package:housing_flutter_app/modules/in_app_message/view/in_app_message_screen.dart';
 import 'package:housing_flutter_app/modules/profile/views/profile_screen.dart';
 import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
 
@@ -158,7 +159,27 @@ class _HomeHeaderState extends State<HomeHeader> {
                 ),
               ),
 
-              // SizedBox(width: 8),
+              GestureDetector(
+                onTap: () {
+                  Get.to(() => InAppMessageScreen());
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  // decoration: BoxDecoration(
+                  //   color: ColorRes.primary.withOpacity(0.05),
+                  //   border: Border.all(
+                  //     color: ColorRes.primary.withOpacity(0.3),
+                  //   ),
+                  //   borderRadius: BorderRadius.circular(12),
+                  // ),
+                  child: Icon(
+                    Icons.notifications_none_rounded,
+                    color: ColorRes.primary,
+                    size: 25,
+                  ),
+                ),
+              ),
+              SizedBox(width: 8),
               GestureDetector(
                 onTap: () {
                   log('dhfgugh djfdfjdn fhgfhglkb ${widget.image}');

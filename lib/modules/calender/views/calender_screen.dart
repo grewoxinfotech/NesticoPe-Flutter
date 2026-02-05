@@ -980,7 +980,6 @@ import '../controllers/calender_event_controller.dart';
 // //   }
 // // }
 
-
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
 
@@ -990,10 +989,12 @@ class CalendarScreen extends StatefulWidget {
 
 class _CalendarScreenState extends State<CalendarScreen> {
   final CalendarController controller = Get.put(CalendarController());
-  final CalenderEventController _eventController =
-  Get.put(CalenderEventController());
-  final CalenderCategoryController _categoryController =
-  Get.put(CalenderCategoryController());
+  final CalenderEventController _eventController = Get.put(
+    CalenderEventController(),
+  );
+  final CalenderCategoryController _categoryController = Get.put(
+    CalenderCategoryController(),
+  );
 
   bool _hasLoadedOnce = false;
 
@@ -1025,9 +1026,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 icon: const Icon(Icons.keyboard_arrow_left_rounded),
               ),
               Obx(
-                    () => Text(
+                () => Text(
                   "${DateFormat.MMMM().format(controller.currentDate.value)} "
-                      "${controller.currentDate.value.year}",
+                  "${controller.currentDate.value.year}",
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -1078,21 +1079,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
             child: Card(
               margin: const EdgeInsets.all(12),
               child: Obx(() {
-
                 final grouped = _eventController.eventsGroupedByDate;
 
                 // ✅ UI-only loading
-                if (!_hasLoadedOnce && grouped.isEmpty) {
+                if (_eventController.isLoading.value && grouped.isEmpty) {
                   return CalenderScreenShimmer();
                 }
 
-                if (!_hasLoadedOnce) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    setState(() => _hasLoadedOnce = true);
-                  });
-                }
-
-                if (grouped.isEmpty) {
+                if (!_eventController.isLoading.value && grouped.isEmpty) {
                   return const Center(
                     child: Padding(
                       padding: EdgeInsets.all(20),
@@ -1102,13 +1096,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 }
 
                 final today = DateTime.now();
-                final todayNormalized =
-                DateTime(today.year, today.month, today.day);
+                final todayNormalized = DateTime(
+                  today.year,
+                  today.month,
+                  today.day,
+                );
 
-                final upcomingDates = grouped.keys
-                    .where((date) => !date.isBefore(todayNormalized))
-                    .toList()
-                  ..sort((a, b) => a.compareTo(b));
+                final upcomingDates =
+                    grouped.keys
+                        .where((date) => !date.isBefore(todayNormalized))
+                        .toList()
+                      ..sort((a, b) => a.compareTo(b));
 
                 if (upcomingDates.isEmpty) {
                   return const Center(
@@ -1130,15 +1128,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             for (final event in grouped[date]!)
                               EventCard(
                                 title: event.title ?? "",
-                                description:
-                                "All day — ${event.details ?? ""}",
+                                description: "All day — ${event.details ?? ""}",
                                 tag: event.categoryName ?? "",
                                 tagColor: Colors.blue,
                                 onEdit: () {
-                                  showEventDialog(
-                                    event: event,
-                                    isEdit: true,
-                                  );
+                                  showEventDialog(event: event, isEdit: true);
                                 },
                                 onDelete: () {
                                   showDeleteConfirmationDialog(
@@ -1166,20 +1160,21 @@ class _CalendarScreenState extends State<CalendarScreen> {
     final days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: days
-          .map(
-            (e) => Expanded(
-          child: Container(
-            padding: const EdgeInsets.all(8),
-            alignment: Alignment.center,
-            child: Text(
-              e[0],
-              style: TextStyle(fontWeight: AppFontWeights.semiBold),
-            ),
-          ),
-        ),
-      )
-          .toList(),
+      children:
+          days
+              .map(
+                (e) => Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    alignment: Alignment.center,
+                    child: Text(
+                      e[0],
+                      style: TextStyle(fontWeight: AppFontWeights.semiBold),
+                    ),
+                  ),
+                ),
+              )
+              .toList(),
     );
   }
 
@@ -1205,17 +1200,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
       dayWidgets.add(
         GestureDetector(
-          onTap: dayDate.isBefore(todayNormalized)
-              ? null
-              : () => showEventDialog(
-            event: CalenderEventModel(date: dayDate.toString()),
-          ),
+          onTap:
+              dayDate.isBefore(todayNormalized)
+                  ? null
+                  : () => showEventDialog(
+                    event: CalenderEventModel(date: dayDate.toString()),
+                  ),
           child: Obx(() {
             final isSelected =
                 calendarController.selectedDate.value != null &&
-                    DateFormat('yyyy-MM-dd')
-                        .format(calendarController.selectedDate.value!) ==
-                        DateFormat('yyyy-MM-dd').format(dayDate);
+                DateFormat(
+                      'yyyy-MM-dd',
+                    ).format(calendarController.selectedDate.value!) ==
+                    DateFormat('yyyy-MM-dd').format(dayDate);
 
             final hasEvent =
                 _eventController.getEventsForDate(dayDate).isNotEmpty;
@@ -1234,10 +1231,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
             return Container(
               margin: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: bgColor,
-                shape: BoxShape.circle,
-              ),
+              decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle),
               alignment: Alignment.center,
               child: Stack(
                 children: [
@@ -1246,9 +1240,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       "$day",
                       style: TextStyle(
                         color: textColor,
-                        fontWeight: dayDate == todayNormalized
-                            ? AppFontWeights.semiBold
-                            : null,
+                        fontWeight:
+                            dayDate == todayNormalized
+                                ? AppFontWeights.semiBold
+                                : null,
                       ),
                     ),
                   ),

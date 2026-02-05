@@ -406,10 +406,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 return GestureDetector(
                   onTap: () {
-                     Get.to(
+                    Get.to(
                       () => ResellerSuccessDetailScreen(successStory: data),
                     );
-                  /*  Get.defaultDialog(
+                    /*  Get.defaultDialog(
                       title: "",
                       contentPadding: const EdgeInsets.all(16),
                       backgroundColor: Colors.white,
@@ -596,7 +596,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(height: 8),
 
                         // 🏷 Achievement tag
-               /*         Container(
+                        /*         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8,
                             vertical: 3,
@@ -616,7 +616,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),*/
-
                         Spacer(),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -906,6 +905,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHorizontalPropertyList(List<dynamic> properties) {
+    print("_buildHorizontalPropertyList called ${properties.length}");
     return Padding(
       padding: const EdgeInsets.only(left: 12),
       child: SizedBox(
@@ -1243,7 +1243,9 @@ class _HomeScreenState extends State<HomeScreen> {
       if (topSellerController.items.isEmpty) {
         return const SizedBox.shrink();
       }
-      print("[TopSeller] topSeller : ${topSellerController.items.map((e) => e.toJson())}");
+      print(
+        "[TopSeller] topSeller : ${topSellerController.items.map((e) => e.toJson())}",
+      );
       return Column(
         children: [
           const SizedBox(height: 15),

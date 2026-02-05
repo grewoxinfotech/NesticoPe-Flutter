@@ -4,6 +4,7 @@ import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractot_employee_controller.dart';
 import '../../../../data/network/contractor/model/employee/contractor_employee_model.dart';
+import '../../../../utils/shimmer/contractor/employee/contractor_employee_list_screen_shimmer.dart';
 import '../../../../widgets/New folder/inputs/text_field.dart';
 import '../../../../widgets/messages/snack_bar.dart';
 // import '../../../data/network/contractor/model/employee/contractor_employee_model.dart';
@@ -38,7 +39,7 @@ class ContractorEmployeeScreen extends StatelessWidget {
       // BODY SECTION
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return ContractorEmployeeListScreenShimmer();
         }
 
         // ✅ Always wrap content inside RefreshIndicator

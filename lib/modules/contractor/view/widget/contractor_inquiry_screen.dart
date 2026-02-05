@@ -369,6 +369,7 @@ import 'package:get/get.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../data/network/contractor/model/contractot_service_model/contractor_inquiry_model.dart';
+import '../../../../utils/shimmer/contractor/inquiry/contractor_inquiry_list_screen_shimmer.dart';
 import '../../../../widgets/New folder/inputs/dropdown_field.dart';
 import '../../../../widgets/bar/filter_bar/filter_chip_bar.dart';
 import '../../controller/contractor_inquiry_controller.dart';
@@ -452,9 +453,7 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
               child: Obx(() {
                 final items = controller.items;
                 if (controller.isLoading.value) {
-                  return Center(
-                    child: CircularProgressIndicator(color: ColorRes.primary),
-                  );
+                  return ContractorInquiryListScreenShimmer();
                 }
 
                 if (controller.items.isEmpty) {

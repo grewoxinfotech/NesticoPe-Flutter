@@ -5,6 +5,7 @@ import 'package:housing_flutter_app/modules/aadhar_auth/screens/aadhar_auth_scre
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_dashboard_controller.dart';
 import 'package:housing_flutter_app/modules/contractor/view/widget/create_service_from.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/widget/dashboard_layout.dart';
+import 'package:housing_flutter_app/utils/shimmer/dashboard/dashbard_shimmer.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
@@ -69,7 +70,7 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
         ),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return DashboardShimmer();
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData) {
@@ -112,7 +113,13 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
                           child: IconButton(
                             onPressed: () async {
                               // await exportContractorInsightsToExcel(contractorInsightsJson);
-                               await exportContractorInsightsToExcel(contractorDashboardController.contractorInsights.value?.toMap()??{});
+                              await exportContractorInsightsToExcel(
+                                contractorDashboardController
+                                        .contractorInsights
+                                        .value
+                                        ?.toMap() ??
+                                    {},
+                              );
                             },
                             icon: const Icon(Icons.download, size: 18),
 
@@ -224,7 +231,8 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
                       () => buildProjectsTrendGraph(
                         contractorDashboardController,
                       ),
-                    ), const SizedBox(height: 20),
+                    ),
+                    const SizedBox(height: 20),
                     Obx(
                       () => buildContractorLeadSourceDistributionGraph(
                         contractorDashboardController,
@@ -593,9 +601,10 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
     );
   }
 }
+
 Widget buildContractorLeadSourceDistributionGraph(
-    ContractorDashboardController overviewController,
-    ) {
+  ContractorDashboardController overviewController,
+) {
   return Container(
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
@@ -639,10 +648,7 @@ Widget buildContractorLeadSourceDistributionGraph(
                 color: ColorRes.primary.withOpacity(0.2),
               ),
               child: Text(
-                'Total: ${Formatter.formatNumber(
-                  (overviewController.contractorInsights.value?.data?.leadAnalytics?.leadSourceBreakdown?.values
-                      ?.fold<int>(0, (sum, value) => sum + (value as int))) ?? 0,
-                )}',
+                'Total: ${Formatter.formatNumber((overviewController.contractorInsights.value?.data?.leadAnalytics?.leadSourceBreakdown?.values?.fold<int>(0, (sum, value) => sum + (value as int))) ?? 0)}',
 
                 style: TextStyle(
                   color: ColorRes.primary,
@@ -661,11 +667,12 @@ Widget buildContractorLeadSourceDistributionGraph(
           width: double.infinity,
           child: LeadSourceDistributionPieGraph(
             breakdown:
-            overviewController
-                .contractorInsights
-                .value
-                ?.data
-                ?.leadAnalytics?.leadSourceBreakdown??
+                overviewController
+                    .contractorInsights
+                    .value
+                    ?.data
+                    ?.leadAnalytics
+                    ?.leadSourceBreakdown ??
                 {},
           ),
         ),
@@ -673,9 +680,10 @@ Widget buildContractorLeadSourceDistributionGraph(
     ),
   );
 }
+
 Widget buildContractorLeadStatusDistributionGraph(
-    ContractorDashboardController overviewController,
-    ) {
+  ContractorDashboardController overviewController,
+) {
   return Container(
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
@@ -719,10 +727,7 @@ Widget buildContractorLeadStatusDistributionGraph(
                 color: ColorRes.primary.withOpacity(0.2),
               ),
               child: Text(
-                'Total: ${Formatter.formatNumber(
-                  (overviewController.contractorInsights.value?.data?.leadAnalytics?.leadStatusBreakdown?.values
-                      ?.fold<int>(0, (sum, value) => sum + (value as int))) ?? 0,
-                )}',
+                'Total: ${Formatter.formatNumber((overviewController.contractorInsights.value?.data?.leadAnalytics?.leadStatusBreakdown?.values?.fold<int>(0, (sum, value) => sum + (value as int))) ?? 0)}',
 
                 style: TextStyle(
                   color: ColorRes.primary,
@@ -741,11 +746,12 @@ Widget buildContractorLeadStatusDistributionGraph(
           width: double.infinity,
           child: LeadStatusDistributionPieGraph(
             breakdown:
-            overviewController
-                .contractorInsights
-                .value
-                ?.data
-                ?.leadAnalytics?.leadStatusBreakdown??
+                overviewController
+                    .contractorInsights
+                    .value
+                    ?.data
+                    ?.leadAnalytics
+                    ?.leadStatusBreakdown ??
                 {},
           ),
         ),
@@ -924,9 +930,8 @@ Widget contractorLeadFunnel(ContractorDashboardController overviewController) {
                     .contractorInsights
                     .value
                     ?.data
-
-                    ?.leadAnalytics?.leadStageBreakdown,
-
+                    ?.leadAnalytics
+                    ?.leadStageBreakdown,
           ),
         ),
       ],

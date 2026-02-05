@@ -301,6 +301,7 @@ import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../../data/network/contractor/model/contractot_service_model/contractor_service_model.dart';
+import '../../../../utils/shimmer/contractor/service/contractor_my_service_list_screen_shimmer.dart';
 import '../../../aadhar_auth/screens/aadhar_auth_screen.dart';
 import '../../controller/contractor_dashboard_controller.dart';
 import '../../controller/contractor_my_service_controller.dart';
@@ -387,9 +388,7 @@ class ContractorService extends StatelessWidget {
         final items = controller.items;
 
         if (controller.isLoading.value) {
-          return Center(
-            child: CircularProgressIndicator(color: ColorRes.primary),
-          );
+          return ContractorMyServiceListScreenShimmer();
         }
 
         return RefreshIndicator(
@@ -459,7 +458,7 @@ class _ServiceCardState extends State<ServiceCard> {
   Widget build(BuildContext context) {
     final meta = widget.item.meta;
     final acceptedPayments = meta.acceptedPaymentModes;
-   /* final metaSections = [
+    /* final metaSections = [
       _metaSection(
         icon: Icons.home_work,
         title: "Construction Materials",
@@ -860,7 +859,7 @@ class _ServiceCardState extends State<ServiceCard> {
                 ),
                 const SizedBox(height: 16),
 
-              /*  if (safeMetaSections.isNotEmpty) ...[
+                /*  if (safeMetaSections.isNotEmpty) ...[
 
                   ...safeMetaSections
                       .take(showAllMeta ? safeMetaSections.length : 2)
@@ -900,12 +899,13 @@ class _ServiceCardState extends State<ServiceCard> {
                           showAllMeta ? Icons.expand_less : Icons.expand_more,
                         ),
                         label: Text(
-                          showAllMeta ? "Show less details" : "Show more details",
+                          showAllMeta
+                              ? "Show less details"
+                              : "Show more details",
                         ),
                       ),
                     ),
                 ],
-
 
                 if ([
                   meta.threeDDesign,

@@ -5,6 +5,7 @@ import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/constants/color_res.dart';
 import '../../../../../data/network/contractor/model/contractor_project_model/contractor_project_payment_model.dart';
+import '../../../../../utils/shimmer/contractor/payment/contractor_payment_list_screen_shimmer.dart';
 import '../../../controller/contractor_project_payment_controller.dart';
 import 'add_milestone_payment_screen.dart';
 
@@ -54,9 +55,7 @@ class _ContractorProjectMileStonePaymentScreenState
             child: IconButton(
               onPressed: () async {
                 final success = await Get.to(
-                      () => AddMilestonePaymentScreen(
-                    tag: tag,
-                  ),
+                  () => AddMilestonePaymentScreen(tag: tag),
                 );
 
                 if (success == true) {
@@ -76,7 +75,7 @@ class _ContractorProjectMileStonePaymentScreenState
       ),
       body: Obx(() {
         if (controller.isLoading.value && controller.items.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return ContractorPaymentListScreenShimmer();
         }
 
         if (!controller.isLoading.value && controller.items.isEmpty) {
@@ -113,7 +112,7 @@ class _ContractorProjectMileStonePaymentScreenState
           child: ListView.builder(
             padding: const EdgeInsets.all(16),
             itemCount:
-            controller.items.length + (controller.hasMore.value ? 1 : 0),
+                controller.items.length + (controller.hasMore.value ? 1 : 0),
             itemBuilder: (context, index) {
               if (index >= controller.items.length) {
                 controller.loadMore();
@@ -127,7 +126,7 @@ class _ContractorProjectMileStonePaymentScreenState
                 payment: controller.items[index],
                 onEdit: () async {
                   final success = await Get.to(
-                        () => AddMilestonePaymentScreen(
+                    () => AddMilestonePaymentScreen(
                       tag: tag,
                       payment: controller.items[index],
                     ),
@@ -150,11 +149,7 @@ class _ContractorProjectMileStonePaymentScreenState
 }
 
 class _PaymentCard extends StatelessWidget {
-  const _PaymentCard({
-    required this.payment,
-    this.onEdit,
-    this.onDelete,
-  });
+  const _PaymentCard({required this.payment, this.onEdit, this.onDelete});
 
   final MilestonePaymentItem payment;
   final VoidCallback? onEdit;
@@ -165,11 +160,15 @@ class _PaymentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final formattedAmount =
-    Formatter.formatPrice(num.tryParse(payment.amount??'')??0);
+    final formattedAmount = Formatter.formatPrice(
+      num.tryParse(payment.amount ?? '') ?? 0,
+    );
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),side: BorderSide(color: ColorRes.leadGreyColor.shade300)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: ColorRes.leadGreyColor.shade300),
+      ),
 
       elevation: 2,
       child: Padding(
@@ -185,13 +184,13 @@ class _PaymentCard extends StatelessWidget {
                     payment.milestone.title,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: ColorRes.textPrimary
+                      color: ColorRes.textPrimary,
                     ),
                   ),
                 ),
                 _StatusChip(
-                  label: payment.paymentStatus??'',
-                  color: _paymentStatusColor(payment.paymentStatus??''),
+                  label: payment.paymentStatus ?? '',
+                  color: _paymentStatusColor(payment.paymentStatus ?? ''),
                 ),
                 if (_canModify) ...[
                   const SizedBox(width: 4),
@@ -213,7 +212,7 @@ class _PaymentCard extends StatelessWidget {
 
             /// Amount
             Text(
-              '${Formatter.formatPrice(num.tryParse(payment.amount.toString())??0)}',
+              '${Formatter.formatPrice(num.tryParse(payment.amount.toString()) ?? 0)}',
 
               style: const TextStyle(
                 fontSize: 18,
@@ -222,9 +221,8 @@ class _PaymentCard extends StatelessWidget {
               ),
             ),
 
-
             /// Payment Mode & Reference
-          /*  Row(
+            /*  Row(
               children: [
                 _InfoTile(
                   label: 'Mode',
@@ -255,15 +253,18 @@ class _PaymentCard extends StatelessWidget {
               ],
             ),*/
             const SizedBox(height: 5),
-            Divider(color: ColorRes.leadGreyColor.shade300,),
+            Divider(color: ColorRes.leadGreyColor.shade300),
             const SizedBox(height: 5),
             Row(
               children: [
                 const CircleAvatar(
                   radius: 14,
                   backgroundColor: Color(0xFFE7F2FF),
-                  child: Icon(Icons.account_balance_wallet_outlined,
-                      size: 16, color: Colors.blue),
+                  child: Icon(
+                    Icons.account_balance_wallet_outlined,
+                    size: 16,
+                    color: Colors.blue,
+                  ),
                 ),
                 const SizedBox(width: 10),
                 Column(
@@ -273,7 +274,7 @@ class _PaymentCard extends StatelessWidget {
                       "PAYMENT MODE",
                       style: theme.textTheme.labelSmall?.copyWith(
                         fontWeight: FontWeight.w600,
-                        color:ColorRes.leadGreyColor.shade600,
+                        color: ColorRes.leadGreyColor.shade600,
                         letterSpacing: 0.3,
                       ),
                     ),
@@ -282,7 +283,7 @@ class _PaymentCard extends StatelessWidget {
                       _capitalizeFirst(payment.paymentMode ?? ''),
                       style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: ColorRes.textPrimary
+                        color: ColorRes.textPrimary,
                       ),
                     ),
                   ],
@@ -296,8 +297,11 @@ class _PaymentCard extends StatelessWidget {
                 const CircleAvatar(
                   radius: 14,
                   backgroundColor: Color(0xFFE7F2FF),
-                  child: Icon(Icons.calendar_today_outlined,
-                      size: 15, color: Colors.blue),
+                  child: Icon(
+                    Icons.calendar_today_outlined,
+                    size: 15,
+                    color: Colors.blue,
+                  ),
                 ),
                 const SizedBox(width: 10),
                 Column(
@@ -316,14 +320,13 @@ class _PaymentCard extends StatelessWidget {
                       Formatter.formatDate(payment.paidOn?.toIso8601String()),
                       style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w600,
-                          color: ColorRes.textPrimary
+                        color: ColorRes.textPrimary,
                       ),
                     ),
                   ],
                 ),
               ],
             ),
-
           ],
         ),
       ),
@@ -386,10 +389,7 @@ class _InfoTile extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),

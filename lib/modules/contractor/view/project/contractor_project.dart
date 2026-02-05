@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
+import '../../../../utils/shimmer/contractor/project/contractor_project_list_screen_shimmer.dart';
 import '../../../../widgets/New folder/inputs/dropdown_field.dart';
 import '../../../../widgets/bar/filter_bar/filter_chip_bar.dart';
 import '../../../../widgets/messages/snack_bar.dart';
@@ -112,9 +113,7 @@ class _ContractorProjectScreenState extends State<ContractorProjectScreen> {
               child: Obx(() {
                 final projects = controller.items;
                 if (controller.isLoading.value) {
-                  return const Center(
-                    child: CircularProgressIndicator(color: ColorRes.primary),
-                  );
+                  return ContractorProjectListScreenShimmer();
                 }
                 if (controller.items.isEmpty) {
                   return RefreshIndicator(

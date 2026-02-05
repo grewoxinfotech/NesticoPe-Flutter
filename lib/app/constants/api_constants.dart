@@ -5,14 +5,17 @@ class ApiConstants {
   // Manual override options (comment/uncomment as needed):
   // static const String baseURL = "http://housing.grewox.com/api/v1"; // Live
 
-  // static const String url = "http://192.168.1.5:19725";
-  static const String url = "https://nesticopeapi.grewoxinfotech.com";
+  static const String url = "http://192.168.1.5:19725";
+  // static const String url = "https://nesticopeapi.grewoxinfotech.com";
   // static const String url = "https://commentary-flush-reprints-prison.trycloudflare.com";
 
   // static const String url =
   //     "https://bow-dir-facility-adjusted.trycloudflare.com";
   static const String baseURL = "$url/api/v1"; // Real Device (WiFi)
   static const String ticketChat = url; // Real Device (WiFi)
+
+  // Notification Endpoints
+  static String get notifications => "$baseURL/notification";
 
   // Auth Endpoints
   static String get auth => "$baseURL/auth";

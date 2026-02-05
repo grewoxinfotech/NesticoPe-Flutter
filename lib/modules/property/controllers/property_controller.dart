@@ -216,7 +216,10 @@ class PropertyController extends PaginatedController<Items> {
       }
 
       // Apply city filter and load properties
-      final filter = {'city': selectedCity.value};
+      final filter = {
+        'city': selectedCity.value,
+        'approval_status': 'approved',
+      };
       await applyFilters(filter);
       await loadInitial();
       await loadTopProperties();
@@ -399,15 +402,16 @@ class PropertyController extends PaginatedController<Items> {
   Future<void> getAllInQuireData(String propertyId) async {
     log('Property Id For Inquiry $propertyId');
 
-    if(UserHelper.isGuest)
-      {
-        final exists = await SecureStorage.hasPropertyInquiry(propertyId);
-        hasSubmittedInquiry.value = exists;
-      }else{
+    if (UserHelper.isGuest) {
+      final exists = await SecureStorage.hasPropertyInquiry(propertyId);
+      hasSubmittedInquiry.value = exists;
+    } else {
       try {
         final UserModel user = await SecureStorage.getUserData() ?? UserModel();
         final userId = user.user?.id ?? '';
-        final inquiries = await _contactedService.fetchContactedInquiries(userId);
+        final inquiries = await _contactedService.fetchContactedInquiries(
+          userId,
+        );
         inquiryResponse.assignAll(inquiries);
 
         final result = inquiryResponse.any((e) => e.propertyId == propertyId);
@@ -426,14 +430,10 @@ class PropertyController extends PaginatedController<Items> {
   Future<void> getHasInQuireData(String propertyId) async {
     log('Property Id For Inquiry $propertyId');
 
-    if(UserHelper.isGuest)
-      {
-        final exists = await SecureStorage.hasPropertyInquiry(propertyId);
-        hasSubmittedInquiry.value = exists;
-
-
-      }
-    else{
+    if (UserHelper.isGuest) {
+      final exists = await SecureStorage.hasPropertyInquiry(propertyId);
+      hasSubmittedInquiry.value = exists;
+    } else {
       try {
         final UserModel user = await SecureStorage.getUserData() ?? UserModel();
         final userId = user.user?.id ?? '';

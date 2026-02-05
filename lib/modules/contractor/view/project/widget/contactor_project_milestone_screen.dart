@@ -7,6 +7,7 @@ import 'package:housing_flutter_app/modules/property_rating/view/widget/read_mor
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/constants/color_res.dart';
 import '../../../../../data/network/contractor/model/contractor_project_model/contractor_project_milestone_model.dart';
+import '../../../../../utils/shimmer/contractor/milestone/contractor_milestone_list_screen_shimmer.dart';
 import '../../../controller/contractor_project_milestone_controller.dart';
 
 class ContactorProjectMileStoneScreen extends StatefulWidget {
@@ -87,7 +88,7 @@ class _ContactorProjectMileStoneScreenState
       ),
       body: Obx(() {
         if (controller.isLoading.value && controller.items.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return ContractorMilestoneListScreenShimmer();
         }
 
         if (!controller.isLoading.value && controller.items.isEmpty) {
