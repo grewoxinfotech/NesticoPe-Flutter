@@ -378,7 +378,7 @@ class ContractorMyServiceController
         isActive: true,
 
         meta: ContractorMetaData(
-          priceModel: selectedPriceModel.value.toLowerCase(),
+          priceModel: selectedPriceModel.value.toLowerCase().replaceAll(" ", "_"),
           minPriceRange: int.tryParse(minRangeController.text.trim()) ?? 0,
           maxPriceRange: int.tryParse(maxRangeController.text.trim()) ?? 0,
           visitCharge: int.tryParse(visitChargeController.text.trim()) ?? 0,
@@ -932,7 +932,7 @@ class ContractorMyServiceController
         isActive: editingService.value!.isActive,
         // Preserve active status
         meta: ContractorMetaData(
-          priceModel: selectedPriceModel.value.toLowerCase(),
+          priceModel: selectedPriceModel.value.toLowerCase().replaceAll(" ", "_"),
           minPriceRange: int.tryParse(minRangeController.text.trim()) ?? 0,
           maxPriceRange: int.tryParse(maxRangeController.text.trim()) ?? 0,
           visitCharge: int.tryParse(visitChargeController.text.trim()) ?? 0,

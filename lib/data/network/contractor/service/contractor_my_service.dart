@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 
 import '../../../../app/care/pagination/models/pagination_models.dart';
 import '../../../../app/constants/api_constants.dart';
@@ -236,7 +237,7 @@ class ContractorMyService {
           message: jsonData['message'],
           contentType: ContentType.success,
         );
-        print("Service Updated Successfully: $data");
+        AppLogger.structured("Service Updated Successfully: ",data);
         return data['success'];
       } else {
         final jsonData = json.decode(response.body);

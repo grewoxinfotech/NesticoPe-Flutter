@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
@@ -14,7 +15,9 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'dart:io';
+import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:timeago/timeago.dart' as currencyFormat;
 
 import '../../../../widgets/messages/snack_bar.dart';
@@ -57,6 +60,40 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool hasMaterialSpecs = [
+      widget.quotation.meta.cementBrand,
+      widget.quotation.meta.steelBrand,
+      widget.quotation.meta.brickType,
+      widget.quotation.meta.sandSource,
+      widget.quotation.meta.falseCeiling,
+      widget.quotation.meta.fabricationWork,
+      widget.quotation.meta.waterTankBrand,
+      widget.quotation.meta.brickType,
+      widget.quotation.meta.cementBrand,
+      widget.quotation.meta.chokhatType,
+      widget.quotation.meta.doorsType,
+      widget.quotation.meta.electricalSwitchesBrand,
+      widget.quotation.meta.electricalWiresBrand,
+      widget.quotation.meta.exteriorPaintBrand,
+      widget.quotation.meta.flooringTilesBrand,
+      widget.quotation.meta.interiorPaintBrand,
+      widget.quotation.meta.plasterType,
+      widget.quotation.meta.plumbingPipesBrand,
+      widget.quotation.meta.railingType,
+      widget.quotation.meta.steelBrand,
+      widget.quotation.meta.structure,
+      widget.quotation.meta.waterproofing,
+      widget.quotation.meta.windowsType,
+    ].any((e) => e?.isNotEmpty ?? false);
+    bool hasAdditionalDetails = [
+      widget.quotation.meta.design3D,
+      widget.quotation.meta.boreAndPump,
+      widget.quotation.meta.homeAutomation,
+      widget.quotation.meta.modularKitchen,
+      widget.quotation.meta.securitySystems,
+      widget.quotation.meta.solarSolutions,
+    ].any((e) => e != null && e.trim().isNotEmpty);
+
     return Scaffold(
       backgroundColor: ColorRes.background,
       appBar: AppBar(
@@ -155,204 +192,6 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
                     widget.quotation.meta.propertyDetails?.serviceDescription ??
                         '',
                   ),
-                  // const SizedBox(height: 12),
-                   Divider(color:ColorRes.leadGreyColor.shade400 ,),
-                  const SizedBox(height: 12),
-
-                  // Material Specifications
-                  Text(
-                    'Material Specifications',
-                    style: TextStyle(
-                      fontSize: AppFontSizes.medium,
-                      fontWeight: AppFontWeights.semiBold,
-                      color: ColorRes.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  if (widget.quotation.meta.cementBrand?.isNotEmpty ?? false)
-                    _buildInfoRow(
-                      'Cement Brand:',
-                      widget.quotation.meta.cementBrand!.join(', '),
-                    ),
-                  const SizedBox(height: 12),
-                  if (widget.quotation.meta.steelBrand?.isNotEmpty ?? false)
-                    _buildInfoRow(
-                      'Steel Brand:',
-                      widget.quotation.meta.steelBrand!.join(', '),
-                    ),
-                  const SizedBox(height: 12),
-                  if (widget.quotation.meta.brickType?.isNotEmpty ?? false)
-                    _buildInfoRow(
-                      'Bricks Type:',
-                      widget.quotation.meta.brickType!.join(', '),
-                    ),
-                  const SizedBox(height: 12),
-                  if (widget.quotation.meta.sandSource?.isNotEmpty ?? false)
-                    _buildInfoRow(
-                      'Sand Source:',
-                      widget.quotation.meta.sandSource!.join(', '),
-                    ),
-                  const SizedBox(height: 12),
-                  if (widget.quotation.meta.electricalWiresBrand?.isNotEmpty ??
-                      false)
-                    _buildInfoRow(
-                      'Electrical Wires:',
-                      widget.quotation.meta.electricalWiresBrand!.join(', '),
-                    ),
-                  const SizedBox(height: 12),
-                  if (widget
-                          .quotation
-                          .meta
-                          .electricalSwitchesBrand
-                          ?.isNotEmpty ??
-                      false)
-                    _buildInfoRow(
-                      'Switches/Sockets:',
-                      widget.quotation.meta.electricalSwitchesBrand!.join(', '),
-                    ),
-                  const SizedBox(height: 12),
-                  if (widget.quotation.meta.plumbingPipesBrand?.isNotEmpty ??
-                      false)
-                    _buildInfoRow(
-                      'Plumbing Pipes:',
-                      widget.quotation.meta.plumbingPipesBrand!.join(', '),
-                    ),
-                  const SizedBox(height: 12),
-                  if (widget.quotation.meta.sanitaryFittingsBrand?.isNotEmpty ??
-                      false)
-                    _buildInfoRow(
-                      'Sanitary/WC:',
-                      widget.quotation.meta.sanitaryFittingsBrand!.join(', '),
-                    ),
-                  const SizedBox(height: 12),
-                  if (widget.quotation.meta.waterTankBrand?.isNotEmpty ?? false)
-                    _buildInfoRow(
-                      'Water Tank:',
-                      widget.quotation.meta.waterTankBrand!.join(', '),
-                    ),
-                  const SizedBox(height: 12),
-                  if (widget.quotation.meta.flooringTilesBrand?.isNotEmpty ??
-                      false)
-                    _buildInfoRow(
-                      'Flooring Tiles:',
-                      widget.quotation.meta.flooringTilesBrand!.join(', '),
-                    ),
-                  const SizedBox(height: 12),
-                  if (widget.quotation.meta.interiorPaintBrand?.isNotEmpty ??
-                      false)
-                    _buildInfoRow(
-                      'Interior Paint:',
-                      widget.quotation.meta.interiorPaintBrand!.join(', '),
-                    ),
-                  const SizedBox(height: 12),
-                  if (widget.quotation.meta.exteriorPaintBrand?.isNotEmpty ??
-                      false)
-                    _buildInfoRow(
-                      'Exterior Paint:',
-                      widget.quotation.meta.exteriorPaintBrand!.join(', '),
-                    ),
-                  const SizedBox(height: 12),
-                  if (widget.quotation.meta.doorsType?.isNotEmpty ?? false)
-                    _buildInfoRow(
-                      'Doors Type:',
-                      widget.quotation.meta.doorsType!.join(', '),
-                    ),
-                  const SizedBox(height: 12),
-                  if (widget.quotation.meta.windowsType?.isNotEmpty ?? false)
-                    _buildInfoRow(
-                      'Windows Type:',
-                      widget.quotation.meta.windowsType!.join(', '),
-                    ),
-                  const SizedBox(height: 12),
-                  if (widget.quotation.meta.structure?.isNotEmpty ?? false)
-                    _buildInfoRow(
-                      'Structure:',
-                      widget.quotation.meta.structure!.join(', '),
-                    ),
-                  const SizedBox(height: 12),
-                  if (widget.quotation.meta.plasterType?.isNotEmpty ?? false)
-                    _buildInfoRow(
-                      'Plaster:',
-                      widget.quotation.meta.plasterType!.join(', '),
-                    ),
-                  const SizedBox(height: 12),
-                  if (widget.quotation.meta.waterproofing?.isNotEmpty ?? false)
-                    _buildInfoRow(
-                      'Waterproofing:',
-                      widget.quotation.meta.waterproofing!.join(', '),
-                    ),
-                  const SizedBox(height: 12),
-                  if (widget.quotation.meta.chokhatType?.isNotEmpty ?? false)
-                    _buildInfoRow(
-                      'Chokhat Type:',
-                      widget.quotation.meta.chokhatType!.join(', '),
-                    ),
-                  const SizedBox(height: 12),
-                  if (widget.quotation.meta.railingType?.isNotEmpty ?? false)
-                    _buildInfoRow(
-                      'Railing Type:',
-                      widget.quotation.meta.railingType!.join(', '),
-                    ),
-                  const SizedBox(height: 12),
-                  if (widget.quotation.meta.falseCeiling?.isNotEmpty ?? false)
-                    _buildInfoRow(
-                      'False Ceiling:',
-                      widget.quotation.meta.falseCeiling!.join(', '),
-                    ),
-                  const SizedBox(height: 12),
-                  if (widget.quotation.meta.fabricationWork?.isNotEmpty ??
-                      false)
-                    _buildInfoRow(
-                      'Fabrication Work:',
-                      widget.quotation.meta.fabricationWork!.join(', '),
-                    ),
-
-                  const SizedBox(height: 12),
-                  Divider(color:ColorRes.leadGreyColor.shade400 ,),
-                  const SizedBox(height: 12),
-
-                  // Additional Services
-                  Text(
-                    'Additional Services',
-                    style: TextStyle(
-                      fontSize: AppFontSizes.medium,
-                      fontWeight: AppFontWeights.semiBold,
-                      color: ColorRes.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  if (widget.quotation.meta.modularKitchen != null)
-                    _buildInfoRow(
-                      'Modular Kitchen:',
-                      widget.quotation.meta.modularKitchen!,
-                    ),
-                  const SizedBox(height: 12),
-                  if (widget.quotation.meta.boreAndPump != null)
-                    _buildInfoRow(
-                      'Bore and Pump:',
-                      widget.quotation.meta.boreAndPump!,
-                    ),
-                  const SizedBox(height: 12),
-                  if (widget.quotation.meta.securitySystems != null)
-                    _buildInfoRow(
-                      'Security Systems:',
-                      widget.quotation.meta.securitySystems!,
-                    ),
-                  const SizedBox(height: 12),
-                  if (widget.quotation.meta.homeAutomation != null)
-                    _buildInfoRow(
-                      'Home Automation:',
-                      widget.quotation.meta.homeAutomation!,
-                    ),
-                  const SizedBox(height: 12),
-                  if (widget.quotation.meta.solarSolutions != null)
-                    _buildInfoRow(
-                      'Solar Solutions:',
-                      widget.quotation.meta.solarSolutions!,
-                    ),
-
                   const SizedBox(height: 12),
                   _buildInfoRow(
                     'Expected Start Date:',
@@ -360,40 +199,181 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
                       'MM/dd/yyyy',
                     ).format(widget.quotation.meta.expectedStartDate),
                   ),
-                  const SizedBox(height: 12),
+                  // const SizedBox(height: 12),
+                  if (hasMaterialSpecs) ...[
+                    const SizedBox(height: 12),
+                    Divider(color: ColorRes.leadGreyColor.shade400),
+                    const SizedBox(height: 12),
+
+                    // Material Specifications
+                    Text(
+                      'Material Specifications',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.medium,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    buildOptionalRow(
+                      'Cement Brand:',
+                      widget.quotation.meta.cementBrand,
+                    ),
+                    buildOptionalRow(
+                      'Steel Brand:',
+                      widget.quotation.meta.steelBrand,
+                    ),
+                    buildOptionalRow(
+                      'Bricks Type:',
+                      widget.quotation.meta.brickType,
+                    ),
+                    buildOptionalRow(
+                      'Sand Source:',
+                      widget.quotation.meta.sandSource,
+                    ),
+                    buildOptionalRow(
+                      'Electrical Wires:',
+                      widget.quotation.meta.electricalWiresBrand,
+                    ),
+                    buildOptionalRow(
+                      'Switches / Sockets:',
+                      widget.quotation.meta.electricalSwitchesBrand,
+                    ),
+                    buildOptionalRow(
+                      'Plumbing Pipes:',
+                      widget.quotation.meta.plumbingPipesBrand,
+                    ),
+                    buildOptionalRow(
+                      'Sanitary / WC:',
+                      widget.quotation.meta.sanitaryFittingsBrand,
+                    ),
+                    buildOptionalRow(
+                      'Water Tank:',
+                      widget.quotation.meta.waterTankBrand,
+                    ),
+                    buildOptionalRow(
+                      'Flooring Tiles:',
+                      widget.quotation.meta.flooringTilesBrand,
+                    ),
+                    buildOptionalRow(
+                      'Interior Paint:',
+                      widget.quotation.meta.interiorPaintBrand,
+                    ),
+                    buildOptionalRow(
+                      'Exterior Paint:',
+                      widget.quotation.meta.exteriorPaintBrand,
+                    ),
+                    buildOptionalRow(
+                      'Doors Type:',
+                      widget.quotation.meta.doorsType,
+                    ),
+                    buildOptionalRow(
+                      'Windows Type:',
+                      widget.quotation.meta.windowsType,
+                    ),
+                    buildOptionalRow(
+                      'Structure:',
+                      widget.quotation.meta.structure,
+                    ),
+                    buildOptionalRow(
+                      'Plaster:',
+                      widget.quotation.meta.plasterType,
+                    ),
+                    buildOptionalRow(
+                      'Waterproofing:',
+                      widget.quotation.meta.waterproofing,
+                    ),
+                    buildOptionalRow(
+                      'Chokhat Type:',
+                      widget.quotation.meta.chokhatType,
+                    ),
+                    buildOptionalRow(
+                      'Railing Type:',
+                      widget.quotation.meta.railingType,
+                    ),
+                    buildOptionalRow(
+                      'False Ceiling:',
+                      widget.quotation.meta.falseCeiling,
+                    ),
+                    buildOptionalRow(
+                      'Fabrication Work:',
+                      widget.quotation.meta.fabricationWork,
+                    ),
+                  ],
+                  if (hasAdditionalDetails) ...[
+                    Divider(color: ColorRes.leadGreyColor.shade400),
+                    const SizedBox(height: 12),
+
+                    // Additional Services
+                    Text(
+                      'Additional Services',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.medium,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    buildOptionalTextRow(
+                      'Modular Kitchen:',
+                      widget.quotation.meta.modularKitchen,
+                    ),
+                    buildOptionalTextRow(
+                      'Bore and Pump:',
+                      widget.quotation.meta.boreAndPump,
+                    ),
+                    buildOptionalTextRow(
+                      'Security Systems:',
+                      widget.quotation.meta.securitySystems,
+                    ),
+                    buildOptionalTextRow(
+                      'Home Automation:',
+                      widget.quotation.meta.homeAutomation,
+                    ),
+                    buildOptionalTextRow(
+                      'Solar Solutions:',
+                      widget.quotation.meta.solarSolutions,
+                    ),
+                  ],
+
                   // Add this where you want to show the advance payment info
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.green.shade50,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.green.shade200),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'ADVANCE PAYMENT REQUIRED',
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.green.shade700,
-                            letterSpacing: 0.5,
+                  if (advancePercentage > 0 && advanceAmount > 0) ...[
+                    const SizedBox(height: 12),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.green.shade200),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'ADVANCE PAYMENT REQUIRED',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.green.shade700,
+                              letterSpacing: 0.5,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          '$advancePercentage% (${Formatter.formatPrice(advanceAmount)})',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.green.shade800,
+                          const SizedBox(height: 8),
+                          Text(
+                            '$advancePercentage% (${Formatter.formatPrice(advanceAmount)})',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.green.shade800,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
 
@@ -441,6 +421,27 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildOptionalRow(String label, List<String>? values) {
+    if (values == null || values.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      children: [
+        _buildInfoRow(label, values.join(', ')),
+        const SizedBox(height: 12),
+      ],
+    );
+  }
+
+  Widget buildOptionalTextRow(String label, String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      children: [_buildInfoRow(label, value), const SizedBox(height: 12)],
     );
   }
 
@@ -1064,6 +1065,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
         .join(' ');
   }
 
+  /*
   Future<void> _downloadQuotationPDF() async {
     final user = await SecureStorage.getUserData();
     log("user : $user");
@@ -1424,16 +1426,28 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
       );
 
       // Close loading dialog
+      final file = await savePdfToTemp(
+        pdf,
+        widget.quotation.id.substring(0, 8),
+      );
 
-      await _sharePDF(pdf);
-      Get.back();
-      /* Get.snackbar(
+      Get.back(); // close loader
+
+      // Open preview
+      Get.to(
+            () => QuotationPdfPreviewScreen(file: file),
+      );
+     */
+
+  /* await _sharePDF(pdf);*/ /*
+     */ /* Get.back();*/ /*
+      */ /* Get.snackbar(
         'Success',
         'Quotation PDF generated and ready to share!',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: ColorRes.primary,
         colorText: Colors.white,
-      );*/
+      );*/ /*
     } catch (e, stackTrace) {
       Get.back(); // Close loading dialog
       print('PDF Generation Error: $e');
@@ -1629,132 +1643,21 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
       ],
     );
   }
+  Future<File> savePdfToTemp(
+      pw.Document pdf,
+      String quotationId,
+      ) async {
+    final bytes = await pdf.save();
+    final dir = await getTemporaryDirectory();
 
-  // pw.Widget _buildItemTable(PdfColor primaryColor, PdfColor darkColor, PdfColor secondaryColor) {
-  //   // Build description
-  //   String description = widget.quotation.meta.serviceNames ?? '';
-  //
-  //   if (widget.quotation.meta.notes.isNotEmpty) {
-  //     String cleanNotes = widget.quotation.meta.notes.replaceAll('Generated from inquiry for: ', '');
-  //     if (!description.contains(cleanNotes) && cleanNotes.isNotEmpty) {
-  //       description += description.isNotEmpty ? '\n\nNote: $cleanNotes' : cleanNotes;
-  //     }
-  //   }
-  //
-  //   if (description.isEmpty) description = 'General Service';
-  //
-  //   // Parse price from string to double
-  //   final price = double.tryParse(widget.quotation.price.toString().replaceAll(',', '')) ?? 0;
-  //
-  //   // Format price manually to avoid NumberFormat issues
-  //   String formatPrice(double amount) {
-  //     final intAmount = amount.toInt();
-  //     final formatted = intAmount.toString().replaceAllMapped(
-  //       RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-  //           (Match m) => '${m[1]},',
-  //     );
-  //     return '₹ $formatted';
-  //   }
-  //
-  //   return pw.Table(
-  //     border: pw.TableBorder.all(color: PdfColors.grey400),
-  //     columnWidths: {
-  //       0: const pw.FlexColumnWidth(3),
-  //       1: const pw.FlexColumnWidth(1),
-  //     },
-  //     children: [
-  //       // Header
-  //       pw.TableRow(
-  //         decoration: pw.BoxDecoration(color: primaryColor),
-  //         children: [
-  //           pw.Padding(
-  //
-  //             padding: const pw.EdgeInsets.all(10),
-  //             child: pw.Text(
-  //               'Description',
-  //               style: pw.TextStyle(
-  //                 fontSize: 11,
-  //                 fontWeight: pw.FontWeight.bold,
-  //                 color: PdfColors.white,
-  //               ),
-  //             ),
-  //           ),
-  //           pw.Padding(
-  //             padding: const pw.EdgeInsets.all(10),
-  //             child: pw.Text(
-  //               'Total',
-  //               textAlign: pw.TextAlign.right,
-  //               style: pw.TextStyle(
-  //                 fontSize: 11,
-  //                 fontWeight: pw.FontWeight.bold,
-  //                 color: PdfColors.white,
-  //               ),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //
-  //       // Body
-  //       pw.TableRow(
-  //         children: [
-  //           pw.Padding(
-  //             padding: const pw.EdgeInsets.all(10),
-  //             child: pw.Text(
-  //               description,
-  //               style: pw.TextStyle(
-  //                 fontSize: 10,
-  //                 color: darkColor,
-  //               ),
-  //             ),
-  //           ),
-  //
-  //
-  //           pw.Padding(
-  //             padding: const pw.EdgeInsets.all(10),
-  //             child: pw.Text(
-  //               "Rs. ${widget.quotation.price}",
-  //               style: pw.TextStyle(
-  //                 fontSize: 10,
-  //                 color: darkColor,
-  //               ),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //
-  //       // Footer (Grand Total)
-  //       pw.TableRow(
-  //         decoration: pw.BoxDecoration(color: PdfColor.fromInt(0xFFF5F5F5)),
-  //         children: [
-  //           pw.Padding(
-  //             padding: const pw.EdgeInsets.all(10),
-  //             child: pw.Text(
-  //               'Grand Total:',
-  //               textAlign: pw.TextAlign.right,
-  //               style: pw.TextStyle(
-  //                 fontSize: 12,
-  //                 fontWeight: pw.FontWeight.bold,
-  //                 color: primaryColor,
-  //               ),
-  //             ),
-  //           ),
-  //           pw.Padding(
-  //             padding: const pw.EdgeInsets.all(10),
-  //             child: pw.Text(
-  //             'Rs. ${price.toString()}',
-  //               textAlign: pw.TextAlign.right,
-  //               style: pw.TextStyle(
-  //                 fontSize: 12,
-  //                 fontWeight: pw.FontWeight.bold,
-  //                 color: primaryColor,
-  //               ),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ],
-  //   );
-  // }
+    final file = File('${dir.path}/quotation_$quotationId.pdf');
+
+    // overwrite same file every time
+    await file.writeAsBytes(bytes, flush: true);
+
+    return file;
+  }
+
 
   String _getFooterNotes() {
     String notes = 'Standard terms and conditions apply.';
@@ -1786,402 +1689,999 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
       return 'N/A';
     }
   }
+}*/
 
-  // Future<void> _downloadQuotationPDF() async {
-  //   try {
-  //     // Show loading dialog
-  //     Get.dialog(
-  //       const Center(
-  //         child: CircularProgressIndicator(),
-  //       ),
-  //       barrierDismissible: false,
-  //     );
-  //     final primaryColor = PdfColor.fromInt(0xFF2980B9); // Professional Blue
-  //     final secondaryColor = PdfColor.fromInt(0xFF7F8C8D); // Gray
-  //     final darkColor = PdfColor.fromInt(0xFF2C3E50); // Dark Navy
-  //
-  //     final pdf = pw.Document();
-  //
-  //     // Add page to PDF
-  //     pdf.addPage(
-  //       pw.MultiPage(
-  //         pageFormat: PdfPageFormat.a4,
-  //         margin: const pw.EdgeInsets.all(32),
-  //         build: (pw.Context context) {
-  //           return [
-  //             // Header
-  //             _buildPDFHeader(),
-  //             pw.SizedBox(height: 30),
-  //
-  //             // Quotation ID and Date
-  //             _buildPDFQuotationInfo(),
-  //             pw.SizedBox(height: 20),
-  //
-  //             // Customer Details
-  //             _buildPDFSection('Customer Details', [
-  //               _buildPDFRow('Name', widget.quotation.user.name),
-  //               _buildPDFRow('Phone', widget.quotation.user.phone),
-  //               _buildPDFRow('Email', widget.quotation.user.email),
-  //             ]),
-  //             pw.SizedBox(height: 20),
-  //
-  //             // Property Details
-  //             _buildPDFSection('Property Details', [
-  //               _buildPDFRow('Type', widget.quotation.meta.propertyDetails?.propertyType??''),
-  //               _buildPDFRow('City', widget.quotation.meta.propertyDetails?.city??''),
-  //               _buildPDFRow('Location', widget.quotation.meta.propertyDetails?.location??''),
-  //               _buildPDFRow('State', widget.quotation.meta.propertyDetails?.state??''),
-  //               _buildPDFRow('Carpet Area', '${widget.quotation.meta.propertyDetails?.carpetArea} sq.ft'),
-  //               if (widget.quotation.meta.propertyDetails?.bhk != null)
-  //                 _buildPDFRow('BHK', '${widget.quotation.meta.propertyDetails?.bhk}'),
-  //             ]),
-  //             pw.SizedBox(height: 20),
-  //
-  //             // Service Details
-  //             _buildPDFSection('Service Details', [
-  //               _buildPDFRow('Services', widget.quotation.meta.serviceNames??''),
-  //               _buildPDFRow('Description', widget.quotation.meta.propertyDetails?.serviceDescription??''),
-  //             ]),
-  //             pw.SizedBox(height: 20),
-  //
-  //             // Notes
-  //             _buildPDFSection('Notes', [
-  //               pw.Text(
-  //                 widget.quotation.meta.notes,
-  //                 style: pw.TextStyle(fontSize: 11, color: PdfColors.grey800),
-  //               ),
-  //             ]),
-  //             pw.SizedBox(height: 30),
-  //
-  //             // Price Section
-  //             pw.Container(
-  //               padding: const pw.EdgeInsets.all(16),
-  //               decoration: pw.BoxDecoration(
-  //                 color: PdfColor.fromHex('#E3F2FD'),
-  //                 borderRadius: pw.BorderRadius.circular(8),
-  //               ),
-  //               child: pw.Row(
-  //                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-  //                 children: [
-  //                   pw.Text(
-  //                     'Total Quotation Price',
-  //                     style: pw.TextStyle(
-  //                       fontSize: 16,
-  //                       fontWeight: pw.FontWeight.bold,
-  //                       color: PdfColor.fromHex('#1976D2'),
-  //                     ),
-  //                   ),
-  //                   pw.Text(
-  //                     '₹ ${widget.quotation.price}',
-  //                     style: pw.TextStyle(
-  //                       fontSize: 20,
-  //                       fontWeight: pw.FontWeight.bold,
-  //                       color: PdfColor.fromHex('#1976D2'),
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //
-  //             pw.SizedBox(height: 20),
-  //
-  //             // Status
-  //             pw.Row(
-  //               children: [
-  //                 pw.Text(
-  //                   'Status: ',
-  //                   style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
-  //                 ),
-  //                 pw.Container(
-  //                   padding: const pw.EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-  //                   decoration: pw.BoxDecoration(
-  //                     color: _getPDFStatusColor(widget.quotation.status),
-  //                     borderRadius: pw.BorderRadius.circular(4),
-  //                   ),
-  //                   child: pw.Text(
-  //                     widget.quotation.status.toUpperCase(),
-  //                     style: const pw.TextStyle(fontSize: 10, color: PdfColors.white),
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //
-  //             pw.Spacer(),
-  //
-  //             // Footer
-  //             pw.Divider(),
-  //             pw.SizedBox(height: 10),
-  //             pw.Text(
-  //               'Generated on ${_formatDate(DateTime.now())}',
-  //               style: pw.TextStyle(fontSize: 9, color: PdfColors.grey600),
-  //               textAlign: pw.TextAlign.center,
-  //             ),
-  //             pw.Text(
-  //               'This is a system-generated quotation',
-  //               style: pw.TextStyle(fontSize: 9, color: PdfColors.grey600),
-  //               textAlign: pw.TextAlign.center,
-  //             ),
-  //           ];
-  //         },
-  //       ),
-  //     );
-  //
-  //     // // Close loading dialog
-  //     Get.back();
-  //     await _sharePDF(pdf);
-  //
-  //     // Show save/share dialog
-  //     // await _showPDFOptions(pdf);
-  //   } catch (e) {
-  //     Get.back(); // Close loading dialog
-  //     Get.snackbar(
-  //       'Error',
-  //       'Failed to generate PDF: ${e.toString()}',
-  //       snackPosition: SnackPosition.BOTTOM,
-  //       backgroundColor: ColorRes.error,
-  //       colorText: ColorRes.white,
-  //       duration: const Duration(seconds: 3),
-  //     );
-  //   }
-  // }
-  //
-  // pw.Widget _buildPDFHeader() {
-  //   return pw.Container(
-  //     padding: const pw.EdgeInsets.all(16),
-  //     decoration: pw.BoxDecoration(
-  //       color: PdfColor.fromHex('#1976D2'),
-  //       borderRadius: pw.BorderRadius.circular(8),
-  //     ),
-  //     child: pw.Column(
-  //       crossAxisAlignment: pw.CrossAxisAlignment.start,
-  //       children: [
-  //         pw.Text(
-  //           'QUOTATION',
-  //           style: pw.TextStyle(
-  //             fontSize: 28,
-  //             fontWeight: pw.FontWeight.bold,
-  //             color: PdfColors.white,
-  //           ),
-  //         ),
-  //         pw.SizedBox(height: 4),
-  //         pw.Text(
-  //           'Professional Service Quotation',
-  //           style: pw.TextStyle(
-  //             fontSize: 12,
-  //             color: PdfColors.white,
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-  //
-  // pw.Widget _buildPDFQuotationInfo() {
-  //   return pw.Row(
-  //     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-  //     children: [
-  //       pw.Column(
-  //         crossAxisAlignment: pw.CrossAxisAlignment.start,
-  //         children: [
-  //           pw.Text(
-  //             'Quotation ID',
-  //             style: pw.TextStyle(fontSize: 10, color: PdfColors.grey600),
-  //           ),
-  //           pw.SizedBox(height: 4),
-  //           pw.Text(
-  //             '#${widget.quotation.id.substring(0, 12).toUpperCase()}',
-  //             style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
-  //           ),
-  //         ],
-  //       ),
-  //       pw.Column(
-  //         crossAxisAlignment: pw.CrossAxisAlignment.end,
-  //         children: [
-  //           pw.Text(
-  //             'Date',
-  //             style: pw.TextStyle(fontSize: 10, color: PdfColors.grey600),
-  //           ),
-  //           pw.SizedBox(height: 4),
-  //           pw.Text(
-  //             _formatDate(widget.quotation.createdAt),
-  //             style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
-  //           ),
-  //         ],
-  //       ),
-  //     ],
-  //   );
-  // }
-  //
-  // pw.Widget _buildPDFSection(String title, List<pw.Widget> children) {
-  //   return pw.Column(
-  //     crossAxisAlignment: pw.CrossAxisAlignment.start,
-  //     children: [
-  //       pw.Container(
-  //         padding: const pw.EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-  //         decoration: pw.BoxDecoration(
-  //           color: PdfColors.grey300,
-  //           borderRadius: pw.BorderRadius.circular(4),
-  //         ),
-  //         child: pw.Text(
-  //           title,
-  //           style: pw.TextStyle(
-  //             fontSize: 14,
-  //             fontWeight: pw.FontWeight.bold,
-  //             color: PdfColors.grey800,
-  //           ),
-  //         ),
-  //       ),
-  //       pw.SizedBox(height: 12),
-  //       pw.Container(
-  //         padding: const pw.EdgeInsets.all(12),
-  //         decoration: pw.BoxDecoration(
-  //           border: pw.Border.all(color: PdfColors.grey300),
-  //           borderRadius: pw.BorderRadius.circular(4),
-  //         ),
-  //         child: pw.Column(
-  //           crossAxisAlignment: pw.CrossAxisAlignment.start,
-  //           children: children,
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
-  //
-  // pw.Widget _buildPDFRow(String label, String value) {
-  //   return pw.Padding(
-  //     padding: const pw.EdgeInsets.only(bottom: 8),
-  //     child: pw.Row(
-  //       crossAxisAlignment: pw.CrossAxisAlignment.start,
-  //       children: [
-  //         pw.SizedBox(
-  //           width: 120,
-  //           child: pw.Text(
-  //             '$label:',
-  //             style: pw.TextStyle(
-  //               fontSize: 11,
-  //               fontWeight: pw.FontWeight.bold,
-  //               color: PdfColors.grey700,
-  //             ),
-  //           ),
-  //         ),
-  //         pw.Expanded(
-  //           child: pw.Text(
-  //             value,
-  //             style: pw.TextStyle(fontSize: 11, color: PdfColors.grey800),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
+  Future<void> _downloadQuotationPDF() async {
+    final user = await SecureStorage.getUserData();
+    log("user : $user");
+    Uint8List logoBytes =
+        (await rootBundle.load(
+          'assets/images/NesticoPe_logo.png',
+        )).buffer.asUint8List();
+    try {
+      // Show loading dialog
+      Get.dialog(
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            CircularProgressIndicator(color: ColorRes.primary),
+            SizedBox(height: 16),
+            Text(
+              "Generating PDF...",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+        barrierDismissible: false,
+      );
 
-  PdfColor _getPDFStatusColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'accepted':
-        return PdfColor.fromHex('#4CAF50');
-      case 'rejected':
-        return PdfColor.fromHex('#F44336');
-      case 'completed':
-        return PdfColor.fromHex('#2196F3');
-      default:
-        return PdfColor.fromHex('#FF9800');
+      final pdf = pw.Document();
+
+      // Define colors matching the provided PDF
+      final headerColor = PdfColor.fromInt(0xFF2C3E50); // Dark blue/gray
+      final accentColor = PdfColor.fromInt(0xFF3498DB); // Blue accent
+      final lightGray = PdfColor.fromInt(0xFFF5F5F5);
+      final darkText = PdfColors.black;
+      final grayText = PdfColor.fromInt(0xFF555555);
+
+      // Add page to PDF
+      pdf.addPage(
+        pw.MultiPage(
+          pageFormat: PdfPageFormat.a4,
+          margin: const pw.EdgeInsets.all(0),
+          build: (pw.Context context) {
+            return [
+              // Header Section with "REAL ESTATE SIMPLIFIED"
+              /*   pw.Container(
+                width: double.infinity,
+                padding: const pw.EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                decoration: pw.BoxDecoration(
+                  color: headerColor,
+                ),
+                child: pw.Text(
+                  'REAL ESTATE SIMPLIFIED',
+                  style: pw.TextStyle(
+                    fontSize: 18,
+                    fontWeight: pw.FontWeight.bold,
+                    color: PdfColors.white,
+                    letterSpacing: 1.5,
+                  ),
+                  textAlign: pw.TextAlign.center,
+                ),
+              ),*/
+              pw.Container(
+                width: double.infinity,
+                padding: const pw.EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 30,
+                ),
+                decoration: pw.BoxDecoration(color: headerColor),
+                child: pw.Row(
+                  crossAxisAlignment: pw.CrossAxisAlignment.center,
+                  children: [
+                    // LEFT: Logo
+                    pw.Image(
+                      pw.MemoryImage(logoBytes), // load from rootBundle
+                      width: 90,
+                      height: 90,
+                      fit: pw.BoxFit.contain,
+                    ),
+
+                    pw.SizedBox(width: 20),
+
+                    // CENTER: Brand Text
+                    /*    pw.Expanded(
+                      child: pw.Column(
+                        mainAxisAlignment: pw.MainAxisAlignment.center,
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Text(
+                            'NesticoPe',
+                            style: pw.TextStyle(
+                              fontSize: 26,
+                              fontWeight: pw.FontWeight.bold,
+                              color: PdfColors.white,
+                            ),
+                          ),
+                          pw.SizedBox(height: 6),
+                          pw.Text(
+                            'REAL ESTATE SIMPLIFIED',
+                            style: pw.TextStyle(
+                              fontSize: 14,
+                              color: PdfColors.amber,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),*/
+                    pw.Spacer(),
+                    pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        _buildInfoPDFRow(
+                          'QUOTATION #',
+                          widget.quotation.quotationNumber,
+                        ),
+                        pw.SizedBox(height: 5),
+                        _buildInfoPDFRow(
+                          'DATE',
+                          _formatQuotationDate(widget.quotation.createdAt),
+                        ),
+                        pw.SizedBox(height: 5),
+                        _buildInfoPDFRow(
+                          'VALID UNTIL',
+                          _formatValidUntilDate(widget.quotation.createdAt),
+                        ),
+                      ],
+                    ),
+
+                    // RIGHT: Quotation Info
+                    /*   pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.e
+                    nd,
+                    children: [
+                      _metaText('QUOTATION #', quoteNo),
+                      _metaText('DATE', date),
+                      _metaText('VALID UNTIL', validTill),
+                    ],
+                  ),*/
+                  ],
+                ),
+              ),
+
+              pw.Padding(
+                padding: const pw.EdgeInsets.all(30),
+                child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    // Quotation Header (Number, Date, Valid Until)
+                    /*  pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                      children: [
+                    */
+                    /*    pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            _buildInfoPDFRow('QUOTATION #', widget.quotation.quotationNumber),
+                            pw.SizedBox(height: 5),
+                            _buildInfoPDFRow('DATE', _formatQuotationDate(widget.quotation.createdAt)),
+                            pw.SizedBox(height: 5),
+                            _buildInfoPDFRow('VALID UNTIL', _formatValidUntilDate(widget.quotation.createdAt)),
+                          ],
+                        ),*/
+                    /*
+                      ],
+                    ),
+
+                    pw.SizedBox(height: 25),*/
+
+                    // Customer and Contractor Details Grid
+                    pw.Row(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        // Customer Details
+                        pw.Expanded(
+                          child: pw.Column(
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Text(
+                                'CUSTOMER DETAILS',
+                                style: pw.TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: pw.FontWeight.bold,
+                                  color: headerColor,
+                                ),
+                              ),
+                              pw.SizedBox(height: 10),
+                              pw.Text(
+                                widget.quotation.user.name,
+                                style: pw.TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: pw.FontWeight.bold,
+                                ),
+                              ),
+                              pw.SizedBox(height: 3),
+                              _buildDetailRow(
+                                'Phone:',
+                                widget.quotation.user.phone,
+                              ),
+                              _buildDetailRow(
+                                'Email:',
+                                widget.quotation.user.email,
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        pw.SizedBox(width: 30),
+
+                        // Contractor Details
+                        pw.Expanded(
+                          child: pw.Column(
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Text(
+                                'CONTRACTOR DETAILS',
+                                style: pw.TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: pw.FontWeight.bold,
+                                  color: headerColor,
+                                ),
+                              ),
+                              pw.SizedBox(height: 10),
+                              pw.Text(
+                                user?.user?.fullName ?? 'N/A',
+                                style: pw.TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: pw.FontWeight.bold,
+                                ),
+                              ),
+                              pw.SizedBox(height: 3),
+                              _buildDetailRow(
+                                'Phone:',
+                                user?.user?.phone ?? 'N/A',
+                              ),
+                              _buildDetailRow(
+                                'City:',
+                                widget.quotation.meta.propertyDetails?.city ??
+                                    'N/A',
+                              ),
+                              _buildDetailRow('Rating on NesticoPe:', '0/5'),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    pw.SizedBox(height: 25),
+
+                    // Property Details Section
+                    pw.Container(
+                      width: double.infinity,
+                      padding: const pw.EdgeInsets.all(12),
+                      decoration: pw.BoxDecoration(
+                        color: lightGray,
+                        border: pw.Border.all(color: PdfColors.grey300),
+                      ),
+                      child: pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Text(
+                            'Property Details',
+                            style: pw.TextStyle(
+                              fontSize: 11,
+                              fontWeight: pw.FontWeight.bold,
+                              color: headerColor,
+                            ),
+                          ),
+                          pw.SizedBox(height: 8),
+                          pw.Row(
+                            children: [
+                              pw.Expanded(
+                                child: _buildPropertyDetailRow(
+                                  'Type',
+                                  widget
+                                          .quotation
+                                          .meta
+                                          .propertyDetails
+                                          ?.propertyType ??
+                                      'N/A',
+                                ),
+                              ),
+                              pw.SizedBox(width: 8),
+                              pw.Expanded(
+                                child: _buildPropertyDetailRow(
+                                  'City / Location',
+                                  '${widget.quotation.meta.propertyDetails?.city ?? 'N/A'}, ${widget.quotation.meta.propertyDetails?.location ?? 'N/A'}',
+                                ),
+                              ),
+                              pw.SizedBox(width: 8),
+                              pw.Expanded(
+                                child: _buildPropertyDetailRow(
+                                  'Area (Sq ft)',
+                                  widget
+                                          .quotation
+                                          .meta
+                                          .propertyDetails
+                                          ?.carpetArea
+                                          .toString() ??
+                                      'N/A',
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    pw.SizedBox(height: 20),
+
+                    // Material Brands & Specifications Section
+                    _buildMaterialBrandsSection(),
+
+                    pw.SizedBox(height: 20),
+
+                    // Expected Start Date
+                    pw.Container(
+                      padding: const pw.EdgeInsets.all(10),
+                      decoration: pw.BoxDecoration(
+                        color: lightGray,
+                        border: pw.Border.all(color: PdfColors.grey300),
+                      ),
+                      child: pw.Row(
+                        children: [
+                          pw.Text(
+                            'EXPECTED START',
+                            style: pw.TextStyle(
+                              fontSize: 10,
+                              fontWeight: pw.FontWeight.bold,
+                              color: headerColor,
+                            ),
+                          ),
+                          pw.SizedBox(width: 20),
+                          pw.Text(
+                            _formatQuotationDate(
+                              widget.quotation.meta.expectedStartDate,
+                            ),
+                            style: const pw.TextStyle(fontSize: 10),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    pw.SizedBox(height: 20),
+
+                    // Service Scope & Pricing Section
+                    pw.Text(
+                      'Service Scope & Pricing',
+                      style: pw.TextStyle(
+                        fontSize: 12,
+                        fontWeight: pw.FontWeight.bold,
+                        color: headerColor,
+                      ),
+                    ),
+                    pw.SizedBox(height: 10),
+
+                    // Service Table
+                    _buildServiceTable(),
+
+                    pw.SizedBox(height: 25),
+
+                    // Notes Section
+                    pw.Text(
+                      'Notes',
+                      style: pw.TextStyle(
+                        fontSize: 11,
+                        fontWeight: pw.FontWeight.bold,
+                        color: headerColor,
+                      ),
+                    ),
+                    pw.SizedBox(height: 8),
+                    pw.Text(
+                      _getNotes(),
+                      style: pw.TextStyle(fontSize: 9, color: grayText),
+                    ),
+
+                    pw.SizedBox(height: 20),
+
+                    // Terms & Conditions Section
+                    pw.Row(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Expanded(
+                          child: pw.Column(
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Text(
+                                'Terms & Conditions',
+                                style: pw.TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: pw.FontWeight.bold,
+                                  color: headerColor,
+                                ),
+                              ),
+                              pw.SizedBox(height: 8),
+                              _buildTermRow(
+                                '1. Payments shall be released based on pre-defined project milestones.',
+                              ),
+                              _buildTermRow(
+                                '2. NesticoPe platform shall not be held liable for any disputes.',
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    pw.SizedBox(height: 30),
+
+                    // Footer
+                    pw.Center(
+                      child: pw.Column(
+                        children: [
+                          pw.Text(
+                            'Thank You for your business!',
+                            style: pw.TextStyle(
+                              fontSize: 12,
+                              fontWeight: pw.FontWeight.bold,
+                              color: headerColor,
+                            ),
+                          ),
+                          pw.SizedBox(height: 5),
+                          pw.Text(
+                            'Generated via NesticoPe Platform',
+                            style: pw.TextStyle(fontSize: 9, color: grayText),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Page number footer
+                    pw.SizedBox(height: 10),
+                    pw.Center(
+                      child: pw.Text(
+                        'Page 1 of 1',
+                        style: pw.TextStyle(fontSize: 8, color: grayText),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ];
+          },
+        ),
+      );
+
+      Get.back(); // close first dialog
+
+      Get.dialog(
+        Center(
+          child: Container(
+            width: 220,
+            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                CircularProgressIndicator(
+                  color: ColorRes.primary,
+                  strokeWidth: 3,
+                ),
+                SizedBox(height: 18),
+                Text(
+                  "Preparing to share PDF...",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: ColorRes.textColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        barrierDismissible: false,
+        barrierColor: Colors.black.withOpacity(0.4),
+      );
+
+      final file = await savePdfToTemp(pdf, widget.quotation.quotationNumber);
+
+      Get.back(); // close loader
+
+      // Open preview
+      Get.to(() => QuotationPdfPreviewScreen(file: file));
+    } catch (e, stackTrace) {
+      Get.back(); // Close loading dialog
+      print('PDF Generation Error: $e');
+      print('Stack Trace: $stackTrace');
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to generate PDF: ${e.toString()}',
+        contentType: ContentType.failure,
+      );
     }
   }
 
-  Future<void> _showPDFOptions(pw.Document pdf) async {
-    Get.dialog(
-      AlertDialog(
-        backgroundColor: ColorRes.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
-          'PDF Generated Successfully',
-          style: TextStyle(
-            fontWeight: AppFontWeights.semiBold,
-            color: ColorRes.textPrimary,
+  // Helper method to build info rows (QUOTATION #, DATE, etc.)
+  pw.Widget _buildInfoPDFRow(String label, String value) {
+    return pw.Row(
+      children: [
+        pw.Container(
+          width: 100,
+          child: pw.Text(
+            label,
+            style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold,color: PdfColors.white),
           ),
         ),
-        content: const Text(
-          'Choose an action for the quotation PDF',
-          style: TextStyle(
-            fontSize: AppFontSizes.medium,
-            color: ColorRes.textSecondary,
+        pw.Text(value, style: const pw.TextStyle(fontSize: 9,color: PdfColors.white)),
+      ],
+    );
+  }
+
+  // Helper method to build detail rows
+  pw.Widget _buildDetailRow(String label, String value) {
+    return pw.Padding(
+      padding: const pw.EdgeInsets.only(bottom: 3),
+      child: pw.Row(
+        children: [
+          pw.Text(
+            '$label ',
+            style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
           ),
-        ),
-        actions: [
-          TextButton.icon(
-            onPressed: () async {
-              await _savePDF(pdf);
-              Navigator.of(context).pop();
-            },
-            icon: const Icon(Icons.save_alt, color: ColorRes.primary),
-            label: const Text(
-              'Save to Device',
-              style: TextStyle(
-                color: ColorRes.primary,
-                fontWeight: AppFontWeights.semiBold,
-              ),
-            ),
-          ),
-          ElevatedButton.icon(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              await _sharePDF(pdf);
-            },
-            icon: const Icon(Icons.share, color: ColorRes.white),
-            label: const Text(
-              'Share',
-              style: TextStyle(
-                color: ColorRes.white,
-                fontWeight: AppFontWeights.semiBold,
-              ),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: ColorRes.primary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-          ),
+          pw.Text(value, style: const pw.TextStyle(fontSize: 9)),
         ],
       ),
     );
   }
 
-  Future<void> _savePDF(pw.Document pdf) async {
-    try {
-      final bytes = await pdf.save();
-      final directory = await getApplicationDocumentsDirectory();
-      final file = File(
-        '${directory.path}/quotation_${widget.quotation.id.substring(0, 8)}.pdf',
-      );
-      await file.writeAsBytes(bytes);
+  // Helper method for property details
+  pw.Widget _buildPropertyDetailRow(String label, String value) {
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Text(
+          label,
+          style: pw.TextStyle(
+            fontSize: 8,
+            fontWeight: pw.FontWeight.bold,
+            color: PdfColor.fromInt(0xFF555555),
+          ),
+        ),
+        pw.SizedBox(height: 3),
+        pw.Text(value, style: const pw.TextStyle(fontSize: 9)),
+      ],
+    );
+  }
 
-      NesticoPeSnackBar.showAwesomeSnackbar(
-        title: 'Success',
-        message: 'PDF saved to ${file.path}',
-        contentType: ContentType.success,
-      );
+  // Build Material Brands & Specifications Section
+  pw.Widget _buildMaterialBrandsSection() {
+    final headerColor = PdfColor.fromInt(0xFF2C3E50);
+
+    List<Map<String, String>> materials = [];
+
+    // Add materials based on available data
+    if (widget.quotation.meta.cementBrand?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'CEMENT',
+        'value': widget.quotation.meta.cementBrand!.join(', '),
+      });
+    }
+    if (widget.quotation.meta.steelBrand?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'STEEL',
+        'value': widget.quotation.meta.steelBrand!.join(', '),
+      });
+    }
+    if (widget.quotation.meta.brickType?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'BRICKS',
+        'value': widget.quotation.meta.brickType!.join(', '),
+      });
+    }
+    if (widget.quotation.meta.sandSource?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'SAND',
+        'value': widget.quotation.meta.sandSource!.join(', '),
+      });
+    }
+    if (widget.quotation.meta.electricalWiresBrand?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'WIRES',
+        'value': widget.quotation.meta.electricalWiresBrand!.join(', '),
+      });
+    }
+    if (widget.quotation.meta.electricalSwitchesBrand?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'SWITCHES',
+        'value': widget.quotation.meta.electricalSwitchesBrand!.join(', '),
+      });
+    }
+    if (widget.quotation.meta.plumbingPipesBrand?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'PIPES',
+        'value': widget.quotation.meta.plumbingPipesBrand!.join(', '),
+      });
+    }
+    if (widget.quotation.meta.sanitaryFittingsBrand?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'SANITARY',
+        'value': widget.quotation.meta.sanitaryFittingsBrand!.join(', '),
+      });
+    }
+    if (widget.quotation.meta.waterTankBrand?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'WATER TANK',
+        'value': widget.quotation.meta.waterTankBrand!.join(', '),
+      });
+    }
+    if (widget.quotation.meta.flooringTilesBrand?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'FLOORING',
+        'value': widget.quotation.meta.flooringTilesBrand!.join(', '),
+      });
+    }
+    if (widget.quotation.meta.interiorPaintBrand?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'INTERIOR PAINT',
+        'value': widget.quotation.meta.interiorPaintBrand!.join(', '),
+      });
+    }
+    if (widget.quotation.meta.exteriorPaintBrand?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'EXTERIOR PAINT',
+        'value': widget.quotation.meta.exteriorPaintBrand!.join(', '),
+      });
+    }
+    if (widget.quotation.meta.doorsType?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'DOORS',
+        'value': widget.quotation.meta.doorsType!.join(', '),
+      });
+    }
+    if (widget.quotation.meta.windowsType?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'WINDOWS',
+        'value': widget.quotation.meta.windowsType!.join(', '),
+      });
+    }
+    if (widget.quotation.meta.structure?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'STRUCTURE',
+        'value': widget.quotation.meta.structure!.join(', '),
+      });
+    }
+    if (widget.quotation.meta.plasterType?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'PLASTER',
+        'value': widget.quotation.meta.plasterType!.join(', '),
+      });
+    }
+    if (widget.quotation.meta.waterproofing?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'WATERPROOFING',
+        'value': widget.quotation.meta.waterproofing!.join(', '),
+      });
+    }
+    if (widget.quotation.meta.chokhatType?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'CHOKHAT',
+        'value': widget.quotation.meta.chokhatType!.join(', '),
+      });
+    }
+    if (widget.quotation.meta.railingType?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'RAILING',
+        'value': widget.quotation.meta.railingType!.join(', '),
+      });
+    }
+    if (widget.quotation.meta.falseCeiling?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'FALSE CEILING',
+        'value': widget.quotation.meta.falseCeiling!.join(', '),
+      });
+    }
+    if (widget.quotation.meta.modularKitchen?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'MODULAR KITCHEN',
+        'value': widget.quotation.meta.modularKitchen!,
+      });
+    }
+    if (widget.quotation.meta.boreAndPump?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'BORE AND PUMP',
+        'value': widget.quotation.meta.boreAndPump!,
+      });
+    }
+    if (widget.quotation.meta.securitySystems?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'SECURITY SYSTEMS',
+        'value': widget.quotation.meta.securitySystems!,
+      });
+    }
+    if (widget.quotation.meta.homeAutomation?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'HOME AUTOMATION',
+        'value': widget.quotation.meta.homeAutomation!,
+      });
+    }
+    if (widget.quotation.meta.solarSolutions?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'SOLAR SOLUTIONS',
+        'value': widget.quotation.meta.solarSolutions!,
+      });
+    }
+    if (widget.quotation.meta.fabricationWork?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'FABRICATION',
+        'value': widget.quotation.meta.fabricationWork!.join(', '),
+      });
+    }
+
+    if (materials.isEmpty) {
+      return pw.SizedBox();
+    }
+
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Text(
+          'Material Brands & Specifications',
+          style: pw.TextStyle(
+            fontSize: 12,
+            fontWeight: pw.FontWeight.bold,
+            color: headerColor,
+          ),
+        ),
+        pw.SizedBox(height: 10),
+        pw.Container(
+          padding: const pw.EdgeInsets.all(12),
+          decoration: pw.BoxDecoration(
+            border: pw.Border.all(color: PdfColors.grey300),
+          ),
+          child: pw.Wrap(
+            spacing: 15,
+            runSpacing: 8,
+            children:
+                materials.map((material) {
+                  return pw.Container(
+                    width: 170,
+                    decoration: pw.BoxDecoration(
+                      border: pw.Border.all(width: 1, color: PdfColors.grey300),
+                      borderRadius: pw.BorderRadius.circular(8),
+                    ),
+                    child: pw.Row(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Container(
+                          width: 100,
+                          child: pw.Text(
+                            material['label']!,
+                            style: pw.TextStyle(
+                              fontSize: 8,
+                              fontWeight: pw.FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        pw.Expanded(
+                          child: pw.Text(
+                            material['value']!,
+                            style: const pw.TextStyle(fontSize: 8),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Build Service Table
+  pw.Widget _buildServiceTable() {
+    final headerColor = PdfColor.fromInt(0xFF2C3E50);
+    final lightGray = PdfColor.fromInt(0xFFF5F5F5);
+
+    String description =
+        widget.quotation.meta.serviceNames ?? 'General Service';
+
+    if (widget.quotation.meta.notes?.isNotEmpty ?? false) {
+      String cleanNotes =
+          widget.quotation.meta.notes?.replaceAll(
+            'Generated from inquiry for: ',
+            '',
+          ) ??
+          '';
+      if (!description.contains(cleanNotes) && cleanNotes.isNotEmpty) {
+        description +=
+            description.isNotEmpty ? '\n\nNote: ($cleanNotes)' : cleanNotes;
+      }
+    }
+
+    final price =
+        double.tryParse(
+          widget.quotation.price.toString().replaceAll(',', ''),
+        ) ??
+        0;
+    final advancePercentage = widget.quotation.meta.advanceRequiredPercentage;
+    final advanceAmount = (price * advancePercentage) / 100;
+
+    return pw.Table(
+      border: pw.TableBorder.all(color: PdfColors.grey400, width: 0.5),
+      columnWidths: {
+        0: const pw.FlexColumnWidth(3),
+        1: const pw.FlexColumnWidth(1),
+        2: const pw.FlexColumnWidth(1.5),
+      },
+      children: [
+        // Header Row
+        pw.TableRow(
+          decoration: pw.BoxDecoration(color: lightGray),
+          children: [
+            pw.Padding(
+              padding: const pw.EdgeInsets.all(8),
+              child: pw.Text(
+                'Service Description',
+                style: pw.TextStyle(
+                  fontSize: 10,
+                  fontWeight: pw.FontWeight.bold,
+                  color: headerColor,
+                ),
+              ),
+            ),
+            pw.Padding(
+              padding: const pw.EdgeInsets.all(8),
+              child: pw.Text(
+                'Adv. Payment %',
+                style: pw.TextStyle(
+                  fontSize: 10,
+                  fontWeight: pw.FontWeight.bold,
+                  color: headerColor,
+                ),
+                textAlign: pw.TextAlign.center,
+              ),
+            ),
+            pw.Padding(
+              padding: const pw.EdgeInsets.all(8),
+              child: pw.Text(
+                'Amount (INR)',
+                style: pw.TextStyle(
+                  fontSize: 10,
+                  fontWeight: pw.FontWeight.bold,
+                  color: headerColor,
+                ),
+                textAlign: pw.TextAlign.right,
+              ),
+            ),
+          ],
+        ),
+        // Data Row
+        pw.TableRow(
+          children: [
+            pw.Padding(
+              padding: const pw.EdgeInsets.all(8),
+              child: pw.Text(
+                description,
+                style: const pw.TextStyle(fontSize: 9),
+              ),
+            ),
+            pw.Padding(
+              padding: const pw.EdgeInsets.all(8),
+              child: pw.Text(
+                '$advancePercentage%',
+                style: const pw.TextStyle(fontSize: 9),
+                textAlign: pw.TextAlign.center,
+              ),
+            ),
+            pw.Padding(
+              padding: const pw.EdgeInsets.all(8),
+              child: pw.Text(
+                _formatIndianCurrency(advanceAmount),
+                style: const pw.TextStyle(fontSize: 9),
+                textAlign: pw.TextAlign.right,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // Helper method for term rows
+  pw.Widget _buildTermRow(String text) {
+    return pw.Padding(
+      padding: const pw.EdgeInsets.only(bottom: 5),
+      child: pw.Text(
+        text,
+        style: pw.TextStyle(fontSize: 9, color: PdfColor.fromInt(0xFF555555)),
+      ),
+    );
+  }
+
+  // Format Indian Currency
+  String _formatIndianCurrency(double amount) {
+    final s = amount.toStringAsFixed(0);
+    final n = s.length;
+    if (n <= 3) return 'Rs. $s';
+    final last3 = s.substring(n - 3);
+    final rest = s.substring(0, n - 3);
+    final formatted =
+        rest.replaceAllMapped(
+          RegExp(r'(\d)(?=(\d\d)+\d$)'),
+          (Match m) => '${m[1]},',
+        ) +
+        ',' +
+        last3;
+    return 'Rs. $formatted';
+  }
+
+  // Get Notes
+  String _getNotes() {
+    List<String> notes = [];
+
+    notes.add('This quotation is valid for 15 days from the date of issue.');
+    notes.add(
+      'Any additional work outside the specified scope will be charged separately.',
+    );
+    notes.add(
+      'Work will commence within 3 days of receiving the advance payment.',
+    );
+
+    return notes.join('\n');
+  }
+
+  // Format Valid Until Date (15 days from creation)
+  String _formatValidUntilDate(DateTime date) {
+    try {
+      final validUntil = date.add(const Duration(days: 15));
+      return '${validUntil.month.toString().padLeft(2, '0')}/${validUntil.day.toString().padLeft(2, '0')}/${validUntil.year}';
     } catch (e) {
-      NesticoPeSnackBar.showAwesomeSnackbar(
-        title: 'Error',
-        message: 'Failed to save PDF: ${e.toString()}',
-        contentType: ContentType.failure,
-      );
+      print('Error formatting valid until date: $e');
+      return 'N/A';
     }
   }
 
-  Future<void> _sharePDF(pw.Document pdf) async {
+  // Format Quotation Date
+  String _formatQuotationDate(DateTime date) {
     try {
-      await Printing.sharePdf(
-        bytes: await pdf.save(),
-        filename: 'quotation_${widget.quotation.id.substring(0, 8)}.pdf',
-      );
+      return '${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}/${date.year}';
     } catch (e) {
-      NesticoPeSnackBar.showAwesomeSnackbar(
-        title: 'Error',
-        message: 'Failed to share PDF: ${e.toString()}',
-        contentType: ContentType.failure,
-      );
+      print('Error formatting date: $e');
+      return 'N/A';
     }
+  }
+
+  // Save PDF to Temp
+  Future<File> savePdfToTemp(pw.Document pdf, String quotationNumber) async {
+    final bytes = await pdf.save();
+    final dir = await getTemporaryDirectory();
+    final file = File('${dir.path}/quotation_$quotationNumber.pdf');
+    await file.writeAsBytes(bytes, flush: true);
+    return file;
+  }
+}
+
+class QuotationPdfPreviewScreen extends StatelessWidget {
+  final File file;
+
+  const QuotationPdfPreviewScreen({super.key, required this.file});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Quotation Preview'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share),
+            onPressed: () async {
+              await Printing.sharePdf(
+                bytes: await file.readAsBytes(),
+                filename: path.basename(file.path),
+              );
+            },
+          ),
+        ],
+      ),
+      body: SfPdfViewer.file(file),
+    );
   }
 }

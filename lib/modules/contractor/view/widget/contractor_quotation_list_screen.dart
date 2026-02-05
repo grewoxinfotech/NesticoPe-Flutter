@@ -12,6 +12,7 @@ import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/l
 import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 
 /// Screen for displaying list of contractor quotations
+
 class ContractorQuotationListScreen extends StatelessWidget {
   const ContractorQuotationListScreen({super.key});
 
@@ -137,9 +138,6 @@ class _QuotationListItem extends StatelessWidget {
                       ),
                     ),
                     _buildStatusBadge(quotation.status),
-                    /*skjcnkksmniolso kkks ioi jsiuswnios
-                    dskofcdko mmsm nshaunhsuen chuidhjeunaksdm ksds  hdujnnnjhduibnbnbnxnj   hdh mdkd kowedmwek kdksdos jsudebn ld ndjc ncjn
-                    * jisj sjn jhduinusje hshu uehhsuien nfjkden hduenn hdhyuwn   uuneujalen   siiismn iiks dn d */
                   ],
                 ),
 
