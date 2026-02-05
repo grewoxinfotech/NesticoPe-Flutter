@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:intl/intl.dart';
 
 import '../../../data/network/in_app_messaging/model/in_app_messaging_model.dart';
+import '../../../utils/shimmer/common_screen/in_app_message/in_app_message_list_screen_shimmer.dart';
 import '../controller/in_app_message_controller.dart';
+import 'in_app_message_detail screen.dart';
 
 class InAppMessageScreen extends StatelessWidget {
   const InAppMessageScreen({super.key});
@@ -13,34 +16,67 @@ class InAppMessageScreen extends StatelessWidget {
     final NotificationController controller = Get.put(NotificationController());
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Notifications"), centerTitle: true),
+      backgroundColor: Colors.grey[50],
+      appBar: AppBar(
+        title: const Text(
+          "Notifications",
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 20,
+          ),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black87,
+        surfaceTintColor: Colors.transparent,
+        // actions: [
+        //   Obx(() => controller.items.isNotEmpty
+        //       ? IconButton(
+        //     icon: const Icon(Icons.done_all_rounded),
+        //     tooltip: "Mark all as read",
+        //     onPressed: () {
+        //       // Add mark all as read functionality
+        //     },
+        //   )
+        //       : const SizedBox.shrink()),
+        // ],
+      ),
       body: RefreshIndicator(
         onRefresh: controller.refreshNotifications,
+        color: Theme.of(context).primaryColor,
         child: Obx(() {
+
           if (controller.isLoading.value && controller.items.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
+            return InAppMessageListScreenShimmer();
           }
 
           if (controller.items.isEmpty) {
-            return const Center(child: Text("No notifications found"));
+            return _EmptyState();
           }
 
           return ListView.builder(
             physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(vertical: 8),
             itemCount:
-                controller.items.length + (controller.hasMore.value ? 1 : 0),
+            controller.items.length + (controller.hasMore.value ? 1 : 0),
             itemBuilder: (context, index) {
               if (index >= controller.items.length) {
                 controller.loadMore();
                 return const Padding(
                   padding: EdgeInsets.all(16),
-                  child: Center(child: CircularProgressIndicator()),
+                  child: Center(
+                    child: CircularProgressIndicator(strokeWidth: 3),
+                  ),
                 );
               }
 
               final notification = controller.items[index];
 
-              return _NotificationCard(notification: notification);
+              return _NotificationCard(
+                notification: notification,
+                index: index,
+              );
             },
           );
         }),
@@ -49,71 +85,278 @@ class InAppMessageScreen extends StatelessWidget {
   }
 }
 
-class _NotificationCard extends StatelessWidget {
-  final NotificationItem notification;
+class _EmptyState extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.blue.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.notifications_none_rounded,
+              size: 64,
+              color: ColorRes.primary,
+            ),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            "No notifications yet",
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[800],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "You're all caught up!",
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[600],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
-  const _NotificationCard({required this.notification});
+class _NotificationCard extends StatefulWidget {
+  final NotificationItem notification;
+  final int index;
+
+  const _NotificationCard({
+    required this.notification,
+    required this.index,
+  });
+
+  @override
+  State<_NotificationCard> createState() => _NotificationCardState();
+}
+
+class _NotificationCardState extends State<_NotificationCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeOut,
+      ),
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.1),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeOutCubic,
+      ),
+    );
+
+    // Stagger animations
+    Future.delayed(Duration(milliseconds: widget.index * 50), () {
+      if (mounted) {
+        _animationController.forward();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final metadata = notification.metadata;
-    final date =
-        notification.createdAt != null
-            ? DateFormat("dd MMM yyyy, hh:mm a").format(notification.createdAt!)
-            : "";
+    final metadata = widget.notification.metadata;
+    final date = widget.notification.createdAt != null
+        ? _formatDate(widget.notification.createdAt!)
+        : "";
 
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (metadata?.image != null)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  metadata!.image!,
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.cover,
-                  errorBuilder:
-                      (_, __, ___) => const Icon(Icons.notifications, size: 40),
-                ),
-              )
-            else
-              const Icon(Icons.notifications, size: 40),
-
-            const SizedBox(width: 12),
-
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    notification.title ?? "",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: SlideTransition(
+        position: _slideAnimation,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          child: Material(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            elevation: 0,
+            child: InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NotificationDetailScreen(
+                      notification: widget.notification,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    notification.message ?? "",
-                    style: TextStyle(color: Colors.grey[700]),
+                );
+              },
+              borderRadius: BorderRadius.circular(16),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.grey[200]!,
+                    width: 1,
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    date,
-                    style: TextStyle(fontSize: 12, color: Colors.grey[500]),
-                  ),
-                ],
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildNotificationIcon(metadata),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  widget.notification.title ?? "",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                    color: Colors.black87,
+                                    height: 1.3,
+                                  ),
+                                ),
+                              ),
+                              // Unread indicator (optional)
+                              Container(
+                                width: 8,
+                                height: 8,
+                                decoration: BoxDecoration(
+                                  color: ColorRes.primary,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            widget.notification.message ?? "",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[700],
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.access_time_rounded,
+                                size: 14,
+                                color: Colors.grey[500],
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                date,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey[600],
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ],
+          ),
         ),
       ),
     );
+  }
+
+  Widget _buildNotificationIcon(metadata) {
+    if (metadata?.image != null) {
+      return Container(
+        width: 56,
+        height: 56,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: Colors.grey[200]!,
+            width: 1,
+          ),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.network(
+            metadata!.image!,
+            width: 56,
+            height: 56,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => _defaultIcon(),
+          ),
+        ),
+      );
+    }
+    return _defaultIcon();
+  }
+
+  Widget _defaultIcon() {
+    return Container(
+      width: 56,
+      height: 56,
+      decoration: BoxDecoration(
+        color: ColorRes.primary,
+
+        borderRadius: BorderRadius.circular(12),
+
+      ),
+      child: const Icon(
+        Icons.notifications_rounded,
+        size: 28,
+        color: Colors.white,
+      ),
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final difference = now.difference(date);
+
+    if (difference.inMinutes < 1) {
+      return "Just now";
+    } else if (difference.inMinutes < 60) {
+      return "${difference.inMinutes}m ago";
+    } else if (difference.inHours < 24) {
+      return "${difference.inHours}h ago";
+    } else if (difference.inDays < 7) {
+      return "${difference.inDays}d ago";
+    } else {
+      return DateFormat("dd MMM yyyy").format(date);
+    }
   }
 }
