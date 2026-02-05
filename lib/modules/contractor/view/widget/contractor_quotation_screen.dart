@@ -1439,15 +1439,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
       );
      */
 
-  /* await _sharePDF(pdf);*/ /*
-     */ /* Get.back();*/ /*
-      */ /* Get.snackbar(
-        'Success',
-        'Quotation PDF generated and ready to share!',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: ColorRes.primary,
-        colorText: Colors.white,
-      );*/ /*
+  /*
     } catch (e, stackTrace) {
       Get.back(); // Close loading dialog
       print('PDF Generation Error: $e');
@@ -1733,207 +1725,256 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
         pw.MultiPage(
           pageFormat: PdfPageFormat.a4,
           margin: const pw.EdgeInsets.all(0),
-          build: (pw.Context context) {
-            return [
-              // Header Section with "REAL ESTATE SIMPLIFIED"
-              /*   pw.Container(
-                width: double.infinity,
-                padding: const pw.EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-                decoration: pw.BoxDecoration(
-                  color: headerColor,
-                ),
-                child: pw.Text(
-                  'REAL ESTATE SIMPLIFIED',
-                  style: pw.TextStyle(
-                    fontSize: 18,
-                    fontWeight: pw.FontWeight.bold,
-                    color: PdfColors.white,
-                    letterSpacing: 1.5,
-                  ),
-                  textAlign: pw.TextAlign.center,
-                ),
-              ),*/
-              pw.Container(
+          maxPages: 2,
+
+          header:
+              (context) => pw.Container(
                 width: double.infinity,
                 padding: const pw.EdgeInsets.symmetric(
-                  vertical: 10,
+                  vertical: 4,
                   horizontal: 30,
                 ),
-                decoration: pw.BoxDecoration(color: headerColor),
+                decoration: pw.BoxDecoration(
+                  color: PdfColor.fromInt(0xff277FB8),
+                ),
                 child: pw.Row(
                   crossAxisAlignment: pw.CrossAxisAlignment.center,
                   children: [
-                    // LEFT: Logo
-                    pw.Image(
-                      pw.MemoryImage(logoBytes), // load from rootBundle
-                      width: 90,
-                      height: 90,
-                      fit: pw.BoxFit.contain,
-                    ),
+                    // LEFT
+                    pw.Stack(
+                      children: [
+                        pw.Image(
+                          pw.MemoryImage(logoBytes),
+                          width: 120,
+                          height: 120,
+                          fit: pw.BoxFit.cover,
+                        ),
 
-                    pw.SizedBox(width: 20),
-
-                    // CENTER: Brand Text
-                    /*    pw.Expanded(
-                      child: pw.Column(
-                        mainAxisAlignment: pw.MainAxisAlignment.center,
-                        crossAxisAlignment: pw.CrossAxisAlignment.start,
-                        children: [
-                          pw.Text(
-                            'NesticoPe',
-                            style: pw.TextStyle(
-                              fontSize: 26,
-                              fontWeight: pw.FontWeight.bold,
-                              color: PdfColors.white,
-                            ),
-                          ),
-                          pw.SizedBox(height: 6),
-                          pw.Text(
+                        pw.Positioned(
+                          top: 70,
+                          left: 10,
+                          child: pw.Text(
                             'REAL ESTATE SIMPLIFIED',
                             style: pw.TextStyle(
-                              fontSize: 14,
-                              color: PdfColors.amber,
-                              letterSpacing: 1.5,
+                              fontSize: 5,
+                              fontWeight: pw.FontWeight.bold,
+                              color: PdfColors.white,
+                              letterSpacing: 1.2,
                             ),
                           ),
-                        ],
-                      ),
-                    ),*/
+                        ),
+                      ],
+                    ),
+
                     pw.Spacer(),
+
+                    // RIGHT
                     pw.Column(
+                      mainAxisSize: pw.MainAxisSize.min,
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
                         _buildInfoPDFRow(
                           'QUOTATION #',
                           widget.quotation.quotationNumber,
                         ),
-                        pw.SizedBox(height: 5),
+                        pw.SizedBox(height: 4),
                         _buildInfoPDFRow(
                           'DATE',
                           _formatQuotationDate(widget.quotation.createdAt),
                         ),
-                        pw.SizedBox(height: 5),
+                        pw.SizedBox(height: 4),
                         _buildInfoPDFRow(
                           'VALID UNTIL',
                           _formatValidUntilDate(widget.quotation.createdAt),
                         ),
                       ],
                     ),
-
-                    // RIGHT: Quotation Info
-                    /*   pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.e
-                    nd,
-                    children: [
-                      _metaText('QUOTATION #', quoteNo),
-                      _metaText('DATE', date),
-                      _metaText('VALID UNTIL', validTill),
-                    ],
-                  ),*/
                   ],
                 ),
               ),
 
+          footer: (context) {
+            return pw.Padding(
+              padding: const pw.EdgeInsets.fromLTRB(30, 0, 30, 20),
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                mainAxisSize: pw.MainAxisSize.min,
+                children: [
+                  pw.Row(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Expanded(
+                        child: pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.Text(
+                              'Notes',
+                              style: pw.TextStyle(
+                                fontSize: 11,
+                                fontWeight: pw.FontWeight.bold,
+                                color: headerColor,
+                              ),
+                            ),
+                            pw.SizedBox(height: 6),
+                            pw.Text(
+                              _getNotes(),
+                              style: pw.TextStyle(fontSize: 9, color: grayText),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      pw.SizedBox(width: 16),
+
+                      pw.Expanded(
+                        child: pw.Container(
+                          padding: const pw.EdgeInsets.all(10),
+                          decoration: pw.BoxDecoration(
+                            color: lightGray,
+                            border: pw.Border.all(color: PdfColors.grey300),
+                          ),
+                          child: pw.Column(
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Text(
+                                'Terms & Conditions',
+                                style: pw.TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: pw.FontWeight.bold,
+                                  color: headerColor,
+                                ),
+                              ),
+                              pw.SizedBox(height: 6),
+                              _buildTermRow(
+                                '1. Payments shall be released based on pre-defined project milestones.',
+                              ),
+                              _buildTermRow(
+                                '2. NesticoPe platform shall not be held liable for any disputes.',
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  pw.SizedBox(height: 12),
+                  pw.Container(
+                    height: 5,
+                    width: double.infinity,
+                    decoration: pw.BoxDecoration(color: PdfColors.blue600),
+                  ),
+                  pw.SizedBox(height: 12),
+                  // Footer
+                  pw.Center(
+                    child: pw.Column(
+                      children: [
+                        pw.Text(
+                          'Thank You for your business!',
+                          style: pw.TextStyle(
+                            fontSize: 12,
+                            fontWeight: pw.FontWeight.bold,
+                            color: headerColor,
+                          ),
+                        ),
+                        pw.SizedBox(height: 5),
+                        pw.Text(
+                          'Generated via NesticoPe Platform',
+                          style: pw.TextStyle(fontSize: 9, color: grayText),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Page number foote
+                  pw.SizedBox(height: 10),
+                  pw.Center(
+                    child: pw.Text(
+                      'Page ${context.pageNumber} of ${context.pagesCount}',
+                      style: pw.TextStyle(fontSize: 8, color: grayText),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+          build: (pw.Context context) {
+            return [
               pw.Padding(
                 padding: const pw.EdgeInsets.all(30),
                 child: pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
-                    // Quotation Header (Number, Date, Valid Until)
-                    /*  pw.Row(
-                      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                      children: [
-                    */
-                    /*    pw.Column(
-                          crossAxisAlignment: pw.CrossAxisAlignment.start,
-                          children: [
-                            _buildInfoPDFRow('QUOTATION #', widget.quotation.quotationNumber),
-                            pw.SizedBox(height: 5),
-                            _buildInfoPDFRow('DATE', _formatQuotationDate(widget.quotation.createdAt)),
-                            pw.SizedBox(height: 5),
-                            _buildInfoPDFRow('VALID UNTIL', _formatValidUntilDate(widget.quotation.createdAt)),
-                          ],
-                        ),*/
-                    /*
-                      ],
-                    ),
-
-                    pw.SizedBox(height: 25),*/
-
-                    // Customer and Contractor Details Grid
                     pw.Row(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
                         // Customer Details
-                        pw.Expanded(
-                          child: pw.Column(
-                            crossAxisAlignment: pw.CrossAxisAlignment.start,
-                            children: [
-                              pw.Text(
-                                'CUSTOMER DETAILS',
-                                style: pw.TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: pw.FontWeight.bold,
-                                  color: headerColor,
-                                ),
+                        pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.Text(
+                              'CUSTOMER DETAILS',
+                              style: pw.TextStyle(
+                                fontSize: 11,
+                                fontWeight: pw.FontWeight.bold,
+                                color: headerColor,
                               ),
-                              pw.SizedBox(height: 10),
-                              pw.Text(
-                                widget.quotation.user.name,
-                                style: pw.TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: pw.FontWeight.bold,
-                                ),
+                            ),
+                            pw.SizedBox(height: 10),
+                            pw.Text(
+                              widget.quotation.user.name,
+                              style: pw.TextStyle(
+                                fontSize: 10,
+                                fontWeight: pw.FontWeight.bold,
                               ),
-                              pw.SizedBox(height: 3),
-                              _buildDetailRow(
-                                'Phone:',
-                                widget.quotation.user.phone,
-                              ),
-                              _buildDetailRow(
-                                'Email:',
-                                widget.quotation.user.email,
-                              ),
-                            ],
-                          ),
+                            ),
+                            pw.SizedBox(height: 3),
+                            _buildDetailRow(
+                              'Phone:',
+                              widget.quotation.user.phone,
+                            ),
+                            _buildDetailRow(
+                              'Email:',
+                              widget.quotation.user.email,
+                            ),
+                          ],
                         ),
 
-                        pw.SizedBox(width: 30),
+                        pw.Spacer(),
 
                         // Contractor Details
-                        pw.Expanded(
-                          child: pw.Column(
-                            crossAxisAlignment: pw.CrossAxisAlignment.start,
-                            children: [
-                              pw.Text(
-                                'CONTRACTOR DETAILS',
-                                style: pw.TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: pw.FontWeight.bold,
-                                  color: headerColor,
-                                ),
+                        pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.Text(
+                              'CONTRACTOR DETAILS',
+                              style: pw.TextStyle(
+                                fontSize: 11,
+                                fontWeight: pw.FontWeight.bold,
+                                color: headerColor,
                               ),
-                              pw.SizedBox(height: 10),
-                              pw.Text(
-                                user?.user?.fullName ?? 'N/A',
-                                style: pw.TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: pw.FontWeight.bold,
-                                ),
+                            ),
+                            pw.SizedBox(height: 10),
+                            pw.Text(
+                              (user?.user?.fullName.isEmpty ?? false)
+                                  ? user?.user?.username ?? ''
+                                  : user?.user?.fullName ?? 'N/A',
+                              style: pw.TextStyle(
+                                fontSize: 10,
+                                fontWeight: pw.FontWeight.bold,
                               ),
-                              pw.SizedBox(height: 3),
-                              _buildDetailRow(
-                                'Phone:',
-                                user?.user?.phone ?? 'N/A',
-                              ),
-                              _buildDetailRow(
-                                'City:',
-                                widget.quotation.meta.propertyDetails?.city ??
-                                    'N/A',
-                              ),
-                              _buildDetailRow('Rating on NesticoPe:', '0/5'),
-                            ],
-                          ),
+                            ),
+                            pw.SizedBox(height: 3),
+                            _buildDetailRow(
+                              'Phone:',
+                              user?.user?.phone ?? 'N/A',
+                            ),
+                            _buildDetailRow(
+                              'City:',
+                              widget.quotation.meta.propertyDetails?.city ??
+                                  'N/A',
+                            ),
+                            _buildDetailRow('Rating on NesticoPe:', '0/5'),
+                          ],
                         ),
                       ],
                     ),
@@ -1941,30 +1982,63 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
                     pw.SizedBox(height: 25),
 
                     // Property Details Section
-                    pw.Container(
-                      width: double.infinity,
-                      padding: const pw.EdgeInsets.all(12),
-                      decoration: pw.BoxDecoration(
-                        color: lightGray,
-                        border: pw.Border.all(color: PdfColors.grey300),
-                      ),
-                      child: pw.Column(
-                        crossAxisAlignment: pw.CrossAxisAlignment.start,
-                        children: [
-                          pw.Text(
-                            'Property Details',
-                            style: pw.TextStyle(
-                              fontSize: 11,
-                              fontWeight: pw.FontWeight.bold,
-                              color: headerColor,
-                            ),
+                    pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        // Title
+                        pw.Text(
+                          'Property Details',
+                          style: pw.TextStyle(
+                            fontSize: 11,
+                            fontWeight: pw.FontWeight.bold,
+                            color: headerColor,
                           ),
-                          pw.SizedBox(height: 8),
-                          pw.Row(
+                        ),
+
+                        pw.SizedBox(height: 8),
+
+                        // Header Row
+                        pw.Container(
+                          padding: const pw.EdgeInsets.symmetric(
+                            vertical: 6,
+                            horizontal: 8,
+                          ),
+                          decoration: pw.BoxDecoration(
+                            color: PdfColors.grey100,
+                          ),
+                          child: pw.Row(
+                            children: [
+                              pw.Expanded(flex: 2, child: _tableHeader('Type')),
+                              pw.Expanded(
+                                flex: 5,
+                                child: _tableHeader('City / Location'),
+                              ),
+                              pw.Expanded(
+                                flex: 2,
+                                child: _tableHeader(
+                                  'Area (Sq ft)',
+                                  alignRight: true,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Data Row
+                        pw.Container(
+                          padding: const pw.EdgeInsets.symmetric(
+                            vertical: 8,
+                            horizontal: 8,
+                          ),
+                          decoration: pw.BoxDecoration(
+                            color: PdfColors.grey200,
+                          ),
+                          child: pw.Row(
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
                             children: [
                               pw.Expanded(
-                                child: _buildPropertyDetailRow(
-                                  'Type',
+                                flex: 2,
+                                child: _tableCell(
                                   widget
                                           .quotation
                                           .meta
@@ -1973,30 +2047,30 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
                                       'N/A',
                                 ),
                               ),
-                              pw.SizedBox(width: 8),
                               pw.Expanded(
-                                child: _buildPropertyDetailRow(
-                                  'City / Location',
-                                  '${widget.quotation.meta.propertyDetails?.city ?? 'N/A'}, ${widget.quotation.meta.propertyDetails?.location ?? 'N/A'}',
+                                flex: 5,
+                                child: _tableCell(
+                                  '${widget.quotation.meta.propertyDetails?.city ?? 'N/A'}, '
+                                  '${widget.quotation.meta.propertyDetails?.location ?? 'N/A'}',
                                 ),
                               ),
-                              pw.SizedBox(width: 8),
                               pw.Expanded(
-                                child: _buildPropertyDetailRow(
-                                  'Area (Sq ft)',
+                                flex: 2,
+                                child: _tableCell(
                                   widget
                                           .quotation
                                           .meta
                                           .propertyDetails
                                           ?.carpetArea
-                                          .toString() ??
+                                          ?.toString() ??
                                       'N/A',
+                                  alignRight: true,
                                 ),
                               ),
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
 
                     pw.SizedBox(height: 20),
@@ -2007,7 +2081,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
                     pw.SizedBox(height: 20),
 
                     // Expected Start Date
-                    pw.Container(
+                    /* pw.Container(
                       padding: const pw.EdgeInsets.all(10),
                       decoration: pw.BoxDecoration(
                         color: lightGray,
@@ -2034,7 +2108,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
                       ),
                     ),
 
-                    pw.SizedBox(height: 20),
+                    pw.SizedBox(height: 20),*/
 
                     // Service Scope & Pricing Section
                     pw.Text(
@@ -2052,33 +2126,20 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
 
                     pw.SizedBox(height: 25),
 
-                    // Notes Section
-                    pw.Text(
-                      'Notes',
-                      style: pw.TextStyle(
-                        fontSize: 11,
-                        fontWeight: pw.FontWeight.bold,
-                        color: headerColor,
-                      ),
-                    ),
-                    pw.SizedBox(height: 8),
-                    pw.Text(
-                      _getNotes(),
-                      style: pw.TextStyle(fontSize: 9, color: grayText),
-                    ),
+                    /*           // Notes Sectio
 
-                    pw.SizedBox(height: 20),
-
-                    // Terms & Conditions Section
+                    // pw.SizedBox(height: 20),
+                    //
+                    // // Terms & Conditions Section
                     pw.Row(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
                         pw.Expanded(
                           child: pw.Column(
-                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                              crossAxisAlignment: pw.CrossAxisAlignment.start,
                             children: [
                               pw.Text(
-                                'Terms & Conditions',
+                                'Notes',
                                 style: pw.TextStyle(
                                   fontSize: 11,
                                   fontWeight: pw.FontWeight.bold,
@@ -2086,20 +2147,55 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
                                 ),
                               ),
                               pw.SizedBox(height: 8),
-                              _buildTermRow(
-                                '1. Payments shall be released based on pre-defined project milestones.',
+                              pw.Text(
+                                _getNotes(),
+                                style: pw.TextStyle(fontSize: 9, color: grayText),
                               ),
-                              _buildTermRow(
-                                '2. NesticoPe platform shall not be held liable for any disputes.',
-                              ),
-                            ],
-                          ),
+                            ]
+                          )
+                        ),
+                        pw.Expanded(
+                          child:pw.Container(
+                            padding: const pw.EdgeInsets.all(10),
+                            decoration: pw.BoxDecoration(
+                              borderRadius: pw.BorderRadius.circular(4),
+                              color: lightGray,
+                              border: pw.Border.all(color: PdfColors.grey300),
+                            ),
+                            child:  pw.Column(
+                              crossAxisAlignment: pw.CrossAxisAlignment.start,
+                              children: [
+                                pw.Text(
+                                  'Terms & Conditions',
+                                  style: pw.TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: pw.FontWeight.bold,
+                                    color: headerColor,
+                                  ),
+                                ),
+                                pw.SizedBox(height: 8),
+                                _buildTermRow(
+                                  '1. Payments shall be released based on pre-defined project milestones.',
+                                ),
+                                _buildTermRow(
+                                  '2. NesticoPe platform shall not be held liable for any disputes.',
+                                ),
+                              ],
+                            ),
+                          )
                         ),
                       ],
                     ),
 
-                    pw.SizedBox(height: 30),
-
+                    pw.SizedBox(height: 12),
+                    pw.Container(
+                      height: 5,
+                      width: double.infinity,
+                      decoration: pw.BoxDecoration(
+                        color: PdfColors.blue600
+                      )
+                    ),
+                    pw.SizedBox(height: 12),
                     // Footer
                     pw.Center(
                       child: pw.Column(
@@ -2128,7 +2224,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
                         'Page 1 of 1',
                         style: pw.TextStyle(fontSize: 8, color: grayText),
                       ),
-                    ),
+                    ),*/
                   ],
                 ),
               ),
@@ -2207,10 +2303,17 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
           width: 100,
           child: pw.Text(
             label,
-            style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold,color: PdfColors.white),
+            style: pw.TextStyle(
+              fontSize: 9,
+              fontWeight: pw.FontWeight.bold,
+              color: PdfColors.white,
+            ),
           ),
         ),
-        pw.Text(value, style: const pw.TextStyle(fontSize: 9,color: PdfColors.white)),
+        pw.Text(
+          value,
+          style: const pw.TextStyle(fontSize: 9, color: PdfColors.white),
+        ),
       ],
     );
   }
@@ -2255,6 +2358,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
     final headerColor = PdfColor.fromInt(0xFF2C3E50);
 
     List<Map<String, String>> materials = [];
+    final DateTime? startDate = widget.quotation.meta.expectedStartDate;
 
     // Add materials based on available data
     if (widget.quotation.meta.cementBrand?.isNotEmpty ?? false) {
@@ -2414,6 +2518,50 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
       });
     }
 
+    if (widget.quotation.meta.design3D?.isNotEmpty ?? false) {
+      materials.add({
+        'label': '3D Design',
+        'value': widget.quotation.meta.design3D ?? '',
+      });
+    }
+    if (widget.quotation.meta.solarSolutions?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'Solar Solutions',
+        'value': widget.quotation.meta.solarSolutions ?? '',
+      });
+    }
+    if (widget.quotation.meta.securitySystems?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'Security Systems',
+        'value': widget.quotation.meta.securitySystems ?? '',
+      });
+    }
+    if (widget.quotation.meta.modularKitchen?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'Modular Kitchen',
+        'value': widget.quotation.meta.modularKitchen ?? '',
+      });
+    }
+    if (widget.quotation.meta.homeAutomation?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'Home Automation',
+        'value': widget.quotation.meta.homeAutomation ?? '',
+      });
+    }
+    if (widget.quotation.meta.boreAndPump?.isNotEmpty ?? false) {
+      materials.add({
+        'label': 'Bore And Pump',
+        'value': widget.quotation.meta.boreAndPump ?? '',
+      });
+    }
+
+    if (startDate != null) {
+      materials.add({
+        'label': 'EXPECTED START',
+        'value': _formatQuotationDate(startDate),
+      });
+    }
+
     if (materials.isEmpty) {
       return pw.SizedBox();
     }
@@ -2430,48 +2578,65 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
           ),
         ),
         pw.SizedBox(height: 10),
-        pw.Container(
-          padding: const pw.EdgeInsets.all(12),
-          decoration: pw.BoxDecoration(
-            border: pw.Border.all(color: PdfColors.grey300),
-          ),
-          child: pw.Wrap(
-            spacing: 15,
-            runSpacing: 8,
-            children:
-                materials.map((material) {
-                  return pw.Container(
-                    width: 170,
-                    decoration: pw.BoxDecoration(
-                      border: pw.Border.all(width: 1, color: PdfColors.grey300),
-                      borderRadius: pw.BorderRadius.circular(8),
-                    ),
-                    child: pw.Row(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Container(
-                          width: 100,
-                          child: pw.Text(
-                            material['label']!,
-                            style: pw.TextStyle(
-                              fontSize: 8,
-                              fontWeight: pw.FontWeight.bold,
-                            ),
-                          ),
+        pw.Wrap(
+          spacing: 15,
+          runSpacing: 8,
+          children:
+              materials.map((material) {
+                return pw.Container(
+                  width: 100,
+                  padding: const pw.EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
+                  decoration: pw.BoxDecoration(
+                    color: PdfColor.fromInt(0xFFF7FAFC),
+
+                    border: pw.Border.all(width: 1, color: PdfColors.grey300),
+                    borderRadius: pw.BorderRadius.circular(4),
+                  ),
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text(
+                        material['label']!,
+                        style: pw.TextStyle(
+                          fontSize: 7,
+                          fontWeight: pw.FontWeight.bold,
+                          color: PdfColors.grey600,
                         ),
-                        pw.Expanded(
-                          child: pw.Text(
-                            material['value']!,
-                            style: const pw.TextStyle(fontSize: 8),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }).toList(),
-          ),
+                      ),
+                      pw.SizedBox(height: 2),
+                      pw.Text(
+                        material['value']!,
+                        style: const pw.TextStyle(fontSize: 8),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
         ),
       ],
+    );
+  }
+
+  pw.Widget _tableHeader(String text, {bool alignRight = false}) {
+    return pw.Text(
+      text,
+      textAlign: alignRight ? pw.TextAlign.right : pw.TextAlign.left,
+      style: pw.TextStyle(
+        fontSize: 9,
+        fontWeight: pw.FontWeight.bold,
+        color: PdfColors.grey700,
+      ),
+    );
+  }
+
+  pw.Widget _tableCell(String text, {bool alignRight = false}) {
+    return pw.Text(
+      text,
+      textAlign: alignRight ? pw.TextAlign.right : pw.TextAlign.left,
+      style: pw.TextStyle(fontSize: 9, color: PdfColors.black),
     );
   }
 
@@ -2574,7 +2739,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
             pw.Padding(
               padding: const pw.EdgeInsets.all(8),
               child: pw.Text(
-                _formatIndianCurrency(advanceAmount),
+                _formatIndianCurrency(price),
                 style: const pw.TextStyle(fontSize: 9),
                 textAlign: pw.TextAlign.right,
               ),
@@ -2668,10 +2833,13 @@ class QuotationPdfPreviewScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quotation Preview'),
+        title: Text(
+          'Quotation Preview',
+          style: TextStyle(fontWeight: AppFontWeights.semiBold),
+        ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.share),
+          TextButton(
+            child: Text('Share'),
             onPressed: () async {
               await Printing.sharePdf(
                 bytes: await file.readAsBytes(),

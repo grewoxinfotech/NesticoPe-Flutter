@@ -133,9 +133,11 @@ class SecureStorage {
     return _storage.read(key: _keyToken);
   }
 
+/*
   static Future<void> deleteToken() async {
     await _storage.delete(key: _keyToken);
   }
+*/
 
   // User data
   static Future<void> saveUserData(UserModel data) async {
@@ -207,6 +209,7 @@ class SecureStorage {
 
   // Update Phone Token (for OTP verification)
   static Future<void> saveUpdatePhoneToken(String token) async {
+    log("Check any field mission of updated token $token");
     await _storage.write(key: _keyUpdatePhoneToken, value: token);
   }
 

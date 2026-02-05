@@ -230,7 +230,7 @@ class ApiConstants {
 
   static Future<Map<String, String>> getUpdatedHeaders() async {
     final token = await SecureStorage.getUpdatePhoneToken();
-    print("header_token: $token");
+    print("header_token Updated token for otp verification: $token");
     return {contentType: applicationJson, authorization: "Bearer $token"};
   }
 

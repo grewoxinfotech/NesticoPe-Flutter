@@ -389,9 +389,9 @@ class ContractorQuotationController
         .convertInquiryIntoLead(payload);
     if (response) {
       print("Check to plau ");
-      controllerLead.loadInitial();
-      controllerLead.refreshLead();
+
       controllerLead.items.refresh();
+      controllerLead.refreshLead();
       refreshList();
       Navigator.pop(Get.context!);
     }

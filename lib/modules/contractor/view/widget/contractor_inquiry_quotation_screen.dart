@@ -315,10 +315,10 @@ class _ContractorInquiryQuotationScreenState
                 ),
 
                 Obx(() {
-                  if (referralController.discountPercentage <= 0) {
+                  if (referralController.referralResponse.value?.data.pointsEarned==0) {
                     return SizedBox.shrink();
                   }
-                  return Column(
+                  return(referralController.discountPercentage <= 0)?SizedBox.shrink(): Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(height: 8),

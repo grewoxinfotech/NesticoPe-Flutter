@@ -35,16 +35,24 @@ class _ContractorLeadScreenState extends State<ContractorLeadScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       controller.loadInitial();
+      controller.refreshLead();
+
+
     });
   }
 
   @override
+
   Widget build(BuildContext context) {
+
     var contractorEmployee = Get.put(ContractorEmployeeController());
     RxMap<String, String> selectedFilters = <String, String>{}.obs;
     final serviceController = Get.find<ContractorMyServiceController>();
+
+
 
     return Scaffold(
       backgroundColor: ColorRes.background,

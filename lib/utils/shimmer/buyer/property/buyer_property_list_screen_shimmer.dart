@@ -7,7 +7,7 @@ class BuyerPropertyListScreenShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       itemCount: 4,
       separatorBuilder: (_, __) => const SizedBox(height: 16),
       itemBuilder: (context, index) {
@@ -20,7 +20,7 @@ class BuyerPropertyListScreenShimmer extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
@@ -38,7 +38,7 @@ class BuyerPropertyListScreenShimmer extends StatelessWidget {
           children: [
             // 🔹 Image Section (Multi-image layout from the screenshot)
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 8),
               child: Row(
                 children: [
                   // Main Large Image

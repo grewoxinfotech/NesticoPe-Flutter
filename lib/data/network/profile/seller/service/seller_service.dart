@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
@@ -32,8 +33,9 @@ class SellerProfileUpdate {
     try {
       final response = await http.get(
         Uri.parse('$_baseUrlSeller/$userId'),
-        headers: await header(),
-      );
+        headers: await header(),);
+
+      /*hhsjdsb jhsjjslkjojfifenisom*/
       final decoded = jsonDecode(response.body);
       print('📦 Selhjuyler Raw Response: $decoded');
 
@@ -133,7 +135,8 @@ class SellerProfileUpdate {
       final response = await http.Response.fromStream(streamedResponse);
 
       final decoded = jsonDecode(response.body);
-      print('📦 Seller Profile Update Response: $decoded');
+
+      AppLogger.structured('📦 Seller Profile Update Response: ',decoded);
       print('📦 Status Code: ${response.statusCode}');
 
       // ✅ Handle OTP-required responses
