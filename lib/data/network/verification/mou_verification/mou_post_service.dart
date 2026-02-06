@@ -6,6 +6,10 @@ import 'package:http/http.dart' as http;
 class MouService {
   static String baseUrl = ApiConstants.digitalSignature;
 
+  Future<Map<String,String>> header()async{
+    return await ApiConstants.getHeaders();
+  }
+
   Future<bool> uploadSignature({
     required Uint8List signatureBytes,
     required String name,
@@ -13,6 +17,8 @@ class MouService {
   }) async {
     try {
       var request = http.MultipartRequest('POST', Uri.parse(baseUrl));
+
+      request.headers.addAll(await header());
 
       /// Add fields
       request.fields['name'] = name;

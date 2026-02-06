@@ -1,6 +1,8 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
+import 'package:signature/signature.dart';
 import '../../../../data/network/verification/mou_verification/mou_verification.dart';
 
 class DigitalSignatureController extends GetxController {
@@ -8,18 +10,105 @@ class DigitalSignatureController extends GetxController {
 
   DigitalSignatureController({required this.userId});
 
-  /// Observables
+  /// User ID
+  final String userId;
+
+  /// ================================
+  /// Signature Upload Related
+  /// ================================
+  final SignatureController signatureController = SignatureController(
+    penStrokeWidth: 3,
+  );
+
+  final nameController = TextEditingController();
+
+  RxBool isUploadLoading = false.obs;
+  RxBool isAgreed = false.obs;
+
+  /// ================================
+  /// Signature List Related
+  /// ================================
   final RxList<dynamic> signatures = <dynamic>[].obs;
   final RxBool isLoading = false.obs;
   final RxBool isPaginationLoading = false.obs;
   final RxBool hasMoreData = true.obs;
+  final isSignatureVerified = false.obs;
 
   /// Pagination
   int _page = 1;
   final int _limit = 10;
 
-  /// Replace this with your auth userId source
-  final String userId;
+  /// ================================
+  /// Submit MOU (Upload Signature)
+  /// ================================
+  Future<void> submitMou() async {
+    if (!isAgreed.value) {
+      Get.snackbar("Error", "Please agree to MOU terms");
+      return;
+    }
+
+    if (nameController.text.trim().isEmpty) {
+      Get.snackbar("Error", "Enter full name");
+      return;
+    }
+
+    if (signatureController.isEmpty) {
+      Get.snackbar("Error", "Please provide signature");
+      return;
+    }
+
+    try {
+      isUploadLoading.value = true;
+
+      Uint8List? bytes = await signatureController.toPngBytes();
+
+      if (bytes == null) {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: 'Signature capture failed',
+          contentType: ContentType.failure,
+        );
+        return;
+      }
+
+      await _service.uploadSignature(
+        signatureBytes: bytes,
+        name: nameController.text.trim(),
+        userId: userId,
+      );
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Success',
+        message: "MOU signed successfully",
+        contentType: ContentType.success,
+      );
+
+      isSignatureVerified.value = true;
+      signatureController.clear();
+      nameController.clear();
+
+      /// Refresh the signature list after upload
+      await refreshList();
+
+      Get.back();
+    } catch (e) {
+      print("Signature Error: $e");
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to upload signature',
+        contentType: ContentType.failure,
+      );
+    } finally {
+      isUploadLoading.value = false;
+    }
+  }
+
+  /// ================================
+  /// Clear Signature Canvas
+  /// ================================
+  void clearSignature() {
+    signatureController.clear();
+  }
 
   /// ================================
   /// Fetch Digital Signatures
@@ -46,13 +135,17 @@ class DigitalSignatureController extends GetxController {
         userId: userId,
       );
 
-      /// ✅ Correct parsing based on your API response
+      /// Parse response based on API structure
       final data = response['data'];
       final List newData = data?['items'] ?? [];
 
       signatures.addAll(newData);
 
-      /// ✅ Use backend pagination flag
+      if (signatures.isNotEmpty) {
+        isSignatureVerified.value = true;
+      }
+
+      /// Use backend pagination flag
       hasMoreData.value = data?['hasMore'] ?? false;
 
       if (hasMoreData.value) {
@@ -88,14 +181,16 @@ class DigitalSignatureController extends GetxController {
     }
   }
 
-  /// ================================
-  /// Getter: Verification Status
-  /// ================================
-  bool get isDigitalSignatureVerified => signatures.isNotEmpty;
-
   @override
   void onInit() {
     super.onInit();
     fetchDigitalSignatures();
+  }
+
+  @override
+  void onClose() {
+    signatureController.dispose();
+    nameController.dispose();
+    super.onClose();
   }
 }

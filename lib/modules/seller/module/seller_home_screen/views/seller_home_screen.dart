@@ -991,7 +991,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
   final profileController = Get.put(BuyerProfileDataController());
   late final SellerOverviewController overviewController;
 
-  // Nullable controller to handle async initialization
+  // Single controller instance - no need for nullable
   DigitalSignatureController? signatureController;
 
   @override
@@ -1004,25 +1004,23 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
   }
 
   Future<void> _initDataAndControllers() async {
-    // 1. Fetch User Data
     final user = await SecureStorage.getUserData();
     final String userId = user?.user?.id.toString() ?? "";
 
-    // 2. Apply Property Filters
     if (userId.isNotEmpty) {
       controller.applyFilter("created_by", userId);
     }
 
-    // 3. Inject DigitalSignatureController with userId via constructor
-    // We check isRegistered to prevent errors if the user navigates back and forth quickly
-    if (Get.isRegistered<DigitalSignatureController>()) {
-      signatureController = Get.find<DigitalSignatureController>();
+    // Use a tag to ensure single instance
+    if (Get.isRegistered<DigitalSignatureController>(tag: 'signature')) {
+      signatureController = Get.find<DigitalSignatureController>(tag: 'signature');
     } else {
-      // Create the instance passing the userId
-      signatureController = Get.put(DigitalSignatureController(userId: userId));
+      signatureController = Get.put(
+        DigitalSignatureController(userId: userId),
+        tag: 'signature',
+      );
     }
 
-    // 4. Update UI to indicate initialization is complete
     if (mounted) {
       setState(() {});
     }
@@ -1032,14 +1030,13 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
   Widget build(BuildContext context) {
     Get.lazyPut(() => LeadController());
 
-    // 1. Show Loading until the Signature Controller is initialized
+    // Show Loading until the Signature Controller is initialized
     if (signatureController == null) {
-      return DashboardShimmer();
+      return SizedBox.shrink();
     }
 
     return DashboardLayout(
       onRefresh: overviewController.refreshSellerDashboard,
-
       floatingButton: FloatingActionButton.extended(
         onPressed: () async {
           /// 1️⃣ Check Aadhar first
@@ -1049,15 +1046,18 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
           }
 
           /// 2️⃣ Ensure signatures are loaded
-          // Use the class-level signatureController instance
           if (signatureController!.signatures.isEmpty &&
               !signatureController!.isLoading.value) {
             await signatureController!.fetchDigitalSignatures();
           }
 
           /// 3️⃣ Check MOU verification
-          if (!signatureController!.isDigitalSignatureVerified) {
-            Get.to(() => MouVerificationScreen());
+          /// 3️⃣ Check MOU verification
+          if (!signatureController!.isSignatureVerified.value) {
+            // Pass the controller to MouVerificationScreen
+            Get.to(() => MouVerificationScreen(
+              controller: signatureController,
+            ));
             return;
           }
 
@@ -1071,8 +1071,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
             fontWeight: AppFontWeights.semiBold,
           ),
         ),
-      ),
-      child: FutureBuilder(
+      ),      child: FutureBuilder(
         future: overviewController.getFetchSellerApi(
           overviewController.selectedGraphYear.value,
         ),

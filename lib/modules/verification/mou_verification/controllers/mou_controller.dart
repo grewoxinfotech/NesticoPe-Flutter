@@ -1,11 +1,15 @@
 import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
 import 'package:signature/signature.dart';
 import '../../../../data/network/verification/mou_verification/mou_post_service.dart';
+import 'mou_verification_controller.dart';
 
 class MouController extends GetxController {
   final MouService _service = MouService();
+
+  DigitalSignatureController digitalSignatureController = Get.find();
 
   final SignatureController signatureController = SignatureController(
     penStrokeWidth: 3,
@@ -40,7 +44,7 @@ class MouController extends GetxController {
       Uint8List? bytes = await signatureController.toPngBytes();
 
       if (bytes == null) {
-        Get.snackbar("Error", "Signature capture failed");
+        NesticoPeSnackBar.showAwesomeSnackbar(title: 'Error', message: 'Signature capture failed', contentType: ContentType.failure);
         return;
       }
 
@@ -49,11 +53,14 @@ class MouController extends GetxController {
         name: nameController.text.trim(),
         userId: userId,
       );
+      NesticoPeSnackBar.showAwesomeSnackbar(title: 'Success', message: "MOU signed successfully", contentType: ContentType.success);
+      digitalSignatureController.isSignatureVerified.value = true;
+      signatureController.clear();
 
-      Get.snackbar("Success", "MOU signed successfully");
       Get.back();
     } catch (e) {
-      Get.snackbar("Error", "Failed to upload signature");
+      print("Signature Error : ${e}");
+      NesticoPeSnackBar.showAwesomeSnackbar(title: 'Error', message: 'Failed to upload signature', contentType: ContentType.failure);
     } finally {
       isLoading.value = false;
     }

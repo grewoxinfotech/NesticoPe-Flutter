@@ -5,8 +5,8 @@ class ApiConstants {
   // Manual override options (comment/uncomment as needed):
   // static const String baseURL = "http://housing.grewox.com/api/v1"; // Live
 
-  static const String url = "http://192.168.1.5:19725";
-  // static const String url = "https://nesticopeapi.grewoxinfotech.com";
+  // static const String url = "http://192.168.1.5:19725";
+  static const String url = "https://nesticopeapi.grewoxinfotech.com";
   // static const String url = "https://commentary-flush-reprints-prison.trycloudflare.com";
 
   // static const String url =
@@ -43,7 +43,7 @@ class ApiConstants {
 
   static String get aadharVerifyOtp => "$auth/verify-aadhaar-otp";
 
-  static String get digitalSignature => "$auth/digitalsignature";
+  static String get digitalSignature => "$baseURL/digitalsignature";
 
   static String get sendNotificationId => "$baseURL/user/notification/token";
 

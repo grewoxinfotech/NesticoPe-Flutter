@@ -1,86 +1,138 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:housing_flutter_app/widgets/New%20folder/inputs/text_field.dart';
 import 'package:signature/signature.dart';
-import '../controllers/mou_controller.dart';
+import '../../../../app/constants/app_font_sizes.dart';
+import '../controllers/mou_verification_controller.dart';
 
 class MouVerificationScreen extends StatelessWidget {
-  MouVerificationScreen({super.key});
+  final DigitalSignatureController? controller;
 
-  final MouController controller = Get.put(MouController());
+  MouVerificationScreen({
+    super.key,
+    this.controller,
+  });
+
+  // Use the passed controller or try to find it
+  DigitalSignatureController get _controller =>
+      controller ?? Get.find<DigitalSignatureController>(tag: 'signature');
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Memorandum of Understanding (MOU)"),
-        backgroundColor: Colors.blue,
+        foregroundColor: ColorRes.white,
+        title: const Text(
+          "Memorandum of Understanding",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        backgroundColor: ColorRes.primary,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         child: Column(
           children: [
             Expanded(
               child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildTermsBox(),
-                    const SizedBox(height: 12),
+                child: Obx(
+                      () {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildTermsBox(),
+                        const SizedBox(height: 12),
 
-                    /// Checkbox
-                    Obx(
-                      () => CheckboxListTile(
-                        value: controller.isAgreed.value,
-                        onChanged:
-                            (val) => controller.isAgreed.value = val ?? false,
-                        title: const Text(
-                          "I have read and agree to the terms of the MOU",
+                        /// Checkbox
+                        Obx(
+                              () => CheckboxListTile(
+                            value: _controller.isAgreed.value,
+                            onChanged: (val) =>
+                            _controller.isAgreed.value = val ?? false,
+                            title: const Text(
+                              "I have read and agree to the terms of the MOU",
+                            ),
+                            controlAffinity: ListTileControlAffinity.leading,
+                          ),
                         ),
-                        controlAffinity: ListTileControlAffinity.leading,
-                      ),
-                    ),
 
-                    const SizedBox(height: 8),
+                        const SizedBox(height: 8),
+                        if (_controller.isAgreed.value) ...[
+                          /// Name Field
+                          NesticoPeTextField(
+                            title: "Full Name",
+                            isRequired: true,
+                            hintText: "Enter your full name",
+                            controller: _controller.nameController,
+                            keyboardType: TextInputType.name,
+                            textInputAction: TextInputAction.next,
+                            prefixIcon: Icons.person,
+                            validator: (val) {
+                              if (val == null || val.isEmpty) {
+                                return "Please enter your full name";
+                              }
+                              return null;
+                            },
+                          ),
 
-                    /// Name Field
-                    const Text("* Full Name"),
-                    const SizedBox(height: 6),
-                    TextField(
-                      controller: controller.nameController,
-                      decoration: InputDecoration(
-                        hintText: "Enter your full name",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
+                          const SizedBox(height: 16),
 
-                    const SizedBox(height: 16),
+                          /// Signature
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    'Digital Signature',
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.medium,
+                                      color: ColorRes.textSecondary,
+                                      fontWeight: AppFontWeights.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    ' *',
+                                    style: TextStyle(color: ColorRes.error),
+                                  )
+                                ],
+                              ),
+                              TextButton(
+                                onPressed: _controller.clearSignature,
+                                child: const Text("Clear"),
+                              ),
+                            ],
+                          ),
 
-                    /// Signature
-                    const Text("* Digital Signature"),
-                    const SizedBox(height: 6),
+                          Container(
+                            height: 180,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: ColorRes.leadGreyColor.shade300,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                              color: ColorRes.white,
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Signature(
+                                controller: _controller.signatureController,
+                                height: double.infinity,
+                                width: double.infinity,
+                                backgroundColor: Colors.white,
+                              ),
+                            ),
+                          ),
 
-                    Container(
-                      height: 180,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Signature(
-                        controller: controller.signatureController,
-                        backgroundColor: Colors.white,
-                      ),
-                    ),
-
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: controller.clearSignature,
-                        child: const Text("Clear"),
-                      ),
-                    ),
-                  ],
+                          SizedBox(height: 24),
+                        ]
+                      ],
+                    );
+                  },
                 ),
               ),
             ),
@@ -97,22 +149,20 @@ class MouVerificationScreen extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Obx(
-                    () => ElevatedButton(
-                      onPressed:
-                          controller.isLoading.value
-                              ? null
-                              : controller.submitMou,
-                      child:
-                          controller.isLoading.value
-                              ? const SizedBox(
-                                height: 18,
-                                width: 18,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
-                                ),
-                              )
-                              : const Text("Agree & Sign"),
+                        () => ElevatedButton(
+                      onPressed: _controller.isUploadLoading.value
+                          ? null
+                          : _controller.submitMou,
+                      child: _controller.isUploadLoading.value
+                          ? const SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                          : const Text("Agree & Sign"),
                     ),
                   ),
                 ),
@@ -134,13 +184,13 @@ class MouVerificationScreen extends StatelessWidget {
       ),
       child: const Text(
         "Terms and Conditions\n\n"
-        "This Memorandum of Understanding (MOU) sets forth the terms and understanding "
-        "between the Seller and our platform regarding the listing and management of properties.\n\n"
-        "1. The Seller confirms that all information provided regarding the property is accurate.\n"
-        "2. The Seller holds the legal right to sell or rent the property.\n"
-        "3. The Seller agrees to service fees and commission structure.\n"
-        "4. Disputes will be subject to jurisdiction of local courts.\n\n"
-        "By signing this document, you acknowledge that you have read and agreed.",
+            "This Memorandum of Understanding (MOU) sets forth the terms and understanding "
+            "between the Seller and our platform regarding the listing and management of properties.\n\n"
+            "1. The Seller confirms that all information provided regarding the property is accurate.\n"
+            "2. The Seller holds the legal right to sell or rent the property.\n"
+            "3. The Seller agrees to service fees and commission structure.\n"
+            "4. Disputes will be subject to jurisdiction of local courts.\n\n"
+            "By signing this document, you acknowledge that you have read and agreed.",
         style: TextStyle(fontSize: 14),
       ),
     );
