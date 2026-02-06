@@ -509,11 +509,12 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
                                   onLeadConvert:
                                   // () => controller.convertToLead(inquiry, inquiry.services,inquiry.convertedServices),
                                   () {
-                                    Get.put(
-                                      ContractorReferralController(
-                                        userId: inquiry.userId,
-                                      ),
-                                    );
+                                    // final controller = Get.put(
+                                    //   ContractorReferralController(
+                                    //     userId: inquiry.userId,
+                                    //   ),
+                                    // );
+                                    // controller.resetAllData();
                                     Get.to(
                                       () => ContractorInquiryQuotationScreen(
                                         inquiry: inquiry,

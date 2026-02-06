@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/img_res.dart';
-import 'package:housing_flutter_app/modules/aadhar_auth/controllers/aadhar_auth_controller.dart';
-import '../../../widgets/New folder/inputs/text_field.dart';
+import '../../../../widgets/New folder/inputs/text_field.dart';
+import '../controllers/aadhar_auth_controller.dart';
 
 class AadharAuthScreen extends StatelessWidget {
   final TextEditingController aadharNumberController = TextEditingController();

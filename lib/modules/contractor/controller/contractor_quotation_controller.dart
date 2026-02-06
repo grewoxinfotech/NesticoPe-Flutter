@@ -214,12 +214,17 @@ class ContractorQuotationController
   /// Update quotation details
   Future<void> updateQuotation({
     required ContractorQuotation quotationId,
-    required int price,
     required String status,
     required String note,
     required String userId,
     required int discountedPrice,
     required String date,
+    required int quotationPrice,
+    required bool gstEnabled,
+    int? gst,
+    int? afterGstPrice,
+    required int discountPercentage,
+    required int discountAmount,
   }) async {
     try {
       Get.dialog(
@@ -241,27 +246,47 @@ class ContractorQuotationController
         "status": status.toLowerCase().replaceAll(" ", '_'),
         "meta": {
           "notes": note,
+          "basePrice": quotationPrice,
+          "isGstEnabled": gstEnabled,
+          "discountPercentage": discountPercentage,
+          "discountAmount": discountAmount,
+          "totalPrice": discountedPrice,
+          if (discountPercentage > 0)
+            "discountReason": "Buyer's referral points benefit",
+          if (gstEnabled) 'gstPercentage': gst,
+          if (gstEnabled) 'gstAmount': afterGstPrice,
+          "inquiryCustomerId": userId,
+          "expectedStartDate": date,
           "propertyDetails": {
-            "propertyType": quotationId.meta.propertyDetails?.propertyType ?? '',
+            "propertyType":
+                quotationId.meta.propertyDetails?.propertyType ?? '',
             "city": quotationId.meta.propertyDetails?.city ?? '',
             "location": quotationId.meta.propertyDetails?.location ?? '',
             "state": quotationId.meta.propertyDetails?.state ?? '',
             "bhk": quotationId.meta.propertyDetails?.bhk,
             "carpetArea": quotationId.meta.propertyDetails?.carpetArea ?? 0,
-            "serviceDescription": quotationId.meta.propertyDetails?.serviceDescription ?? ''
+            "serviceDescription":
+                quotationId.meta.propertyDetails?.serviceDescription ?? '',
           },
-          "inquiryServices": quotationId.meta.inquiryServices.map((service) => {
-            "serviceId": service.serviceId,
-            "serviceName": service.serviceName,
-            "advanceRequiredPercentage": quotationId.meta.advanceRequiredPercentage
-          }).toList(),
+          "inquiryServices":
+              quotationId.meta.inquiryServices
+                  .map(
+                    (service) => {
+                      "serviceId": service.serviceId,
+                      "serviceName": service.serviceName,
+                      "advanceRequiredPercentage":
+                          quotationId.meta.advanceRequiredPercentage,
+                    },
+                  )
+                  .toList(),
           "serviceNames": quotationId.meta.serviceNames,
           "cementBrand": quotationId.meta.cementBrand ?? [],
           "steelBrand": quotationId.meta.steelBrand ?? [],
           "brickType": quotationId.meta.brickType ?? [],
           "sandSource": quotationId.meta.sandSource ?? [],
           "electricalWiresBrand": quotationId.meta.electricalWiresBrand ?? [],
-          "electricalSwitchesBrand": quotationId.meta.electricalSwitchesBrand ?? [],
+          "electricalSwitchesBrand":
+              quotationId.meta.electricalSwitchesBrand ?? [],
           "plumbingPipesBrand": quotationId.meta.plumbingPipesBrand ?? [],
           "sanitaryFittingsBrand": quotationId.meta.sanitaryFittingsBrand ?? [],
           "waterTankBrand": quotationId.meta.waterTankBrand ?? [],
@@ -283,18 +308,22 @@ class ContractorQuotationController
           "homeAutomation": quotationId.meta.homeAutomation ?? '',
           "solarSolutions": quotationId.meta.solarSolutions ?? '',
           "threeDDesign": quotationId.meta.design3D ?? '',
-          "advanceRequiredPercentage": quotationId.meta.advanceRequiredPercentage,
-          "referralInfo": quotationId.meta.referralInfo != null ? {
-            "userId": quotationId.meta.referralInfo!.userId,
-            "userType": quotationId.meta.referralInfo!.userType,
-            "totalReferralPoints": quotationId.meta.referralInfo!.totalReferralPoints,
-            "pointsUsed": quotationId.meta.referralInfo!.pointsUsed,
-            "discountApplied": quotationId.meta.referralInfo!.discountApplied,
-            "discountedPrice": quotationId.meta.referralInfo!.discountedPrice,
-          } : null,
-          "originalPrice": price,
-          "expectedStartDate": date,
-          "inquiryCustomerId": userId,
+          "advanceRequiredPercentage":
+              quotationId.meta.advanceRequiredPercentage,
+          "referralInfo":
+              quotationId.meta.referralInfo != null
+                  ? {
+                    "userId": quotationId.meta.referralInfo!.userId,
+                    "userType": quotationId.meta.referralInfo!.userType,
+                    "totalReferralPoints":
+                        quotationId.meta.referralInfo!.totalReferralPoints,
+                    "pointsUsed": quotationId.meta.referralInfo!.pointsUsed,
+                    "discountApplied":
+                        quotationId.meta.referralInfo!.discountApplied,
+                    "discountedPrice":
+                        quotationId.meta.referralInfo!.discountedPrice,
+                  }
+                  : null,
         },
         "price": discountedPrice,
         "is_converted": false,

@@ -146,4 +146,10 @@ class ContractorReferralController extends GetxController {
     // saved price
     savedPriceObs.value = originalPrice.value - discountedPriceObs.value;
   }
+
+  /// resetAllData
+  void resetAllData() {
+    originalPrice.value = 0;
+    discountedPriceObs.value = 0;
+  }
 }

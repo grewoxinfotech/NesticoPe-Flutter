@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
-import 'package:housing_flutter_app/modules/aadhar_auth/screens/aadhar_auth_screen.dart';
 import 'package:housing_flutter_app/modules/contractor/controller/contractor_dashboard_controller.dart';
 import 'package:housing_flutter_app/modules/contractor/view/widget/create_service_from.dart';
 import 'package:housing_flutter_app/modules/dashboard/views/widget/dashboard_layout.dart';
@@ -17,6 +16,7 @@ import '../../../dashboard/views/dashboard_screen.dart';
 import '../../../reseller/view/property_reseller.dart';
 import '../../../reseller/widget/graph/linear_graph.dart';
 import '../../../seller/module/seller_home_screen/views/widget/property_distribution_pie_graph.dart';
+import '../../../verification/aadhar_auth/screens/aadhar_auth_screen.dart';
 import '../../controller/contractor_my_service_controller.dart';
 import '../widget/service_property_trend_graphs.dart';
 

@@ -637,7 +637,6 @@ import '../../../app/widgets/texts/headline_text.dart';
 import '../../../data/database/secure_storage_service.dart';
 import '../../../data/network/seller_dashboard/model/seller_dashboardmodel.dart';
 import '../../../utils/excel/generate_excel.dart';
-import '../../aadhar_auth/screens/aadhar_auth_screen.dart';
 import '../../dashboard/views/dashboard_screen.dart';
 import '../../property/controllers/property_controller.dart';
 import '../../reseller/view/property_reseller.dart';
@@ -646,6 +645,7 @@ import '../../seller/module/lead_screen/controllers/lead_controller.dart';
 import '../../seller/module/seller_home_screen/views/property_overview_screen.dart';
 import '../../seller/module/seller_home_screen/views/seller_home_screen.dart';
 import '../../seller/module/seller_home_screen/views/widget/property_distribution_pie_graph.dart';
+import '../../verification/aadhar_auth/screens/aadhar_auth_screen.dart';
 import '../controller/builder_form_controller.dart';
 import 'builder_form_screen.dart';
 

@@ -59,6 +59,7 @@
         "share_plus",
         "shared_preferences",
         "shimmer",
+        "signature",
         "smooth_page_indicator",
         "socket_io_client",
         "speech_to_text",
@@ -2446,6 +2447,14 @@
         "path",
         "sqflite_common",
         "sqflite_platform_interface"
+      ]
+    },
+    {
+      "name": "signature",
+      "version": "6.3.0",
+      "dependencies": [
+        "flutter",
+        "flutter_svg"
       ]
     }
   ],

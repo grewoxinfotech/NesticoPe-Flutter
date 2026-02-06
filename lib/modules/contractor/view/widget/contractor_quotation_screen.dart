@@ -379,6 +379,11 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
 
               const SizedBox(height: 16),
 
+              // Price Summary Section
+              _buildPriceSummarySection(),
+
+              const SizedBox(height: 16),
+
               // Quotation Details Section
               _buildSectionCard(
                 icon: Icons.receipt_outlined,
@@ -421,6 +426,119 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildPriceSummarySection() {
+    // Get base price from meta
+    final double basePrice = widget.quotation.meta.basePrice ?? 0;
+
+    // Get discount information
+    final double discountPercentage =
+        widget.quotation.meta.discountPercentage ?? 0;
+    final double discountAmount = widget.quotation.meta.discountAmount ?? 0;
+
+    // Calculate discounted price (base price - discount amount)
+    final double priceAfterDiscount = basePrice - discountAmount;
+
+    // Get GST information
+    final bool isGstEnabled = widget.quotation.meta.isGstEnabled ?? false;
+    final double gstPercentage = widget.quotation.meta.gstPercentage ?? 0;
+    final double gstAmount = widget.quotation.meta.gstAmount ?? 0;
+
+    // Calculate total price (discounted price + GST)
+    final double totalPrice =
+        widget.quotation.meta.totalPrice ?? (priceAfterDiscount + gstAmount);
+
+    return _buildSectionCard(
+      children: [
+        _buildSummaryRow('Base Price', Formatter.formatPrice(basePrice)),
+
+        // Show discount if applicable
+        if (discountAmount > 0) ...[
+          const SizedBox(height: 8),
+          _buildSummaryRow(
+            'Discount (${discountPercentage.toStringAsFixed(0)}%)',
+            '- ${Formatter.formatPrice(discountAmount)}',
+            valueColor: ColorRes.success,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '(Buyer\'s referral points benefit)',
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.grey.shade600,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+        ],
+
+        // Show GST if enabled
+        if (isGstEnabled && gstAmount > 0) ...[
+          const SizedBox(height: 8),
+          _buildSummaryRow(
+            'GST (${gstPercentage.toStringAsFixed(0)}%)',
+            Formatter.formatPrice(gstAmount),
+            valueColor: ColorRes.primary,
+          ),
+        ],
+
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 12),
+          child: Divider(),
+        ),
+
+        Row(
+          children: [
+            Spacer(),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  isGstEnabled ? 'Total Price (Incl. GST)' : 'Total Price',
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
+                ),
+                const SizedBox(height: 6),
+
+                Text(
+                  Formatter.formatPrice(totalPrice),
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: ColorRes.success,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+      title: 'Price Summery',
+      icon: Icons.attach_money_outlined,
+    );
+  }
+
+  Widget _buildSummaryRow(String label, String value, {Color? valueColor}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 14,
+            color: valueColor ?? Colors.grey.shade700,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: valueColor ?? Colors.grey.shade800,
+          ),
+        ),
+      ],
     );
   }
 
@@ -2641,10 +2759,121 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
   }
 
   // Build Service Table
+  // pw.Widget _buildServiceTable() {
+  //   final headerColor = PdfColor.fromInt(0xFF2C3E50);
+  //   final lightGray = PdfColor.fromInt(0xFFF5F5F5);
+  //
+  //   String description =
+  //       widget.quotation.meta.serviceNames ?? 'General Service';
+  //
+  //   if (widget.quotation.meta.notes?.isNotEmpty ?? false) {
+  //     String cleanNotes =
+  //         widget.quotation.meta.notes?.replaceAll(
+  //           'Generated from inquiry for: ',
+  //           '',
+  //         ) ??
+  //         '';
+  //     if (!description.contains(cleanNotes) && cleanNotes.isNotEmpty) {
+  //       description +=
+  //           description.isNotEmpty ? '\n\nNote: ($cleanNotes)' : cleanNotes;
+  //     }
+  //   }
+  //
+  //   final price =
+  //       double.tryParse(
+  //         widget.quotation.price.toString().replaceAll(',', ''),
+  //       ) ??
+  //       0;
+  //   final advancePercentage = widget.quotation.meta.advanceRequiredPercentage;
+  //   final advanceAmount = (price * advancePercentage) / 100;
+  //
+  //   return pw.Table(
+  //     border: pw.TableBorder.all(color: PdfColors.grey400, width: 0.5),
+  //     columnWidths: {
+  //       0: const pw.FlexColumnWidth(3),
+  //       1: const pw.FlexColumnWidth(1),
+  //       2: const pw.FlexColumnWidth(1.5),
+  //     },
+  //     children: [
+  //       // Header Row
+  //       pw.TableRow(
+  //         decoration: pw.BoxDecoration(color: lightGray),
+  //         children: [
+  //           pw.Padding(
+  //             padding: const pw.EdgeInsets.all(8),
+  //             child: pw.Text(
+  //               'Service Description',
+  //               style: pw.TextStyle(
+  //                 fontSize: 10,
+  //                 fontWeight: pw.FontWeight.bold,
+  //                 color: headerColor,
+  //               ),
+  //             ),
+  //           ),
+  //           pw.Padding(
+  //             padding: const pw.EdgeInsets.all(8),
+  //             child: pw.Text(
+  //               'Adv. Payment %',
+  //               style: pw.TextStyle(
+  //                 fontSize: 10,
+  //                 fontWeight: pw.FontWeight.bold,
+  //                 color: headerColor,
+  //               ),
+  //               textAlign: pw.TextAlign.center,
+  //             ),
+  //           ),
+  //           pw.Padding(
+  //             padding: const pw.EdgeInsets.all(8),
+  //             child: pw.Text(
+  //               'Amount (INR)',
+  //               style: pw.TextStyle(
+  //                 fontSize: 10,
+  //                 fontWeight: pw.FontWeight.bold,
+  //                 color: headerColor,
+  //               ),
+  //               textAlign: pw.TextAlign.right,
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //       // Data Row
+  //       pw.TableRow(
+  //         children: [
+  //           pw.Padding(
+  //             padding: const pw.EdgeInsets.all(8),
+  //             child: pw.Text(
+  //               description,
+  //               style: const pw.TextStyle(fontSize: 9),
+  //             ),
+  //           ),
+  //           pw.Padding(
+  //             padding: const pw.EdgeInsets.all(8),
+  //             child: pw.Text(
+  //               '$advancePercentage%',
+  //               style: const pw.TextStyle(fontSize: 9),
+  //               textAlign: pw.TextAlign.center,
+  //             ),
+  //           ),
+  //           pw.Padding(
+  //             padding: const pw.EdgeInsets.all(8),
+  //             child: pw.Text(
+  //               _formatIndianCurrency(price),
+  //               style: const pw.TextStyle(fontSize: 9),
+  //               textAlign: pw.TextAlign.right,
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ],
+  //   );
+  // }
+
   pw.Widget _buildServiceTable() {
     final headerColor = PdfColor.fromInt(0xFF2C3E50);
     final lightGray = PdfColor.fromInt(0xFFF5F5F5);
+    final totalBg = PdfColor.fromInt(0xFFE8F5E9);
 
+    // 1. Service Description
     String description =
         widget.quotation.meta.serviceNames ?? 'General Service';
 
@@ -2655,19 +2884,58 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
             '',
           ) ??
           '';
+
       if (!description.contains(cleanNotes) && cleanNotes.isNotEmpty) {
         description +=
             description.isNotEmpty ? '\n\nNote: ($cleanNotes)' : cleanNotes;
       }
     }
 
-    final price =
+    // 2. Pricing Logic
+    final basePrice =
+        double.tryParse(
+          widget.quotation.meta.basePrice.toString().replaceAll(',', ''),
+        ) ??
+        0;
+
+    final discountAmount =
+        double.tryParse(
+          widget.quotation.meta.discountAmount.toString().replaceAll(',', ''),
+        ) ??
+        0;
+
+    final discountPercent =
+        double.tryParse(
+          widget.quotation.meta.discountPercentage.toString().replaceAll(
+            ',',
+            '',
+          ),
+        ) ??
+        0;
+
+    final gstAmount =
+        double.tryParse(
+          widget.quotation.meta.gstAmount.toString().replaceAll(',', ''),
+        ) ??
+        0;
+
+    final gstPercentage =
+        double.tryParse(
+          widget.quotation.meta.gstPercentage.toString().replaceAll(',', ''),
+        ) ??
+        0;
+
+    final totalAmount =
         double.tryParse(
           widget.quotation.price.toString().replaceAll(',', ''),
         ) ??
         0;
+
+    final isGSTEnable = widget.quotation.meta.isGstEnabled ?? false;
+
+    // Advance
     final advancePercentage = widget.quotation.meta.advanceRequiredPercentage;
-    final advanceAmount = (price * advancePercentage) / 100;
+    final advanceAmount = (totalAmount * advancePercentage) / 100;
 
     return pw.Table(
       border: pw.TableBorder.all(color: PdfColors.grey400, width: 0.5),
@@ -2677,48 +2945,25 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
         2: const pw.FlexColumnWidth(1.5),
       },
       children: [
-        // Header Row
+        // HEADER
         pw.TableRow(
           decoration: pw.BoxDecoration(color: lightGray),
           children: [
-            pw.Padding(
-              padding: const pw.EdgeInsets.all(8),
-              child: pw.Text(
-                'Service Description',
-                style: pw.TextStyle(
-                  fontSize: 10,
-                  fontWeight: pw.FontWeight.bold,
-                  color: headerColor,
-                ),
-              ),
+            _pdfHeaderCell('Description', headerColor),
+            _pdfHeaderCell(
+              'Rate/Info',
+              headerColor,
+              align: pw.TextAlign.center,
             ),
-            pw.Padding(
-              padding: const pw.EdgeInsets.all(8),
-              child: pw.Text(
-                'Adv. Payment %',
-                style: pw.TextStyle(
-                  fontSize: 10,
-                  fontWeight: pw.FontWeight.bold,
-                  color: headerColor,
-                ),
-                textAlign: pw.TextAlign.center,
-              ),
-            ),
-            pw.Padding(
-              padding: const pw.EdgeInsets.all(8),
-              child: pw.Text(
-                'Amount (INR)',
-                style: pw.TextStyle(
-                  fontSize: 10,
-                  fontWeight: pw.FontWeight.bold,
-                  color: headerColor,
-                ),
-                textAlign: pw.TextAlign.right,
-              ),
+            _pdfHeaderCell(
+              'Amount (INR)',
+              headerColor,
+              align: pw.TextAlign.right,
             ),
           ],
         ),
-        // Data Row
+
+        // SERVICE DESCRIPTION ROW
         pw.TableRow(
           children: [
             pw.Padding(
@@ -2730,21 +2975,159 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
             ),
             pw.Padding(
               padding: const pw.EdgeInsets.all(8),
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.center,
+                children: [
+                  pw.Text(
+                    'Adv: $advancePercentage%',
+                    style: const pw.TextStyle(fontSize: 9),
+                  ),
+                  pw.Text(
+                    '(${_formatIndianCurrency(advanceAmount)})',
+                    style: const pw.TextStyle(
+                      fontSize: 8,
+                      color: PdfColors.grey700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text('')),
+          ],
+        ),
+
+        // BASE AMOUNT
+        _priceRow('Base Amount', basePrice),
+
+        // DISCOUNT (optional)
+        if (discountAmount > 0)
+          pw.TableRow(
+            children: [
+              pw.Padding(
+                padding: const pw.EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 6,
+                ),
+                child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text(
+                      'Discount',
+                      style: pw.TextStyle(
+                        fontSize: 9,
+                        fontStyle: pw.FontStyle.italic,
+                      ),
+                    ),
+                    pw.Text(
+                      "(Buyer's referral points benefit)",
+                      style: pw.TextStyle(
+                        fontSize: 8,
+                        color: PdfColors.grey700,
+                        fontStyle: pw.FontStyle.italic,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              pw.Padding(
+                padding: const pw.EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 6,
+                ),
+                child: pw.Text(
+                  '${discountPercent.toStringAsFixed(0)}%',
+                  textAlign: pw.TextAlign.center,
+                  style: const pw.TextStyle(fontSize: 9),
+                ),
+              ),
+              pw.Padding(
+                padding: const pw.EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 6,
+                ),
+                child: pw.Text(
+                  '-${_formatIndianCurrency(discountAmount)}',
+                  textAlign: pw.TextAlign.right,
+                  style: const pw.TextStyle(fontSize: 9),
+                ),
+              ),
+            ],
+          ),
+
+        // GST ROW
+        if (isGSTEnable && gstAmount > 0)
+          _priceRow('GST (${gstPercentage}%)', gstAmount),
+
+        // TOTAL ROW (highlighted)
+        pw.TableRow(
+          decoration: pw.BoxDecoration(color: totalBg),
+          children: [
+            pw.Padding(
+              padding: const pw.EdgeInsets.all(10),
               child: pw.Text(
-                '$advancePercentage%',
-                style: const pw.TextStyle(fontSize: 9),
-                textAlign: pw.TextAlign.center,
+                'Total Quotation Amount (Inclusive of all taxes)',
+                style: pw.TextStyle(
+                  fontSize: 10,
+                  fontWeight: pw.FontWeight.bold,
+                ),
               ),
             ),
             pw.Padding(
-              padding: const pw.EdgeInsets.all(8),
+              padding: const pw.EdgeInsets.all(10),
+              child: pw.Text(''),
+            ),
+            pw.Padding(
+              padding: const pw.EdgeInsets.all(10),
               child: pw.Text(
-                _formatIndianCurrency(price),
-                style: const pw.TextStyle(fontSize: 9),
+                _formatIndianCurrency(totalAmount),
                 textAlign: pw.TextAlign.right,
+                style: pw.TextStyle(
+                  fontSize: 12,
+                  fontWeight: pw.FontWeight.bold,
+                  color: PdfColors.green800,
+                ),
               ),
             ),
           ],
+        ),
+      ],
+    );
+  }
+
+  pw.Widget _pdfHeaderCell(
+    String text,
+    PdfColor color, {
+    pw.TextAlign align = pw.TextAlign.left,
+  }) {
+    return pw.Padding(
+      padding: const pw.EdgeInsets.all(8),
+      child: pw.Text(
+        text,
+        textAlign: align,
+        style: pw.TextStyle(
+          fontSize: 10,
+          fontWeight: pw.FontWeight.bold,
+          color: color,
+        ),
+      ),
+    );
+  }
+
+  pw.TableRow _priceRow(String label, double amount) {
+    return pw.TableRow(
+      children: [
+        pw.Padding(
+          padding: const pw.EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          child: pw.Text(label, style: const pw.TextStyle(fontSize: 9)),
+        ),
+        pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text('')),
+        pw.Padding(
+          padding: const pw.EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          child: pw.Text(
+            _formatIndianCurrency(amount),
+            textAlign: pw.TextAlign.right,
+            style: const pw.TextStyle(fontSize: 9),
+          ),
         ),
       ],
     );

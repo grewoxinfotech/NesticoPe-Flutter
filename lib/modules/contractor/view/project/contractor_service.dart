@@ -302,7 +302,7 @@ import '../../../../app/constants/color_res.dart';
 import '../../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../../data/network/contractor/model/contractot_service_model/contractor_service_model.dart';
 import '../../../../utils/shimmer/contractor/service/contractor_my_service_list_screen_shimmer.dart';
-import '../../../aadhar_auth/screens/aadhar_auth_screen.dart';
+import '../../../verification/aadhar_auth/screens/aadhar_auth_screen.dart';
 import '../../controller/contractor_dashboard_controller.dart';
 import '../../controller/contractor_my_service_controller.dart';
 import '../widget/cotractor_active_switch.dart';

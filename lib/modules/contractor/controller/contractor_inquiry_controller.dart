@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
 import 'package:housing_flutter_app/data/network/contractor/service/contractor_inquiry_service.dart';
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 
 import '../../../app/care/pagination/controller/pagination_controller.dart';
 import '../../../app/constants/app_font_sizes.dart';
@@ -445,7 +446,12 @@ class ContractorInquiryController
     required ContractorInquiryItem inquiry,
     required String userId,
     required int discountedPrice,
-    required String date
+    required String date,
+    required bool gstEnabled,
+    int? gst,
+    int? afterGstPrice,
+    required int discountPercentage,
+    required int discountAmount,
   }) async {
     try {
       // TODO: Implement API call to save quotation
@@ -453,14 +459,24 @@ class ContractorInquiryController
       Map<String, dynamic> payload = {
         "related_id": inquiryId,
         "user": {
-          "id": inquiry.contractorId,
+          "id": inquiry.userId,
           "name": inquiry.name,
           "email": inquiry.email,
           "phone": inquiry.phone,
         },
         "meta": {
           "notes": note,
-          "originalPrice": quotationPrice,
+          "basePrice": quotationPrice,
+          "isGstEnabled": gstEnabled,
+          "discountPercentage": discountPercentage,
+          "discountAmount": discountAmount,
+          "totalPrice": discountedPrice,
+          if (discountPercentage > 0)
+            "discountReason": "Buyer's referral points benefit",
+          if (gstEnabled) 'gstPercentage': gst,
+          if (gstEnabled) 'gstAmount': afterGstPrice,
+          "inquiryCustomerId": userId,
+          "expectedStartDate": date,
           "propertyDetails": {
             "propertyType": inquiry.meta.propertyType,
             "city": inquiry.meta.city,
@@ -468,15 +484,14 @@ class ContractorInquiryController
             "state": inquiry.meta.state,
             "bhk": inquiry.meta.bhk,
             "carpetArea": inquiry.meta.carpetArea,
-            "serviceDescription": inquiry.meta.serviceDescription
+            "serviceDescription": inquiry.meta.serviceDescription,
           },
-          "inquiryCustomerId": userId,
-          "expectedStartDate": date,
         },
         "price": discountedPrice,
         "status": status.toLowerCase().replaceAll(" ", "_"),
       };
 
+      AppLogger.structured("Contractor quotation Payload", payload);
       final response = await ContractorInquiryService.contractorInquiryService
           .convertInquiryQuotation(payload);
 

@@ -6,6 +6,7 @@ import 'package:http/http.dart';
 
 import '../../../../app/care/pagination/models/pagination_models.dart';
 import '../../../../app/constants/api_constants.dart';
+import '../../../../utils/logger/app_logger.dart';
 import '../../../../widgets/messages/snack_bar.dart';
 import '../model/contractor_quotation/contractor_quotation.dart';
 import '../model/contractot_service_model/contractor_inquiry_model.dart';
@@ -347,6 +348,7 @@ class ContractorInquiryService {
 
   Future<bool> updateQuotation(Map<String, dynamic> quotation) async {
     try {
+      AppLogger.structured("Quotation Update:", quotation);
       final response = await http.put(
         Uri.parse('$_baseUrlQutation/${quotation['id']}'),
         headers: await headers(),

@@ -71,6 +71,7 @@ dependencies:
   excel:
   onesignal_flutter:
   package_info_plus:
+  signature:
 
 
 dev_dependencies:

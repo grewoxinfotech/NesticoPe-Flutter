@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-import '../../../../app/constants/api_constants.dart';
+import '../../../../../app/constants/api_constants.dart';
 
 class AadharAuthService {
   final String aadhar = ApiConstants.aadharInitiateVerification;

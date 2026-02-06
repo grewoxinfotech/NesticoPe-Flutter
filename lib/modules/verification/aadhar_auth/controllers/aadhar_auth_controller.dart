@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
-import '../../../data/network/aadhar_auth/service/aadhar_auth_service.dart';
+import '../../../../data/network/verification/aadhar_auth/service/aadhar_auth_service.dart';
 import '../screens/aadhar_verify_otp_screen.dart';
 
 class AadharAuthController extends GetxController {
