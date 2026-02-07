@@ -252,203 +252,198 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                         project: project!,
                         reviewController: reviewController,
                       ),
-                      const SizedBox(height: 12),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 12,
+                      const SizedBox(height: 8),
+
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          color: ColorRes.white,
+                          // borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Limited Time Offer!',
+                              style: TextStyle(
+                                fontSize: AppFontSizes.medium,
+                                fontWeight: AppFontWeights.semiBold,
+
+                                color: ColorRes.textPrimary,
+                              ),
                             ),
-                            decoration: BoxDecoration(
-                              color: ColorRes.white,
-                              borderRadius: BorderRadius.circular(12),
+                            const SizedBox(height: 8),
+                            // Offer Text
+                            const Text(
+                              'Limited-time! Get an exclusive offer on this property.',
+                              style: TextStyle(
+                                fontSize: AppFontSizes.small,
+                                fontWeight: AppFontWeights.medium,
+                                color: ColorRes.textPrimary,
+                                height: 1.3,
+                              ),
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Limited Time Offer!',
-                                  style: TextStyle(
-                                    fontSize: AppFontSizes.medium,
-                                    fontWeight: AppFontWeights.semiBold,
 
-                                    color: ColorRes.textPrimary,
+                            const SizedBox(height: 12),
+
+                            // Conditional Area
+                            Obx(() {
+                              if (controller.hasSubmittedInquiry.value) {
+                                return Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 6,
                                   ),
-                                ),
-                                const SizedBox(height: 8),
-                                // Offer Text
-                                const Text(
-                                  'Limited-time! Get an exclusive offer on this property.',
-                                  style: TextStyle(
-                                    fontSize: AppFontSizes.small,
-                                    fontWeight: AppFontWeights.medium,
-                                    color: ColorRes.textPrimary,
-                                    height: 1.3,
+                                  decoration: BoxDecoration(
+                                    color: ColorRes.success.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: ColorRes.success,
+                                      width: 1,
+                                    ),
                                   ),
-                                ),
-
-                                const SizedBox(height: 12),
-
-                                // Conditional Area
-                                Obx(() {
-                                  if (controller.hasSubmittedInquiry.value) {
-                                    return Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 6,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(
+                                        Icons.check_circle_outline,
+                                        color: ColorRes.success,
+                                        size: 16,
                                       ),
-                                      decoration: BoxDecoration(
-                                        color: ColorRes.success.withOpacity(
-                                          0.1,
-                                        ),
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        'Submitted',
+                                        style: TextStyle(
                                           color: ColorRes.success,
-                                          width: 1,
+                                          fontSize: AppFontSizes.small,
+                                          fontWeight: AppFontWeights.semiBold,
                                         ),
                                       ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          const Icon(
-                                            Icons.check_circle_outline,
-                                            color: ColorRes.success,
-                                            size: 16,
-                                          ),
-                                          const SizedBox(width: 6),
-                                          Text(
-                                            'Submitted',
-                                            style: TextStyle(
-                                              color: ColorRes.success,
-                                              fontSize: AppFontSizes.small,
-                                              fontWeight:
-                                                  AppFontWeights.semiBold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  } else {
-                                    return NesticoPeButton(
-                                      title: 'Get Offer',
-                                      backgroundColor: ColorRes.error,
-                                      height: 36,
-                                      onTap:
-                                          (UserHelper.isGuest)
-                                              ? () async {
-                                                try {
-                                                  if (Get.context == null) {
-                                                    NesticoPeSnackBar.showAwesomeSnackbar(
-                                                      title: 'Error',
-                                                      message:
-                                                          'UI not ready to show dialog.',
-                                                      contentType:
-                                                          ContentType.failure,
-                                                    );
-                                                    return;
-                                                  }
-
-                                                  addInquiryFromProject(
-                                                    '',
-                                                    '',
-                                                    '',
-                                                    project?.id ?? '',
-                                                    'sell',
-                                                    "project",
-                                                  );
-                                                } catch (e, s) {
-                                                  debugPrint(
-                                                    '❌ Error in Get Offer button: $e',
-                                                  );
-                                                  debugPrint('$s');
-
-                                                  NesticoPeSnackBar.showAwesomeSnackbar(
-                                                    title: 'Error',
-                                                    message:
-                                                        'Something went wrong. Please try again.',
-                                                    contentType:
-                                                        ContentType.failure,
-                                                  );
-                                                }
+                                    ],
+                                  ),
+                                );
+                              } else {
+                                return NesticoPeButton(
+                                  title: 'Get Offer',
+                                  backgroundColor: ColorRes.error,
+                                  height: 36,
+                                  onTap:
+                                      (UserHelper.isGuest)
+                                          ? () async {
+                                            try {
+                                              if (Get.context == null) {
+                                                NesticoPeSnackBar.showAwesomeSnackbar(
+                                                  title: 'Error',
+                                                  message:
+                                                      'UI not ready to show dialog.',
+                                                  contentType:
+                                                      ContentType.failure,
+                                                );
+                                                return;
                                               }
-                                              : () async {
-                                                try {
-                                                  final user =
-                                                      await SecureStorage.getUserData();
 
-                                                  if (user == null) {
-                                                    NesticoPeSnackBar.showAwesomeSnackbar(
-                                                      title: 'Error',
-                                                      message:
-                                                          'No user data found. Please log in.',
-                                                      contentType:
-                                                          ContentType.failure,
-                                                    );
-                                                    return;
-                                                  }
+                                              addInquiryFromProject(
+                                                '',
+                                                '',
+                                                '',
+                                                project?.id ?? '',
+                                                'sell',
+                                                "project",
+                                              );
+                                            } catch (e, s) {
+                                              debugPrint(
+                                                '❌ Error in Get Offer button: $e',
+                                              );
+                                              debugPrint('$s');
 
-                                                  final fullName =
-                                                      user.user?.fullName ?? '';
-                                                  final firstName =
-                                                      user.user?.firstName ??
-                                                      '';
-                                                  final username =
-                                                      user.user?.username ?? '';
-                                                  final email =
-                                                      user.user?.email ?? '';
-                                                  final phone =
-                                                      user.user?.phone ?? '';
+                                              NesticoPeSnackBar.showAwesomeSnackbar(
+                                                title: 'Error',
+                                                message:
+                                                    'Something went wrong. Please try again.',
+                                                contentType:
+                                                    ContentType.failure,
+                                              );
+                                            }
+                                          }
+                                          : () async {
+                                            try {
+                                              final user =
+                                                  await SecureStorage.getUserData();
 
-                                                  final displayName =
-                                                      (firstName.isEmpty
-                                                              ? username
-                                                              : fullName)
-                                                          .trim();
+                                              if (user == null) {
+                                                NesticoPeSnackBar.showAwesomeSnackbar(
+                                                  title: 'Error',
+                                                  message:
+                                                      'No user data found. Please log in.',
+                                                  contentType:
+                                                      ContentType.failure,
+                                                );
+                                                return;
+                                              }
 
-                                                  if (Get.context == null) {
-                                                    NesticoPeSnackBar.showAwesomeSnackbar(
-                                                      title: 'Error',
-                                                      message:
-                                                          'UI not ready to show dialog.',
-                                                      contentType:
-                                                          ContentType.failure,
-                                                    );
-                                                    return;
-                                                  }
+                                              final fullName =
+                                                  user.user?.fullName ?? '';
+                                              final firstName =
+                                                  user.user?.firstName ?? '';
+                                              final username =
+                                                  user.user?.username ?? '';
+                                              final email =
+                                                  user.user?.email ?? '';
+                                              final phone =
+                                                  user.user?.phone ?? '';
 
-                                                  addInquiryFromProject(
-                                                    displayName,
-                                                    email,
-                                                    phone,
-                                                    project?.id ?? '',
-                                                    'sell',
-                                                    "project",
-                                                  );
-                                                } catch (e, s) {
-                                                  debugPrint(
-                                                    '❌ Error in Get Offer button: $e',
-                                                  );
-                                                  debugPrint('$s');
+                                              final displayName =
+                                                  (firstName.isEmpty
+                                                          ? username
+                                                          : fullName)
+                                                      .trim();
 
-                                                  NesticoPeSnackBar.showAwesomeSnackbar(
-                                                    title: 'Error',
-                                                    message:
-                                                        'Something went wrong. Please try again.',
-                                                    contentType:
-                                                        ContentType.failure,
-                                                  );
-                                                }
-                                              },
-                                    );
-                                  }
-                                }),
-                              ],
-                            ),
-                          ),
-                        ],
+                                              if (Get.context == null) {
+                                                NesticoPeSnackBar.showAwesomeSnackbar(
+                                                  title: 'Error',
+                                                  message:
+                                                      'UI not ready to show dialog.',
+                                                  contentType:
+                                                      ContentType.failure,
+                                                );
+                                                return;
+                                              }
+
+                                              addInquiryFromProject(
+                                                displayName,
+                                                email,
+                                                phone,
+                                                project?.id ?? '',
+                                                'sell',
+                                                "project",
+                                              );
+                                            } catch (e, s) {
+                                              debugPrint(
+                                                '❌ Error in Get Offer button: $e',
+                                              );
+                                              debugPrint('$s');
+
+                                              NesticoPeSnackBar.showAwesomeSnackbar(
+                                                title: 'Error',
+                                                message:
+                                                    'Something went wrong. Please try again.',
+                                                contentType:
+                                                    ContentType.failure,
+                                              );
+                                            }
+                                          },
+                                );
+                              }
+                            }),
+                          ],
+                        ),
                       ),
+                      const SizedBox(height: 8),
+
                       if (project?.brochures.isNotEmpty ?? false) ...[
                         _buildDocuments(controller, project!),
                       ],
@@ -664,10 +659,10 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                       controller.hasSubmittedInquiry.value =
                                           true;
 
-                                      CustomSnackBar.show(
-                                        Get.overlayContext!,
+                                      NesticoPeSnackBar.showAwesomeSnackbar(
+                                        title: 'Success',
                                         message: "Inquiry Added Successfully",
-                                        type: SnackBarType.success,
+                                        contentType: ContentType.success,
                                       );
 
                                       Get.back();
@@ -678,10 +673,10 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                         project?.id ?? '',
                                       );
                                     } else {
-                                      CustomSnackBar.show(
-                                        Get.overlayContext!,
+                                      NesticoPeSnackBar.showAwesomeSnackbar(
+                                        title: 'Error',
                                         message: "Failed to Submit Inquiry",
-                                        type: SnackBarType.error,
+                                        contentType: ContentType.failure,
                                       );
                                     }
                                   },
@@ -698,7 +693,10 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                 );
               }
             },
-            primaryTitle: "View Contact",
+            primaryTitle:
+                controller.hasSubmittedInquiry.value
+                    ? "Submitted"
+                    : "View Contact",
           ),
         );
       }),

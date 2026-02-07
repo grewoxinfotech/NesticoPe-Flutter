@@ -379,6 +379,8 @@ class PropertyService {
         headers: await headers(),
       );
 
+      print("Response of Recommended properties: ${response.body}");
+
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
         if (jsonData['data'] != null &&

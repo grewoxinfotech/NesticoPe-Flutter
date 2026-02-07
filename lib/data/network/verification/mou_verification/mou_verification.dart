@@ -17,7 +17,10 @@ class DigitalSignatureService {
     required String userId,
   }) async {
     try {
-      var request = http.MultipartRequest('POST', Uri.parse(baseUrl));
+      final uri = Uri.parse(baseUrl);
+      print("URI of Digital Signature: $uri");
+
+      var request = http.MultipartRequest('POST', uri);
 
       request.headers.addAll(await headers());
 
@@ -66,6 +69,8 @@ class DigitalSignatureService {
           'userId': userId,
         },
       );
+
+      print("URI of Digital Signature: $uri");
 
       final response = await http.get(uri, headers: await headers());
 

@@ -134,6 +134,7 @@ class DigitalSignatureController extends GetxController {
         limit: _limit,
         userId: userId,
       );
+      print("Response of Digital Signature: $response");
 
       /// Parse response based on API structure
       final data = response['data'];

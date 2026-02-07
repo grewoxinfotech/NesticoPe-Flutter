@@ -188,6 +188,20 @@
       ]
     },
     {
+      "name": "model_viewer_plus",
+      "version": "1.9.3",
+      "dependencies": [
+        "android_intent_plus",
+        "flutter",
+        "path",
+        "url_launcher",
+        "web",
+        "webview_flutter",
+        "webview_flutter_android",
+        "webview_flutter_wkwebview"
+      ]
+    },
+    {
       "name": "device_info_plus",
       "version": "12.3.0",
       "dependencies": [
@@ -784,7 +798,7 @@
     },
     {
       "name": "meta",
-      "version": "1.16.0",
+      "version": "1.17.0",
       "dependencies": []
     },
     {
@@ -1105,7 +1119,7 @@
     },
     {
       "name": "test_api",
-      "version": "0.7.6",
+      "version": "0.7.7",
       "dependencies": [
         "async",
         "boolean_selector",
@@ -1174,6 +1188,44 @@
       "dependencies": [
         "crypto",
         "path"
+      ]
+    },
+    {
+      "name": "webview_flutter_wkwebview",
+      "version": "3.23.5",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "path",
+        "webview_flutter_platform_interface"
+      ]
+    },
+    {
+      "name": "webview_flutter_android",
+      "version": "4.10.11",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "webview_flutter_platform_interface"
+      ]
+    },
+    {
+      "name": "webview_flutter",
+      "version": "4.13.1",
+      "dependencies": [
+        "flutter",
+        "webview_flutter_android",
+        "webview_flutter_platform_interface",
+        "webview_flutter_wkwebview"
+      ]
+    },
+    {
+      "name": "android_intent_plus",
+      "version": "5.3.1",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "platform"
       ]
     },
     {
@@ -1480,6 +1532,16 @@
       ]
     },
     {
+      "name": "url_launcher_web",
+      "version": "2.4.1",
+      "dependencies": [
+        "flutter",
+        "flutter_web_plugins",
+        "url_launcher_platform_interface",
+        "web"
+      ]
+    },
+    {
       "name": "url_launcher_platform_interface",
       "version": "2.3.2",
       "dependencies": [
@@ -1548,6 +1610,14 @@
       "dependencies": [
         "flutter",
         "plugin_platform_interface"
+      ]
+    },
+    {
+      "name": "video_player_avfoundation",
+      "version": "2.8.9",
+      "dependencies": [
+        "flutter",
+        "video_player_platform_interface"
       ]
     },
     {
@@ -1796,6 +1866,14 @@
       ]
     },
     {
+      "name": "path_provider_foundation",
+      "version": "2.5.1",
+      "dependencies": [
+        "flutter",
+        "path_provider_platform_interface"
+      ]
+    },
+    {
       "name": "path_provider_android",
       "version": "2.2.22",
       "dependencies": [
@@ -1882,6 +1960,14 @@
       "dependencies": [
         "file_selector_linux",
         "file_selector_platform_interface",
+        "flutter",
+        "image_picker_platform_interface"
+      ]
+    },
+    {
+      "name": "image_picker_ios",
+      "version": "0.8.13+3",
+      "dependencies": [
         "flutter",
         "image_picker_platform_interface"
       ]
@@ -2150,6 +2236,20 @@
       ]
     },
     {
+      "name": "webview_flutter_platform_interface",
+      "version": "2.14.0",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "plugin_platform_interface"
+      ]
+    },
+    {
+      "name": "platform",
+      "version": "3.1.6",
+      "dependencies": []
+    },
+    {
       "name": "sanitize_html",
       "version": "2.1.0",
       "dependencies": [
@@ -2194,11 +2294,6 @@
         "dbus",
         "meta"
       ]
-    },
-    {
-      "name": "platform",
-      "version": "3.1.6",
-      "dependencies": []
     },
     {
       "name": "xdg_directories",
@@ -2313,101 +2408,6 @@
         "path",
         "sqflite_common",
         "sqflite_platform_interface"
-      ]
-    },
-    {
-      "name": "url_launcher_web",
-      "version": "2.4.1",
-      "dependencies": [
-        "flutter",
-        "flutter_web_plugins",
-        "url_launcher_platform_interface",
-        "web"
-      ]
-    },
-    {
-      "name": "image_picker_ios",
-      "version": "0.8.13+3",
-      "dependencies": [
-        "flutter",
-        "image_picker_platform_interface"
-      ]
-    },
-    {
-      "name": "path_provider_foundation",
-      "version": "2.5.1",
-      "dependencies": [
-        "flutter",
-        "path_provider_platform_interface"
-      ]
-    },
-    {
-      "name": "video_player_avfoundation",
-      "version": "2.8.9",
-      "dependencies": [
-        "flutter",
-        "video_player_platform_interface"
-      ]
-    },
-    {
-      "name": "model_viewer_plus",
-      "version": "1.9.3",
-      "dependencies": [
-        "android_intent_plus",
-        "flutter",
-        "path",
-        "url_launcher",
-        "web",
-        "webview_flutter",
-        "webview_flutter_android",
-        "webview_flutter_wkwebview"
-      ]
-    },
-    {
-      "name": "webview_flutter_wkwebview",
-      "version": "3.23.5",
-      "dependencies": [
-        "flutter",
-        "meta",
-        "path",
-        "webview_flutter_platform_interface"
-      ]
-    },
-    {
-      "name": "webview_flutter_android",
-      "version": "4.10.11",
-      "dependencies": [
-        "flutter",
-        "meta",
-        "webview_flutter_platform_interface"
-      ]
-    },
-    {
-      "name": "webview_flutter",
-      "version": "4.13.1",
-      "dependencies": [
-        "flutter",
-        "webview_flutter_android",
-        "webview_flutter_platform_interface",
-        "webview_flutter_wkwebview"
-      ]
-    },
-    {
-      "name": "webview_flutter_platform_interface",
-      "version": "2.14.0",
-      "dependencies": [
-        "flutter",
-        "meta",
-        "plugin_platform_interface"
-      ]
-    },
-    {
-      "name": "android_intent_plus",
-      "version": "5.3.1",
-      "dependencies": [
-        "flutter",
-        "meta",
-        "platform"
       ]
     }
   ],

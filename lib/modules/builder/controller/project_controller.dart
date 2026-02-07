@@ -117,36 +117,36 @@ class ProjectController extends GetxController {
   }
 
   Future<void> getAllInQuireData(String propertyId) async {
-   if(UserHelper.isGuest)
-     {
-       final exists = await SecureStorage.hasPropertyInquiry(propertyId);
-       hasSubmittedInquiry.value = exists;
-     }
-   else{
-     try {
-       final UserModel user = await SecureStorage.getUserData() ?? UserModel();
-       final userId = user.user?.id ?? '';
-       final inquiries = await _contactedService.fetchContactedInquiries(userId);
-       inquiryResponse.assignAll(inquiries);
+    if (UserHelper.isGuest) {
+      final exists = await SecureStorage.hasPropertyInquiry(propertyId);
+      hasSubmittedInquiry.value = exists;
+    } else {
+      try {
+        final UserModel user = await SecureStorage.getUserData() ?? UserModel();
+        final userId = user.user?.id ?? '';
+        final inquiries = await _contactedService.fetchContactedInquiries(
+          userId,
+        );
+        inquiryResponse.assignAll(inquiries);
 
-       final result = inquiryResponse.any((e) => e.propertyId == propertyId);
+        final result = inquiryResponse.any((e) => e.propertyId == propertyId);
 
-       hasSubmittedInquiry.value = result;
-       print(
-         "Inquiry Data ** ${inquiryResponse.map((e) => e.toJson()).toList()}    ${result} ${hasSubmittedInquiry.value}",
-       );
-       print("Inquiry Response ** ${result} ${hasSubmittedInquiry.value}");
-     } catch (e) {
-       print("Error fetching inquiries: $e");
-     }
-   }
+        hasSubmittedInquiry.value = result;
+        print(
+          "Inquiry Data ** ${inquiryResponse.map((e) => e.toJson()).toList()}    ${result} ${hasSubmittedInquiry.value}",
+        );
+        print("Inquiry Response ** ${result} ${hasSubmittedInquiry.value}");
+      } catch (e) {
+        print("Error fetching inquiries: $e");
+      }
+    }
   }
 
   Future<void> getHasInQuireData(String propertyId) async {
-    if(UserHelper.isGuest) {
+    if (UserHelper.isGuest) {
       final exists = await SecureStorage.hasPropertyInquiry(propertyId);
       hasSubmittedInquiry.value = exists;
-    }else{
+    } else {
       try {
         final UserModel user = await SecureStorage.getUserData() ?? UserModel();
         final userId = user.user?.id ?? '';
@@ -164,6 +164,5 @@ class ProjectController extends GetxController {
         print("Error fetching inquiries: $e");
       }
     }
-    }
-
+  }
 }

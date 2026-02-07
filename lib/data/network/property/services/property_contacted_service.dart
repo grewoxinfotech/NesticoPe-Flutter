@@ -15,15 +15,16 @@ class PropertyContactedService {
 
   /// Fetch contacted property inquiries for a given user.
 
-    Future<List<Inquiry>> fetchContactedInquiries(String userId) async {
+  Future<List<Inquiry>> fetchContactedInquiries(String userId) async {
     try {
       final uri = Uri.parse('$baseUrl/$userId/inquiry');
       final response = await http.get(uri, headers: await headers());
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         AppLogger.structured(
-            'Fetched contacted inquiries successfully',
-             jsonDecode(response.body));
+          'Fetched contacted inquiries successfully',
+          jsonDecode(response.body),
+        );
         final data = jsonDecode(response.body);
         if (data['success'] == true && data['data'] != null) {
           final inquiryResponse = InquiryResponse.fromJson(data);
@@ -42,20 +43,16 @@ class PropertyContactedService {
     }
   }
 
-
-  Future<bool> fetchHasInquiries(
-      String userId, {
-        String? itemId,
-      }) async {
+  Future<bool> fetchHasInquiries(String userId, {String? itemId}) async {
     try {
       // Build the path dynamically
-      final idData = (itemId != null && itemId.isNotEmpty)
-          ? '$userId/$itemId'
-          : userId;
-
+      final idData =
+          (itemId != null && itemId.isNotEmpty) ? '$userId/$itemId' : userId;
       final uri = Uri.parse('$baseUrl/$idData/has-inquired');
-      final response = await http.get(uri, headers: await headers());
+      print("URI os Inquiry Check : ${uri}");
 
+      final response = await http.get(uri, headers: await headers());
+      print("Response os Inquiry Check : ${response.body}");
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
 
@@ -80,7 +77,6 @@ class PropertyContactedService {
       return false;
     }
   }
-
 
   /// Fetch only contacted property IDs for a given user
   Future<List<String>> fetchContactedPropertyIds(String userId) async {

@@ -9,6 +9,7 @@ import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../app/constants/img_res.dart';
 import '../../../../app/constants/size_manager.dart';
+import '../../../../app/widgets/image/custom_image.dart' hide ColorRes;
 import '../../../reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 
 // class PropertyReviewCard extends StatefulWidget {
@@ -306,7 +307,12 @@ class _PropertyReviewCardState extends State<PropertyReviewCard> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildAvatar(),
+              Obx(
+                () => _buildAvatar(
+                  username: userController.user.value?.username ?? "Anonymous",
+                  imageUrl: userController.user.value?.profilePic,
+                ),
+              ),
               const SizedBox(width: 12),
               Expanded(child: _buildReviewerInfo()),
               Text(
@@ -386,24 +392,39 @@ class _PropertyReviewCardState extends State<PropertyReviewCard> {
   }
 
   /// 🧍 Avatar (Rounded Image)
-  Widget _buildAvatar() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(25),
-      child: Image.asset(
-        IMGRes.user_2,
+  Widget _buildAvatar({String? imageUrl, required String username}) {
+    final String initial =
+        username.isNotEmpty ? username.trim()[0].toUpperCase() : "U";
+
+    return ClipOval(
+      child: Container(
         width: 50,
         height: 50,
-        fit: BoxFit.cover,
-        errorBuilder:
-            (context, error, stackTrace) => Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                color: ColorRes.leadGreyColor.shade100,
-                borderRadius: BorderRadius.circular(25),
-              ),
-              child: const Icon(Icons.person, size: 28, color: Colors.grey),
-            ),
+        color: ColorRes.leadGreyColor.shade100,
+        child:
+            (imageUrl != null && imageUrl.isNotEmpty)
+                ? CustomImage(
+                  src: imageUrl,
+                  type: CustomImageType.network,
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => _buildInitialAvatar(initial),
+                )
+                : _buildInitialAvatar(initial),
+      ),
+    );
+  }
+
+  Widget _buildInitialAvatar(String initial) {
+    return Center(
+      child: Text(
+        initial,
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey.shade700,
+        ),
       ),
     );
   }

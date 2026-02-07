@@ -1005,7 +1005,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
 
   Future<void> _initDataAndControllers() async {
     final user = await SecureStorage.getUserData();
-    final String userId = user?.user?.id.toString() ?? "";
+    final String userId = user?.user?.id ?? "";
 
     if (userId.isNotEmpty) {
       controller.applyFilter("created_by", userId);
@@ -1013,7 +1013,9 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
 
     // Use a tag to ensure single instance
     if (Get.isRegistered<DigitalSignatureController>(tag: 'signature')) {
-      signatureController = Get.find<DigitalSignatureController>(tag: 'signature');
+      signatureController = Get.find<DigitalSignatureController>(
+        tag: 'signature',
+      );
     } else {
       signatureController = Get.put(
         DigitalSignatureController(userId: userId),
@@ -1055,9 +1057,9 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
           /// 3️⃣ Check MOU verification
           if (!signatureController!.isSignatureVerified.value) {
             // Pass the controller to MouVerificationScreen
-            Get.to(() => MouVerificationScreen(
-              controller: signatureController,
-            ));
+            Get.to(
+              () => MouVerificationScreen(controller: signatureController),
+            );
             return;
           }
 
@@ -1071,7 +1073,8 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
             fontWeight: AppFontWeights.semiBold,
           ),
         ),
-      ),      child: FutureBuilder(
+      ),
+      child: FutureBuilder(
         future: overviewController.getFetchSellerApi(
           overviewController.selectedGraphYear.value,
         ),

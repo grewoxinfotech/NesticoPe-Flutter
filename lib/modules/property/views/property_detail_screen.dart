@@ -4446,213 +4446,215 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       },
                     ),
 
-                  if(property?.propertyStatus?.toLowerCase()!="sold")...[
-                    Divider(
-                      indent: 18,
-                      endIndent: 18,
-                      color: ColorRes.leadGreyColor.shade300,
-                    ),
-                    const SizedBox(height: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        
-                        const TitleWithViewAll(title: 'Limited Time Offer!'),
-                        const SizedBox(height: 8),
+                    if (property?.propertyStatus?.toLowerCase() != "sold") ...[
+                      Divider(
+                        indent: 18,
+                        endIndent: 18,
+                        color: ColorRes.leadGreyColor.shade300,
+                      ),
+                      const SizedBox(height: 12),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const TitleWithViewAll(title: 'Limited Time Offer!'),
+                          const SizedBox(height: 8),
 
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 12,
-                          ),
-                          decoration: BoxDecoration(
-                            color: ColorRes.white,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Offer Text
-                              const Text(
-                                'Limited-time! Get an exclusive offer on this property.',
-                                style: TextStyle(
-                                  fontSize: AppFontSizes.small,
-                                  fontWeight: AppFontWeights.medium,
-                                  color: ColorRes.textPrimary,
-                                  height: 1.3,
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 12,
+                            ),
+                            decoration: BoxDecoration(
+                              color: ColorRes.white,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Offer Text
+                                const Text(
+                                  'Limited-time! Get an exclusive offer on this property.',
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.small,
+                                    fontWeight: AppFontWeights.medium,
+                                    color: ColorRes.textPrimary,
+                                    height: 1.3,
+                                  ),
                                 ),
-                              ),
 
-                              const SizedBox(height: 12),
+                                const SizedBox(height: 12),
 
-                              // Conditional Area
-                              Obx(() {
-                                if (controller.hasSubmittedInquiry.value) {
-                                  return Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 6,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: ColorRes.success.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(
-                                        color: ColorRes.success,
-                                        width: 1,
+                                // Conditional Area
+                                Obx(() {
+                                  if (controller.hasSubmittedInquiry.value) {
+                                    return Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 6,
                                       ),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const Icon(
-                                          Icons.check_circle_outline,
+                                      decoration: BoxDecoration(
+                                        color: ColorRes.success.withOpacity(
+                                          0.1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
                                           color: ColorRes.success,
-                                          size: 16,
+                                          width: 1,
                                         ),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          'Submitted',
-                                          style: TextStyle(
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Icon(
+                                            Icons.check_circle_outline,
                                             color: ColorRes.success,
-                                            fontSize: AppFontSizes.small,
-                                            fontWeight: AppFontWeights.semiBold,
+                                            size: 16,
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                } else {
-                                  return NesticoPeButton(
-                                    title: 'Get Offer',
-                                    backgroundColor: ColorRes.error,
-                                    height: 36,
-                                    onTap:
-                                    (UserHelper.isGuest)
-                                        ? () async {
-                                      try {
+                                          const SizedBox(width: 6),
+                                          Text(
+                                            'Submitted',
+                                            style: TextStyle(
+                                              color: ColorRes.success,
+                                              fontSize: AppFontSizes.small,
+                                              fontWeight:
+                                                  AppFontWeights.semiBold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  } else {
+                                    return NesticoPeButton(
+                                      title: 'Get Offer',
+                                      backgroundColor: ColorRes.error,
+                                      height: 36,
+                                      onTap:
+                                          (UserHelper.isGuest)
+                                              ? () async {
+                                                try {
+                                                  if (Get.context == null) {
+                                                    NesticoPeSnackBar.showAwesomeSnackbar(
+                                                      title: "Error",
+                                                      message:
+                                                          'UI not ready to show dialog.',
+                                                      contentType:
+                                                          ContentType.failure,
+                                                    );
+                                                    return;
+                                                  }
 
-                                        if (Get.context == null) {
-                                          NesticoPeSnackBar.showAwesomeSnackbar(
-                                            title: "Error",
-                                            message:
-                                            'UI not ready to show dialog.',
-                                            contentType:
-                                            ContentType.failure,
-                                          );
-                                          return;
-                                        }
+                                                  addInquiryFromApp(
+                                                    '',
+                                                    '',
+                                                    '',
+                                                    currentProperty.id ?? '',
+                                                    currentProperty.listingType
+                                                            ?.toLowerCase()
+                                                            .replaceAll(
+                                                              " ",
+                                                              "_",
+                                                            ) ??
+                                                        '',
+                                                    "property",
+                                                  );
+                                                } catch (e, s) {
+                                                  debugPrint(
+                                                    '❌ Error in Get Offer button: $e',
+                                                  );
+                                                  debugPrint('$s');
 
-                                        addInquiryFromApp(
-                                          '',
-                                          '',
-                                          '',
-                                          currentProperty.id ?? '',
-                                          currentProperty.listingType
-                                              ?.toLowerCase()
-                                              .replaceAll(
-                                            " ",
-                                            "_",
-                                          ) ??
-                                              '',
-                                          "property",
-                                        );
-                                      } catch (e, s) {
-                                        debugPrint(
-                                          '❌ Error in Get Offer button: $e',
-                                        );
-                                        debugPrint('$s');
+                                                  NesticoPeSnackBar.showAwesomeSnackbar(
+                                                    title: "Error",
+                                                    message:
+                                                        'Something went wrong. Please try again.',
+                                                    contentType:
+                                                        ContentType.failure,
+                                                  );
+                                                }
+                                              }
+                                              : () async {
+                                                try {
+                                                  final user =
+                                                      await SecureStorage.getUserData();
 
-                                        NesticoPeSnackBar.showAwesomeSnackbar(
-                                          title: "Error",
-                                          message:
-                                          'Something went wrong. Please try again.',
-                                          contentType:
-                                          ContentType.failure,
-                                        );
-                                      }
-                                    }
-                                        : () async {
-                                      try {
-                                        final user =
-                                        await SecureStorage.getUserData();
+                                                  if (user == null) {
+                                                    NesticoPeSnackBar.showAwesomeSnackbar(
+                                                      title: "Error",
+                                                      message:
+                                                          'No user data found. Please log in.',
+                                                      contentType:
+                                                          ContentType.failure,
+                                                    );
+                                                    return;
+                                                  }
 
-                                        if (user == null) {
-                                          NesticoPeSnackBar.showAwesomeSnackbar(
-                                            title: "Error",
-                                            message:
-                                            'No user data found. Please log in.',
-                                            contentType:
-                                            ContentType.failure,
-                                          );
-                                          return;
-                                        }
+                                                  final fullName =
+                                                      user.user?.fullName ?? '';
+                                                  final firstName =
+                                                      user.user?.firstName ??
+                                                      '';
+                                                  final username =
+                                                      user.user?.username ?? '';
+                                                  final email =
+                                                      user.user?.email ?? '';
+                                                  final phone =
+                                                      user.user?.phone ?? '';
 
-                                        final fullName =
-                                            user.user?.fullName ?? '';
-                                        final firstName =
-                                            user.user?.firstName ?? '';
-                                        final username =
-                                            user.user?.username ?? '';
-                                        final email =
-                                            user.user?.email ?? '';
-                                        final phone =
-                                            user.user?.phone ?? '';
+                                                  final displayName =
+                                                      (firstName.isEmpty
+                                                              ? username
+                                                              : fullName)
+                                                          .trim();
 
-                                        final displayName =
-                                        (firstName.isEmpty
-                                            ? username
-                                            : fullName)
-                                            .trim();
+                                                  if (Get.context == null) {
+                                                    NesticoPeSnackBar.showAwesomeSnackbar(
+                                                      title: "Error",
+                                                      message:
+                                                          'UI not ready to show dialog.',
+                                                      contentType:
+                                                          ContentType.failure,
+                                                    );
+                                                    return;
+                                                  }
 
-                                        if (Get.context == null) {
-                                          NesticoPeSnackBar.showAwesomeSnackbar(
-                                            title: "Error",
-                                            message:
-                                            'UI not ready to show dialog.',
-                                            contentType:
-                                            ContentType.failure,
-                                          );
-                                          return;
-                                        }
+                                                  addInquiryFromApp(
+                                                    displayName,
+                                                    email,
+                                                    phone,
+                                                    currentProperty.id ?? '',
+                                                    currentProperty.listingType
+                                                            ?.toLowerCase()
+                                                            .replaceAll(
+                                                              " ",
+                                                              "_",
+                                                            ) ??
+                                                        '',
+                                                    "property",
+                                                  );
+                                                } catch (e, s) {
+                                                  debugPrint(
+                                                    '❌ Error in Get Offer button: $e',
+                                                  );
+                                                  debugPrint('$s');
 
-                                        addInquiryFromApp(
-                                          displayName,
-                                          email,
-                                          phone,
-                                          currentProperty.id ?? '',
-                                          currentProperty.listingType
-                                              ?.toLowerCase()
-                                              .replaceAll(
-                                            " ",
-                                            "_",
-                                          ) ??
-                                              '',
-                                          "property",
-                                        );
-                                      } catch (e, s) {
-                                        debugPrint(
-                                          '❌ Error in Get Offer button: $e',
-                                        );
-                                        debugPrint('$s');
-
-                                        NesticoPeSnackBar.showAwesomeSnackbar(
-                                          title: "Error",
-                                          message:
-                                          'Something went wrong. Please try again.',
-                                          contentType:
-                                          ContentType.failure,
-                                        );
-                                      }
-                                    },
-                                  );
-                                }
-                              }),
-                            ],
+                                                  NesticoPeSnackBar.showAwesomeSnackbar(
+                                                    title: "Error",
+                                                    message:
+                                                        'Something went wrong. Please try again.',
+                                                    contentType:
+                                                        ContentType.failure,
+                                                  );
+                                                }
+                                              },
+                                    );
+                                  }
+                                }),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
 
                     if (!UserHelper.isGuest) ...[
                       if (controller.items.isNotEmpty) ...[
@@ -4730,176 +4732,175 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       top: Radius.circular(20),
                     ),
                   ),
-                  builder:
-                      (context) {
-                        final hasSubmitted = controller.hasSubmittedInquiry.value;
-                        final propertySold = (currentProperty.propertyStatus ?? '').toLowerCase() == "sold";
+                  builder: (context) {
+                    final hasSubmitted = controller.hasSubmittedInquiry.value;
+                    final propertySold =
+                        (currentProperty.propertyStatus ?? '').toLowerCase() ==
+                        "sold";
 
-                        // Decide which section is showing
-                        final bool isCompactView = hasSubmitted || propertySold;
+                    // Decide which section is showing
+                    final bool isCompactView = hasSubmitted || propertySold;
 
                     return DraggableScrollableSheet(
-                        expand: false,
-                        minChildSize: 0.45,
-                        initialChildSize:
-                        isCompactView ? 0.45 : 0.85,
-                        maxChildSize:
-                        isCompactView ? 0.45 : 0.85,
-                        builder:
-                            (
-                              context,
-                              scrollController,
-                            ) => SingleChildScrollView(
-                              controller: scrollController,
-                              child: Padding(
+                      expand: false,
+                      minChildSize: 0.45,
+                      initialChildSize: isCompactView ? 0.45 : 0.85,
+                      maxChildSize: isCompactView ? 0.45 : 0.85,
+                      builder:
+                          (context, scrollController) => SingleChildScrollView(
+                            controller: scrollController,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                bottom:
+                                    MediaQuery.of(context).viewInsets.bottom,
+                                left: 16,
+                                right: 16,
+                                top: 16,
+                              ),
+                              child: ContactOwnerBottom(
+                                isProject: 'property',
+                                propertyStatus:
+                                    currentProperty.propertyStatus ?? '',
+                                pgRoomData:
+                                    currentProperty
+                                        .propertyDetails
+                                        ?.pgInfo
+                                        ?.pgRoomInfo ??
+                                    [],
 
-                                padding: EdgeInsets.only(
-                                  bottom:
-                                      MediaQuery.of(context).viewInsets.bottom,
-                                  left: 16,
-                                  right: 16,
-                                  top: 16,
-                                ),
-                                child: ContactOwnerBottom(
-                                  isProject: 'property',
-                                  propertyStatus: currentProperty.propertyStatus??'',
-                                  pgRoomData:
-                                      currentProperty
-                                          .propertyDetails
-                                          ?.pgInfo
-                                          ?.pgRoomInfo ??
-                                      [],
+                                price: priceManager.actualPrice,
+                                listingType:
+                                    currentProperty.listingType
+                                        ?.toLowerCase() ??
+                                    '',
+                                forRentPrice:
+                                    currentProperty
+                                        .propertyDetails
+                                        ?.financialInfo
+                                        ?.propertyRentPerMonth ??
+                                    0,
+                                forSellPrice:
+                                    currentProperty
+                                        .propertyDetails
+                                        ?.financialInfo
+                                        ?.price ??
+                                    0,
+                                isForSell:
+                                    currentProperty
+                                        .propertyDetails
+                                        ?.financialInfo
+                                        ?.is_for_sellorrent ??
+                                    false,
 
-                                  price: priceManager.actualPrice,
-                                  listingType:
-                                      currentProperty.listingType
-                                          ?.toLowerCase() ??
-                                      '',
-                                  forRentPrice:
-                                      currentProperty
-                                          .propertyDetails
-                                          ?.financialInfo
-                                          ?.propertyRentPerMonth ??
-                                      0,
-                                  forSellPrice:
-                                      currentProperty
-                                          .propertyDetails
-                                          ?.financialInfo
-                                          ?.price ??
-                                      0,
-                                  isForSell:
-                                      currentProperty
-                                          .propertyDetails
-                                          ?.financialInfo
-                                          ?.is_for_sellorrent ??
-                                      false,
+                                inQuireSubmitted:
+                                    controller.hasSubmittedInquiry.value,
+                                titleText: "Contact the Owner",
+                                chatButtonText: "Chat via WhatsApp",
+                                formTitle: "Quick Contact Form",
+                                contactButtonText: "Send Request",
+                                nameIcon: Icons.person,
+                                phoneIcon: Icons.phone,
+                                emailIcon: Icons.email,
+                                allowSellerContact: false,
+                                negotiable: false,
 
-                                  inQuireSubmitted:
-                                      controller.hasSubmittedInquiry.value,
-                                  titleText: "Contact the Owner",
-                                  chatButtonText: "Chat via WhatsApp",
-                                  formTitle: "Quick Contact Form",
-                                  contactButtonText: "Send Request",
-                                  nameIcon: Icons.person,
-                                  phoneIcon: Icons.phone,
-                                  emailIcon: Icons.email,
-                                  allowSellerContact: false,
-                                  negotiable: false,
+                                bookSiteVisit: false,
+                                onChatPressed: () {
+                                  print("WhatsApp button clicked!");
+                                },
+                                onContactPressed: (
+                                  name,
+                                  phone,
+                                  email,
+                                  price,
+                                  isNegotiable,
 
-                                  bookSiteVisit: false,
-                                  onChatPressed: () {
-                                    print("WhatsApp button clicked!");
-                                  },
-                                  onContactPressed: (
-                                    name,
-                                    phone,
-                                    email,
-                                    price,
-                                    isNegotiable,
+                                  isAllowAllCondition,
+                                  inquiryListing,
+                                  isBookSiteVisit,
+                                  planningToBuy,
+                                  date,
+                                  time,
+                                  roomInfo,
+                                  selectedVariant,
+                                ) async {
+                                  final inquiry = {
+                                    "name": name ?? "",
+                                    "phone": phone ?? "",
+                                    "email": email ?? "",
+                                    "agreeToContact":
+                                        isAllowAllCondition ?? false,
+                                    "meta": {
+                                      if (price != null)
+                                        "negotiablePrice": price,
+                                      if (inquiryListing != null &&
+                                          (inquiryListing?.isNotEmpty ?? false))
+                                        "inquiryType":
+                                            inquiryListing.toLowerCase(),
+                                      if (isNegotiable != null)
+                                        "isNegotiable": isNegotiable,
+                                      if (planningToBuy != null)
+                                        "timePeriod": planningToBuy,
+                                      if (date != null)
+                                        "visitDate":
+                                            '${date.day}-${date.month}-${date.year}',
+                                      if (roomInfo != null)
+                                        "selectedRoomType": roomInfo,
+                                      if (time != null)
+                                        "visitTime":
+                                            '${time.hour.toString().padLeft(2, '0')}:'
+                                            '${time.minute.toString().padLeft(2, '0')}',
+                                    },
+                                  };
 
-                                    isAllowAllCondition,
-                                    inquiryListing,
-                                    isBookSiteVisit,
-                                    planningToBuy,
-                                    date,
-                                    time,
-                                    roomInfo,
-                                    selectedVariant,
-                                  ) async {
-                                    final inquiry = {
-                                      "name": name ?? "",
-                                      "phone": phone ?? "",
-                                      "email": email ?? "",
-                                      "agreeToContact":
-                                          isAllowAllCondition ?? false,
-                                      "meta": {
-                                        if (price != null)
-                                          "negotiablePrice": price,
-                                        if (inquiryListing != null &&
-                                            (inquiryListing?.isNotEmpty ??
-                                                false))
-                                          "inquiryType":
-                                              inquiryListing.toLowerCase(),
-                                        if (isNegotiable != null)
-                                          "isNegotiable": isNegotiable,
-                                        if (planningToBuy != null)
-                                          "timePeriod": planningToBuy,
-                                        if (date != null)
-                                          "visitDate":
-                                              '${date.day}-${date.month}-${date.year}',
-                                        if (roomInfo != null)
-                                          "selectedRoomType": roomInfo,
-                                        if (time != null)
-                                          "visitTime":
-                                              '${time.hour.toString().padLeft(2, '0')}:'
-                                              '${time.minute.toString().padLeft(2, '0')}',
-                                      },
-                                    };
+                                  print('Submitting inquiry: ${inquiry}');
 
-                                    print('Submitting inquiry: ${inquiry}');
+                                  final success = await controller.addInquiry(
+                                    inquiry,
+                                    currentProperty.id ?? '',
+                                  );
 
-                                    final success = await controller.addInquiry(
-                                      inquiry,
-                                      currentProperty.id ?? '',
+                                  if (success) {
+                                    controller.hasSubmittedInquiry.value = true;
+
+                                    NesticoPeSnackBar.showAwesomeSnackbar(
+                                      title: "Success",
+                                      message: "Inquiry Added Successfully",
+                                      contentType: ContentType.success,
                                     );
-
-                                    if (success) {
-                                      controller.hasSubmittedInquiry.value =
-                                          true;
-                                      CustomSnackBar.show(
-                                        Get.overlayContext!,
-                                        message: "Inquiry Added Successfully",
-                                        type: SnackBarType.success,
-                                      );
-                                      Get.back();
-                                      await controller.getAllInQuireData(
-                                        widget.propertyId ?? '',
-                                      );
-                                      await controller.getHasInQuireData(
-                                        widget.propertyId ?? '',
-                                      );
-                                    } else {
-                                      CustomSnackBar.show(
-                                        Get.overlayContext!,
-                                        message: "Failed to Submit Inquiry",
-                                        type: SnackBarType.error,
-                                      );
-                                    }
-                                  },
-                                  onAllowSellerContactChanged: (value) {
-                                    print("Allow sellers changed: $value");
-                                  },
-                                  onHomeLoanInterestChanged: (value) {
-                                    print("Home loan interest changed: $value");
-                                  },
-                                ),
+                                    await controller.getAllInQuireData(
+                                      widget.propertyId ?? '',
+                                    );
+                                    await controller.getHasInQuireData(
+                                      widget.propertyId ?? '',
+                                    );
+                                    Get.back();
+                                  } else {
+                                    NesticoPeSnackBar.showAwesomeSnackbar(
+                                      title: "Error",
+                                      message: "Failed to Submit Inquiry",
+                                      contentType: ContentType.failure,
+                                    );
+                                  }
+                                },
+                                onAllowSellerContactChanged: (value) {
+                                  print("Allow sellers changed: $value");
+                                },
+                                onHomeLoanInterestChanged: (value) {
+                                  print("Home loan interest changed: $value");
+                                },
                               ),
                             ),
-                      );},
+                          ),
+                    );
+                  },
                 );
               }
             },
-            primaryTitle:(currentProperty.propertyStatus?.toLowerCase()=="sold")?"Property Sold" :"View Contact",
+            primaryTitle:
+                (currentProperty.propertyStatus?.toLowerCase() == "sold")
+                    ? "Property Sold"
+                    : "View Contact",
           ),
         );
       }),
@@ -5097,27 +5098,27 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                 propertyID ?? '',
                               );
 
-
                               if (success) {
-                                if(UserHelper.isGuest)
-                                {
-
+                                if (UserHelper.isGuest) {
                                   controller.hasSubmittedInquiry.value = true;
-                                  var inquiryData={
-                                    'property':propertyID,
+                                  var inquiryData = {
+                                    'property': propertyID,
                                     "email": emailController.text ?? "",
-                                    "success":success
-
+                                    "success": success,
                                   };
-                                  final exists = await SecureStorage.hasPropertyInquiry(propertyID);
+                                  final exists =
+                                      await SecureStorage.hasPropertyInquiry(
+                                        propertyID,
+                                      );
 
                                   if (!exists) {
-                                    await SecureStorage.addPropertyInquiry(inquiryData);
+                                    await SecureStorage.addPropertyInquiry(
+                                      inquiryData,
+                                    );
                                   }
-
                                 }
                                 controller.hasSubmittedInquiry.value = true;
-                             /*   CustomSnackBar.show(
+                                /*   CustomSnackBar.show(
                                   Get.overlayContext!,
                                   message: "Inquiry Added Successfully",
                                   type: SnackBarType.success,
@@ -5131,7 +5132,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                 );
                               } else {
                                 Get.back();
-                               /* CustomSnackBar.show(
+                                /* CustomSnackBar.show(
                                   Get.overlayContext!,
                                   message: "Failed to Submit Inquiry",
                                   type: SnackBarType.error,
@@ -6891,7 +6892,6 @@ class StatCard extends StatelessWidget {
                 const SizedBox(width: 4),
               ],
               buildCommonText(
-                
                 value,
                 AppFontSizes.extraSmall,
                 AppFontWeights.semiBold,

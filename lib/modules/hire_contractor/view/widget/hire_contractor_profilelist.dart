@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/utils/formater/formater.dart';
+import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+    hide ColorRes;
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/data/network/contractor/model/contractor_compare_model/contractor_compare_model.dart';
 import 'package:housing_flutter_app/data/network/contractor/model/contractor_profile_model/contractor_profile_model.dart';
@@ -765,34 +767,35 @@ class _HireContractorCardState extends State<HireContractorCard> {
                       : null,
                 ),*/
                 Container(
-                  width: 80, // same as radius * 2 of CircleAvatar
+                  width: 80,
                   height: 80,
                   decoration: BoxDecoration(
                     color: ColorRes.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
-                    // square with rounded corners, adjust as needed
-                    image:
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child:
                         (widget.data.profilePic != null &&
                                 widget.data.profilePic!.isNotEmpty)
-                            ? DecorationImage(
-                              image: NetworkImage(widget.data.profilePic!),
+                            ? CustomImage(
+                              src: widget.data.profilePic!,
+                              type: CustomImageType.network,
+                              width: 80,
+                              height: 80,
                               fit: BoxFit.cover,
                             )
-                            : null,
-                  ),
-                  child:
-                      (widget.data.profilePic?.isEmpty ?? true)
-                          ? Center(
-                            child: Text(
-                              _getInitials(widget.data.username ?? 'U'),
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: ColorRes.primary,
+                            : Center(
+                              child: Text(
+                                _getInitials(widget.data.username ?? 'U'),
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: ColorRes.primary,
+                                ),
                               ),
                             ),
-                          )
-                          : null,
+                  ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -850,6 +853,7 @@ class _HireContractorCardState extends State<HireContractorCard> {
                       const SizedBox(height: 6),
                       Wrap(
                         spacing: 4,
+                        runSpacing: 4,
                         // mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           if (widget.data.subscription?.hasPremiumPlan ?? false)

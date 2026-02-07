@@ -646,6 +646,8 @@ import '../../seller/module/seller_home_screen/views/property_overview_screen.da
 import '../../seller/module/seller_home_screen/views/seller_home_screen.dart';
 import '../../seller/module/seller_home_screen/views/widget/property_distribution_pie_graph.dart';
 import '../../verification/aadhar_auth/screens/aadhar_auth_screen.dart';
+import '../../verification/mou_verification/controllers/mou_verification_controller.dart';
+import '../../verification/mou_verification/screens/mou_verification_screen.dart';
 import '../controller/builder_form_controller.dart';
 import 'builder_form_screen.dart';
 
@@ -661,6 +663,7 @@ class _BuilderDashboardState extends State<BuilderDashboard> {
   late final SellerOverviewController overviewController;
   late Future<void> _dashboardFuture;
   late Future<void> _dashboardRefreshFuture;
+  DigitalSignatureController? signatureController;
 
   @override
   void initState() {
@@ -682,8 +685,26 @@ class _BuilderDashboardState extends State<BuilderDashboard> {
 
   Future<void> loadPropertyBySeller() async {
     final user = await SecureStorage.getUserData();
-    if (user != null) {
-      controller.applyFilter("created_by", user.user?.id.toString() ?? "");
+    final String userId = user?.user?.id.toString() ?? "";
+    if (userId.isNotEmpty) {
+      controller.applyFilter("created_by", userId);
+    }
+
+    print("User Id for Signature: ${userId}");
+
+    if (Get.isRegistered<DigitalSignatureController>(tag: 'signature')) {
+      signatureController = Get.find<DigitalSignatureController>(
+        tag: 'signature',
+      );
+    } else {
+      signatureController = Get.put(
+        DigitalSignatureController(userId: userId),
+        tag: 'signature',
+      );
+    }
+
+    if (mounted) {
+      setState(() {});
     }
   }
 
@@ -701,21 +722,36 @@ class _BuilderDashboardState extends State<BuilderDashboard> {
       },
 
       floatingButton: FloatingActionButton.extended(
-        onPressed: () {
+        onPressed: () async {
+          /// 1️⃣ Check Aadhar first
           if (!UserHelper.isAadharVerified) {
             Get.to(() => AadharAuthScreen());
-          } else {
-            final controller = Get.put(
-              ProjectWizardController(isBuilderView: false),
-              tag: "builder",
-            );
-            controller.resetForm();
-            Get.to(
-              () => CreateProjectScreen(),
-              binding: ProjectWizardBinding(),
-            );
+            return;
           }
+
+          /// 2️⃣ Ensure signatures are loaded
+          if (signatureController!.signatures.isEmpty &&
+              !signatureController!.isLoading.value) {
+            await signatureController!.fetchDigitalSignatures();
+          }
+
+          /// 3️⃣ Check MOU verification
+          /// 3️⃣ Check MOU verification
+          if (!signatureController!.isSignatureVerified.value) {
+            // Pass the controller to MouVerificationScreen
+            Get.to(
+              () => MouVerificationScreen(controller: signatureController),
+            );
+            return;
+          }
+          final controller = Get.put(
+            ProjectWizardController(isBuilderView: false),
+            tag: "builder",
+          );
+          controller.resetForm();
+          Get.to(() => CreateProjectScreen(), binding: ProjectWizardBinding());
         },
+
         label: Text(
           '+ Add Project',
           style: TextStyle(
