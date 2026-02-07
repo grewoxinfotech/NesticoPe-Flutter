@@ -5,6 +5,7 @@ import 'package:housing_flutter_app/app/care/pagination/models/pagination_models
 import 'package:housing_flutter_app/app/constants/api_constants.dart';
 import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
 import 'package:housing_flutter_app/utils/logger/app_logger.dart';
+import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
 import 'package:http/http.dart' as http;
 
 import '../model/in_app_messaging_model.dart';
@@ -51,11 +52,10 @@ class NotificationService {
       } else {
         debugPrint("Failed to fetch notifications: ${response.statusCode}");
         debugPrint("Response body: ${response.body}");
-
-        CustomSnackBar.show(
-          Get.overlayContext!,
-          message: "Failed to load notifications",
-          type: SnackBarType.error,
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: 'Failed to load notifications',
+          contentType: ContentType.failure,
         );
 
         throw Exception("Failed to load notifications");
@@ -102,7 +102,7 @@ class NotificationService {
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
 
-        AppLogger.structured("All Notification Clear ",jsonData);
+        AppLogger.structured("All Notification Clear ", jsonData);
 
         return jsonData['success'];
       } else {

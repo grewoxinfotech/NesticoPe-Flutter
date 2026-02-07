@@ -65,22 +65,7 @@ class HireContractorProfileList extends StatelessWidget {
         centerTitle: false,
         actions: [
           IconButton(
-            onPressed: () async {
-              final result = await Get.dialog<Map<String, String>>(
-                const HireContractorFilter(),
-                barrierDismissible: true,
-              );
-              if (result != null) {
-                log("Selected Filters → $result");
-                if (result != null) {
-                  result.remove('city');
-                  selectedFilters.value = result;
-                  controllerFilter.applyFilters(result);
-                }
-                // You can now apply filters to your list, API call, etc.
-                // controller.fetchFilteredInquiries(result);
-              }
-            },
+            onPressed: () async => onFilterButtonClick(selectedFilters: selectedFilters,controllerFilter: controllerFilter),
             icon: Icon(Icons.filter_list),
           ),
         ],
@@ -182,10 +167,40 @@ class HireContractorProfileList extends StatelessWidget {
                         }
 
                         if (contractors.isEmpty) {
-                          return const Center(
-                            child: Text(
-                              'No contractors available for this category.',
-                              style: TextStyle(color: ColorRes.textSecondary),
+                          return Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'No contractors available for this category.',
+                                  style: TextStyle(
+                                    color: ColorRes.textSecondary,
+                                  ),
+                                ),
+                                SizedBox(height: 12),
+                                OutlinedButton(
+                                  onPressed:  () async => onFilterButtonClick(selectedFilters: selectedFilters,controllerFilter: controllerFilter),
+                                  style: OutlinedButton.styleFrom(
+                                    side: BorderSide(
+                                      color: ColorRes.primary,
+                                      width: 1,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 8,
+                                    ),
+                                    textStyle: TextStyle(
+                                      fontSize: AppFontSizes.small,
+                                      fontWeight: AppFontWeights.medium,
+                                      color: ColorRes.primary,
+                                    ),
+                                  ),
+                                  child: Text('Change Category'),
+                                ),
+                              ],
                             ),
                           );
                         }
@@ -233,6 +248,27 @@ class HireContractorProfileList extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> onFilterButtonClick({required RxMap<String, String> selectedFilters,
+    required HireContractorFilterProfileController controllerFilter,
+  })async{
+
+      final result = await Get.dialog<Map<String, String>>(
+        const HireContractorFilter(),
+        barrierDismissible: true,
+      );
+      if (result != null) {
+        log("Selected Filters → $result");
+        if (result != null) {
+          result.remove('city');
+          selectedFilters.value = result;
+          controllerFilter.applyFilters(result);
+        }
+        // You can now apply filters to your list, API call, etc.
+        // controller.fetchFilteredInquiries(result);
+      }
+
   }
 }
 

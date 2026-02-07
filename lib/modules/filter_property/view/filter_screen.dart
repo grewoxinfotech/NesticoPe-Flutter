@@ -657,10 +657,8 @@ flex: 2,
 
       if (value is Map || value is List) {
         if (value.isEmpty) return;
-        // ✅ Proper JSON encoding instead of toString()
         result[mappedKey] = jsonEncode(value);
       } else {
-        // ✅ Skip empty strings or invalid values
         if (value.toString().trim().isEmpty) return;
         result[mappedKey] = value.toString();
       }

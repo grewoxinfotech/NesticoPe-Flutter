@@ -13,7 +13,7 @@ class ProjectFilterController extends GetxController {
   RxBool isPropertyHaveVideo=false.obs;
   RxBool isPropertyHaveBroucher=false.obs;
   RxDouble min = 0.0.obs;
-  RxDouble max = 100000000.0.obs;
+  RxDouble max = 0.0.obs;
   RxList<double> budgetValues = <double>[
     0,
     500000,

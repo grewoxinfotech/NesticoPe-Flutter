@@ -18,31 +18,32 @@ class RecommendedProperty extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
           if (controller.items.isEmpty) {
-            return const Center(child: Text("No Property found."));
+            return SizedBox.shrink();
           }
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: SizedBox(
-              height: 325,
-              child: Obx(() {
-                final items = controller.recommendedProperties;
-                if (items.isEmpty) {
-                  return const Center(child: Text("No Property found."));
-                }
-                return ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: items.length, // ✅ Always up-to-date
-                  separatorBuilder: (_, __) => const SizedBox(width: 12),
-                  itemBuilder: (context, index) {
-                    if (index >= items.length) {
-                      return const SizedBox(); // ✅ Prevents RangeError
-                    }
-                    final data = items[index];
-                    return RecommendedCard(property: data);
-                  },
-                );
-              }),
-            ),
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: SizedBox(
+                  height: 325,
+                  child: Obx(() {
+                    final items = controller.recommendedProperties;
+                    return ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: items.length, // ✅ Always up-to-date
+                      separatorBuilder: (_, __) => const SizedBox(width: 12),
+                      itemBuilder: (context, index) {
+                        if (index >= items.length) {
+                          return const SizedBox(); // ✅ Prevents RangeError
+                        }
+                        final data = items[index];
+                        return RecommendedCard(property: data);
+                      },
+                    );
+                  }),
+                ),
+              ),
+            ],
           );
         }),
       ],

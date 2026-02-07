@@ -287,7 +287,7 @@ class _ProjectListingScreenState extends State<ProjectListingScreen> {
                   () => ProjectFilterScreen(
                     initialFilters: selectedFilters.value,
                     onApply: (filterData) {
-                      // Return selected filters to previous screen
+                      filterData.removeWhere((key, value) => ( value == 'false'),);
                       Get.back(result: filterData);
                     },
                   ),

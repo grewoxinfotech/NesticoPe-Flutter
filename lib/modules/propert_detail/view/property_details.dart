@@ -424,6 +424,186 @@ import '../../../widgets/empty_state/empty_state.dart';
 import '../../home/widgets/unified_comparison_floating_button.dart';
 import '../../property/controllers/property_controller.dart';
 
+// class PropertyDetail extends StatefulWidget {
+//   final List<Map<String, String>>? filters;
+//   final bool isAppBarShow;
+//   final Color backgroundColor;
+//   final bool isFromSeeAll;
+//
+//   const PropertyDetail({
+//     super.key,
+//     this.isAppBarShow = true,
+//     this.backgroundColor = ColorRes.white,
+//     this.filters,
+//     this.isFromSeeAll = false,
+//   });
+//
+//   @override
+//   State<PropertyDetail> createState() => _PropertyDetailState();
+// }
+//
+// class _PropertyDetailState extends State<PropertyDetail> {
+//   final PropertyController controller = Get.put(
+//     PropertyController(),
+//     tag: 'listing_view',
+//   );
+//
+//   /// 🔹 User-visible filters only
+//   final RxMap<String, String> selectedFilters = <String, String>{}.obs;
+//
+//   final CompareManager compare = Get.find<CompareManager>();
+//
+//   /// 🔒 Hard-locked filter (never visible, never removable)
+//   static const Map<String, String> _lockedFilters = {
+//     "approval_status": "approved",
+//   };
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//
+//     WidgetsBinding.instance.addPostFrameCallback((_) {
+//       final Map<String, String> uiFilters = {};
+//
+//       if (widget.filters != null && widget.filters!.isNotEmpty) {
+//         for (final filter in widget.filters!) {
+//           uiFilters.addAll(filter);
+//         }
+//       }
+//
+//       selectedFilters.addAll(uiFilters);
+//       _applyFilters();
+//     });
+//   }
+//
+//   void _applyFilters() {
+//     controller.applyFilters({
+//       ..._lockedFilters, // 🔒 always applied
+//       ...selectedFilters, // user filters
+//     });
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: widget.backgroundColor,
+//       appBar: ListScreenAppbar(
+//         showAppBar: widget.isAppBarShow,
+//         title: "Property List",
+//         isFormScreen: widget.isFromSeeAll,
+//         onBack: () => Get.back(),
+//
+//         onFilterTap: () async {
+//           final result = await Get.to<Map<String, String>>(
+//             () => RealEstateFilterScreen(
+//               initialFilters: Map<String, String>.from(
+//                 selectedFilters.value, // ✅ READ VALUE
+//               ),
+//             ),
+//             transition: Transition.rightToLeft,
+//           );
+//
+//           if (result != null) {
+//             selectedFilters
+//               ..clear()
+//               ..addAll(result);
+//             _applyFilters();
+//           }
+//         },
+//       ),
+//
+//       body: SafeArea(
+//         child: Stack(
+//           children: [
+//             Column(
+//               children: [
+//                 /// ✅ FIXED Obx — observable is READ
+//                 Obx(() {
+//                   final filters = selectedFilters.value;
+//
+//                   return FilterChipsBar(
+//                     filters: filters, // plain Map now
+//                     onClearAll: () {
+//                       selectedFilters.clear();
+//                       _applyFilters();
+//                     },
+//                     onRemoveFilter: (key) {
+//                       selectedFilters.remove(key);
+//                       _applyFilters();
+//                     },
+//                     priceRangeFormatter:
+//                         (min, max) => formatPriceRange(min, max),
+//                   );
+//                 }),
+//
+//                 Expanded(
+//                   child: Obx(() {
+//                     if (controller.isLoading.value &&
+//                         controller.items.isEmpty) {
+//                       return BuyerPropertyListScreenShimmer();
+//                     }
+//
+//                     if (!controller.isLoading.value &&
+//                         controller.items.isEmpty) {
+//                       return const EmptyStateWidget(
+//                         icon: Icons.search_off_rounded,
+//                         title: "No properties found",
+//                         subtitle: "No approved properties available",
+//                       );
+//                     }
+//
+//                     return NotificationListener<ScrollNotification>(
+//                       onNotification: (notification) {
+//                         if (notification.metrics.pixels >=
+//                             notification.metrics.maxScrollExtent - 200) {
+//                           controller.loadMore();
+//                         }
+//                         return false;
+//                       },
+//                       child: RefreshIndicator(
+//                         onRefresh: controller.refreshList,
+//                         child: ListView.builder(
+//                           padding: const EdgeInsets.symmetric(
+//                             vertical: AppPadding.small,
+//                             horizontal: AppPadding.small,
+//                           ),
+//                           itemCount: controller.items.length,
+//                           itemBuilder: (context, index) {
+//                             final Items data = controller.items[index];
+//                             return PropertyCardWidget(
+//                               property: data,
+//                               role: 'Developer',
+//                             );
+//                           },
+//                         ),
+//                       ),
+//                     );
+//                   }),
+//                 ),
+//               ],
+//             ),
+//
+//             const UnifiedComparisonFloatingButton(bottom: 16),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+// String formatPriceRange(dynamic min, dynamic max) {
+//   double minVal =
+//       (min is num) ? min.toDouble() : double.tryParse(min.toString()) ?? 0;
+//   double maxVal =
+//       (max is num) ? max.toDouble() : double.tryParse(max.toString()) ?? 0;
+//
+//   if (minVal == 0 && maxVal == 0) return "₹0";
+//   if (minVal == 0) return "Up to ${Formatter.formatPrice(maxVal)}";
+//   if (maxVal == 0) return "From ${Formatter.formatPrice(minVal)}";
+//
+//   return "${Formatter.formatPrice(minVal)} - ${Formatter.formatPrice(maxVal)}";
+// }
+
 class PropertyDetail extends StatefulWidget {
   final List<Map<String, String>>? filters;
   final bool isAppBarShow;
@@ -448,8 +628,8 @@ class _PropertyDetailState extends State<PropertyDetail> {
     tag: 'listing_view',
   );
 
-  /// 🔹 User-visible filters only
-  final RxMap<String, String> selectedFilters = <String, String>{}.obs;
+  /// 🔹 User-visible filters only (now regular Map)
+  Map<String, String> selectedFilters = {};
 
   final CompareManager compare = Get.find<CompareManager>();
 
@@ -457,6 +637,9 @@ class _PropertyDetailState extends State<PropertyDetail> {
   static const Map<String, String> _lockedFilters = {
     "approval_status": "approved",
   };
+
+  bool _isLoading = true; // ✅ Start with loading state
+  List<Items> _items = [];
 
   @override
   void initState() {
@@ -471,8 +654,27 @@ class _PropertyDetailState extends State<PropertyDetail> {
         }
       }
 
-      selectedFilters.addAll(uiFilters);
+      setState(() {
+        selectedFilters = uiFilters;
+      });
       _applyFilters();
+    });
+
+    // Listen to controller changes
+    controller.isLoading.listen((loading) {
+      if (mounted) {
+        setState(() {
+          _isLoading = loading;
+        });
+      }
+    });
+
+    controller.items.listen((items) {
+      if (mounted) {
+        setState(() {
+          _items = items;
+        });
+      }
     });
   }
 
@@ -495,18 +697,17 @@ class _PropertyDetailState extends State<PropertyDetail> {
 
         onFilterTap: () async {
           final result = await Get.to<Map<String, String>>(
-            () => RealEstateFilterScreen(
-              initialFilters: Map<String, String>.from(
-                selectedFilters.value, // ✅ READ VALUE
-              ),
+                () => RealEstateFilterScreen(
+              initialFilters: Map<String, String>.from(selectedFilters),
             ),
             transition: Transition.rightToLeft,
           );
 
           if (result != null) {
-            selectedFilters
-              ..clear()
-              ..addAll(result);
+            result.removeWhere((key, value) => value == 'false',);
+            setState(() {
+              selectedFilters = result;
+            });
             _applyFilters();
           }
         },
@@ -517,68 +718,59 @@ class _PropertyDetailState extends State<PropertyDetail> {
           children: [
             Column(
               children: [
-                /// ✅ FIXED Obx — observable is READ
-                Obx(() {
-                  final filters = selectedFilters.value;
-
-                  return FilterChipsBar(
-                    filters: filters, // plain Map now
-                    onClearAll: () {
+                /// ✅ Using regular setState
+                FilterChipsBar(
+                  filters: selectedFilters,
+                  onClearAll: () {
+                    setState(() {
                       selectedFilters.clear();
-                      _applyFilters();
-                    },
-                    onRemoveFilter: (key) {
+                    });
+                    _applyFilters();
+                  },
+                  onRemoveFilter: (key) {
+                    setState(() {
                       selectedFilters.remove(key);
-                      _applyFilters();
-                    },
-                    priceRangeFormatter:
-                        (min, max) => formatPriceRange(min, max),
-                  );
-                }),
+                    });
+                    _applyFilters();
+                  },
+                  priceRangeFormatter: (min, max) => formatPriceRange(min, max),
+                ),
 
                 Expanded(
-                  child: Obx(() {
-                    if (controller.isLoading.value &&
-                        controller.items.isEmpty) {
-                      return BuyerPropertyListScreenShimmer();
-                    }
-
-                    if (!controller.isLoading.value &&
-                        controller.items.isEmpty) {
-                      return const EmptyStateWidget(
-                        icon: Icons.search_off_rounded,
-                        title: "No properties found",
-                        subtitle: "No approved properties available",
-                      );
-                    }
-
-                    return NotificationListener<ScrollNotification>(
-                      onNotification: (notification) {
-                        if (notification.metrics.pixels >=
-                            notification.metrics.maxScrollExtent - 200) {
-                          controller.loadMore();
-                        }
-                        return false;
-                      },
-                      child: RefreshIndicator(
-                        onRefresh: controller.refreshList,
-                        child: ListView.builder(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: AppPadding.small,
-                            horizontal: AppPadding.small,
-                          ),
-                          itemCount: controller.items.length,
-                          itemBuilder: (context, index) {
-                            final Items data = controller.items[index];
-                            return PropertyCardWidget(
-                              property: data,
-                              role: 'Developer',
-                            );
-                          },
+                  child: _isLoading && _items.isEmpty
+                      ? BuyerPropertyListScreenShimmer()
+                      : !_isLoading && _items.isEmpty
+                      ? const EmptyStateWidget(
+                    icon: Icons.search_off_rounded,
+                    title: "No properties found",
+                    subtitle: "No approved properties available",
+                  )
+                      : NotificationListener<ScrollNotification>(
+                    onNotification: (notification) {
+                      if (notification.metrics.pixels >=
+                          notification.metrics.maxScrollExtent - 200) {
+                        controller.loadMore();
+                      }
+                      return false;
+                    },
+                    child: RefreshIndicator(
+                      onRefresh: controller.refreshList,
+                      child: ListView.builder(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: AppPadding.small,
+                          horizontal: AppPadding.small,
                         ),
+                        itemCount: _items.length,
+                        itemBuilder: (context, index) {
+                          final Items data = _items[index];
+                          return PropertyCardWidget(
+                            property: data,
+                            role: 'Developer',
+                          );
+                        },
                       ),
-                    );
-                  }),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -589,20 +781,13 @@ class _PropertyDetailState extends State<PropertyDetail> {
       ),
     );
   }
-}
 
-// String formatPriceRange(dynamic min, dynamic max) {
-//   double minVal =
-//       (min is num) ? min.toDouble() : double.tryParse(min.toString()) ?? 0;
-//   double maxVal =
-//       (max is num) ? max.toDouble() : double.tryParse(max.toString()) ?? 0;
-//
-//   if (minVal == 0 && maxVal == 0) return "₹0";
-//   if (minVal == 0) return "Up to ${Formatter.formatPrice(maxVal)}";
-//   if (maxVal == 0) return "From ${Formatter.formatPrice(minVal)}";
-//
-//   return "${Formatter.formatPrice(minVal)} - ${Formatter.formatPrice(maxVal)}";
-// }
+  @override
+  void dispose() {
+    // Clean up listeners if needed
+    super.dispose();
+  }
+}
 
 String formatPriceRange(dynamic min, dynamic max) {
   final double minVal = _parseToDouble(min);
