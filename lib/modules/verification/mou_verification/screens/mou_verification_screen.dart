@@ -23,18 +23,18 @@ class MouVerificationScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         foregroundColor: ColorRes.white,
-        title: const Text(
+        title:  Text(
           "Memorandum of Understanding",
           style: TextStyle(
             color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
+            fontWeight: AppFontWeights.semiBold,
+            // fontSize: 18,
           ),
         ),
         backgroundColor: ColorRes.primary,
       ),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
         child: Column(
           children: [
             Expanded(
@@ -55,6 +55,11 @@ class MouVerificationScreen extends StatelessWidget {
                             _controller.isAgreed.value = val ?? false,
                             title: const Text(
                               "I have read and agree to the terms of the MOU",
+                              style: TextStyle(
+                                fontSize: AppFontSizes.small,
+                                fontWeight: AppFontWeights.medium,
+                                color: ColorRes.textPrimary
+                              ),
                             ),
                             controlAffinity: ListTileControlAffinity.leading,
                           ),
@@ -176,23 +181,136 @@ class MouVerificationScreen extends StatelessWidget {
 
   Widget _buildTermsBox() {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(8),
+        color: ColorRes.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(color: Colors.grey.shade200),
       ),
-      child: const Text(
-        "Terms and Conditions\n\n"
-            "This Memorandum of Understanding (MOU) sets forth the terms and understanding "
-            "between the Seller and our platform regarding the listing and management of properties.\n\n"
-            "1. The Seller confirms that all information provided regarding the property is accurate.\n"
-            "2. The Seller holds the legal right to sell or rent the property.\n"
-            "3. The Seller agrees to service fees and commission structure.\n"
-            "4. Disputes will be subject to jurisdiction of local courts.\n\n"
-            "By signing this document, you acknowledge that you have read and agreed.",
-        style: TextStyle(fontSize: 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// Title
+          const Text(
+            "Terms and Conditions",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: ColorRes.textColor
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          /// Intro text
+          Text(
+            "Please review the following legal agreement carefully before proceeding with your property listing. "
+                "This document constitutes a binding agreement between you and the platform.",
+            style: TextStyle(
+              fontSize: 13,
+              color: Colors.grey.shade700,
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          _termItem(
+            index: "1",
+            title: "Property Accuracy",
+            description:
+            "The seller confirms all property details provided, including location, dimensions, and amenities, are accurate and truthful.",
+          ),
+
+          _termItem(
+            index: "2",
+            title: "Legal Rights",
+            description:
+            "The seller warrants they have the full legal right and authorization to list and sell the property described in this application.",
+          ),
+
+          _termItem(
+            index: "3",
+            title: "Fees and Commission",
+            description:
+            "Agreement to the standard platform commission of 2.5% of the final sale price upon successful closing of the transaction.",
+          ),
+
+          _termItem(
+            index: "4",
+            title: "Validity",
+            description:
+            "This MOU is valid for a period of 6 months from the date of digital signing, after which it may be renewed.",
+          ),
+        ],
       ),
     );
   }
+  Widget _termItem({
+    required String index,
+    required String title,
+    required String description,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// Number Circle
+          Container(
+            height: 26,
+            width: 26,
+            decoration: BoxDecoration(
+              color: ColorRes.primary.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              index,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: ColorRes.primary,
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 12),
+
+          /// Text
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                      color: ColorRes.textColor
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  description,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey.shade700,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
 }

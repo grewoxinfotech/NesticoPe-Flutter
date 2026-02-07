@@ -16,6 +16,7 @@ class ApiConstants {
 
   // Notification Endpoints
   static String get notifications => "$baseURL/notification";
+  static String get notificationsMarkAsRead => "$baseURL/notification/mark-all-read";
 
   // Auth Endpoints
   static String get auth => "$baseURL/auth";

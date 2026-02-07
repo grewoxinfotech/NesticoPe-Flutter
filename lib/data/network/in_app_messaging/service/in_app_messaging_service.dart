@@ -4,12 +4,14 @@ import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
 import 'package:housing_flutter_app/app/constants/api_constants.dart';
 import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 import 'package:http/http.dart' as http;
 
 import '../model/in_app_messaging_model.dart';
 
 class NotificationService {
   final String baseUrl = ApiConstants.notifications;
+  final String baseUrlMarkAsRead = ApiConstants.notificationsMarkAsRead;
 
   ///==================== Common Headers ====================
   static Future<Map<String, String>> headersWithoutToken() async {
@@ -86,5 +88,30 @@ class NotificationService {
     }
 
     return null;
+  }
+
+  Future<bool> updateNotificationMarkAsRead() async {
+    try {
+      final response = await http.patch(
+        Uri.parse("$baseUrlMarkAsRead"),
+        headers: await headers(),
+      );
+
+      debugPrint("Get notification by ID response: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+
+        AppLogger.structured("All Notification Clear ",jsonData);
+
+        return jsonData['success'];
+      } else {
+        debugPrint("Failed to get notification by ID: ${response.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("Get notification by ID exception: $e");
+    }
+
+    return false;
   }
 }

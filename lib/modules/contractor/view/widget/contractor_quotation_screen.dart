@@ -1840,13 +1840,9 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
 
       // Add page to PDF
       pdf.addPage(
-
-
         pw.MultiPage(
           pageFormat: PdfPageFormat.a4,
           margin: const pw.EdgeInsets.all(0),
-
-
 
           header:
               (context) => pw.Container(
@@ -1923,61 +1919,6 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   mainAxisSize: pw.MainAxisSize.min,
                   children: [
-                    pw.Row(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Expanded(
-                          child: pw.Column(
-                            crossAxisAlignment: pw.CrossAxisAlignment.start,
-                            children: [
-                              pw.Text(
-                                'Notes',
-                                style: pw.TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: pw.FontWeight.bold,
-                                  color: headerColor,
-                                ),
-                              ),
-                              pw.SizedBox(height: 6),
-                              pw.Text(
-                                _getNotes(),
-                                style: pw.TextStyle(fontSize: 9, color: grayText),
-                              ),
-                            ],
-                          ),
-                        ),
-                        pw.SizedBox(width: 16),
-                        pw.Expanded(
-                          child: pw.Container(
-                            padding: const pw.EdgeInsets.all(10),
-                            decoration: pw.BoxDecoration(
-                              color: lightGray,
-                              border: pw.Border.all(color: PdfColors.grey300),
-                            ),
-                            child: pw.Column(
-                              crossAxisAlignment: pw.CrossAxisAlignment.start,
-                              children: [
-                                pw.Text(
-                                  'Terms & Conditions',
-                                  style: pw.TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: pw.FontWeight.bold,
-                                    color: headerColor,
-                                  ),
-                                ),
-                                pw.SizedBox(height: 6),
-                                _buildTermRow(
-                                  '1. Payments shall be released based on pre-defined project milestones.',
-                                ),
-                                _buildTermRow(
-                                  '2. NesticoPe platform shall not be held liable for any disputes.',
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
                     pw.SizedBox(height: 12),
                     pw.Container(
                       height: 5,
@@ -2053,7 +1994,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
                         style: pw.TextStyle(fontSize: 8, color: grayText),
                       ),
                     ),
-                ]
+                  ],
                 ),
               );
             }
@@ -2064,6 +2005,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
                 padding: const pw.EdgeInsets.all(30),
                 child: pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  mainAxisSize: pw.MainAxisSize.min,
                   children: [
                     pw.Row(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -2145,6 +2087,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
                     // Property Details Section
                     pw.Column(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      mainAxisSize: pw.MainAxisSize.min,
                       children: [
                         // Title
                         pw.Text(
@@ -2246,7 +2189,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
                       ),
                     ),
                     pw.SizedBox(height: 10),
-                   ... _buildMaterialBrandsList(),
+                    ..._buildMaterialBrandsList(),
 
                     pw.SizedBox(height: 20),
 
@@ -2281,21 +2224,68 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
                     pw.SizedBox(height: 20),*/
 
                     // Service Scope & Pricing Section
-                    pw.Text(
-                      'Service Scope & Pricing',
-                      style: pw.TextStyle(
-                        fontSize: 12,
-                        fontWeight: pw.FontWeight.bold,
-                        color: headerColor,
-                      ),
-                    ),
-                    pw.SizedBox(height: 10),
 
                     // Service Table
-
                     _buildServiceTable(),
-
-                    pw.SizedBox(height: 30),
+                    pw.SizedBox(height: 20),
+                    pw.Row(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Expanded(
+                          child: pw.Column(
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Text(
+                                'Notes',
+                                style: pw.TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: pw.FontWeight.bold,
+                                  color: headerColor,
+                                ),
+                              ),
+                              pw.SizedBox(height: 6),
+                              pw.Text(
+                                _getNotes(),
+                                style: pw.TextStyle(
+                                  fontSize: 9,
+                                  color: grayText,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        pw.SizedBox(width: 16),
+                        pw.Expanded(
+                          child: pw.Container(
+                            padding: const pw.EdgeInsets.all(10),
+                            decoration: pw.BoxDecoration(
+                              color: lightGray,
+                              border: pw.Border.all(color: PdfColors.grey300),
+                            ),
+                            child: pw.Column(
+                              crossAxisAlignment: pw.CrossAxisAlignment.start,
+                              children: [
+                                pw.Text(
+                                  'Terms & Conditions',
+                                  style: pw.TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: pw.FontWeight.bold,
+                                    color: headerColor,
+                                  ),
+                                ),
+                                pw.SizedBox(height: 6),
+                                _buildTermRow(
+                                  '1. Payments shall be released based on pre-defined project milestones.',
+                                ),
+                                _buildTermRow(
+                                  '2. NesticoPe platform shall not be held liable for any disputes.',
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -2405,26 +2395,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
     );
   }
 
-  // Helper method for property details
-  pw.Widget _buildPropertyDetailRow(String label, String value) {
-    return pw.Column(
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
-      children: [
-        pw.Text(
-          label,
-          style: pw.TextStyle(
-            fontSize: 8,
-            fontWeight: pw.FontWeight.bold,
-            color: PdfColor.fromInt(0xFF555555),
-          ),
-        ),
-        pw.SizedBox(height: 3),
-        pw.Text(value, style: const pw.TextStyle(fontSize: 9)),
-      ],
-    );
-  }
-
-
+  // Helper method for propert
   List<pw.Widget> _buildMaterialBrandsList() {
     List<Map<String, String>> materials = [];
     final DateTime? startDate = widget.quotation.meta.expectedStartDate;
@@ -2640,22 +2611,22 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
 
     for (var material in materials) {
       final contentLength = material['value']!.length;
-      if (contentLength <= 20) {
+     /* if (contentLength <= 20) {
         shortItems.add(material);
       } else if (contentLength <= 50) {
         mediumItems.add(material);
-      } else {
+      } else {*/
         longItems.add(material);
-      }
+      // }
     }
 
     List<pw.Widget> rows = [];
 
     // Build rows for short items (4 per row)
-    rows.addAll(_buildMaterialRows(shortItems, 4));
+/*    rows.addAll(_buildMaterialRows(shortItems, 4));
 
     // Build rows for medium items (3 per row)
-    rows.addAll(_buildMaterialRows(mediumItems, 4));
+    rows.addAll(_buildMaterialRows(mediumItems, 4));*/
 
     // Build rows for long items (2 per row)
     rows.addAll(_buildMaterialRows(longItems, 4));
@@ -2664,9 +2635,9 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
   }
 
   List<pw.Widget> _buildMaterialRows(
-      List<Map<String, String>> materials,
-      int itemsPerRow,
-      ) {
+    List<Map<String, String>> materials,
+    int itemsPerRow,
+  ) {
     if (materials.isEmpty) return [];
 
     List<pw.Widget> rows = [];
@@ -2679,7 +2650,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
 
       rows.add(
         pw.Padding(
-          padding: const pw.EdgeInsets.symmetric(horizontal: 15, vertical: 4),
+          padding: pw.EdgeInsets.only(right: 15,top: 4,bottom: 4),
           child: pw.Row(
             mainAxisAlignment: pw.MainAxisAlignment.start,
             children: [
@@ -2692,7 +2663,10 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
                       padding: const pw.EdgeInsets.all(8),
                       decoration: pw.BoxDecoration(
                         color: PdfColor.fromInt(0xFFF7FAFC),
-                        border: pw.Border.all(width: 1, color: PdfColors.grey300),
+                        border: pw.Border.all(
+                          width: 1,
+                          color: PdfColors.grey300,
+                        ),
                         borderRadius: pw.BorderRadius.circular(4),
                       ),
                       child: pw.Column(
@@ -2930,158 +2904,174 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
     final advancePercentage = widget.quotation.meta.advanceRequiredPercentage;
     final advanceAmount = (totalAmount * advancePercentage) / 100;
 
-    return pw.Table(
-
-      border: pw.TableBorder.all(color: PdfColors.grey400, width: 0.5),
-      columnWidths: {
-        0: const pw.FlexColumnWidth(3),
-        1: const pw.FlexColumnWidth(1),
-        2: const pw.FlexColumnWidth(1.5),
-      },
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        // HEADER
-        pw.TableRow(
-          decoration: pw.BoxDecoration(color: lightGray),
-
-          children: [
-            _pdfHeaderCell('Description', headerColor),
-            _pdfHeaderCell(
-              'Rate/Info',
-              headerColor,
-              align: pw.TextAlign.center,
-            ),
-            _pdfHeaderCell(
-              'Amount (INR)',
-              headerColor,
-              align: pw.TextAlign.right,
-            ),
-          ],
+        pw.Text(
+          'Service Scope & Pricing',
+          style: pw.TextStyle(
+            fontSize: 12,
+            fontWeight: pw.FontWeight.bold,
+            color: headerColor,
+          ),
         ),
-
-        // SERVICE DESCRIPTION ROW
-        pw.TableRow(
+        pw.SizedBox(height: 10),
+        pw.Table(
+          border: pw.TableBorder.all(color: PdfColors.grey400, width: 0.5),
+          columnWidths: {
+            0: const pw.FlexColumnWidth(3),
+            1: const pw.FlexColumnWidth(1),
+            2: const pw.FlexColumnWidth(1.5),
+          },
           children: [
-            pw.Padding(
-              padding: const pw.EdgeInsets.all(8),
-              child: pw.Text(
-                description,
-                style: const pw.TextStyle(fontSize: 9),
-              ),
+            // HEADER
+            pw.TableRow(
+              decoration: pw.BoxDecoration(color: lightGray),
+
+              children: [
+                _pdfHeaderCell('Description', headerColor),
+                _pdfHeaderCell(
+                  'Rate/Info',
+                  headerColor,
+                  align: pw.TextAlign.center,
+                ),
+                _pdfHeaderCell(
+                  'Amount (INR)',
+                  headerColor,
+                  align: pw.TextAlign.right,
+                ),
+              ],
             ),
-            pw.Padding(
-              padding: const pw.EdgeInsets.all(8),
-              child: pw.Column(
-                crossAxisAlignment: pw.CrossAxisAlignment.center,
-                children: [
-                  pw.Text(
-                    'Adv: $advancePercentage%',
-                    style: const pw.TextStyle(fontSize: 9),
+
+            // SERVICE DESCRIPTION ROW
+            pw.TableRow(
+              children: [
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(6),
+                  child: pw.Text(
+                    description,
+                    style: const pw.TextStyle(fontSize: 8),
                   ),
-                  pw.Text(
-                    '(${_formatIndianCurrency(advanceAmount)})',
-                    style: const pw.TextStyle(
-                      fontSize: 8,
-                      color: PdfColors.grey700,
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(8),
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.center,
+                    children: [
+                      pw.Text(
+                        'Adv: $advancePercentage%',
+                        style: const pw.TextStyle(fontSize: 8),
+                      ),
+                      pw.Text(
+                        '(${_formatIndianCurrency(advanceAmount)})',
+                        style: const pw.TextStyle(
+                          fontSize: 8,
+                          color: PdfColors.grey700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(6),
+                  child: pw.Text(''),
+                ),
+              ],
+            ),
+
+            // BASE AMOUNT
+            _priceRow('Base Amount', basePrice),
+
+            // DISCOUNT (optional)
+            if (discountAmount > 0)
+              pw.TableRow(
+                children: [
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 6,
+                    ),
+                    child: pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text(
+                          'Discount',
+                          style: pw.TextStyle(
+                            fontSize: 8,
+                            fontStyle: pw.FontStyle.italic,
+                          ),
+                        ),
+                        pw.Text(
+                          "(Buyer's referral points benefit)",
+                          style: pw.TextStyle(
+                            fontSize: 7,
+                            color: PdfColors.grey700,
+                            fontStyle: pw.FontStyle.italic,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 6,
+                    ),
+                    child: pw.Text(
+                      '${discountPercent.toStringAsFixed(0)}%',
+                      textAlign: pw.TextAlign.center,
+                      style: const pw.TextStyle(fontSize: 8),
+                    ),
+                  ),
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 6,
+                    ),
+                    child: pw.Text(
+                      '-${_formatIndianCurrency(discountAmount)}',
+                      textAlign: pw.TextAlign.right,
+                      style: const pw.TextStyle(fontSize: 8),
                     ),
                   ),
                 ],
               ),
-            ),
-            pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text('')),
-          ],
-        ),
 
-        // BASE AMOUNT
-        _priceRow('Base Amount', basePrice),
+            // GST ROW
+            if (isGSTEnable && gstAmount > 0)
+              _priceRow('GST (${gstPercentage}%)', gstAmount),
 
-        // DISCOUNT (optional)
-        if (discountAmount > 0)
-          pw.TableRow(
-            children: [
-              pw.Padding(
-                padding: const pw.EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 6,
-                ),
-                child: pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text(
-                      'Discount',
-                      style: pw.TextStyle(
-                        fontSize: 9,
-                        fontStyle: pw.FontStyle.italic,
-                      ),
+            // TOTAL ROW (highlighted)
+            pw.TableRow(
+              decoration: pw.BoxDecoration(color: totalBg),
+              children: [
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(8),
+                  child: pw.Text(
+                    'Total Quotation Amount (Inclusive of all taxes)',
+                    style: pw.TextStyle(
+                      fontSize: 9,
+                      fontWeight: pw.FontWeight.bold,
                     ),
-                    pw.Text(
-                      "(Buyer's referral points benefit)",
-                      style: pw.TextStyle(
-                        fontSize: 8,
-                        color: PdfColors.grey700,
-                        fontStyle: pw.FontStyle.italic,
-                      ),
+                  ),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(8),
+                  child: pw.Text(''),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(8),
+                  child: pw.Text(
+                    _formatIndianCurrency(totalAmount),
+                    textAlign: pw.TextAlign.right,
+                    style: pw.TextStyle(
+                      fontSize: 9,
+                      fontWeight: pw.FontWeight.bold,
+                      color: PdfColors.green800,
                     ),
-                  ],
+                  ),
                 ),
-              ),
-              pw.Padding(
-                padding: const pw.EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 6,
-                ),
-                child: pw.Text(
-                  '${discountPercent.toStringAsFixed(0)}%',
-                  textAlign: pw.TextAlign.center,
-                  style: const pw.TextStyle(fontSize: 9),
-                ),
-              ),
-              pw.Padding(
-                padding: const pw.EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 6,
-                ),
-                child: pw.Text(
-                  '-${_formatIndianCurrency(discountAmount)}',
-                  textAlign: pw.TextAlign.right,
-                  style: const pw.TextStyle(fontSize: 9),
-                ),
-              ),
-            ],
-          ),
-
-        // GST ROW
-        if (isGSTEnable && gstAmount > 0)
-          _priceRow('GST (${gstPercentage}%)', gstAmount),
-
-        // TOTAL ROW (highlighted)
-        pw.TableRow(
-          decoration: pw.BoxDecoration(color: totalBg),
-          children: [
-            pw.Padding(
-              padding: const pw.EdgeInsets.all(10),
-              child: pw.Text(
-                'Total Quotation Amount (Inclusive of all taxes)',
-                style: pw.TextStyle(
-                  fontSize: 10,
-                  fontWeight: pw.FontWeight.bold,
-                ),
-              ),
-            ),
-            pw.Padding(
-              padding: const pw.EdgeInsets.all(10),
-              child: pw.Text(''),
-            ),
-            pw.Padding(
-              padding: const pw.EdgeInsets.all(10),
-              child: pw.Text(
-                _formatIndianCurrency(totalAmount),
-                textAlign: pw.TextAlign.right,
-                style: pw.TextStyle(
-                  fontSize: 12,
-                  fontWeight: pw.FontWeight.bold,
-                  color: PdfColors.green800,
-                ),
-              ),
+              ],
             ),
           ],
         ),
@@ -3100,7 +3090,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
         text,
         textAlign: align,
         style: pw.TextStyle(
-          fontSize: 10,
+          fontSize: 9,
           fontWeight: pw.FontWeight.bold,
           color: color,
         ),
@@ -3110,19 +3100,18 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
 
   pw.TableRow _priceRow(String label, double amount) {
     return pw.TableRow(
-
       children: [
         pw.Padding(
-          padding: const pw.EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-          child: pw.Text(label, style: const pw.TextStyle(fontSize: 9)),
+          padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+          child: pw.Text(label, style: const pw.TextStyle(fontSize: 8)),
         ),
         pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text('')),
         pw.Padding(
-          padding: const pw.EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 6),
           child: pw.Text(
             _formatIndianCurrency(amount),
             textAlign: pw.TextAlign.right,
-            style: const pw.TextStyle(fontSize: 9),
+            style: const pw.TextStyle(fontSize: 8),
           ),
         ),
       ],

@@ -201,7 +201,6 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
                               SizedBox(height: 6),
 
                               Container(
-
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 8,
                                   vertical: 4,
@@ -210,7 +209,9 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
                                   color: ColorRes.orangeColor.withOpacity(0.05),
                                   borderRadius: BorderRadius.circular(6),
                                   border: Border.all(
-                                    color: ColorRes.orangeColor.withOpacity(0.3),
+                                    color: ColorRes.orangeColor.withOpacity(
+                                      0.3,
+                                    ),
                                   ),
                                 ),
                                 child: Text(
@@ -540,7 +541,6 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
     String? contractorLastName,
     String? userName,
   }) {
-
     final fullName =
         '${contractorFirstName ?? ''} ${contractorLastName ?? ''}'.trim();
 
@@ -618,7 +618,7 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
   }
 }
 
-class ServiceCard extends StatelessWidget {
+class ServiceCard extends StatefulWidget {
   final bool isSelectable;
   final ContractorServiceItem service;
 
@@ -629,8 +629,77 @@ class ServiceCard extends StatelessWidget {
   });
 
   @override
+  State<ServiceCard> createState() => _ServiceCardState();
+}
+
+class _ServiceCardState extends State<ServiceCard> {
+  bool showAllMeta = false;
+
+  @override
   Widget build(BuildContext context) {
     final contractorController = Get.find<ContractorServiceController>();
+    var meta = widget.service.meta;
+    final metaMaps = [
+      cleanMetaMap({
+        "Cement": meta.cementBrand,
+        "Steel": meta.steelBrand,
+        "Bricks": meta.brickType,
+        "Sand": meta.sandSource,
+        "Tank": meta.waterTankBrand,
+      }),
+      cleanMetaMap({
+        "Wires": meta.electricalWiresBrand,
+        "Switches": meta.electricalSwitchesBrand,
+        "Pipes": meta.plumbingPipesBrand,
+        "Sanitary": meta.sanitaryFittingsBrand,
+      }),
+      cleanMetaMap({
+        "Flooring": meta.flooringTilesBrand,
+        "Interior Paint": meta.interiorPaintBrand,
+        "Exterior Paint": meta.exteriorPaintBrand,
+        "False Ceiling": meta.falseCeiling,
+        "Fabrication": meta.fabricationWork,
+      }),
+      cleanMetaMap({
+        "Doors": meta.doorsType,
+        "Windows": meta.windowsType,
+        "Structure": meta.structure,
+        "Plaster": meta.plasterType,
+        "Waterproofing": meta.waterproofing,
+        "Railing": meta.railingType,
+        "Chokhat": meta.chokhatType,
+      }),
+    ];
+    final metaSections = [
+      if (metaMaps[0].isNotEmpty)
+        _metaSection(
+          icon: Icons.home_work,
+          title: "Construction Materials",
+          data: metaMaps[0],
+        ),
+      if (metaMaps[1].isNotEmpty)
+        _metaSection(
+          icon: Icons.electrical_services,
+          title: "Electrical & Plumbing",
+          data: metaMaps[1],
+        ),
+      if (metaMaps[2].isNotEmpty)
+        _metaSection(
+          icon: Icons.format_paint,
+          title: "Finishing",
+          data: metaMaps[2],
+        ),
+      if (metaMaps[3].isNotEmpty)
+        _metaSection(
+          icon: Icons.apartment,
+          title: "Structure & Safety",
+          data: metaMaps[3],
+        ),
+    ];
+
+    final safeMetaSections =
+        metaSections?.where((e) => e != null).toList() ?? [];
+    final hasAnyMetaData = metaMaps.any((map) => map.isNotEmpty);
 
     return Container(
       decoration: BoxDecoration(
@@ -638,13 +707,17 @@ class ServiceCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color:
-              isSelectable &&
-                      contractorController.selectedItems.contains(service)
+              widget.isSelectable &&
+                      contractorController.selectedItems.contains(
+                        widget.service,
+                      )
                   ? ColorRes.primary
                   : ColorRes.leadGreyColor.shade300,
           width:
-              isSelectable &&
-                      contractorController.selectedItems.contains(service)
+              widget.isSelectable &&
+                      contractorController.selectedItems.contains(
+                        widget.service,
+                      )
                   ? 2
                   : 1,
         ),
@@ -658,14 +731,16 @@ class ServiceCard extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (isSelectable) ...[
+                if (widget.isSelectable) ...[
                   Obx(
                     () => Checkbox(
                       value: contractorController.selectedItems.contains(
-                        service,
+                        widget.service,
                       ),
                       onChanged: (value) {
-                        contractorController.toggleSelectedService(service);
+                        contractorController.toggleSelectedService(
+                          widget.service,
+                        );
                       },
                       activeColor: ColorRes.primary,
                     ),
@@ -681,7 +756,7 @@ class ServiceCard extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              service.serviceName,
+                              widget.service.serviceName,
                               style: TextStyle(
                                 fontSize: AppFontSizes.body,
                                 fontWeight: AppFontWeights.semiBold,
@@ -699,7 +774,7 @@ class ServiceCard extends StatelessWidget {
                               ),
                               SizedBox(width: 4),
                               Text(
-                                '${service.averageRating} (${service.totalReviews})',
+                                '${widget.service.averageRating} (${widget.service.totalReviews})',
                                 style: TextStyle(
                                   fontSize: AppFontSizes.bodySmall,
                                   fontWeight: AppFontWeights.medium,
@@ -711,7 +786,7 @@ class ServiceCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        service.description,
+                        widget.service.description,
                         style: TextStyle(
                           fontSize: AppFontSizes.bodySmall,
                           fontWeight: AppFontWeights.medium,
@@ -733,33 +808,41 @@ class ServiceCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-
-                _detailColumn("AVAILABILITY", service.meta.workAvailability??''),
+                _detailColumn(
+                  "AVAILABILITY",
+                  widget.service.meta.workAvailability ?? '',
+                ),
                 _detailColumn(
                   "Visiting Charge",
-                  '₹${service.meta.visitCharge.toString()}',
+                  '₹${widget.service.meta.visitCharge.toString()}',
                   highlight: true,
                 ),
               ],
             ),
           ),
           Divider(color: ColorRes.leadGreyColor.shade300, height: 1),
-          SizedBox(height: 10,),
+          SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: _detailColumn("PRICE", service.meta.priceRange),
+            child: _detailColumn("PRICE", widget.service.meta.priceRange),
           ),
           // Features list -----------
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Column(
               children: [
-                _feature(service.meta.provideMaterials??false, "Materials Provided"),
-                const SizedBox(height: 6),
-                _feature(service.meta.equipmentProvided??false, "Equipment Provided"),
+                _feature(
+                  widget.service.meta.provideMaterials ?? false,
+                  "Materials Provided",
+                ),
                 const SizedBox(height: 6),
                 _feature(
-                  service.meta.insuranceAvailable??false,
+                  widget.service.meta.equipmentProvided ?? false,
+                  "Equipment Provided",
+                ),
+                const SizedBox(height: 6),
+                _feature(
+                  widget.service.meta.insuranceAvailable ?? false,
                   "Insurance Available",
                 ),
               ],
@@ -775,18 +858,138 @@ class ServiceCard extends StatelessWidget {
                 Expanded(
                   child: _detailColumn(
                     "ADVANCE REQUIRED",
-                    "${service.meta.advanceRequiredPercentage}%",
+                    "${widget.service.meta.advanceRequiredPercentage}%",
                   ),
                 ),
                 Expanded(
                   child: _detailColumn(
                     "PAYMENT MODES",
-                    service.meta.acceptedPaymentModes
-                        ?.map((e) => e.replaceAll("_", " ").capitalize)
-                        .join(", ")??'',
+                    widget.service.meta.acceptedPaymentModes
+                            ?.map((e) => e.replaceAll("_", " ").capitalize)
+                            .join(", ") ??
+                        '',
                   ),
                 ),
               ],
+            ),
+          ),
+
+          if (hasAnyMetaData) ...[
+            Divider(color: ColorRes.leadGreyColor.shade300, height: 1),
+            SizedBox(height: 15),
+            ...metaSections
+                .take(showAllMeta ? metaSections.length : 2)
+                .toList(),
+
+            if (metaSections.length > 2)
+              Center(
+                child: TextButton.icon(
+                  onPressed: () {
+                    setState(() => showAllMeta = !showAllMeta);
+                  },
+                  icon: Icon(
+                    showAllMeta ? Icons.expand_less : Icons.expand_more,
+                  ),
+                  label: Text(
+                    showAllMeta ? "Show less details" : "Show more details",
+                  ),
+                ),
+              ),
+          ],
+
+          if ([
+            meta.threeDDesign,
+            meta.modularKitchen,
+            meta.boreAndPump,
+            meta.securitySystems,
+            meta.homeAutomation,
+            meta.solarSolutions,
+          ].any((e) => e != null)) ...[
+            Padding(
+              padding:  EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.add_box_outlined,
+                    color: ColorRes.primary,
+                    size: 18,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    "Additional Services",
+                    style: TextStyle(
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Padding(
+              padding:  EdgeInsets.symmetric(horizontal: 16),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  _yesNoChip("3D Design", meta.threeDDesign),
+                  _yesNoChip("Modular Kitchen", meta.modularKitchen),
+                  _yesNoChip("Bore & Pump", meta.boreAndPump),
+                  _yesNoChip("Security", meta.securitySystems),
+                  _yesNoChip("Home Auto.", meta.homeAutomation),
+                  _yesNoChip("Solar", meta.solarSolutions),
+                ],
+              ),
+            ),
+            SizedBox(height: 10,),
+          ],
+        ],
+      ),
+    );
+  }
+  Widget _yesNoChip(String label, String? value) {
+    if (value == null) return const SizedBox();
+
+    final isYes = value.toUpperCase() == "YES";
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color:
+        isYes
+            ? ColorRes.success.withOpacity(0.08)
+            : ColorRes.error.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isYes ? ColorRes.success.shade100 : ColorRes.error.shade100,
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: AppFontSizes.extraSmall,
+              fontWeight: AppFontWeights.medium,
+            ),
+          ),
+          const SizedBox(width: 6),
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              color: isYes ? ColorRes.success : ColorRes.error,
+            ),
+            child: Text(
+              value,
+              style: TextStyle(
+                fontWeight: AppFontWeights.semiBold,
+                fontSize: AppFontSizes.small,
+                color: ColorRes.white,
+              ),
             ),
           ),
         ],
@@ -794,8 +997,94 @@ class ServiceCard extends StatelessWidget {
     );
   }
 
-  Widget _detailColumn(String title, String value, {bool highlight = false}) {
+  Widget _metaSection({
+    required IconData icon,
+    required String title,
+    required Map<String, List<String>?> data,
+  }) {
+    if (data.values.every((v) => v == null || v.isEmpty)) {
+      return const SizedBox();
+    }
 
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          Row(
+            children: [
+              Icon(icon, size: 18, color: ColorRes.primary),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: AppFontSizes.medium,
+                  fontWeight: AppFontWeights.semiBold,
+                  color: ColorRes.textPrimary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ...data.entries.map((e) => _infoRow(e.key, e.value)),
+          const SizedBox(height: 12),
+        ],
+      ),
+    );
+  }
+
+  Widget _infoRow(String label, List<String>? values) {
+    if (values == null || values.isEmpty) return const SizedBox();
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: ColorRes.background,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: ColorRes.border),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: ColorRes.textSecondary,
+              fontSize: AppFontSizes.extraSmall,
+              fontWeight: AppFontWeights.medium,
+            ),
+          ),
+          Flexible(
+            child: Text(
+              values.join(", "),
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                color: ColorRes.textPrimary,
+                fontSize: AppFontSizes.caption,
+                fontWeight: AppFontWeights.semiBold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Map<String, List<String>> cleanMetaMap(Map<String, List<String>?> raw) {
+    final map = <String, List<String>>{};
+
+    raw.forEach((key, value) {
+      if (value != null && value.isNotEmpty) {
+        map[key] = value;
+      }
+    });
+
+    return map;
+  }
+
+  Widget _detailColumn(String title, String value, {bool highlight = false}) {
     print("iudjiidfi ${value}");
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

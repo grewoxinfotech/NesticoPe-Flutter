@@ -20,33 +20,32 @@ class InAppMessageScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           "Notifications",
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 20,
-          ),
+          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
         ),
-        centerTitle: true,
+
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black87,
         surfaceTintColor: Colors.transparent,
-        // actions: [
-        //   Obx(() => controller.items.isNotEmpty
-        //       ? IconButton(
-        //     icon: const Icon(Icons.done_all_rounded),
-        //     tooltip: "Mark all as read",
-        //     onPressed: () {
-        //       // Add mark all as read functionality
-        //     },
-        //   )
-        //       : const SizedBox.shrink()),
-        // ],
+        actions: [
+          Obx(
+            () =>
+                controller.items.isNotEmpty
+                    ? IconButton(
+                      icon: const Icon(Icons.done_all_rounded),
+                      tooltip: "Mark all as read",
+                      onPressed: () async {
+                        await controller.markAsRead();
+                      },
+                    )
+                    : const SizedBox.shrink(),
+          ),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: controller.refreshNotifications,
         color: Theme.of(context).primaryColor,
         child: Obx(() {
-
           if (controller.isLoading.value && controller.items.isEmpty) {
             return InAppMessageListScreenShimmer();
           }
@@ -59,7 +58,7 @@ class InAppMessageScreen extends StatelessWidget {
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.symmetric(vertical: 8),
             itemCount:
-            controller.items.length + (controller.hasMore.value ? 1 : 0),
+                controller.items.length + (controller.hasMore.value ? 1 : 0),
             itemBuilder: (context, index) {
               if (index >= controller.items.length) {
                 controller.loadMore();
@@ -116,10 +115,7 @@ class _EmptyState extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             "You're all caught up!",
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
           ),
         ],
       ),
@@ -131,10 +127,7 @@ class _NotificationCard extends StatefulWidget {
   final NotificationItem notification;
   final int index;
 
-  const _NotificationCard({
-    required this.notification,
-    required this.index,
-  });
+  const _NotificationCard({required this.notification, required this.index});
 
   @override
   State<_NotificationCard> createState() => _NotificationCardState();
@@ -155,20 +148,14 @@ class _NotificationCardState extends State<_NotificationCard>
     );
 
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOut,
-      ),
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
 
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.1),
       end: Offset.zero,
     ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOutCubic,
-      ),
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
     );
 
     // Stagger animations
@@ -188,9 +175,10 @@ class _NotificationCardState extends State<_NotificationCard>
   @override
   Widget build(BuildContext context) {
     final metadata = widget.notification.metadata;
-    final date = widget.notification.createdAt != null
-        ? _formatDate(widget.notification.createdAt!)
-        : "";
+    final date =
+        widget.notification.createdAt != null
+            ? _formatDate(widget.notification.createdAt!)
+            : "";
 
     return FadeTransition(
       opacity: _fadeAnimation,
@@ -207,19 +195,17 @@ class _NotificationCardState extends State<_NotificationCard>
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => NotificationDetailScreen(
-                      notification: widget.notification,
-                    ),
+                    builder:
+                        (context) => NotificationDetailScreen(
+                          notification: widget.notification,
+                        ),
                   ),
                 );
               },
               borderRadius: BorderRadius.circular(16),
               child: Container(
                 decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.grey[200]!,
-                    width: 1,
-                  ),
+                  border: Border.all(color: Colors.grey[200]!, width: 1),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 padding: const EdgeInsets.all(16),
@@ -305,10 +291,7 @@ class _NotificationCardState extends State<_NotificationCard>
         height: 56,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Colors.grey[200]!,
-            width: 1,
-          ),
+          border: Border.all(color: Colors.grey[200]!, width: 1),
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(12),
@@ -333,7 +316,6 @@ class _NotificationCardState extends State<_NotificationCard>
         color: ColorRes.primary,
 
         borderRadius: BorderRadius.circular(12),
-
       ),
       child: const Icon(
         Icons.notifications_rounded,

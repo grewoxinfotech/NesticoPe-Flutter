@@ -41,6 +41,16 @@ class NotificationController extends PaginatedController<NotificationItem> {
     }
   }
 
+  Future<void> markAsRead() async {
+    final data = await _service.updateNotificationMarkAsRead();
+    if (data) {
+      items.refresh();
+      items.clear();
+      refreshList();
+    }
+  }
+/*
+* JKNDD NJSLDWSDN sdfjksfn  jndjksdm jsimaneik dfdndskjd hwdb msjdkbn wejw akdasdn bchdnn  smnskj */
   ///==================== Filters ====================
   void applyFilter(String key, String val) {
     filters ??= {};
