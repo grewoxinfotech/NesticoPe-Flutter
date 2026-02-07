@@ -218,23 +218,26 @@ class BuyerProfileScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 6),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 150,
-                      child: Text(
-                        '${controller.userProfile.value?.city ?? 'Not Define'} ',
-                        style: TextStyle(
-                          fontSize: AppFontSizes.small,
-                          color: ColorRes.leadGreyColor[600],
-                          fontWeight: AppFontWeights.medium,
+                if (controller.userProfile.value?.city != null &&
+                    controller.userProfile.value!.city!.isNotEmpty) ...[
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 150,
+                        child: Text(
+                          '${controller.userProfile.value?.city ?? 'Not Define'} ',
+                          style: TextStyle(
+                            fontSize: AppFontSizes.small,
+                            color: ColorRes.leadGreyColor[600],
+                            fontWeight: AppFontWeights.medium,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                ],
               ],
             ),
           ),
@@ -600,7 +603,7 @@ class BuyerProfileScreen extends StatelessWidget {
           // Read-only display
           _buildInfoRow(
             Icons.person_outline,
-            '${controller.userProfile.value?.firstName ?? ''} ${controller.userProfile.value?.lastName ?? ''}',
+            '${controller.userProfile.value?.username ?? ''}',
           ),
           const SizedBox(height: 12),
           _buildInfoRow(
@@ -613,12 +616,15 @@ class BuyerProfileScreen extends StatelessWidget {
             controller.userProfile.value?.phone ?? '',
           ),
           const SizedBox(height: 12),
-          _buildInfoRow(
-            Icons.location_on_outlined,
+          if (controller.userProfile.value?.city != null &&
+              controller.userProfile.value!.city!.isNotEmpty) ...[
+            _buildInfoRow(
+              Icons.location_on_outlined,
 
-            '${controller.userProfile.value?.city ?? ''}, ${controller.userProfile.value?.state ?? ''}',
-          ),
-          const SizedBox(height: 12),
+              '${controller.userProfile.value?.city ?? ''}',
+            ),
+            const SizedBox(height: 12),
+          ],
         ],
       ),
     );

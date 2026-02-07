@@ -850,8 +850,8 @@ class ProfileScreen extends StatelessWidget {
 
           SettingsMenuTile(
             icon: Icons.group_add_outlined,
-            title: "Convert to Reseller",
-            subTitle: "Become the reseller",
+            title: "Convert to Partner",
+            subTitle: "Become the Partner",
             onTap: () => Get.to(() => ResellerConversionScreen()),
           ),
 
@@ -892,7 +892,6 @@ class ProfileScreen extends StatelessWidget {
           //   label: "Hire Contractor",
           //   onTap: () => Get.to(() => HireContractorScreen()),
           // ),
-
           _buildActionButton(
             icon: Icons.support_agent_outlined,
             label: "Support Ticket",
@@ -919,7 +918,6 @@ class ProfileScreen extends StatelessWidget {
           //   subtitle: "Hire top contractors",
           //   onTap: () => Get.to(() => HireContractorScreen()),
           // ),
-
           _buildActionButton(
             icon: Icons.support_agent_outlined,
             label: "Support Ticket",
@@ -965,13 +963,13 @@ class ProfileScreen extends StatelessWidget {
 
             onTap: () => Get.to(() => BuilderMainScreen()),
           ),
+
           // _buildActionButton(
           //   icon: Icons.engineering_outlined,
           //   label: "Hire Contractor",
           //   subtitle: "Hire top contractors",
           //   onTap: () => Get.to(() => HireContractorScreen()),
           // ),
-
           _buildActionButton(
             icon: Icons.support_agent_outlined,
             label: "Support Ticket",

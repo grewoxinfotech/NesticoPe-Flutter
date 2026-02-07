@@ -782,7 +782,10 @@ class ProjectFilterScreen extends StatelessWidget {
                                           // ),
                                           // const SizedBox(height: 4),
                                           Text(
-                                            amenity.title,
+                                            amenity.title
+                                                .replaceAll("_", " ")
+                                                .capitalize
+                                                .toString(),
                                             textAlign: TextAlign.center,
                                             maxLines: 2,
                                             overflow: TextOverflow.ellipsis,

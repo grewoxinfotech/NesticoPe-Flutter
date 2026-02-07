@@ -143,6 +143,8 @@ class _CityZipcodeSelectorState extends State<CityZipcodeSelector> {
                     enabledBorder: _tile(Get.theme.dividerColor),
                     focusedBorder: _tile(Get.theme.primaryColor),
                     disabledBorder: _tile(ColorRes.leadGreyColor),
+                    errorBorder: _tile(ColorRes.error),
+                    focusedErrorBorder: _tile(ColorRes.error),
                   ),
                   onChanged: (val) async {
                     if (val.length == 6) {

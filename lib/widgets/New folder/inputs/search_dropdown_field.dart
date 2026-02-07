@@ -134,7 +134,7 @@ class _NesticoPeSearchDropdownState<T>
                               return ListTile(
                                 title: Text(
                                   widget.itemLabel(item),
-                                  style: const TextStyle(fontSize: 14),
+                                  style: const TextStyle(fontSize: 12),
                                 ),
                                 onTap: () {
                                   widget.onChanged(item);

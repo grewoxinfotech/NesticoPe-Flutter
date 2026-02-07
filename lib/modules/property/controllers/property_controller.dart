@@ -374,28 +374,31 @@ class PropertyController extends PaginatedController<Items> {
     return null;
   }
 
-  Future<void> getRecommendedPropertyById(String id) async {
+  Future<void> getRecommendedPropertyByUserId(String id) async {
     try {
-      final properties = await _service.getRecommendedPropertyById(id);
-      if (properties.isNotEmpty) {
-        // Get existing property IDs
-        final existingIds =
-            recommendedProperties.map((p) => p.propertyId).toSet();
+      final fetchedProperties = await _service.getRecommendedPropertyByUserId(
+        id,
+      );
 
-        // Filter out duplicates
-        final newProperties =
-            properties
-                .map((p) => Items.fromJson(p))
-                .where((property) => !existingIds.contains(property.propertyId))
-                .toList();
+      if (fetchedProperties.isEmpty) return;
 
-        if (newProperties.isNotEmpty) {
-          recommendedProperties.addAll(newProperties);
-          recommendedProperties.refresh();
-        }
-      }
-    } catch (e) {
-      print("Get property error: $e");
+      // Existing IDs for fast duplicate checking
+      final existingIds =
+          recommendedProperties.map((e) => e.propertyId).toSet();
+
+      // Filter only new properties
+      final uniqueProperties =
+          fetchedProperties
+              .where((e) => !existingIds.contains(e.propertyId))
+              .toList();
+
+      if (uniqueProperties.isEmpty) return;
+
+      recommendedProperties.addAll(uniqueProperties);
+    } catch (e, stackTrace) {
+      debugPrint(
+        'getRecommendedPropertyByUserId controller error: $e\n$stackTrace',
+      );
     }
   }
 

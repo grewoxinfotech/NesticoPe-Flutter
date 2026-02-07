@@ -81,7 +81,7 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          "Find Your Perfect Luxury Home",
+                          "Start Your Journey as a Contractor",
                           style: TextStyle(
                             // fontFamily: 'Exo',
                             color: ColorRes.white,
@@ -93,7 +93,7 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
                         const SizedBox(height: 8),
 
                         Text(
-                          "Find a property that perfectly aligns with your lifestyle, needs, and aspirations",
+                          "Expand your reach, get more projects, and build your professional reputation.",
                           style: TextStyle(
                             fontFamily: 'Exo',
                             color: ColorRes.whiteShade.withOpacity(0.85),
@@ -148,8 +148,15 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
                         // What happens next section
                         buildContentContainer("What happens next?", options),
                         SizedBox(height: 10),
-
-
+                        Text(
+                          "Contractor Type",
+                          style: TextStyle(
+                            fontSize: AppFontSizes.medium,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
                         buildContractorTypeSelector(controller),
                         const SizedBox(height: 16),
                         CitySelectionWidget(
@@ -175,7 +182,11 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
                           width: double.infinity,
                           child: Obx(
                             () =>
-                                (controller.city.value.isNotEmpty && controller.contractorType.value.isNotEmpty)
+                                (controller.city.value.isNotEmpty &&
+                                        controller
+                                            .contractorType
+                                            .value
+                                            .isNotEmpty)
                                     ? ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor:
@@ -207,7 +218,9 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
                                                       controller
                                                           .selectedCityZ
                                                           .text,
-                                                  controller.contractorType.value
+                                                      controller
+                                                          .contractorType
+                                                          .value,
                                                     );
                                               },
                                       child:
@@ -375,57 +388,54 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
 }
 
 Widget buildContractorTypeSelector(AuthController controller) {
-  return Container(
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(
-        color: ColorRes.leadGreyColor.shade300.withOpacity(0.5),
-      ),
-    ),
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Contractor Type",
-          style: TextStyle(
-            fontFamily: 'Exo',
-            fontSize: AppFontSizes.small,
-            fontWeight: FontWeight.w500,
-            color: ColorRes.blackShade87,
-          ),
-        ),
-        const SizedBox(height: 12),
-
-        Obx(
-              () => Column(
-            children: [
-              RadioListTile<String>(
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Obx(
+        () => Row(
+          children: [
+            Expanded(
+              child: RadioListTile<String>(
                 value: "Labour",
                 groupValue: controller.contractorType.value,
                 activeColor: ColorRes.primary,
                 contentPadding: EdgeInsets.zero,
-
-                title: const Text("Labour"),
+                title: const Text(
+                  "Labour",
+                  style: TextStyle(
+                    fontSize: AppFontSizes.small,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
                 onChanged: (value) {
                   controller.setContractorType(value!);
                 },
               ),
-              RadioListTile<String>(
+            ),
+
+            Expanded(
+              child: RadioListTile<String>(
                 value: "Company",
                 groupValue: controller.contractorType.value,
                 activeColor: ColorRes.primary,
                 contentPadding: EdgeInsets.zero,
-                title: const Text("Company"),
+                title: const Text(
+                  "Company",
+                  style: TextStyle(
+                    fontSize: AppFontSizes.small,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+
                 onChanged: (value) {
                   controller.setContractorType(value!);
                 },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ],
-    ),
+      ),
+    ],
   );
 }
 

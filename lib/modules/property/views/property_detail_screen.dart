@@ -4900,7 +4900,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
             primaryTitle:
                 (currentProperty.propertyStatus?.toLowerCase() == "sold")
                     ? "Property Sold"
-                    : "View Contact",
+                    : (controller.hasSubmittedInquiry.value) ? "Submitted" :"View Contact",
           ),
         );
       }),

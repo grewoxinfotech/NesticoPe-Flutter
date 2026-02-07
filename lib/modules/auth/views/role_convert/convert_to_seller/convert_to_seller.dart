@@ -74,7 +74,7 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          "Find Your Perfect Luxury Home",
+                          "Start Selling as a Builder or Property Seller",
                           style: TextStyle(
                             // fontFamily: 'Exo',
                             color: ColorRes.white,
@@ -85,7 +85,7 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          "Find a property that perfectly aligns with your lifestyle, needs, and aspirations",
+                          "Expand your market reach and connect with serious buyers effortlessly.",
                           style: TextStyle(
                             fontFamily: 'Exo',
                             color: ColorRes.whiteShade.withOpacity(0.85),

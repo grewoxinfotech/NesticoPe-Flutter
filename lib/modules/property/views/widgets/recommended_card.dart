@@ -14,6 +14,7 @@ import 'package:housing_flutter_app/modules/property/controllers/property_contro
 import '../../../../app/manager/property/proiperty_feature_manager.dart';
 import '../../../../app/manager/property_highlight_manager.dart';
 import '../../../../app/manager/compare_manager.dart';
+import '../../../../app/widgets/image/custom_image.dart' hide ColorRes;
 import '../../../../app/widgets/snack_bar/custom_snackbar.dart';
 import '../../../../app/utils/svg_widget.dart';
 import '../../../../data/network/property/models/property_model.dart';
@@ -80,21 +81,23 @@ class _RecommendedCardState extends State<RecommendedCard> {
               ),
               child: Stack(
                 children: [
-                  widget.property.propertyMedia!.images!.isNotEmpty
-                      ? Image.network(
-                        widget.property.propertyMedia!.images!.first,
-                        height: 150,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      )
-                      : Image.asset(
-                        IMGRes.home1,
-                        height: 150,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
+                  CustomImage(
+                    src:
+                        widget.property.propertyMedia!.images!.isNotEmpty
+                            ? widget.property.propertyMedia!.images!.first
+                            : IMGRes.home1,
+                    type:
+                        widget.property.propertyMedia!.images!.isNotEmpty
+                            ? CustomImageType.network
+                            : CustomImageType.asset,
+                    height: 150,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+
                   Container(
                     height: 150,
+                    width: double.infinity,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [

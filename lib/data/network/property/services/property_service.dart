@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
 import 'package:housing_flutter_app/app/constants/api_constants.dart';
+import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
 import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
@@ -343,7 +344,10 @@ class PropertyService {
       print("baseUrl : $baseUrl/$id/inquiry");
       final response = await http.post(
         Uri.parse("$baseUrl/$id/inquiry"),
-        headers: await ApiConstants.getHeadersWithoutToken(),
+        headers:
+            UserHelper.isGuest
+                ? await ApiConstants.getHeadersWithoutToken()
+                : await ApiConstants.getHeaders(),
         body: jsonEncode(data),
       );
       print("response : ${response.body}");
@@ -370,30 +374,72 @@ class PropertyService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getRecommendedPropertyById(
-    String id,
-  ) async {
+  // Future<List<Map<String, dynamic>>> getRecommendedPropertyByUserId(
+  //   String userId,
+  // ) async {
+  //   try {
+  //     final response = await http.get(
+  //       Uri.parse("$recommendedPropertyUrl/$userId"),
+  //       headers: await headers(),
+  //     );
+  //
+  //     print("Response of Recommended properties: ${response.body}");
+  //     print("Response of Recommended properties: ${response.body}");
+  //
+  //     if (response.statusCode == 200) {
+  //       final jsonData = json.decode(response.body);
+  //       if (jsonData['data'] != null &&
+  //           jsonData['data']['properties'] != null) {
+  //         return List<Map<String, dynamic>>.from(
+  //           jsonData['data']['properties'],
+  //         );
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print("Get property by ID exception: $e");
+  //   }
+  //   return [];
+  // }
+
+  Future<List<Items>> getRecommendedPropertyByUserId(String userId) async {
     try {
-      final response = await http.get(
-        Uri.parse("$recommendedPropertyUrl/$id"),
-        headers: await headers(),
-      );
+      final uri = Uri.parse("$recommendedPropertyUrl/$userId");
+      print("ReCommanded Property baseUrl : $uri");
 
-      print("Response of Recommended properties: ${response.body}");
+      final response = await http.get(uri, headers: await headers());
 
-      if (response.statusCode == 200) {
-        final jsonData = json.decode(response.body);
-        if (jsonData['data'] != null &&
-            jsonData['data']['properties'] != null) {
-          return List<Map<String, dynamic>>.from(
-            jsonData['data']['properties'],
-          );
-        }
+      debugPrint("Recommended properties response: ${response.body}");
+
+      if (response.statusCode != 200) {
+        debugPrint(
+          "Failed to fetch recommended properties. Status: ${response.statusCode}",
+        );
+        return [];
       }
-    } catch (e) {
-      print("Get property by ID exception: $e");
+
+      final Map<String, dynamic> jsonData = json.decode(response.body);
+      AppLogger.structured("Recommended properties data: ", jsonData);
+
+      final properties = jsonData['data']?['properties'] as List<dynamic>?;
+
+      if (properties == null || properties.isEmpty) {
+        return [];
+      }
+
+      final data =
+          properties
+              .map((e) => Items.fromJson(e as Map<String, dynamic>))
+              .toList();
+      print(
+        "Recommended properties data count: ${data.map((e) => e.id).toList()}",
+      );
+      return data;
+    } catch (e, stackTrace) {
+      debugPrint(
+        "getRecommendedPropertyByUserId service error: $e\n$stackTrace",
+      );
+      return [];
     }
-    return [];
   }
 
   //

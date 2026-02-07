@@ -268,7 +268,9 @@ class _HomeScreenState extends State<HomeScreen> {
       if (user?.user?.id != null) {
         await Future.wait([
           favoriteController.getFavorite(user?.user?.id ?? ''),
-          propertyController.getRecommendedPropertyById(user?.user?.id ?? ''),
+          propertyController.getRecommendedPropertyByUserId(
+            user?.user?.id ?? '',
+          ),
           profileController.getUserProfile(),
         ]);
       }

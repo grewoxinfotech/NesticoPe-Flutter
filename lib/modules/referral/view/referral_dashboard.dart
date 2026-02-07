@@ -581,7 +581,6 @@
 //   );
 // }
 
-
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -646,7 +645,8 @@ class ReferralProgramScreen extends StatelessWidget {
                 referrals!.first.referredUsers != null &&
                 referrals.first.referredUsers!.isNotEmpty) ...[
               const SizedBox(height: 16),
-              _buildReferredSellersSection(),
+              UseYourPointsSection(),
+              // _buildReferredSellersSection(),
             ],
           ],
         );
@@ -722,9 +722,10 @@ class ReferralProgramScreen extends StatelessWidget {
             child: Obx(() {
               if (!controller.isGenerated.value) {
                 return GestureDetector(
-                  onTap: controller.isGenerate.value
-                      ? null
-                      : () => controller.referralCodeGenerator(),
+                  onTap:
+                      controller.isGenerate.value
+                          ? null
+                          : () => controller.referralCodeGenerator(),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
                     padding: const EdgeInsets.symmetric(
@@ -732,9 +733,10 @@ class ReferralProgramScreen extends StatelessWidget {
                       horizontal: 20,
                     ),
                     decoration: BoxDecoration(
-                      color: controller.isGenerate.value
-                          ? Colors.grey.withOpacity(0.3)
-                          : Colors.white,
+                      color:
+                          controller.isGenerate.value
+                              ? Colors.grey.withOpacity(0.3)
+                              : Colors.white,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Center(
@@ -743,9 +745,10 @@ class ReferralProgramScreen extends StatelessWidget {
                             ? 'Generating...'
                             : 'Generate Referral Code',
                         style: TextStyle(
-                          color: controller.isGenerate.value
-                              ? Colors.white70
-                              : ColorRes.primary,
+                          color:
+                              controller.isGenerate.value
+                                  ? Colors.white70
+                                  : ColorRes.primary,
                           fontWeight: AppFontWeights.semiBold,
                         ),
                       ),
@@ -850,21 +853,35 @@ class ReferralProgramScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.08),
                         borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: Colors.white.withOpacity(0.25)),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.25),
+                        ),
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.diamond_outlined,color: ColorRes.white,),
+                          Icon(Icons.diamond_outlined, color: ColorRes.white),
                           SizedBox(width: 12),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Reward',style: TextStyle(color: ColorRes.white,fontSize: 12),),
+                              Text(
+                                'Reward',
+                                style: TextStyle(
+                                  color: ColorRes.white,
+                                  fontSize: 12,
+                                ),
+                              ),
                               SizedBox(height: 6),
-                              Text('${referral?.referrerReward ?? 0} coins',style: TextStyle(color: ColorRes.white,fontSize: 12
-                                  ,fontWeight: AppFontWeights.bold),)
+                              Text(
+                                '${referral?.referrerReward ?? 0} coins',
+                                style: TextStyle(
+                                  color: ColorRes.white,
+                                  fontSize: 12,
+                                  fontWeight: AppFontWeights.bold,
+                                ),
+                              ),
                             ],
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -879,30 +896,42 @@ class ReferralProgramScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.08),
                         borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: Colors.white.withOpacity(0.25)),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.25),
+                        ),
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.watch_later_outlined,color: ColorRes.white,),
-                          SizedBox(width: 12),
+                          Icon(
+                            Icons.watch_later_outlined,
+                            color: ColorRes.white,
+                          ),
+                          SizedBox(width: 8),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            
+
                             children: [
-                              Text('Expires',style: TextStyle(color: ColorRes.white,fontSize: 12),),
+                              Text(
+                                'Expires',
+                                style: TextStyle(
+                                  color: ColorRes.white,
+                                  fontSize: 12,
+                                ),
+                              ),
                               SizedBox(height: 6),
                               Text(
-                                DateFormat('yyyy-MM-dd').format(
-                                  DateTime.parse(referral!.expiryDate!),
-                                ),
+                                DateFormat(
+                                  'yyyy-MM-dd',
+                                ).format(DateTime.parse(referral!.expiryDate!)),
                                 style: const TextStyle(
                                   color: ColorRes.white,
                                   fontSize: 12,
                                   fontWeight: AppFontWeights.bold,
                                 ),
-                              )
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ],
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -929,7 +958,8 @@ class ReferralProgramScreen extends StatelessWidget {
 
   Widget _buildStatsGrid(DataWrapper? data) {
     final referrals = data?.referrals;
-    final firstReferral = (referrals != null && referrals.isNotEmpty) ? referrals.first : null;
+    final firstReferral =
+        (referrals != null && referrals.isNotEmpty) ? referrals.first : null;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -983,7 +1013,6 @@ class ReferralProgramScreen extends StatelessWidget {
     );
   }
 
-
   Widget _buildBonusCard() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -1002,7 +1031,7 @@ class ReferralProgramScreen extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Obx(
-                      () => RichText(
+                  () => RichText(
                     text: TextSpan(
                       style: const TextStyle(
                         fontSize: 14,
@@ -1012,7 +1041,8 @@ class ReferralProgramScreen extends StatelessWidget {
                       children: [
                         const TextSpan(text: 'Refer '),
                         TextSpan(
-                          text: '${controller.requiredResellers.value - referredUsers} more active sellers',
+                          text:
+                              '${controller.requiredResellers.value - referredUsers} more active sellers',
                           style: TextStyle(
                             fontWeight: AppFontWeights.extraBold,
                             color: Color(0xFF4A90E2),
@@ -1035,26 +1065,25 @@ class ReferralProgramScreen extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           // Progress bar
-          Obx(
-                () {
-              final int totalRequired = 10;
-              final int referedUser = referredUsers;
-              final int completed = 10 - (totalRequired - referedUser);
-              final progress = totalRequired > 0
-                  ? (completed / totalRequired).clamp(0.0, 1.0)
-                  : 0.0;
+          Obx(() {
+            final int totalRequired = 10;
+            final int referedUser = referredUsers;
+            final int completed = 10 - (totalRequired - referedUser);
+            final progress =
+                totalRequired > 0
+                    ? (completed / totalRequired).clamp(0.0, 1.0)
+                    : 0.0;
 
-              return ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: LinearProgressIndicator(
-                  value: progress,
-                  minHeight: 8,
-                  backgroundColor: Color(0xFFE0E0E0),
-                  valueColor: AlwaysStoppedAnimation<Color>(ColorRes.primary),
-                ),
-              );
-            },
-          ),
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: LinearProgressIndicator(
+                value: progress,
+                minHeight: 8,
+                backgroundColor: Color(0xFFE0E0E0),
+                valueColor: AlwaysStoppedAnimation<Color>(ColorRes.primary),
+              ),
+            );
+          }),
         ],
       ),
     );
@@ -1142,9 +1171,8 @@ class ReferralProgramScreen extends StatelessWidget {
     }
 
     // Flatten all referred users from all referral codes
-    final referredUsers = referrals
-        .expand((r) => r.referredUsers ?? [])
-        .toList();
+    final referredUsers =
+        referrals.expand((r) => r.referredUsers ?? []).toList();
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -1167,7 +1195,7 @@ class ReferralProgramScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               final user = referredUsers[index];
               final referral = referrals.firstWhere(
-                    (r) => r.referredUsers?.contains(user) ?? false,
+                (r) => r.referredUsers?.contains(user) ?? false,
                 orElse: () => referrals.first,
               );
 
@@ -1177,15 +1205,20 @@ class ReferralProgramScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: ColorRes.leadGreyColor.shade50,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+                  border: Border.all(
+                    color: ColorRes.leadGreyColor.shade300,
+                    width: 1,
+                  ),
                 ),
                 child: Row(
                   children: [
                     CircleAvatar(
                       backgroundColor: Colors.green.shade400,
-                      child: Text(user.username != null && user.username!.isNotEmpty
-                          ? user.username![0].toUpperCase()
-                          : 'S'),
+                      child: Text(
+                        user.username != null && user.username!.isNotEmpty
+                            ? user.username![0].toUpperCase()
+                            : 'S',
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -1227,8 +1260,8 @@ class ReferralProgramScreen extends StatelessWidget {
                               Text(
                                 user.registeredAt != null
                                     ? '${DateTime.parse(user.registeredAt!).day.toString().padLeft(2, '0')} '
-                                    '${_monthString(DateTime.parse(user.registeredAt!).month)} '
-                                    '${DateTime.parse(user.registeredAt!).year}'
+                                        '${_monthString(DateTime.parse(user.registeredAt!).month)} '
+                                        '${DateTime.parse(user.registeredAt!).year}'
                                     : '-',
                                 style: TextStyle(
                                   fontSize: AppFontSizes.extraSmall,
@@ -1236,14 +1269,15 @@ class ReferralProgramScreen extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(width: 12),
-                              if(user.userId != null && user.userId!.isNotEmpty)
-                              Text(
-                                'ID: ${user.userId.toString().substring(0,8) ?? '-'}',
-                                style: TextStyle(
-                                  fontSize: AppFontSizes.extraSmall,
-                                  color: ColorRes.leadGreyColor.shade600,
+                              if (user.userId != null &&
+                                  user.userId!.isNotEmpty)
+                                Text(
+                                  'ID: ${user.userId.toString().substring(0, 8) ?? '-'}',
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.extraSmall,
+                                    color: ColorRes.leadGreyColor.shade600,
+                                  ),
                                 ),
-                              ),
                             ],
                           ),
                         ],
@@ -1271,33 +1305,39 @@ class ReferralProgramScreen extends StatelessWidget {
         children: [
           Icon(icon, size: 14, color: ColorRes.textColor),
           const SizedBox(width: 4),
-          Text(
-            text,
-            style: TextStyle(fontSize: AppFontSizes.extraSmall),
-          ),
+          Text(text, style: TextStyle(fontSize: AppFontSizes.extraSmall)),
         ],
       ),
     );
   }
 
-// Helper to convert month number to string
+  // Helper to convert month number to string
   String _monthString(int month) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return months[month - 1];
   }
 
-
   Widget _buildStep(
-      String title,
-      String subtitle,
-      String number,
-      Color color,
-      bool isFirst,
-      bool isLast,
-      ) {
+    String title,
+    String subtitle,
+    String number,
+    Color color,
+    bool isFirst,
+    bool isLast,
+  ) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1377,6 +1417,98 @@ class ReferralProgramScreen extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class UseYourPointsSection extends StatelessWidget {
+  const UseYourPointsSection({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      child: Column(
+        children: [
+          // Star icon
+          // Container(
+          //   padding: const EdgeInsets.all(12),
+          //   decoration: BoxDecoration(
+          //     color: Colors.amber.shade100,
+          //     shape: BoxShape.circle,
+          //   ),
+          //   child: Icon(Icons.star, color: Colors.amber.shade600, size: 32),
+          // ),
+          // const SizedBox(height: 16),
+
+          // How to Redeem Points section
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: ColorRes.leadGreyColor.shade50,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: ColorRes.leadGreyColor.shade200,
+                width: 1,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'How to Redeem Points',
+                  style: TextStyle(
+                    fontSize: AppFontSizes.bodyMedium,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.textColor,
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Point 1
+                _buildRedemptionStep(
+                  'Points are automatically applied when you create a contractor quotation',
+                ),
+                const SizedBox(height: 12),
+
+                // Point 2
+                _buildRedemptionStep(
+                  'Your points are redeemed only when the quotation is accepted by the contractor',
+                ),
+                const SizedBox(height: 12),
+
+                // Point 3
+                _buildRedemptionStep(
+                  'You save on service costs while contractors receive full commission',
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRedemptionStep(String text) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          margin: const EdgeInsets.only(top: 2),
+          child: Icon(Icons.check, color: Colors.green.shade600, size: 20),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: AppFontSizes.extraSmall,
+              color: ColorRes.leadGreyColor.shade700,
+              height: 1.5,
             ),
           ),
         ),

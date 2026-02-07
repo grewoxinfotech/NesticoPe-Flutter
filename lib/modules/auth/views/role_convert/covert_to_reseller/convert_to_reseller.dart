@@ -82,7 +82,7 @@ class ResellerConversionScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          "Find Your Perfect Luxury Home",
+                          "Start Your Journey as a Partner",
                           style: TextStyle(
                             // fontFamily: 'Exo',
                             color: ColorRes.white,
@@ -94,7 +94,7 @@ class ResellerConversionScreen extends StatelessWidget {
                         const SizedBox(height: 8),
 
                         Text(
-                          "Find a property that perfectly aligns with your lifestyle, needs, and aspirations",
+                          "Unlock new earning opportunities by connecting the right buyers with the right properties.",
                           style: TextStyle(
                             fontFamily: 'Exo',
                             color: ColorRes.whiteShade.withOpacity(0.85),
