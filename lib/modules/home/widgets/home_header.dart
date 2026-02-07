@@ -182,6 +182,7 @@ class _HomeHeaderState extends State<HomeHeader> {
               SizedBox(width: 8),
               GestureDetector(
                 onTap: () {
+
                   log('dhfgugh djfdfjdn fhgfhglkb ${widget.image}');
                   Get.to(() => ProfileScreen(imageUrl: widget.image));
                 },

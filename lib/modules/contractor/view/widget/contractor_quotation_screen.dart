@@ -1840,10 +1840,13 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
 
       // Add page to PDF
       pdf.addPage(
+
+
         pw.MultiPage(
           pageFormat: PdfPageFormat.a4,
           margin: const pw.EdgeInsets.all(0),
-          maxPages: 2,
+
+
 
           header:
               (context) => pw.Container(
@@ -1912,50 +1915,23 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
               ),
 
           footer: (context) {
-            return pw.Padding(
-              padding: const pw.EdgeInsets.fromLTRB(30, 0, 30, 20),
-              child: pw.Column(
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                mainAxisSize: pw.MainAxisSize.min,
-                children: [
-                  pw.Row(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.Expanded(
-                        child: pw.Column(
-                          crossAxisAlignment: pw.CrossAxisAlignment.start,
-                          children: [
-                            pw.Text(
-                              'Notes',
-                              style: pw.TextStyle(
-                                fontSize: 11,
-                                fontWeight: pw.FontWeight.bold,
-                                color: headerColor,
-                              ),
-                            ),
-                            pw.SizedBox(height: 6),
-                            pw.Text(
-                              _getNotes(),
-                              style: pw.TextStyle(fontSize: 9, color: grayText),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      pw.SizedBox(width: 16),
-
-                      pw.Expanded(
-                        child: pw.Container(
-                          padding: const pw.EdgeInsets.all(10),
-                          decoration: pw.BoxDecoration(
-                            color: lightGray,
-                            border: pw.Border.all(color: PdfColors.grey300),
-                          ),
+            // Only show full footer on the last page
+            if (context.pageNumber == context.pagesCount) {
+              return pw.Padding(
+                padding: const pw.EdgeInsets.fromLTRB(30, 0, 30, 20),
+                child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  mainAxisSize: pw.MainAxisSize.min,
+                  children: [
+                    pw.Row(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Expanded(
                           child: pw.Column(
                             crossAxisAlignment: pw.CrossAxisAlignment.start,
                             children: [
                               pw.Text(
-                                'Terms & Conditions',
+                                'Notes',
                                 style: pw.TextStyle(
                                   fontSize: 11,
                                   fontWeight: pw.FontWeight.bold,
@@ -1963,57 +1939,124 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
                                 ),
                               ),
                               pw.SizedBox(height: 6),
-                              _buildTermRow(
-                                '1. Payments shall be released based on pre-defined project milestones.',
-                              ),
-                              _buildTermRow(
-                                '2. NesticoPe platform shall not be held liable for any disputes.',
+                              pw.Text(
+                                _getNotes(),
+                                style: pw.TextStyle(fontSize: 9, color: grayText),
                               ),
                             ],
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  pw.SizedBox(height: 12),
-                  pw.Container(
-                    height: 5,
-                    width: double.infinity,
-                    decoration: pw.BoxDecoration(color: PdfColors.blue600),
-                  ),
-                  pw.SizedBox(height: 12),
-                  // Footer
-                  pw.Center(
-                    child: pw.Column(
-                      children: [
-                        pw.Text(
-                          'Thank You for your business!',
-                          style: pw.TextStyle(
-                            fontSize: 12,
-                            fontWeight: pw.FontWeight.bold,
-                            color: headerColor,
+                        pw.SizedBox(width: 16),
+                        pw.Expanded(
+                          child: pw.Container(
+                            padding: const pw.EdgeInsets.all(10),
+                            decoration: pw.BoxDecoration(
+                              color: lightGray,
+                              border: pw.Border.all(color: PdfColors.grey300),
+                            ),
+                            child: pw.Column(
+                              crossAxisAlignment: pw.CrossAxisAlignment.start,
+                              children: [
+                                pw.Text(
+                                  'Terms & Conditions',
+                                  style: pw.TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: pw.FontWeight.bold,
+                                    color: headerColor,
+                                  ),
+                                ),
+                                pw.SizedBox(height: 6),
+                                _buildTermRow(
+                                  '1. Payments shall be released based on pre-defined project milestones.',
+                                ),
+                                _buildTermRow(
+                                  '2. NesticoPe platform shall not be held liable for any disputes.',
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        pw.SizedBox(height: 5),
-                        pw.Text(
-                          'Generated via NesticoPe Platform',
-                          style: pw.TextStyle(fontSize: 9, color: grayText),
                         ),
                       ],
                     ),
-                  ),
-
-                  // Page number foote
-                  pw.SizedBox(height: 10),
-                  pw.Center(
-                    child: pw.Text(
-                      'Page ${context.pageNumber} of ${context.pagesCount}',
-                      style: pw.TextStyle(fontSize: 8, color: grayText),
+                    pw.SizedBox(height: 12),
+                    pw.Container(
+                      height: 5,
+                      width: double.infinity,
+                      decoration: pw.BoxDecoration(color: PdfColors.blue600),
                     ),
-                  ),
-                ],
-              ),
-            );
+                    pw.SizedBox(height: 12),
+                    pw.Center(
+                      child: pw.Column(
+                        children: [
+                          pw.Text(
+                            'Thank You for your business!',
+                            style: pw.TextStyle(
+                              fontSize: 12,
+                              fontWeight: pw.FontWeight.bold,
+                              color: headerColor,
+                            ),
+                          ),
+                          pw.SizedBox(height: 5),
+                          pw.Text(
+                            'Generated via NesticoPe Platform',
+                            style: pw.TextStyle(fontSize: 9, color: grayText),
+                          ),
+                        ],
+                      ),
+                    ),
+                    pw.SizedBox(height: 10),
+                    pw.Center(
+                      child: pw.Text(
+                        'Page ${context.pageNumber} of ${context.pagesCount}',
+                        style: pw.TextStyle(fontSize: 8, color: grayText),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              // Simple footer for other pages
+              return pw.Padding(
+                padding: const pw.EdgeInsets.only(bottom: 12),
+                child: pw.Column(
+                  children: [
+                    pw.SizedBox(height: 12),
+                    pw.Container(
+                      height: 5,
+                      width: double.infinity,
+                      decoration: pw.BoxDecoration(color: PdfColors.blue600),
+                    ),
+                    pw.SizedBox(height: 12),
+                    pw.Center(
+                      child: pw.Column(
+                        children: [
+                          pw.Text(
+                            'Thank You for your business!',
+                            style: pw.TextStyle(
+                              fontSize: 12,
+                              fontWeight: pw.FontWeight.bold,
+                              color: headerColor,
+                            ),
+                          ),
+                          pw.SizedBox(height: 5),
+                          pw.Text(
+                            'Generated via NesticoPe Platform',
+                            style: pw.TextStyle(fontSize: 9, color: grayText),
+                          ),
+                        ],
+                      ),
+                    ),
+                    pw.SizedBox(height: 10),
+                    pw.Center(
+                      child: pw.Text(
+                        'Page ${context.pageNumber} of ${context.pagesCount}',
+                        style: pw.TextStyle(fontSize: 8, color: grayText),
+                      ),
+                    ),
+                ]
+                ),
+              );
+            }
           },
           build: (pw.Context context) {
             return [
@@ -2194,7 +2237,16 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
                     pw.SizedBox(height: 20),
 
                     // Material Brands & Specifications Section
-                    _buildMaterialBrandsSection(),
+                    pw.Text(
+                      'Material Brands & Specifications',
+                      style: pw.TextStyle(
+                        fontSize: 12,
+                        fontWeight: pw.FontWeight.bold,
+                        color: headerColor,
+                      ),
+                    ),
+                    pw.SizedBox(height: 10),
+                   ... _buildMaterialBrandsList(),
 
                     pw.SizedBox(height: 20),
 
@@ -2240,109 +2292,10 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
                     pw.SizedBox(height: 10),
 
                     // Service Table
+
                     _buildServiceTable(),
 
-                    pw.SizedBox(height: 25),
-
-                    /*           // Notes Sectio
-
-                    // pw.SizedBox(height: 20),
-                    //
-                    // // Terms & Conditions Section
-                    pw.Row(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Expanded(
-                          child: pw.Column(
-                              crossAxisAlignment: pw.CrossAxisAlignment.start,
-                            children: [
-                              pw.Text(
-                                'Notes',
-                                style: pw.TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: pw.FontWeight.bold,
-                                  color: headerColor,
-                                ),
-                              ),
-                              pw.SizedBox(height: 8),
-                              pw.Text(
-                                _getNotes(),
-                                style: pw.TextStyle(fontSize: 9, color: grayText),
-                              ),
-                            ]
-                          )
-                        ),
-                        pw.Expanded(
-                          child:pw.Container(
-                            padding: const pw.EdgeInsets.all(10),
-                            decoration: pw.BoxDecoration(
-                              borderRadius: pw.BorderRadius.circular(4),
-                              color: lightGray,
-                              border: pw.Border.all(color: PdfColors.grey300),
-                            ),
-                            child:  pw.Column(
-                              crossAxisAlignment: pw.CrossAxisAlignment.start,
-                              children: [
-                                pw.Text(
-                                  'Terms & Conditions',
-                                  style: pw.TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: pw.FontWeight.bold,
-                                    color: headerColor,
-                                  ),
-                                ),
-                                pw.SizedBox(height: 8),
-                                _buildTermRow(
-                                  '1. Payments shall be released based on pre-defined project milestones.',
-                                ),
-                                _buildTermRow(
-                                  '2. NesticoPe platform shall not be held liable for any disputes.',
-                                ),
-                              ],
-                            ),
-                          )
-                        ),
-                      ],
-                    ),
-
-                    pw.SizedBox(height: 12),
-                    pw.Container(
-                      height: 5,
-                      width: double.infinity,
-                      decoration: pw.BoxDecoration(
-                        color: PdfColors.blue600
-                      )
-                    ),
-                    pw.SizedBox(height: 12),
-                    // Footer
-                    pw.Center(
-                      child: pw.Column(
-                        children: [
-                          pw.Text(
-                            'Thank You for your business!',
-                            style: pw.TextStyle(
-                              fontSize: 12,
-                              fontWeight: pw.FontWeight.bold,
-                              color: headerColor,
-                            ),
-                          ),
-                          pw.SizedBox(height: 5),
-                          pw.Text(
-                            'Generated via NesticoPe Platform',
-                            style: pw.TextStyle(fontSize: 9, color: grayText),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Page number footer
-                    pw.SizedBox(height: 10),
-                    pw.Center(
-                      child: pw.Text(
-                        'Page 1 of 1',
-                        style: pw.TextStyle(fontSize: 8, color: grayText),
-                      ),
-                    ),*/
+                    pw.SizedBox(height: 30),
                   ],
                 ),
               ),
@@ -2471,14 +2424,12 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
     );
   }
 
-  // Build Material Brands & Specifications Section
-  pw.Widget _buildMaterialBrandsSection() {
-    final headerColor = PdfColor.fromInt(0xFF2C3E50);
 
+  List<pw.Widget> _buildMaterialBrandsList() {
     List<Map<String, String>> materials = [];
     final DateTime? startDate = widget.quotation.meta.expectedStartDate;
 
-    // Add materials based on available data
+    // ... (all your material additions)
     if (widget.quotation.meta.cementBrand?.isNotEmpty ?? false) {
       materials.add({
         'label': 'CEMENT',
@@ -2672,70 +2623,112 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
         'value': widget.quotation.meta.boreAndPump ?? '',
       });
     }
-
     if (startDate != null) {
       materials.add({
         'label': 'EXPECTED START',
         'value': _formatQuotationDate(startDate),
       });
     }
-
     if (materials.isEmpty) {
-      return pw.SizedBox();
+      return [];
     }
 
-    return pw.Column(
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
-      children: [
-        pw.Text(
-          'Material Brands & Specifications',
-          style: pw.TextStyle(
-            fontSize: 12,
-            fontWeight: pw.FontWeight.bold,
-            color: headerColor,
-          ),
-        ),
-        pw.SizedBox(height: 10),
-        pw.Wrap(
-          spacing: 15,
-          runSpacing: 8,
-          children:
-              materials.map((material) {
-                return pw.Container(
-                  width: 100,
-                  padding: const pw.EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 4,
-                  ),
-                  decoration: pw.BoxDecoration(
-                    color: PdfColor.fromInt(0xFFF7FAFC),
+    // Categorize materials by content length
+    List<Map<String, String>> shortItems = [];
+    List<Map<String, String>> mediumItems = [];
+    List<Map<String, String>> longItems = [];
 
-                    border: pw.Border.all(width: 1, color: PdfColors.grey300),
-                    borderRadius: pw.BorderRadius.circular(4),
-                  ),
-                  child: pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.Text(
-                        material['label']!,
-                        style: pw.TextStyle(
-                          fontSize: 7,
-                          fontWeight: pw.FontWeight.bold,
-                          color: PdfColors.grey600,
-                        ),
+    for (var material in materials) {
+      final contentLength = material['value']!.length;
+      if (contentLength <= 20) {
+        shortItems.add(material);
+      } else if (contentLength <= 50) {
+        mediumItems.add(material);
+      } else {
+        longItems.add(material);
+      }
+    }
+
+    List<pw.Widget> rows = [];
+
+    // Build rows for short items (4 per row)
+    rows.addAll(_buildMaterialRows(shortItems, 4));
+
+    // Build rows for medium items (3 per row)
+    rows.addAll(_buildMaterialRows(mediumItems, 4));
+
+    // Build rows for long items (2 per row)
+    rows.addAll(_buildMaterialRows(longItems, 4));
+
+    return rows;
+  }
+
+  List<pw.Widget> _buildMaterialRows(
+      List<Map<String, String>> materials,
+      int itemsPerRow,
+      ) {
+    if (materials.isEmpty) return [];
+
+    List<pw.Widget> rows = [];
+
+    for (int i = 0; i < materials.length; i += itemsPerRow) {
+      final rowMaterials = materials.sublist(
+        i,
+        i + itemsPerRow > materials.length ? materials.length : i + itemsPerRow,
+      );
+
+      rows.add(
+        pw.Padding(
+          padding: const pw.EdgeInsets.symmetric(horizontal: 15, vertical: 4),
+          child: pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.start,
+            children: [
+              ...rowMaterials.map((material) {
+                return pw.SizedBox(
+                  width: 130,
+                  child: pw.Padding(
+                    padding: const pw.EdgeInsets.only(right: 8),
+                    child: pw.Container(
+                      padding: const pw.EdgeInsets.all(8),
+                      decoration: pw.BoxDecoration(
+                        color: PdfColor.fromInt(0xFFF7FAFC),
+                        border: pw.Border.all(width: 1, color: PdfColors.grey300),
+                        borderRadius: pw.BorderRadius.circular(4),
                       ),
-                      pw.SizedBox(height: 2),
-                      pw.Text(
-                        material['value']!,
-                        style: const pw.TextStyle(fontSize: 8),
+                      child: pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Text(
+                            material['label']!,
+                            style: pw.TextStyle(
+                              fontSize: 7,
+                              fontWeight: pw.FontWeight.bold,
+                              color: PdfColors.grey600,
+                            ),
+                          ),
+                          pw.SizedBox(height: 3),
+                          pw.Text(
+                            material['value']!,
+                            style: const pw.TextStyle(fontSize: 8),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 );
               }).toList(),
+              // Fill empty columns
+              /*...List.generate(
+        itemsPerRow - rowMaterials.length,
+            (index) => pw.Expanded(child: pw.SizedBox()),
+              ),*/
+            ],
+          ),
         ),
-      ],
-    );
+      );
+    }
+
+    return rows;
   }
 
   pw.Widget _tableHeader(String text, {bool alignRight = false}) {
@@ -2938,6 +2931,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
     final advanceAmount = (totalAmount * advancePercentage) / 100;
 
     return pw.Table(
+
       border: pw.TableBorder.all(color: PdfColors.grey400, width: 0.5),
       columnWidths: {
         0: const pw.FlexColumnWidth(3),
@@ -2948,6 +2942,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
         // HEADER
         pw.TableRow(
           decoration: pw.BoxDecoration(color: lightGray),
+
           children: [
             _pdfHeaderCell('Description', headerColor),
             _pdfHeaderCell(
@@ -3115,6 +3110,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
 
   pw.TableRow _priceRow(String label, double amount) {
     return pw.TableRow(
+
       children: [
         pw.Padding(
           padding: const pw.EdgeInsets.symmetric(horizontal: 8, vertical: 6),
