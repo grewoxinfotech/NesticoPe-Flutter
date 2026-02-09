@@ -99,89 +99,194 @@ class _SubscriptionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final statusColor = getColor(status);
 
-    // final statusText = status ? "Active" : "Expired";
-
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
+        gradient: LinearGradient(
+          colors: [Colors.white, Colors.grey.shade50],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade200, width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// Header
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  planName,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Column(
+          children: [
+            /// Header with accent color bar
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: statusColor.withOpacity(0.08),
+                border: Border(
+                  left: BorderSide(color: statusColor, width: 4),
+                ),
+              ),
+              child: Row(
+                children: [
+                  /// Plan icon
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: statusColor.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      Icons.card_membership,
+                      color: statusColor,
+                      size: 24,
+                    ),
                   ),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  status.capitalize.toString(),
-                  style: TextStyle(
-                    color: statusColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
+                  const SizedBox(width: 12),
+
+                  /// Plan name and status
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          planName,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Container(
+                              width: 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                color: statusColor,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              status.capitalize.toString(),
+                              style: TextStyle(
+                                color: statusColor,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ),
-              IconButton(
-                onPressed: () {
-                  Get.dialog(CancelSubscriptionDialog());
-                },
-                icon: Icon(Icons.remove_circle_outline, color: Colors.red),
-              ),
-            ],
-          ),
 
-          const SizedBox(height: 12),
+                  /// Cancel button
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade50,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: IconButton(
+                      onPressed: () {
+                        Get.dialog(CancelSubscriptionDialog());
+                      },
+                      icon: const Icon(Icons.close, color: Colors.red),
+                      iconSize: 20,
+                      tooltip: 'Cancel Subscription',
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
-          /// Details
-          _row("Start Date", startDate),
-          _row("End Date", endDate),
-          _row("Price", price),
-        ],
+            /// Details section
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  _detailRow(
+                    icon: Icons.calendar_today_outlined,
+                    label: "Start Date",
+                    value: startDate,
+                    iconColor: Colors.blue,
+                  ),
+                  const Divider(height: 20),
+                  _detailRow(
+                    icon: Icons.event_outlined,
+                    label: "End Date",
+                    value: endDate,
+                    iconColor: Colors.orange,
+                  ),
+                  const Divider(height: 20),
+                  _detailRow(
+                    icon: Icons.payments_outlined,
+                    label: "Price",
+                    value: price,
+                    iconColor: Colors.green,
+                    isPrice: true,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _row(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Text(
-            "$label:",
-            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+  Widget _detailRow({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color iconColor,
+    bool isPrice = false,
+  }) {
+    return Row(
+      children: [
+        /// Icon
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: iconColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
           ),
-          const SizedBox(width: 8),
-          Expanded(child: Text(value, style: const TextStyle(fontSize: 13))),
-        ],
-      ),
+          child: Icon(icon, size: 18, color: iconColor),
+        ),
+        const SizedBox(width: 12),
+
+        /// Label
+        Expanded(
+          flex: 2,
+          child: Text(
+            label,
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 13,
+              color: Colors.grey.shade700,
+            ),
+          ),
+        ),
+
+        /// Value
+        Expanded(
+          flex: 3,
+          child: Text(
+            value,
+            style: TextStyle(
+              fontSize: isPrice ? 16 : 14,
+              fontWeight: isPrice ? FontWeight.bold : FontWeight.w600,
+              color: isPrice ? Colors.green.shade700 : Colors.black87,
+            ),
+            textAlign: TextAlign.right,
+          ),
+        ),
+      ],
     );
   }
 
