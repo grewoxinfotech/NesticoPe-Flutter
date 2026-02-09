@@ -33,147 +33,150 @@ class MouVerificationScreen extends StatelessWidget {
         ),
         backgroundColor: ColorRes.primary,
       ),
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Obx(
-                      () {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildTermsBox(),
-                        const SizedBox(height: 12),
+      body: SafeArea(
 
-                        /// Checkbox
-                        Obx(
-                              () => CheckboxListTile(
-                            value: _controller.isAgreed.value,
-                            onChanged: (val) =>
-                            _controller.isAgreed.value = val ?? false,
-                            title: const Text(
-                              "I have read and agree to the terms of the MOU",
-                              style: TextStyle(
-                                fontSize: AppFontSizes.small,
-                                fontWeight: AppFontWeights.medium,
-                                color: ColorRes.textPrimary
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+          child: Column(
+            children: [
+
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Obx(
+                        () {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildTermsBox(),
+                          const SizedBox(height: 12),
+        
+                          /// Checkbox
+                          Obx(
+                                () => CheckboxListTile(
+                              value: _controller.isAgreed.value,
+                              onChanged: (val) =>
+                              _controller.isAgreed.value = val ?? false,
+                              title: const Text(
+                                "I have read and agree to the terms of the MOU",
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.small,
+                                  fontWeight: AppFontWeights.medium,
+                                  color: ColorRes.textPrimary
+                                ),
                               ),
+                              controlAffinity: ListTileControlAffinity.leading,
                             ),
-                            controlAffinity: ListTileControlAffinity.leading,
                           ),
-                        ),
-
-                        const SizedBox(height: 8),
-                        if (_controller.isAgreed.value) ...[
-                          /// Name Field
-                          NesticoPeTextField(
-                            title: "Full Name",
-                            isRequired: true,
-                            hintText: "Enter your full name",
-                            controller: _controller.nameController,
-                            keyboardType: TextInputType.name,
-                            textInputAction: TextInputAction.next,
-                            prefixIcon: Icons.person,
-                            validator: (val) {
-                              if (val == null || val.isEmpty) {
-                                return "Please enter your full name";
-                              }
-                              return null;
-                            },
-                          ),
-
-                          const SizedBox(height: 16),
-
-                          /// Signature
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    'Digital Signature',
-                                    style: TextStyle(
-                                      fontSize: AppFontSizes.medium,
-                                      color: ColorRes.textSecondary,
-                                      fontWeight: AppFontWeights.bold,
+        
+                          const SizedBox(height: 8),
+                          if (_controller.isAgreed.value) ...[
+                            /// Name Field
+                            NesticoPeTextField(
+                              title: "Full Name",
+                              isRequired: true,
+                              hintText: "Enter your full name",
+                              controller: _controller.nameController,
+                              keyboardType: TextInputType.name,
+                              textInputAction: TextInputAction.next,
+                              prefixIcon: Icons.person,
+                              validator: (val) {
+                                if (val == null || val.isEmpty) {
+                                  return "Please enter your full name";
+                                }
+                                return null;
+                              },
+                            ),
+        
+                            const SizedBox(height: 16),
+        
+                            /// Signature
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Digital Signature',
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.medium,
+                                        color: ColorRes.textSecondary,
+                                        fontWeight: AppFontWeights.bold,
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    ' *',
-                                    style: TextStyle(color: ColorRes.error),
-                                  )
-                                ],
-                              ),
-                              TextButton(
-                                onPressed: _controller.clearSignature,
-                                child: const Text("Clear"),
-                              ),
-                            ],
-                          ),
-
-                          Container(
-                            height: 180,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: ColorRes.leadGreyColor.shade300,
-                              ),
-                              borderRadius: BorderRadius.circular(12),
-                              color: ColorRes.white,
+                                    Text(
+                                      ' *',
+                                      style: TextStyle(color: ColorRes.error),
+                                    )
+                                  ],
+                                ),
+                                TextButton(
+                                  onPressed: _controller.clearSignature,
+                                  child: const Text("Clear"),
+                                ),
+                              ],
                             ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Signature(
-                                controller: _controller.signatureController,
-                                height: double.infinity,
-                                width: double.infinity,
-                                backgroundColor: Colors.white,
+        
+                            Container(
+                              height: 180,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: ColorRes.leadGreyColor.shade300,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                                color: ColorRes.white,
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Signature(
+                                  controller: _controller.signatureController,
+                                  height: double.infinity,
+                                  width: double.infinity,
+                                  backgroundColor: Colors.white,
+                                ),
                               ),
                             ),
-                          ),
-
-                          SizedBox(height: 24),
-                        ]
-                      ],
-                    );
-                  },
+        
+                            SizedBox(height: 24),
+                          ]
+                        ],
+                      );
+                    },
+                  ),
                 ),
               ),
-            ),
 
-            /// Bottom Buttons
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () => Get.back(),
-                    child: const Text("Cancel"),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Obx(
-                        () => ElevatedButton(
-                      onPressed: _controller.isUploadLoading.value
-                          ? null
-                          : _controller.submitMou,
-                      child: _controller.isUploadLoading.value
-                          ? const SizedBox(
-                        height: 18,
-                        width: 18,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                          : const Text("Agree & Sign"),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Get.back(),
+                      child: const Text("Cancel"),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Obx(
+                          () => ElevatedButton(
+                        onPressed: _controller.isUploadLoading.value
+                            ? null
+                            : _controller.submitMou,
+                        child: _controller.isUploadLoading.value
+                            ? const SizedBox(
+                          height: 18,
+                          width: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                            : const Text("Agree & Sign"),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -247,8 +247,10 @@ class BuilderService {
         return true;
       }
       final data = jsonDecode(response.body);
+      debugPrint("❌ Create project exception: ${data['message']}");
       NesticoPeSnackBar.showAwesomeSnackbar(
-        title: 'Failed',
+        title: 'Failergrejhghrd',
+
         message: data['message'] ?? 'Project Created fail',
         contentType: ContentType.failure,
       );

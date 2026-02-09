@@ -11,9 +11,9 @@ import '../../../../app/constants/app_font_sizes.dart';
 import '../../controller/builder_form_controller.dart';
 
 class UploadMediaScreen extends GetView<ProjectWizardController> {
-  final GlobalKey<FormState> formKey;
 
-  UploadMediaScreen({super.key, required this.formKey});
+
+  UploadMediaScreen({super.key,});
 
   @override
   Widget build(BuildContext context) {

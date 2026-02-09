@@ -780,8 +780,8 @@ class ProjectVariant {
       price: (json['price'] ?? 0).toDouble(),
       pricePerSqFt:
           json['pricePerSqFt'] != null
-              ? (json['pricePerSqFt']).toDouble()
-              : null,
+              ? (json['pricePerSqFt']??0.0).toDouble()
+              :0.0,
       totalUnits: json['totalUnits'] ?? 0,
       availableUnits: json['availableUnits'] ?? 0,
       platformFees:

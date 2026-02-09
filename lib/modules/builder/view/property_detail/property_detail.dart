@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/modules/builder/view/property_detail/widget/variation_media_upload_widget.dart';
 import 'package:housing_flutter_app/modules/saved_property/views/saved_property_screen.dart';
 import 'package:housing_flutter_app/utils/logger/app_logger.dart';
@@ -40,7 +41,9 @@ class StepConfigurations extends GetView<ProjectWizardController> {
       final p = controller.project.value;
       log("Logger of Total Unit ${controller.totalUnitsController.text}");
       log("Logger of Total Unit ${p.projectSize.totalUnits}");
-      log("Logger of Total Unit ${p.configurations.map((e) => e.variants.map((e) => e.toJson(),),)}");
+      log(
+        "Logger of Total Unit ${p.configurations.map((e) => e.variants.map((e) => e.toJson()))}",
+      );
 
       return Form(
         key: formKey,
@@ -647,9 +650,16 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                               if (value == null ||
                                                   value.isEmpty) {
                                                 return 'Please enter monthly rent';
-                                              }
 
-                                              final rent =
+                                              }
+                                              ProjectValidators.positiveNumber(
+                                                num.tryParse(value ?? ''),
+                                                field:
+                                                'Broker Commission',
+                                              );
+
+
+                                              /*final rent =
                                                   int.tryParse(value) ?? 0;
 
                                               if (rent > 0) {
@@ -683,28 +693,84 @@ class StepConfigurations extends GetView<ProjectWizardController> {
 
                                                 return null;
                                               }
-
+*/
                                               return null;
                                             },
 
-                                            onSaved:
-                                                (
-                                                  n,
-                                                ) => controller.project.update(
-                                                  (x) =>
-                                                      x!
-                                                              .configurations[ci]
-                                                              .variants[vi]
-                                                              .price =
-                                                          double.tryParse(
-                                                            n ?? '',
-                                                          ) ??
+                                            onSaved: (n) {
+                                              controller.project.update(
+                                                (x) =>
+                                                    x!
+                                                            .configurations[ci]
+                                                            .variants[vi]
+                                                            .price =
+                                                        double.tryParse(
+                                                          n ?? '',
+                                                        ) ??
+                                                        0,
+                                              );
+
+                                              final rent =
+                                                  int.tryParse(n ?? "0") ?? 0;
+
+                                              if (rent > 0) {
+                                                final platformFee = rent * 0.05;
+                                                final brokerCommission =
+                                                    platformFee * 0.02;
+
+                                                v.platformFees =
+                                                    double.tryParse(
+                                                      platformFee
+                                                          .toStringAsFixed(2),
+                                                    );
+                                                v.brokerCommission =
+                                                    double.tryParse(
+                                                      brokerCommission
+                                                          .toStringAsFixed(2),
+                                                    );
+
+                                                // 🔒 Schedule controller update AFTER build phase
+                                                WidgetsBinding.instance
+                                                    .addPostFrameCallback((_) {
+                                                      controller
+                                                          .platformFees
+                                                          .text = platformFee
+                                                          .toStringAsFixed(2);
+                                                      controller
+                                                          .brokerRageCommission
+                                                          .text = brokerCommission
+                                                          .toStringAsFixed(2);
+                                                    });
+                                                controller.project.update(
+                                                      (x) =>
+                                                  x!
+                                                      .configurations[ci]
+                                                      .variants[vi]
+                                                      .platformFees =
+                                                      double.tryParse(
+                                                        platformFee.toStringAsFixed(2) ?? '',
+                                                      ) ??
                                                           0,
-                                                ),
+                                                );
+                                                controller.project.update(
+                                                      (x) =>
+                                                  x!
+                                                      .configurations[ci]
+                                                      .variants[vi]
+                                                      .brokerCommission =
+                                                      double.tryParse(
+                                                        brokerCommission.toStringAsFixed(2) ?? '',
+                                                      ) ??
+                                                          0,
+                                                );
+
+                                                return;
+                                              }
+                                            },
                                           ),
                                         ),
-                                        const SizedBox(width: 12),
-                                        Expanded(
+                                        // const SizedBox(width: 12),
+                                       /* Expanded(
                                           child: CommonTextField(
                                             hint: 'e.g 2.4 per sq.ft',
                                             label: 'Price / Sq.Ft (optional)',
@@ -730,11 +796,11 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                                           ),
                                                 ),
                                           ),
-                                        ),
+                                        ),*/
                                       ],
                                     ),
                                     const SizedBox(height: 12),
-                                    Row(
+                                 /*   Row(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
@@ -742,24 +808,20 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                           child: CommonTextField(
                                             label:
                                                 'Platform Fees (5% of Price)',
-                                            controller: controller.platformFees,
+                                            // controller: controller.platformFees,
                                             hint: 'Platform Fees',
+                                            enabled: false,
                                             prefixIcon: const Icon(
                                               Icons.aspect_ratio_outlined,
                                               size: 16,
                                             ),
 
-                                            // initialValue:
-                                            //     v.platformFees == 0
-                                            //         ? ''
-                                            //         : v.platformFees.toString(),
+                                            initialValue:
+                                                v.platformFees == 0
+                                                    ? ''
+                                                    : v.platformFees.toString(),
                                             keyboardType: TextInputType.number,
-                                            validator:
-                                                (n) =>
-                                                    ProjectValidators.positiveNumber(
-                                                      num.tryParse(n ?? ''),
-                                                      field: 'Platform fees',
-                                                    ),
+
                                             onSaved:
                                                 (
                                                   n,
@@ -782,24 +844,20 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                             label:
                                                 'Broker Commission (2% of Platform  Fees)',
                                             hint: 'Broker Commission',
-                                            controller:
-                                                controller.brokerRageCommission,
+                                            enabled: false,
+                                            // controller:
+                                            //     controller.brokerRageCommission,
+
                                             prefixIcon: const Icon(
                                               Icons.straighten,
                                               size: 16,
                                             ),
-                                            // initialValue:
-                                            //     v.brokerCommission == 0
-                                            //         ? ''
-                                            //         : v.brokerCommission.toString(),
+                                            initialValue:
+                                                v.brokerCommission == 0
+                                                    ? ''
+                                                    : v.brokerCommission.toString(),
                                             keyboardType: TextInputType.number,
-                                            validator:
-                                                (n) =>
-                                                    ProjectValidators.positiveNumber(
-                                                      num.tryParse(n ?? ''),
-                                                      field:
-                                                          'Broker Commission',
-                                                    ),
+
                                             onSaved:
                                                 (
                                                   n,
@@ -817,7 +875,32 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                           ),
                                         ),
                                       ],
+                                    ),*/
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: _InfoTile(
+                                            label: 'Platform Fees (5% of Price)',
+                                            value: v.platformFees == 0
+                                                ? '--'
+                                                : '${Formatter.formatPrice(num.tryParse(v.platformFees?.toStringAsFixed(2)??'0')??0)}',
+                                            icon: Icons.aspect_ratio_outlined,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: _InfoTile(
+                                            label: 'Broker Commission (2% of Platform Fees)',
+                                            value: v.brokerCommission == 0
+                                                ? '--'
+                                                : '${Formatter.formatPrice(num.tryParse(v.brokerCommission?.toStringAsFixed(2)??"0")??0)}',
+                                            icon: Icons.straighten,
+                                          ),
+                                        ),
+                                      ],
                                     ),
+
 
                                     const SizedBox(height: 12),
                                     Row(
@@ -905,7 +988,7 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                           ),
                                         ),
                                         const SizedBox(width: 12),
-                                       /* Expanded(
+                                        /* Expanded(
                                           child: CommonTextField(
                                             hint: 'e.g 2500',
                                             label: 'Available Units',
@@ -950,11 +1033,17 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                               Icons.inventory_2_outlined,
                                               size: 16,
                                             ),
-                                            initialValue: v.availableUnits == 0 ? '' : v.availableUnits.toString(),
+                                            initialValue:
+                                                v.availableUnits == 0
+                                                    ? ''
+                                                    : v.availableUnits
+                                                        .toString(),
                                             keyboardType: TextInputType.number,
                                             validator: (n) {
-                                              final available = int.tryParse(n ?? '') ?? 0;
-                                              final totalUnits = v.totalUnits ?? 0;
+                                              final available =
+                                                  int.tryParse(n ?? '') ?? 0;
+                                              final totalUnits =
+                                                  v.totalUnits ?? 0;
 
                                               if (available < 0) {
                                                 return 'Available units cannot be negative';
@@ -966,56 +1055,77 @@ class StepConfigurations extends GetView<ProjectWizardController> {
 
                                               return null;
                                             },
-                                            onSaved: (n) => controller.project.update(
-                                                  (x) => x!.configurations[ci].variants[vi].availableUnits =
-                                                  int.tryParse(n ?? '') ?? 0,
-                                            ),
+                                            onSaved:
+                                                (
+                                                  n,
+                                                ) => controller.project.update(
+                                                  (x) =>
+                                                      x!
+                                                              .configurations[ci]
+                                                              .variants[vi]
+                                                              .availableUnits =
+                                                          int.tryParse(
+                                                            n ?? '',
+                                                          ) ??
+                                                          0,
+                                                ),
                                           ),
                                         ),
-
                                       ],
                                     ),
                                     const SizedBox(height: 12),
-                                  Obx(() {
-                                    final buildingMap = controller.project.value.buildingNames ?? {};
-                                    final buildingList = buildingMap.values.toList();
+                                    Obx(() {
+                                      final buildingMap =
+                                          controller
+                                              .project
+                                              .value
+                                              .buildingNames ??
+                                          {};
+                                      final buildingList =
+                                          buildingMap.values.toList();
 
-                                    if (buildingList.isEmpty) return const SizedBox();
+                                      if (buildingList.isEmpty)
+                                        return const SizedBox();
 
-                                    return NesticoPeDropdownField<String>(
-                                      title: "Select Building",
-                                      fontsize: 12,
-                                      fontWight: AppFontWeights.medium,
-                                      darkText: true,
-                                      value: v.buildingName ?? '',
-                                      hintText: "Choose a building",
-                                      prefixIcon: Icons.home_work_outlined,
-                                      items: buildingList.map((buildingName) {
-                                        return DropdownMenuItem<String>(
-                                          value: buildingName,
-                                          child: Text(buildingName),
-                                        );
-                                      }).toList(),
-                                      onChanged: (value) {
-                                        if (value != null) {
-                                          controller.project.update(
-                                                  (x) => x!.configurations[ci].variants[vi].buildingName = (value ?? '') ,
-                                          );
+                                      return NesticoPeDropdownField<String>(
+                                        title: "Select Building",
+                                        fontsize: 12,
+                                        fontWight: AppFontWeights.medium,
+                                        darkText: true,
+                                        value: v.buildingName ?? '',
+                                        hintText: "Choose a building",
+                                        prefixIcon: Icons.home_work_outlined,
+                                        items:
+                                            buildingList.map((buildingName) {
+                                              return DropdownMenuItem<String>(
+                                                value: buildingName,
+                                                child: Text(buildingName),
+                                              );
+                                            }).toList(),
+                                        onChanged: (value) {
+                                          if (value != null) {
+                                            controller.project.update(
+                                              (x) =>
+                                                  x!
+                                                          .configurations[ci]
+                                                          .variants[vi]
+                                                          .buildingName =
+                                                      (value ?? ''),
+                                            );
 
+                                            log("Selected Building: $value");
+                                          }
+                                        },
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Please select a building';
+                                          }
+                                          return null;
+                                        },
+                                      );
+                                    }),
 
-                                          log("Selected Building: $value");
-                                        }
-                                      },
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please select a building';
-                                        }
-                                        return null;
-                                      },
-                                    );
-                                  }),
-
-                                  const SizedBox(height: 12),
+                                    const SizedBox(height: 12),
                                     CommonTextField(
                                       label: 'Specifications (comma separated)',
 
@@ -1967,3 +2077,54 @@ class StepConfigurations extends GetView<ProjectWizardController> {
 //     );
 //   }
 // }
+
+class _InfoTile extends StatelessWidget {
+  final String label;
+  final String value;
+  final IconData icon;
+
+  const _InfoTile({
+    required this.label,
+    required this.value,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey.shade600,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: Row(
+            children: [
+              Icon(icon, size: 16, color: Colors.grey.shade700),
+              const SizedBox(width: 8),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}

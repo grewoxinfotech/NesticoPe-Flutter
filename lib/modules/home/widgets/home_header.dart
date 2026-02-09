@@ -161,7 +161,7 @@ class _HomeHeaderState extends State<HomeHeader> {
                 ),
               ),
 
-              Stack(
+              (UserHelper.isGuest)?SizedBox.shrink():Stack(
                 clipBehavior: Clip.none,
                 children: [
                   GestureDetector(

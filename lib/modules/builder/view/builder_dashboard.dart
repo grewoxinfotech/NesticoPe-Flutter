@@ -748,8 +748,9 @@ class _BuilderDashboardState extends State<BuilderDashboard> {
             ProjectWizardController(isBuilderView: false),
             tag: "builder",
           );
-          controller.resetForm();
+
           Get.to(() => CreateProjectScreen(), binding: ProjectWizardBinding());
+          controller.resetForm();
         },
 
         label: Text(

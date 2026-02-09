@@ -444,7 +444,7 @@ class CreateProjectScreen extends GetView<ProjectWizardController> {
                                       ),
                                       switchInCurve: Curves.easeOut,
                                       switchOutCurve: Curves.easeIn,
-                                      child: _buildStep(step),
+                                      child: KeyedSubtree(  key: ValueKey<int>(step),child: _buildStep(step)),
                                     ),
                                   ],
                                 ),
@@ -605,10 +605,10 @@ class CreateProjectScreen extends GetView<ProjectWizardController> {
       case 3:
         return StepAdditional(formKey: controller.formKeys[3]);
       case 4:
-        return UploadMediaScreen(formKey: controller.formKeys[4]);
+        return UploadMediaScreen();
       case 5:
         return StepReview(
-          formKey: controller.formKeys[5],
+
         ); // Use index 5 since formKeys now has 6 elements (0-5)
       default:
         return const Center(child: Text('Step not found'));

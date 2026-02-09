@@ -120,6 +120,7 @@
 //   }
 // }
 
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -134,9 +135,9 @@ import '../../controller/builder_form_controller.dart';
 import '../media/upload_media_screen.dart';
 
 class StepReview extends GetView<ProjectWizardController> {
-  final GlobalKey<FormState> formKey;
 
-  const StepReview({super.key, required this.formKey});
+
+  const StepReview({super.key,});
 
   @override
   Widget build(BuildContext context) {
@@ -144,8 +145,8 @@ class StepReview extends GetView<ProjectWizardController> {
     return Obx(() {
       final p = controller.project.value;
       return Form(
-        key: formKey,
-        // autovalidateMode: AutovalidateMode.onUserInteraction,
+        // key: formKey,
+        // // autovalidateMode: AutovalidateMode.onUserInteraction,
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -255,8 +256,9 @@ class StepReview extends GetView<ProjectWizardController> {
 
               // Before Additional Details
               _buildMediaGallerySection(theme, p),
-
+              _buildBuildNameSection(theme, p),
               // Timeline Section
+              const SizedBox(height: 20),
               _buildTimelineSection(theme, p),
               const SizedBox(height: 20),
 
@@ -624,6 +626,79 @@ class StepReview extends GetView<ProjectWizardController> {
       ),
     );
   }
+  Widget _buildBuildNameSection(ThemeData theme, AddProjectModel p) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: ColorRes.purpleColor.withOpacity(0.02),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: ColorRes.purpleColor.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: ColorRes.purpleColor.withOpacity(0.08),
+                  border: Border.all(
+                    color: ColorRes.purpleColor.withOpacity(0.3),
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(
+                  Icons.apartment_outlined,
+                  color: ColorRes.purpleColor,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Project Buildings',
+                style: TextStyle(
+                  fontSize: AppFontSizes.medium,
+                  fontWeight: AppFontWeights.semiBold,
+                  color: ColorRes.textPrimary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: p.buildingNames?.values.map((name) {
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(
+                  // color: ColorRes.purpleColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: ColorRes.purpleColor.withOpacity(0.4),
+                  ),
+                ),
+                child: Text(
+                  name,
+                  style: TextStyle(
+                    fontSize: AppFontSizes.small,
+                    fontWeight: AppFontWeights.medium,
+                    color: ColorRes.purpleColor,
+                  ),
+                ),
+              );
+            }).toList()??[],
+          ),
+
+        ],
+      ),
+    );
+  }
 
   Widget _buildDateCard(
     IconData icon,
@@ -660,7 +735,7 @@ class StepReview extends GetView<ProjectWizardController> {
             date.toLocal().toString().split(' ').first,
             style: TextStyle(
               fontSize: AppFontSizes.body,
-              fontWeight: AppFontWeights.extraBold,
+              fontWeight: AppFontWeights.bold,
               color: ColorRes.textPrimary,
             ),
           ),
@@ -1319,6 +1394,9 @@ class StepReview extends GetView<ProjectWizardController> {
     final hasVideos = p.videoList != null && p.videoList.isNotEmpty;
     final hasBrochure = p.brochure != null && p.brochure!.isNotEmpty;
 
+    log("Check any thing missing ${p.imageList.map((e) => e,)}");
+
+
     if (!hasImages && !hasVideos && !hasBrochure)
       return const SizedBox.shrink();
 
@@ -1377,10 +1455,12 @@ class StepReview extends GetView<ProjectWizardController> {
                     itemCount: p.imageList.length > 5 ? 5 : p.imageList.length,
                     itemBuilder: (context, index) {
                       final isLast = index == 4 && p.imageList.length > 5;
+
                       final imagePath = p.imageList[index];
+                      log("Check why image to show ${File(imagePath).path}");
                       return GestureDetector(
                         onTap: () {
-                          Get.to(() => MediaPreviewScreen(url: imagePath));
+                          Get.to(() => MediaPreviewScreen(url: File(imagePath).path));
                         },
                         child: Container(
                           width: 120,
@@ -1395,36 +1475,65 @@ class StepReview extends GetView<ProjectWizardController> {
                           margin: const EdgeInsets.only(right: 10),
                           child: Stack(
                             children: [
-                              ClipRRect(
+                              /*ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
                                 child: CustomImage(
-                                  type: CustomImageType.network,
+                                  type: CustomImageType.memory,
                                   src: imagePath,
                                   width: 140,
                                   height: 100,
                                   fit: BoxFit.cover,
-                                ),
-                                // Image.file(
-                                //   File(imagePath),
-                                //   width: 140,
-                                //   height: 100,
-                                //   fit: BoxFit.cover,
-                                //   errorBuilder:
-                                //       (context, error, stackTrace) => Container(
-                                //         decoration: BoxDecoration(
-                                //           color:
-                                //               ColorRes.leadGreyColor.shade200,
-                                //           borderRadius: BorderRadius.circular(
-                                //             12,
-                                //           ),
-                                //         ),
-                                //         child: Icon(
-                                //           Icons.image,
-                                //           color: ColorRes.leadGreyColor,
-                                //         ),
-                                //       ),
-                                // ),
-                              ),
+                                ),*/
+                             if(imagePath.contains('http') || imagePath.contains("https"))...[
+                               ClipRRect(
+                                 borderRadius: BorderRadius.circular(10),
+                                 child: Image.network(
+                                   imagePath,
+                                   width: 140,
+                                   height: 100,
+                                   fit: BoxFit.cover,
+                                   errorBuilder:
+                                       (context, error, stackTrace) => Container(
+                                     decoration: BoxDecoration(
+                                       color:
+                                       ColorRes.leadGreyColor.shade200,
+                                       borderRadius: BorderRadius.circular(
+                                         12,
+                                       ),
+                                     ),
+                                     child: Icon(
+                                       Icons.image,
+                                       color: ColorRes.leadGreyColor,
+                                     ),
+                                   ),
+                                 ),
+                               ),
+                             ]else...[
+                               ClipRRect(
+                                 borderRadius: BorderRadius.circular(10),
+                                 child: Image.file(
+                                   File(imagePath),
+                                   width: 140,
+                                   height: 100,
+                                   fit: BoxFit.cover,
+                                   errorBuilder:
+                                       (context, error, stackTrace) => Container(
+                                     decoration: BoxDecoration(
+                                       color:
+                                       ColorRes.leadGreyColor.shade200,
+                                       borderRadius: BorderRadius.circular(
+                                         12,
+                                       ),
+                                     ),
+                                     child: Icon(
+                                       Icons.image,
+                                       color: ColorRes.leadGreyColor,
+                                     ),
+                                   ),
+                                 ),
+                               ),
+                             ],
+
                               if (isLast)
                                 Positioned.fill(
                                   child: Container(
@@ -1899,22 +2008,23 @@ class StepReview extends GetView<ProjectWizardController> {
                                         Text(
                                           '₹${_formatPrice(variant.price)}',
                                           style: TextStyle(
-                                            fontSize: AppFontSizes.body,
+                                            fontSize: AppFontSizes.bodySmall,
                                             fontWeight:
-                                                AppFontWeights.extraBold,
+                                                AppFontWeights.bold,
                                             color:
                                                 ColorRes.builderGridLightGreen,
                                           ),
                                         ),
                                       ],
                                     ),
-                                    if (variant.pricePerSqFt != null)
+                                    SizedBox(width: 12,),
+                                    if (variant.buildingName != null)
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.end,
                                         children: [
                                           Text(
-                                            'Per Sq.Ft',
+                                            'Building Name',
                                             style: TextStyle(
                                               fontSize: AppFontSizes.small,
                                               color: ColorRes.textSecondary,
@@ -1922,7 +2032,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                           ),
                                           const SizedBox(height: 4),
                                           Text(
-                                            '₹${_formatPrice(variant.pricePerSqFt!)}',
+                                            '${variant.buildingName}',
                                             style: TextStyle(
                                               fontSize: AppFontSizes.bodySmall,
                                               fontWeight:

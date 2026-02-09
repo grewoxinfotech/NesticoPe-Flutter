@@ -1375,6 +1375,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
           name: '',
           builtUpArea: 0,
           carpetArea: 0,
+          pricePerSqFt: 0.0,
           price: 0,
           totalUnits: 0,
           buildingName: '',
@@ -1422,6 +1423,11 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       log(
         "📦 Final Payload:\n${const JsonEncoder.withIndent('  ').convert(project.value.toJson())}",
       );
+      var data=await _buildProjectPayload();
+         AppLogger.structured(
+        "📦 Final dsjcdjhdjhdsd :\n",data.toJson(),
+      );
+
       final success = await _builderService.createProject(
         projectData: await _buildProjectPayload(),
         images: project.value.imageList.map((path) => File(path)).toList(),
@@ -1440,6 +1446,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
         //   contentType: ContentType.success,
         // );
         refreshList();
+        resetForm();
         Get.offUntil(
           MaterialPageRoute(builder: (_) => BuilderMainScreen()),
           (route) => route.isFirst,
@@ -1775,7 +1782,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
           for (var j = 0; j < config.variants.length; j++) {
             final variant = config.variants[j];
             print(
-              '    Variant ${j + 1}: ${variant.name}, BuiltUp: ${variant.builtUpArea}, Carpet: ${variant.carpetArea}, Price: ${variant.price}, Price/SqFt: ${variant.pricePerSqFt}, Total Units: ${variant.totalUnits}, Available Units: ${variant.availableUnits}',
+              '    Variant ${j + 1}: ${variant.name}, BuiltUp: ${variant.builtUpArea}, BuiltUp: ${variant.pricePerSqFt}, Carpet: ${variant.carpetArea}, Price: ${variant.price}, Total Units: ${variant.totalUnits}, Available Units: ${variant.availableUnits}',
             );
             if (variant.specifications.isNotEmpty) {
               print(
