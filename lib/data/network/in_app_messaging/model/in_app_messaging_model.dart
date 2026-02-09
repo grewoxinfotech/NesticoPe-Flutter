@@ -119,6 +119,32 @@ class NotificationItem {
       updatedAt: _parseDate(json['updatedAt']),
     );
   }
+  NotificationItem copyWith({
+    String? status,
+    NotificationMetadata? metadata,
+    DateTime? updatedAt,
+  }) {
+    return NotificationItem(
+      id: id,
+      createdBy: createdBy,
+      updatedBy: updatedBy,
+      userId: userId,
+      title: title,
+      message: message,
+      type: type,
+      priority: priority,
+      status: status ?? this.status,
+      relatedId: relatedId,
+      relatedType: relatedType,
+      actionUrl: actionUrl,
+      metadata: metadata ?? this.metadata,
+      scheduledFor: scheduledFor,
+      expiresAt: expiresAt,
+      createdAt: createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
 
   Map<String, dynamic> toJson() => {
     'id': id,

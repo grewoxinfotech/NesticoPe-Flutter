@@ -335,8 +335,7 @@ class WebSocketService {
       _socket = IO.io(
         url,
         IO.OptionBuilder()
-            .setTransports(['websocket'])
-            .setAuth({'token': token})
+            .setTransports(['websocket']).setAuth({'token': token})
             .disableAutoConnect()
             .setReconnectionAttempts(1000000)
             .setReconnectionDelay(1000)

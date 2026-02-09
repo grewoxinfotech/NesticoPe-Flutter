@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -9,6 +10,9 @@ import 'package:housing_flutter_app/data/network/user/service/notification_sync_
 import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
 import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 import 'package:http/http.dart' as http;
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../../app/constants/api_constants.dart';
 import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:get/get.dart';
@@ -56,7 +60,16 @@ class AuthService {
         );
         debugPrint("Response : ${response.body}");
 
+
         final data = jsonDecode(response.body);
+        final url = data['data']['certificateUrl'];
+
+         await downloadOpenSharePdf(url);
+
+      /*  if (path != null) {
+          print("Certificate saved at: $path");
+        }
+*/
         final success = data['success'] == true;
 
         // ✅ Show success/failure toast
@@ -104,6 +117,60 @@ class AuthService {
       return false;
     }
   }
+  Future<String?> downloadCertificate(String pdfUrl) async {
+    try {
+      final dio = Dio();
+
+      final dir = await getApplicationDocumentsDirectory();
+      final fileName = pdfUrl.split('/').last;
+      final filePath = "${dir.path}/$fileName";
+
+      await dio.download(
+        pdfUrl,
+        filePath,
+        options: Options(
+          responseType: ResponseType.bytes,
+          followRedirects: true,
+          receiveTimeout: const Duration(minutes: 2),
+        ),
+      );
+
+      return filePath;
+    } catch (e) {
+      debugPrint("PDF download failed: $e");
+      return null;
+    }
+  }
+  Future<void> downloadOpenSharePdf(String pdfUrl) async {
+    try {
+      final dio = Dio();
+
+      final dir = await getApplicationDocumentsDirectory();
+      final fileName = pdfUrl.split('/').last;
+      final filePath = "${dir.path}/$fileName";
+
+      await dio.download(
+        pdfUrl,
+        filePath,
+        options: Options(
+          responseType: ResponseType.bytes,
+          followRedirects: true,
+        ),
+      );
+
+      // 🔓 Open PDF
+      await OpenFilex.open(filePath);
+
+      // 📤 Share PDF
+      await Share.shareXFiles(
+        [XFile(filePath)],
+        text: "Here is your certificate",
+      );
+    } catch (e) {
+      debugPrint("PDF flow failed: $e");
+    }
+  }
+
 
   // Login
   Future<UserModel> login(String email, String password) async {
@@ -275,7 +342,7 @@ class AuthService {
         );
       }
     } catch (e) {
-      debugPrint('[ERROR] => Reseller registration exception: $e');
+      debugPrint('[ERROR] => Partner registration exception: $e');
       rethrow;
     }
   }

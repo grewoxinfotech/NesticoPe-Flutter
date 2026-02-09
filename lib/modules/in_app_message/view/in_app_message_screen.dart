@@ -13,7 +13,8 @@ class InAppMessageScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NotificationController controller = Get.put(NotificationController());
+    final NotificationController controller =
+        Get.find<NotificationController>();
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -35,7 +36,7 @@ class InAppMessageScreen extends StatelessWidget {
                       icon: const Icon(Icons.done_all_rounded),
                       tooltip: "Mark all as read",
                       onPressed: () async {
-                        await controller.markAsRead();
+                        await controller.markAllRead();
                       },
                     )
                     : const SizedBox.shrink(),
@@ -51,7 +52,8 @@ class InAppMessageScreen extends StatelessWidget {
           }
 
           if (controller.items.isEmpty) {
-            return _EmptyState();
+            return RefreshIndicator(onRefresh: controller.refreshNotifications,child: _EmptyState());
+
           }
 
           return ListView.builder(
@@ -138,6 +140,7 @@ class _NotificationCardState extends State<_NotificationCard>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+  final NotificationController controller = Get.find<NotificationController>();
 
   @override
   void initState() {
@@ -269,6 +272,23 @@ class _NotificationCardState extends State<_NotificationCard>
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
+
+                              Spacer(),
+                              GestureDetector(
+                                onTap: () async {
+                                  await controller.markedReadNotification(
+                                    widget.notification.id ?? '',
+                                  );
+                                },
+                                child: Text(
+                                  "Mark As Read",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: ColorRes.primary,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ],
@@ -287,8 +307,8 @@ class _NotificationCardState extends State<_NotificationCard>
   Widget _buildNotificationIcon(metadata) {
     if (metadata?.image != null) {
       return Container(
-        width: 56,
-        height: 56,
+        width: 45,
+        height: 45,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: Colors.grey[200]!, width: 1),
@@ -297,8 +317,8 @@ class _NotificationCardState extends State<_NotificationCard>
           borderRadius: BorderRadius.circular(12),
           child: Image.network(
             metadata!.image!,
-            width: 56,
-            height: 56,
+            width: 45,
+            height: 45,
             fit: BoxFit.cover,
             errorBuilder: (_, __, ___) => _defaultIcon(),
           ),
@@ -310,8 +330,8 @@ class _NotificationCardState extends State<_NotificationCard>
 
   Widget _defaultIcon() {
     return Container(
-      width: 56,
-      height: 56,
+      width: 45,
+      height: 45,
       decoration: BoxDecoration(
         color: ColorRes.primary,
 
@@ -319,7 +339,7 @@ class _NotificationCardState extends State<_NotificationCard>
       ),
       child: const Icon(
         Icons.notifications_rounded,
-        size: 28,
+        size: 20,
         color: Colors.white,
       ),
     );

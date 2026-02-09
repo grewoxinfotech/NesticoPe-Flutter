@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
@@ -90,6 +91,34 @@ class NotificationService {
     return null;
   }
 
+  Future<bool> markReadNotificationById(String id) async {
+    try {
+      final response = await http.patch(
+        Uri.parse("$baseUrl/$id/read"),
+        headers: await headers(),
+      );
+
+      debugPrint(
+        "Get notification by ID Url : ${Uri.parse("$baseUrl/$id/read")}",
+      );
+      debugPrint("Get notification by ID response: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+
+        log("When the user are from ${jsonData}");
+
+        return jsonData['success'];
+      } else {
+        debugPrint("Failed to get notification by ID: ${response.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("Get notification by ID exception: $e");
+    }
+
+    return false;
+  }
+
   Future<bool> updateNotificationMarkAsRead() async {
     try {
       final response = await http.patch(
@@ -113,5 +142,33 @@ class NotificationService {
     }
 
     return false;
+  }
+
+  Future<int> fetchCountOfUnReadNotification() async {
+    try {
+      final response = await http.get(
+        Uri.parse("$baseUrl/unread-count"),
+
+        headers: await headers(),
+      );
+
+      debugPrint("Get notification by ID response: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+
+        AppLogger.structured("All Notification Clear ", jsonData);
+        /*bdgdh uiuhjdb androd*/
+
+        return jsonData['data']['unreadCount'];
+
+      } else {
+        debugPrint("Failed to get notification by ID: ${response.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("Get notification by ID exception: $e");
+    }
+
+    return 0;
   }
 }

@@ -541,7 +541,7 @@ class AuthController extends GetxController {
         user.user!.userType = "seller";
         await SecureStorage.saveUserData(user);
       }
-      print("Token data: ${data}");
+      print("Token data: $data");
       await SecureStorage.saveToken(data);
       // await SecureStorage.saveLoggedIn(true);
 

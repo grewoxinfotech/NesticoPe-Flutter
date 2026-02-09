@@ -13,7 +13,8 @@ class NotificationController extends PaginatedController<NotificationItem> {
   RxBool isExpanded = false.obs;
   RxBool isUnreadOnly = false.obs;
   RxString selectedType = ''.obs;
-
+  RxInt unReadNumber=0
+.obs;
   /// Optional filters
   Map<String, String>? filters = {};
 
@@ -21,6 +22,7 @@ class NotificationController extends PaginatedController<NotificationItem> {
   void onInit() {
     super.onInit();
     loadInitial(); // Auto-load first page
+    getUnReadNotificationCount();
   }
 
   ///==================== Pagination Fetch ====================
@@ -33,6 +35,7 @@ class NotificationController extends PaginatedController<NotificationItem> {
       );
 
       debugPrint("Fetched notifications: ${response.items.length}");
+      getUnReadNotificationCount();
 
       return response;
     } catch (e) {
@@ -41,16 +44,15 @@ class NotificationController extends PaginatedController<NotificationItem> {
     }
   }
 
-  Future<void> markAsRead() async {
+  Future<void> markAllRead() async {
     final data = await _service.updateNotificationMarkAsRead();
     if (data) {
-      items.refresh();
+      getUnReadNotificationCount();
       items.clear();
       refreshList();
     }
   }
-/*
-* JKNDD NJSLDWSDN sdfjksfn  jndjksdm jsimaneik dfdndskjd hwdb msjdkbn wejw akdasdn bchdnn  smnskj */
+
   ///==================== Filters ====================
   void applyFilter(String key, String val) {
     filters ??= {};
@@ -72,6 +74,22 @@ class NotificationController extends PaginatedController<NotificationItem> {
     await refreshList();
 
     isLoading.value = false;
+  }
+
+  Future<void> markedReadNotification(String id) async {
+    final data = await _service.markReadNotificationById(id);
+    if (data) {
+      getUnReadNotificationCount();
+      refreshList();
+      items.refresh();
+
+    }
+  }
+
+  Future<void> getUnReadNotificationCount()
+  async {
+    final data = await _service.fetchCountOfUnReadNotification();
+    unReadNumber.value=data;
   }
 
   ///==================== Get Single Notification ====================
@@ -98,5 +116,6 @@ class NotificationController extends PaginatedController<NotificationItem> {
   ///==================== Refresh Helper ====================
   Future<void> refreshNotifications() async {
     await refreshList();
+    Future.delayed(Duration(seconds: 2));
   }
 }

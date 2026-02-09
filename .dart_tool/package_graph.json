@@ -14,6 +14,7 @@
         "connectivity_plus",
         "cupertino_icons",
         "device_info_plus",
+        "dio",
         "dotted_border",
         "dropdown_button2",
         "dropdown_search",
@@ -2408,6 +2409,29 @@
         "path",
         "sqflite_common",
         "sqflite_platform_interface"
+      ]
+    },
+    {
+      "name": "dio",
+      "version": "5.9.1",
+      "dependencies": [
+        "async",
+        "collection",
+        "dio_web_adapter",
+        "http_parser",
+        "meta",
+        "mime",
+        "path"
+      ]
+    },
+    {
+      "name": "dio_web_adapter",
+      "version": "2.1.1",
+      "dependencies": [
+        "dio",
+        "http_parser",
+        "meta",
+        "web"
       ]
     }
   ],

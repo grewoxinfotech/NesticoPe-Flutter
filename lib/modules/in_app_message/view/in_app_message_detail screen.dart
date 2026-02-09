@@ -5,22 +5,24 @@ import 'package:intl/intl.dart';
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/color_res.dart';
 import '../../../data/network/in_app_messaging/model/in_app_messaging_model.dart';
+import '../controller/in_app_message_controller.dart';
 
 class NotificationDetailScreen extends StatelessWidget {
   final NotificationItem notification;
 
-  const NotificationDetailScreen({
-    super.key,
-    required this.notification,
-  });
+  const NotificationDetailScreen({super.key, required this.notification});
 
   @override
   Widget build(BuildContext context) {
+    NotificationController notificationController =
+        Get.find<NotificationController>();
     final metadata = notification.metadata;
-    final date = notification.createdAt != null
-        ? DateFormat("EEEE, dd MMMM yyyy 'at' hh:mm a")
-        .format(notification.createdAt!)
-        : "";
+    final date =
+        notification.createdAt != null
+            ? DateFormat(
+              "EEEE, dd MMMM yyyy 'at' hh:mm a",
+            ).format(notification.createdAt!)
+            : "";
 
     return Scaffold(
       body: CustomScrollView(
@@ -36,17 +38,18 @@ class NotificationDetailScreen extends StatelessWidget {
               icon: _circleIcon(const Icon(Icons.arrow_back, size: 20)),
               onPressed: () => Navigator.pop(context),
             ),
-            actions: [
+            /*  actions: [
               IconButton(
                 icon: _circleIcon(const Icon(Icons.more_vert, size: 20)),
                 onPressed: () => _showMoreOptions(context),
               ),
               const SizedBox(width: 8),
-            ],
+            ],*/
             flexibleSpace: FlexibleSpaceBar(
-              background: metadata?.image != null
-                  ? _buildHeaderImage(metadata!.image!)
-                  : _buildHeaderGradient(),
+              background:
+                  metadata?.image != null
+                      ? _buildHeaderImage(metadata!.image!)
+                      : _buildHeaderGradient(),
             ),
           ),
 
@@ -145,7 +148,10 @@ class NotificationDetailScreen extends StatelessWidget {
                 ),
 
                 // Action Buttons
-                _buildActionButtons(),
+                _buildActionButtons(
+                  notificationController,
+                  notification.id ?? '',
+                ),
 
                 const SizedBox(height: 24),
               ],
@@ -190,10 +196,7 @@ class NotificationDetailScreen extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                Colors.transparent,
-                Colors.black.withOpacity(0.3),
-              ],
+              colors: [Colors.transparent, Colors.black.withOpacity(0.3)],
             ),
           ),
         ),
@@ -207,10 +210,7 @@ class NotificationDetailScreen extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            ColorRes.primary,
-            Colors.purple[500]!,
-          ],
+          colors: [ColorRes.primary, Colors.purple[500]!],
         ),
       ),
       child: Center(
@@ -287,10 +287,7 @@ class NotificationDetailScreen extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   value.toString(),
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[800],
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.grey[800]),
                 ),
               ],
             ),
@@ -300,14 +297,17 @@ class NotificationDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButtons() {
+  Widget _buildActionButtons(NotificationController controller, String id) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
           Expanded(
             child: ElevatedButton(
-              onPressed: Get.back,
+              onPressed: () async {
+                await controller.markedReadNotification(id);
+                Get.back();
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: ColorRes.primary,
                 padding: const EdgeInsets.symmetric(vertical: 16),
@@ -324,7 +324,7 @@ class NotificationDetailScreen extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: OutlinedButton(
-              onPressed: () {},
+              onPressed: Get.back,
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: ColorRes.primary, width: 1.5),
                 padding: const EdgeInsets.symmetric(vertical: 16),
@@ -349,9 +349,12 @@ class NotificationDetailScreen extends StatelessWidget {
         .replaceAll('_', ' ')
         .trim()
         .split(' ')
-        .map((w) => w.isEmpty
-        ? ''
-        : w[0].toUpperCase() + w.substring(1).toLowerCase())
+        .map(
+          (w) =>
+              w.isEmpty
+                  ? ''
+                  : w[0].toUpperCase() + w.substring(1).toLowerCase(),
+        )
         .join(' ');
   }
 
@@ -359,56 +362,61 @@ class NotificationDetailScreen extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (_) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 12),
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(2),
-                ),
+      builder:
+          (_) => Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 12),
+                  Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  _sheetItem(
+                    Icons.check_circle_outline,
+                    "Mark as Read",
+                    context,
+                  ),
+                  _sheetItem(
+                    Icons.delete_outline,
+                    "Delete Notification",
+                    context,
+                    destructive: true,
+                  ),
+                  _sheetItem(Icons.share_outlined, "Share", context),
+                  const SizedBox(height: 12),
+                ],
               ),
-              const SizedBox(height: 20),
-              _sheetItem(Icons.check_circle_outline, "Mark as Read", context),
-              _sheetItem(Icons.delete_outline, "Delete Notification", context,
-                  destructive: true),
-              _sheetItem(Icons.share_outlined, "Share", context),
-              const SizedBox(height: 12),
-            ],
+            ),
           ),
-        ),
-      ),
     );
   }
 
   Widget _sheetItem(
-      IconData icon,
-      String title,
-      BuildContext context, {
-        bool destructive = false,
-      }) {
+    IconData icon,
+    String title,
+    BuildContext context, {
+    bool destructive = false,
+  }) {
     return ListTile(
       leading: Icon(
         icon,
-        color: destructive
-            ? ColorRes.error
-            : ColorRes.leadGreyColor.shade700,
+        color: destructive ? ColorRes.error : ColorRes.leadGreyColor.shade700,
       ),
       title: Text(
         title,
         style: TextStyle(
-          color: destructive
-              ? ColorRes.error
-              : ColorRes.leadGreyColor.shade700,
+          color: destructive ? ColorRes.error : ColorRes.leadGreyColor.shade700,
         ),
       ),
       onTap: () => Navigator.pop(context),

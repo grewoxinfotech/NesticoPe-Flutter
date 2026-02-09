@@ -28,6 +28,7 @@ import '../../../widgets/messages/snack_bar.dart';
 import '../../builder/controller/builder_form_controller.dart';
 import '../../builder/view/builder_main_screen.dart';
 import '../../contractor/view/contractor_main.dart';
+import '../../in_app_message/controller/in_app_message_controller.dart';
 import '../../property/controllers/property_controller.dart';
 
 class HomeHeader extends StatefulWidget {
@@ -54,6 +55,7 @@ class _HomeHeaderState extends State<HomeHeader> {
   final propertyController = Get.find<PropertyController>();
   final projectController = Get.find<ProjectWizardController>();
   final searchHistoryController = Get.find<SearchHistoryController>();
+  final NotificationController controller = Get.put(NotificationController());
 
   int selectedIndex = 0;
 
@@ -159,30 +161,61 @@ class _HomeHeaderState extends State<HomeHeader> {
                 ),
               ),
 
-              GestureDetector(
-                onTap: () {
-                  Get.to(() => InAppMessageScreen());
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  // decoration: BoxDecoration(
-                  //   color: ColorRes.primary.withOpacity(0.05),
-                  //   border: Border.all(
-                  //     color: ColorRes.primary.withOpacity(0.3),
-                  //   ),
-                  //   borderRadius: BorderRadius.circular(12),
-                  // ),
-                  child: Icon(
-                    Icons.notifications_none_rounded,
-                    color: ColorRes.primary,
-                    size: 25,
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      controller.refreshNotifications();
+                      Get.to(() => InAppMessageScreen());
+
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      child: Icon(
+                        Icons.notifications_none_rounded,
+                        color: ColorRes.primary,
+                        size: 25,
+                      ),
+                    ),
                   ),
-                ),
+
+                  // 🔴 Badge
+                  Obx(() {
+                    if(controller.unReadNumber.value==0){
+                      return SizedBox.shrink();
+                    }
+                    return Positioned(
+                      right: 4,
+                      top: 2,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
+                        child: Center(
+                          child: Text(
+                            '${controller.unReadNumber.value}', // 🔢 notification count
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },)
+                ],
               ),
               SizedBox(width: 8),
               GestureDetector(
                 onTap: () {
-
                   log('dhfgugh djfdfjdn fhgfhglkb ${widget.image}');
                   Get.to(() => ProfileScreen(imageUrl: widget.image));
                 },

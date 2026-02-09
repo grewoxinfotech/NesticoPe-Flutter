@@ -283,6 +283,8 @@ class OnboardingController extends GetxController {
     selectedOption.value = option;
     isProcessing.value = true;
 
+    log("Options of the dashboard $option");
+
     try {
       // Perform different operations based on selection
       switch (option) {
@@ -295,7 +297,7 @@ class OnboardingController extends GetxController {
         case 'Seller Registration':
           handleSellerRegistration();
           break;
-        case 'Reseller Registration':
+        case 'Partner Registration':
           handleResellerRegistration();
           break;
         case 'Contractor Registration':
