@@ -366,7 +366,7 @@ class RoomDetail extends StatelessWidget {
                             const SizedBox(height: 12),
                             buildTextField(
                               "Enter other facility",
-                              Icons.currency_rupee_outlined,
+                              Icons.other_houses_outlined,
                               controller.otherFacility,
                             ),
                           ],

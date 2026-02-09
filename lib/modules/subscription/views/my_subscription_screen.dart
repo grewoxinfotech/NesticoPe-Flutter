@@ -1,0 +1,200 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:housing_flutter_app/modules/subscription/views/widgets/cancel_subscription_dialog.dart';
+
+import '../../../app/utils/formater/formater.dart';
+import '../controller/user_subscription_controller.dart';
+
+class MySubscriptionScreen extends StatelessWidget {
+  const MySubscriptionScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = Get.put(CurrentUserPlanController());
+
+    return Scaffold(
+      appBar: AppBar(title: const Text("My Subscriptions")),
+      body: Obx(() {
+        /// Initial loading
+        if (controller.isLoading.value && controller.items.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        /// Empty state
+        if (controller.items.isEmpty) {
+          return const Center(child: Text("No subscriptions found"));
+        }
+
+        return NotificationListener<ScrollEndNotification>(
+          onNotification: (scrollEnd) {
+            final metrics = scrollEnd.metrics;
+            if (metrics.atEdge && metrics.pixels != 0) {
+              controller.loadMore();
+            }
+            return false;
+          },
+
+          child: ListView.builder(
+            padding: const EdgeInsets.all(12),
+            itemCount: controller.items.length,
+            itemBuilder: (context, index) {
+              /// Pagination loader at bottom
+              if (index == controller.items.length) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+
+              final item = controller.items[index];
+              final plan = item.plan;
+
+              final String startDate = Formatter.formatDate(
+                item.startDate.toString(),
+              );
+
+              final String endDate = Formatter.formatDate(
+                item.endDate.toString(),
+              );
+
+              final String price = Formatter.formatPrice(
+                double.tryParse(plan?.amount ?? "0") ?? 0,
+              );
+
+              final bool isActive = DateTime.now().isBefore(item.endDate!);
+
+              return _SubscriptionCard(
+                planName: plan?.name ?? "Unknown Plan",
+                startDate: startDate,
+                endDate: endDate,
+                price: price,
+                status: item.status ?? '',
+              );
+            },
+          ),
+        );
+      }),
+    );
+  }
+}
+
+/// ================= CARD UI =================
+
+class _SubscriptionCard extends StatelessWidget {
+  final String planName;
+  final String startDate;
+  final String endDate;
+  final String price;
+  final String status;
+
+  const _SubscriptionCard({
+    required this.planName,
+    required this.startDate,
+    required this.endDate,
+    required this.price,
+    required this.status,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final statusColor = getColor(status);
+
+    // final statusText = status ? "Active" : "Expired";
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// Header
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  planName,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: statusColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  status.capitalize.toString(),
+                  style: TextStyle(
+                    color: statusColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  Get.dialog(CancelSubscriptionDialog());
+                },
+                icon: Icon(Icons.remove_circle_outline, color: Colors.red),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 12),
+
+          /// Details
+          _row("Start Date", startDate),
+          _row("End Date", endDate),
+          _row("Price", price),
+        ],
+      ),
+    );
+  }
+
+  Widget _row(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Text(
+            "$label:",
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+          ),
+          const SizedBox(width: 8),
+          Expanded(child: Text(value, style: const TextStyle(fontSize: 13))),
+        ],
+      ),
+    );
+  }
+
+  Color getColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'active':
+        return Colors.green;
+      case 'pending':
+        return Colors.orange;
+      case 'expired':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+}

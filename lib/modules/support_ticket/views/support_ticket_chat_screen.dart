@@ -396,14 +396,15 @@ class _SupportTicketChatScreenState extends State<SupportTicketChatScreen> {
               ),
             ),
 
-            ChatMessageInputField(
-              messageController: _messageController,
-              onSendTap: _sendMessage,
-              pendingFile: _pendingFile,
-              // onDocumentPicked: (file) {
-              //   _pendingFile = file; // <-- STORE FILE
-              // },
-            ),
+            if (widget.ticket.status?.toLowerCase() != 'resolved')
+              ChatMessageInputField(
+                messageController: _messageController,
+                onSendTap: _sendMessage,
+                pendingFile: _pendingFile,
+                // onDocumentPicked: (file) {
+                //   _pendingFile = file; // <-- STORE FILE
+                // },
+              ),
           ],
         );
       }),

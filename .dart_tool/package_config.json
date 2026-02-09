@@ -266,6 +266,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "eventify",
+      "rootUri": "file:///C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/eventify-1.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "excel",
       "rootUri": "file:///C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/excel-4.0.6",
       "packageUri": "lib/",
@@ -339,7 +345,7 @@
     },
     {
       "name": "flutter",
-      "rootUri": "file:///E:/flutter/packages/flutter",
+      "rootUri": "file:///C:/flutter/src/flutter/packages/flutter",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
@@ -393,7 +399,7 @@
     },
     {
       "name": "flutter_localizations",
-      "rootUri": "file:///E:/flutter/packages/flutter_localizations",
+      "rootUri": "file:///C:/flutter/src/flutter/packages/flutter_localizations",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
@@ -465,7 +471,7 @@
     },
     {
       "name": "flutter_test",
-      "rootUri": "file:///E:/flutter/packages/flutter_test",
+      "rootUri": "file:///C:/flutter/src/flutter/packages/flutter_test",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
@@ -477,13 +483,13 @@
     },
     {
       "name": "flutter_web_plugins",
-      "rootUri": "file:///E:/flutter/packages/flutter_web_plugins",
+      "rootUri": "file:///C:/flutter/src/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
     {
       "name": "fluttertoast",
-      "rootUri": "file:///C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/fluttertoast-9.0.0",
+      "rootUri": "file:///C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/fluttertoast-8.2.14",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -1040,6 +1046,12 @@
       "languageVersion": "3.4"
     },
     {
+      "name": "razorpay_flutter",
+      "rootUri": "file:///C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/razorpay_flutter-1.4.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "readmore",
       "rootUri": "file:///C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/readmore-3.0.0",
       "packageUri": "lib/",
@@ -1143,7 +1155,7 @@
     },
     {
       "name": "sky_engine",
-      "rootUri": "file:///E:/flutter/bin/cache/pkg/sky_engine",
+      "rootUri": "file:///C:/flutter/src/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
@@ -1552,7 +1564,7 @@
   ],
   "generator": "pub",
   "generatorVersion": "3.10.7",
-  "flutterRoot": "file:///E:/flutter",
+  "flutterRoot": "file:///C:/flutter/src/flutter",
   "flutterVersion": "3.38.8",
   "pubCache": "file:///C:/Users/DELL/AppData/Local/Pub/Cache"
 }

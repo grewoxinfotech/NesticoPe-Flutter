@@ -207,7 +207,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart'; // Import added
 
-class ColorRes {
+class ColorResImg {
   static const Color leadGreyColor = Colors.grey;
   static final Color shimmerBase = Colors.grey[300]!;
   static final Color shimmerHighlight = Colors.grey[100]!;
@@ -270,8 +270,8 @@ class CustomImage extends StatelessWidget {
   /// ✅ Shimmer Placeholder Widget
   Widget _shimmerPlaceholder() {
     return Shimmer.fromColors(
-      baseColor: ColorRes.shimmerBase,
-      highlightColor: ColorRes.shimmerHighlight,
+      baseColor: ColorResImg.shimmerBase,
+      highlightColor: ColorResImg.shimmerHighlight,
       child: Container(
         width: width ?? double.infinity,
         height: height ?? double.infinity,
@@ -318,7 +318,7 @@ class CustomImage extends StatelessWidget {
               (context, url, error) => const Icon(
                 Icons.broken_image,
                 size: 40,
-                color: ColorRes.leadGreyColor,
+                color: ColorResImg.leadGreyColor,
               ),
         );
 
@@ -355,7 +355,7 @@ class CustomImage extends StatelessWidget {
   ) {
     return const Icon(
       Icons.broken_image,
-      color: ColorRes.leadGreyColor,
+      color: ColorResImg.leadGreyColor,
       size: 40,
     );
   }

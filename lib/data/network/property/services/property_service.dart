@@ -192,7 +192,6 @@ class PropertyService {
       // Send request
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
-
       AppLogger.structured("Create property response: ", response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -201,9 +200,11 @@ class PropertyService {
           contentType: ContentType.success,
         );
       } else {
+        final data = jsonDecode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: "Error",
-          message: "Failed to create property. Please try again.",
+          message:
+              data['message'] ?? "Failed to create property. Please try again.",
           contentType: ContentType.failure,
         );
       }

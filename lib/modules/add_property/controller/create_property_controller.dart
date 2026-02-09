@@ -542,10 +542,9 @@ class CreatePropertyController extends GetxController {
   var saleDeedDocumentNumber = TextEditingController();
   var yearOfRegistration = TextEditingController();
 
-
   /////================================ PlotAdvance details Variables ===============
-  var khataNumberPlotAndLand=TextEditingController();
-  var surveyNumberPlotAndLand=TextEditingController();
+  var khataNumberPlotAndLand = TextEditingController();
+  var surveyNumberPlotAndLand = TextEditingController();
 
   @override
   void onInit() {
@@ -1920,7 +1919,7 @@ class CreatePropertyController extends GetxController {
               propertyId: propertyId,
             );
             break;
-       /*   case "sell":
+          /*   case "sell":
             success = await _addPropertyResidentialSell(
               isEdit: true,
               propertyId: propertyId,
@@ -2000,7 +1999,7 @@ class CreatePropertyController extends GetxController {
       final action = lookingTo.value.toLowerCase();
 
       final subtype = selectedIndex.value.toLowerCase(); // For commercial cases
-log(" Plot type check ${type} ====== $action============$subtype");
+      log(" Plot type check ${type} ====== $action============$subtype");
       if (type.isEmpty || action.isEmpty) {
         print("Error: Property type or action is empty.");
         return;
@@ -3022,16 +3021,12 @@ log(" Plot type check ${type} ====== $action============$subtype");
     final userId = user?.user?.id ?? "";
     DateTime? parsedDate;
 
-
     if (rent_AvailableFrom.text.trim().isNotEmpty) {
-      parsedDate = DateFormat('d/M/yyyy')
-          .parse(rent_AvailableFrom.text.trim());
+      parsedDate = DateFormat('d/M/yyyy').parse(rent_AvailableFrom.text.trim());
     }
 
-    final formattedDate = parsedDate != null
-        ? DateFormat('yyyy-MM-dd').format(parsedDate)
-        : null;
-
+    final formattedDate =
+        parsedDate != null ? DateFormat('yyyy-MM-dd').format(parsedDate) : null;
 
     return AddPropertyModel(
       type:
@@ -3094,10 +3089,7 @@ log(" Plot type check ${type} ====== $action============$subtype");
                 ? selectedRoomAmenities.value
                 : null,
 
-        possessionInfo: PossessionInfo(
-          possessionDate:
-          formattedDate,
-        ),
+        possessionInfo: PossessionInfo(possessionDate: formattedDate),
         lifInfo: LiftInfo(
           serviceLift:
               lift_info.value.isNotEmpty &&
@@ -3299,7 +3291,6 @@ log(" Plot type check ${type} ====== $action============$subtype");
 
       propertyType:
           rent_propertyType.value.isNotEmpty
-
               ? rent_propertyType.value.toLowerCase().replaceAll(" ", "_")
               : null,
       propertyDescription:
@@ -3311,12 +3302,14 @@ log(" Plot type check ${type} ====== $action============$subtype");
             saleDeedDocumentNumber.text.trim().isNotEmpty
                 ? saleDeedDocumentNumber.text.trim()
                 : null,
-        khataNumberPlot:   khataNumberPlotAndLand.text.trim().isNotEmpty
-            ? khataNumberPlotAndLand.text.trim()
-            : null ,
-        surveyNumber:   surveyNumberPlotAndLand.text.trim().isNotEmpty
-            ? surveyNumberPlotAndLand.text.trim()
-            : null ,
+        khataNumberPlot:
+            khataNumberPlotAndLand.text.trim().isNotEmpty
+                ? khataNumberPlotAndLand.text.trim()
+                : null,
+        surveyNumber:
+            surveyNumberPlotAndLand.text.trim().isNotEmpty
+                ? surveyNumberPlotAndLand.text.trim()
+                : null,
         subRegistrarOfficeName:
             subRegistrarOffice.text.trim().isNotEmpty
                 ? subRegistrarOffice.text.trim()
@@ -3326,7 +3319,7 @@ log(" Plot type check ${type} ====== $action============$subtype");
                 ? int.tryParse(yearOfRegistration.text.trim())
                 : null,
         availableFrom: formattedDate,
-        tenantType: tenantType.value.toLowerCase(),
+        // tenantType: tenantType.value.toLowerCase(),
         bhk: int.tryParse(
           bhkType.value
               .split(RegExp(r'\D'))
@@ -3607,12 +3600,14 @@ log(" Plot type check ${type} ====== $action============$subtype");
               .split(RegExp(r'\D'))
               .firstWhere((e) => e.isNotEmpty, orElse: () => ''),
         ),
-        khataNumberPlot:   khataNumberPlotAndLand.text.trim().isNotEmpty
-            ? khataNumberPlotAndLand.text.trim()
-            : null ,
-        surveyNumber:   surveyNumberPlotAndLand.text.trim().isNotEmpty
-            ? surveyNumberPlotAndLand.text.trim()
-            : null ,
+        khataNumberPlot:
+            khataNumberPlotAndLand.text.trim().isNotEmpty
+                ? khataNumberPlotAndLand.text.trim()
+                : null,
+        surveyNumber:
+            surveyNumberPlotAndLand.text.trim().isNotEmpty
+                ? surveyNumberPlotAndLand.text.trim()
+                : null,
         transactionType:
             transactionType.value.isNotEmpty
                 ? transactionType.value.toLowerCase().replaceAll(" ", "_")
@@ -3734,7 +3729,10 @@ log(" Plot type check ${type} ====== $action============$subtype");
               plotWidth.text.trim().isNotEmpty
                   ? double.tryParse(plotWidth.text.trim())
                   : null,
-          possessionStatus: sell_constructionStatus.value.isNotEmpty?sell_constructionStatus.value:null,
+          possessionStatus:
+              sell_constructionStatus.value.isNotEmpty
+                  ? sell_constructionStatus.value
+                  : null,
 
           plotArea:
               commercial_plot.text.trim().isNotEmpty
@@ -3744,17 +3742,23 @@ log(" Plot type check ${type} ====== $action============$subtype");
               commercial_plotArea.value.isNotEmpty
                   ? commercial_plotArea.value
                   : null,
-          ownership:commercial_ownerShipList.value.isNotEmpty?commercial_ownerShipList.value.toLowerCase().replaceAll(" ","_"):null ,
-          zoneType:commercial_ZoneType.value.isNotEmpty?commercial_ZoneType.value.toLowerCase().replaceAll(" ","_"):null ,
-
-
+          ownership:
+              commercial_ownerShipList.value.isNotEmpty
+                  ? commercial_ownerShipList.value.toLowerCase().replaceAll(
+                    " ",
+                    "_",
+                  )
+                  : null,
+          zoneType:
+              commercial_ZoneType.value.isNotEmpty
+                  ? commercial_ZoneType.value.toLowerCase().replaceAll(" ", "_")
+                  : null,
 
           possessionDate:
               sell_constructionStatus.value.toLowerCase() == 'in future' &&
                       sell_AvailableFrom.text.trim().isNotEmpty
                   ? formatDateForBackend(sell_AvailableFrom.text.trim())
                   : null,
-
         ),
         furnishInfo:
             furnishingType.value.isNotEmpty
@@ -4112,12 +4116,14 @@ log(" Plot type check ${type} ====== $action============$subtype");
             selectedCommercialAmenities.value.isNotEmpty
                 ? selectedCommercialAmenities.value
                 : null,
-        khataNumberPlot:   khataNumberPlotAndLand.text.trim().isNotEmpty
-            ? khataNumberPlotAndLand.text.trim()
-            : null ,
-        surveyNumber:   surveyNumberPlotAndLand.text.trim().isNotEmpty
-            ? surveyNumberPlotAndLand.text.trim()
-            : null ,
+        khataNumberPlot:
+            khataNumberPlotAndLand.text.trim().isNotEmpty
+                ? khataNumberPlotAndLand.text.trim()
+                : null,
+        surveyNumber:
+            surveyNumberPlotAndLand.text.trim().isNotEmpty
+                ? surveyNumberPlotAndLand.text.trim()
+                : null,
 
         financialInfo: FinancialInfo(
           monthlyRent:
@@ -4801,12 +4807,14 @@ log(" Plot type check ${type} ====== $action============$subtype");
             commercial_ZoneType.value.isNotEmpty
                 ? commercial_ZoneType.value
                 : null,
-        khataNumberPlot:   khataNumberPlotAndLand.text.trim().isNotEmpty
-            ? khataNumberPlotAndLand.text.trim()
-            : null ,
-        surveyNumber:   surveyNumberPlotAndLand.text.trim().isNotEmpty
-            ? surveyNumberPlotAndLand.text.trim()
-            : null ,
+        khataNumberPlot:
+            khataNumberPlotAndLand.text.trim().isNotEmpty
+                ? khataNumberPlotAndLand.text.trim()
+                : null,
+        surveyNumber:
+            surveyNumberPlotAndLand.text.trim().isNotEmpty
+                ? surveyNumberPlotAndLand.text.trim()
+                : null,
         amenities:
             selectedCommercialAmenities.value.isNotEmpty
                 ? selectedCommercialAmenities.value

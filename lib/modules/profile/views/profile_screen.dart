@@ -589,6 +589,7 @@ import 'package:housing_flutter_app/modules/referral/view/referral_dashboard.dar
 import 'package:housing_flutter_app/modules/review/views/widget/add_app_review_screen.dart';
 import 'package:housing_flutter_app/modules/review/views/widget/app_review_card.dart';
 import 'package:housing_flutter_app/modules/saved_property/views/user_activity_screen.dart';
+import 'package:housing_flutter_app/modules/subscription/views/my_subscription_screen.dart';
 import 'package:housing_flutter_app/widgets/bar/app_bar/common_bar.dart';
 import 'package:housing_flutter_app/widgets/button/button.dart';
 
@@ -704,6 +705,13 @@ class ProfileScreen extends StatelessWidget {
                         subTitle: "Track your interactions",
                         onTap: () => Get.to(() => UserActivityScreen()),
                       ),
+                      if (!UserHelper.isGuest || !UserHelper.isBuyer)
+                        SettingsMenuTile(
+                          icon: Icons.workspace_premium,
+                          title: "My Subscription",
+                          subTitle: "Track your Subscription",
+                          onTap: () => Get.to(() => MySubscriptionScreen()),
+                        ),
                       SettingsMenuTile(
                         icon: Icons.travel_explore,
                         title: "Visits",

@@ -55,6 +55,7 @@
         "persistent_bottom_nav_bar",
         "printing",
         "provider",
+        "razorpay_flutter",
         "readmore",
         "salomon_bottom_bar",
         "share_plus",
@@ -148,11 +149,33 @@
       ]
     },
     {
+      "name": "razorpay_flutter",
+      "version": "1.4.0",
+      "dependencies": [
+        "eventify",
+        "flutter",
+        "fluttertoast"
+      ]
+    },
+    {
       "name": "signature",
       "version": "6.3.0",
       "dependencies": [
         "flutter",
         "flutter_svg"
+      ]
+    },
+    {
+      "name": "dio",
+      "version": "5.9.1",
+      "dependencies": [
+        "async",
+        "collection",
+        "dio_web_adapter",
+        "http_parser",
+        "meta",
+        "mime",
+        "path"
       ]
     },
     {
@@ -306,7 +329,7 @@
     },
     {
       "name": "fluttertoast",
-      "version": "9.0.0",
+      "version": "8.2.14",
       "dependencies": [
         "flutter",
         "flutter_web_plugins",
@@ -1131,6 +1154,21 @@
         "stream_channel",
         "string_scanner",
         "term_glyph"
+      ]
+    },
+    {
+      "name": "eventify",
+      "version": "1.0.1",
+      "dependencies": []
+    },
+    {
+      "name": "dio_web_adapter",
+      "version": "2.1.1",
+      "dependencies": [
+        "dio",
+        "http_parser",
+        "meta",
+        "web"
       ]
     },
     {
@@ -2409,29 +2447,6 @@
         "path",
         "sqflite_common",
         "sqflite_platform_interface"
-      ]
-    },
-    {
-      "name": "dio",
-      "version": "5.9.1",
-      "dependencies": [
-        "async",
-        "collection",
-        "dio_web_adapter",
-        "http_parser",
-        "meta",
-        "mime",
-        "path"
-      ]
-    },
-    {
-      "name": "dio_web_adapter",
-      "version": "2.1.1",
-      "dependencies": [
-        "dio",
-        "http_parser",
-        "meta",
-        "web"
       ]
     }
   ],
