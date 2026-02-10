@@ -168,7 +168,7 @@ class LeadItem {
   final String? fakeReason;
   final String? markedFakeBy;
   final String? markedFakeAt;
-  Items? customFields; // 👈 can hold either Map or String
+  CustomOldLeadFields? customFields; // 👈 can hold either Map or String
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final String? commissionStatus;
@@ -227,43 +227,45 @@ class LeadItem {
     fakeReason: json["fakeReason"],
     markedFakeBy: json["markedFakeBy"],
     markedFakeAt: json["markedFakeAt"],
-    customFields:
-        (() {
-          final data = json["customFields"];
-          if (data == null) return null;
-          if (data is Items) return data;
-          if (data is Map<String, dynamic>) {
-            try {
-              return Items.fromJson(data);
-            } catch (e) {
-              log("Error parsing customFields as Map: $e");
-              return null;
-            }
-          }
+    // customFields:
+    //     (() {
+    //       final data = json["customFields"];
+    //       if (data == null) return null;
+    //       if (data is Items) return data;
+    //       if (data is Map<String, dynamic>) {
+    //         try {
+    //           return Items.fromJson(data);
+    //         } catch (e) {
+    //           log("Error parsing customFields as Map: $e");
+    //           return null;
+    //         }
+    //       }
+    //
+    //       // if (data is String && data.isNotEmpty) {
+    //       //   // Try to parse JSON string
+    //       //   log("Parsing customFields from String: $data");
+    //       //   try {
+    //       //     // First, try to decode as JSON
+    //       //     final decoded = jsonDecode(data);
+    //       //     // Check if decoded result is a Map
+    //       //     if (decoded is Map) {
+    //       //       // Cast to Map<String, dynamic>
+    //       //       return Items.fromJson(Map<String, dynamic>.from(decoded));
+    //       //     } else {
+    //       //       // If not a Map, return null (string is not valid)
+    //       //       log("customFields String decoded to non-Map type: ${decoded.runtimeType}");
+    //       //       return null;
+    //       //     }
+    //       //   } catch (e) {
+    //       //     // If JSON decode fails, the string is just a plain value, not JSON
+    //       //     log("customFields is a plain String (not JSON): $data");
+    //       //     return null;
+    //       //   }
+    //       // }
+    //       return null;
+    //     })(),
 
-          // if (data is String && data.isNotEmpty) {
-          //   // Try to parse JSON string
-          //   log("Parsing customFields from String: $data");
-          //   try {
-          //     // First, try to decode as JSON
-          //     final decoded = jsonDecode(data);
-          //     // Check if decoded result is a Map
-          //     if (decoded is Map) {
-          //       // Cast to Map<String, dynamic>
-          //       return Items.fromJson(Map<String, dynamic>.from(decoded));
-          //     } else {
-          //       // If not a Map, return null (string is not valid)
-          //       log("customFields String decoded to non-Map type: ${decoded.runtimeType}");
-          //       return null;
-          //     }
-          //   } catch (e) {
-          //     // If JSON decode fails, the string is just a plain value, not JSON
-          //     log("customFields is a plain String (not JSON): $data");
-          //     return null;
-          //   }
-          // }
-          return null;
-        })(),
+    customFields: CustomOldLeadFields.fromJson(json["customFields"]),
 
     createdAt:
         json["createdAt"] != null ? DateTime.parse(json["createdAt"]) : null,
@@ -374,6 +376,88 @@ extension LeadItemCopy on LeadItem {
     );
   }
 }
+class CustomOldLeadFields {
+  final bool? isNegotiable;
+  final String? timePeriod;
+  final int? negotiablePrice;
+
+  final String? visitDate;
+  final String? visitTime;
+
+  final String? inquiryType;
+
+  // Project related
+  final String? selectedVariantId;
+  final String? selectedVariantName;
+  final int? selectedVariantBhk;
+  final int? selectedVariantPrice;
+
+  // Property related
+  final String? type;
+
+  final int? margin;
+  final String? marginType;
+  final int? finalNegotiablePrice;
+
+  final bool? isConvertedToProject;
+
+  CustomOldLeadFields({
+    this.isNegotiable,
+    this.timePeriod,
+    this.negotiablePrice,
+    this.visitDate,
+    this.visitTime,
+    this.inquiryType,
+    this.selectedVariantId,
+    this.selectedVariantName,
+    this.selectedVariantBhk,
+    this.selectedVariantPrice,
+    this.type,
+    this.margin,
+    this.marginType,
+    this.finalNegotiablePrice,
+    this.isConvertedToProject,
+  });
+
+  factory CustomOldLeadFields.fromJson(Map<String, dynamic> json) {
+    return CustomOldLeadFields(
+      isNegotiable: json['isNegotiable'],
+      timePeriod: json['timePeriod'],
+      negotiablePrice: json['negotiablePrice'],
+      visitDate: json['visitDate'],
+      visitTime: json['visitTime'],
+      inquiryType: json['inquiryType'],
+      selectedVariantId: json['selectedVariantId'],
+      selectedVariantName: json['selectedVariantName'],
+      selectedVariantBhk: json['selectedVariantBhk'],
+      selectedVariantPrice: json['selectedVariantPrice'],
+      type: json['type'],
+      margin: json['margin'],
+      marginType: json['marginType'],
+      finalNegotiablePrice: json['finalNegotiablePrice'],
+      isConvertedToProject: json['isConvertedToProject'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    "isNegotiable": isNegotiable,
+    "timePeriod": timePeriod,
+    "negotiablePrice": negotiablePrice,
+    "visitDate": visitDate,
+    "visitTime": visitTime,
+    "inquiryType": inquiryType,
+    "selectedVariantId": selectedVariantId,
+    "selectedVariantName": selectedVariantName,
+    "selectedVariantBhk": selectedVariantBhk,
+    "selectedVariantPrice": selectedVariantPrice,
+    "type": type,
+    "margin": margin,
+    "marginType": marginType,
+    "finalNegotiablePrice": finalNegotiablePrice,
+    "isConvertedToProject": isConvertedToProject,
+  };
+}
+
 
 // import 'dart:developer';
 

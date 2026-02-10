@@ -1321,16 +1321,16 @@ class BuilderLeadOverView extends StatelessWidget {
             padding: EdgeInsets.zero,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
-              childAspectRatio: 0.84,
-              crossAxisSpacing: 12,
+              crossAxisCount: 3,
+              childAspectRatio: 0.99,
+              crossAxisSpacing: 10,
               mainAxisSpacing: 10,
             ),
             itemCount: project.amenities.length,
             itemBuilder: (context, index) {
-              final amenity = project.amenities[index];
+              final amenity = project.amenities[index].toLowerCase().replaceAll(" ", "_");
               print("Project deatils ${project.amenities.map((e) => e)}");
-              final Map<String, String> amenityIcons = {
+              /*final Map<String, String> amenityIcons = {
                 'Swimming Pool': AppSvgRes.swimming,
                 "Fire Safety": AppSvgRes.fire_extinguisher,
                 "CCTV": AppSvgRes.cctv,
@@ -1355,6 +1355,47 @@ class BuilderLeadOverView extends StatelessWidget {
                 "Temple": AppSvgRes.hall,
                 "Jogging Track": AppSvgRes.sports,
                 "Amphitheatre Theater": AppSvgRes.home_theater,
+              };*/
+              final Map<String, String> amenityIcons = {
+                // 🏊 Lifestyle
+                'swimming_pool': AppSvgRes.swimming,
+                'gym': AppSvgRes.gym,
+                'gymnasium': AppSvgRes.gym,
+                'club_house': AppSvgRes.club,
+                'community_hall': AppSvgRes.hall,
+                'multipurpose_hall': AppSvgRes.multi_purpose_hall,
+                'children_play_area': AppSvgRes.playground,
+                'meditation_area': AppSvgRes.meditation_area,
+                'garden': AppSvgRes.garden,
+                'gardens': AppSvgRes.garden,
+                'gated_community': AppSvgRes.security,
+                'jogging_track': AppSvgRes.jogging,
+                'amphitheatre': AppSvgRes.home_theater,
+                'temple': AppSvgRes.temple ?? AppSvgRes.hall,
+
+                // 🔐 Safety & Security
+                '24x7_security': AppSvgRes.security,
+                'cctv': AppSvgRes.cctv,
+                'cctv_surveillance': AppSvgRes.cctv,
+                'intercom': AppSvgRes.intercom ?? AppSvgRes.security,
+                'fire_safety': AppSvgRes.fire_extinguisher,
+
+                // ⚡ Utilities
+                'power_backup': AppSvgRes.battery,
+                'lift': AppSvgRes.elevator,
+                'service_lift': AppSvgRes.elevator,
+                'solar_panels': AppSvgRes.solar_panel,
+                'ev_charging': AppSvgRes.dg,
+                'wi-fi_connectivity': AppSvgRes.internet_connectivity,
+
+                // 🚗 Parking
+                'covered_parking': AppSvgRes.covered_parking,
+                'visitor_parking': AppSvgRes.visitor_parking,
+
+                // 🧹 Services
+                'maintenance_staff': AppSvgRes.maintenanace_staff,
+                'waste_disposal': AppSvgRes.waste_disposal,
+                'laundry_service': AppSvgRes.washing,
               };
 
               final List<Color> amenityColors = [
@@ -1386,7 +1427,7 @@ class BuilderLeadOverView extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    amenity,
+                    capitalizeEachWord(amenity),
                     style: const TextStyle(
                       fontSize: AppFontSizes.mini,
                       fontWeight: AppFontWeights.medium,

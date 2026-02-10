@@ -27,6 +27,7 @@ import '../../../seller/module/lead_screen/controllers/lead_property_negotiable_
 import '../../../seller/module/lead_screen/controllers/lead_visit_controller.dart';
 import '../../../seller/view/widget/seller_property_approval_history.dart';
 import '../../controller/dashborad_controller/dashboard_controller.dart';
+import '../../controller/reseller_property_controller/reseller_property_controller.dart';
 import '../../model/reseller_lead_model/reseller_lead_overview.dart';
 import '../lead/lead_screen.dart';
 import '../report/report_screen.dart';
@@ -40,6 +41,7 @@ class LeadDetailScreen extends StatefulWidget {
   final LeadVisitController? leadVisitController;
   final LeadPropertyNegotiablePriceController?
   leadPropertyNegotiablePriceController;
+  final  ResellerPropertyController? propertyController;
 
   LeadDetailScreen({
     Key? key,
@@ -49,6 +51,7 @@ class LeadDetailScreen extends StatefulWidget {
     this.leadPropertyInquiryController,
     this.leadVisitController,
     this.leadPropertyNegotiablePriceController,
+    this.propertyController,
     this.isReseller = false,
   }) : assert(
          (lead != null) != (property != null),
@@ -3106,10 +3109,16 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
   }
 
   FinancialInfo? get _resolvedFinancialInfo {
+    final Items? property = widget.propertyController?.items
+        .cast<Items?>()
+        .firstWhere(
+          (e) => e?.propertyId == widget.lead?.propertyId,
+      orElse: () => null,
+    );
     if (widget.property?.propertyDetails?.financialInfo != null)
       return widget.property!.propertyDetails!.financialInfo;
-    if (widget.lead?.customFields?.propertyDetails?.financialInfo != null)
-      return leadProperty.value?.propertyDetails!.financialInfo;
+    if (property?.propertyDetails?.financialInfo != null)
+      return property?.propertyDetails!.financialInfo;
     return null;
   }
 

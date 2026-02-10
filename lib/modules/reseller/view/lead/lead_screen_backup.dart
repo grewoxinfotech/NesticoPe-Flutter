@@ -10,18 +10,49 @@ import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/manager/data_masker.dart';
+import '../../../../data/database/secure_storage_service.dart';
+import '../../../../data/network/property/models/property_model.dart';
 import '../../../../utils/global.dart';
 import '../../../add_property/view/create_property.dart';
 import '../../../seller/module/lead_screen/controllers/lead_controller.dart';
 import '../../controller/dashborad_controller/dashboard_controller.dart';
+import '../../controller/project/reseller_project_controller.dart';
+import '../../controller/reseller_property_controller/reseller_property_controller.dart';
 import '../../model/dashboard/dashboard_model.dart';
 import '../lead_overview/lead_detail.dart';
 
-class ResellerLeadScreen extends StatelessWidget {
+class ResellerLeadScreen extends StatefulWidget {
   final bool isViewAll;
 
   const ResellerLeadScreen({super.key, this.isViewAll = false});
 
+  @override
+  State<ResellerLeadScreen> createState() => _ResellerLeadScreenState();
+}
+
+class _ResellerLeadScreenState extends State<ResellerLeadScreen> {
+  ResellerPropertyController? propertyController;
+  final RxBool isInitialized = false.obs; // Add this to track initialization
+  String? resellerId;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _loadData();
+    });
+  }
+
+  Future<void> _loadData() async {
+    final user = await SecureStorage.getUserData();
+    if (user != null) {
+      resellerId = user.user?.id;
+    }
+    propertyController = Get.put(
+      ResellerPropertyController(resellerId: resellerId ?? ''),
+
+    );
+    isInitialized.value = true; // Mark as initialized
+  }
   @override
   Widget build(BuildContext context) {
     Get.lazyPut(() => LeadController(), tag: "reseller");
@@ -32,7 +63,7 @@ class ResellerLeadScreen extends StatelessWidget {
       backgroundColor: ColorRes.white,
       appBar: AppBar(
         leading:
-            (isViewAll)
+            (widget.isViewAll)
                 ? IconButton(
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -44,7 +75,7 @@ class ResellerLeadScreen extends StatelessWidget {
           'Property Buyer Leads',
           style: TextStyle(fontWeight: AppFontWeights.bold),
         ),
-        automaticallyImplyLeading: (isViewAll),
+        automaticallyImplyLeading: (widget.isViewAll),
         backgroundColor: ColorRes.white,
         elevation: 0,
         actions: [
@@ -118,10 +149,11 @@ class ResellerLeadScreen extends StatelessWidget {
                                   () => LeadDetailScreen(
                                     lead: lead,
                                     isFromLead: true,
+                                    propertyController: propertyController,
                                   ),
                                 );
                               },
-                              child: buildLeadCard(context, lead, controller),
+                              child: buildLeadCard(context, lead, controller,propertyController??ResellerPropertyController(resellerId: lead.resellerId??'')),
                             );
                           },
                         ),
@@ -364,14 +396,23 @@ Widget buildLeadCard(
   BuildContext context,
   LeadItem lead,
   DashboardController controller,
+    ResellerPropertyController resellerPropertyController,
 ) {
   final leadController = Get.find<LeadController>(tag: "reseller");
   final isCompact = MediaQuery.of(context).size.width < 600;
   final cardPadding = isCompact ? 12.0 : 16.0;
-  final priceManager = PropertyPriceManager(
-    listingType: lead.customFields?.listingType ?? '',
-    financialInfo: lead.customFields?.propertyDetails?.financialInfo,
+  final Items? property = resellerPropertyController.items
+      .cast<Items?>()
+      .firstWhere(
+        (e) => e?.propertyId == lead.propertyId,
+    orElse: () => null,
   );
+
+  final priceManager = PropertyPriceManager(
+    listingType: property?.listingType??'',
+    financialInfo: property?.propertyDetails?.financialInfo,
+  );
+
 
   return Container(
     padding: EdgeInsets.all(cardPadding),

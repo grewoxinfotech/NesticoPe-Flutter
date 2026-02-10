@@ -68,9 +68,11 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
     );
   }
 
-  Widget _buildImageViewer() {
+/*  Widget _buildImageViewer() {
     return InteractiveViewer(
+
       child: Image.network(
+
         widget.url,
         fit: BoxFit.contain,
         loadingBuilder: (context, child, progress) {
@@ -84,7 +86,30 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
                 const Icon(Icons.broken_image, color: Colors.white, size: 80),
       ),
     );
+  }*/
+  Widget _buildImageViewer() {
+    return InteractiveViewer(
+      clipBehavior: Clip.hardEdge,
+      minScale: 1.0,
+      maxScale: 5.0,
+      boundaryMargin: EdgeInsets.zero,
+      child: Center(
+        child: Image.network(
+          widget.url,
+          fit: BoxFit.contain,
+          loadingBuilder: (context, child, progress) {
+            if (progress == null) return child;
+            return const Center(
+              child: CircularProgressIndicator(color: Colors.white),
+            );
+          },
+          errorBuilder: (context, error, stackTrace) =>
+          const Icon(Icons.broken_image, color: Colors.white, size: 80),
+        ),
+      ),
+    );
   }
+
 
   Widget _buildVideoPlayer() {
     if (_videoController == null || !_videoController!.value.isInitialized) {

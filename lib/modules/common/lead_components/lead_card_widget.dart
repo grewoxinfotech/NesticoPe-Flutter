@@ -6,13 +6,15 @@ import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/manager/data_masker.dart';
 import 'package:housing_flutter_app/app/manager/property/property_pricemanager.dart';
+import 'package:housing_flutter_app/app/utils/formater/formater.dart';
 import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
+import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
 import 'lead_helpers.dart';
 
 /// Reusable Lead Card Widget
 /// Used across Reseller, Seller, and Builder lead screens
-class LeadCardWidget extends StatelessWidget {
+class LeadCardWidget extends StatefulWidget {
   final LeadItem lead;
   final bool isCompact;
   final VoidCallback? onTap;
@@ -36,53 +38,22 @@ class LeadCardWidget extends StatelessWidget {
     this.leadPropertiesList, // Accept properties list
   }) : super(key: key);
 
-  // /// Method to match lead property ID with leadPropertiesList
-  // /// Returns FinancialInfo if match found, otherwise null
-  // FinancialInfo? _getMatchingPropertyFinancialInfo() {
-  //   if (lead.propertyId == null || leadPropertiesList == null) {
-  //     return null;
-  //   }
-  //
-  //   try {
-  //     final matchingProperty = leadPropertiesList!.firstWhereOrNull(
-  //       (property) => property.id == lead.propertyId,
-  //     );
-  //
-  //     return matchingProperty?.propertyDetails?.financialInfo;
-  //   } catch (e) {
-  //     print("Error matching property financial info: $e");
-  //     return null;
-  //   }
-  // }
-  //
-  // /// Method to match lead property ID with leadPropertiesList
-  // /// Returns listing type if match found, otherwise null
-  // String? _getMatchingPropertyListingType() {
-  //   if (lead.propertyId == null || leadPropertiesList == null) {
-  //     return null;
-  //   }
-  //
-  //   try {
-  //     final matchingProperty = leadPropertiesList!.firstWhereOrNull(
-  //       (property) => property.id == lead.propertyId,
-  //     );
-  //
-  //     return matchingProperty?.listingType;
-  //   } catch (e) {
-  //     print("Error matching property listing type: $e");
-  //     return null;
-  //   }
-  // }
+  @override
+  State<LeadCardWidget> createState() => _LeadCardWidgetState();
+}
 
+class _LeadCardWidgetState extends State<LeadCardWidget> {
+  var isExpanded = false;
+
+  // /// Method to match lead property ID with leadPropertiesList
   @override
   Widget build(BuildContext context) {
-    final cardPadding = isCompact ? 12.0 : 16.0;
+    final cardPadding = widget.isCompact ? 12.0 : 16.0;
 
     // Get financial info and listing type from matching property
     // final matchingFinancialInfo = _getMatchingPropertyFinancialInfo();
     // final matchingListingType = _getMatchingPropertyListingType();
-    //
-    // // Priority order: matching property > customFields
+    // Priority order: matching property > customFields
     // final listingType = matchingListingType ?? lead.customFields?.listingType ?? '';
     // final financialInfo = matchingFinancialInfo ?? lead.customFields?.propertyDetails?.financialInfo;
     //
@@ -94,7 +65,7 @@ class LeadCardWidget extends StatelessWidget {
     //     ).displayPrice;
 
     return GestureDetector(
-      onTap: onTap,
+      onTap: widget.onTap,
       child: Container(
         padding: EdgeInsets.all(cardPadding),
         decoration: BoxDecoration(
@@ -109,19 +80,21 @@ class LeadCardWidget extends StatelessWidget {
               children: [
                 // Avatar
                 CircleAvatar(
-                  radius: isCompact ? 18 : 20,
+                  radius: widget.isCompact ? 18 : 20,
                   backgroundColor: ColorRes.primary.withOpacity(0.2),
                   child: Text(
-                    getInitials(lead.name!),
+                    getInitials(widget.lead.name!),
                     style: TextStyle(
                       color: ColorRes.primary,
                       fontWeight: AppFontWeights.bold,
                       fontSize:
-                          isCompact ? AppFontSizes.small : AppFontSizes.medium,
+                          widget.isCompact
+                              ? AppFontSizes.small
+                              : AppFontSizes.medium,
                     ),
                   ),
                 ),
-                SizedBox(width: isCompact ? 8 : 12),
+                SizedBox(width: widget.isCompact ? 8 : 12),
 
                 // Lead Details
                 Expanded(
@@ -132,10 +105,10 @@ class LeadCardWidget extends StatelessWidget {
                       SizedBox(
                         width: 180,
                         child: Text(
-                          DataMasker.maskName(lead.name!),
+                          DataMasker.maskName(widget.lead.name!),
                           style: TextStyle(
                             fontSize:
-                                isCompact
+                                widget.isCompact
                                     ? AppFontSizes.medium
                                     : AppFontSizes.body,
                             fontWeight: AppFontWeights.bold,
@@ -149,10 +122,10 @@ class LeadCardWidget extends StatelessWidget {
                       SizedBox(
                         width: 180,
                         child: Text(
-                          DataMasker.maskPhone(lead.phone!),
+                          DataMasker.maskPhone(widget.lead.phone!),
                           style: TextStyle(
                             fontSize:
-                                isCompact
+                                widget.isCompact
                                     ? AppFontSizes.extraSmall
                                     : AppFontSizes.small,
                             color: ColorRes.leadGreyColor[700],
@@ -162,13 +135,14 @@ class LeadCardWidget extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      if (lead.email != null && lead.email!.isNotEmpty) ...[
+                      if (widget.lead.email != null &&
+                          widget.lead.email!.isNotEmpty) ...[
                         SizedBox(height: 4),
                         Row(
                           children: [
                             Expanded(
                               child: Text(
-                                DataMasker.maskEmail(lead.email!),
+                                DataMasker.maskEmail(widget.lead.email!),
                                 style: TextStyle(
                                   fontSize: AppFontSizes.extraSmall,
                                   color: ColorRes.leadGreyColor[600],
@@ -189,7 +163,7 @@ class LeadCardWidget extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    if (propertyPrice != null) ...[
+                    if (widget.lead.priceRange != null) ...[
                       Text(
                         'Budget',
                         style: TextStyle(
@@ -200,10 +174,10 @@ class LeadCardWidget extends StatelessWidget {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        '$propertyPrice',
+                        '${Formatter.formatPriceRangeFromString(widget.lead.priceRange)}',
                         style: TextStyle(
                           fontSize:
-                              isCompact
+                              widget.isCompact
                                   ? AppFontSizes.medium
                                   : AppFontSizes.body,
                           fontWeight: AppFontWeights.semiBold,
@@ -211,9 +185,32 @@ class LeadCardWidget extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 4),
+                    ]else...[
+                      Text(
+                        'Budget',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.extraSmall,
+                          color: ColorRes.leadGreyColor[800],
+                          fontWeight: AppFontWeights.regular,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        '${Formatter.formatPrice(num.tryParse(widget.lead.price.toString()??"0")??0)}',
+
+                        style: TextStyle(
+                          fontSize:
+                          widget.isCompact
+                              ? AppFontSizes.medium
+                              : AppFontSizes.body,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.success,
+                        ),
+                      ),
+                      SizedBox(height: 4),
                     ],
                     Text(
-                      formatTime(lead.createdAt!),
+                      formatTime(widget.lead.createdAt!),
                       style: TextStyle(
                         fontSize: AppFontSizes.caption,
                         color: ColorRes.leadGreyColor[600],
@@ -224,9 +221,9 @@ class LeadCardWidget extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: isCompact ? 8 : 12),
+            SizedBox(height: widget.isCompact ? 8 : 12),
             Divider(color: ColorRes.leadGreyColor, thickness: 0.5),
-            SizedBox(height: isCompact ? 8 : 12),
+            SizedBox(height: widget.isCompact ? 8 : 12),
 
             // Status & Stage Badges + Action Buttons
             Row(
@@ -234,41 +231,43 @@ class LeadCardWidget extends StatelessWidget {
                 // Status Badge
                 Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: isCompact ? 10 : 14,
-                    vertical: isCompact ? 6 : 8,
+                    horizontal: widget.isCompact ? 10 : 14,
+                    vertical: widget.isCompact ? 6 : 8,
                   ),
                   decoration: BoxDecoration(
                     color:
-                        (lead.isFake ?? false)
+                        (widget.lead.isFake ?? false)
                             ? ColorRes.error.withOpacity(0.08)
                             : getStatusColor(
-                              getLeadStatusFromString(lead.status!),
+                              getLeadStatusFromString(widget.lead.status!),
                             ).withOpacity(0.08),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color:
-                          (lead.isFake ?? false)
+                          (widget.lead.isFake ?? false)
                               ? ColorRes.error.shade300
                               : getStatusColor(
-                                getLeadStatusFromString(lead.status!),
+                                getLeadStatusFromString(widget.lead.status!),
                               ).withOpacity(0.3),
                       width: 1,
                     ),
                   ),
                   child: Text(
-                    (lead.isFake ?? false)
+                    (widget.lead.isFake ?? false)
                         ? "Fake"
-                        : getStatusText(getLeadStatusFromString(lead.status!)),
+                        : getStatusText(
+                          getLeadStatusFromString(widget.lead.status!),
+                        ),
                     style: TextStyle(
                       fontSize:
-                          isCompact
+                          widget.isCompact
                               ? AppFontSizes.extraSmall
                               : AppFontSizes.small,
                       color:
-                          (lead.isFake ?? false)
+                          (widget.lead.isFake ?? false)
                               ? ColorRes.error
                               : getStatusColor(
-                                getLeadStatusFromString(lead.status!),
+                                getLeadStatusFromString(widget.lead.status!),
                               ),
                       fontWeight: AppFontWeights.bold,
                     ),
@@ -280,29 +279,31 @@ class LeadCardWidget extends StatelessWidget {
                 // Stage Badge
                 Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: isCompact ? 10 : 14,
-                    vertical: isCompact ? 6 : 8,
+                    horizontal: widget.isCompact ? 10 : 14,
+                    vertical: widget.isCompact ? 6 : 8,
                   ),
                   decoration: BoxDecoration(
                     color: getStageColor(
-                      getLeadStageFromString(lead.stage),
+                      getLeadStageFromString(widget.lead.stage),
                     ).withOpacity(0.08),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color: getStageColor(
-                        getLeadStageFromString(lead.stage),
+                        getLeadStageFromString(widget.lead.stage),
                       ).withOpacity(0.3),
                       width: 1,
                     ),
                   ),
                   child: Text(
-                    getStageText(getLeadStageFromString(lead.stage)),
+                    getStageText(getLeadStageFromString(widget.lead.stage)),
                     style: TextStyle(
                       fontSize:
-                          isCompact
+                          widget.isCompact
                               ? AppFontSizes.extraSmall
                               : AppFontSizes.small,
-                      color: getStageColor(getLeadStageFromString(lead.stage)),
+                      color: getStageColor(
+                        getLeadStageFromString(widget.lead.stage),
+                      ),
                       fontWeight: AppFontWeights.bold,
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -312,30 +313,32 @@ class LeadCardWidget extends StatelessWidget {
                 // Stage Badge
                 Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: isCompact ? 10 : 14,
-                    vertical: isCompact ? 6 : 8,
+                    horizontal: widget.isCompact ? 10 : 14,
+                    vertical: widget.isCompact ? 6 : 8,
                   ),
                   decoration: BoxDecoration(
                     color: getSourceColor(
-                      getSourceFromString(lead.source ?? ''),
+                      getSourceFromString(widget.lead.source ?? ''),
                     ).withOpacity(0.08),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color: getSourceColor(
-                        getSourceFromString(lead.source ?? ''),
+                        getSourceFromString(widget.lead.source ?? ''),
                       ).withOpacity(0.3),
                       width: 1,
                     ),
                   ),
                   child: Text(
-                    getSourceText(getSourceFromString(lead.source ?? '')),
+                    getSourceText(
+                      getSourceFromString(widget.lead.source ?? ''),
+                    ),
                     style: TextStyle(
                       fontSize:
-                          isCompact
+                          widget.isCompact
                               ? AppFontSizes.extraSmall
                               : AppFontSizes.small,
                       color: getSourceColor(
-                        getSourceFromString(lead.source ?? ''),
+                        getSourceFromString(widget.lead.source ?? ''),
                       ),
 
                       fontWeight: AppFontWeights.bold,
@@ -343,25 +346,138 @@ class LeadCardWidget extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
+                Spacer(),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      isExpanded = !isExpanded;
+                    });
+                  },
+                  child:
+                      isExpanded
+                          ? Icon(Icons.keyboard_arrow_down_outlined)
+                          : Icon(Icons.keyboard_arrow_up_outlined),
+                ),
               ],
             ),
-            SizedBox(height: isCompact ? 8 : 12),
-            if (lead.status != null &&
-                lead.stage != null &&
-                lead.status!.toLowerCase() == 'converted' &&
-                lead.stage!.toLowerCase() == 'sell') ...[
-              if (lead.commissionStatus != null &&
-                  lead.commissionStatus!.isNotEmpty) ...[
+
+            if (widget.lead.status != null &&
+                widget.lead.stage != null &&
+                widget.lead.status!.toLowerCase() == 'converted' &&
+                widget.lead.stage!.toLowerCase() == 'sell') ...[
+              if (widget.lead.commissionStatus != null &&
+                  widget.lead.commissionStatus!.isNotEmpty) ...[
+                SizedBox(height: widget.isCompact ? 8 : 12),
                 buildCommissionStatus(isPaid: true),
               ] else ...[
+                SizedBox(height: widget.isCompact ? 8 : 12),
                 buildCommissionStatus(isPaid: false),
               ],
+            ],
+
+            if (isExpanded) ...[
+              const SizedBox(height: 10),
+
+              Divider(color: ColorRes.leadGreyColor.shade300),
+              const SizedBox(height: 10),
+              // Project Name
+              Text(
+                widget.lead.projectName ?? "-",
+                style: TextStyle(
+                  fontSize: AppFontSizes.bodySmall,
+                  fontWeight: AppFontWeights.semiBold,
+                  color: ColorRes.textPrimary,
+                ),
+              ),
+
+              const SizedBox(height: 6),
+
+              // City + Property Type
+              Row(
+                children: [
+                  Icon(
+                    Icons.location_on,
+                    size: 14,
+                    color: ColorRes.leadGreyColor.shade600,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    widget.lead.city ?? "-",
+                    style: TextStyle(
+                      fontSize: AppFontSizes.caption,
+                      fontWeight: AppFontWeights.medium,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Icon(
+                    Icons.home_work_outlined,
+                    size: 14,
+                    color: ColorRes.leadGreyColor.shade600,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    widget.lead.propertyType ?? "-",
+                    style: TextStyle(
+                      fontSize: AppFontSizes.caption,
+                      fontWeight: AppFontWeights.medium,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 10),
+
+              // Status Row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _infoChip(
+                    label:
+                        capitalizeEachWord(widget.lead.projectStatus) ??
+                        "Unknown",
+                    color: ColorRes.orangeColor,
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 10),
+
+              // Reseller Info
+              /*  if (widget.lead.reseller != null)
+                Row(
+                  children: [
+                    Icon(Icons.person_outline,
+                        size: 16, color: ColorRes.leadGreyColor),
+                    const SizedBox(width: 6),
+                    Text(
+                      "Reseller: ${widget.lead.reseller?.username}",
+                      style: TextStyle(
+                        fontSize: AppFontSizes.caption,
+                        fontWeight: AppFontWeights.medium,
+                      ),
+                    ),
+                  ],
+                ),*/
             ],
           ],
         ),
       ),
     );
   }
+}
+
+Widget _infoChip({required String label, required Color color}) {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+    decoration: BoxDecoration(
+      color: color.withOpacity(0.1),
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: Text(
+      label,
+      style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: color),
+    ),
+  );
 }
 
 Widget buildCommissionStatus({required bool isPaid, VoidCallback? onTap}) {

@@ -632,6 +632,7 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
                               Get.to(
                                     () => ProjectDetailsScreen(
                                   projectItem: data,
+                                  isFromPanel: true,
                                   isBuilder: widget.isbuilder,
                                 ),
                               );

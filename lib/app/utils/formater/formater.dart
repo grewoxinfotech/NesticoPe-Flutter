@@ -54,7 +54,30 @@ class Formatter {
       return '-';
     }
   }
+  static String formatPriceRangeFromString(String? range) {
+    if (range == null || range.isEmpty || !range.contains('-')) {
+      return '—';
+    }
 
+    final parts = range.split('-');
+    if (parts.length != 2) return '—';
+
+    final min = num.tryParse(parts[0].trim());
+    final max = num.tryParse(parts[1].trim());
+
+    if (min == null || max == null) return '—';
+
+    return formatPriceRange(min, max);
+  }
+
+
+  static String formatPriceRange(num min, num max) {
+    if (min == max) {
+      return formatPrice(min);
+    }
+
+    return '${formatPrice(min)} – ${formatPrice(max)}';
+  }
 
   static String formatPrice(num price) {
     const String prefix = '₹';

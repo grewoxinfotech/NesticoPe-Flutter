@@ -62,12 +62,14 @@ class ProjectDetailsScreen extends StatefulWidget {
   final ProjectItem? projectItem;
   final String? projectId;
   final bool isBuilder;
+  final bool isFromPanel;
 
   const ProjectDetailsScreen({
     super.key,
     this.projectItem,
     this.projectId,
     this.isBuilder = false,
+    this.isFromPanel = false,
   }) : assert(
          projectItem != null || projectId != null,
          'Either projectItem or projectId must be provided',
@@ -234,7 +236,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
           children: [
             CustomScrollView(
               slivers: [
-                _buildAppBar(context, project!),
+                _buildAppBar(context, project!,widget.isFromPanel),
                 SliverToBoxAdapter(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -455,6 +457,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                             showDivider: false,
                             color: ColorRes.white,
                             margin: 8,
+                            project: project,
                           ),
                         ],
                         SizedBox(height: 8),
@@ -523,6 +526,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                         MediaQuery.of(context).size.width < 600,
                                     showDataMasking: false,
                                     onTap: onTap,
+
                                   );
                                 },
                               ),
@@ -973,7 +977,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     );
   }
 
-  Widget _buildAppBar(BuildContext context, ProjectItem project) {
+  Widget _buildAppBar(BuildContext context, ProjectItem project,bool isFromPanel ) {
     return SliverAppBar(
       expandedHeight: 280,
       pinned: true,
@@ -1004,15 +1008,17 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         //     child: const Icon(Icons.share, color: ColorRes.black),
         //   ),
         // ),
-        Padding(
-          padding: const EdgeInsets.only(right: 12.0),
-          child: EntityActionButtons(
-            id: project.id,
-            entity: project,
-            projectCompareController: Get.find<ProjectCompareManager>(),
-            favoriteController: Get.find<PropertyFavoriteController>(),
+        if(!isFromPanel)...[
+          Padding(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: EntityActionButtons(
+              id: project.id,
+              entity: project,
+              projectCompareController: Get.find<ProjectCompareManager>(),
+              favoriteController: Get.find<PropertyFavoriteController>(),
+            ),
           ),
-        ),
+        ]
       ],
 
       flexibleSpace: FlexibleSpaceBar(

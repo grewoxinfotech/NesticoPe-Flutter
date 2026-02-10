@@ -4807,6 +4807,7 @@ Widget _buildRecentLeads(DashboardController controller) {
   );
 }
 
+/*
 Widget buildLeadCard(
   BuildContext context,
   LeadItem lead,
@@ -5052,6 +5053,7 @@ Widget buildLeadCard(
     ),
   );
 }
+*/
 
 Widget buildTopProducts(DashboardController controller) {
   return Column(

@@ -6,8 +6,10 @@ import 'package:housing_flutter_app/modules/performance_score/views/widgets/medi
 import 'package:housing_flutter_app/modules/performance_score/views/widgets/score_bar_chart.dart';
 import 'package:housing_flutter_app/modules/performance_score/views/widgets/score_component_tile.dart';
 import 'package:housing_flutter_app/modules/performance_score/views/widgets/score_gauge.dart';
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 
 import '../../../app/constants/color_res.dart';
+import '../../../data/network/builder/model/builder_model.dart';
 import '../../../data/network/property/models/analytics_model.dart';
 
 class PerformanceScoreWidget extends StatelessWidget {
@@ -15,6 +17,7 @@ class PerformanceScoreWidget extends StatelessWidget {
   final bool showDivider;
   final Color? color;
   final double? margin;
+  final ProjectItem? project;
 
   const PerformanceScoreWidget({
     super.key,
@@ -22,11 +25,13 @@ class PerformanceScoreWidget extends StatelessWidget {
     this.showDivider = true,
     this.color,
     this.margin,
+    this.project,
   });
 
   @override
   Widget build(BuildContext context) {
     final components = score.components;
+    AppLogger.structured("Project that items helps", project?.toJson());
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,10 +93,31 @@ class PerformanceScoreWidget extends StatelessWidget {
 
         //  Engagement Breakdown
         // EngagementTile(breakdown: components.engagement.breakdown),
-        EngagementPieChart(
-          breakdown: components.engagement.breakdown,
-          color: color,
-        ),
+        if (project != null) ...[
+          EngagementPieChart(
+            /*  breakdown: components.engagement.breakdown,*/
+            breakdown: {
+              "totalViews": project?.totalViews ?? 0,
+              "totalInquiries": project?.totalInquiries ?? 0,
+              "totalShares": project?.totalShares ?? 0,
+              "totalFavorites": project?.totalFavorites ?? 0,
+              // "totalViews":project?.totalViews??0,
+            },
+            color: color,
+          ),
+        ] else ...[
+          EngagementSubBreakDownPieChart(
+            breakdown: components.engagement.breakdown,
+            // breakdown: {
+            //   "totalViews":project?.totalViews??0,
+            //   "totalInquiries":project?.totalInquiries??0,
+            //   "totalShares":project?.totalShares??0,
+            //   "totalFavorites":project?.totalFavorites??0,
+            //   // "totalViews":project?.totalViews??0,
+            // },
+            color: color,
+          ),
+        ],
       ],
     );
   }
