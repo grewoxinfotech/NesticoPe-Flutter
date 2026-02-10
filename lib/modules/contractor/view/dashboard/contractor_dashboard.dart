@@ -78,7 +78,7 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
           }
           return Obx(() {
             if (contractorDashboardController.isLoading.value) {
-              return const Center(child: CircularProgressIndicator());
+              return DashboardShimmer();
             }
             contractorDashboardController.contractorInsights = snapshot.data!;
 

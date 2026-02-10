@@ -4,6 +4,7 @@ import 'package:housing_flutter_app/modules/hire_contractor/view/widget/hire_con
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../data/network/contractor/model/contractot_service_model/contractor_category_model.dart';
+import '../../../utils/shimmer/buyer/hire_contractor/buyer_hire_contractor_category_list_screen_shimmer.dart';
 import '../controller/hire_contractor_controller.dart';
 import '../controller/hire_contractor_filter_controller.dart';
 import '../controller/hire_contractor_list_of_profile_controller.dart';
@@ -40,7 +41,7 @@ class HireContractorScreen extends StatelessWidget {
       ),
       body: Obx(() {
         if (controller.isLoading.value && controller.items.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return BuyerHireContractorCategoryListScreenShimmer();
         }
 
         if (controller.items.isEmpty) {

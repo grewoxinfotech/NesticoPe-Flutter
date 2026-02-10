@@ -13,6 +13,7 @@ import '../../../../app/constants/app_font_sizes.dart';
 
 import 'package:get/get.dart';
 
+import '../../../../utils/shimmer/buyer/profile/buyer_profile_screen_shimmer.dart';
 import '../../../../widgets/messages/snack_bar.dart';
 import '../../../auth/views/delete_account.dart';
 import '../../../reseller/controller/profile/profile_controller.dart';
@@ -45,7 +46,7 @@ class BuyerProfileScreen extends StatelessWidget {
       ),
       body: Obx(() {
         if (profileController.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return BuyerProfileScreenShimmer();
         }
 
         return SingleChildScrollView(

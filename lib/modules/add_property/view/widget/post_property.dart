@@ -110,7 +110,7 @@ class PostProperty extends StatelessWidget {
       if (controller.lookingTo.value == 'PG/Co-Living') {
         return Form(
           key: formKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
+          // autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -936,7 +936,7 @@ class PostProperty extends StatelessWidget {
               controller.lookingTo.value == 'Sell') &&
           controller.propertyType.value == 'Residential') {
         return Form(
-          autovalidateMode: AutovalidateMode.onUserInteraction,
+          // autovalidateMode: AutovalidateMode.onUserInteraction,
           key: formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1169,7 +1169,11 @@ class PostProperty extends StatelessWidget {
                         controller.zoneType
                             .map(
                               (e) => buildChoice(
-                                title: e.replaceAll("_"," ").capitalize.toString(),
+                                title:
+                                    e
+                                        .replaceAll("_", " ")
+                                        .capitalize
+                                        .toString(),
                                 selected:
                                     controller.commercial_ZoneType.value == e,
                                 onTap: () {
@@ -1589,7 +1593,7 @@ class PostProperty extends StatelessWidget {
           controller.lookingTo.value == "Rent" &&
           controller.selectedIndex.value.isNotEmpty) {
         return Form(
-          autovalidateMode: AutovalidateMode.onUserInteraction,
+          // autovalidateMode: AutovalidateMode.onUserInteraction,
           key: formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1713,23 +1717,23 @@ class PostProperty extends StatelessWidget {
                 minLines: 1,
               ),
 
-              if (controller.selectedIndex.value == 'Other') ...[
-                SizedBox(height: 16),
-                const Text('Property Name'),
-                SizedBox(height: 8),
-                buildTextField(
-                  'Enter Property Name',
-                  Icons.apartment_outlined,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter Property name';
-                    }
-                    return null;
-                  },
-                  controller.commercial_Property_Name,
-                ),
-                SizedBox(height: 16),
-              ],
+              // if (controller.selectedIndex.value == 'Other') ...[
+              //   SizedBox(height: 16),
+              //   const Text('Property Name'),
+              //   SizedBox(height: 8),
+              //   buildTextField(
+              //     'Enter Property Name',
+              //     Icons.apartment_outlined,
+              //     validator: (value) {
+              //       if (value == null || value.isEmpty) {
+              //         return 'Please enter Property name';
+              //       }
+              //       return null;
+              //     },
+              //     controller.commercial_Property_Name,
+              //   ),
+              //   SizedBox(height: 16),
+              // ],
               if ((controller.selectedIndex.value == 'Office') ||
                   (controller.selectedIndex.value == 'Shop') ||
                   (controller.selectedIndex.value == 'Showroom') ||
@@ -1984,7 +1988,11 @@ class PostProperty extends StatelessWidget {
                         controller.zoneType
                             .map(
                               (e) => buildChoice(
-                                title: e.replaceAll("_"," ").capitalize.toString(),
+                                title:
+                                    e
+                                        .replaceAll("_", " ")
+                                        .capitalize
+                                        .toString(),
                                 selected:
                                     controller.commercial_ZoneType.value == e,
                                 onTap: () {
@@ -2170,6 +2178,38 @@ class PostProperty extends StatelessWidget {
                   },
                 ),
               ],
+              if (controller.selectedIndex.value != "Plot") ...[
+                SizedBox(height: 8),
+                Text("Build Up Area"),
+                SizedBox(height: 8),
+                TextFieldWithDropdown(
+                  hintText: "Build Up Area",
+                  icon: Icons.square_foot,
+                  controller: controller.commercial_Square_BuildArea,
+                  selectedValue: controller.commercial_Square_AreaUnti_Build,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter building area';
+                    }
+
+                    final rent = int.tryParse(value);
+                    if (rent == null) {
+                      return 'Please enter a valid number';
+                    }
+
+                    if (rent < 50 || rent > 3000000) {
+                      return 'Area should be between 50 to 3000000';
+                    }
+
+                    return null;
+                  },
+
+                  // RxString
+                  dropdownItems: ['sq.ft.', 'sq.yd.', 'sq.mt.'],
+                  isPhoneKey: true,
+                ),
+              ],
+
               if (controller.selectedIndex.value == 'Shop' ||
                   controller.selectedIndex.value == 'Showroom' ||
                   controller.selectedIndex.value == "Warehouse" ||
@@ -2198,37 +2238,6 @@ class PostProperty extends StatelessWidget {
                   },
                   controller: controller.commercial_Square_CarpetArea,
                   selectedValue: controller.commercial_Square_AreaUnti_Carpet,
-                  // RxString
-                  dropdownItems: ['sq.ft.', 'sq.yd.', 'sq.mt.'],
-                  isPhoneKey: true,
-                ),
-              ],
-              if (controller.selectedIndex.value != "Plot") ...[
-                SizedBox(height: 8),
-                Text("Build Up Area"),
-                SizedBox(height: 8),
-                TextFieldWithDropdown(
-                  hintText: "Build Up Area",
-                  icon: Icons.square_foot,
-                  controller: controller.commercial_Square_BuildArea,
-                  selectedValue: controller.commercial_Square_AreaUnti_Build,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter building area';
-                    }
-
-                    final rent = int.tryParse(value);
-                    if (rent == null) {
-                      return 'Please enter a valid number';
-                    }
-
-                    if (rent < 50 || rent > 3000000) {
-                      return 'Area should be between 50 to 3000000';
-                    }
-
-                    return null;
-                  },
-
                   // RxString
                   dropdownItems: ['sq.ft.', 'sq.yd.', 'sq.mt.'],
                   isPhoneKey: true,
@@ -2481,7 +2490,7 @@ class PostProperty extends StatelessWidget {
           controller.selectedIndex.value.isNotEmpty) {
         return Form(
           key: formKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
+          // autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -2907,7 +2916,11 @@ class PostProperty extends StatelessWidget {
                         controller.zoneType
                             .map(
                               (e) => buildChoice(
-                                title: e.replaceAll("_", " ").capitalize.toString(),
+                                title:
+                                    e
+                                        .replaceAll("_", " ")
+                                        .capitalize
+                                        .toString(),
                                 selected:
                                     controller.commercial_ZoneType.value == e,
                                 onTap: () {
@@ -3094,6 +3107,32 @@ class PostProperty extends StatelessWidget {
                   },
                 ),
               ],
+              if (controller.selectedIndex.value != "Plot") ...[
+                SizedBox(height: 8),
+                Text("Build Up Area"),
+                SizedBox(height: 8),
+                TextFieldWithDropdown(
+                  hintText: "Build Up Area",
+                  icon: Icons.square_foot,
+                  controller: controller.commercial_Square_BuildArea,
+                  selectedValue: controller.commercial_Square_AreaUnti_Build,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter building name';
+                    }
+                    final rent = int.tryParse(value);
+                    if (rent != null) {
+                      if (rent < 50 || rent > 3000000) {
+                        return 'Area should be between 50 to 3000000';
+                      }
+                    }
+                    return null;
+                  },
+                  // RxString
+                  dropdownItems: ['sq.ft.', 'sq.yd.', 'sq.mt.'],
+                  isPhoneKey: true,
+                ),
+              ],
               if (controller.selectedIndex.value == 'Shop' ||
                   controller.selectedIndex.value == 'Showroom' ||
                   controller.selectedIndex.value == "Warehouse" ||
@@ -3122,32 +3161,6 @@ class PostProperty extends StatelessWidget {
                   },
                   controller: controller.commercial_Square_CarpetArea,
                   selectedValue: controller.commercial_Square_AreaUnti_Carpet,
-                  // RxString
-                  dropdownItems: ['sq.ft.', 'sq.yd.', 'sq.mt.'],
-                  isPhoneKey: true,
-                ),
-              ],
-              if (controller.selectedIndex.value != "Plot") ...[
-                SizedBox(height: 8),
-                Text("Build Up Area"),
-                SizedBox(height: 8),
-                TextFieldWithDropdown(
-                  hintText: "Build Up Area",
-                  icon: Icons.square_foot,
-                  controller: controller.commercial_Square_BuildArea,
-                  selectedValue: controller.commercial_Square_AreaUnti_Build,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter building name';
-                    }
-                    final rent = int.tryParse(value);
-                    if (rent != null) {
-                      if (rent < 50 || rent > 3000000) {
-                        return 'Area should be between 50 to 3000000';
-                      }
-                    }
-                    return null;
-                  },
                   // RxString
                   dropdownItems: ['sq.ft.', 'sq.yd.', 'sq.mt.'],
                   isPhoneKey: true,

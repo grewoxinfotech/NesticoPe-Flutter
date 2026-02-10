@@ -113,7 +113,7 @@ class RentAdvanceDetail extends StatelessWidget {
           controller.propertyType.value == "Residential") {
         return Form(
           key: formKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
+          // autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -769,10 +769,9 @@ class RentAdvanceDetail extends StatelessWidget {
                 ),
               ],
 
-
-              if(controller.rent_propertyType.value.toLowerCase() == "plot" ||
+              if (controller.rent_propertyType.value.toLowerCase() == "plot" ||
                   controller.rent_propertyType.value.toLowerCase() ==
-                      "agricultural land")...[
+                      "agricultural land") ...[
                 SizedBox(height: 16),
                 buildSectionTitle("Survey Number"),
 

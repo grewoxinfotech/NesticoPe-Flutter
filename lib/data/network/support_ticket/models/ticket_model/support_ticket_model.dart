@@ -142,14 +142,16 @@ class TicketCreateRequest {
   final String description;
   final String category;
   final String ticketType;
-  // final String priority;
+  final String? relatedId;
+  final String? priority;
 
   TicketCreateRequest({
     required this.title,
     required this.description,
     required this.category,
     required this.ticketType,
-    // required this.priority,
+    this.relatedId,
+    this.priority,
   });
 
   Map<String, dynamic> toJson() => {
@@ -157,7 +159,8 @@ class TicketCreateRequest {
     "description": description,
     "category": category,
     "ticketType": ticketType,
-    // "priority": priority,
+    if (relatedId != null) "relatedId": relatedId,
+    if (priority != null) "priority": priority,
   };
 }
 

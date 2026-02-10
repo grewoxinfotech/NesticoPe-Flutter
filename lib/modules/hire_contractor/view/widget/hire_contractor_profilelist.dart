@@ -16,6 +16,7 @@ import '../../../../app/constants/color_res.dart';
 import '../../../../data/network/contractor/model/contractot_service_model/contractor_service_model.dart';
 import '../../../../data/network/contractor/model/hire-contractor_service_model.dart';
 import '../../../../data/network/contractor/model/new_hire_contractor.dart';
+import '../../../../utils/shimmer/buyer/hire_contractor/buyer_hire_contractor_list_screen_shimmer.dart';
 import '../../../../widgets/bar/filter_bar/filter_chip_bar.dart';
 import '../../../../widgets/messages/snack_bar.dart';
 import '../../../contractor/controller/contractor_my_service_controller.dart';
@@ -65,7 +66,11 @@ class HireContractorProfileList extends StatelessWidget {
         centerTitle: false,
         actions: [
           IconButton(
-            onPressed: () async => onFilterButtonClick(selectedFilters: selectedFilters,controllerFilter: controllerFilter),
+            onPressed:
+                () async => onFilterButtonClick(
+                  selectedFilters: selectedFilters,
+                  controllerFilter: controllerFilter,
+                ),
             icon: Icon(Icons.filter_list),
           ),
         ],
@@ -161,9 +166,7 @@ class HireContractorProfileList extends StatelessWidget {
                         final contractors = controllerFilter.items;
 
                         if (controllerFilter.isLoading.value) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
+                          return BuyerHireContractorListScreenShimmer();
                         }
 
                         if (contractors.isEmpty) {
@@ -179,7 +182,11 @@ class HireContractorProfileList extends StatelessWidget {
                                 ),
                                 SizedBox(height: 12),
                                 OutlinedButton(
-                                  onPressed:  () async => onFilterButtonClick(selectedFilters: selectedFilters,controllerFilter: controllerFilter),
+                                  onPressed:
+                                      () async => onFilterButtonClick(
+                                        selectedFilters: selectedFilters,
+                                        controllerFilter: controllerFilter,
+                                      ),
                                   style: OutlinedButton.styleFrom(
                                     side: BorderSide(
                                       color: ColorRes.primary,
@@ -250,25 +257,24 @@ class HireContractorProfileList extends StatelessWidget {
     );
   }
 
-  Future<void> onFilterButtonClick({required RxMap<String, String> selectedFilters,
+  Future<void> onFilterButtonClick({
+    required RxMap<String, String> selectedFilters,
     required HireContractorFilterProfileController controllerFilter,
-  })async{
-
-      final result = await Get.dialog<Map<String, String>>(
-        const HireContractorFilter(),
-        barrierDismissible: true,
-      );
+  }) async {
+    final result = await Get.dialog<Map<String, String>>(
+      const HireContractorFilter(),
+      barrierDismissible: true,
+    );
+    if (result != null) {
+      log("Selected Filters → $result");
       if (result != null) {
-        log("Selected Filters → $result");
-        if (result != null) {
-          result.remove('city');
-          selectedFilters.value = result;
-          controllerFilter.applyFilters(result);
-        }
-        // You can now apply filters to your list, API call, etc.
-        // controller.fetchFilteredInquiries(result);
+        result.remove('city');
+        selectedFilters.value = result;
+        controllerFilter.applyFilters(result);
       }
-
+      // You can now apply filters to your list, API call, etc.
+      // controller.fetchFilteredInquiries(result);
+    }
   }
 }
 

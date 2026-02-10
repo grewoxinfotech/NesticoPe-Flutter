@@ -21,7 +21,7 @@ class RoomDetail extends StatelessWidget {
         return SingleChildScrollView(
           child: Form(
             key: formKey,
-            autovalidateMode: AutovalidateMode.onUserInteraction,
+            // autovalidateMode: AutovalidateMode.onUserInteraction,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

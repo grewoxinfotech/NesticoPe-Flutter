@@ -22,7 +22,7 @@ class RentPriceDetail extends StatelessWidget {
           controller.propertyType.value == "Residential") {
         return Form(
           key: formKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
+          // autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -226,7 +226,7 @@ class RentPriceDetail extends StatelessWidget {
           controller.propertyType.value == "Residential") {
         return Form(
           key: formKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
+          // autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -460,113 +460,114 @@ class RentPriceDetail extends StatelessWidget {
                         )
                         .toList(),
               ),
-             if(controller.rent_propertyType.value == "Plot" || controller.rent_propertyType.value.toLowerCase() == "agricultural land")...[
-               SizedBox(height: 16),
-               buildSectionTitle("Construction status"),
-               SizedBox(height: 8),
-               Wrap(
-                 spacing: 12,
-                 runSpacing: 12,
-                 children:
-                 ["Immediate", "In Future"]
-                     .map(
-                       (type) => buildChoice(
-                     title: type,
-                     selected:
-                     controller.sell_constructionStatus.value ==
-                         type,
-                     onTap: () {
-                       controller.setValue(
-                         controller.sell_constructionStatus,
-                         type,
-                       );
-                     },
-                   ),
-                 )
-                     .toList(),
-               ),
-               if (controller.sell_constructionStatus.value ==
-                   "In Future") ...[
-                 SizedBox(height: 16),
-                 Text("Available From"),
-                 SizedBox(height: 8),
-                 buildTextField(
-                   "Enter Available From",
-                   Icons.calendar_month_outlined,
-                   controller.sell_AvailableFrom,
-                   isEnable: false,
-                   validator: (value) {
-                     if (value == null || value.isEmpty) {
-                       return 'Please enter valid month';
-                     }
-                     return null;
-                   },
-                   onTap: () async {
-                     FocusScope.of(context).unfocus();
-                     DateTime? picked = await showDatePicker(
-                       context: context,
-                       initialDate: DateTime.now(),
-                       firstDate: DateTime.now(),
-                       lastDate: DateTime(2100),
-                       builder: (context, child) {
-                         return Theme(
-                           data: Theme.of(context).copyWith(
-                             colorScheme: ColorScheme.light(
-                               primary: ColorRes.primary,
-                               // header background color
-                               onPrimary: ColorRes.white,
-                               // header text color
-                               onSurface: ColorRes.black, // body text color
-                             ),
-                             textButtonTheme: TextButtonThemeData(
-                               style: TextButton.styleFrom(
-                                 foregroundColor: ColorRes.primary,
-                               ),
-                             ),
-                           ),
-                           child: child!,
-                         );
-                       },
-                     );
-                     if (picked != null) {
-                       controller.sell_AvailableFrom.text =
-                       "${picked.day}/${picked.month}/${picked.year}";
-                     }
-                   },
-                 ),
-               ],
-             ]else...[
-               SizedBox(height: 16),
-               buildSectionTitle("Construction status"),
-               SizedBox(height: 8),
-               Obx(
-                 () =>  Wrap(
-                   spacing: 12,
-                   runSpacing: 12,
-                   children:
-                   ["Ready To Move", "Under Construction"]
-                       .map(
-                         (type) => buildChoice(
-                       title: type,
-                       selected:
-                       controller.sell_constructionStatus.value ==
-                           type,
-                       onTap: () {
-
-                         controller.setValue(
-                           controller.sell_constructionStatus,
-                           type,
-                         );
-                         log('Tapped on ${controller.sell_constructionStatus
-                             .value}');
-                       },
-                     ),
-                   )
-                       .toList(),
-                 ),
-               ),
-             ],
-
+              if (controller.rent_propertyType.value == "Plot" ||
+                  controller.rent_propertyType.value.toLowerCase() ==
+                      "agricultural land") ...[
+                SizedBox(height: 16),
+                buildSectionTitle("Construction status"),
+                SizedBox(height: 8),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children:
+                      ["Immediate", "In Future"]
+                          .map(
+                            (type) => buildChoice(
+                              title: type,
+                              selected:
+                                  controller.sell_constructionStatus.value ==
+                                  type,
+                              onTap: () {
+                                controller.setValue(
+                                  controller.sell_constructionStatus,
+                                  type,
+                                );
+                              },
+                            ),
+                          )
+                          .toList(),
+                ),
+                if (controller.sell_constructionStatus.value ==
+                    "In Future") ...[
+                  SizedBox(height: 16),
+                  Text("Available From"),
+                  SizedBox(height: 8),
+                  buildTextField(
+                    "Enter Available From",
+                    Icons.calendar_month_outlined,
+                    controller.sell_AvailableFrom,
+                    isEnable: false,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter valid month';
+                      }
+                      return null;
+                    },
+                    onTap: () async {
+                      FocusScope.of(context).unfocus();
+                      DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime(2100),
+                        builder: (context, child) {
+                          return Theme(
+                            data: Theme.of(context).copyWith(
+                              colorScheme: ColorScheme.light(
+                                primary: ColorRes.primary,
+                                // header background color
+                                onPrimary: ColorRes.white,
+                                // header text color
+                                onSurface: ColorRes.black, // body text color
+                              ),
+                              textButtonTheme: TextButtonThemeData(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: ColorRes.primary,
+                                ),
+                              ),
+                            ),
+                            child: child!,
+                          );
+                        },
+                      );
+                      if (picked != null) {
+                        controller.sell_AvailableFrom.text =
+                            "${picked.day}/${picked.month}/${picked.year}";
+                      }
+                    },
+                  ),
+                ],
+              ] else ...[
+                SizedBox(height: 16),
+                buildSectionTitle("Construction status"),
+                SizedBox(height: 8),
+                Obx(
+                  () => Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children:
+                        ["Ready To Move", "Under Construction"]
+                            .map(
+                              (type) => buildChoice(
+                                title: type,
+                                selected:
+                                    controller.sell_constructionStatus.value ==
+                                    type,
+                                onTap: () {
+                                  controller.setValue(
+                                    controller.sell_constructionStatus,
+                                    type,
+                                  );
+                                  log(
+                                    'Tapped on ${controller.sell_constructionStatus.value}',
+                                  );
+                                },
+                              ),
+                            )
+                            .toList(),
+                  ),
+                ),
+              ],
 
               if (controller.sell_constructionStatus.value ==
                   "Under Construction") ...[
@@ -644,7 +645,7 @@ class RentPriceDetail extends StatelessWidget {
           controller.propertyType.value == "Commercial") {
         return Form(
           key: formKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
+          // autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -788,7 +789,6 @@ class RentPriceDetail extends StatelessWidget {
                 SizedBox(height: 8),
                 buildTextField(
                   'Enter deposit',
-
                   Icons.currency_rupee_outlined,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -797,9 +797,6 @@ class RentPriceDetail extends StatelessWidget {
                     final rent = int.tryParse(value); // parse once
                     if (rent == null) {
                       return 'Please enter a valid amount';
-                    }
-                    if (rent > 1500000 || rent < 20000) {
-                      return 'Please enter rent between  20000 to 1500000';
                     }
 
                     return null;
@@ -980,9 +977,9 @@ class RentPriceDetail extends StatelessWidget {
                       if (rent == null) {
                         return 'Please enter a valid amount';
                       }
-                      if (rent > 1500000 || rent < 20000) {
-                        return 'Please enter rent between  20000 to 1500000';
-                      }
+                      // if (rent > 1500000 || rent < 20000) {
+                      //   return 'Please enter rent between  20000 to 1500000';
+                      // }
 
                       return null;
                     },
@@ -1084,7 +1081,7 @@ class RentPriceDetail extends StatelessWidget {
           controller.propertyType.value == "Commercial") {
         return Form(
           key: formKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
+          // autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -1587,9 +1584,9 @@ class RentPriceDetail extends StatelessWidget {
                       if (rent == null) {
                         return 'Please enter a valid amount';
                       }
-                      if (rent > 1500000 || rent < 20000) {
-                        return 'Please enter rent between  20000 to 1500000';
-                      }
+                      // if (rent > 1500000 || rent < 20000) {
+                      //   return 'Please enter rent between  20000 to 1500000';
+                      // }
 
                       return null;
                     },

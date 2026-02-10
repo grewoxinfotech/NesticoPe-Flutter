@@ -50,20 +50,20 @@ class LoadEditPropertyPayload extends GetxController {
         '';
 
     controller.commercial_ZoneType.value =
-        (((property.propertyDetails?.plotInfo?.zoneType?.isNotEmpty ??
-            false) &&
-            property.propertyDetails?.plotInfo?.zoneType != null)
+        (((property.propertyDetails?.plotInfo?.zoneType?.isNotEmpty ?? false) &&
+                property.propertyDetails?.plotInfo?.zoneType != null)
             ? property.propertyDetails?.plotInfo?.zoneType
             : null) ??
-            '';
+        '';
     controller.plotLength.text =
         ((property.propertyDetails?.plotInfo?.plotLength != null)
                 ? property.propertyDetails?.plotInfo?.plotLength
                 : null)
             .toString() ??
         '';
-    controller.commercial_ownerShipList.value =
-        mapOwnership(property.propertyDetails?.plotInfo?.ownership);
+    controller.commercial_ownerShipList.value = mapOwnership(
+      property.propertyDetails?.plotInfo?.ownership,
+    );
 
     controller.plotWidth.text =
         ((property.propertyDetails?.plotInfo?.plotWidth != null)
@@ -78,7 +78,7 @@ class LoadEditPropertyPayload extends GetxController {
             .toString() ??
         '';
     controller.commercial_plotArea.value =
-        normalizeUnit(property.propertyDetails?.plotInfo?.plotAreaUnit)??'';
+        normalizeUnit(property.propertyDetails?.plotInfo?.plotAreaUnit) ?? '';
 
     controller.rent_propertyType.value =
         (property.propertyType != null && property.propertyType!.isNotEmpty)
@@ -230,11 +230,15 @@ class LoadEditPropertyPayload extends GetxController {
     log("Log of possession datatusedfgefgeyh $possessionStatus");
 
     controller.sell_constructionStatus.value =
-    (possessionStatus != null && possessionStatus.trim().isNotEmpty)
-        ? (possessionStatus=="Immediate")?"Immediate":"In Future"
-        : "";
+        (possessionStatus != null && possessionStatus.trim().isNotEmpty)
+            ? (possessionStatus == "Immediate")
+                ? "Immediate"
+                : "In Future"
+            : "";
 
-    log('possession status:dfkdnlsf ${controller.sell_constructionStatus.value}');
+    log(
+      'possession status:dfkdnlsf ${controller.sell_constructionStatus.value}',
+    );
     loadFinancialData(controller, property);
     loadPossessionInfo(controller, property);
     loadMedia(controller, property);
@@ -360,12 +364,14 @@ class LoadEditPropertyPayload extends GetxController {
     final possessionStatus =
         property.propertyDetails?.plotInfo?.possessionStatus;
 
-    log("Log of possession datatus ${property.propertyDetails?.plotInfo?.toJson()}");
+    log(
+      "Log of possession datatus ${property.propertyDetails?.plotInfo?.toJson()}",
+    );
 
     controller.sell_constructionStatus.value =
-    (possessionStatus != null && possessionStatus.trim().isNotEmpty)
-        ? capitalizeEachWord(possessionStatus.replaceAll("_", " "))
-        : "";
+        (possessionStatus != null && possessionStatus.trim().isNotEmpty)
+            ? capitalizeEachWord(possessionStatus.replaceAll("_", " "))
+            : "";
 
     controller.commercial_plot.text =
         (property.propertyDetails?.plotInfo?.plotArea != null &&
@@ -379,12 +385,11 @@ class LoadEditPropertyPayload extends GetxController {
             ? property.propertyDetails!.plotInfo!.plotLength!.toStringAsFixed(0)
             : '0';
     controller.commercial_ZoneType.value =
-        (((property.propertyDetails?.plotInfo?.zoneType?.isNotEmpty ??
-            false) &&
-            property.propertyDetails?.plotInfo?.zoneType != null)
+        (((property.propertyDetails?.plotInfo?.zoneType?.isNotEmpty ?? false) &&
+                property.propertyDetails?.plotInfo?.zoneType != null)
             ? property.propertyDetails?.plotInfo?.zoneType
             : null) ??
-            '';
+        '';
 
     controller.commercial_rent_posessionStatus.value =
         property.propertyDetails?.plotInfo?.possessionStatus ?? '';
@@ -397,8 +402,9 @@ class LoadEditPropertyPayload extends GetxController {
               )!,
             )
             : '0';
-    controller.commercial_ownerShipList.value =
-        mapOwnership(property.propertyDetails?.plotInfo?.ownership);
+    controller.commercial_ownerShipList.value = mapOwnership(
+      property.propertyDetails?.plotInfo?.ownership,
+    );
 
     controller.plotWidth.text =
         (property.propertyDetails?.plotInfo?.plotWidth != null &&
@@ -611,7 +617,6 @@ class LoadEditPropertyPayload extends GetxController {
           property.propertyDetails?.financialInfo?.parkingCharges ?? '';
     }
 
-
     // broker charges
     controller.doYouWantBrokerage.value =
         (property.propertyDetails?.financialInfo?.brokerCommission != null &&
@@ -710,7 +715,8 @@ class LoadEditPropertyPayload extends GetxController {
                       .possessionInfo!
                       .possessionStatus!
                       .isNotEmpty)
-              ? property.propertyDetails!.possessionInfo!.possessionStatus! ==
+              ? property.propertyDetails!.possessionInfo!.possessionStatus!
+                          .toLowerCase() ==
                       'ready_to_move'
                   ? 'Ready to move'
                   : 'Under Construction'
@@ -1185,6 +1191,7 @@ class LoadEditPropertyPayload extends GetxController {
     return null;
   }
 }
+
 String? normalizeUnit(String? unit) {
   switch (unit) {
     case 'sqft':
@@ -1197,6 +1204,7 @@ String? normalizeUnit(String? unit) {
       return null;
   }
 }
+
 String mapOwnership(String? value) {
   if (value == null || value.trim().isEmpty) return '';
 

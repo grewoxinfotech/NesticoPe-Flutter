@@ -372,7 +372,7 @@ class PhotoUpload extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    buildBuilderDefaultHeaderText('Project Images'),
+                    buildBuilderDefaultHeaderText('Property Images'),
                     Text(
                       'Required • Max 5MB each',
                       style: TextStyle(
@@ -479,7 +479,7 @@ class PhotoUpload extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Project Videos',
+                      'Property Videos',
                       style: TextStyle(
                         fontSize: AppFontSizes.bodyMedium,
                         fontWeight: AppFontWeights.semiBold,
@@ -790,7 +790,7 @@ class PhotoUpload extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    buildBuilderDefaultHeaderText('Project Documents'),
+                    buildBuilderDefaultHeaderText('Property Documents'),
                     Text(
                       'Max 5 files • PDF, DOC, DOCX',
                       style: TextStyle(
@@ -847,7 +847,7 @@ class PhotoUpload extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Mandatory Documents for Builder Project',
+                        'Mandatory Documents for Property',
                         style: TextStyle(
                           fontSize: AppFontSizes.medium,
                           fontWeight: AppFontWeights.semiBold,

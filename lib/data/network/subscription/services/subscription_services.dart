@@ -544,7 +544,6 @@ class SubscriptionPlanService {
     try {
       final queryParameters = {
         'page': page.toString(),
-        'limit': "all",
         if (filters != null) ...filters,
         'userId': userId,
       };

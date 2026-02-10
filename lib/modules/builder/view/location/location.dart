@@ -38,7 +38,7 @@ class StepLocation extends GetView<ProjectWizardController> {
       print("Zip Debug: ${p.zipCode}");
       return Form(
         key: formKey,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
+        // autovalidateMode: AutovalidateMode.onUserInteraction,
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,

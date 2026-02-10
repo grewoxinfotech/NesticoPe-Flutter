@@ -53,11 +53,11 @@ class NotificationService {
       } else {
         debugPrint("Failed to fetch notifications: ${response.statusCode}");
         debugPrint("Response body: ${response.body}");
-        NesticoPeSnackBar.showAwesomeSnackbar(
-          title: 'Error',
-          message: 'Failed to load notifications',
-          contentType: ContentType.failure,
-        );
+        // NesticoPeSnackBar.showAwesomeSnackbar(
+        //   title: 'Error',
+        //   message: 'Failed to load notifications',
+        //   contentType: ContentType.failure,
+        // );
 
         throw Exception("Failed to load notifications");
       }
@@ -161,7 +161,6 @@ class NotificationService {
         /*bdgdh uiuhjdb androd*/
 
         return jsonData['data']['unreadCount'];
-
       } else {
         debugPrint("Failed to get notification by ID: ${response.statusCode}");
       }

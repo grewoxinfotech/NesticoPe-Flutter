@@ -5,6 +5,7 @@ import 'package:housing_flutter_app/modules/property/views/property_detail_scree
 
 import '../../../../app/constants/color_res.dart';
 import '../../../data/network/visit/model/visit_model.dart';
+import '../../../utils/shimmer/buyer/my_visit/buyer_my_visit_list_screen_shimmer.dart';
 import '../controller/visit_controller.dart';
 
 class VisitScreen extends StatelessWidget {
@@ -18,7 +19,7 @@ class VisitScreen extends StatelessWidget {
       appBar: AppBar(title: const Text("My Visits")),
       body: Obx(() {
         if (controller.isLoading.value && controller.items.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return BuyerMyVisitListScreenShimmer();
         }
 
         if (controller.items.isEmpty) {

@@ -15,122 +15,160 @@ class ListingReviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-     if(controller.lookingTo.value=="PG/Co-Living")
-       {
-         if (controller.review.value == null) {
-           return const Center(
-             child: Padding(
-               padding: EdgeInsets.all(20.0),
-               child: Text(
-                 'No review yet.',
-                 style: TextStyle(fontSize: AppFontSizes.body, color: ColorRes.leadGreyColor),
-               ),
-             ),
-           );
-         }
-         final review = controller.review.value!;
-         return SingleChildScrollView(
-           child: Column(
-             children: [
-               _ReviewCardItem(review: review),
-               const SizedBox(height: 24),
-               // Congratulation message
-               Container(
-                 width: double.infinity,
-                 margin: const EdgeInsets.symmetric(horizontal: 12),
-                 padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
-                 decoration: BoxDecoration(
-                   color: ColorRes.green.shade50,
-                   borderRadius: BorderRadius.circular(14),
-                   border: Border.all(color: ColorRes.green.shade200, width: 1),
-                 ),
-                 child: Row(
-                   mainAxisAlignment: MainAxisAlignment.center,
-                   children: [
-                     const Icon(Icons.check_circle, color: ColorRes.green, size: 28),
-                     const SizedBox(width: 12),
-                     Expanded(
-                       child: Text(
-                         "Congratulations! Your property listing has been created.",
-                         style: TextStyle(
-                           color: ColorRes.green.shade800,
-                           fontWeight: AppFontWeights.semiBold,
-                           fontSize: AppFontSizes.small,
-                         ),
-                         textAlign: TextAlign.start,
-                       ),
-                     ),
-                   ],
-                 ),
-               ),
-             ],
-           ),
-         );
-       }
-     else if((controller.lookingTo.value=='Rent'||controller.lookingTo.value=="Sell") && controller.propertyType.value=="Commercial")
-       {
-         if (controller.commercialReview.value == null) {
-           return const Center(
-             child: Padding(
-               padding: EdgeInsets.all(20.0),
-               child: Text(
-                 'No review yet.',
-                 style: TextStyle(fontSize: AppFontSizes.body, color: ColorRes.leadGreyColor),
-               ),
-             ),
-           );
-         }
-         final review = controller.commercialReview.value??CommercialPropertyModel(buildingName: 'No Define', localityName: 'No Define');
+      if (controller.lookingTo.value == "PG/Co-Living") {
+        if (controller.review.value == null) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Text(
+                'No review yet.',
+                style: TextStyle(
+                  fontSize: AppFontSizes.body,
+                  color: ColorRes.leadGreyColor,
+                ),
+              ),
+            ),
+          );
+        }
+        final review = controller.review.value!;
 
-         return SingleChildScrollView(
-           child: Column(
-             children: [
-               _CommercialReviewCardItem(review: review),
-               const SizedBox(height: 24),
-               // Congratulation message
-               Container(
-                 width: double.infinity,
-                 margin: const EdgeInsets.symmetric(horizontal: 12),
-                 padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
-                 decoration: BoxDecoration(
-                   color: ColorRes.green.shade50,
-                   borderRadius: BorderRadius.circular(14),
-                   border: Border.all(color: ColorRes.green.shade200, width: 1),
-                 ),
-                 child: Row(
-                   mainAxisAlignment: MainAxisAlignment.center,
-                   children: [
-                     const Icon(Icons.check_circle, color: ColorRes.green, size: 28),
-                     const SizedBox(width: 12),
-                     Expanded(
-                       child: Text(
-                         "Congratulations! Your property listing has been created.",
-                         style: TextStyle(
-                           color: ColorRes.green.shade800,
-                           // fontWeight: AppFontWeights.semiBold,
-                           fontWeight: AppFontWeights.semiBold,
-                           fontSize: AppFontSizes.small,
-                           // fontSize: 12,
-                         ),
-                         textAlign: TextAlign.start,
-                       ),
-                     ),
-                   ],
-                 ),
-               ),
-             ],
-           ),
-         );
-       }
-     return SizedBox.shrink();
+        // DEBUG: Print image paths
+        debugPrint("=== PG/CO-LIVING REVIEW IMAGES ===");
+        for (var img in review.images) {
+          debugPrint("Image path: ${img.path}");
+        }
+        debugPrint("==================================");
+
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              _ReviewCardItem(review: review, controller: controller),
+              const SizedBox(height: 24),
+              // Congratulation message
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 18,
+                  horizontal: 16,
+                ),
+                decoration: BoxDecoration(
+                  color: ColorRes.green.shade50,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: ColorRes.green.shade200, width: 1),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.check_circle,
+                      color: ColorRes.green,
+                      size: 28,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        "Congratulations! Your property listing has been created.",
+                        style: TextStyle(
+                          color: ColorRes.green.shade800,
+                          fontWeight: AppFontWeights.semiBold,
+                          fontSize: AppFontSizes.small,
+                        ),
+                        textAlign: TextAlign.start,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      } else if ((controller.lookingTo.value == 'Rent' ||
+              controller.lookingTo.value == "Sell") &&
+          controller.propertyType.value == "Commercial") {
+        if (controller.commercialReview.value == null) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Text(
+                'No review yet.',
+                style: TextStyle(
+                  fontSize: AppFontSizes.body,
+                  color: ColorRes.leadGreyColor,
+                ),
+              ),
+            ),
+          );
+        }
+        final review =
+            controller.commercialReview.value ??
+            CommercialPropertyModel(
+              buildingName: 'No Define',
+              localityName: 'No Define',
+            );
+
+        // DEBUG: Print image paths
+        debugPrint("=== COMMERCIAL REVIEW IMAGES ===");
+        for (var img in review.photos) {
+          debugPrint("Image path: ${img.path}");
+        }
+        debugPrint("=================================");
+
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              _CommercialReviewCardItem(review: review, controller: controller),
+              const SizedBox(height: 24),
+              // Congratulation message
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 18,
+                  horizontal: 16,
+                ),
+                decoration: BoxDecoration(
+                  color: ColorRes.green.shade50,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: ColorRes.green.shade200, width: 1),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.check_circle,
+                      color: ColorRes.green,
+                      size: 28,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        "Congratulations! Your property listing has been created.",
+                        style: TextStyle(
+                          color: ColorRes.green.shade800,
+                          fontWeight: AppFontWeights.semiBold,
+                          fontSize: AppFontSizes.small,
+                        ),
+                        textAlign: TextAlign.start,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+      return SizedBox.shrink();
     });
   }
 }
 
 class _ReviewCardItem extends StatelessWidget {
   final PropertyReviewModel review;
+  final CreatePropertyController controller;
 
-  const _ReviewCardItem({required this.review});
+  const _ReviewCardItem({required this.review, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -146,8 +184,14 @@ class _ReviewCardItem extends StatelessWidget {
             ? review.bestSuitedList.join(', ')
             : "Not specified";
     final location = review.locality.isNotEmpty ? review.locality : "Location";
-    final imagePath =
-        review.images.isNotEmpty ? review.images.first.path : null;
+
+    // Try to get image from review first, fallback to controller's imageList
+    String? imagePath;
+    if (review.images.isNotEmpty) {
+      imagePath = review.images.first.path;
+    } else if (controller.imageList.value.isNotEmpty) {
+      imagePath = controller.imageList.value.first;
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
@@ -157,7 +201,6 @@ class _ReviewCardItem extends StatelessWidget {
           side: BorderSide(color: ColorRes.leadGreyColor.shade300, width: 1),
         ),
         elevation: 2,
-
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(
@@ -195,30 +238,69 @@ class _ReviewCardItem extends StatelessWidget {
   }
 
   Widget _buildImageWidget(String? imagePath) {
-    // Optimize image loading to prevent memory issues
-    if (imagePath != null && imagePath.isNotEmpty) {
-      final file = File(imagePath);
-      if (file.existsSync()) {
-        return Image.file(
-          file,
-          fit: BoxFit.cover,
-          // Add memory optimizations
-          cacheWidth: 200, // Reduce cache size
-          cacheHeight: 240,
-          errorBuilder: (context, error, stackTrace) {
-            debugPrint("Error loading image: $error");
-            return _buildPlaceholderImage();
-          },
-        );
-      }
+    debugPrint("PG Image path: $imagePath");
+
+    if (imagePath == null || imagePath.isEmpty) {
+      return _buildPlaceholderImage();
     }
-    return _buildPlaceholderImage();
+
+    // Check if it's a network URL
+    final isNetwork =
+        imagePath.startsWith('http://') || imagePath.startsWith('https://');
+
+    if (isNetwork) {
+      return Image.network(
+        imagePath,
+        fit: BoxFit.cover,
+        cacheWidth: 200,
+        cacheHeight: 240,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Center(
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              value:
+                  loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                      : null,
+            ),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          debugPrint("Error loading network image: $error");
+          return _buildPlaceholderImage();
+        },
+      );
+    }
+
+    // Otherwise, try local file
+    final file = File(imagePath);
+    if (!file.existsSync()) {
+      debugPrint("Local file does not exist: $imagePath");
+      return _buildPlaceholderImage();
+    }
+
+    return Image.file(
+      file,
+      fit: BoxFit.cover,
+      cacheWidth: 200,
+      cacheHeight: 240,
+      errorBuilder: (context, error, stackTrace) {
+        debugPrint("Error loading file image: $error");
+        return _buildPlaceholderImage();
+      },
+    );
   }
 
   Widget _buildPlaceholderImage() {
     return Container(
       color: ColorRes.leadGreyColor.shade200,
-      child: Icon(Icons.image, size: 50, color: ColorRes.leadGreyColor.shade400),
+      child: Icon(
+        Icons.image,
+        size: 50,
+        color: ColorRes.leadGreyColor.shade400,
+      ),
     );
   }
 
@@ -236,8 +318,10 @@ class _ReviewCardItem extends StatelessWidget {
         // PG Name
         Text(
           pgName,
-          style:  TextStyle(fontSize: AppFontSizes.body, fontWeight: AppFontWeights.semiBold),
-          // style: const TextStyle(fontSize: 16, fontWeight: AppFontWeights.semiBold),
+          style: TextStyle(
+            fontSize: AppFontSizes.body,
+            fontWeight: AppFontWeights.semiBold,
+          ),
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
         ),
@@ -264,8 +348,10 @@ class _ReviewCardItem extends StatelessWidget {
   Widget _buildInfoText(String text) {
     return Text(
       text,
-      style: TextStyle(fontSize: AppFontSizes.caption, color: ColorRes.leadGreyColor.shade600),
-      // style: TextStyle(fontSize: 11, color: ColorRes.leadGreyColor.shade600),
+      style: TextStyle(
+        fontSize: AppFontSizes.caption,
+        color: ColorRes.leadGreyColor.shade600,
+      ),
       overflow: TextOverflow.ellipsis,
       maxLines: 1,
     );
@@ -281,11 +367,9 @@ class _ReviewCardItem extends StatelessWidget {
       child: Text(
         'Under Review',
         style: TextStyle(
-          // fontSize: 11,
           fontSize: AppFontSizes.caption,
           color: ColorRes.green.shade800,
           fontWeight: AppFontWeights.semiBold,
-          // fontWeight: AppFontWeights.semiBold,
         ),
       ),
     );
@@ -300,9 +384,7 @@ class _ReviewCardItem extends StatelessWidget {
             "₹ $rent",
             style: TextStyle(
               fontSize: AppFontSizes.medium,
-              // fontSize: 14,
               fontWeight: AppFontWeights.extraBold,
-              // fontWeight: FontWeight.bold,
               color: ColorRes.textPrimary,
             ),
             overflow: TextOverflow.ellipsis,
@@ -311,8 +393,10 @@ class _ReviewCardItem extends StatelessWidget {
         Flexible(
           child: Text(
             "Notice: $noticePeriod days",
-            style: TextStyle(fontSize: AppFontSizes.small, color: ColorRes.leadGreyColor.shade600),
-            // style: TextStyle(fontSize: 12, color: ColorRes.leadGreyColor.shade600),
+            style: TextStyle(
+              fontSize: AppFontSizes.small,
+              color: ColorRes.leadGreyColor.shade600,
+            ),
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.end,
           ),
@@ -324,16 +408,29 @@ class _ReviewCardItem extends StatelessWidget {
 
 class _CommercialReviewCardItem extends StatelessWidget {
   final CommercialPropertyModel review;
+  final CreatePropertyController controller;
 
-  const _CommercialReviewCardItem({required this.review});
+  const _CommercialReviewCardItem({
+    required this.review,
+    required this.controller,
+  });
 
   @override
   Widget build(BuildContext context) {
     // Pre-compute values to avoid repeated calculations
-    final imagePath = review.photos.isNotEmpty ? review.photos.first.path : null;
-    final buildingName = review.buildingName.isNotEmpty ? review.buildingName : "Building";
-    final locality = review.localityName.isNotEmpty ? review.localityName : "Locality";
-    final rent = review.expectedRent?.isNotEmpty ?? false ? review.expectedRent! : "0";
+    String? imagePath;
+    if (review.photos.isNotEmpty) {
+      imagePath = review.photos.first.path;
+    } else if (controller.imageList.value.isNotEmpty) {
+      imagePath = controller.imageList.value.first;
+    }
+
+    final buildingName =
+        review.buildingName.isNotEmpty ? review.buildingName : "Building";
+    final locality =
+        review.localityName.isNotEmpty ? review.localityName : "Locality";
+    final rent =
+        review.expectedRent?.isNotEmpty ?? false ? review.expectedRent! : "0";
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
@@ -379,28 +476,69 @@ class _CommercialReviewCardItem extends StatelessWidget {
   }
 
   Widget _buildImageWidget(String? imagePath) {
-    if (imagePath != null && imagePath.isNotEmpty) {
-      final file = File(imagePath);
-      if (file.existsSync()) {
-        return Image.file(
-          file,
-          fit: BoxFit.cover,
-          cacheWidth: 200,
-          cacheHeight: 240,
-          errorBuilder: (context, error, stackTrace) {
-            debugPrint("Error loading image: $error");
-            return _buildPlaceholderImage();
-          },
-        );
-      }
+    debugPrint("Commercial Image path: $imagePath");
+
+    if (imagePath == null || imagePath.isEmpty) {
+      return _buildPlaceholderImage();
     }
-    return _buildPlaceholderImage();
+
+    // Check if it's a network URL
+    final isNetwork =
+        imagePath.startsWith('http://') || imagePath.startsWith('https://');
+
+    if (isNetwork) {
+      return Image.network(
+        imagePath,
+        fit: BoxFit.cover,
+        cacheWidth: 200,
+        cacheHeight: 240,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Center(
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              value:
+                  loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                      : null,
+            ),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          debugPrint("Error loading network image: $error");
+          return _buildPlaceholderImage();
+        },
+      );
+    }
+
+    // Otherwise, try local file
+    final file = File(imagePath);
+    if (!file.existsSync()) {
+      debugPrint("Local file does not exist: $imagePath");
+      return _buildPlaceholderImage();
+    }
+
+    return Image.file(
+      file,
+      fit: BoxFit.cover,
+      cacheWidth: 200,
+      cacheHeight: 240,
+      errorBuilder: (context, error, stackTrace) {
+        debugPrint("Error loading file image: $error");
+        return _buildPlaceholderImage();
+      },
+    );
   }
 
   Widget _buildPlaceholderImage() {
     return Container(
       color: ColorRes.leadGreyColor.shade200,
-      child: Icon(Icons.image, size: 50, color: ColorRes.leadGreyColor.shade400),
+      child: Icon(
+        Icons.image,
+        size: 50,
+        color: ColorRes.leadGreyColor.shade400,
+      ),
     );
   }
 
@@ -417,8 +555,10 @@ class _CommercialReviewCardItem extends StatelessWidget {
         // Building Name
         Text(
           buildingName,
-          style: TextStyle(fontSize: AppFontSizes.body, fontWeight: AppFontWeights.semiBold),
-          // style: const TextStyle(fontSize: 16, fontWeight: AppFontWeights.semiBold),
+          style: TextStyle(
+            fontSize: AppFontSizes.body,
+            fontWeight: AppFontWeights.semiBold,
+          ),
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
         ),
@@ -446,8 +586,10 @@ class _CommercialReviewCardItem extends StatelessWidget {
   Widget _buildInfoText(String text) {
     return Text(
       text,
-      style: TextStyle(fontSize: AppFontSizes.caption, color: ColorRes.leadGreyColor.shade600),
-      // style: TextStyle(fontSize: 11, color: ColorRes.leadGreyColor.shade600),
+      style: TextStyle(
+        fontSize: AppFontSizes.caption,
+        color: ColorRes.leadGreyColor.shade600,
+      ),
       overflow: TextOverflow.ellipsis,
       maxLines: 1,
     );
@@ -464,10 +606,8 @@ class _CommercialReviewCardItem extends StatelessWidget {
         'Under Review',
         style: TextStyle(
           fontSize: AppFontSizes.caption,
-          // fontSize: 11,
           color: ColorRes.green.shade800,
           fontWeight: AppFontWeights.semiBold,
-          // fontWeight: AppFontWeights.semiBold,
         ),
       ),
     );
@@ -482,12 +622,7 @@ class _CommercialReviewCardItem extends StatelessWidget {
             "₹ $rent",
             style: TextStyle(
               fontSize: AppFontSizes.medium,
-              // fontSize: 14,
               fontWeight: AppFontWeights.extraBold,
-              // fontWeight: FontWeight.bold,
-              // color: ColorRes.textPrimary,
-              // fontSize: 14,
-              // fontWeight: FontWeight.bold,
               color: ColorRes.textPrimary,
             ),
             overflow: TextOverflow.ellipsis,
@@ -497,4 +632,3 @@ class _CommercialReviewCardItem extends StatelessWidget {
     );
   }
 }
-

@@ -44,6 +44,8 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../widgets/messages/snack_bar.dart';
+import '../../dashboard/views/seller_dashboard_screen.dart';
+import '../../seller/module/seller_home_screen/views/seller_home_screen.dart';
 import '../model/add_property_model.dart';
 import '../model/commercial_model.dart';
 
@@ -1972,7 +1974,7 @@ class CreatePropertyController extends GetxController {
       }
       if (success) {
         print("Property added successfully ✅");
-        Get.offAll(() => DashboardScreen());
+        Get.offAll(() => SellerDashboardScreen());
       } else {
         print("Failed to Updater property ❌");
       }
@@ -2043,7 +2045,7 @@ class CreatePropertyController extends GetxController {
       }
       if (success) {
         print("Property added successfully ✅");
-        Get.offAll(() => DashboardScreen());
+        Get.offAll(() => SellerDashboardScreen());
       } else {
         print("Failed to add property ❌");
       }
@@ -3019,10 +3021,21 @@ class CreatePropertyController extends GetxController {
   Future<AddPropertyModel> buildPropertyPayloadResidentialRent() async {
     final user = await SecureStorage.getUserData();
     final userId = user?.user?.id ?? "";
-    DateTime? parsedDate;
 
-    if (rent_AvailableFrom.text.trim().isNotEmpty) {
-      parsedDate = DateFormat('d/M/yyyy').parse(rent_AvailableFrom.text.trim());
+    // ✅ Safe date parsing (handles ISO + d/M/yyyy)
+    DateTime? parsedDate;
+    final rawDate = rent_AvailableFrom.text.trim();
+
+    if (rawDate.isNotEmpty) {
+      try {
+        parsedDate = DateTime.parse(rawDate);
+      } catch (_) {
+        try {
+          parsedDate = DateFormat('d/M/yyyy').parse(rawDate);
+        } catch (e) {
+          print('Date parse error: $e');
+        }
+      }
     }
 
     final formattedDate =
@@ -3044,11 +3057,9 @@ class CreatePropertyController extends GetxController {
               : null,
       propertyDetails: PropertyDetails(
         bhk: int.tryParse(bhkType.value.substring(0, 1)),
-
         bathroom: rent_Bathroom.value,
         availableFrom: formattedDate,
         tenantType: tenantType.value.toLowerCase(),
-
         saleDeedDocumentNumber:
             saleDeedDocumentNumber.text.trim().isNotEmpty
                 ? saleDeedDocumentNumber.text.trim()
@@ -3061,9 +3072,7 @@ class CreatePropertyController extends GetxController {
             yearOfRegistration.text.trim().isNotEmpty
                 ? int.tryParse(yearOfRegistration.text.trim())
                 : null,
-
         balcony: rent_Balcony.value,
-
         petFriendly:
             rent_Pet_Friendly.value.toLowerCase() == 'yes' ? true : false,
         propertyBuiltUpArea:
@@ -3074,7 +3083,6 @@ class CreatePropertyController extends GetxController {
             carpetAreaController.text.trim().isNotEmpty
                 ? double.tryParse(carpetAreaController.text.trim())
                 : null,
-
         propertyBuiltUpAreaUnit:
             areaUnit.value.isNotEmpty ? removeDots(areaUnit.value) : null,
         propertyCarpetAreaUnit:
@@ -3088,7 +3096,6 @@ class CreatePropertyController extends GetxController {
             selectedRoomAmenities.value.isNotEmpty
                 ? selectedRoomAmenities.value
                 : null,
-
         possessionInfo: PossessionInfo(possessionDate: formattedDate),
         lifInfo: LiftInfo(
           serviceLift:
@@ -3124,7 +3131,6 @@ class CreatePropertyController extends GetxController {
                   propertyRentPerMonth: double.tryParse(
                     rent_MonthilyRent.text.trim(),
                   ),
-
                   propertySecurityDeposit: double.tryParse(
                     rent_SecurityDeposit.text.trim(),
                   ),
@@ -3170,7 +3176,6 @@ class CreatePropertyController extends GetxController {
                 ? PropertyFurnishInfo(
                   furnishType: furnishingType.value,
                   furnishDetails: FurnishDetails(
-                    // ---------- Multi-choice (int) ----------
                     fan: int.tryParse(
                       selectedFurnishing.value['fan']?.quantity.toString() ??
                           '',
@@ -3198,54 +3203,27 @@ class CreatePropertyController extends GetxController {
                       selectedFurnishing.value['geyser']?.quantity.toString() ??
                           '',
                     ),
-
-                    // ---------- Boolean Furnishings ----------
                     diningTable:
-                        selectedFurnishing.value['table']?.quantity == 1
-                            ? true
-                            : false,
+                        selectedFurnishing.value['table']?.quantity == 1,
                     washingMachine:
-                        selectedFurnishing.value['washing']?.quantity == 1
-                            ? true
-                            : false,
+                        selectedFurnishing.value['washing']?.quantity == 1,
                     cupboard:
-                        selectedFurnishing.value['cupboard']?.quantity == 1
-                            ? true
-                            : false,
-                    sofa:
-                        selectedFurnishing.value['sofa']?.quantity == 1
-                            ? true
-                            : false,
+                        selectedFurnishing.value['cupboard']?.quantity == 1,
+                    sofa: selectedFurnishing.value['sofa']?.quantity == 1,
                     microwave:
-                        selectedFurnishing.value['microwave']?.quantity == 1
-                            ? true
-                            : false,
-                    stove:
-                        selectedFurnishing.value['stove']?.quantity == 1
-                            ? true
-                            : false,
+                        selectedFurnishing.value['microwave']?.quantity == 1,
+                    stove: selectedFurnishing.value['stove']?.quantity == 1,
                     fridge:
-                        selectedFurnishing.value['refrigerate']?.quantity == 1
-                            ? true
-                            : false,
+                        selectedFurnishing.value['refrigerate']?.quantity == 1,
                     waterPurifier:
                         selectedFurnishing.value['water-purifier']?.quantity ==
-                                1
-                            ? true
-                            : false,
+                        1,
                     gasPipeline:
-                        selectedFurnishing.value['gas-pipline']?.quantity == 1
-                            ? true
-                            : false,
-                    chimney:
-                        selectedFurnishing.value['chimeny']?.quantity == 1
-                            ? true
-                            : false,
+                        selectedFurnishing.value['gas-pipline']?.quantity == 1,
+                    chimney: selectedFurnishing.value['chimeny']?.quantity == 1,
                     modularKitchen:
                         selectedFurnishing.value['modular-kitchen']?.quantity ==
-                                1
-                            ? true
-                            : false,
+                        1,
                   ),
                 )
                 : null,
@@ -3255,7 +3233,6 @@ class CreatePropertyController extends GetxController {
               ? localityController.text.trim()
               : null,
       state: extractState(localityController.text.trim()),
-
       city:
           cityController.text.trim().isNotEmpty
               ? cityController.text.trim()
@@ -3560,7 +3537,8 @@ class CreatePropertyController extends GetxController {
       ownerEmail: user != null ? user.user?.email : "",
       ownerPhone: user != null ? user.user?.phone : "",
       ownerName:
-          user != null ? "${user.user?.firstName} ${user.user?.firstName}" : "",
+          user != null ? "${user.user?.firstName} ${user.user?.lastName}" : "",
+
       reraId:
           sell_Rera_Id.text.trim().isNotEmpty ? sell_Rera_Id.text.trim() : null,
     );
@@ -4138,6 +4116,12 @@ class CreatePropertyController extends GetxController {
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
                   : null,
+          propertySecurityDeposit:
+              commercial_rent_security_deposite.text.trim().isNotEmpty
+                  ? double.tryParse(
+                    commercial_rent_security_deposite.text.trim(),
+                  )
+                  : null,
         ),
         plotInfo: PlotInfo(
           // TODO: Dynamic
@@ -4265,10 +4249,12 @@ class CreatePropertyController extends GetxController {
           //         ? double.tryParse(commercial_rent_cost.text.trim())
           //         : null,
         ),
-        // floorInfo: FloorInfo(
-        //   totalFloors: commercial_total_floor.text.trim().isNotEmpty ?
-        //   int.tryParse(commercial_total_floor.text.trim()):null,
-        // )
+        floorInfo: FloorInfo(
+          totalFloors:
+              commercial_total_floor.text.trim().isNotEmpty
+                  ? int.tryParse(commercial_total_floor.text.trim())
+                  : null,
+        ),
       ),
       state: extractState(commercial_rent_Loaclity_Name.text.trim()),
 

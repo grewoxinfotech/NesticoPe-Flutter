@@ -379,63 +379,66 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Title and Price
-                          Row(
+                          Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      property.propertyType ?? 'Property Title',
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Text(
+                                    property.propertyType ?? 'Property Title',
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.body,
+                                      fontWeight: AppFontWeights.semiBold,
+                                      color: ColorRes.textPrimary,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: ColorRes.blueColor[50],
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      priceManager.displayPrice,
                                       style: TextStyle(
-                                        fontSize: AppFontSizes.body,
+                                        fontSize: AppFontSizes.small,
                                         fontWeight: AppFontWeights.semiBold,
-                                        color: ColorRes.textPrimary,
+                                        color: ColorRes.blueColor[700],
                                       ),
                                     ),
-                                    const SizedBox(height: 4),
-                                    Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.location_on,
-                                          size: 14,
-                                          color: ColorRes.leadGreyColor,
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Expanded(
-                                          child: Text(
-                                            property.location ?? 'Location',
-                                            style: TextStyle(
-                                              fontSize: AppFontSizes.medium,
-                                              color:
-                                                  ColorRes.leadGreyColor[600],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: ColorRes.blueColor[50],
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  priceManager.displayPrice,
-                                  style: TextStyle(
-                                    fontSize: AppFontSizes.small,
-                                    fontWeight: AppFontWeights.semiBold,
-                                    color: ColorRes.blueColor[700],
                                   ),
-                                ),
+                                ],
+                              ),
+                              SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.location_on,
+                                    size: 14,
+                                    color: ColorRes.leadGreyColor,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Expanded(
+                                    child: Text(
+                                      property.location ?? 'Location',
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.medium,
+                                        color: ColorRes.leadGreyColor[600],
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),

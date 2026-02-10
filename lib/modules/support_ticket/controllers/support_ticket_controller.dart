@@ -26,6 +26,7 @@ class SupportTicketController extends PaginatedController<TicketItem> {
   // Dropdown Values
   final selectedCategory = ''.obs;
   final selectedTicketType = ''.obs;
+
   // final selectedPriority = ''.obs;
   final Rx<File> pickedImages = Rx<File>(File(""));
 
@@ -74,24 +75,34 @@ class SupportTicketController extends PaginatedController<TicketItem> {
   }
 
   /// Create a new ticket
-  Future<void> submitTicket() async {
+  Future<void> submitTicket({TicketCreateRequest? payload}) async {
     try {
       isLoading.value = true;
 
-      if (!formKey.currentState!.validate()) {
-        return;
+      if (payload == null) {
+        if (!formKey.currentState!.validate()) {
+          return;
+        }
       }
 
-      final ticket = TicketCreateRequest(
-        title: titleController.text,
-        description: descriptionController.text,
-        category: selectedCategory.value,
-        ticketType: selectedTicketType.value,
-        // priority: selectedPriority.value,
-      );
+      final ticket =
+          payload != null
+              ? payload
+              : TicketCreateRequest(
+                title: titleController.text,
+                description: descriptionController.text,
+                category: selectedCategory.value,
+                ticketType: selectedTicketType.value,
+                // priority: selectedPriority.value,
+              );
 
       final success = await _service.createTicket(ticket, pickedImages.value);
       if (success) {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Success",
+          message: "Ticket created successfully",
+          contentType: ContentType.success,
+        );
         resetFormField();
         refreshList();
         Get.back();
