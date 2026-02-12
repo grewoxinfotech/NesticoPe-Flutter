@@ -169,6 +169,7 @@ class LeadItem {
   final String? markedFakeBy;
   final String? markedFakeAt;
   CustomOldLeadFields? customFields; // 👈 can hold either Map or String
+  final LeadResellerData? leadResellerData;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final String? commissionStatus;
@@ -206,7 +207,7 @@ class LeadItem {
     this.propertyType,
     this.projectStatus,
     this.priceRange,
-    this.price,
+    this.price, this.leadResellerData,
   });
 
   factory LeadItem.fromJson(Map<String, dynamic> json) => LeadItem(
@@ -220,6 +221,12 @@ class LeadItem {
     resellerId: json["reseller_id"],
     source: json["source"],
     status: json["status"],
+    leadResellerData: json['reseller'] != null
+        ? LeadResellerData.fromMap(
+      Map<String, dynamic>.from(json['reseller']),
+    )
+        : null,
+
     stage: json["stage"],
     notes: json["notes"],
     lastContactedAt: json["lastContactedAt"],
@@ -313,6 +320,7 @@ class LeadItem {
     if (projectStatus != null) "projectStatus": projectStatus,
     if (priceRange != null) "priceRange": priceRange,
     if (price != null) "price": price,
+    if(leadResellerData!=null)"reseller":leadResellerData?.toMap()
   };
 }
 
@@ -376,6 +384,51 @@ extension LeadItemCopy on LeadItem {
     );
   }
 }
+
+
+
+class LeadResellerData {
+  final String id;
+  final String username;
+  final String? firstName;
+  final String? lastName;
+
+  LeadResellerData({
+    required this.id,
+    required this.username,
+    this.firstName,
+    this.lastName,
+  });
+
+  /// 🔹 Computed Full Name
+  String get fullName {
+    final fn = firstName ?? '';
+    final ln = lastName ?? '';
+    final name = '$fn $ln'.trim();
+    return name.isEmpty ? username : name;
+  }
+
+  /// 🔹 From Map
+  factory LeadResellerData.fromMap(Map<String, dynamic> map) {
+    return LeadResellerData(
+      id: map['id'] ?? '',
+      username: map['username'] ?? '',
+      firstName: map['firstName'],
+      lastName: map['lastName'],
+    );
+  }
+
+  /// 🔹 To Map
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'username': username,
+      'firstName': firstName,
+      'lastName': lastName,
+    };
+  }
+}
+
 class CustomOldLeadFields {
   final bool? isNegotiable;
   final String? timePeriod;

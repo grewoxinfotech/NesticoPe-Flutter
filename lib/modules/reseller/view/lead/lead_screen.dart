@@ -935,6 +935,7 @@
 
 import 'dart:developer';
 
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -965,7 +966,9 @@ class CommonLeadScreen extends StatefulWidget {
   final String? entityId; // propertyId / projectId
   final String title;
   final String controllerTag;
+  final bool showActionButton;
   final bool showDataMasking;
+
   final Widget Function(LeadItem lead, VoidCallback onTap)? leadCardBuilder;
 
   /// Pagination handler
@@ -981,6 +984,8 @@ class CommonLeadScreen extends StatefulWidget {
     this.entityId,
     this.showDataMasking = false,
     this.leadCardBuilder,
+    this.showActionButton = true,
+
   });
 
   @override
@@ -1022,11 +1027,25 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
     leadController.filters.clear();
 
     /// Apply entity filter (property / project)
+    ///  najjsindhu hsjin ajsin dheuj bndfb  nxjdin bc vbsg bchdu nsji bchdu bhuen bchduj ncj nchs nsjwn
+    /// ndhsj  jkfdn dhuejkn jsuekidbn ahd bdhc
     leadController.currentPropertyFilterId.value = widget.entityId;
 
     log(
+
+      /*bchd hduejhsbs
+      *
+      *
+      *
+      *
+      *
+      *
+      * sdddjhsuibn */
       "Controller Lead Project ${leadController.currentPropertyFilterId.value} ==================${widget.entityId}",
     );
+
+
+
 
     /// Apply dashboard filters
     if (dashboardController.selectedLeadFilters.isNotEmpty) {
@@ -1048,8 +1067,9 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
       appBar: AppBar(
         backgroundColor: ColorRes.white,
         elevation: 0,
-        automaticallyImplyLeading: false, // 🚫 disable Flutter auto logic
+        automaticallyImplyLeading: false,
 
+        // 🚫 disable Flutter auto logic
         leading:
             widget.isViewAll
                 ? null
@@ -1062,39 +1082,81 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
           widget.title,
           style: const TextStyle(fontWeight: AppFontWeights.bold),
         ),
-        actions: [
-          /// Add Lead
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              FocusScope.of(context).unfocus();
-              leadController.resetForm();
-              Get.to(
-                () => AddLeadScreen(),
-                binding: BindingsBuilder(() {
-                  Get.lazyPut(
-                    () => LeadController(),
-                    tag: widget.controllerTag,
-                  );
-                }),
-              );
-            },
-          ),
+        actions:
+            (widget.showActionButton)
+                ? [
+                  /// Add Lead
+                  IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () {
+                      FocusScope.of(context).unfocus();
+                      leadController.resetForm();
+                      Get.to(
+                        () => AddLeadScreen(),
+                        binding: BindingsBuilder(() {
+                          Get.lazyPut(
+                            () => LeadController(),
+                            tag: widget.controllerTag,
+                          );
+                        }),
+                      );
+                    },
+                  ),
 
-          /// Filter
-          IconButton(
-            icon: const Icon(Icons.filter_list, color: ColorRes.primary),
-            onPressed: () {
-              LeadFilterBottomSheet.show(
-                context: context,
-                selectedFilters: dashboardController.selectedLeadFilters,
-                onApplyFilters: () async {
-                  await _loadData();
-                },
-              );
-            },
-          ),
-        ],
+                  /// Filter
+                  IconButton(
+                    icon: const Icon(
+                      Icons.filter_list,
+                      color: ColorRes.primary,
+                    ),
+                    onPressed: () {
+                      LeadFilterBottomSheet.show(
+                        context: context,
+                        selectedFilters:
+                            dashboardController.selectedLeadFilters,
+                        onApplyFilters: () async {
+                          await _loadData();
+                        },
+                      );
+                    },
+                  ),
+                  PopupMenuButton<String>(
+                    onSelected: (value) {
+                      if (value == 'export') {
+
+                        leadController.exportToPdf(leadController.items);
+                      } else if (value == 'import') {
+                        showImportLeadsDialog(context);
+                        // leadController.importFromPdf();
+
+                      }
+                    },
+                    itemBuilder:
+                        (context) => [
+                          const PopupMenuItem(
+                            value: 'export',
+                            child: Row(
+                              children: [
+                                Icon(Icons.picture_as_pdf, color: Colors.red),
+                                SizedBox(width: 8),
+                                Text('Export PDF'),
+                              ],
+                            ),
+                          ),
+                          const PopupMenuItem(
+                            value: 'import',
+                            child: Row(
+                              children: [
+                                Icon(Icons.upload_file, color: Colors.blue),
+                                SizedBox(width: 8),
+                                Text('Import PDF'),
+                              ],
+                            ),
+                          ),
+                        ],
+                  ),
+                ]
+                : null,
       ),
       body: Obx(() {
         final leads = leadController.items;
@@ -1143,7 +1205,8 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
                             padding: EdgeInsets.all(
                               getResponsivePadding(context),
                             ),
-                            itemCount: leads.length + 1, // 👈 space for footer
+                            itemCount: leads.length + 1,
+                            // 👈 space for footer
                             separatorBuilder:
                                 (_, __) => SizedBox(
                                   height: getResponsiveSpacing(context),
@@ -1203,6 +1266,214 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
       }),
     );
   }
+  Future<void> showImportLeadsDialog(
+      BuildContext context,
+
+      ) async {
+
+    Get.dialog(
+      Dialog(
+        backgroundColor: ColorRes.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        insetPadding:
+        const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
+        child: Container(
+          // constraints: const BoxConstraints(
+          //   maxWidth: 600,
+          //   maxHeight: 700,
+          // ),
+          constraints: const BoxConstraints(maxWidth: 600, maxHeight: 700),
+
+          decoration: BoxDecoration(
+            color: ColorRes.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+
+              /// 🔹 HEADER (Same style structure)
+              _buildImportDialogHeader(),
+
+              const SizedBox(height: 10),
+
+                _buildRequiredHeadersSection(),
+
+                _buildTipSection(),
+                const SizedBox(height: 10),
+                _buildUploadSection(),
+                const SizedBox(height: 10),
+
+
+              /// 🔹 CONTENT
+              // Expanded(
+              //   child: SingleChildScrollView(
+              //     padding: const EdgeInsets.all(20),
+              //     child: Column(
+              //       crossAxisAlignment: CrossAxisAlignment.start,
+              //
+              //     ),
+              //   ),
+              // ),
+
+              /// 🔹 FOOTER (optional if needed)
+              const SizedBox(height: 10),
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: true,
+    );
+  }
+  Widget _buildImportDialogHeader() {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: const BoxDecoration(
+        color: ColorRes.primary,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+           Text(
+            "Import Leads (Excel)",
+            style: TextStyle(
+              fontSize: AppFontSizes.body,
+              fontWeight: AppFontWeights.semiBold,
+              color: ColorRes.white,
+            ),
+          ),
+          InkWell(
+            onTap: () => Get.back(),
+            borderRadius: BorderRadius.circular(50),
+            child: const Icon(
+              Icons.close_rounded,
+              color: ColorRes.white,
+              size: 20,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  Widget _buildRequiredHeadersSection() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: ColorRes.leadGreyColor.shade300,width: 1)
+
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.info_outline, size: 18),
+              SizedBox(width: 8),
+              Text(
+                "Required headers",
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: const [
+              _HeaderChip("name"),
+              _HeaderChip("email"),
+              _HeaderChip("phone"),
+              _HeaderChip("source"),
+              _HeaderChip("status"),
+              _HeaderChip("notes"),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+  Widget _buildTipSection() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: const Row(
+        children: [
+          Expanded(
+            child: Text(
+              "Tip: Keep first row as headers. Save as .xlsx/.xls after filling.",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+          Icon(Icons.download, color: Colors.white),
+        ],
+      ),
+    );
+  }
+  Widget _buildUploadSection() {
+    return GestureDetector(
+      onTap: () async {
+        await leadController.importFromPdf();
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: DottedBorder(
+          options: RoundedRectDottedBorderOptions(
+            radius: const Radius.circular(12),
+            dashPattern: const [6, 4], // dash length, gap
+            color: ColorRes.primary,
+            strokeWidth: 1.5, ),
+
+          child: Container(
+            height: 150,
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: ColorRes.white,
+            ),
+            child: const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.upload, size: 40, color: ColorRes.primary),
+                SizedBox(height: 10),
+                Text(
+                  "Click or drag file to this area to upload",
+                  style: TextStyle(
+                    color: ColorRes.primary,
+                    fontWeight: FontWeight.w500,
+                    fontSize: AppFontSizes.small,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  "Supports CSV, Excel files (.xlsx, .xls). Max ~5MB.",
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: ColorRes.leadGreyColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+
 
   Future<void> _openLead(LeadItem lead) async {
     if (isOpeningLead.value) return;
@@ -1262,6 +1533,23 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
           ),
         ],
       ),
+    );
+  }
+}
+class _HeaderChip extends StatelessWidget {
+  final String label;
+  const _HeaderChip(this.label);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding:
+      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(label, style: const TextStyle(fontSize: 13)),
     );
   }
 }

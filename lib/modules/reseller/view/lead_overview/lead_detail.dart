@@ -41,7 +41,7 @@ class LeadDetailScreen extends StatefulWidget {
   final LeadVisitController? leadVisitController;
   final LeadPropertyNegotiablePriceController?
   leadPropertyNegotiablePriceController;
-  final  ResellerPropertyController? propertyController;
+  final ResellerPropertyController? propertyController;
 
   LeadDetailScreen({
     Key? key,
@@ -170,6 +170,8 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
   Widget build(BuildContext context) {
     final isCompact = MediaQuery.of(context).size.width < 600;
 
+    log("Building Name in Reseller ${builderName}");
+
     return Scaffold(
       backgroundColor: ColorRes.white,
       appBar: AppBar(
@@ -187,8 +189,8 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
         backgroundColor: ColorRes.white,
         elevation: 0,
         // actions: [
-        //   IconButton(
-        //     icon: const Icon(Icons.more_vert),
+        //   IconButtvsgsv bsgwh bdheb hsdbgs on(
+        //     icon: const Icon(Icons.more_verhdub sbdhsb t),
         //     onPressed: () => _showMoreOptions(context),
         //   ),
         // ],
@@ -1304,7 +1306,11 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
         children: [
           _buildSectionHeader('Property Details', Icons.info_outline, true),
           SizedBox(height: 16),
-          if (builderName.isNotEmpty) _buildDetailRow('Builder', builderName),
+
+          if (builderName.isNotEmpty &&
+              (!builderName.contains("null")) &&
+              builderName != null)
+            _buildDetailRow('Builder', builderName),
           if (projectName.isNotEmpty) _buildDetailRow('Project', projectName),
           _buildDetailRow('Property Type', propertyType.toUpperCase()),
           if (details.zoneType != null)
@@ -1353,7 +1359,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
           if (possessionInfo?.propertyAgeInYear != null)
             _buildDetailRow(
               'Property Age',
-              '${possessionInfo!.propertyAgeInYear} years',
+              '${possessionInfo?.propertyAgeInYear != null ? possessionInfo?.propertyAgeInYear : "Not define"} years',
             ),
         ],
       ),
@@ -3113,8 +3119,8 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
         .cast<Items?>()
         .firstWhere(
           (e) => e?.propertyId == widget.lead?.propertyId,
-      orElse: () => null,
-    );
+          orElse: () => null,
+        );
     if (widget.property?.propertyDetails?.financialInfo != null)
       return widget.property!.propertyDetails!.financialInfo;
     if (property?.propertyDetails?.financialInfo != null)

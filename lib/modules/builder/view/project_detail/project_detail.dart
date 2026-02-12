@@ -509,6 +509,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                 title: 'Project Buyer Leads',
                                 controllerTag: 'project',
                                 entityId: project?.id,
+                                showActionButton: false,
                                 showDataMasking: false,
                                 onLoadMore: (controller, id) async {
                                   if (id != null) {

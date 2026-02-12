@@ -915,7 +915,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
               onTap: () async {
                 if (!Get.isRegistered<PropertyController>())
                   Get.put(PropertyController());
-                final result = await Get.to(() => ResellerPropertyFilter());
+                final result = await Get.to(() => ResellerPropertyFilterScreen());
 
                 if (result != null) {
                   final newFilter = convertFiltersToString(result);
@@ -924,6 +924,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
 
                   if (userId != null && userId.isNotEmpty) {
                     newFilter["assignedTo"] = userId;
+
 
                     log("Applying filter → $newFilter");
 

@@ -21,6 +21,8 @@
         "easy_stepper",
         "excel",
         "file_picker",
+        "firebase_core",
+        "firebase_crashlytics",
         "fl_chart",
         "flutter",
         "flutter_image_compress",
@@ -150,11 +152,10 @@
     },
     {
       "name": "razorpay_flutter",
-      "version": "1.4.0",
+      "version": "1.4.1",
       "dependencies": [
         "eventify",
-        "flutter",
-        "fluttertoast"
+        "flutter"
       ]
     },
     {
@@ -196,7 +197,7 @@
     },
     {
       "name": "onesignal_flutter",
-      "version": "5.3.7",
+      "version": "5.4.1",
       "dependencies": [
         "flutter"
       ]
@@ -213,7 +214,7 @@
     },
     {
       "name": "model_viewer_plus",
-      "version": "1.9.3",
+      "version": "1.10.0",
       "dependencies": [
         "android_intent_plus",
         "flutter",
@@ -325,6 +326,27 @@
         "plugin_platform_interface",
         "web",
         "win32"
+      ]
+    },
+    {
+      "name": "firebase_crashlytics",
+      "version": "5.0.7",
+      "dependencies": [
+        "firebase_core",
+        "firebase_core_platform_interface",
+        "firebase_crashlytics_platform_interface",
+        "flutter",
+        "stack_trace"
+      ]
+    },
+    {
+      "name": "firebase_core",
+      "version": "4.4.0",
+      "dependencies": [
+        "firebase_core_platform_interface",
+        "firebase_core_web",
+        "flutter",
+        "meta"
       ]
     },
     {
@@ -1231,7 +1253,7 @@
     },
     {
       "name": "webview_flutter_wkwebview",
-      "version": "3.23.5",
+      "version": "3.23.6",
       "dependencies": [
         "flutter",
         "meta",
@@ -1260,7 +1282,7 @@
     },
     {
       "name": "android_intent_plus",
-      "version": "5.3.1",
+      "version": "6.0.0",
       "dependencies": [
         "flutter",
         "meta",
@@ -1325,7 +1347,7 @@
     },
     {
       "name": "syncfusion_pdfviewer_linux",
-      "version": "32.1.25",
+      "version": "32.2.4",
       "dependencies": [
         "flutter",
         "plugin_platform_interface"
@@ -1333,14 +1355,14 @@
     },
     {
       "name": "syncfusion_pdfviewer_windows",
-      "version": "32.1.25",
+      "version": "32.2.4",
       "dependencies": [
         "flutter"
       ]
     },
     {
       "name": "syncfusion_pdfviewer_macos",
-      "version": "32.1.25",
+      "version": "32.2.4",
       "dependencies": [
         "flutter",
         "syncfusion_pdfviewer_platform_interface"
@@ -1348,7 +1370,7 @@
     },
     {
       "name": "syncfusion_pdfviewer_web",
-      "version": "32.1.25",
+      "version": "32.2.4",
       "dependencies": [
         "flutter",
         "flutter_web_plugins",
@@ -1358,7 +1380,7 @@
     },
     {
       "name": "syncfusion_pdfviewer_platform_interface",
-      "version": "32.1.25",
+      "version": "32.2.4",
       "dependencies": [
         "flutter",
         "plugin_platform_interface"
@@ -1434,6 +1456,40 @@
       "version": "2.0.33",
       "dependencies": [
         "flutter"
+      ]
+    },
+    {
+      "name": "firebase_crashlytics_platform_interface",
+      "version": "3.8.17",
+      "dependencies": [
+        "_flutterfire_internals",
+        "collection",
+        "firebase_core",
+        "flutter",
+        "meta",
+        "plugin_platform_interface"
+      ]
+    },
+    {
+      "name": "firebase_core_platform_interface",
+      "version": "6.0.2",
+      "dependencies": [
+        "collection",
+        "flutter",
+        "flutter_test",
+        "meta",
+        "plugin_platform_interface"
+      ]
+    },
+    {
+      "name": "firebase_core_web",
+      "version": "3.4.0",
+      "dependencies": [
+        "firebase_core_platform_interface",
+        "flutter",
+        "flutter_web_plugins",
+        "meta",
+        "web"
       ]
     },
     {
@@ -2287,6 +2343,17 @@
       "name": "platform",
       "version": "3.1.6",
       "dependencies": []
+    },
+    {
+      "name": "_flutterfire_internals",
+      "version": "1.3.66",
+      "dependencies": [
+        "collection",
+        "firebase_core",
+        "firebase_core_platform_interface",
+        "flutter",
+        "meta"
+      ]
     },
     {
       "name": "sanitize_html",

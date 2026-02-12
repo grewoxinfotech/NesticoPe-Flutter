@@ -283,13 +283,14 @@ class _ProjectListingScreenState extends State<ProjectListingScreen> {
                 if (!Get.isRegistered<ProjectController>())
                   Get.put(ProjectController());
                 // final result = await Get.to(() => ResellerProjectFilter());
-                final result = await Get.to<Map<String, String>>(
-                  () => ProjectFilterScreen(
-                    initialFilters: selectedFilters.value,
+                final result = await Get.to(
+                  () => ResellerProjectFilterScreen(
+
+                  /*  initialFilters: selectedFilters.value,
                     onApply: (filterData) {
                       filterData.removeWhere((key, value) => ( value == 'false'),);
                       Get.back(result: filterData);
-                    },
+                    },*/
                   ),
                   transition: Transition.downToUp,
                   // optional for sheet-like slide-up effect

@@ -12,6 +12,13 @@ class ProjectFilterController extends GetxController {
   RxBool isPropertyHaveImage=false.obs;
   RxBool isPropertyHaveVideo=false.obs;
   RxBool isPropertyHaveBroucher=false.obs;
+  final txtStartDate = TextEditingController();
+  final txtEndDate = TextEditingController();
+  RxString builderProjectStatus = "".obs;
+  RxString resellerVerified = "".obs;
+  RxString resellerApprovalStatus = ''.obs;
+  DateTime startDate = DateTime.now();
+  DateTime endDate = DateTime.now();
   RxDouble min = 0.0.obs;
   RxDouble max = 0.0.obs;
   RxList<double> budgetValues = <double>[
@@ -77,9 +84,11 @@ class ProjectFilterController extends GetxController {
       selectedPropertyType.value = propertyTypes.first;
     }
   }
-
+  void setValue<T>(Rx<T> target, T value) {
+    target.value = value;
+  }
   // Dropdown Data
-  final List<String> propertyTypes = ["Apartment", "Villa", "House"];
+  RxList<String> propertyTypes = <String>[].obs;
 
   // Localities based on city
 

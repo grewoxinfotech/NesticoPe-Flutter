@@ -719,7 +719,7 @@ class DashboardController extends GetxController {
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
   RxDouble resellerMinPrice = 0.0.obs;
-  RxDouble resellerMaxPrice = 100000000.0.obs;
+  RxDouble resellerMaxPrice = 0.0.obs;
   RxString resellerPropertyCategory = "".obs;
   RxString resellerListingType = "".obs;
   final RxString resellerSelectedState = ''.obs;

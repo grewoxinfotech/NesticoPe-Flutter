@@ -278,8 +278,11 @@ RxBool isPropertyHaveVideo=false.obs;
     selectedState.listen((state) {
       availableCities.value =
           cityController.stateCityMap[state]
-              ?.map((city) => city.city)
-              .toList() ??
+              ?.map((city) => city.city?.trim() ?? '')
+                  .where((city) => city.isNotEmpty)
+                  .toSet()
+                  .toList()
+              ??
           [];
       // Only reset city if NOT initializing filters
       if (!isInitializing.value) {

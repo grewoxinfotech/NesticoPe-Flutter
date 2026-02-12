@@ -13,7 +13,7 @@ class ResellerPropertyController extends PaginatedController<Items> {
   Map<String, String>? filters = {};
   final String resellerId;
   ResellerPropertyController({required this.resellerId}) {
-    filters = {'assignedTo': resellerId};
+    filters = {'assignedTo': resellerId,'isExpired':false.toString()};
   }
 
   /// State
@@ -51,6 +51,7 @@ class ResellerPropertyController extends PaginatedController<Items> {
     filters ??= {};
     filters![key] = value;
     filters!['assignedTo'] = resellerId;
+    filters!['isExpired'] = false.toString();
 
     _resetPagination();
     refreshList();
@@ -61,6 +62,7 @@ class ResellerPropertyController extends PaginatedController<Items> {
     isApplyingFilter.value = true;
     filters = Map<String, String>.from(newFilters);
     filters!['assignedTo'] = resellerId;
+    filters!['isExpired'] = false.toString();
 
     _resetPagination();
     await refreshList();
@@ -73,6 +75,7 @@ class ResellerPropertyController extends PaginatedController<Items> {
     filters ??= {};
     filters!.remove(key);
     filters!['assignedTo'] = resellerId;
+    filters!['isExpired'] = false.toString();
 
     _resetPagination();
     refreshList();
@@ -82,6 +85,7 @@ class ResellerPropertyController extends PaginatedController<Items> {
   void clearAllFilters() {
     filters?.clear();
     filters!['assignedTo'] = resellerId;
+    filters!['isExpired'] = false.toString();
 
     _resetPagination();
     refreshList();

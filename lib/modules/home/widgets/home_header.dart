@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
@@ -161,64 +162,81 @@ class _HomeHeaderState extends State<HomeHeader> {
                 ),
               ),
 
-              (UserHelper.isGuest)?SizedBox.shrink():Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      controller.refreshNotifications();
-                      Get.to(() => InAppMessageScreen());
-
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      child: Icon(
-                        Icons.notifications_none_rounded,
-                        color: ColorRes.primary,
-                        size: 25,
-                      ),
-                    ),
-                  ),
-
-                  // 🔴 Badge
-                  Obx(() {
-                    if(controller.unReadNumber.value==0){
-                      return SizedBox.shrink();
-                    }
-                    return Positioned(
-                      right: 4,
-                      top: 2,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          shape: BoxShape.circle,
-                        ),
-                        constraints: const BoxConstraints(
-                          minWidth: 16,
-                          minHeight: 16,
-                        ),
-                        child: Center(
-                          child: Text(
-                            '${controller.unReadNumber.value}', // 🔢 notification count
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            ),
+              (UserHelper.isGuest)
+                  ? SizedBox.shrink()
+                  : Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          controller.refreshNotifications();
+                          Get.to(() => InAppMessageScreen());
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          child: Icon(
+                            Icons.notifications_none_rounded,
+                            color: ColorRes.primary,
+                            size: 25,
                           ),
                         ),
                       ),
-                    );
-                  },)
-                ],
-              ),
+
+                      // 🔴 Badge
+                      Obx(() {
+                        if (controller.unReadNumber.value == 0) {
+                          return SizedBox.shrink();
+                        }
+                        return Positioned(
+                          right: 4,
+                          top: 2,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            constraints: const BoxConstraints(
+                              minWidth: 16,
+                              minHeight: 16,
+                            ),
+                            child: Center(
+                              child: Text(
+                                '${controller.unReadNumber.value}',
+                                // 🔢 notification count
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
               SizedBox(width: 8),
               GestureDetector(
                 onTap: () {
-                  log('dhfgugh djfdfjdn fhgfhglkb ${widget.image}');
+                  // log('dhfgugh djfdfjdn fhgfhglkb ${widget.image}');
+                  //
+                  // // FirebaseCrashlytics.instance.crash();
+                  // onPressed: () => throw Exception(),
                   Get.to(() => ProfileScreen(imageUrl: widget.image));
                 },
+                /*onTap: () {
+                  try {
+                    throw Exception("Manual test exception");
+                  } catch (e, s) {
+                    FirebaseCrashlytics.instance.recordError(
+                      e,
+                      s,
+                      fatal: true,
+                    );
+                  }
+                },*/
+
                 child:
                     (widget.image.isEmpty)
                         ? Container(

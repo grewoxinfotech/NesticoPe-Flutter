@@ -352,6 +352,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _isConfirmPasswordVisible = false;
   bool _isLoading = false;
   bool _acceptTerms = false;
+  bool _haveReferralCode = false;
+
   UserRole _selectedRole = UserRole.buyer;
 
   @override
@@ -693,8 +695,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 //     _selectedRole == UserRole.reseller)...[
                 NesticoPeTextField(
                   title: "Username",
+                  isRequired: true,
                   controller: _usernameController,
                   hintText: 'Enter Username',
+
                   style: TextStyle(
                     fontSize: AppFontSizes.medium,
                     fontWeight: AppFontWeights.semiBold,
@@ -764,6 +768,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ],
 
                 NesticoPeTextField(
+
+                  isRequired: true,
                   title: "Email Address",
                   style: TextStyle(
                     fontSize: AppFontSizes.medium,
@@ -792,6 +798,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 NesticoPeTextField(
                   hintText: 'Enter Phone Number',
                   title: "Phone Number",
+
+                  isRequired: true,
                   style: TextStyle(
                     fontSize: AppFontSizes.medium,
                     fontWeight: AppFontWeights.semiBold,
@@ -951,22 +959,45 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   },
                 ),
                 const SizedBox(height: 10),
-                NesticoPeTextField(
-                  hintText: 'Enter Referral Code (Optional)',
-                  title: "Referral Code",
-                  style: TextStyle(
-                    fontSize: AppFontSizes.medium,
-                    fontWeight: AppFontWeights.semiBold,
-                    color: ColorRes.textPrimary,
-                  ),
-
-                  controller: _referralCodeController,
-                  textCapitalization: TextCapitalization.characters,
-                  prefixIcon: Icons.numbers_outlined,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                Row(
+                  children: [
+                    Checkbox(
+                      value: _haveReferralCode,
+                      onChanged:
+                          (val) =>
+                              setState(() => _haveReferralCode = val ?? false),
+                      activeColor: theme.colorScheme.primary,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      "Do you have a referral code?",
+                      style: TextStyle(
+                        fontSize: 12.5,
+                        fontWeight: AppFontWeights.regular,
+                      ),
+                    ),
+                  ],
                 ),
 
-                const SizedBox(height: 16),
+                if (_haveReferralCode) ...[
+                  NesticoPeTextField(
+                    hintText: 'Enter Referral Code (Optional)',
+                    title: "Referral Code",
+
+                    style: TextStyle(
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.textPrimary,
+                    ),
+
+                    controller: _referralCodeController,
+                    textCapitalization: TextCapitalization.characters,
+                    prefixIcon: Icons.numbers_outlined,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                  ),
+
+                  const SizedBox(height: 16),
+                ],
 
                 Row(
                   children: [

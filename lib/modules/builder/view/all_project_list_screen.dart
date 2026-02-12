@@ -267,6 +267,7 @@ import 'package:housing_flutter_app/widgets/empty_state/empty_state.dart';
 import '../../../app/constants/img_res.dart';
 import '../../../utils/shimmer/buyer/project/buyer_project_list_screen_shimmer.dart';
 import '../../home/widgets/unified_comparison_floating_button.dart';
+import '../../reseller/view/listing/property_listing.dart' show convertFiltersToString;
 import 'builder_property_listing.dart';
 
 // class AllProjectListScreen extends StatefulWidget {
@@ -518,6 +519,7 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
       }
 
       setState(() {
+
         selectedFilters = uiFilters;
       });
       _applyFilters();
@@ -557,22 +559,27 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
         onBack: () => Get.back(),
 
         onFilterTap: () async {
-          final result = await Get.to<Map<String, String>>(
-                () => ProjectFilterScreen(
-              initialFilters: Map<String, String>.from(selectedFilters),
+          final result = await Get.to(
+                () => ResellerProjectFilterScreen(
+             /* initialFilters: Map<String, String>.from(selectedFilters),
               onApply: (filterData) {
                 filterData.removeWhere((key, value) => ( value == 'false'),);
 
                 Get.back(result: filterData);
-              },
+              },*/
+
             ),
             transition: Transition.downToUp,
             duration: const Duration(milliseconds: 300),
           );
 
           if (result != null) {
+            final newFilter = convertFiltersToString(result);
             setState(() {
-              selectedFilters = result;
+              selectedFilters
+                ..clear()
+                ..addAll(newFilter);
+              // selectedFilters = newFilter;
             });
             _applyFilters();
           }
@@ -626,6 +633,7 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
                         itemCount: _items.length,
                         itemBuilder: (context, index) {
                           final ProjectItem data = _items[index];
+
 
                           return GestureDetector(
                             onTap: () {

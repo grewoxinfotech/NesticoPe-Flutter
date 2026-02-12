@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "755730133759",
+    "project_id": "grewox-infotech-nesticop-14b19",
+    "storage_bucket": "grewox-infotech-nesticop-14b19.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:755730133759:android:d3755bcd0f3ce354c092ca",
+        "android_client_info": {
+          "package_name": "com.example.housing_flutter_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbJmA6vgDI1V6xznO6uBroFZoL1jGvf4k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

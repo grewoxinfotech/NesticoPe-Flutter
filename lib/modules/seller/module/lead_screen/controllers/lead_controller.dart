@@ -518,8 +518,10 @@
 // }
 
 import 'dart:developer';
+import 'dart:io';
 import 'dart:math' hide log;
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
@@ -532,6 +534,7 @@ import '../../../../../app/constants/color_res.dart';
 import '../../../../../data/database/secure_storage_service.dart';
 import '../../../../../data/network/lead/lead_service.dart';
 import '../../../../../data/network/property/services/property_service.dart';
+import '../../../../../utils/excel/generate_excel.dart';
 import '../../../../../utils/logger/app_logger.dart';
 import '../../../../../widgets/messages/snack_bar.dart';
 import '../../../../builder/controller/all_project_controller.dart';
@@ -668,6 +671,96 @@ class LeadController extends PaginatedController<LeadItem> {
       );
     }
   }
+
+  Future<void> exportToPdf(List<LeadItem> item) async {
+
+    AppLogger.structured(
+      "Lead Data Export in excel form : ",
+      item.map((e) => e.toJson()),
+    );
+    await exportLeadsToExcel(items);
+
+  }
+
+  Future<void> importFromPdf() async {
+    await pickAndImportExcel();
+  }
+
+  Future<void> pickAndImportExcel() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['xlsx', 'xls'],
+      withData: true, // safer for Android
+    );
+
+    if (result == null) {
+      print("❌ No file selected");
+      return;
+    }
+
+    final pickedFile = result.files.single;
+
+    print("📄 File name: ${pickedFile.name}");
+    print("📍 File path: ${pickedFile.path}");
+    print("📦 Bytes length (memory): ${pickedFile.bytes?.length}");
+
+    // --- CASE 1: Using bytes (recommended)
+    if (pickedFile.bytes != null) {
+      print("✅ Using in-memory bytes");
+
+      if (pickedFile.bytes!.isEmpty) {
+        print("❌ Picked file bytes are EMPTY");
+        return;
+      }
+
+      final response = await _service.importLeadDataExcelFile(
+        pickedFile.bytes!,
+        pickedFile.name,
+      );
+
+      if (response == true) {
+        Get.back();
+        Get.snackbar("Import Successful", "");
+        await refreshList();
+      }
+
+      return;
+    }
+
+    // --- CASE 2: Using path fallback
+    if (pickedFile.path == null) {
+      print("❌ File path is NULL");
+      return;
+    }
+
+    final file = File(pickedFile.path!);
+
+    print("📂 Exists: ${await file.exists()}");
+
+    if (!await file.exists()) {
+      print("❌ File does not exist at path");
+      return;
+    }
+
+    final fileSize = await file.length();
+    print("📦 File size (disk): $fileSize bytes");
+
+    if (fileSize == 0) {
+      print("❌ File size is ZERO");
+      return;
+    }
+
+    final response = await _service.importLeadDataExcelFile(   pickedFile.bytes!,
+      pickedFile.name,);
+
+    if (response == true) {
+      Get.back();
+      Get.snackbar("Import Successful", "");
+      await refreshList();
+    }
+  }
+
+
 
   Future<void> fetchResellerAssignProject() async {
     final user = await SecureStorage.getUserData();

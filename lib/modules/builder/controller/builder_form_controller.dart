@@ -806,6 +806,14 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   Future<PaginationResponse<ProjectItem>> fetchItems(int page) async {
     try {
       log("dkvjcvifj $filters");
+      var user=await SecureStorage.getUserData();
+      var userId=user?.user?.id;
+     if(userId!=null)
+       {
+         filters={
+           'created_by':userId
+         };
+       }
       final response = await _builderService.fetchProjects(
         page: page,
         filters: filters,

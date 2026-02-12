@@ -36,6 +36,130 @@ class LeadService {
     return await ApiConstants.getHeaders();
   }
 
+/*  Future<bool?> importLeadDataExcelFile(
+      List<int> bytes,
+      String fileName,
+      ) async {
+    try {
+      print("📦 Uploading file: $fileName");
+      print("📦 Bytes length: ${bytes.length}");
+
+      if (bytes.isEmpty) {
+        print("❌ File bytes are empty");
+        return null;
+      }
+
+      final uri = Uri.parse("$baseUrl/import");
+      final request = http.MultipartRequest("POST", uri);
+
+      /// 🔹 Add headers (REMOVE content-type!)
+      final authHeaders = await headers();
+      request.headers.addAll(authHeaders);
+
+      /// 🔹 Attach Excel file
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          "file", // Make sure backend expects this field name
+          bytes,
+          filename: fileName,
+        ),
+      );
+
+      /// 🔹 Send request
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      print("📥 Status Code: ${response.statusCode}");
+      print("📥 Response: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(response.body);
+
+        if (decoded["success"] == true) {
+          print("✅ Import successful");
+          return true;
+        } else {
+          print("❌ Backend says failed: ${decoded["message"]}");
+          return null;
+        }
+      } else {
+        print("❌ HTTP Error: ${response.body}");
+        return null;
+      }
+    } catch (e, stack) {
+      print("💥 Import Error: $e");
+      print(stack);
+      return null;
+    }
+  }*/
+
+  Future<bool?> importLeadDataExcelFile(
+      List<int> bytes,
+      String fileName,
+      ) async {
+    try {
+      print("📦 Uploading file: $fileName");
+      print("📦 Bytes length: ${bytes.length}");
+
+      if (bytes.isEmpty) {
+        print("❌ File bytes are empty");
+        return null;
+      }
+
+      final uri = Uri.parse("$baseUrl/import");
+      final request = http.MultipartRequest("POST", uri);
+
+      /// 🔹 Add headers (without content-type)
+      final authHeaders = await headers();
+      request.headers.addAll(authHeaders);
+
+      /// 🔹 Attach Excel file with proper content type
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          "file",
+          bytes,
+          filename: fileName,
+          contentType: http.MediaType(
+            'application',
+            'vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          ),
+        ),
+      );
+
+      print("📤 Sending multipart request...");
+      print("📤 Files count: ${request.files.length}");
+      print("📤 File field name: ${request.files.first.field}");
+      print("📤 File length: ${request.files.first.length}");
+
+      /// 🔹 Send request
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      print("📥 Status Code: ${response.statusCode}");
+      print("📥 Response: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(response.body);
+
+        if (decoded["success"] == true) {
+          print("✅ Import successful");
+          return true;
+        } else {
+          print("❌ Backend says failed: ${decoded["message"]}");
+          return null;
+        }
+      } else {
+        print("❌ HTTP Error: ${response.body}");
+        return null;
+      }
+    } catch (e, stack) {
+      print("💥 Import Error: $e");
+      print(stack);
+      return null;
+    }
+  }
+
+
   /// Fetch paginated leads with property_id filter support
   Future<PaginationResponse<LeadItem>> fetchLeads({
     int page = 1,

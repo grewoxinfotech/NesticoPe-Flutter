@@ -58,7 +58,10 @@ dependencies:
   mime:
   google_maps_flutter:
   fluttertoast:
-  
+
+  firebase_core:
+  firebase_crashlytics:
+
   file_picker:
   pdfx:
   open_filex:

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:excel/excel.dart';
+import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_filex/open_filex.dart';
 
@@ -165,6 +166,73 @@ Future<void> exportSellerInsightsToExcel(Map<String, dynamic> jsonData) async {
     print('📚 Stack: $stack');
   }
 }
+
+
+Future<void> exportLeadsToExcel(List<LeadItem> leads) async {
+  try {
+    final excel = Excel.createExcel();
+    final sheet = excel['Leads Export'];
+
+    /// 🔹 HEADER ROW (Same as your image)
+    sheet.appendRow([
+      TextCellValue('ID'),
+      TextCellValue('Name'),
+      TextCellValue('Email'),
+      TextCellValue('Phone'),
+      TextCellValue('Source'),
+      TextCellValue('Status'),
+      TextCellValue('Stage'),
+      TextCellValue('Created At'),
+      TextCellValue('Property'),
+      TextCellValue('Partner'),
+    ]);
+
+    /// 🔹 DATA ROWS
+    for (var lead in leads) {
+      sheet.appendRow([
+        TextCellValue(lead.id ?? ''),
+        TextCellValue(lead.name ?? ''),
+        TextCellValue(lead.email ?? ''),
+        TextCellValue(lead.phone ?? ''),
+        TextCellValue(lead.source ?? ''),
+        TextCellValue(lead.status ?? ''),
+        TextCellValue(lead.stage ?? ''),
+        TextCellValue(_formatDate(lead.createdAt?.toIso8601String())),
+        TextCellValue(lead.projectName ?? 'N/A'),
+        TextCellValue(lead.leadResellerData?.fullName?? 'N/A'),
+      ]);
+    }
+
+    /// ✅ SAVE FILE
+    final bytes = excel.encode();
+    if (bytes == null) throw Exception('Failed to encode Excel');
+
+    Directory dir;
+    if (Platform.isAndroid) {
+      dir = Directory('/storage/emulated/0/Download');
+      if (!dir.existsSync()) {
+        dir = await getApplicationDocumentsDirectory();
+      }
+    } else {
+      dir = await getApplicationDocumentsDirectory();
+    }
+
+    final filePath =
+        '${dir.path}/leads_export_${DateTime.now().millisecondsSinceEpoch}.xlsx';
+
+    final file = File(filePath)
+      ..createSync(recursive: true)
+      ..writeAsBytesSync(bytes);
+
+    print('✅ Leads Excel exported successfully: $filePath');
+    await OpenFilex.open(filePath);
+
+  } catch (e, stack) {
+    print('💥 Error exporting Leads: $e');
+    print('📚 Stack: $stack');
+  }
+}
+
 
 Future<void> exportContractorInsightsToExcel(Map<String, dynamic> jsonData) async {
   try {

@@ -2642,11 +2642,13 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
 
     List<pw.Widget> rows = [];
 
+
     for (int i = 0; i < materials.length; i += itemsPerRow) {
       final rowMaterials = materials.sublist(
         i,
         i + itemsPerRow > materials.length ? materials.length : i + itemsPerRow,
       );
+
 
       rows.add(
         pw.Padding(
@@ -2655,11 +2657,13 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
             mainAxisAlignment: pw.MainAxisAlignment.start,
             children: [
               ...rowMaterials.map((material) {
+
                 return pw.SizedBox(
                   width: 130,
                   child: pw.Padding(
                     padding: const pw.EdgeInsets.only(right: 8),
                     child: pw.Container(
+                      height: 50,
                       padding: const pw.EdgeInsets.all(8),
                       decoration: pw.BoxDecoration(
                         color: PdfColor.fromInt(0xFFF7FAFC),

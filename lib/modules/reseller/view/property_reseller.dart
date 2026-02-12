@@ -729,6 +729,7 @@ class ResellerDashboardScreen extends StatefulWidget {
 //     );
 //   }
 // }
+
 class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
   // @override
   final controller = Get.put(DashboardController());
@@ -2300,6 +2301,9 @@ Widget buildTopPropertyForGoodCommission(
   );
 }
 
+
+
+
 // Helper method to build feature items
 Widget _buildFeatureItem(IconData icon, String label) {
   return Container(
@@ -3481,11 +3485,11 @@ Widget buildLeaderBoardRanking({
             },
           );
         }),
-//iojjfnrfjr jjuicn  id9ejh
+
+        //iojjfnrfjr jjuicn  id9ejh
 
         // /*iidkcjndcnd
         // jdcdcnnn
-
         const SizedBox(height: 16),
 
         // Dynamic Leader Cards
@@ -4411,6 +4415,7 @@ Widget buildDailyGoals({
   print("resele $remainingSteps");
   print("resele $completedSteps");
   print("resele $progressPercent");
+  final completeDailyGoal = totalSteps == currentStep;
 
   return Container(
     decoration: BoxDecoration(
@@ -4652,6 +4657,65 @@ Widget buildDailyGoals({
             ),
           ],
         ),
+        const SizedBox(height: 16),
+        if (completeDailyGoal) ...[
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(16)),
+              color: ColorRes.green.shade50,
+
+              border: Border.all(color: ColorRes.green, width: 1),
+            ),
+            child: Row(
+              children: [
+                // Icon(Icons.emoji_emotions_outlined,color:ColorRes.green),
+                TiltingIcon(
+                  tiltAmount: 0.8,
+                  direction: TiltDirection.vertical,
+                  icon: Icon(
+                    Icons.emoji_emotions_outlined,
+                    color: ColorRes.green,
+                  ),
+
+                  // duration: Duration(seconds: 1),
+                ),
+                SizedBox(width: 8),
+
+                Text(
+                  "Goal Achieved! Great job!",
+                  style: TextStyle(
+                    fontSize: AppFontSizes.extraSmall,
+                    fontWeight: AppFontWeights.medium,
+                    color: ColorRes.green,
+                  ),
+                ),
+                SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                    color: ColorRes.homeAmber.shade50,
+
+                    border: Border.all(color: ColorRes.homeAmber, width: 1),
+                  ),
+                  child: Text(
+                    "+100 pts",
+                    style: TextStyle(
+                      fontSize: AppFontSizes.extraSmall,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.homeAmber,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ],
     ),
   );
@@ -6204,8 +6268,6 @@ class MainNavigationScreen extends StatelessWidget {
           }
         },
       ),
-
-      ResellerSubscriptionPlanScreen(),
       ResellerProfileScreen(),
     ];
 
@@ -6264,13 +6326,13 @@ class MainNavigationScreen extends StatelessWidget {
                 ),
                 label: 'Leads',
               ),
-              BottomNavigationBarItem(
+            /*  BottomNavigationBarItem(
                 icon: Padding(
                   padding: EdgeInsets.only(bottom: 4),
                   child: Icon(Icons.card_giftcard_outlined, size: 22),
                 ),
                 label: 'Plans',
-              ),
+              ),*/
               BottomNavigationBarItem(
                 icon: Padding(
                   padding: EdgeInsets.only(bottom: 4),

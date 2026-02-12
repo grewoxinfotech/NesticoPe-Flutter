@@ -20,6 +20,8 @@ import '../../controller/fack_lead_controller/fack_lead_controller.dart';
 import '../../controller/profile/profile_controller.dart';
 import 'package:get/get.dart';
 
+import '../subscription_plan/reseller_subscription_plan.dart';
+
 class ResellerProfileScreen extends StatelessWidget {
   const ResellerProfileScreen({Key? key}) : super(key: key);
 
@@ -109,6 +111,14 @@ class ResellerProfileScreen extends StatelessWidget {
 
                             onTap: () {
                               Get.to(() => SuccessStoryScreen());
+                            },
+                          ),  const SizedBox(height: 16),
+                          _buildActionButton(
+                            icon: Icons.card_giftcard_outlined,
+                            label: "Partner Plan",
+
+                            onTap: () {
+                              Get.to(() =>  ResellerSubscriptionPlanScreen());
                             },
                           ),
                           /*                     const SizedBox(height: 16),
