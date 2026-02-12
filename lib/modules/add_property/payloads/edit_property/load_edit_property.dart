@@ -49,12 +49,12 @@ class LoadEditPropertyPayload extends GetxController {
             : null) ??
         '';
 
-    controller.commercial_ZoneType.value =
-        (((property.propertyDetails?.plotInfo?.zoneType?.isNotEmpty ?? false) &&
-                property.propertyDetails?.plotInfo?.zoneType != null)
-            ? property.propertyDetails?.plotInfo?.zoneType
-            : null) ??
-        '';
+    // controller.commercial_ZoneType.value =
+    //     (((property.propertyDetails?.plotInfo?.zoneType?.isNotEmpty ?? false) &&
+    //             property.propertyDetails?.plotInfo?.zoneType != null)
+    //         ? property.propertyDetails?.plotInfo?.zoneType
+    //         : null) ??
+    //     '';
     controller.plotLength.text =
         ((property.propertyDetails?.plotInfo?.plotLength != null)
                 ? property.propertyDetails?.plotInfo?.plotLength
@@ -109,7 +109,11 @@ class LoadEditPropertyPayload extends GetxController {
     controller.tenantType.value =
         capitalizeEachWord(property.propertyDetails?.tenantType) ?? '';
     controller.rent_AvailableFrom.text =
-        property.propertyDetails?.availableFrom ?? '';
+        DateTime.tryParse(property.propertyDetails?.availableFrom ?? '') != null
+            ? DateFormat(
+              'dd/MM/yyyy',
+            ).format(DateTime.parse(property.propertyDetails!.availableFrom!))
+            : '';
 
     controller.rent_Bathroom.value =
         (property.propertyDetails?.bathroom != null &&
@@ -280,6 +284,11 @@ class LoadEditPropertyPayload extends GetxController {
                 property.propertyDetails!.zoneType!.isNotEmpty)
             ? property.propertyDetails!.zoneType!
             : '';
+    controller.commercial_rent_description.text =
+        (property.propertyDescription != null &&
+                property.propertyDescription!.isNotEmpty)
+            ? property.propertyDescription!
+            : '';
 
     loadPlotInfo(controller, property);
     loadPropertyCondition(controller, property);
@@ -372,6 +381,12 @@ class LoadEditPropertyPayload extends GetxController {
         (possessionStatus != null && possessionStatus.trim().isNotEmpty)
             ? capitalizeEachWord(possessionStatus.replaceAll("_", " "))
             : "";
+    if (possessionStatus != null) {
+      controller.commercial_rent_posessionStatus.value =
+          possessionStatus.toLowerCase() == 'immediate'
+              ? 'Immediate'
+              : 'In Future';
+    }
 
     controller.commercial_plot.text =
         (property.propertyDetails?.plotInfo?.plotArea != null &&
@@ -384,15 +399,13 @@ class LoadEditPropertyPayload extends GetxController {
                 property.propertyDetails!.plotInfo!.plotLength != 0)
             ? property.propertyDetails!.plotInfo!.plotLength!.toStringAsFixed(0)
             : '0';
-    controller.commercial_ZoneType.value =
-        (((property.propertyDetails?.plotInfo?.zoneType?.isNotEmpty ?? false) &&
-                property.propertyDetails?.plotInfo?.zoneType != null)
-            ? property.propertyDetails?.plotInfo?.zoneType
-            : null) ??
-        '';
+    // controller.commercial_ZoneType.value =
+    //     (((property.propertyDetails?.plotInfo?.zoneType?.isNotEmpty ?? false) &&
+    //             property.propertyDetails?.plotInfo?.zoneType != null)
+    //         ? property.propertyDetails?.plotInfo?.zoneType
+    //         : null) ??
+    //     '';
 
-    controller.commercial_rent_posessionStatus.value =
-        property.propertyDetails?.plotInfo?.possessionStatus ?? '';
     controller.commercial_rent_AvailableFrom.text =
         (property.propertyDetails?.plotInfo?.possessionDate != null &&
                 property.propertyDetails!.plotInfo!.possessionDate!.isNotEmpty)
@@ -419,12 +432,16 @@ class LoadEditPropertyPayload extends GetxController {
   ) {
     /// commercial financial info
 
-    controller.commercial_rent_cost.text =
-        (property.propertyDetails?.financialInfo?.propertyPrice != null &&
-                property.propertyDetails!.financialInfo!.propertyPrice != 0)
-            ? property.propertyDetails!.financialInfo!.propertyPrice!
-                .toStringAsFixed(0)
-            : '0';
+    controller
+        .commercial_rent_cost
+        .text = ((property.propertyDetails?.financialInfo?.propertyPrice ?? 0) >
+                0
+            ? property.propertyDetails!.financialInfo!.propertyPrice
+            : property.propertyDetails?.financialInfo?.monthlyRent ??
+                property.propertyDetails?.financialInfo?.propertyRentPerMonth ??
+                0)!
+        .toStringAsFixed(0);
+
     controller.platformFees.text =
         (property.propertyDetails?.financialInfo?.platformFees != null &&
                 property.propertyDetails!.financialInfo!.platformFees != 0)
@@ -469,12 +486,17 @@ class LoadEditPropertyPayload extends GetxController {
                 .toStringAsFixed(0)
             : '0';
 
+    // controller.commercial_rent_maintainance_charge.value =
+    //     (property.propertyDetails?.financialInfo?.maintenanceCharges != null &&
+    //             property.propertyDetails!.financialInfo!.maintenanceCharges !=
+    //                 0)
+    //         ? 'Yes'
+    //         : 'No';
+
     controller.commercial_rent_maintainance_charge.value =
-        (property.propertyDetails?.financialInfo?.maintenanceCharges != null &&
-                property.propertyDetails!.financialInfo!.maintenanceCharges !=
-                    0)
-            ? 'Yes'
-            : 'No';
+        ((property.propertyDetails?.financialInfo?.maintenanceCharges ?? 0) > 0)
+            ? "Separate"
+            : "Included in Rent";
 
     controller.commercial_rent_mainatainance_charge.text =
         (property.propertyDetails?.financialInfo?.maintenanceCharges != null &&

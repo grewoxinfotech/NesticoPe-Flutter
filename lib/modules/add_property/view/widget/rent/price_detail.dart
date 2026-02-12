@@ -7,6 +7,7 @@ import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
 import 'package:housing_flutter_app/modules/add_property/view/create_property.dart';
+import 'package:intl/intl.dart';
 
 class RentPriceDetail extends StatelessWidget {
   final CreatePropertyController controller;
@@ -162,7 +163,7 @@ class RentPriceDetail extends StatelessWidget {
                 "Enter Available From",
                 Icons.calendar_month_outlined,
                 controller.rent_AvailableFrom,
-                isEnable: false,
+                isEnable: false, // ✅ changed
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter valid month';
@@ -171,6 +172,7 @@ class RentPriceDetail extends StatelessWidget {
                 },
                 onTap: () async {
                   FocusScope.of(context).unfocus();
+
                   DateTime? picked = await showDatePicker(
                     context: context,
                     initialDate: DateTime.now(),
@@ -194,9 +196,11 @@ class RentPriceDetail extends StatelessWidget {
                       );
                     },
                   );
+
                   if (picked != null) {
-                    controller.rent_AvailableFrom.text =
-                        "${picked.day}/${picked.month}/${picked.year}";
+                    controller.rent_AvailableFrom.text = DateFormat(
+                      'dd/MM/yyyy',
+                    ).format(picked);
                   }
                 },
               ),

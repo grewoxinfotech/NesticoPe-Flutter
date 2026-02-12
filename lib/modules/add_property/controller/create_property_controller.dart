@@ -2643,7 +2643,10 @@ class CreatePropertyController extends GetxController {
           break;
         case "other":
           print("Adding Commercial Sell → Other");
-          return await _addPropertyCommercialSellOther();
+          return await _addPropertyCommercialSellOther(
+            isEdit: true,
+            propertyId: propertyId,
+          );
           break;
         case "office":
           print("Adding Commercial Sell → Office");
@@ -2712,7 +2715,10 @@ class CreatePropertyController extends GetxController {
     }
   }
 
-  Future<bool> _addPropertyCommercialSellOther() async {
+  Future<bool> _addPropertyCommercialSellOther({
+    bool isEdit = false,
+    String? propertyId,
+  }) async {
     try {
       // debugPrint("Property Type : ${propertyType.value}");
       // debugPrint("Looking to Type : ${lookingTo.value}");
@@ -2754,12 +2760,21 @@ class CreatePropertyController extends GetxController {
 
       final payload = await buildPropertyPayloadCommercialSellOther();
       AppLogger.structured("Payload : ", payload.toJson());
-      final success = await _propertyService.createProperty(
-        payload.toJson(),
-        imageList.map((element) => File(element)).toList(),
-        videoList.map((element) => File(element)).toList(),
-        documentList.map((element) => File(element)).toList(),
-      );
+      final success =
+          isEdit
+              ? await _propertyService.updateProperty(
+                propertyId ?? '',
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              )
+              : await _propertyService.createProperty(
+                payload.toJson(),
+                imageList.map((element) => File(element)).toList(),
+                videoList.map((element) => File(element)).toList(),
+                documentList.map((element) => File(element)).toList(),
+              );
       return success;
     } catch (e) {
       print("Error adding residential pg: $e");
@@ -3698,7 +3713,6 @@ class CreatePropertyController extends GetxController {
                 )
                 : null,
         plotInfo: PlotInfo(
-          // TODO: Dynamic
           plotLength:
               plotLength.text.trim().isNotEmpty
                   ? double.tryParse(plotLength.text.trim())
@@ -3861,7 +3875,7 @@ class CreatePropertyController extends GetxController {
                   lookingTo.value.toLowerCase() == "pg/co-living")
               ? "PG"
               : null,
-      // TODO: property Type
+
       propertyType: "apartment",
       propertyDetails: PropertyDetails(
         pgInfo: PgInfo(
@@ -4124,7 +4138,6 @@ class CreatePropertyController extends GetxController {
                   : null,
         ),
         plotInfo: PlotInfo(
-          // TODO: Dynamic
           plotLength:
               plotLength.text.trim().isNotEmpty
                   ? double.tryParse(plotLength.text.trim())
@@ -4153,6 +4166,17 @@ class CreatePropertyController extends GetxController {
                     commercial_rent_AvailableFrom.text.trim(),
                   )
                   : null,
+          ownership:
+              commercial_ownerShipList.value.isNotEmpty
+                  ? (() {
+                    final ownershipValue = commercial_ownerShipList.value
+                        .toLowerCase()
+                        .replaceAll(" ", "_");
+                    return ownershipValue == "cooperative"
+                        ? "cooperative_society"
+                        : ownershipValue;
+                  })()
+                  : null,
         ),
       ),
       location:
@@ -4178,10 +4202,13 @@ class CreatePropertyController extends GetxController {
     final userId = user?.user?.id ?? "";
 
     return AddPropertyModel(
-      // TODO: Building,available from, floor, rent, location hub, ownership
       type:
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
+              : null,
+      propertyDescription:
+          commercial_rent_description.text.trim().isNotEmpty
+              ? commercial_rent_description.text.trim()
               : null,
       listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
       propertyType: selectedIndex.value.isNotEmpty ? "others" : null,
@@ -4231,11 +4258,13 @@ class CreatePropertyController extends GetxController {
                 : null,
 
         financialInfo: FinancialInfo(
-          //TODO: Implement Remain
           brokerCommission: double.tryParse(brokerRageCommission.text.trim()),
           platformFees: double.tryParse(platformFees.text.trim()),
           is_for_sellorrent: isPredefinedCostEnabled.value,
-          propertyPrice: double.tryParse(sell_ExpectedPrice.text.trim()),
+          propertyPrice:
+              isPredefinedCostEnabled.value
+                  ? double.tryParse(sell_ExpectedPrice.text.trim())
+                  : null,
           propertyRentPerMonth:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
@@ -4243,6 +4272,12 @@ class CreatePropertyController extends GetxController {
           monthlyRent:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
+                  : null,
+          propertySecurityDeposit:
+              commercial_rent_security_deposite.text.trim().isNotEmpty
+                  ? double.tryParse(
+                    commercial_rent_security_deposite.text.trim(),
+                  )
                   : null,
           // propertyPrice:
           //     commercial_rent_cost.text.trim().isNotEmpty
@@ -4253,6 +4288,10 @@ class CreatePropertyController extends GetxController {
           totalFloors:
               commercial_total_floor.text.trim().isNotEmpty
                   ? int.tryParse(commercial_total_floor.text.trim())
+                  : null,
+          floorNumber:
+              commercial_your_floor.text.trim().isNotEmpty
+                  ? int.tryParse(commercial_your_floor.text.trim())
                   : null,
         ),
       ),
@@ -4287,7 +4326,6 @@ class CreatePropertyController extends GetxController {
     final userId = user?.user?.id ?? "";
 
     return AddPropertyModel(
-      // TODO: Building, location hub, ownership
       type:
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
@@ -4300,6 +4338,10 @@ class CreatePropertyController extends GetxController {
       propertyType:
           selectedIndex.value.isNotEmpty
               ? selectedIndex.value.toLowerCase()
+              : null,
+      propertyDescription:
+          commercial_rent_description.text.trim().isNotEmpty
+              ? commercial_rent_description.text.trim()
               : null,
       propertyDetails: PropertyDetails(
         possessionInfo: PossessionInfo(
@@ -4448,7 +4490,6 @@ class CreatePropertyController extends GetxController {
     final userId = user?.user?.id ?? "";
 
     return AddPropertyModel(
-      // TODO: Building, location hub, ownership
       type:
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
@@ -4461,6 +4502,10 @@ class CreatePropertyController extends GetxController {
       propertyType:
           selectedIndex.value.isNotEmpty
               ? selectedIndex.value.toLowerCase()
+              : null,
+      propertyDescription:
+          commercial_rent_description.text.trim().isNotEmpty
+              ? commercial_rent_description.text.trim()
               : null,
       propertyDetails: PropertyDetails(
         possessionInfo: PossessionInfo(
@@ -4516,7 +4561,10 @@ class CreatePropertyController extends GetxController {
 
         financialInfo: FinancialInfo(
           is_for_sellorrent: isPredefinedCostEnabled.value,
-          propertyPrice: double.tryParse(sell_ExpectedPrice.text.trim()),
+          propertyPrice:
+              isPredefinedCostEnabled.value
+                  ? double.tryParse(sell_ExpectedPrice.text.trim())
+                  : null,
           brokerCommission: double.tryParse(brokerRageCommission.text.trim()),
           platformFees: double.tryParse(platformFees.text.trim()),
           propertyRentPerMonth:
@@ -4550,7 +4598,6 @@ class CreatePropertyController extends GetxController {
     final userId = user?.user?.id ?? "";
 
     return AddPropertyModel(
-      // TODO: Building, location hub, ownership
       type:
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
@@ -4559,6 +4606,10 @@ class CreatePropertyController extends GetxController {
       city:
           cityController.text.trim().isNotEmpty
               ? cityController.text.trim()
+              : null,
+      propertyDescription:
+          commercial_rent_description.text.trim().isNotEmpty
+              ? commercial_rent_description.text.trim()
               : null,
       propertyType: selectedIndex.value.isNotEmpty ? "retail_shop" : null,
       propertyDetails: PropertyDetails(
@@ -4617,7 +4668,10 @@ class CreatePropertyController extends GetxController {
           brokerCommission: double.tryParse(brokerRageCommission.text.trim()),
           platformFees: double.tryParse(platformFees.text.trim()),
           is_for_sellorrent: isPredefinedCostEnabled.value,
-          propertyPrice: double.tryParse(sell_ExpectedPrice.text.trim()),
+          propertyPrice:
+              isPredefinedCostEnabled.value
+                  ? double.tryParse(sell_ExpectedPrice.text.trim())
+                  : null,
           propertyRentPerMonth:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
@@ -4660,7 +4714,6 @@ class CreatePropertyController extends GetxController {
     final userId = user?.user?.id ?? "";
 
     return AddPropertyModel(
-      // TODO: Building, location hub, ownership
       type:
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
@@ -4673,6 +4726,10 @@ class CreatePropertyController extends GetxController {
       propertyType:
           selectedIndex.value.isNotEmpty
               ? selectedIndex.value.toLowerCase()
+              : null,
+      propertyDescription:
+          commercial_rent_description.text.trim().isNotEmpty
+              ? commercial_rent_description.text.trim()
               : null,
       propertyDetails: PropertyDetails(
         possessionInfo: PossessionInfo(
@@ -4733,7 +4790,10 @@ class CreatePropertyController extends GetxController {
           brokerCommission: double.tryParse(brokerRageCommission.text.trim()),
           platformFees: double.tryParse(platformFees.text.trim()),
           is_for_sellorrent: isPredefinedCostEnabled.value,
-          propertyPrice: double.tryParse(sell_ExpectedPrice.text.trim()),
+          propertyPrice:
+              isPredefinedCostEnabled.value
+                  ? double.tryParse(sell_ExpectedPrice.text.trim())
+                  : null,
           propertyRentPerMonth:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
@@ -4821,7 +4881,7 @@ class CreatePropertyController extends GetxController {
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
                   : null,
-          // TODO: Lease Year
+
           // propertyRentPerMonth:
           //     (commercial_isPreLeased.value.toLowerCase() == "yes")
           //         ? double.tryParse(
@@ -4834,11 +4894,8 @@ class CreatePropertyController extends GetxController {
           //           commercial_current_rent_preLeasedTill.text.trim(),
           //         )
           //         : null,
-          // TODO: R.O.I
         ),
         plotInfo: PlotInfo(
-          // TODO: Dynamic
-          // TODO: possession date Available From
           plotLength:
               plotLength.text.trim().isNotEmpty
                   ? double.tryParse(plotLength.text.trim())
@@ -4860,6 +4917,13 @@ class CreatePropertyController extends GetxController {
             // commercial_rent_AvailableFrom.text.trim(),
             DateTime.now().toIso8601String(),
           ),
+          ownership:
+              commercial_ownerShipList.value.isNotEmpty
+                  ? commercial_ownerShipList.value.toLowerCase().replaceAll(
+                    " ",
+                    "_",
+                  )
+                  : null,
         ),
       ),
 
@@ -4898,7 +4962,6 @@ class CreatePropertyController extends GetxController {
     final userId = user?.user?.id ?? "";
 
     return AddPropertyModel(
-      // TODO: Building, location hub, ownership, locality
       type:
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
@@ -4909,7 +4972,10 @@ class CreatePropertyController extends GetxController {
               ? cityController.text.trim()
               : null,
       propertyType: selectedIndex.value.isNotEmpty ? "others" : null,
-
+      propertyDescription:
+          commercial_rent_description.text.trim().isNotEmpty
+              ? commercial_rent_description.text.trim()
+              : null,
       propertyDetails: PropertyDetails(
         possessionInfo: PossessionInfo(
           possessionDate:
@@ -4972,7 +5038,7 @@ class CreatePropertyController extends GetxController {
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
                   : null,
-          // TODO: Lease Year
+
           // propertyRentPerMonth:
           //     (commercial_isPreLeased.value.toLowerCase() == "yes")
           //         ? double.tryParse(
@@ -4989,7 +5055,6 @@ class CreatePropertyController extends GetxController {
           platformFees: double.tryParse(platformFees.text.trim()),
           is_for_sellorrent: isPredefinedCostEnabled.value,
           propertyRentPerMonth: double.tryParse(rent_MonthilyRent.text.trim()),
-          // TODO: R.O.I
         ),
 
         amenities:
@@ -5033,7 +5098,6 @@ class CreatePropertyController extends GetxController {
     final userId = user?.user?.id ?? "";
 
     return AddPropertyModel(
-      // TODO: Building, location hub, ownership
       type:
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
@@ -5046,6 +5110,10 @@ class CreatePropertyController extends GetxController {
       propertyType:
           selectedIndex.value.isNotEmpty
               ? selectedIndex.value.toLowerCase()
+              : null,
+      propertyDescription:
+          commercial_rent_description.text.trim().isNotEmpty
+              ? commercial_rent_description.text.trim()
               : null,
       propertyDetails: PropertyDetails(
         possessionInfo: PossessionInfo(
@@ -5155,7 +5223,6 @@ class CreatePropertyController extends GetxController {
                   ? double.tryParse(commercial_rent_cost.text.trim())
                   : null,
 
-          // TODO: Lease Year
           // propertyRentPerMonth:
           //     (commercial_isPreLeased.value.toLowerCase() == "yes")
           //         ? double.tryParse(
@@ -5172,7 +5239,6 @@ class CreatePropertyController extends GetxController {
           platformFees: double.tryParse(platformFees.text.trim()),
           is_for_sellorrent: isPredefinedCostEnabled.value,
           propertyRentPerMonth: double.tryParse(rent_MonthilyRent.text.trim()),
-          // TODO: R.O.I
         ),
       ),
 
@@ -5211,7 +5277,6 @@ class CreatePropertyController extends GetxController {
     final userId = user?.user?.id ?? "";
 
     return AddPropertyModel(
-      // TODO: Building, location hub, ownership
       type:
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
@@ -5224,6 +5289,10 @@ class CreatePropertyController extends GetxController {
       propertyType:
           selectedIndex.value.isNotEmpty
               ? selectedIndex.value.toLowerCase()
+              : null,
+      propertyDescription:
+          commercial_rent_description.text.trim().isNotEmpty
+              ? commercial_rent_description.text.trim()
               : null,
       propertyDetails: PropertyDetails(
         possessionInfo: PossessionInfo(
@@ -5290,7 +5359,6 @@ class CreatePropertyController extends GetxController {
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
                   : null,
-          // TODO: Lease Year
           // propertyRentPerMonth:
           //     (commercial_isPreLeased.value.toLowerCase() == "yes")
           //         ? double.tryParse(
@@ -5307,7 +5375,6 @@ class CreatePropertyController extends GetxController {
           platformFees: double.tryParse(platformFees.text.trim()),
           is_for_sellorrent: isPredefinedCostEnabled.value,
           propertyRentPerMonth: double.tryParse(rent_MonthilyRent.text.trim()),
-          // TODO: R.O.I
         ),
       ),
 
@@ -5346,7 +5413,6 @@ class CreatePropertyController extends GetxController {
     final userId = user?.user?.id ?? "";
 
     return AddPropertyModel(
-      // TODO: Building, location hub, ownership
       type:
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
@@ -5357,6 +5423,10 @@ class CreatePropertyController extends GetxController {
               ? cityController.text.trim()
               : null,
       propertyType: selectedIndex.value.isNotEmpty ? "retail_shop" : null,
+      propertyDescription:
+          commercial_rent_description.text.trim().isNotEmpty
+              ? commercial_rent_description.text.trim()
+              : null,
       propertyDetails: PropertyDetails(
         possessionInfo: PossessionInfo(
           possessionDate:
@@ -5422,7 +5492,7 @@ class CreatePropertyController extends GetxController {
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
                   : null,
-          // TODO: Lease Year
+
           // propertyRentPerMonth:
           //     (commercial_isPreLeased.value.toLowerCase() == "yes")
           //         ? double.tryParse(
@@ -5439,7 +5509,6 @@ class CreatePropertyController extends GetxController {
           platformFees: double.tryParse(platformFees.text.trim()),
           is_for_sellorrent: isPredefinedCostEnabled.value,
           propertyRentPerMonth: double.tryParse(rent_MonthilyRent.text.trim()),
-          // TODO: R.O.I
         ),
       ),
 
@@ -5478,7 +5547,6 @@ class CreatePropertyController extends GetxController {
     final userId = user?.user?.id ?? "";
 
     return AddPropertyModel(
-      // TODO: Building, location hub, ownership
       type:
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
@@ -5491,6 +5559,10 @@ class CreatePropertyController extends GetxController {
       propertyType:
           selectedIndex.value.isNotEmpty
               ? selectedIndex.value.toLowerCase()
+              : null,
+      propertyDescription:
+          commercial_rent_description.text.trim().isNotEmpty
+              ? commercial_rent_description.text.trim()
               : null,
       propertyDetails: PropertyDetails(
         possessionInfo: PossessionInfo(
@@ -5560,7 +5632,6 @@ class CreatePropertyController extends GetxController {
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
                   : null,
-          // TODO: Lease Year
           // propertyRentPerMonth:
           //     (commercial_isPreLeased.value.toLowerCase() == "yes")
           //         ? double.tryParse(
@@ -5577,7 +5648,6 @@ class CreatePropertyController extends GetxController {
           platformFees: double.tryParse(platformFees.text.trim()),
           is_for_sellorrent: isPredefinedCostEnabled.value,
           propertyRentPerMonth: double.tryParse(rent_MonthilyRent.text.trim()),
-          // TODO: R.O.I
         ),
       ),
 
