@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
 
 import '../helper/api_helper.dart';
@@ -535,6 +536,7 @@ class GoogleMapApi {
 
         if (data['status'] == 'OK') {
           final predictions = data['predictions'] as List;
+          log("Check any zip code ${predictions}");
 
           // Extract unique zipcodes
           final zipcodes = <Map<String, String>>[];

@@ -806,14 +806,11 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   Future<PaginationResponse<ProjectItem>> fetchItems(int page) async {
     try {
       log("dkvjcvifj $filters");
-      var user=await SecureStorage.getUserData();
-      var userId=user?.user?.id;
-     if(userId!=null)
-       {
-         filters={
-           'created_by':userId
-         };
-       }
+      var user = await SecureStorage.getUserData();
+      var userId = user?.user?.id;
+      if (userId != null) {
+        filters = {'created_by': userId};
+      }
       final response = await _builderService.fetchProjects(
         page: page,
         filters: filters,
@@ -1281,16 +1278,11 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   // Get single project by ID (returns cached one if found)
   Future<ProjectItem?> getProjectById(String id) async {
     try {
-      // Check cache first
-      final existing = items.firstWhereOrNull((item) => item.id == id);
-      if (existing != null) {
-        return existing;
-      } else {
-        final data = await _builderService.getProjectById(id);
-        print('Fetched item: ${data}');
-        items.add(data);
-        return data;
-      }
+      // Check cache firs
+      final data = await _builderService.getProjectById(id);
+      print('Fetched item: ${data}');
+      items.add(data);
+      return data;
 
       // If not in cache, fetch from API
       // Note: You may need to add this method to BuilderService
@@ -1431,10 +1423,8 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       log(
         "📦 Final Payload:\n${const JsonEncoder.withIndent('  ').convert(project.value.toJson())}",
       );
-      var data=await _buildProjectPayload();
-         AppLogger.structured(
-        "📦 Final dsjcdjhdjhdsd :\n",data.toJson(),
-      );
+      var data = await _buildProjectPayload();
+      AppLogger.structured("📦 Final dsjcdjhdjhdsd :\n", data.toJson());
 
       final success = await _builderService.createProject(
         projectData: await _buildProjectPayload(),

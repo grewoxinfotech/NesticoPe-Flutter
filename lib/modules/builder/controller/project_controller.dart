@@ -19,6 +19,9 @@ class ProjectController extends GetxController {
   // final Rx<ProjectItem?> project = Rx<ProjectItem>();
 
   final PropertyService _propertyService = PropertyService();
+  RxBool isCompareProjectFirst=false.obs;
+  RxBool isCompareProjectSecond=false.obs;
+
 
   final RxInt selectedConfigIndex = 0.obs;
   final RxInt selectedImageIndex = 0.obs;
@@ -31,6 +34,7 @@ class ProjectController extends GetxController {
   RxMap<int, int> variantIndexMap = <int, int>{}.obs;
   late PageController configPageController;
   final showAllConfigurations = false.obs;
+
 
   // Add these methods
   void toggleShowAllConfigurations() {

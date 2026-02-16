@@ -36,7 +36,7 @@ class LeadService {
     return await ApiConstants.getHeaders();
   }
 
-/*  Future<bool?> importLeadDataExcelFile(
+  Future<bool?> importLeadDataExcelFile(
       List<int> bytes,
       String fileName,
       ) async {
@@ -76,10 +76,20 @@ class LeadService {
         final decoded = jsonDecode(response.body);
 
         if (decoded["success"] == true) {
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Successfully',
+            message: decoded['message'],
+            contentType: ContentType.success,
+          );
           print("✅ Import successful");
           return true;
         } else {
           print("❌ Backend says failed: ${decoded["message"]}");
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Fail',
+            message: decoded['message'],
+            contentType: ContentType.success,
+          );
           return null;
         }
       } else {
@@ -87,13 +97,18 @@ class LeadService {
         return null;
       }
     } catch (e, stack) {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Fail',
+        message: stack.toString(),
+        contentType: ContentType.success,
+      );
       print("💥 Import Error: $e");
       print(stack);
       return null;
     }
-  }*/
+  }
 
-  Future<bool?> importLeadDataExcelFile(
+  /*Future<bool?> importLeadDataExcelFile(
       List<int> bytes,
       String fileName,
       ) async {
@@ -158,7 +173,7 @@ class LeadService {
       return null;
     }
   }
-
+*/
 
   /// Fetch paginated leads with property_id filter support
   Future<PaginationResponse<LeadItem>> fetchLeads({

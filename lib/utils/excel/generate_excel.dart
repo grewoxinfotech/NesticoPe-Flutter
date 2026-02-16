@@ -232,6 +232,69 @@ Future<void> exportLeadsToExcel(List<LeadItem> leads) async {
     print('📚 Stack: $stack');
   }
 }
+Future<void> downloadLeadImportExample() async {
+  try {
+    final excel = Excel.createExcel();
+    final sheet = excel['Leads'];
+
+    /// 🔹 Header Row (Exactly like your image)
+    sheet.appendRow([
+      TextCellValue('name'),
+      TextCellValue('email'),
+      TextCellValue('phone'),
+      TextCellValue('source'),
+      TextCellValue('status'),
+      TextCellValue('notes'),
+    ]);
+
+    /// 🔹 Example Row 1
+    sheet.appendRow([
+      TextCellValue('John Doe'),
+      TextCellValue('john@example.com'),
+      TextCellValue('+1 555-1234'),
+      TextCellValue('website'),
+      TextCellValue('new'),
+      TextCellValue('Interested in 2BHK'),
+    ]);
+
+    /// 🔹 Example Row 2
+    sheet.appendRow([
+      TextCellValue('Jane Smith'),
+      TextCellValue('jane@example.com'),
+      TextCellValue('5551234567'),
+      TextCellValue('referral'),
+      TextCellValue('contacted'),
+      TextCellValue('Follow up next week'),
+    ]);
+
+    final bytes = excel.encode();
+    if (bytes == null) throw Exception('Failed to encode Excel');
+
+    Directory dir;
+    if (Platform.isAndroid) {
+      dir = Directory('/storage/emulated/0/Download');
+      if (!dir.existsSync()) {
+        dir = await getApplicationDocumentsDirectory();
+      }
+    } else {
+      dir = await getApplicationDocumentsDirectory();
+    }
+
+    final filePath = '${dir.path}/lead_import_example.xlsx';
+
+    final file = File(filePath)
+      ..createSync(recursive: true)
+      ..writeAsBytesSync(bytes);
+
+    print('✅ Example file created: $filePath');
+    await OpenFilex.open(filePath);
+
+  } catch (e, stack) {
+    print('💥 Error creating example: $e');
+    print(stack);
+  }
+}
+
 
 
 Future<void> exportContractorInsightsToExcel(Map<String, dynamic> jsonData) async {

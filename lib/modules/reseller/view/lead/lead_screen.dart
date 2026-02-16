@@ -955,6 +955,7 @@ import 'package:housing_flutter_app/modules/seller/module/lead_screen/controller
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
 import 'package:housing_flutter_app/utils/shimmer/common_screen/lead_screen/lead_list_screen_shimmer.dart';
 
+import '../../../../utils/excel/generate_excel.dart';
 import '../../../../widgets/bottom_sheet/widgets/lead_filter_chips.dart';
 import '../../../../widgets/messages/snack_bar.dart';
 
@@ -985,7 +986,6 @@ class CommonLeadScreen extends StatefulWidget {
     this.showDataMasking = false,
     this.leadCardBuilder,
     this.showActionButton = true,
-
   });
 
   @override
@@ -1020,6 +1020,24 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _loadData());
   }
 
+  bool _isDownloading = false;
+
+  Future<void> _startDownload() async {
+    if (_isDownloading) return;
+
+    setState(() => _isDownloading = true);
+
+    try {
+      await downloadLeadImportExample();
+    } catch (e) {
+      Get.snackbar("Error", "Failed to download file");
+    } finally {
+      if (mounted) {
+        setState(() => _isDownloading = false);
+      }
+    }
+  }
+
   /// ✅ FIXED: Proper data loading without double-calling
   Future<void> _loadData() async {
     // Clear previous data
@@ -1032,7 +1050,6 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
     leadController.currentPropertyFilterId.value = widget.entityId;
 
     log(
-
       /*bchd hduejhsbs
       *
       *
@@ -1043,9 +1060,6 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
       * sdddjhsuibn */
       "Controller Lead Project ${leadController.currentPropertyFilterId.value} ==================${widget.entityId}",
     );
-
-
-
 
     /// Apply dashboard filters
     if (dashboardController.selectedLeadFilters.isNotEmpty) {
@@ -1123,12 +1137,10 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
                   PopupMenuButton<String>(
                     onSelected: (value) {
                       if (value == 'export') {
-
                         leadController.exportToPdf(leadController.items);
                       } else if (value == 'import') {
                         showImportLeadsDialog(context);
                         // leadController.importFromPdf();
-
                       }
                     },
                     itemBuilder:
@@ -1266,24 +1278,15 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
       }),
     );
   }
-  Future<void> showImportLeadsDialog(
-      BuildContext context,
 
-      ) async {
-
+  Future<void> showImportLeadsDialog(BuildContext context) async {
     Get.dialog(
       Dialog(
         backgroundColor: ColorRes.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        insetPadding:
-        const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
         child: Container(
-          // constraints: const BoxConstraints(
-          //   maxWidth: 600,
-          //   maxHeight: 700,
-          // ),
+
           constraints: const BoxConstraints(maxWidth: 600, maxHeight: 700),
 
           decoration: BoxDecoration(
@@ -1293,19 +1296,17 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-
               /// 🔹 HEADER (Same style structure)
               _buildImportDialogHeader(),
 
               const SizedBox(height: 10),
 
-                _buildRequiredHeadersSection(),
+              _buildRequiredHeadersSection(),
 
-                _buildTipSection(),
-                const SizedBox(height: 10),
-                _buildUploadSection(),
-                const SizedBox(height: 10),
-
+              _buildTipSection(),
+              const SizedBox(height: 10),
+              _buildUploadSection(),
+              const SizedBox(height: 10),
 
               /// 🔹 CONTENT
               // Expanded(
@@ -1327,6 +1328,7 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
       barrierDismissible: true,
     );
   }
+
   Widget _buildImportDialogHeader() {
     return Container(
       padding: const EdgeInsets.all(18),
@@ -1340,7 +1342,7 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-           Text(
+          Text(
             "Import Leads (Excel)",
             style: TextStyle(
               fontSize: AppFontSizes.body,
@@ -1361,15 +1363,15 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
       ),
     );
   }
+
   Widget _buildRequiredHeadersSection() {
     return Container(
       padding: const EdgeInsets.all(16),
-      margin: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.grey.shade100,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: ColorRes.leadGreyColor.shade300,width: 1)
-
+        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1401,27 +1403,41 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
       ),
     );
   }
+
   Widget _buildTipSection() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.black,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: const Row(
+      child: Row(
         children: [
           Expanded(
             child: Text(
-              "Tip: Keep first row as headers. Save as .xlsx/.xls after filling.",
-              style: TextStyle(color: Colors.white),
+              "Tip: Keep first row as headers. Save as .csv after filling.",
+              style: const TextStyle(color: Colors.white),
             ),
           ),
-          Icon(Icons.download, color: Colors.white),
+          _isDownloading
+              ? const SizedBox(
+                height: 22,
+                width: 22,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              )
+              : IconButton(
+                onPressed: _startDownload,
+                icon: const Icon(Icons.download, color: Colors.white),
+              ),
         ],
       ),
     );
   }
+
   Widget _buildUploadSection() {
     return GestureDetector(
       onTap: () async {
@@ -1434,7 +1450,8 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
             radius: const Radius.circular(12),
             dashPattern: const [6, 4], // dash length, gap
             color: ColorRes.primary,
-            strokeWidth: 1.5, ),
+            strokeWidth: 1.5,
+          ),
 
           child: Container(
             height: 150,
@@ -1459,11 +1476,8 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
                 ),
                 SizedBox(height: 10),
                 Text(
-                  "Supports CSV, Excel files (.xlsx, .xls). Max ~5MB.",
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: ColorRes.leadGreyColor,
-                  ),
+                  "Supports CSV , Max ~5MB.",
+                  style: TextStyle(fontSize: 11, color: ColorRes.leadGreyColor),
                 ),
               ],
             ),
@@ -1472,8 +1486,6 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
       ),
     );
   }
-
-
 
   Future<void> _openLead(LeadItem lead) async {
     if (isOpeningLead.value) return;
@@ -1536,15 +1548,16 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
     );
   }
 }
+
 class _HeaderChip extends StatelessWidget {
   final String label;
+
   const _HeaderChip(this.label);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding:
-      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: Colors.grey.shade200,
         borderRadius: BorderRadius.circular(8),

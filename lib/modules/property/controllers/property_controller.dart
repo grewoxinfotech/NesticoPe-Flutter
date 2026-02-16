@@ -52,6 +52,10 @@ class PropertyController extends PaginatedController<Items> {
   // Optional filters
   Map<String, String>? filters = {};
 
+
+  RxBool isComparePropertyFirst=false.obs;
+  RxBool isComparePropertySecond=false.obs;
+
   // var favoriteIds = <String>{}.obs;
 
   @override

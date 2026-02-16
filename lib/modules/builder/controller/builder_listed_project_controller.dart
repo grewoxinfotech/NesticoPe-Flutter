@@ -654,9 +654,9 @@ class BuilderProjectListController extends PaginatedController<ProjectItem> {
   /// ==============================
   Future<ProjectItem?> getProjectById(String id) async {
     try {
-      final cached = items.firstWhereOrNull((e) => e.id == id);
-
-      if (cached != null) return cached;
+      // final cached = items.firstWhereOrNull((e) => e.id == id);
+      //
+      // if (cached != null) return cached;
 
       final project = await _builderService.getProjectById(id);
       items.add(project);

@@ -885,7 +885,7 @@ class ProjectItem {
   final List<Brochure> brochures;
   final bool isVerified;
   final bool isActive;
-  ScoreBreakdownModel? scoreBreakdown;
+  final ScoreBreakdownModel? scoreBreakdown;
   final String? createdAt;
   final String? updatedAt;
 

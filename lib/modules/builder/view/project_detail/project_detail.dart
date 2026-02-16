@@ -53,6 +53,7 @@ import '../../../review/views/widget/property_review_card.dart';
 import '../../../search_property/controller/search_controller.dart';
 import '../../../seller/view/widget/seller_property_approval_history.dart';
 import '../../controller/builder_form_controller.dart';
+import '../../controller/builder_listed_project_controller.dart';
 import '../../controller/project_controller.dart';
 import 'package:get/get.dart';
 
@@ -82,16 +83,19 @@ class ProjectDetailsScreen extends StatefulWidget {
 class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   final projectController = Get.put(ProjectController());
   late final ProjectWizardController wizardController;
-  final Rxn<ProjectItem> _project = Rxn<ProjectItem>();
+  final Rxn<ProjectItem> project = Rxn<ProjectItem>();
   final RxBool _isLoading = true.obs;
   late final OverallRatingController _overallRatingController;
   late final ReviewController reviewController;
   final RxBool canAddReview = true.obs;
   late final GoogleMapSearchController mapController;
+  late final BuilderProjectListController controller;
 
   @override
   void initState() {
     super.initState();
+
+    controller = Get.put(BuilderProjectListController());
 
     // Get project ID (from object or direct ID)
     final projectId = widget.projectItem?.id ?? widget.projectId ?? '';
@@ -115,6 +119,10 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     // }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      AppLogger(
+        "Check the score card come null from backend ",
+        widget.projectItem?.toJson(),
+      );
       _loadData();
     });
   }
@@ -123,7 +131,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   void dispose() {
     final projectId = widget.projectItem?.id ?? widget.projectId ?? '';
     Get.delete<ProjectWizardController>(tag: 'project_detail_$projectId');
-    _project.close();
+    project.close();
     _isLoading.close();
     super.dispose();
   }
@@ -154,9 +162,13 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         }
         return;
       }
-      _project.value = fetchedProject;
+      project.value = fetchedProject;
+      AppLogger(
+        "Check the score card come null from backend ",
+        fetchedProject?.toJson(),
+      );
 
-      final currentProject = _project.value;
+      final currentProject = project.value;
       if (currentProject == null) return;
 
       reviewController.filters.value = {"entity_id": currentProject.id ?? ""};
@@ -185,7 +197,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   }
 
   // Convenience getter
-  ProjectItem? get project => _project.value ?? widget.projectItem;
 
   @override
   Widget build(BuildContext context) {
@@ -232,26 +243,28 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
           );
         }
 
+        AppLogger.structured("project Overview Screen ", project?.toJson());
+
         return Stack(
           children: [
             CustomScrollView(
               slivers: [
-                _buildAppBar(context, project!,widget.isFromPanel),
+                _buildAppBar(context, project.value!, widget.isFromPanel),
                 SliverToBoxAdapter(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildProjectDetails(project!),
-                      _buildMediaGallery(project!),
-                      _buildConfigurations(controller, project!),
+                      _buildProjectDetails(project.value!),
+                      _buildMediaGallery(project.value!),
+                      _buildConfigurations(controller, project.value!),
                       SizedBox(height: 8),
-                      _buildMapSection(controller, project!),
-                      _buildAmenities(project!),
+                      _buildMapSection(controller, project.value!),
+                      _buildAmenities(project.value!),
                       SizedBox(height: 8),
                       _buildReviewSection(
                         canAddReview: canAddReview,
                         overallRatingController: _overallRatingController,
-                        project: project!,
+                        project: project.value!,
                         reviewController: reviewController,
                       ),
                       const SizedBox(height: 8),
@@ -352,7 +365,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                                 '',
                                                 '',
                                                 '',
-                                                project?.id ?? '',
+                                                project?.value?.id ?? '',
                                                 'sell',
                                                 "project",
                                               );
@@ -419,7 +432,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                                 displayName,
                                                 email,
                                                 phone,
-                                                project?.id ?? '',
+                                                project?.value?.id ?? '',
                                                 'sell',
                                                 "project",
                                               );
@@ -446,18 +459,18 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                       ),
                       const SizedBox(height: 8),
 
-                      if (project?.brochures.isNotEmpty ?? false) ...[
-                        _buildDocuments(controller, project!),
+                      if (project?.value?.brochures.isNotEmpty ?? false) ...[
+                        _buildDocuments(controller, project.value!),
                       ],
                       // _buildContactSection(controller, project!),
                       if (widget.isBuilder) ...[
-                        if (project?.scoreBreakdown != null) ...[
+                        if (project?.value?.scoreBreakdown != null) ...[
                           PerformanceScoreWidget(
-                            score: project!.scoreBreakdown!,
+                            score: project!.value!.scoreBreakdown!,
                             showDivider: false,
                             color: ColorRes.white,
                             margin: 8,
-                            project: project,
+                            project: project.value,
                           ),
                         ],
                         SizedBox(height: 8),
@@ -478,7 +491,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                           onTap: () {
                             Get.to(
                               () => SellerPropertyApprovalHistory(
-                                propertyId: project?.id ?? '',
+                                propertyId: project?.value?.id ?? '',
                                 isProject: true,
                               ),
                             );
@@ -501,14 +514,14 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                           trailing: Icon(Icons.arrow_forward_ios_rounded),
                           onTap: () {
                             log(
-                              "Check it is from project pass project id ${project?.id}",
+                              "Check it is from project pass project id ${project?.value?.id}",
                             );
 
                             Get.to(
                               () => CommonLeadScreen(
                                 title: 'Project Buyer Leads',
                                 controllerTag: 'project',
-                                entityId: project?.id,
+                                entityId: project?.value?.id,
                                 showActionButton: false,
                                 showDataMasking: false,
                                 onLoadMore: (controller, id) async {
@@ -527,7 +540,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                         MediaQuery.of(context).size.width < 600,
                                     showDataMasking: false,
                                     onTap: onTap,
-
                                   );
                                 },
                               ),
@@ -551,7 +563,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         }
         return SafeArea(
           child: ReusableBottomBar(
-            mainPriceText: project?.getPriceRange() ?? '',
+            mainPriceText: project?.value?.getPriceRange() ?? '',
             priceBreakdown: {},
             onPrimaryAction: () {
               if (UserHelper.isGuest) {
@@ -591,7 +603,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                   // Check if inquiry already submitted
                                   propertyStatus: "",
                                   projectConfiguration:
-                                      project?.configuration ?? [],
+                                      project.value?.configuration ?? [],
                                   isProject: 'project',
                                   inQuireSubmitted:
                                       controller.hasSubmittedInquiry.value,
@@ -655,7 +667,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
                                     final success = await controller.addInquiry(
                                       inquiry,
-                                      project?.id ?? '',
+                                      project.value?.id ?? '',
                                     );
 
                                     if (success) {
@@ -672,10 +684,10 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
                                       Get.back();
                                       await controller.getAllInQuireData(
-                                        project?.id ?? '',
+                                        project.value?.id ?? '',
                                       );
                                       await controller.getHasInQuireData(
-                                        project?.id ?? '',
+                                        project.value?.id ?? '',
                                       );
                                     } else {
                                       NesticoPeSnackBar.showAwesomeSnackbar(
@@ -978,7 +990,11 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     );
   }
 
-  Widget _buildAppBar(BuildContext context, ProjectItem project,bool isFromPanel ) {
+  Widget _buildAppBar(
+    BuildContext context,
+    ProjectItem project,
+    bool isFromPanel,
+  ) {
     return SliverAppBar(
       expandedHeight: 280,
       pinned: true,
@@ -1009,7 +1025,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         //     child: const Icon(Icons.share, color: ColorRes.black),
         //   ),
         // ),
-        if(!isFromPanel)...[
+        if (!isFromPanel) ...[
           Padding(
             padding: const EdgeInsets.only(right: 12.0),
             child: EntityActionButtons(
@@ -1019,7 +1035,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
               favoriteController: Get.find<PropertyFavoriteController>(),
             ),
           ),
-        ]
+        ],
       ],
 
       flexibleSpace: FlexibleSpaceBar(
@@ -1599,7 +1615,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
             // Horizontal Variants List
             SizedBox(
-              height: 285,
+              height: 320,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: config.variants.length,
@@ -1657,7 +1673,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      'Variant ${variantIndex + 1}',
+                      '${variant.buildingName}',
                       style: const TextStyle(
                         fontSize: AppFontSizes.small,
                         fontWeight: AppFontWeights.semiBold,
@@ -1716,7 +1732,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                               return Container(
                                 width: 200,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
                                   image: DecorationImage(
                                     image: NetworkImage(
                                       variant.images[imgIndex],
@@ -1764,6 +1779,12 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                               controller.formatCurrency(
                                 variant.price.toDouble(),
                               ),
+                            ),
+                            const SizedBox(height: 8),
+                            _buildDetailRow(
+                              'Available Units',
+
+                              "${variant.totalUnits}/${variant.availableUnits}",
                             ),
                           ],
                         ),
@@ -1833,7 +1854,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       height: 150, // optional — adjust based on layout
       decoration: BoxDecoration(
         color: ColorRes.leadGreyColor[100],
-        borderRadius: BorderRadius.circular(8),
+
         image: const DecorationImage(
           image: AssetImage('assets/images/not_available_image.png'),
           fit: BoxFit.cover, // 👈 makes image fill the entire box

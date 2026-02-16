@@ -151,6 +151,7 @@ class ResellerConversionScreen extends StatelessWidget {
 
                         CityZipcodeSelector(
                           onSelected: (city, zipcode) {
+                            print("Partner City Selection Data ${city}  ${zipcode}");
                             _cityController.text = city;
                             _zipcodeController.text = zipcode;
                           },
@@ -183,18 +184,19 @@ class ResellerConversionScreen extends StatelessWidget {
                                       : () {
                                         if (_cityController.text.isEmpty ||
                                             _zipcodeController.text.isEmpty) {
-                                          controller.convertBuyerToReseller(
-                                            city: _cityController.text.trim(),
-                                            zipCode:
-                                                _zipcodeController.text.trim(),
-                                          );
-                                        } else {
                                           NesticoPeSnackBar.showAwesomeSnackbar(
                                             title: 'Error',
                                             message:
-                                                'Please select a city and zipcode',
+                                            'Please select a city and zipcode',
                                             contentType: ContentType.failure,
                                           );
+                                        } else {
+                                          controller.convertBuyerToReseller(
+                                            city: _cityController.text.trim(),
+                                            zipCode:
+                                            _zipcodeController.text.trim(),
+                                          );
+
                                         }
                                       },
                               child:

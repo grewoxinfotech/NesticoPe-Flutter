@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
 import '../../../confige/search_api/search_api.dart';
 import '../../search_property/model/search_model.dart';
@@ -73,11 +75,14 @@ class GoogleMapSearchController extends GetxController {
   /// Verifies a specific zipcode against a city (Dynamic verification)
   Future<bool> verifyZipcodeDynamic(String zipcode, String cityName) async {
     try {
+      print("City Code fkjdghdfujhdf  ${zipcode}  ${cityName}");
       isVerifying.value = true;
       // Using the specialized postal_code search from your API
       final results = await _api.searchZipcodes(zipcode);
 
       if (results.isEmpty) return false;
+      
+      log("Check City fetch perfectly ${results.map((e) => e,)}");
 
       // Check if any returned zipcode matches and mentions the city
       final cityLower = cityName.toLowerCase();

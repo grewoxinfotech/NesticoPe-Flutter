@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
@@ -12,6 +14,8 @@ import 'package:housing_flutter_app/modules/new_project/view/latest_project.dart
 import '../../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../../app/widgets/snack_bar/custom_snackbar.dart';
 import '../../../../data/database/secure_storage_service.dart';
+import '../../../../data/network/auth/model/user_model.dart';
+import '../../../../data/network/property/services/property_contacted_service.dart';
 import '../../../../widgets/New folder/inputs/text_field.dart';
 import '../../../../widgets/messages/snack_bar.dart';
 import '../../../auth/views/login_screen.dart';
@@ -19,8 +23,69 @@ import '../../../builder/controller/project_controller.dart';
 import '../../../property_rating/view/widget/read_more_or_less.dart';
 import 'comapre_screen.dart';
 
-class ProjectCompareScreen extends StatelessWidget {
+class ProjectCompareScreen extends StatefulWidget {
   const ProjectCompareScreen({super.key});
+
+  @override
+  State<ProjectCompareScreen> createState() => _ProjectCompareScreenState();
+}
+
+class _ProjectCompareScreenState extends State<ProjectCompareScreen> {
+  final projectController = Get.put(ProjectController());
+  final PropertyContactedService _contactedService = PropertyContactedService();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      final selected = ProjectCompareManager.to.selectedList;
+
+      loadData(selected[0].id ?? '');
+      loadDataSecond(selected[1].id ?? '');
+    });
+  }
+
+  Future<void> loadData(String propertyId) async {
+    try {
+      final UserModel user = await SecureStorage.getUserData() ?? UserModel();
+      final userId = user.user?.id ?? '';
+      projectController.isCompareProjectFirst.value = await _contactedService
+          .fetchHasInquiries(userId, itemId: propertyId);
+    } catch (e, s) {
+      log(
+        '[PropertyDetail] ERROR in _loadData',
+        error: e,
+        stackTrace: s,
+        level: 1000,
+      );
+    }
+  }
+
+  Future<void> loadDataSecond(String propertyId) async {
+    try {
+      final UserModel user = await SecureStorage.getUserData() ?? UserModel();
+      final userId = user.user?.id ?? '';
+
+      final inquiries = await _contactedService.fetchContactedInquiries(userId);
+      projectController.inquiryResponse.assignAll(inquiries);
+
+      final result = projectController.inquiryResponse.any(
+        (e) => e.propertyId == propertyId,
+      );
+
+      projectController.isCompareProjectSecond.value = result;
+      // await controller.getAllInQuireData(propertyId);
+      // await controller.getHasInQuireData(propertyId);
+    } catch (e, s) {
+      log(
+        '[PropertyDetail] ERROR in _loadData',
+        error: e,
+        stackTrace: s,
+        level: 1000,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,11 +163,15 @@ class ProjectCompareScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ProjectCardForCompare(
-                      item: item,
-                      onRemove: () {
-                        ProjectCompareManager.to.remove(item.id);
-                      },
+                    Obx(
+                      () => ProjectCardForCompare(
+                        item: item,
+                        isSubmitted:
+                            projectController.isCompareProjectFirst.value,
+                        onRemove: () {
+                          ProjectCompareManager.to.remove(item.id);
+                        },
+                      ),
                     ),
                     const SizedBox(height: 24),
                     Center(
@@ -140,18 +209,26 @@ class ProjectCompareScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ProjectCardForCompare(
-                    item: a,
-                    onRemove: () {
-                      ProjectCompareManager.to.remove(a.id);
-                    },
+                  Obx(
+                    () => ProjectCardForCompare(
+                      item: a,
+                      isSubmitted:
+                          projectController.isCompareProjectFirst.value,
+                      onRemove: () {
+                        ProjectCompareManager.to.remove(a.id);
+                      },
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.small),
-                  ProjectCardForCompare(
-                    item: b,
-                    onRemove: () {
-                      ProjectCompareManager.to.remove(b.id);
-                    },
+                  Obx(
+                    () => ProjectCardForCompare(
+                      item: b,
+                      isSubmitted:
+                          projectController.isCompareProjectSecond.value,
+                      onRemove: () {
+                        ProjectCompareManager.to.remove(b.id);
+                      },
+                    ),
                   ),
                   const SizedBox(height: 16),
                   const Text(
@@ -175,11 +252,24 @@ class ProjectCompareScreen extends StatelessWidget {
   }
 }
 
-class ProjectCardForCompare extends StatelessWidget {
+class ProjectCardForCompare extends StatefulWidget {
   final ProjectItem item;
   final VoidCallback? onRemove;
+  final bool isSubmitted;
 
-  const ProjectCardForCompare({super.key, required this.item, this.onRemove});
+  const ProjectCardForCompare({
+    super.key,
+    required this.item,
+    this.onRemove,
+    required this.isSubmitted,
+  });
+
+  @override
+  State<ProjectCardForCompare> createState() => _ProjectCardForCompareState();
+}
+
+class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
+  final projectController = Get.put(ProjectController());
 
   String _firstImage(ProjectItem i) {
     final imgs = i.mediaGallery?.images;
@@ -197,7 +287,6 @@ class ProjectCardForCompare extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final projectController = Get.find<ProjectController>();
     return Material(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(12),
@@ -219,10 +308,10 @@ class ProjectCardForCompare extends StatelessWidget {
                     left: Radius.circular(11),
                   ),
                   child:
-                      (_firstImage(item).isNotEmpty)
+                      (_firstImage(widget.item).isNotEmpty)
                           ? CustomImage(
                             type: CustomImageType.network,
-                            src: _firstImage(item),
+                            src: _firstImage(widget.item),
                             width: 120,
                             height: 121,
                             fit: BoxFit.cover,
@@ -248,7 +337,7 @@ class ProjectCardForCompare extends StatelessWidget {
                       children: [
                         // Title
                         Text(
-                          _title(item),
+                          _title(widget.item),
                           style: const TextStyle(
                             fontSize: AppFontSizes.bodyMedium,
                             fontWeight: AppFontWeights.semiBold,
@@ -261,7 +350,7 @@ class ProjectCardForCompare extends StatelessWidget {
 
                         // Address
                         Text(
-                          item.address,
+                          widget.item.address,
                           style: TextStyle(
                             fontSize: AppFontSizes.caption,
                             color: ColorRes.leadGreyColor[600],
@@ -281,11 +370,11 @@ class ProjectCardForCompare extends StatelessWidget {
                                 vertical: 3,
                               ),
                               decoration: BoxDecoration(
-                                color: _getStatusColor(item.status),
+                                color: _getStatusColor(widget.item.status),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
-                                item.status.toUpperCase(),
+                                widget.item.status.toUpperCase(),
                                 style: const TextStyle(
                                   fontSize: AppFontSizes.mini,
                                   fontWeight: AppFontWeights.medium,
@@ -303,7 +392,7 @@ class ProjectCardForCompare extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Text(
-                                _price(item),
+                                _price(widget.item),
                                 style: const TextStyle(
                                   fontSize: AppFontSizes.medium,
                                   fontWeight: AppFontWeights.bold,
@@ -315,126 +404,165 @@ class ProjectCardForCompare extends StatelessWidget {
                               ),
                             ),
                             SizedBox(width: 10),
-                            GestureDetector(
-                              onTap:
-                                  (UserHelper.isGuest)
-                                      ? () async {
-                                    try {
-
-
-                                      if (Get.context == null) {
-                                        NesticoPeSnackBar.showAwesomeSnackbar(
-                                          title: 'Error',
-                                          message:
-                                          'UI not ready to show dialog.',
-                                          contentType: ContentType.failure,
-                                        );
-                                        return;
-                                      }
-
-                                      addInquiryFromProject(
-                                        '',
-                                        '',
-                                        '',
-                                        item.id,
-                                        'sell',
-                                        "project",
-                                      );
-                                    } catch (e, s) {
-                                      debugPrint(
-                                        '❌ Error in Get Offer button: $e',
-                                      );
-                                      debugPrint('$s');
-
-                                      NesticoPeSnackBar.showAwesomeSnackbar(
-                                        title: 'Error',
-                                        message:
-                                        'Something went wrong. Please try again.',
-                                        contentType: ContentType.failure,
-                                      );
-                                    }
-                                  }
-                                      : () async {
-                                        try {
-                                          final user =
-                                              await SecureStorage.getUserData();
-
-                                          if (user == null) {
-                                            NesticoPeSnackBar.showAwesomeSnackbar(
-                                              title: 'Error',
-                                              message:
-                                                  'No user data found. Please log in.',
-                                              contentType: ContentType.failure,
-                                            );
-                                            return;
-                                          }
-
-                                          final fullName =
-                                              user.user?.fullName ?? '';
-                                          final firstName =
-                                              user.user?.firstName ?? '';
-                                          final username =
-                                              user.user?.username ?? '';
-                                          final email = user.user?.email ?? '';
-                                          final phone = user.user?.phone ?? '';
-
-                                          final displayName =
-                                              (firstName.isEmpty
-                                                      ? username
-                                                      : fullName)
-                                                  .trim();
-
-                                          if (Get.context == null) {
-                                            NesticoPeSnackBar.showAwesomeSnackbar(
-                                              title: 'Error',
-                                              message:
-                                                  'UI not ready to show dialog.',
-                                              contentType: ContentType.failure,
-                                            );
-                                            return;
-                                          }
-
-                                          addInquiryFromProject(
-                                            displayName,
-                                            email,
-                                            phone,
-                                            item.id,
-                                            'sell',
-                                            "project",
-                                          );
-                                        } catch (e, s) {
-                                          debugPrint(
-                                            '❌ Error in Get Offer button: $e',
-                                          );
-                                          debugPrint('$s');
-
-                                          NesticoPeSnackBar.showAwesomeSnackbar(
-                                            title: 'Error',
-                                            message:
-                                                'Something went wrong. Please try again.',
-                                            contentType: ContentType.failure,
-                                          );
-                                        }
-                                      },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 14,
-                                  vertical: 8,
+                            if (widget.isSubmitted) ...[
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: ColorRes.primary,
-                                  borderRadius: BorderRadius.circular(6),
+                                  color: ColorRes.success.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: ColorRes.success,
+                                    width: 1,
+                                  ),
                                 ),
-                                child: Text(
-                                  '${projectController.hasSubmittedInquiry.value ? 'Submitted' : 'Contact Now'}',
-                                  style: TextStyle(
-                                    fontWeight: AppFontWeights.semiBold,
-                                    fontSize: AppFontSizes.small,
-                                    color: ColorRes.white,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(
+                                      Icons.check_circle_outline,
+                                      color: ColorRes.success,
+                                      size: 16,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      'Submitted',
+                                      style: TextStyle(
+                                        color: ColorRes.success,
+                                        fontSize: AppFontSizes.small,
+                                        fontWeight: AppFontWeights.semiBold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ] else ...[
+                              GestureDetector(
+                                onTap:
+                                    (UserHelper.isGuest)
+                                        ? () async {
+                                          try {
+                                            if (Get.context == null) {
+                                              NesticoPeSnackBar.showAwesomeSnackbar(
+                                                title: 'Error',
+                                                message:
+                                                    'UI not ready to show dialog.',
+                                                contentType:
+                                                    ContentType.failure,
+                                              );
+                                              return;
+                                            }
+
+                                            addInquiryFromProject(
+                                              '',
+                                              '',
+                                              '',
+                                              widget.item.id,
+                                              'sell',
+                                              "project",
+                                            );
+                                          } catch (e, s) {
+                                            debugPrint(
+                                              '❌ Error in Get Offer button: $e',
+                                            );
+                                            debugPrint('$s');
+
+                                            NesticoPeSnackBar.showAwesomeSnackbar(
+                                              title: 'Error',
+                                              message:
+                                                  'Something went wrong. Please try again.',
+                                              contentType: ContentType.failure,
+                                            );
+                                          }
+                                        }
+                                        : () async {
+                                          try {
+                                            final user =
+                                                await SecureStorage.getUserData();
+
+                                            if (user == null) {
+                                              NesticoPeSnackBar.showAwesomeSnackbar(
+                                                title: 'Error',
+                                                message:
+                                                    'No user data found. Please log in.',
+                                                contentType:
+                                                    ContentType.failure,
+                                              );
+                                              return;
+                                            }
+
+                                            final fullName =
+                                                user.user?.fullName ?? '';
+                                            final firstName =
+                                                user.user?.firstName ?? '';
+                                            final username =
+                                                user.user?.username ?? '';
+                                            final email =
+                                                user.user?.email ?? '';
+                                            final phone =
+                                                user.user?.phone ?? '';
+
+                                            final displayName =
+                                                (firstName.isEmpty
+                                                        ? username
+                                                        : fullName)
+                                                    .trim();
+
+                                            if (Get.context == null) {
+                                              NesticoPeSnackBar.showAwesomeSnackbar(
+                                                title: 'Error',
+                                                message:
+                                                    'UI not ready to show dialog.',
+                                                contentType:
+                                                    ContentType.failure,
+                                              );
+                                              return;
+                                            }
+
+                                            addInquiryFromProject(
+                                              displayName,
+                                              email,
+                                              phone,
+                                              widget.item.id,
+                                              'sell',
+                                              "project",
+                                            );
+                                          } catch (e, s) {
+                                            debugPrint(
+                                              '❌ Error in Get Offer button: $e',
+                                            );
+                                            debugPrint('$s');
+
+                                            NesticoPeSnackBar.showAwesomeSnackbar(
+                                              title: 'Error',
+                                              message:
+                                                  'Something went wrong. Please try again.',
+                                              contentType: ContentType.failure,
+                                            );
+                                          }
+                                        },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: ColorRes.primary,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    '${projectController.hasSubmittedInquiry.value ? 'Submitted' : 'Contact Now'}',
+                                    style: TextStyle(
+                                      fontWeight: AppFontWeights.semiBold,
+                                      fontSize: AppFontSizes.small,
+                                      color: ColorRes.white,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
+                            ],
                           ],
                         ),
                       ],
@@ -444,12 +572,12 @@ class ProjectCardForCompare extends StatelessWidget {
               ],
             ),
             // Remove button
-            if (onRemove != null)
+            if (widget.onRemove != null)
               Positioned(
                 top: 8,
                 right: 8,
                 child: GestureDetector(
-                  onTap: onRemove,
+                  onTap: widget.onRemove,
                   child: const Icon(
                     Icons.cancel,
                     color: ColorRes.error,
@@ -656,35 +784,36 @@ class ProjectCardForCompare extends StatelessWidget {
                               );
 
                               if (success) {
-                                if(UserHelper.isGuest)
-                                {
-
+                                if (UserHelper.isGuest) {
                                   controller.hasSubmittedInquiry.value = true;
-                                  var inquiryData={
-                                    'property':propertyID,
+                                  var inquiryData = {
+                                    'property': propertyID,
                                     "email": emailController.text ?? "",
-                                    "success":success
-
+                                    "success": success,
                                   };
-                                  final exists = await SecureStorage.hasPropertyInquiry(propertyID);
+                                  final exists =
+                                      await SecureStorage.hasPropertyInquiry(
+                                        propertyID,
+                                      );
 
                                   if (!exists) {
-                                    await SecureStorage.addPropertyInquiry(inquiryData);
+                                    await SecureStorage.addPropertyInquiry(
+                                      inquiryData,
+                                    );
                                   }
-
                                 }
                                 controller.hasSubmittedInquiry.value = true;
-                              /*  CustomSnackBar.show(
+                                /*  CustomSnackBar.show(
                                   Get.overlayContext!,
                                   message: "Inquiry Added Successfully",
                                   type: SnackBarType.success,
                                 );*/
                                 Get.back();
                                 await controller.getAllInQuireData(
-                                  item.id ?? '',
+                                  widget.item.id ?? '',
                                 );
                                 await controller.getHasInQuireData(
-                                  item.id ?? '',
+                                  widget.item.id ?? '',
                                 );
                               } else {
                                 Get.back();

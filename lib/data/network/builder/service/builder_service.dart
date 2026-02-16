@@ -47,6 +47,8 @@ class BuilderService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
+
+
         return PaginationResponse<ProjectItem>.fromJson(
           data,
           (json) => ProjectItem.fromJson(json),
@@ -106,7 +108,7 @@ class BuilderService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         print("✅ Project API Response: $data");
-
+        AppLogger.structured("Project Api Calling from api",  data);
         return ProjectItem.fromJson(data['data']);
       } else {
         print("❌ Failed to load projects: ${response.statusCode}");

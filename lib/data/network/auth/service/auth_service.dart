@@ -458,8 +458,10 @@ class AuthService {
     required String city,
     required String zipCode,
   }) async {
+
     final user = await SecureStorage.getUserData();
     final userId = user?.user?.id ?? '';
+    print("djsfhdsfhdsdsjfjdsjfds ${city} ${zipCode}  ${userId}");
     final response = await http.post(
       Uri.parse('${ApiConstants.convertToReseller}/$userId'),
       headers: await headers(),
@@ -468,6 +470,8 @@ class AuthService {
 
     final data = jsonDecode(response.body);
     if (response.statusCode == 200 && data['success'] == true) {
+
+      await generateResellerCertificate(data['data']['certificateData']);
       return true;
     } else {
       throw Exception(data["message"] ?? "Failed to convert buyer to reseller");

@@ -1893,7 +1893,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
           if (reviewController.isLoading.value &&
               reviewController.siteReviewWithUsers.isEmpty) {
             return SizedBox(
-              height: 280,
+              height: 250,
               child: Center(
                 child: CircularProgressIndicator(color: ColorRes.homeGreenFade),
               ),
@@ -1903,7 +1903,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
           // Show empty state
           if (reviewController.allReviews.isEmpty) {
             return SizedBox(
-              height: 280,
+              height: 250,
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -1930,8 +1930,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
 
           // Show reviews list
           return SizedBox(
-            height: 215,
-            child: ListView.separated(
+            height: 185,              child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: reviewController.allReviews.length,
               clipBehavior: Clip.none,

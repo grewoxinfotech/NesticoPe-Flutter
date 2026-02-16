@@ -673,24 +673,22 @@ class LeadController extends PaginatedController<LeadItem> {
   }
 
   Future<void> exportToPdf(List<LeadItem> item) async {
-
     AppLogger.structured(
       "Lead Data Export in excel form : ",
       item.map((e) => e.toJson()),
     );
     await exportLeadsToExcel(items);
-
   }
 
   Future<void> importFromPdf() async {
-    await pickAndImportExcel();
+    await pickAndImportCsv();
   }
 
-  Future<void> pickAndImportExcel() async {
+  Future<void> pickAndImportCsv() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['xlsx', 'xls'],
-      withData: true, // safer for Android
+      allowedExtensions: ['csv'], // ✅ Only CSV
+      withData: true,
     );
 
     if (result == null) {
@@ -701,66 +699,29 @@ class LeadController extends PaginatedController<LeadItem> {
     final pickedFile = result.files.single;
 
     print("📄 File name: ${pickedFile.name}");
-    print("📍 File path: ${pickedFile.path}");
-    print("📦 Bytes length (memory): ${pickedFile.bytes?.length}");
+    print("📦 Bytes length: ${pickedFile.bytes?.length}");
 
-    // --- CASE 1: Using bytes (recommended)
-    if (pickedFile.bytes != null) {
-      print("✅ Using in-memory bytes");
-
-      if (pickedFile.bytes!.isEmpty) {
-        print("❌ Picked file bytes are EMPTY");
-        return;
-      }
-
-      final response = await _service.importLeadDataExcelFile(
-        pickedFile.bytes!,
-        pickedFile.name,
-      );
-
-      if (response == true) {
-        Get.back();
-        Get.snackbar("Import Successful", "");
-        await refreshList();
-      }
-
+    // Extra safety check
+    if (!pickedFile.name.toLowerCase().endsWith('.csv')) {
+      print("❌ Invalid file type. Only CSV allowed.");
       return;
     }
 
-    // --- CASE 2: Using path fallback
-    if (pickedFile.path == null) {
-      print("❌ File path is NULL");
+    if (pickedFile.bytes == null || pickedFile.bytes!.isEmpty) {
+      print("❌ CSV file is empty");
       return;
     }
 
-    final file = File(pickedFile.path!);
-
-    print("📂 Exists: ${await file.exists()}");
-
-    if (!await file.exists()) {
-      print("❌ File does not exist at path");
-      return;
-    }
-
-    final fileSize = await file.length();
-    print("📦 File size (disk): $fileSize bytes");
-
-    if (fileSize == 0) {
-      print("❌ File size is ZERO");
-      return;
-    }
-
-    final response = await _service.importLeadDataExcelFile(   pickedFile.bytes!,
-      pickedFile.name,);
+    final response = await _service.importLeadDataExcelFile(
+      pickedFile.bytes!,
+      pickedFile.name,
+    );
 
     if (response == true) {
       Get.back();
-      Get.snackbar("Import Successful", "");
       await refreshList();
     }
   }
-
-
 
   Future<void> fetchResellerAssignProject() async {
     final user = await SecureStorage.getUserData();
