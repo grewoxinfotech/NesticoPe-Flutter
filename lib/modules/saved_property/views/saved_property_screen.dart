@@ -275,6 +275,7 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorRes.white,
+      appBar: AppBar(title: const Text("My Activity")),
       body: Column(
         children: [
           /// Header Tabs
@@ -282,7 +283,7 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
             elevation: 5,
             child: Container(
               padding: const EdgeInsets.only(
-                top: 50,
+                top: 0,
                 left: 10,
                 right: 10,
                 bottom: 16,

@@ -697,14 +697,14 @@ class _PropertyDetailState extends State<PropertyDetail> {
 
         onFilterTap: () async {
           final result = await Get.to<Map<String, String>>(
-                () => RealEstateFilterScreen(
+            () => RealEstateFilterScreen(
               initialFilters: Map<String, String>.from(selectedFilters),
             ),
             transition: Transition.rightToLeft,
           );
 
           if (result != null) {
-            result.removeWhere((key, value) => value == 'false',);
+            result.removeWhere((key, value) => value == 'false');
             setState(() {
               selectedFilters = result;
             });
@@ -737,40 +737,41 @@ class _PropertyDetailState extends State<PropertyDetail> {
                 ),
 
                 Expanded(
-                  child: _isLoading && _items.isEmpty
-                      ? BuyerPropertyListScreenShimmer()
-                      : !_isLoading && _items.isEmpty
-                      ? const EmptyStateWidget(
-                    icon: Icons.search_off_rounded,
-                    title: "No properties found",
-                    subtitle: "No approved properties available",
-                  )
-                      : NotificationListener<ScrollNotification>(
-                    onNotification: (notification) {
-                      if (notification.metrics.pixels >=
-                          notification.metrics.maxScrollExtent - 200) {
-                        controller.loadMore();
-                      }
-                      return false;
-                    },
-                    child: RefreshIndicator(
-                      onRefresh: controller.refreshList,
-                      child: ListView.builder(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: AppPadding.small,
-                          horizontal: AppPadding.small,
-                        ),
-                        itemCount: _items.length,
-                        itemBuilder: (context, index) {
-                          final Items data = _items[index];
-                          return PropertyCardWidget(
-                            property: data,
-                            role: 'Developer',
-                          );
-                        },
-                      ),
-                    ),
-                  ),
+                  child:
+                      _isLoading && _items.isEmpty
+                          ? BuyerPropertyListScreenShimmer()
+                          : !_isLoading && _items.isEmpty
+                          ? const EmptyStateWidget(
+                            icon: Icons.search_off_rounded,
+                            title: "No properties found",
+                            subtitle: "No approved properties available",
+                          )
+                          : NotificationListener<ScrollNotification>(
+                            onNotification: (notification) {
+                              if (notification.metrics.pixels ==
+                                  notification.metrics.maxScrollExtent) {
+                                controller.loadMore();
+                              }
+                              return false;
+                            },
+                            child: RefreshIndicator(
+                              onRefresh: controller.refreshList,
+                              child: ListView.builder(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: AppPadding.small,
+                                  horizontal: AppPadding.small,
+                                ),
+                                itemCount: _items.length,
+                                itemBuilder: (context, index) {
+                                  final Items data = _items[index];
+                                  return PropertyCardWidget(
+                                    property: data,
+                                    role: 'Developer',
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
                 ),
               ],
             ),

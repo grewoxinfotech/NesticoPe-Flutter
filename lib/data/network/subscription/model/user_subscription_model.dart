@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class CurrentUserSubscription {
   final bool success;
   final String message;
@@ -17,7 +15,9 @@ class CurrentUserSubscription {
       message: json['message'] ?? '',
       data:
           json['data'] != null
-              ? SCurrentUserSubscriptionData.fromJson(json['data'])
+              ? SCurrentUserSubscriptionData.fromJson(
+                Map<String, dynamic>.from(json['data']),
+              )
               : null,
     );
   }
@@ -48,7 +48,11 @@ class SCurrentUserSubscriptionData {
     return SCurrentUserSubscriptionData(
       items:
           (json['items'] as List<dynamic>?)
-              ?.map((e) => CurrentUserSubscriptionItem.fromJson(e))
+              ?.map(
+                (e) => CurrentUserSubscriptionItem.fromJson(
+                  Map<String, dynamic>.from(e),
+                ),
+              )
               .toList() ??
           [],
       total: json['total'] ?? 0,
@@ -119,29 +123,45 @@ class CurrentUserSubscriptionItem {
       updatedBy: json['updated_by'],
       userId: json['userId'],
       planId: json['planId'],
-      amount: json['amount'],
+      amount: json['amount']?.toString(),
       startDate:
-          json['startDate'] != null ? DateTime.parse(json['startDate']) : null,
-      endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
+          json['startDate'] != null
+              ? DateTime.tryParse(json['startDate'])
+              : null,
+      endDate:
+          json['endDate'] != null ? DateTime.tryParse(json['endDate']) : null,
       status: json['status'],
       autoRenew: json['autoRenew'] ?? false,
       isPremium: json['isPremium'] ?? false,
       metadata:
-          json['metadata'] != null
+          json['metadata'] is Map
               ? Map<String, dynamic>.from(json['metadata'])
               : null,
       usedProperties: json['usedProperties'] ?? 0,
       usedServices: json['usedServices'] ?? 0,
       createdAt:
-          json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+          json['createdAt'] != null
+              ? DateTime.tryParse(json['createdAt'])
+              : null,
       updatedAt:
-          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+          json['updatedAt'] != null
+              ? DateTime.tryParse(json['updatedAt'])
+              : null,
       plan:
-          json['plan'] != null ? CurrentUserPlan.fromJson(json['plan']) : null,
+          json['plan'] != null
+              ? CurrentUserPlan.fromJson(
+                Map<String, dynamic>.from(json['plan']),
+              )
+              : null,
       user:
-          json['user'] != null ? CurrentUserData.fromJson(json['user']) : null,
+          json['user'] != null
+              ? CurrentUserData.fromJson(
+                Map<String, dynamic>.from(json['user']),
+              )
+              : null,
     );
   }
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -193,12 +213,16 @@ class CurrentUserPlan {
       type: json['type'],
       plansFor: json['plansFor'],
       durationMonths: json['durationMonths'],
-      amount: json['amount'],
+      amount: json['amount']?.toString(),
       isPremium: json['isPremium'],
       isActive: json['isActive'],
-      features: json['features'] != null ? jsonDecode(json['features']) : null,
+      features:
+          json['features'] is Map
+              ? Map<String, dynamic>.from(json['features'])
+              : null,
     );
   }
+
   Map<String, dynamic> toMap() {
     return {
       'name': name,

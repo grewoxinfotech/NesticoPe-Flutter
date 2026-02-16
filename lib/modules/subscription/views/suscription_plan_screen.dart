@@ -399,7 +399,10 @@ class SubscriptionPlansScreen extends StatelessWidget {
 
                   final item =
                       currentPlanController.items.isNotEmpty
-                          ? currentPlanController.items.first
+                          ? currentPlanController.items.firstWhereOrNull(
+                            (element) =>
+                                element.status?.toLowerCase() == 'active',
+                          )
                           : null;
 
                   if (item == null) {
@@ -617,7 +620,7 @@ class SubscriptionPlansScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            "${(max - used).clamp(0, max)} remaining in your current cycle",
+                            "${(max - used).clamp(0, max)} ${(userRole == UserRole.contractor) ? 'services' : 'properties'} remaining in your current cycle",
                             style: const TextStyle(
                               color: Colors.black54,
                               fontSize: 12,

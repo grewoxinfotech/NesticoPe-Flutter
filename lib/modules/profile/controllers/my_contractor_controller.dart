@@ -10,6 +10,8 @@ import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/color_res.dart';
+import '../../../data/network/buyer/model/my_contractor_model.dart';
+import '../../../data/network/buyer/service/my_contractor_service.dart';
 import '../../../data/network/lead/lead_service.dart';
 import '../../../data/network/review/service/review_service.dart';
 import '../../../widgets/New folder/inputs/text_field.dart';
@@ -17,9 +19,10 @@ import '../../../widgets/messages/snack_bar.dart';
 import '../../review/controllers/review_controller.dart';
 import '../../review/views/widget/rating_widget.dart';
 
-class MyContractorController extends PaginatedController<NewUpdatedLeadModel> {
+class MyContractorController
+    extends PaginatedController<ContractorProjectItem> {
   final ReviewController controller = Get.put(ReviewController());
-  final LeadService _service = LeadService();
+  final ContractorProjectService _service = ContractorProjectService();
   Rxn<GlobalKey> formKey = Rxn<GlobalKey>();
   RxMap<String, String> filters = <String, String>{}.obs;
   var isReasonValid = false.obs;
@@ -358,10 +361,14 @@ class MyContractorController extends PaginatedController<NewUpdatedLeadModel> {
   }
 
   @override
-  Future<PaginationResponse<NewUpdatedLeadModel>> fetchItems(int page) async {
-    final response = await _service.fetchContractorById(
+  Future<PaginationResponse<ContractorProjectItem>> fetchItems(int page) async {
+    final user = await SecureStorage.getUserData();
+    final email = user?.user?.email;
+    print('Email $email');
+    final response = await _service.fetchContractorProjects(
       page: page,
       filters: filters,
+      email: email,
     );
     loadData();
     return response;

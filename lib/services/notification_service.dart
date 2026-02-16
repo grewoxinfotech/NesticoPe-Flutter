@@ -226,7 +226,8 @@ class NotificationService {
     if (_isInitialized) return;
 
     OneSignal.Debug.setLogLevel(OSLogLevel.none);
-    OneSignal.initialize("21e16d75-ba82-4d03-9672-b66d2c59dea3");
+    OneSignal.initialize("70d48857-661a-4b36-b757-f221c97a1103");
+    // OneSignal.initialize("21e16d75-ba82-4d03-9672-b66d2c59dea3");
 
     await OneSignal.Notifications.requestPermission(true);
 
