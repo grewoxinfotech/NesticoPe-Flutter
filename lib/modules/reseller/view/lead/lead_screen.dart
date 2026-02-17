@@ -968,6 +968,7 @@ class CommonLeadScreen extends StatefulWidget {
   final String title;
   final String controllerTag;
   final bool showActionButton;
+  final bool isResellerFromApp;
   final bool showDataMasking;
 
   final Widget Function(LeadItem lead, VoidCallback onTap)? leadCardBuilder;
@@ -986,6 +987,7 @@ class CommonLeadScreen extends StatefulWidget {
     this.showDataMasking = false,
     this.leadCardBuilder,
     this.showActionButton = true,
+    this.isResellerFromApp = false,
   });
 
   @override
@@ -1044,20 +1046,9 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
     leadController.items.clear();
     leadController.filters.clear();
 
-    /// Apply entity filter (property / project)
-    ///  najjsindhu hsjin ajsin dheuj bndfb  nxjdin bc vbsg bchdu nsji bchdu bhuen bchduj ncj nchs nsjwn
-    /// ndhsj  jkfdn dhuejkn jsuekidbn ahd bdhc
     leadController.currentPropertyFilterId.value = widget.entityId;
 
     log(
-      /*bchd hduejhsbs
-      *
-      *
-      *
-      *
-      *
-      *
-      * sdddjhsuibn */
       "Controller Lead Project ${leadController.currentPropertyFilterId.value} ==================${widget.entityId}",
     );
 
@@ -1068,9 +1059,6 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
       );
       leadController.filters.addAll(filterMap);
     }
-
-    /// ✅ CRITICAL FIX: Only call loadInitial() - it handles everything
-    /// Don't call refreshList() AND loadInitial() together!
     await leadController.loadInitial();
   }
 
@@ -1100,22 +1088,24 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
             (widget.showActionButton)
                 ? [
                   /// Add Lead
-                  IconButton(
-                    icon: const Icon(Icons.add),
-                    onPressed: () {
-                      FocusScope.of(context).unfocus();
-                      leadController.resetForm();
-                      Get.to(
-                        () => AddLeadScreen(),
-                        binding: BindingsBuilder(() {
-                          Get.lazyPut(
-                            () => LeadController(),
-                            tag: widget.controllerTag,
-                          );
-                        }),
-                      );
-                    },
-                  ),
+                  if (widget.isResellerFromApp) ...[
+                    IconButton(
+                      icon: const Icon(Icons.add),
+                      onPressed: () {
+                        FocusScope.of(context).unfocus();
+                        leadController.resetForm();
+                        Get.to(
+                          () => AddLeadScreen(),
+                          binding: BindingsBuilder(() {
+                            Get.lazyPut(
+                              () => LeadController(),
+                              tag: widget.controllerTag,
+                            );
+                          }),
+                        );
+                      },
+                    ),
+                  ],
 
                   /// Filter
                   IconButton(
@@ -1134,39 +1124,41 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
                       );
                     },
                   ),
-                  PopupMenuButton<String>(
-                    onSelected: (value) {
-                      if (value == 'export') {
-                        leadController.exportToPdf(leadController.items);
-                      } else if (value == 'import') {
-                        showImportLeadsDialog(context);
-                        // leadController.importFromPdf();
-                      }
-                    },
-                    itemBuilder:
-                        (context) => [
-                          const PopupMenuItem(
-                            value: 'export',
-                            child: Row(
-                              children: [
-                                Icon(Icons.picture_as_pdf, color: Colors.red),
-                                SizedBox(width: 8),
-                                Text('Export PDF'),
-                              ],
+                  if (widget.isResellerFromApp) ...[
+                    PopupMenuButton<String>(
+                      onSelected: (value) {
+                        if (value == 'export') {
+                          leadController.exportToPdf(leadController.items);
+                        } else if (value == 'import') {
+                          showImportLeadsDialog(context);
+                          // leadController.importFromPdf();
+                        }
+                      },
+                      itemBuilder:
+                          (context) => [
+                            const PopupMenuItem(
+                              value: 'export',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.picture_as_pdf, color: Colors.red),
+                                  SizedBox(width: 8),
+                                  Text('Export PDF'),
+                                ],
+                              ),
                             ),
-                          ),
-                          const PopupMenuItem(
-                            value: 'import',
-                            child: Row(
-                              children: [
-                                Icon(Icons.upload_file, color: Colors.blue),
-                                SizedBox(width: 8),
-                                Text('Import PDF'),
-                              ],
+                            const PopupMenuItem(
+                              value: 'import',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.upload_file, color: Colors.blue),
+                                  SizedBox(width: 8),
+                                  Text('Import PDF'),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
-                  ),
+                          ],
+                    ),
+                  ],
                 ]
                 : null,
       ),
@@ -1286,7 +1278,6 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         insetPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
         child: Container(
-
           constraints: const BoxConstraints(maxWidth: 600, maxHeight: 700),
 
           decoration: BoxDecoration(

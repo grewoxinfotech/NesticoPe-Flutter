@@ -150,6 +150,26 @@ void showFilterBottomSheet(
                           ),
 
                           const SizedBox(height: 24),
+                          buildFilterSection(
+                            context: context,
+                            title: 'Lead Source',
+                            icon: Icons.stairs,
+                            filterType: 'source',
+                            options:
+                            controller.sourceList
+                                .map(
+                                  (s) =>
+                              s
+                                  .replaceAll('_', ' ')
+                                  .capitalizeFirst ??
+                                  s,
+                            )
+                                .toList(),
+                            tempFilters: tempFilters,
+                            setState: setState,
+                          ),
+
+                          const SizedBox(height: 24),
 
                           // Status Section
                           buildFilterSection(

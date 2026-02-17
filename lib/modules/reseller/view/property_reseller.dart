@@ -4822,7 +4822,7 @@ Widget _buildRecentLeads(DashboardController controller) {
                   () => CommonLeadScreen(
                     title: 'Property Buyer Leads',
                     controllerTag: 'reseller',
-
+showActionButton: true,
                     showDataMasking: true,
                     onLoadMore: (controller, id) async {
                       if (id != null) {
@@ -6259,6 +6259,7 @@ class MainNavigationScreen extends StatelessWidget {
         title: 'Property Buyer Leads',
         controllerTag: 'reseller',
         showDataMasking: true,
+        isResellerFromApp: true,
         isViewAll: true,
         onLoadMore: (controller, id) async {
           if (id != null) {
@@ -6299,6 +6300,7 @@ class MainNavigationScreen extends StatelessWidget {
             items: const [
               BottomNavigationBarItem(
                 icon: Padding(
+                  
                   padding: EdgeInsets.only(bottom: 4),
                   child: Icon(Icons.dashboard, size: 22),
                 ),
