@@ -85,7 +85,7 @@ class _ResellerLeadScreenState extends State<ResellerLeadScreen> {
               FocusScope.of(context).unfocus();
               leadController.resetForm();
               Get.to(
-                () => AddLeadScreen(),
+                () => AddLeadScreen(controller: leadController,),
                 binding: BindingsBuilder(() {
                   Get.lazyPut(() => LeadController(), tag: "reseller");
                 }),
@@ -607,7 +607,7 @@ Widget buildLeadCard(
                   color: ColorRes.orangeColor,
                   onPressed: () {
                     leadController.resetForm();
-                    Get.to(() => AddLeadScreen(lead: lead, isEditMode: true));
+                    Get.to(() => AddLeadScreen(lead: lead, isEditMode: true,controller: leadController,));
                   },
 
                   tooltip: 'Edit Lead',

@@ -10,11 +10,12 @@ import 'city_insigths_controller.dart';
 class PropertyFilterControllerForFilter extends GetxController {
   ///=====================================Property Type Selection=====================
   RxInt selectedPropertyTypeIndex = 0.obs;
-RxBool isRERAVerified=false.obs;
-RxBool isPropertyHaveImage=false.obs;
-RxBool isPropertyHaveVideo=false.obs;
-  RxList<String> amenities=<String>[].obs;
+  RxBool isRERAVerified = false.obs;
+  RxBool isPropertyHaveImage = false.obs;
+  RxBool isPropertyHaveVideo = false.obs;
+  RxList<String> amenities = <String>[].obs;
   final showAllAmenities = false.obs;
+
   void addBuilderAmenities(String items) {
     if (amenities.contains(items)) {
       amenities.remove(items);
@@ -23,11 +24,13 @@ RxBool isPropertyHaveVideo=false.obs;
     }
     amenities.refresh();
   }
+
   void toggleAmenitiesView() {
     showAllAmenities.value = !showAllAmenities.value;
   }
+
   RxList<String> propertyType =
-      ['Sell', 'Rent', 'Commercial', "PG/Co-living"].obs;
+      ['Residential', 'Commercial', "PG/Co-living"].obs;
   RxList<String> verificationStatus = <String>['Verified', 'Non-verified'].obs;
   RxString verifiedStatusIndex = ''.obs;
   RxString statusApplicateIndex = ''.obs;
@@ -60,7 +63,9 @@ RxBool isPropertyHaveVideo=false.obs;
         "Studio",
         "Duplex",
         "PentHouse",
-        "Builder Floor",
+        "Independent Floor",
+        "Farmhouse",
+        "Agricultural Land",
         "Villa",
       ].obs;
 
@@ -72,70 +77,73 @@ RxBool isPropertyHaveVideo=false.obs;
   RxList<String> furnishingType =
       <String>["Unfurnished", "Semi Furnished", "Fully Furnished"].obs;
   RxString rentFurnishing = ''.obs;
-  RxList<double> budgetValues = <double>[
-    0,
-    500000,
-    1000000,
-    1500000,
-    2000000,
-    2500000,
-    3000000,
-    3500000,
-    4000000,
-    4500000,
-    5000000,
-    6000000,
-    7000000,
-    8000000,
-    9000000,
-    10000000,
-    20000000,
-    50000000
-  ].obs;
-  RxList<double> commercialBuyBudgetValues = <double>[
-    0,
-    1000000,     // 10L
-    2500000,     // 25L
-    5000000,     // 50L
-    10000000,    // 1Cr
-    20000000,    // 2Cr
-    50000000,    // 5Cr
-    100000000,   // 10Cr
-    200000000,   // 20Cr
-    500000000,   // 50Cr
-    1000000000,  // 100Cr
-  ].obs;
-  RxList<double> commercialRentBudgetValues = <double>[
-    0,
-    10000,       // ₹10K
-    25000,       // ₹25K
-    50000,       // ₹50K
-    100000,      // ₹1L
-    200000,      // ₹2L
-    500000,      // ₹5L
-    1000000,     // ₹10L
-    2000000,     // ₹20L
-  ].obs;
+  RxList<double> budgetValues =
+      <double>[
+        0,
+        500000,
+        1000000,
+        1500000,
+        2000000,
+        2500000,
+        3000000,
+        3500000,
+        4000000,
+        4500000,
+        5000000,
+        6000000,
+        7000000,
+        8000000,
+        9000000,
+        10000000,
+        20000000,
+        50000000,
+      ].obs;
+  RxList<double> commercialBuyBudgetValues =
+      <double>[
+        0,
+        1000000, // 10L
+        2500000, // 25L
+        5000000, // 50L
+        10000000, // 1Cr
+        20000000, // 2Cr
+        50000000, // 5Cr
+        100000000, // 10Cr
+        200000000, // 20Cr
+        500000000, // 50Cr
+        1000000000, // 100Cr
+      ].obs;
+  RxList<double> commercialRentBudgetValues =
+      <double>[
+        0,
+        10000, // ₹10K
+        25000, // ₹25K
+        50000, // ₹50K
+        100000, // ₹1L
+        200000, // ₹2L
+        500000, // ₹5L
+        1000000, // ₹10L
+        2000000, // ₹20L
+      ].obs;
 
-  RxList<double> rentBudgetValues = <double>[
-    0,
-    5000,
-    10000,
-    15000,
-    20000,
-    25000,
-    30000,
-    40000,
-    50000,
-    75000,
-    100000,
-    150000,
-    200000,
-    300000,
-    400000,
-    500000,
-  ].obs;
-
+  RxList<double> rentBudgetValues =
+      <double>[
+        0,
+        5000,
+        10000,
+        15000,
+        20000,
+        25000,
+        30000,
+        40000,
+        50000,
+        75000,
+        100000,
+        150000,
+        200000,
+        300000,
+        400000,
+        500000,
+      ].obs;
 
   ///=====================================COMMERCIAL PROPERTIES=====================
   // Commercial Buy
@@ -169,21 +177,16 @@ RxBool isPropertyHaveVideo=false.obs;
   // Commercial Categories
   RxList<String> commercialSubCategory = <String>['Buy', 'Rent'].obs;
   RxString commercialSelectedSubCategory = ''.obs;
+  RxList<String> residentialSubCategory = <String>['Buy', 'Rent'].obs;
+  RxString residentialSelectedSubCategory = ''.obs;
 
   RxList<String> buyCommercialPropertyType =
-      <String>[
-        "Ready to use Office Space",
-        "Bare Shell Office Space",
-        "Shop",
-        "Showroom",
-        "Commercial Plot",
-        "WareHouse",
-        "Others",
-      ].obs;
+      <String>["Office", "Shop", "Showroom", "Plot", "WareHouse", "Others"].obs;
   RxString buySelectedCommercialPropertyTyp = ''.obs;
 
   RxList<String> saleTypeCommercialProperty =
-      <String>["New Properties", "Resale Properties"].obs;  RxList<String> purchaseTypeCommercialProperty =
+      <String>["New Properties", "Resale Properties"].obs;
+  RxList<String> purchaseTypeCommercialProperty =
       <String>["New Booking", "Resale Properties"].obs;
   RxString selectedSalesType = ''.obs;
   RxString selectedPurchaseType = ''.obs;
@@ -260,6 +263,7 @@ RxBool isPropertyHaveVideo=false.obs;
   // Available states (unique)
   RxList<String> availableStates = <String>[].obs;
   RxList<String> availableCities = <String>[].obs;
+  RxBool hasUserSelectedPropertyType = false.obs;
 
   @override
   void onInit() {
@@ -279,10 +283,9 @@ RxBool isPropertyHaveVideo=false.obs;
       availableCities.value =
           cityController.stateCityMap[state]
               ?.map((city) => city.city?.trim() ?? '')
-                  .where((city) => city.isNotEmpty)
-                  .toSet()
-                  .toList()
-              ??
+              .where((city) => city.isNotEmpty)
+              .toSet()
+              .toList() ??
           [];
       // Only reset city if NOT initializing filters
       if (!isInitializing.value) {
@@ -310,24 +313,29 @@ RxBool isPropertyHaveVideo=false.obs;
 
   /// Change property type and reset values to avoid out-of-bounds errors
   void changePropertyType(int index) {
+    hasUserSelectedPropertyType.value = true;
     selectedPropertyTypeIndex.value = index;
 
     // Reset range values based on selected property type to prevent out-of-bounds errors
     switch (propertyType[index]) {
-      case 'Sell':
-        // Ensure Buy range values are within bounds
-        if (_rangeValues.value.start < min.value ||
-            _rangeValues.value.end > max.value) {
+      case 'Residential':
+      // Reset buy range values if out of bounds
+       if(residentialSelectedSubCategory.value == 'Buy' ||
+           residentialSelectedSubCategory.value.isEmpty){
+         if (_rangeValues.value.start < min.value ||
+             _rangeValues.value.end > max.value) {
+           _rangeValues.value = RangeValues(min.value, max.value);
+         }
+       }else{
+         if (rentRangeValues.value.start < rentMin.value ||
+             rentRangeValues.value.end > rentMax.value) {
+           rentRangeValues.value = RangeValues(rentMin.value, rentMax.value);
+         }
+       }
+        // Reset rent range values if out of bounds
 
-          _rangeValues.value = RangeValues(min.value, max.value);
-        }
-        break;
-      case 'Rent':
-        // Ensure Rent range values are within bounds
-        if (rentRangeValues.value.start < rentMin.value ||
-            rentRangeValues.value.end > rentMax.value) {
-          rentRangeValues.value = RangeValues(rentMin.value, rentMax.value);
-        }
+        // Reset residential sub category
+        residentialSelectedSubCategory.value = '';
         break;
       case 'Commercial':
         // Reset commercial values based on sub-category
@@ -384,7 +392,6 @@ RxBool isPropertyHaveVideo=false.obs;
     );
     resetFilters();
   }
-
 
   /// Rent property price range with validation
   void dynamicRentChangeValue(RangeValues value) {
@@ -458,7 +465,6 @@ RxBool isPropertyHaveVideo=false.obs;
     filterValue.value = value;
   }
 
-
   /// Reset most filters to defaults (used when switching property type)
   void resetFilters() {
     // Reset Buy filters
@@ -506,10 +512,11 @@ RxBool isPropertyHaveVideo=false.obs;
   /// Reset ALL filters including search, verification and location (used by Reset button)
   void resetAllFilters() {
     resetFilters();
+    hasUserSelectedPropertyType.value = false;
     // Common
-    isRERAVerified.value=false;
-    isPropertyHaveVideo.value=false;
-    isPropertyHaveImage.value=false;
+    isRERAVerified.value = false;
+    isPropertyHaveVideo.value = false;
+    isPropertyHaveImage.value = false;
     amenities.clear();
     selectedPurchaseType.value = '';
     statusApplicateIndex.value = '';
@@ -536,7 +543,6 @@ RxBool isPropertyHaveVideo=false.obs;
         searchFilterByID.clear();
         break;
       case 'priceRange':
-
         _rangeValues.value = RangeValues(min.value, max.value);
         break;
       case 'bhk':
@@ -627,7 +633,7 @@ RxBool isPropertyHaveVideo=false.obs;
   }
 
   /// Get selected filters as readable chip labels with keys for clearing
-  List<Map<String, String>> getSelectedFilterChips() {
+/*  List<Map<String, String>> getSelectedFilterChips() {
     final filters = getAllFilters();
     final List<Map<String, String>> chips = [];
 
@@ -644,9 +650,9 @@ RxBool isPropertyHaveVideo=false.obs;
           });
           break;
         case "reraId":
-         if(value==true) {
-           chips.add({'key': key, 'label': 'RERA: Yes'});
-         }
+          if (value == true) {
+            chips.add({'key': key, 'label': 'RERA: Yes'});
+          }
           break;
         case 'approval_status':
           chips.add({'key': key, 'label': 'Status: $value'});
@@ -663,7 +669,11 @@ RxBool isPropertyHaveVideo=false.obs;
           }
           break;
         case "transaction_type":
-          chips.add({'key': key, 'label': 'Transaction: ${value.toString().toLowerCase().replaceAll(" ", "_")}'});
+          chips.add({
+            'key': key,
+            'label':
+                'Transaction: ${value.toString().toLowerCase().replaceAll(" ", "_")}',
+          });
           break;
         case "amenities":
           if (value is Iterable && value.isNotEmpty) {
@@ -678,9 +688,15 @@ RxBool isPropertyHaveVideo=false.obs;
         case 'propertyId':
           chips.add({'key': key, 'label': 'ID: $value'});
           break;
+        // case 'priceRange':
+        //   final minV = (value['min'] as num).toDouble();
+        //   final maxV = (value['max'] as num).toDouble();
+        //   chips.add({'key': key, 'label': 'Price: ${priceLabel(minV, maxV)}'});
+        //   break;
         case 'priceRange':
-          final minV = (value['min'] as num).toDouble();
-          final maxV = (value['max'] as num).toDouble();
+          final minV = ((value['min'] ?? 0) as num).toDouble();
+          final maxV = ((value['max'] ?? 0) as num).toDouble();
+          if (minV == 0.0 && maxV == 0.0) break; // skip empty range
           chips.add({'key': key, 'label': 'Price: ${priceLabel(minV, maxV)}'});
           break;
         case 'bhk':
@@ -712,8 +728,90 @@ RxBool isPropertyHaveVideo=false.obs;
     });
 
     return chips;
-  }
+  }*/
+  List<Map<String, String>> getSelectedFilterChips() {
+    final filters = getAllFilters();
+    final List<Map<String, String>> chips = [];
+    String priceLabel(double a, double b) =>
+        '${Formatter.formatPrice(a)} - ${Formatter.formatPrice(b)}';
 
+    filters.forEach((key, value) {
+      if (value == null) return;
+      // ✅ Skip false boolean values
+      if (value is bool && value == false) return;
+
+      switch (key) {
+        case 'isVerified':
+          chips.add({
+            'key': key,
+            'label': 'Verified: ${value == true ? 'Yes' : 'No'}',
+          });
+          break;
+        case "reraId":
+        // ✅ Only reaches here if true (handled above)
+          chips.add({'key': key, 'label': 'RERA: Yes'});
+          break;
+        case 'approval_status':
+          chips.add({'key': key, 'label': 'Status: $value'});
+          break;
+        case "hasPhotos":
+          chips.add({'key': key, 'label': 'Has Photos: Yes'});
+          break;
+        case "hasVideos":
+          chips.add({'key': key, 'label': 'Has Videos: Yes'});
+          break;
+        case "transaction_type":
+          chips.add({
+            'key': key,
+            'label': 'Transaction: $value',
+          });
+          break;
+        case "amenities":
+          if (value is Iterable && value.isNotEmpty) {
+            chips.add({
+              'key': key,
+              'label': 'Amenities: ${value.length} selected',
+            });
+          }
+          break;
+        case 'propertyId':
+          chips.add({'key': key, 'label': 'ID: $value'});
+          break;
+        case 'priceRange':
+          final minV = ((value['min'] ?? 0) as num).toDouble();
+          final maxV = ((value['max'] ?? 0) as num).toDouble();
+          // ✅ Skip if both zero
+          if (minV == 0.0 && maxV == 0.0) break;
+          chips.add({'key': key, 'label': 'Price: ${priceLabel(minV, maxV)}'});
+          break;
+        case 'bhk':
+          chips.add({'key': key, 'label': 'BHK: $value'});
+          break;
+        case 'propertyType':
+          chips.add({'key': key, 'label': 'Type: $value'});
+          break;
+        case 'possession_status':
+          chips.add({'key': key, 'label': 'Possession: $value'});
+          break;
+        case 'furnish_type':
+          chips.add({'key': key, 'label': 'Furnish: $value'});
+          break;
+        case 'property_condition':
+          chips.add({'key': key, 'label': 'Condition: $value'});
+          break;
+        case 'state':
+          chips.add({'key': key, 'label': 'State: $value'});
+          break;
+        case 'city':
+          chips.add({'key': key, 'label': 'City: $value'});
+          break;
+        default:
+          break;
+      }
+    });
+
+    return chips;
+  }
 
   Map<String, dynamic> getAllFilters() {
     // Helpers
@@ -727,8 +825,14 @@ RxBool isPropertyHaveVideo=false.obs;
 
     String? mapListingType() {
       final tab = propertyType[selectedPropertyTypeIndex.value];
-      if (tab == 'Sell') return 'Sell';
-      if (tab == 'Rent') return 'Rent';
+      /* if (tab == 'Sell') return 'Sell';
+      if (tab == 'Rent') return 'Rent';*/
+      if (tab == "Residential") {
+        if (residentialSelectedSubCategory.value.toLowerCase() == 'rent') {
+          return 'Rent';
+        }
+        return 'Sell';
+      }
       if (tab == 'Commercial') {
         if (commercialSelectedSubCategory.value.toLowerCase() == 'rent') {
           return 'Rent';
@@ -746,14 +850,13 @@ RxBool isPropertyHaveVideo=false.obs;
       if (tab == 'Commercial') {
         final t = buySelectedCommercialPropertyTyp.value;
         switch (t) {
-          case 'Ready to use Office Space':
-          case 'Bare Shell Office Space':
+          case 'Office':
             return 'office';
           case 'Shop':
-            return 'retail_shop';
+            return 'shop';
           case 'Showroom':
             return 'showroom';
-          case 'Commercial Plot':
+          case 'Plot':
             return 'plot';
           case 'WareHouse':
             return 'warehouse';
@@ -777,10 +880,14 @@ RxBool isPropertyHaveVideo=false.obs;
             return 'duplex';
           case 'PentHouse':
             return 'penthouse';
-          case 'Builder Floor':
-            return 'builder_floor';
+          case 'Independent Floor':
+            return 'independent_floor';
           case 'Villa':
             return 'villa';
+          case "Farmhouse":
+            return 'farmhouse';
+          case 'Agricultural Land':
+            return 'agricultural_land';
           default:
             return null;
         }
@@ -809,42 +916,110 @@ RxBool isPropertyHaveVideo=false.obs;
     }
 
     // Compute priceRange based on context
-    Map<String, dynamic>? mapPriceRange() {
+   /* Map<String, dynamic>? mapPriceRange() {
       final tab = propertyType[selectedPropertyTypeIndex.value];
-      if (tab == 'Sell') {
-        log("hjsdfbsdfjdsfjhdfbhdfbd ${min.value}   ${max.value}");
-        return {
-          if(min.value != 0.0 || max.value != 0.0)'min': min.value,
-          if(max.value != 0.0)'max': max.value,
-        };
-      } else if (tab == 'Rent') {
-        return {
-          if(rentRangeValues.value.start != 0.0 || rentRangeValues.value.end != 0.0)'min': rentRangeValues.value.start,
-          if(rentRangeValues.value.end != 0.0)'max': rentRangeValues.value.end,
-        };
-      } else if (tab == 'Commercial') {
-        if (commercialSelectedSubCategory.value.toLowerCase() == 'rent') {
+      if (tab == 'Residential') {
+        final isRent = residentialSelectedSubCategory.value.toLowerCase() == 'rent';
+        if (isRent) {
           return {
-            if(commercialRentRangeValue.value.start != 0.0 || commercialRentRangeValue.value.end != 0.0)'min': commercialRentRangeValue.value.start,
-            if(commercialRentRangeValue.value.end != 0.0)'max': commercialRentRangeValue.value.end,
+            if (rentRangeValues.value.start != 0.0) 'min': rentRangeValues.value.start,
+            if (rentRangeValues.value.end != 0.0) 'max': rentRangeValues.value.end,
           };
         } else {
           return {
-            if(commercialRentRangeValue.value.start != 0.0 || commercialRentRangeValue.value.end != 0.0)'min': commercialRentRangeValue.value.start,
-            if(commercialRentRangeValue.value.end != 0.0)'max': commercialRentRangeValue.value.end,
+            if (_rangeValues.value.start != 0.0 || _rangeValues.value.end != 0.0)
+              'min': _rangeValues.value.start,
+            if (_rangeValues.value.end != 0.0) 'max': _rangeValues.value.end,
+          };
+        }
+      } else if (tab == 'Commercial') {
+        if (commercialSelectedSubCategory.value.toLowerCase() == 'rent') {
+          return {
+            if (commercialRentRangeValue.value.start != 0.0 ||
+                commercialRentRangeValue.value.end != 0.0)
+              'min': commercialRentRangeValue.value.start,
+            if (commercialRentRangeValue.value.end != 0.0)
+              'max': commercialRentRangeValue.value.end,
+          };
+        } else {
+          return {
+            if (commercialRentRangeValue.value.start != 0.0 ||
+                commercialRentRangeValue.value.end != 0.0)
+              'min': commercialRentRangeValue.value.start,
+            if (commercialRentRangeValue.value.end != 0.0)
+              'max': commercialRentRangeValue.value.end,
           };
         }
       } else if (tab == 'PG/Co-living') {
         return {
-          if(pgRangeValues.value.start != 0.0 || pgRangeValues.value.end != 0.0)'min': pgRangeValues.value.start,
-          if(pgRangeValues.value.end != 0.0)'max': pgRangeValues.value.end,
+          if (pgRangeValues.value.start != 0.0 ||
+              pgRangeValues.value.end != 0.0)
+            'min': pgRangeValues.value.start,
+          if (pgRangeValues.value.end != 0.0) 'max': pgRangeValues.value.end,
+        };
+      }
+      return null;
+    }*/
+    Map<String, dynamic>? mapPriceRange() {
+      final tab = propertyType[selectedPropertyTypeIndex.value];
+
+      if (tab == 'Residential') {
+        final isRent =
+            residentialSelectedSubCategory.value.toLowerCase() == 'rent';
+        if (isRent) {
+          // ✅ Skip if still at default values
+          if (rentRangeValues.value.start == rentMin.value &&
+              rentRangeValues.value.end == rentMax.value) {
+            return null;
+          }
+          return {
+            'min': rentRangeValues.value.start,
+            'max': rentRangeValues.value.end,
+          };
+        } else {
+          // ✅ Skip if both are 0 (default)
+          if (_rangeValues.value.start == 0.0 && _rangeValues.value.end == 0.0) {
+            return null;
+          }
+          if (_rangeValues.value.start == min.value &&
+              _rangeValues.value.end == max.value) return null;
+          return {
+            'min': _rangeValues.value.start,
+            'max': _rangeValues.value.end,
+          };
+        }
+      } else if (tab == 'Commercial') {
+        if (commercialSelectedSubCategory.value.toLowerCase() == 'rent') {
+          if (commercialRentMin.value == 0.0 && commercialRentMax.value == 0.0) {
+            return null;
+          }
+          return {
+            'min': commercialRentMin.value,
+            'max': commercialRentMax.value,
+          };
+        } else {
+          if (commercialMin.value == 0.0 && commercialMax.value == 0.0) {
+            return null;
+          }
+          return {
+            'min': commercialMin.value,
+            'max': commercialMax.value,
+          };
+        }
+      } else if (tab == 'PG/Co-living') {
+        // ✅ Skip if still at default values
+        if (pgRangeValues.value.start == pgMin.value &&
+            pgRangeValues.value.end == pgMax.value) return null;
+        return {
+          'min': pgRangeValues.value.start,
+          'max': pgRangeValues.value.end,
         };
       }
       return null;
     }
 
     // Optionally set property_condition for commercial office
-    String? mapPropertyCondition() {
+   /* String? mapPropertyCondition() {
       if (propertyType[selectedPropertyTypeIndex.value] != 'Commercial') {
         return null;
       }
@@ -852,31 +1027,40 @@ RxBool isPropertyHaveVideo=false.obs;
       if (t == 'Ready to use Office Space') return 'ready_to_use';
       if (t == 'Bare Shell Office Space') return 'bare_shell';
       return null;
-    }
+    }*/
 
     final mappedListingType = mapListingType();
     final mappedPropertyType = mapPropertyType();
     final priceRange = mapPriceRange();
-    final propertyCondition = mapPropertyCondition();
+    // final propertyCondition = mapPropertyCondition();
 
     Map<String, dynamic> filters = {
       // Core filters
-      if (propertyType[selectedPropertyTypeIndex.value].isNotEmpty)
+      // if (propertyType[selectedPropertyTypeIndex.value].isNotEmpty)
+      //   'type':
+      //       propertyType[selectedPropertyTypeIndex.value] == "Commercial"
+      //           ? 'commercial'
+      //           : 'residential',
+      if (hasUserSelectedPropertyType.value &&
+          propertyType[selectedPropertyTypeIndex.value].isNotEmpty)
         'type':
             propertyType[selectedPropertyTypeIndex.value] == "Commercial"
                 ? 'commercial'
                 : 'residential',
-      if (mappedListingType != null) 'listingType': mappedListingType,
+      // if (mappedListingType != null) 'listingType': mappedListingType,
+      if (hasUserSelectedPropertyType.value && mappedListingType != null)
+        'listingType': mappedListingType,
       if (mappedPropertyType != null) 'propertyType': mappedPropertyType,
       if (priceRange != null) 'priceRange': priceRange,
 
       // Flags
-      'reraId': isRERAVerified.value,
-      'hasPhotos': isPropertyHaveImage.value,
-      'hasVideos': isPropertyHaveVideo.value,
-      if(amenities.value.isNotEmpty)
-
-        'amenities':amenities.value.map((e) => e.toLowerCase().replaceAll(" ", "_"),),
+      if (isRERAVerified.value) 'reraId': true,
+      if (isPropertyHaveImage.value) 'hasPhotos': true,
+      if (isPropertyHaveVideo.value) 'hasVideos': true,
+      if (amenities.value.isNotEmpty)
+        'amenities': amenities.value.map(
+          (e) => e.toLowerCase().replaceAll(" ", "_"),
+        ),
 
       if (verifiedStatusIndex.value.isNotEmpty)
         'isVerified': verifiedStatusIndex.value == 'Verified',
@@ -894,8 +1078,8 @@ RxBool isPropertyHaveVideo=false.obs;
       // Possession status (buy)
       if (constructionStatusInBuy.value.isNotEmpty)
         'possession_status': slug(constructionStatusInBuy.value),
-      if(selectedPurchaseType.value.isNotEmpty)
-        'transaction_type':slug(selectedPurchaseType.value),
+      if (selectedPurchaseType.value.isNotEmpty)
+        'transaction_type': slug(selectedPurchaseType.value),
 
       // Furnishing (rent)
       if (mapFurnishType() != null) 'furnish_type': mapFurnishType(),
@@ -905,7 +1089,7 @@ RxBool isPropertyHaveVideo=false.obs;
       if (selectedCity.value.isNotEmpty) 'city': selectedCity.value,
 
       // Commercial-specific extras (optional, only when known)
-      if (propertyCondition != null) 'property_condition': propertyCondition,
+      // if (propertyCondition != null) 'property_condition': propertyCondition,
 
       // Type (only when Commercial tab)
       if (propertyType[selectedPropertyTypeIndex.value] == 'Commercial')
@@ -974,14 +1158,17 @@ RxBool isPropertyHaveVideo=false.obs;
       isInitializing.value = true;
       // Handle listing type first to set correct tab
       if (initialFilters['listingType'] != null) {
+        hasUserSelectedPropertyType.value = true;
         String listingType = initialFilters['listingType']!;
         int index;
         switch (listingType) {
           case 'Sell':
-            index = propertyType.indexOf('Sell');
+            index = propertyType.indexOf('Residential'); // ✅ map Sell → Residential
+            residentialSelectedSubCategory.value = 'Buy';
             break;
           case 'Rent':
-            index = propertyType.indexOf('Rent');
+            index = propertyType.indexOf('Residential'); // ✅ map Rent → Residential
+            residentialSelectedSubCategory.value = 'Rent';
             break;
           case 'PG':
             index = propertyType.indexOf('PG/Co-living');
@@ -989,7 +1176,7 @@ RxBool isPropertyHaveVideo=false.obs;
           default:
             index = 0;
         }
-        selectedPropertyTypeIndex.value = index;
+        selectedPropertyTypeIndex.value = index >= 0 ? index : 0;
       }
 
       // Handle verification status
@@ -1031,17 +1218,23 @@ RxBool isPropertyHaveVideo=false.obs;
           case 'penthouse':
             uiType = 'PentHouse';
             break;
-          case 'builder_floor':
-            uiType = 'Builder Floor';
+          case 'independent_floor':
+            uiType = 'Independent Floor';
             break;
           case 'villa':
             uiType = 'Villa';
             break;
+            case 'farmhouse':
+            uiType = 'Farmhouse';
+            break;
+            case 'agricultural_land':
+            uiType = 'Agricultural Land';
+            break;
           // Commercial types
           case 'office':
-            uiType = 'Ready to use Office Space';
+            uiType = 'Office';
             break;
-          case 'retail_shop':
+          case 'shop':
             uiType = 'Shop';
             break;
           case 'showroom':
@@ -1049,6 +1242,9 @@ RxBool isPropertyHaveVideo=false.obs;
             break;
           case 'warehouse':
             uiType = 'WareHouse';
+            break;
+            case 'others':
+            uiType = 'Others';
             break;
         }
 
@@ -1155,7 +1351,9 @@ RxBool isPropertyHaveVideo=false.obs;
         selectedState.value = stateValue;
 
         // Wait for cities to load for this state
-        await Future.delayed(const Duration(milliseconds: 100)); // Give time for listener to update cities
+        await Future.delayed(
+          const Duration(milliseconds: 100),
+        ); // Give time for listener to update cities
 
         // Now set city if provided
         if (initialFilters['city'] != null) {
@@ -1195,7 +1393,6 @@ RxBool isPropertyHaveVideo=false.obs;
     super.onClose();
   }
 }
-
 
 // class PropertyFilterControllerForFilter extends GetxController {
 //   ///=====================================Property Type Selection=====================
@@ -2266,4 +2463,3 @@ RxBool isPropertyHaveVideo=false.obs;
 //     super.onClose();
 //   }
 // }
-

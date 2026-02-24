@@ -16,11 +16,12 @@ import '../../../../widgets/New folder/inputs/text_field.dart';
 class AddLeadScreen extends StatelessWidget {
   final LeadItem? lead;
   final bool isEditMode;
-  final controller = Get.find<LeadController>(tag: "reseller");
+  final LeadController controller;
   final resellerDashboard = Get.find<DashboardController>();
+  final bool isForProject;
   final _formKey = GlobalKey<FormState>();
 
-  AddLeadScreen({super.key, this.lead, this.isEditMode = false});
+  AddLeadScreen({super.key, this.lead, this.isEditMode = false, this.isForProject=false, required this.controller});
   @override
   Widget build(BuildContext context) {
     if (isEditMode && lead != null) {
@@ -87,43 +88,85 @@ class AddLeadScreen extends StatelessWidget {
                 const SizedBox(height: 16),
 
                 // Property
-                Obx(
-                  () => NesticoPeDropdownField(
-                    title: "Property",
-                    hintText: "Select property",
-                    isRequired: true,
-                    value: controller.selectedProperty.value,
-                    items:
-                        controller.propertyList.map((e) {
-                          final displayName = e.title;
-                          return DropdownMenuItem(
-                            value: e,
-                            child: Row(
-                              children: [
-                                if (e.image != null && e.image!.isNotEmpty) ...[
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(6),
-                                    child: CustomImage(
-                                      type: CustomImageType.network,
-                                      src: e.image,
-                                      height: 30,
-                                      width: 30,
-                                    ),
-                                  ),
-                                  SizedBox(width: 12),
-                                ],
-                                Text('${displayName}'),
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                    onChanged: (val) => controller.selectedProperty.value = val,
-                    validator:
-                        (val) =>
-                            val == null ? 'Please select a property' : null,
-                  ),
-                ),
-                const SizedBox(height: 16),
+               if(!isForProject)...[
+
+                 Obx(
+                       () => NesticoPeDropdownField(
+                     title: "Property",
+                     hintText: "Select property",
+                     isRequired: true,
+                     value: controller.selectedProperty.value,
+                     items:
+                     controller.propertyList.map((e) {
+                       final displayName = e.title;
+                       return DropdownMenuItem(
+                         value: e,
+                         child: Row(
+                           children: [
+                             if (e.image != null && e.image!.isNotEmpty) ...[
+                               ClipRRect(
+                                 borderRadius: BorderRadius.circular(6),
+                                 child: CustomImage(
+                                   type: CustomImageType.network,
+                                   src: e.image,
+                                   height: 30,
+                                   width: 30,
+                                 ),
+                               ),
+                               SizedBox(width: 12),
+                             ],
+                             Text('${displayName}'),
+                           ],
+                         ),
+                       );
+                     }).toList(),
+                     onChanged: (val) => controller.selectedProperty.value = val,
+                     validator:
+                         (val) =>
+                     val == null ? 'Please select a property' : null,
+                   ),
+                 ),
+                 const SizedBox(height: 16),
+
+               ]else...[
+                 Obx(
+                       () => NesticoPeDropdownField(
+                     title: "Project",
+                     hintText: "Select project",
+                     isRequired: true,
+                     value: controller.selectedProperty.value,
+                     items:
+                     controller.projectList.map((e) {
+                       final displayName = e.title;
+                       return DropdownMenuItem(
+                         value: e,
+                         child: Row(
+                           children: [
+                             if (e.image != null && e.image!.isNotEmpty) ...[
+                               ClipRRect(
+                                 borderRadius: BorderRadius.circular(6),
+                                 child: CustomImage(
+                                   type: CustomImageType.network,
+                                   src: e.image,
+                                   height: 30,
+                                   width: 30,
+                                 ),
+                               ),
+                               SizedBox(width: 12),
+                             ],
+                             Text('${displayName}'),
+                           ],
+                         ),
+                       );
+                     }).toList(),
+                     onChanged: (val) => controller.selectedProperty.value = val,
+                     validator:
+                         (val) =>
+                     val == null ? 'Please select a property' : null,
+                   ),
+                 ),
+                 const SizedBox(height: 16),
+               ],
 
                 // Source
                 Obx(

@@ -31,6 +31,7 @@ import '../../../data/network/reseller/reseller_dashboard/model/reseller_citywis
 import '../../../data/network/reseller/reseller_dashboard/model/reseller_dashboard_model.dart';
 import '../../../utils/excel/generate_excel.dart';
 import '../../../utils/global.dart';
+import '../../../utils/logger/app_logger.dart';
 import '../../../utils/shimmer/dashboard/dashbard_shimmer.dart';
 import '../../common/lead_components/lead_helpers.dart';
 import '../../dashboard/views/dashboard_screen.dart';
@@ -767,6 +768,10 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
             if (controller.isLoading.value && controller.recentLeads.isEmpty) {
               return DashboardShimmer();
             }
+            AppLogger.structured(
+              "Check the dashboard Reseller",
+              controller.resellerInsightsModel.value?.toJson(),
+            );
             return RefreshIndicator(
               onRefresh: controller.refreshDashboard,
               child:
@@ -896,6 +901,7 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
 
                                 levelIcon: Icons.star,
                                 levelIconColor: ColorRes.orangeColor,
+
                                 benefits:
                                     controller
                                         .resellerInsightsModel
@@ -2300,9 +2306,6 @@ Widget buildTopPropertyForGoodCommission(
     ),
   );
 }
-
-
-
 
 // Helper method to build feature items
 Widget _buildFeatureItem(IconData icon, String label) {
@@ -4512,7 +4515,7 @@ Widget buildDailyGoals({
         const SizedBox(height: 20),
 
         // Progress Bar with Dots
-        LayoutBuilder(
+      /*  LayoutBuilder(
           builder: (context, constraints) {
             final totalWidth = constraints.maxWidth;
 
@@ -4585,6 +4588,118 @@ Widget buildDailyGoals({
                     }),
                   ),
                 ),
+              ],
+            );
+          },
+        ),*/
+        // Progress Bar with Dots
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final totalWidth = constraints.maxWidth;
+            final double clampedProgress = progress.clamp(0.0, 1.0);
+            final double labelPosition = (totalWidth - 40) * clampedProgress;
+            final percent = (clampedProgress * 100).toInt();
+
+            return Stack(
+              clipBehavior: Clip.none,
+              children: [
+                // 🟣 Animated Progress Bar with Shimmer
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Stack(
+                    children: [
+                      // Background track
+                      Container(
+                        height: 20,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: primaryColor.withOpacity(0.08),
+                        ),
+                      ),
+                      // Animated fill
+                      TweenAnimationBuilder<double>(
+                        tween: Tween<double>(begin: 0, end: clampedProgress),
+                        duration: const Duration(milliseconds: 800),
+                        curve: Curves.easeInOut,
+                        builder: (context, value, _) => LinearProgressIndicator(
+                          value: value,
+                          borderRadius: BorderRadius.circular(15),
+                          backgroundColor: Colors.transparent,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            completedSteps > 0 ? primaryColor : Colors.transparent,
+                          ),
+                          minHeight: 20,
+                        ),
+                      ),
+                      // ✨ Shimmer overlay
+                      Positioned.fill(
+                        child: Shimmer.fromColors(
+                          baseColor: Colors.transparent,
+                          highlightColor: Colors.white.withOpacity(0.4),
+                          period: const Duration(seconds: 2),
+                          child: Container(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+
+
+                // 🔵 Dots overlay
+                Positioned.fill(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: List.generate(totalSteps + 1, (index) {
+                      bool isActive = index <= completedSteps;
+                      bool isFirst = index == 0;
+                      bool isLast = index == totalSteps;
+
+                      return ScaleIconWidget(
+                        duration: const Duration(seconds: 3),
+                        minScale: 0.9,
+                        maxScale: 1.1,
+                        child: Container(
+                          margin: EdgeInsets.only(
+                            left: isFirst ? 0 : 0,
+                            right: isLast ? 0 : 0,
+                          ),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 600),
+                            curve: Curves.easeInOut,
+                            height: 10,
+                            width: 10,
+                            decoration: BoxDecoration(
+                              color: isActive
+                                  ? ColorRes.green.shade400
+                                  : ColorRes.white,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isActive
+                                    ? ColorRes.green.shade400
+                                    : ColorRes.green.shade300,
+                                width: 1,
+                              ),
+                              boxShadow: isActive
+                                  ? [
+                                BoxShadow(
+                                  offset: const Offset(0, 2),
+                                  blurRadius: 8,
+                                  spreadRadius: 0,
+                                  color: ColorRes.green.shade400
+                                      .withOpacity(0.4),
+                                ),
+                              ]
+                                  : null,
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+
+
               ],
             );
           },
@@ -4822,7 +4937,7 @@ Widget _buildRecentLeads(DashboardController controller) {
                   () => CommonLeadScreen(
                     title: 'Property Buyer Leads',
                     controllerTag: 'reseller',
-showActionButton: true,
+                    showActionButton: true,
                     showDataMasking: true,
                     onLoadMore: (controller, id) async {
                       if (id != null) {
@@ -6197,13 +6312,13 @@ Widget buildMetricComparisonCard({
           color:
               isPositive
                   ? ColorRes.success.withOpacity(0.08)
-                  : ColorRes.leadGreyColor.withOpacity(0.08),
+                  : ColorRes.error.withOpacity(0.08),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color:
                 isPositive
                     ? ColorRes.success.shade300
-                    : ColorRes.leadGreyColor.shade300,
+                    : ColorRes.error.shade300,
             width: 0.5,
           ),
           // borderRadius: BorderRadius.circular(8),
@@ -6211,18 +6326,36 @@ Widget buildMetricComparisonCard({
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.trending_up,
-              size: 14,
-              color: isPositive ? ColorRes.success : ColorRes.leadGreyColor,
-            ),
+            if (isPositive) ...[
+              AnimatedContainerScaler(
+                minScale: 0.95,
+                maxScale: 1.10,
+                duration: const Duration(seconds: 2),
+                child: Icon(
+                  Icons.trending_up,
+                  size: 14,
+                  color: ColorRes.success,
+                ),
+              ),
+            ] else ...[
+              AnimatedContainerScaler(
+                minScale: 0.95,
+                maxScale: 1.10,
+                duration: const Duration(seconds: 2),
+                child: Icon(
+                  Icons.trending_down,
+                  size: 14,
+                  color: ColorRes.error,
+                ),
+              ),
+            ],
             const SizedBox(width: 4),
             Text(
               '${percentage} %${isPositive ? 'increase' : 'decrease'} ',
               style: TextStyle(
                 fontSize: AppFontSizes.small,
                 fontWeight: AppFontWeights.semiBold,
-                color: isPositive ? ColorRes.success : ColorRes.leadGreyColor,
+                color: isPositive ? ColorRes.success : ColorRes.error,
               ),
             ),
           ],
@@ -6248,28 +6381,18 @@ class MainNavigationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final navigationController = Get.put(ResellerNavigationController());
     Get.lazyPut(() => DashboardController(), tag: "reseller");
-    Get.lazyPut(() => LeadController(), tag: "reseller");
+    /*    Get.lazyPut(() => LeadController(), tag: "reseller");*/
+
 
     final screens = [
       ResellerDashboardScreen(),
       ProductListingScreen(),
       ProjectListingScreen(),
       // ResellerLeadScreen(isViewAll: true),
-      CommonLeadScreen(
-        title: 'Property Buyer Leads',
-        controllerTag: 'reseller',
-        showDataMasking: true,
-        isResellerFromApp: true,
-        isViewAll: true,
-        onLoadMore: (controller, id) async {
-          if (id != null) {
-            controller.loadMorePropertyLeads(id);
-          } else {
-            controller.loadMore();
-          }
-        },
-      ),
-      ResellerProfileScreen(),
+
+
+      ResellerSubscriptionPlanScreen(),
+
     ];
 
     return Scaffold(
@@ -6300,7 +6423,6 @@ class MainNavigationScreen extends StatelessWidget {
             items: const [
               BottomNavigationBarItem(
                 icon: Padding(
-                  
                   padding: EdgeInsets.only(bottom: 4),
                   child: Icon(Icons.dashboard, size: 22),
                 ),
@@ -6324,17 +6446,10 @@ class MainNavigationScreen extends StatelessWidget {
               BottomNavigationBarItem(
                 icon: Padding(
                   padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.people, size: 22),
-                ),
-                label: 'Leads',
-              ),
-            /*  BottomNavigationBarItem(
-                icon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
                   child: Icon(Icons.card_giftcard_outlined, size: 22),
                 ),
-                label: 'Plans',
-              ),*/
+                label: 'Plan',
+              ),
               BottomNavigationBarItem(
                 icon: Padding(
                   padding: EdgeInsets.only(bottom: 4),

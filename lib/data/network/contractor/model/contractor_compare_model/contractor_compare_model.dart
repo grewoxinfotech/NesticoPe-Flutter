@@ -1,4 +1,6 @@
 // Main Response Model
+import '../../../../../app/utils/formater/formater.dart';
+
 class ContractorDataResponse {
   final bool success;
   final String message;
@@ -276,7 +278,7 @@ class Service {
 }
 
 // Service Meta Model
-class ServiceMeta {
+/*class ServiceMeta {
   final double price;
   final String priceModel;
   final String startingPriceRange;
@@ -288,6 +290,35 @@ class ServiceMeta {
   final List<String> acceptedPaymentModes;
   final int advanceRequiredPercentage;
   final String billingType;
+  final List<String>? cementBrand;
+  final List<String>? steelBrand;
+  final List<String>? brickType;
+  final List<String>? sandSource;
+  final List<String>? electricalWiresBrand;
+  final List<String>? electricalSwitchesBrand;
+  final List<String>? plumbingPipesBrand;
+  final List<String>? sanitaryFittingsBrand;
+  final List<String>? waterTankBrand;
+  final List<String>? flooringTilesBrand;
+  final List<String>? interiorPaintBrand;
+  final List<String>? exteriorPaintBrand;
+  final List<String>? doorsType;
+  final List<String>? windowsType;
+  final List<String>? structure;
+  final List<String>? plasterType;
+  final List<String>? waterproofing;
+  final List<String>? chokhatType;
+  final List<String>? railingType;
+  final List<String>? falseCeiling;
+  final List<String>? fabricationWork;
+
+  // Yes / No values
+  final String? threeDDesign;
+  final String? modularKitchen;
+  final String? boreAndPump;
+  final String? securitySystems;
+  final String? homeAutomation;
+  final String? solarSolutions;
 
   ServiceMeta({
     required this.price,
@@ -296,6 +327,33 @@ class ServiceMeta {
     required this.workAvailability,
     required this.provideMaterials,
     this.brandsUsed,
+    this.cementBrand,
+    this.steelBrand,
+    this.brickType,
+    this.sandSource,
+    this.electricalWiresBrand,
+    this.electricalSwitchesBrand,
+    this.plumbingPipesBrand,
+    this.sanitaryFittingsBrand,
+    this.waterTankBrand,
+    this.flooringTilesBrand,
+    this.interiorPaintBrand,
+    this.exteriorPaintBrand,
+    this.doorsType,
+    this.windowsType,
+    this.structure,
+    this.plasterType,
+    this.waterproofing,
+    this.chokhatType,
+    this.railingType,
+    this.falseCeiling,
+    this.fabricationWork,
+    this.threeDDesign,
+    this.modularKitchen,
+    this.boreAndPump,
+    this.securitySystems,
+    this.homeAutomation,
+    this.solarSolutions,
     required this.equipmentProvided,
     required this.insuranceAvailable,
     required this.acceptedPaymentModes,
@@ -319,6 +377,41 @@ class ServiceMeta {
           ['cash'],
       advanceRequiredPercentage: json['advanceRequiredPercentage'] ?? 0,
       billingType: json['billingType'] ?? 'non_gst',
+      cementBrand: (json['cementBrand'] as List?)?.cast<String>(),
+      steelBrand: (json['steelBrand'] as List?)?.cast<String>(),
+      brickType: (json['brickType'] as List?)?.cast<String>(),
+      sandSource: (json['sandSource'] as List?)?.cast<String>(),
+      electricalWiresBrand:
+      (json['electricalWiresBrand'] as List?)?.cast<String>(),
+      electricalSwitchesBrand:
+      (json['electricalSwitchesBrand'] as List?)?.cast<String>(),
+      plumbingPipesBrand:
+      (json['plumbingPipesBrand'] as List?)?.cast<String>(),
+      sanitaryFittingsBrand:
+      (json['sanitaryFittingsBrand'] as List?)?.cast<String>(),
+      waterTankBrand: (json['waterTankBrand'] as List?)?.cast<String>(),
+      flooringTilesBrand:
+      (json['flooringTilesBrand'] as List?)?.cast<String>(),
+      interiorPaintBrand:
+      (json['interiorPaintBrand'] as List?)?.cast<String>(),
+      exteriorPaintBrand:
+      (json['exteriorPaintBrand'] as List?)?.cast<String>(),
+      doorsType: (json['doorsType'] as List?)?.cast<String>(),
+      windowsType: (json['windowsType'] as List?)?.cast<String>(),
+      structure: (json['structure'] as List?)?.cast<String>(),
+      plasterType: (json['plasterType'] as List?)?.cast<String>(),
+      waterproofing: (json['waterproofing'] as List?)?.cast<String>(),
+      chokhatType: (json['chokhatType'] as List?)?.cast<String>(),
+      railingType: (json['railingType'] as List?)?.cast<String>(),
+      falseCeiling: (json['falseCeiling'] as List?)?.cast<String>(),
+      fabricationWork:
+      (json['fabricationWork'] as List?)?.cast<String>(),
+      threeDDesign: json['threeDDesign'],
+      modularKitchen: json['modularKitchen'],
+      boreAndPump: json['boreAndPump'],
+      securitySystems: json['securitySystems'],
+      homeAutomation: json['homeAutomation'],
+      solarSolutions: json['solarSolutions'],
     );
   }
 
@@ -335,7 +428,229 @@ class ServiceMeta {
       'acceptedPaymentModes': acceptedPaymentModes,
       'advanceRequiredPercentage': advanceRequiredPercentage,
       'billingType': billingType,
+      'cementBrand': cementBrand,
+      'steelBrand': steelBrand,
+      'brickType': brickType,
+      'sandSource': sandSource,
+      'electricalWiresBrand': electricalWiresBrand,
+      'electricalSwitchesBrand': electricalSwitchesBrand,
+      'plumbingPipesBrand': plumbingPipesBrand,
+      'sanitaryFittingsBrand': sanitaryFittingsBrand,
+      'waterTankBrand': waterTankBrand,
+      'flooringTilesBrand': flooringTilesBrand,
+      'interiorPaintBrand': interiorPaintBrand,
+      'exteriorPaintBrand': exteriorPaintBrand,
+      'doorsType': doorsType,
+      'windowsType': windowsType,
+      'structure': structure,
+      'plasterType': plasterType,
+      'waterproofing': waterproofing,
+      'chokhatType': chokhatType,
+      'railingType': railingType,
+      'falseCeiling': falseCeiling,
+      'fabricationWork': fabricationWork,
+
+      'threeDDesign': threeDDesign,
+      'modularKitchen': modularKitchen,
+      'boreAndPump': boreAndPump,
+      'securitySystems': securitySystems,
+      'homeAutomation': homeAutomation,
+      'solarSolutions': solarSolutions,
     };
+  }
+}*/
+class ServiceMeta {
+  final String priceModel;
+  final int minPrice;
+  final int maxPrice;
+  final int visitCharge;
+  final String workAvailability;
+  final bool provideMaterials;
+  final String? brandsUsed;
+  final bool equipmentProvided;
+  final bool insuranceAvailable;
+  final List<String>? acceptedPaymentModes;
+  final int advanceRequiredPercentage;
+  final String billingType;
+  final List<String>? cementBrand;
+  final List<String>? steelBrand;
+  final List<String>? brickType;
+  final List<String>? sandSource;
+  final List<String>? electricalWiresBrand;
+  final List<String>? electricalSwitchesBrand;
+  final List<String>? plumbingPipesBrand;
+  final List<String>? sanitaryFittingsBrand;
+  final List<String>? waterTankBrand;
+  final List<String>? flooringTilesBrand;
+  final List<String>? interiorPaintBrand;
+  final List<String>? exteriorPaintBrand;
+  final List<String>? doorsType;
+  final List<String>? windowsType;
+  final List<String>? structure;
+  final List<String>? plasterType;
+  final List<String>? waterproofing;
+  final List<String>? chokhatType;
+  final List<String>? railingType;
+  final List<String>? falseCeiling;
+  final List<String>? fabricationWork;
+
+  // Yes / No values
+  final String? threeDDesign;
+  final String? modularKitchen;
+  final String? boreAndPump;
+  final String? securitySystems;
+  final String? homeAutomation;
+  final String? solarSolutions;
+
+  ServiceMeta({
+    required this.priceModel,
+    required this.minPrice,
+    required this.maxPrice,
+    required this.visitCharge,
+    required this.workAvailability,
+    required this.provideMaterials,
+    this.brandsUsed,
+    this.cementBrand,
+    this.steelBrand,
+    this.brickType,
+    this.sandSource,
+    this.electricalWiresBrand,
+    this.electricalSwitchesBrand,
+    this.plumbingPipesBrand,
+    this.sanitaryFittingsBrand,
+    this.waterTankBrand,
+    this.flooringTilesBrand,
+    this.interiorPaintBrand,
+    this.exteriorPaintBrand,
+    this.doorsType,
+    this.windowsType,
+    this.structure,
+    this.plasterType,
+    this.waterproofing,
+    this.chokhatType,
+    this.railingType,
+    this.falseCeiling,
+    this.fabricationWork,
+    this.threeDDesign,
+    this.modularKitchen,
+    this.boreAndPump,
+    this.securitySystems,
+    this.homeAutomation,
+    this.solarSolutions,
+    required this.equipmentProvided,
+    required this.insuranceAvailable,
+    required this.acceptedPaymentModes,
+    required this.advanceRequiredPercentage,
+    required this.billingType,
+  });
+
+  factory ServiceMeta.fromJson(Map<String, dynamic> json) {
+    return ServiceMeta(
+      priceModel: json['priceModel'],
+      minPrice: json['minPrice'],
+      maxPrice: json['maxPrice'],
+      visitCharge: json['visitCharge'],
+      workAvailability: json['workAvailability'] ,
+      provideMaterials: json['provideMaterials'] ,
+      brandsUsed: json['brandsUsed'],
+      equipmentProvided: json['equipmentProvided'],
+      insuranceAvailable: json['insuranceAvailable'],
+      acceptedPaymentModes:
+      (json['acceptedPaymentModes'] as List?)?.cast<String>(),
+      advanceRequiredPercentage: json['advanceRequiredPercentage'],
+      billingType: json['billingType'] ?? 'non_gst',
+      cementBrand: (json['cementBrand'] as List?)?.cast<String>(),
+      steelBrand: (json['steelBrand'] as List?)?.cast<String>(),
+      brickType: (json['brickType'] as List?)?.cast<String>(),
+      sandSource: (json['sandSource'] as List?)?.cast<String>(),
+      electricalWiresBrand:
+      (json['electricalWiresBrand'] as List?)?.cast<String>(),
+      electricalSwitchesBrand:
+      (json['electricalSwitchesBrand'] as List?)?.cast<String>(),
+      plumbingPipesBrand:
+      (json['plumbingPipesBrand'] as List?)?.cast<String>(),
+      sanitaryFittingsBrand:
+      (json['sanitaryFittingsBrand'] as List?)?.cast<String>(),
+      waterTankBrand: (json['waterTankBrand'] as List?)?.cast<String>(),
+      flooringTilesBrand:
+      (json['flooringTilesBrand'] as List?)?.cast<String>(),
+      interiorPaintBrand:
+      (json['interiorPaintBrand'] as List?)?.cast<String>(),
+      exteriorPaintBrand:
+      (json['exteriorPaintBrand'] as List?)?.cast<String>(),
+      doorsType: (json['doorsType'] as List?)?.cast<String>(),
+      windowsType: (json['windowsType'] as List?)?.cast<String>(),
+      structure: (json['structure'] as List?)?.cast<String>(),
+      plasterType: (json['plasterType'] as List?)?.cast<String>(),
+      waterproofing: (json['waterproofing'] as List?)?.cast<String>(),
+      chokhatType: (json['chokhatType'] as List?)?.cast<String>(),
+      railingType: (json['railingType'] as List?)?.cast<String>(),
+      falseCeiling: (json['falseCeiling'] as List?)?.cast<String>(),
+      fabricationWork: (json['fabricationWork'] as List?)?.cast<String>(),
+      threeDDesign: json['threeDDesign'],
+      modularKitchen: json['modularKitchen'],
+      boreAndPump: json['boreAndPump'],
+      securitySystems: json['securitySystems'],
+      homeAutomation: json['homeAutomation'],
+      solarSolutions: json['solarSolutions'],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    final Map<String, dynamic> data = {
+      'priceModel': priceModel,
+      'minPrice': minPrice,
+      'maxPrice': maxPrice,
+      'visitCharge': visitCharge,
+      'workAvailability': workAvailability,
+      'provideMaterials': provideMaterials,
+      'brandsUsed': brandsUsed,
+      'equipmentProvided': equipmentProvided,
+      'insuranceAvailable': insuranceAvailable,
+      'acceptedPaymentModes': acceptedPaymentModes,
+      'advanceRequiredPercentage': advanceRequiredPercentage,
+      'billingType': billingType,
+      'cementBrand': cementBrand,
+      'steelBrand': steelBrand,
+      'brickType': brickType,
+      'sandSource': sandSource,
+      'electricalWiresBrand': electricalWiresBrand,
+      'electricalSwitchesBrand': electricalSwitchesBrand,
+      'plumbingPipesBrand': plumbingPipesBrand,
+      'sanitaryFittingsBrand': sanitaryFittingsBrand,
+      'waterTankBrand': waterTankBrand,
+      'flooringTilesBrand': flooringTilesBrand,
+      'interiorPaintBrand': interiorPaintBrand,
+      'exteriorPaintBrand': exteriorPaintBrand,
+      'doorsType': doorsType,
+      'windowsType': windowsType,
+      'structure': structure,
+      'plasterType': plasterType,
+      'waterproofing': waterproofing,
+      'chokhatType': chokhatType,
+      'railingType': railingType,
+      'falseCeiling': falseCeiling,
+      'fabricationWork': fabricationWork,
+      'threeDDesign': threeDDesign,
+      'modularKitchen': modularKitchen,
+      'boreAndPump': boreAndPump,
+      'securitySystems': securitySystems,
+      'homeAutomation': homeAutomation,
+      'solarSolutions': solarSolutions,
+    };
+
+    data.removeWhere((key, value) => value == null);
+
+    return data;
+  }
+
+  /// Helper getter matching ContractorMetaData pattern
+  String get priceRange {
+    if (minPrice == 0 && maxPrice == 0) {
+      return 'No Price Range';
+    } else {
+      return Formatter.formatPriceRange(minPrice, maxPrice);
+    }
   }
 }
 

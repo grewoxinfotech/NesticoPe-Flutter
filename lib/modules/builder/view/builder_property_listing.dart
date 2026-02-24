@@ -221,7 +221,7 @@ class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
         elevation: 0,
         automaticallyImplyLeading: false,
         actions: [
-          IconButton(icon: const Icon(Icons.search_rounded), onPressed: () {}),
+          // IconButton(icon: const Icon(Icons.search_rounded), onPressed: () {}),
           IconButton(
             icon: const Icon(Icons.filter_list_rounded),
             onPressed: () async {

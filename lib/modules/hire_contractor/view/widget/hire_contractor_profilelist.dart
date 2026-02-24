@@ -257,7 +257,7 @@ class HireContractorProfileList extends StatelessWidget {
     );
   }
 
-  Future<void> onFilterButtonClick({
+ /* Future<void> onFilterButtonClick({
     required RxMap<String, String> selectedFilters,
     required HireContractorFilterProfileController controllerFilter,
   }) async {
@@ -274,6 +274,21 @@ class HireContractorProfileList extends StatelessWidget {
       }
       // You can now apply filters to your list, API call, etc.
       // controller.fetchFilteredInquiries(result);
+    }
+  }*/
+  Future<void> onFilterButtonClick({
+    required RxMap<String, String> selectedFilters,
+    required HireContractorFilterProfileController controllerFilter,
+  }) async {
+    final result = await Get.to<Map<String, String>>(
+          () => const HireContractorFilterScreen(),
+      transition: Transition.rightToLeft, // optional slide animation
+    );
+
+    if (result != null) {
+      result.remove('city');
+      selectedFilters.value = result;
+      controllerFilter.applyFilters(result);
     }
   }
 }
@@ -955,7 +970,7 @@ class _HireContractorCardState extends State<HireContractorCard> {
                       ),
                   if (widget.data.servicesInCategory.length > 2)
                     _buildServiceChip(
-                      serviceName:
+                          serviceName:
                           '+${widget.data.servicesInCategory.length - 2} more services',
                       isMore: true,
                     ),
@@ -1117,12 +1132,14 @@ class _HireContractorCardState extends State<HireContractorCard> {
         child: Row(
           mainAxisSize: MainAxisSize.min, // <-- important
           children: [
-            Text(
-              serviceName,
-              style: TextStyle(
-                fontSize: AppFontSizes.caption,
-                fontWeight: AppFontWeights.medium,
-                color: isMore ? ColorRes.primary : ColorRes.textColor,
+            Expanded(
+              child: Text(
+                serviceName,
+                style: TextStyle(
+                  fontSize: AppFontSizes.caption,
+                  fontWeight: AppFontWeights.medium,
+                  color: isMore ? ColorRes.primary : ColorRes.textColor,
+                ),
               ),
             ),
             if (!isMore) ...[

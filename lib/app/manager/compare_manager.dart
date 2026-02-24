@@ -44,6 +44,13 @@ class CompareManager extends GetxController {
         print('Error clearing Contractor comparison: $e');
       }
     }
+    if (_selected.isEmpty && Get.isRegistered<ContractorCompareManager>()) {
+      try {
+        ContractorCompareManager.to.clear();
+      } catch (e) {
+        print('Error clearing Contractor comparison: $e');
+      }
+    }
     
     _selected[id] = item;
     _selected.refresh();

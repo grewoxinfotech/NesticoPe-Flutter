@@ -6,7 +6,7 @@ import '../../app/constants/color_res.dart';
 import '../../modules/add_property/view/create_property.dart';
 import '../../modules/seller/module/lead_screen/controllers/lead_controller.dart';
 
-void showFilterBottomSheet(
+/*void showFilterBottomSheet(
   BuildContext context,
   LeadController controller, {
   String? propertyId,
@@ -191,7 +191,8 @@ void showFilterBottomSheet(
                             setState: setState,
                           ),
                         ],
-                      ),
+                      ),+
+
                     ),
                   ),
 
@@ -244,6 +245,268 @@ void showFilterBottomSheet(
           },
         ),
   );
+}*/
+class LeadBuildFilterScreen extends StatefulWidget {
+  final LeadController controller;
+  final String? propertyId;
+
+  const LeadBuildFilterScreen({
+    super.key,
+    required this.controller,
+    this.propertyId,
+  });
+
+  @override
+  State<LeadBuildFilterScreen> createState() => _LeadBuildFilterScreenState();
+}
+
+class _LeadBuildFilterScreenState extends State<LeadBuildFilterScreen> {
+  late final RxMap<String, String> tempFilters;
+  DateTime? startDate;
+  DateTime? endDate;
+
+  @override
+  void initState() {
+    super.initState();
+    // Copy current filters into temp
+    tempFilters = Map<String, String>.from(widget.controller.filters).obs;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: ColorRes.white,
+      appBar: AppBar(
+        backgroundColor: ColorRes.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.close, color: ColorRes.textColor),
+          onPressed: () => Get.back(),
+        ),
+        title: Text(
+          'Filter Leads',
+          style: TextStyle(
+            fontSize: AppFontSizes.large,
+            fontWeight: AppFontWeights.semiBold,
+            color: ColorRes.textColor,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              tempFilters.clear();
+              widget.controller.resetFilters();
+              setState(() {
+
+              });
+            },
+            child: Text(
+              'Clear All',
+              style: TextStyle(
+                color: ColorRes.error,
+                fontWeight: AppFontWeights.medium,
+                fontSize: AppFontSizes.small,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Date Range Row
+            Row(
+              children: [
+                Expanded(
+                  child: buildFilterSection(
+                    context: context,
+                    title: 'Start Date',
+                    icon: Icons.calendar_month_outlined,
+                    filterType: 'createdAtFrom',
+                    type: 'date',
+                    tempFilters: tempFilters,
+                    setState: setState,
+                    startDate: startDate,
+                    endDate: endDate,
+                    onDatePicked: (picked) {
+                      startDate = picked;
+                      widget.controller.startDate = picked;
+                    },
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: buildFilterSection(
+                    context: context,
+                    title: 'End Date',
+                    icon: Icons.calendar_month_outlined,
+                    filterType: 'createdAtTo',
+                    type: 'date',
+                    tempFilters: tempFilters,
+                    setState: setState,
+                    startDate: startDate,
+                    endDate: endDate,
+                    onDatePicked: (picked) {
+                      endDate = picked;
+                      widget.controller.endDate = picked;
+                    },
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 24),
+
+            // Stage Section
+            buildFilterSection(
+              context: context,
+              title: 'Stage',
+              icon: Icons.stairs,
+              filterType: 'stage',
+              options:
+                  widget.controller.stageList
+                      .map((s) => s.replaceAll('_', ' ').capitalizeFirst ?? s)
+                      .toList(),
+              tempFilters: tempFilters,
+              setState: setState,
+            ),
+
+            const SizedBox(height: 24),
+
+            // Lead Source Section
+            buildFilterSection(
+              context: context,
+              title: 'Lead Source',
+              icon: Icons.source_outlined,
+              filterType: 'source',
+              options:
+                  widget.controller.sourceList
+                      .map((s) => s.replaceAll('_', ' ').capitalizeFirst ?? s)
+                      .toList(),
+              tempFilters: tempFilters,
+              setState: setState,
+            ),
+
+            const SizedBox(height: 24),
+
+            // Status Section
+            buildFilterSection(
+              context: context,
+              title: 'Status',
+              icon: Icons.flag_outlined,
+              filterType: 'status',
+              options:
+                  widget.controller.statusList
+                      .map((s) => s.replaceAll('_', ' ').capitalizeFirst ?? s)
+                      .toList(),
+              tempFilters: tempFilters,
+              setState: setState,
+            ),
+
+            // Bottom padding so content isn't hidden behind button
+            const SizedBox(height: 100),
+          ],
+        ),
+      ),
+
+      // Fixed Apply Button at Bottom
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: ColorRes.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 12,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                // Cancel Button
+                Expanded(
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(
+                        color: ColorRes.primary,
+                        width: 1.5,
+                      ),
+                      foregroundColor: ColorRes.primary,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () => Get.back(),
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.body,
+                        fontWeight: AppFontWeights.semiBold,
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(width: 12),
+
+                // Apply Button
+                Expanded(
+                  flex: 2,
+                  child: Obx(
+                    () => ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ColorRes.primary,
+                        foregroundColor: ColorRes.white,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () async {
+                        if (widget.propertyId != null) {
+                          await widget.controller.applyFilters(
+                            Map<String, String>.from(tempFilters),
+                            propertyId: widget.propertyId,
+                          );
+                        } else {
+                          await widget.controller.applyFilters(
+                            Map<String, String>.from(tempFilters),
+                          );
+                        }
+                        Get.back();
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Apply Filters (${tempFilters.length})',
+                            style: TextStyle(
+                              fontSize: AppFontSizes.body,
+                              fontWeight: AppFontWeights.semiBold,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          const Icon(Icons.arrow_forward, size: 18),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 Widget buildFilterSection({

@@ -346,6 +346,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
 import 'package:housing_flutter_app/modules/auth/views/role_convert/convert_to_seller/convert_to_seller.dart';
@@ -406,7 +407,7 @@ class SubscriptionPlansScreen extends StatelessWidget {
                           : null;
 
                   if (item == null) {
-                    return const SizedBox.shrink();
+                    return _buildNoSubscriptionState();
                   }
 
                   final plan = item.plan;
@@ -415,6 +416,8 @@ class SubscriptionPlansScreen extends StatelessWidget {
                       item.usedProperties > 0
                           ? item.usedProperties
                           : item.usedServices;
+
+                  log("Check which plan was selected ${plan?.toMap()}");
 
                   /// ===== Unlimited handling =====
                   final dynamic rawMax =
@@ -574,7 +577,7 @@ class SubscriptionPlansScreen extends StatelessWidget {
                         const SizedBox(height: 10),
 
                         const Text(
-                          "Plan Usage",
+                          "Property Listing Usage",
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
@@ -588,21 +591,20 @@ class SubscriptionPlansScreen extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              isUnlimited
-                                  ? "$used / Unlimited"
-                                  : "$used / $max",
-                              style: const TextStyle(
+                              isUnlimited ? "$used / ∞" : "$used / $max",
+                              style: TextStyle(
                                 fontWeight: FontWeight.w600,
-                                fontSize: 14,
+                                fontSize: 15,
                                 color: Colors.black,
                               ),
                             ),
                             const SizedBox(width: 8),
-                            const Text(
+                            Text(
                               "Total Used",
                               style: TextStyle(
+                                fontWeight: AppFontWeights.medium,
                                 color: Colors.black54,
-                                fontSize: 10,
+                                fontSize: 12,
                               ),
                             ),
                           ],
@@ -626,6 +628,68 @@ class SubscriptionPlansScreen extends StatelessWidget {
                               fontSize: 12,
                             ),
                           ),
+                        ] else ...[
+                          const SizedBox(height: 12),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE6F4EF),
+                              // light green background
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: const Color(0xFF8ED1B2),
+                                // soft green border
+                                width: 1.2,
+                              ),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFD2EFE3),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Icon(
+                                    Icons.apartment_rounded,
+                                    color: Color(0xFF1AAE84),
+                                    size: 20,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Unlimited Property Listings",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      SizedBox(height: 6),
+                                      Text(
+                                        "Your plan allows for unlimited property listings",
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          color:
+                                              ColorRes.leadGreyColor.shade600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ],
                     ),
@@ -646,6 +710,51 @@ class SubscriptionPlansScreen extends StatelessWidget {
       ),
     );
   }
+  Widget _buildNoSubscriptionState() {
+    return Container(
+      margin: EdgeInsets.only(left: 16,right: 16,top: 10,bottom: 5),
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        color: ColorRes.white,
+        border: Border.all(color: ColorRes.leadGreyColor.shade300,width: 1)
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children:  [
+            Icon(
+              Icons.info_outline,
+              size: 60,
+              color: ColorRes.primary,
+            ),
+            SizedBox(height: 16),
+            Text(
+              "No Active Subscription",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: AppFontWeights.semiBold,
+                color: ColorRes.textColor
+              ),
+            ),
+            SizedBox(height: 8),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                "You don't have an active subscription plan. Please subscribe to start listing properties as builder.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 10
+                ),
+              ),
+            ),
+            SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
 
   /// Build metric card widget
   Widget _buildMetricCard(

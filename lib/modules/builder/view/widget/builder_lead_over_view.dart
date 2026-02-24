@@ -24,8 +24,9 @@ import '../project_detail/project_detail.dart';
 class BuilderLeadOverView extends StatelessWidget {
   final LeadItem lead;
   final ProjectItem project;
+  final bool isFromResellerProject;
 
-  BuilderLeadOverView({super.key, required this.lead, required this.project});
+  BuilderLeadOverView({super.key, required this.lead, required this.project, this.isFromResellerProject=false});
 
   final BuilderLeadOverviewController controller = Get.put(
     BuilderLeadOverviewController(),
@@ -97,79 +98,82 @@ class BuilderLeadOverView extends StatelessWidget {
             /// ================= Interest & Documents =================
             _buildInterestSection(),
             const SizedBox(height: 8),
-            ListTile(
-              tileColor: ColorRes.white,
-              title: Text(
-                'Visit',
-                style: TextStyle(
-                  fontSize: AppFontSizes.medium,
-                  fontWeight: AppFontWeights.semiBold,
-                ),
-              ),
-              leading: Icon(Icons.history, color: ColorRes.primary),
-              trailing: Icon(Icons.arrow_forward_ios_rounded),
-              onTap: () {
-                debugPrint('Fetching lead details for ${lead.id}');
-                leadVisitController.getLeadId(lead.id);
+           if(!isFromResellerProject)...[
+             ListTile(
+               tileColor: ColorRes.white,
+               title: Text(
+                 'Visit',
+                 style: TextStyle(
+                   fontSize: AppFontSizes.medium,
+                   fontWeight: AppFontWeights.semiBold,
+                 ),
+               ),
+               leading: Icon(Icons.history, color: ColorRes.primary),
+               trailing: Icon(Icons.arrow_forward_ios_rounded),
+               onTap: () {
+                 debugPrint('Fetching lead details for ${lead.id}');
+                 leadVisitController.getLeadId(lead.id);
 
 
-                // final buyerId=propertyInquiryController?.selectedInquiry.value?.userId;
-                // final propertyId=propertyInquiryController?.selectedInquiry.value?.propertyId;
+                 // final buyerId=propertyInquiryController?.selectedInquiry.value?.userId;
+                 // final propertyId=propertyInquiryController?.selectedInquiry.value?.propertyId;
 
-                print(
-                  "Buyer Data ${leadPropertyInquiryController?.selectedInquiry.value?.userId}============== ${leadPropertyInquiryController?.selectedInquiry.value?.propertyId}",
-                );
+                 print(
+                   "Buyer Data ${leadPropertyInquiryController?.selectedInquiry.value?.userId}============== ${leadPropertyInquiryController?.selectedInquiry.value?.propertyId}",
+                 );
 
-                Get.to(
-                      () => LeadVisit(
-                    leadVisitController: leadVisitController,
-                    propertyInquiryController:
+                 Get.to(
+                       () => LeadVisit(
+                     leadVisitController: leadVisitController,
+                     propertyInquiryController:
 
-                    leadPropertyInquiryController,
-                    buyerID: leadPropertyInquiryController?.selectedInquiry.value?.userId,
-                    propertyId:
-                    project.id,
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 8),
-            ListTile(
-              tileColor: ColorRes.white,
-              title: Text(
-                'Negotiable',
-                style: TextStyle(
-                  fontSize: AppFontSizes.medium,
-                  fontWeight: AppFontWeights.semiBold,
-                ),
-              ),
-              leading: Icon(Icons.currency_rupee_outlined, color: ColorRes.primary),
-              trailing: Icon(Icons.arrow_forward_ios_rounded),
-              onTap: () {
-                final selectedInquiry =
-                    leadPropertyInquiryController?.selectedInquiry.value;
+                     leadPropertyInquiryController,
+                     buyerID: leadPropertyInquiryController?.selectedInquiry.value?.userId,
+                     propertyId:
+                     project.id,
+                   ),
+                 );
+               },
+             ),
+             const SizedBox(height: 8),
+             ListTile(
+               tileColor: ColorRes.white,
+               title: Text(
+                 'Negotiable',
+                 style: TextStyle(
+                   fontSize: AppFontSizes.medium,
+                   fontWeight: AppFontWeights.semiBold,
+                 ),
+               ),
+               leading: Icon(Icons.currency_rupee_outlined, color: ColorRes.primary),
+               trailing: Icon(Icons.arrow_forward_ios_rounded),
+               onTap: () {
+                 final selectedInquiry =
+                     leadPropertyInquiryController?.selectedInquiry.value;
 
-                if (selectedInquiry != null) {
-                  // Set visit id
-                  print(
-                    'Setting visit ID for user ${selectedInquiry.userId} and property ${selectedInquiry.propertyId}',
-                  );
-                  leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
-                    selectedInquiry.propertyId ?? '',
-                   buyerID:  selectedInquiry.userId ?? '',
-                  );
-                  print(
-                    'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
-                  );
-                }
-                Get.to(
-                      () => LeadNegotiablePriceScreen(
-                    controller: leadPropertyNegotiablePriceController,
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 8),
+                 if (selectedInquiry != null) {
+                   // Set visit id
+                   print(
+                     'Setting visit ID for user ${selectedInquiry.userId} and property ${selectedInquiry.propertyId}',
+                   );
+                   leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
+                     selectedInquiry.propertyId ?? '',
+                     buyerID:  selectedInquiry.userId ?? '',
+                   );
+                   print(
+                     'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
+                   );
+                 }
+                 Get.to(
+                       () => LeadNegotiablePriceScreen(
+                     controller: leadPropertyNegotiablePriceController,
+                   ),
+                 );
+               },
+             ),
+             const SizedBox(height: 8),
+           ],
+
             SafeArea(
 
               child: ListTile(

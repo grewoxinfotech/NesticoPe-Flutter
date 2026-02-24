@@ -253,7 +253,8 @@ class _PartnerMilestoneRewardScreenState
                   ],
                 ),
                 const SizedBox(height: 15),
-                ProgressWithLabel(
+                ProgressWithLabelAndImage(
+                  imageSize: 60,
                   progressValue: (m.progress / 100).clamp(0.0, 1.0),
                   progressColor: Color(0xff5BE2B7),
                   backgroundColor: Color(0xff5BE2B7),

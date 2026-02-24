@@ -5,6 +5,7 @@ import 'package:housing_flutter_app/widgets/New%20folder/inputs/text_field.dart'
 
 class CancelSubscriptionDialog extends StatefulWidget {
   final Function(String reason) onSubmit;
+
   const CancelSubscriptionDialog({Key? key, required this.onSubmit})
     : super(key: key);
 
@@ -156,7 +157,7 @@ class _CancelSubscriptionDialogState extends State<CancelSubscriptionDialog> {
                             'Close',
                             style: TextStyle(
                               color: Colors.black87,
-                              fontSize: 14,
+                              fontSize: 12,
                             ),
                           ),
                         ),
@@ -188,7 +189,7 @@ class _CancelSubscriptionDialogState extends State<CancelSubscriptionDialog> {
                             'Submit Request',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 14,
+                              fontSize: 12,
                               fontWeight: FontWeight.w500,
                             ),
                           ),

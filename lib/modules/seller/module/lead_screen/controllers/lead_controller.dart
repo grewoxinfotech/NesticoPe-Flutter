@@ -554,6 +554,7 @@ class LeadController extends PaginatedController<LeadItem> {
 
   // ADDED: Track specific property ID for filtering
   RxnString currentPropertyFilterId = RxnString();
+  RxnString currentModule = RxnString();
 
   final PropertyController propertyController = Get.put(
     PropertyController(),
@@ -617,15 +618,19 @@ class LeadController extends PaginatedController<LeadItem> {
   Rxn<DateTime> selectedDate = Rxn<DateTime>();
   RxString notes = ''.obs;
   RxList<DisplayEntityModel> propertyList = <DisplayEntityModel>[].obs;
+  RxList<DisplayEntityModel> projectList = <DisplayEntityModel>[].obs;
   Rxn<DisplayEntityModel> selectedProperty = Rxn<DisplayEntityModel>();
 
   RxMap<String, String> filters = <String, String>{}.obs;
+
+
 
   @override
   void onInit() {
     super.onInit();
     if (UserHelper.isReseller) {
       fromReseller = true;
+
     }
 
     if (UserHelper.isSeller) {
@@ -679,10 +684,18 @@ class LeadController extends PaginatedController<LeadItem> {
     );
     await exportLeadsToExcel(items);
   }
+  Future<void> exportProjectToPdf(List<LeadItem> item) async {
+    AppLogger.structured(
+      "Lead Data Export in excel form : ",
+      item.map((e) => e.toJson()),
+    );
+    await exportProjectLeadsToExcel(items);
+  }
 
   Future<void> importFromPdf() async {
     await pickAndImportCsv();
   }
+
 
   Future<void> pickAndImportCsv() async {
     final result = await FilePicker.platform.pickFiles(
@@ -729,7 +742,7 @@ class LeadController extends PaginatedController<LeadItem> {
     if (user != null) {
       final filter = {"assignedTo": userId};
       await projectController.applyFilters(filter);
-      propertyList.addAll(
+      projectList.addAll(
         projectController.items
             .map(
               (element) => DisplayEntityModel(
@@ -777,11 +790,13 @@ class LeadController extends PaginatedController<LeadItem> {
       else if (fromReseller) {
         final user = await SecureStorage.getUserData();
         final userId = user?.user?.id;
+        log("Check it all ok or not ${currentModule.value}");
         response = await _service.fetchLeads(
           page: page,
           userId: userId,
           filters: filters.value,
           fromReseller: fromReseller,
+          module: currentModule.value,
         );
       } else {
         response = await _service.fetchLeads(

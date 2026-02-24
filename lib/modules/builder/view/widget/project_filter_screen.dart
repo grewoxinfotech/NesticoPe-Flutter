@@ -685,7 +685,6 @@ Widget _dropdown({
   );
 }
 
-
 class ResellerProjectFilterScreen extends StatefulWidget {
   final bool isProjectItemFilter;
 
@@ -703,8 +702,10 @@ class _ResellerProjectFilterScreenState
     extends State<ResellerProjectFilterScreen> {
   final DashboardController controller = Get.put(DashboardController());
   final controllerFilter = Get.put(ProjectFilterController());
-  PropertyFilterControllerForFilter controllerForFilter=Get.put(PropertyFilterControllerForFilter());
-  CityController cityController=Get.put(CityController());
+  PropertyFilterControllerForFilter controllerForFilter = Get.put(
+    PropertyFilterControllerForFilter(),
+  );
+  CityController cityController = Get.put(CityController());
 
   ResellerProjectController? projectController;
   String? resellerId;
@@ -773,8 +774,7 @@ class _ResellerProjectFilterScreenState
     super.dispose();
   }
 
-
-  Map<String, dynamic> _buildFilterResult() {
+  /*  Map<String, dynamic> _buildFilterResult() {
     log('Price Range ${jsonEncode(controller.priceRangeSeller)}');
     log('Min Price → ${controller.priceRangeSeller['min']}');
     log('Max Price → ${controller.priceRangeSeller['max']}');
@@ -859,6 +859,81 @@ class _ResellerProjectFilterScreenState
           controller.resellerFurnishingType.value,
         ),
     };
+  }*/
+  Map<String, dynamic> _buildFilterResult() {
+    final bool hasPriceFilter =
+        controller.resellerMinPrice.value != 0.0 ||
+        controller.resellerMaxPrice.value != 0.0;
+
+    return {
+      // Date Range
+      if (controller.txtStartDate.text.isNotEmpty &&
+          controller.startDate != null)
+        'createdAtFrom': controller.txtStartDate.text,
+      if (controller.txtEndDate.text.isNotEmpty && controller.endDate != null)
+        'createdAtTo': controller.txtEndDate.text,
+
+      // Location
+      if (controller.resellerSelectedState.value.isNotEmpty)
+        'state': controller.resellerSelectedState.value,
+      if (controller.resellerSelectedCity.value.isNotEmpty)
+        'city': controller.resellerSelectedCity.value,
+      if (controller.txtBuilderProjectName.text.isNotEmpty)
+        'projectName': controller.txtBuilderProjectName.text,
+      if (controller.txtBuilderRERAID.text.isNotEmpty)
+        'reraId': controller.txtBuilderRERAID.text,
+
+      // Property Category
+      if (controller.resellerPropertyCategory.value.isNotEmpty)
+        'type': controller.resellerPropertyCategory.value.toLowerCase(),
+
+      // Listing Type
+      if (controller.resellerListingType.value.isNotEmpty)
+        'listingType': controller.resellerListingType.value,
+
+      // Approval Status
+      if (controller.resellerApprovalStatus.value.isNotEmpty)
+        'approval_status':
+            controller.resellerApprovalStatus.value.toLowerCase(),
+
+      // Property Type
+      if (controller.resellerPropertyType.value.isNotEmpty)
+        'propertyType': controller.resellerPropertyType.value,
+      if (controller.builderProjectStatus.value.isNotEmpty)
+        'status': controller.builderProjectStatus.value,
+
+      // BHK
+      if (controller.resellerBHKType.value.isNotEmpty)
+        ...() {
+          final bhkValue = controller.resellerBHKType.value.split(' ')[0];
+          if (bhkValue == '5+') {
+            return {'bhk': 5, 'bhkPlus': true};
+          } else {
+            return {'bhk': int.tryParse(bhkValue)};
+          }
+        }(),
+
+      // ✅ Price Range - ONLY when user actually selected something
+      if (hasPriceFilter)
+        'priceRange': jsonEncode({
+          'min': controller.resellerMinPrice.value,
+          'max': controller.resellerMaxPrice.value,
+        }),
+
+      // Verification Status
+      if (controller.resellerVerified.value.isNotEmpty)
+        'isVerified': controller.resellerVerified.value == 'Verified',
+
+      // Possession Status
+      if (controller.resellerPossessionStatus.value.isNotEmpty)
+        'possessionStatus': controller.resellerPossessionStatus.value,
+
+      // Furnishing Type
+      if (controller.resellerFurnishingType.value.isNotEmpty)
+        'furnish_type': controller.matchFurnishType(
+          controller.resellerFurnishingType.value,
+        ),
+    };
   }
 
   @override
@@ -867,13 +942,14 @@ class _ResellerProjectFilterScreenState
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
-
             Get.back();
             controller.txtStartDate.clear();
             controller.txtEndDate.clear();
             controller.txtStateSearch.clear();
             controller.txtCitySearch.clear();
+            controller.txtBuilderRERAID.clear();
             controller.txtSearchPropertyByID.clear();
+            controller.txtBuilderProjectName.clear();
 
             controller.resellerApprovalStatus.value = '';
             controller.resellerBHKType.value = '';
@@ -885,8 +961,9 @@ class _ResellerProjectFilterScreenState
             controller.resellerVerified.value = '';
             controllerForFilter.availableStates.clear();
             controllerForFilter.availableCities.clear();
-            controllerForFilter.selectedState.value='';
-            controllerForFilter.selectedCity.value='';
+            controllerForFilter.selectedState.value = '';
+            controllerForFilter.selectedCity.value = '';
+            controllerForFilter.selectedCity.value = '';
             // ✅ Clear the dropdown lists
 
             controller.resellerStatePropertyList.value =
@@ -894,7 +971,7 @@ class _ResellerProjectFilterScreenState
                     .map((e) => e.state ?? '')
                     .toSet()
                     .toList() ??
-                    [];
+                [];
 
             // ✅ Repopulate the property type list
             controller.propertyTypeList.value =
@@ -902,11 +979,12 @@ class _ResellerProjectFilterScreenState
                     .map((e) => e.propertyTypes ?? '')
                     .toSet()
                     .toList() ??
-                    [];
+                [];
 
             // ✅ Clear the selected values
             controller.resellerSelectedState.value = '';
             controller.resellerSelectedCity.value = '';
+            controller.builderProjectStatus.value = '';
 
             setState(() {
               startDate = null;
@@ -914,7 +992,6 @@ class _ResellerProjectFilterScreenState
               tempMinPrice = controller.resellerMinPrice.value;
               tempMaxPrice = controller.resellerMaxPrice.value;
             });
-
           },
           icon: Icon(Icons.arrow_back),
         ),
@@ -1074,7 +1151,7 @@ class _ResellerProjectFilterScreenState
 
               SizedBox(height: 16),
 
-            /*  Obx(() {
+              /*  Obx(() {
                 return _dropdown(
                   title: "State",
                   value:
@@ -1117,15 +1194,19 @@ class _ResellerProjectFilterScreenState
                 );
               }),*/
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 8,
+                ),
                 child: SearchableDropdownWidget(
                   label: 'State',
                   hint: 'Select your state',
-                  items: controllerForFilter.availableStates, // now RxList
+                  items: controllerForFilter.availableStates,
+                  // now RxList
                   selectedValue: controllerForFilter.selectedState,
                   prefixIcon: Icons.location_city,
                   onChanged: (value) {
-                    controller.resellerSelectedState.value=value??'';
+                    controller.resellerSelectedState.value = value ?? '';
                     if (value != null) controllerForFilter.updateState(value);
                   },
                 ),
@@ -1133,7 +1214,7 @@ class _ResellerProjectFilterScreenState
 
               // City Dropdown
               Obx(
-                    () => Padding(
+                () => Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 8,
@@ -1141,21 +1222,22 @@ class _ResellerProjectFilterScreenState
                   child: SearchableDropdownWidget(
                     label: 'City',
                     hint:
-                    controllerForFilter.selectedState.value.isEmpty
-                        ? 'Select state first'
-                        : 'Select your city',
+                        controllerForFilter.selectedState.value.isEmpty
+                            ? 'Select state first'
+                            : 'Select your city',
                     items: controllerForFilter.availableCities,
                     selectedValue: controllerForFilter.selectedCity,
                     prefixIcon: Icons.location_on,
                     enabled: controllerForFilter.selectedState.value.isNotEmpty,
                     onChanged:
-                    controllerForFilter.selectedState.value.isEmpty
-                        ? null
-                        : (value) {
-                      if (value != null)
-                        controllerForFilter.updateCity(value);
-                      controller.resellerSelectedCity.value=value??'';
-                    },
+                        controllerForFilter.selectedState.value.isEmpty
+                            ? null
+                            : (value) {
+                              if (value != null)
+                                controllerForFilter.updateCity(value);
+                              controller.resellerSelectedCity.value =
+                                  value ?? '';
+                            },
                   ),
                 ),
               ),
@@ -1196,7 +1278,7 @@ class _ResellerProjectFilterScreenState
               buildSectionTitle('Price'),
               SizedBox(height: 8),
               Obx(
-                    () => BudgetFilterChange(
+                () => BudgetFilterChange(
                   minSelected: controller.resellerMinPrice.value,
                   maxSelected: controller.resellerMaxPrice.value,
                   budgetList: controller.budgetValues.value,
@@ -1221,7 +1303,8 @@ class _ResellerProjectFilterScreenState
                   maxLabel: "Max Budget",
                 ),
               ),
-          /*    SizedBox(height: 8),
+
+              /*    SizedBox(height: 8),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -1263,7 +1346,6 @@ class _ResellerProjectFilterScreenState
                   ),
                 ],
               ),*/
-
               SizedBox(height: 16),
               buildSectionTitle('Project Status'),
               SizedBox(height: 8),
@@ -1421,7 +1503,8 @@ class _ResellerProjectFilterScreenState
                           controller.txtStateSearch.clear();
                           controller.txtCitySearch.clear();
                           controller.txtSearchPropertyByID.clear();
-
+                          controller.txtBuilderProjectName.clear();
+                          controller.txtBuilderRERAID.clear();
                           controller.resellerApprovalStatus.value = '';
                           controller.resellerBHKType.value = '';
                           controller.resellerFurnishingType.value = '';
@@ -1431,9 +1514,10 @@ class _ResellerProjectFilterScreenState
                           controller.resellerPropertyType.value = '';
                           controller.resellerVerified.value = '';
                           controllerForFilter.availableStates.clear();
+                          controller.txtBuilderRERAID.clear();
                           controllerForFilter.availableCities.clear();
-                          controllerForFilter.selectedState.value='';
-                          controllerForFilter.selectedCity.value='';
+                          controllerForFilter.selectedState.value = '';
+                          controllerForFilter.selectedCity.value = '';
                           // ✅ Clear the dropdown lists
 
                           controller.resellerStatePropertyList.value =
@@ -1454,6 +1538,7 @@ class _ResellerProjectFilterScreenState
                           // ✅ Clear the selected values
                           controller.resellerSelectedState.value = '';
                           controller.resellerSelectedCity.value = '';
+                          controller.builderProjectStatus.value = '';
 
                           setState(() {
                             startDate = null;
@@ -1499,10 +1584,53 @@ class _ResellerProjectFilterScreenState
                           Get.back(
                             result: filterResult,
                           ); // ✅ Return the filter result
+                          controller.txtStartDate.clear();
+                          controller.txtEndDate.clear();
+                          controller.txtStateSearch.clear();
+                          controller.txtCitySearch.clear();
+                          controller.txtSearchPropertyByID.clear();
+
+                          controller.resellerApprovalStatus.value = '';
+                          controller.resellerBHKType.value = '';
+                          controller.resellerFurnishingType.value = '';
+                          controller.resellerListingType.value = '';
+                          controller.resellerPossessionStatus.value = '';
+                          controller.resellerPropertyCategory.value = '';
+                          controller.resellerPropertyType.value = '';
+                          controller.txtBuilderProjectName.clear();
+                          controller.resellerVerified.value = '';
                           controllerForFilter.availableStates.clear();
                           controllerForFilter.availableCities.clear();
-                          controllerForFilter.selectedState.value='';
-                          controllerForFilter.selectedCity.value='';
+                          controllerForFilter.selectedState.value = '';
+                          controllerForFilter.selectedCity.value = '';
+                          // ✅ Clear the dropdown lists
+
+                          controller.resellerStatePropertyList.value =
+                              projectController?.items.value
+                                  .map((e) => e.state ?? '')
+                                  .toSet()
+                                  .toList() ??
+                              [];
+
+                          // ✅ Repopulate the property type list
+                          controller.propertyTypeList.value =
+                              projectController?.items.value
+                                  .map((e) => e.propertyTypes ?? '')
+                                  .toSet()
+                                  .toList() ??
+                              [];
+
+                          // ✅ Clear the selected values
+                          controller.resellerSelectedState.value = '';
+                          controller.resellerSelectedCity.value = '';
+                          controller.builderProjectStatus.value = '';
+
+                          setState(() {
+                            startDate = null;
+                            endDate = null;
+                            tempMinPrice = controller.resellerMinPrice.value;
+                            tempMaxPrice = controller.resellerMaxPrice.value;
+                          });
                           // Get.snackbar(
                           //   'Filters Applied',
                           //   'Your filters have been applied successfully',

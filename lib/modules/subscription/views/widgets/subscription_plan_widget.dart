@@ -716,6 +716,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
   // ------------------------------------------------------
   Widget _buildPlanCard(SubscriptionPlan plan, int index) {
     return Obx(() {
+      log("Plan is Active or Not  ${plan.isActive}");
       final bool isSelected = selectedPlanIndex.value == index;
 
       log("Plan Selected : ${selectedPlanIndex.value == index}");
@@ -1282,10 +1283,15 @@ void addInquiryForPlanBuy(
                                 .subscriptionPlanInquiry(inquiry);
 
                             if (success) {
-                              CustomSnackBar.show(
-                                Get.overlayContext!,
-                                message: "Inquiry submitted Successfully",
-                                type: SnackBarType.success,
+                              // CustomSnackBar.show(
+                              //   Get.overlayContext!,
+                              //   message: "Inquiry submitted Successfully",
+                              //   type: SnackBarType.success,
+                              // );
+                              NesticoPeSnackBar.showAwesomeSnackbar(
+                                title: 'Successfully',
+                                message:" Inquiry submitted Successfully",
+                                contentType: ContentType.success,
                               );
                               Get.back();
                             }

@@ -110,9 +110,7 @@ Widget buildSelectedFiltersChips(
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
-                                filterType
-                                        .replaceAll("_", " ")
-                                        .capitalize
+                                filterType.capitalize
                                         .toString() ??
                                     '',
                                 style: TextStyle(

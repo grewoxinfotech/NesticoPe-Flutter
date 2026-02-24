@@ -384,45 +384,47 @@ class ContractorService extends StatelessWidget {
       //     },
       //   );
       // }),
-      body: Obx(() {
-        final items = controller.items;
+      body: SafeArea(
+        child: Obx(() {
+          final items = controller.items;
 
-        if (controller.isLoading.value) {
-          return ContractorMyServiceListScreenShimmer();
-        }
+          if (controller.isLoading.value) {
+            return ContractorMyServiceListScreenShimmer();
+          }
 
-        return RefreshIndicator(
-          onRefresh: controller.refreshService,
-          color: ColorRes.primary,
-          child:
-              items.isEmpty
-                  ? SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.7,
-                      child: Center(
-                        child: Text(
-                          "No services available",
-                          style: TextStyle(
-                            fontSize: AppFontSizes.body,
-                            color: ColorRes.textSecondary,
-                            fontWeight: AppFontWeights.medium,
+          return RefreshIndicator(
+            onRefresh: controller.refreshService,
+            color: ColorRes.primary,
+            child:
+                items.isEmpty
+                    ? SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.7,
+                        child: Center(
+                          child: Text(
+                            "No services available",
+                            style: TextStyle(
+                              fontSize: AppFontSizes.body,
+                              color: ColorRes.textSecondary,
+                              fontWeight: AppFontWeights.medium,
+                            ),
                           ),
                         ),
                       ),
+                    )
+                    : ListView.builder(
+                      padding: const EdgeInsets.all(12),
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      itemCount: items.length,
+                      itemBuilder: (context, index) {
+                        final item = items[index];
+                        return ServiceCard(item: item, controller: controller);
+                      },
                     ),
-                  )
-                  : ListView.builder(
-                    padding: const EdgeInsets.all(12),
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      final item = items[index];
-                      return ServiceCard(item: item, controller: controller);
-                    },
-                  ),
-        );
-      }),
+          );
+        }),
+      ),
     );
   }
 }
@@ -539,6 +541,18 @@ class _ServiceCardState extends State<ServiceCard> {
         "Railing": meta.railingType,
         "Chokhat": meta.chokhatType,
       }),
+      cleanMetaMap({
+        "Solar Panel": meta.solarPanelBrands,
+        "Solar Inverter": meta.solarInverterBrands,
+      }),
+      cleanMetaMap({
+        "Security": meta.securityBrands,
+        "Smart Home": meta.smartHomeBrands,
+      }),
+      cleanMetaMap({
+        "Machine": meta.machineBrands,
+        "Cladding": meta.claddingBrands,
+      }),
     ];
     final metaSections = [
       if (metaMaps[0].isNotEmpty)
@@ -565,10 +579,26 @@ class _ServiceCardState extends State<ServiceCard> {
           title: "Structure & Safety",
           data: metaMaps[3],
         ),
+      if (metaMaps[4].isNotEmpty)
+        _metaSection(
+          icon: Icons.solar_power,
+          title: "Solar",
+          data: metaMaps[4],
+        ),
+      if (metaMaps[5].isNotEmpty)
+        _metaSection(
+          icon: Icons.security,
+          title: "Security & Smart Home",
+          data: metaMaps[5],
+        ),
+      if (metaMaps[6].isNotEmpty)
+        _metaSection(
+          icon: Icons.construction,
+          title: "Machinery & Cladding",
+          data: metaMaps[6],
+        ),
     ];
 
-    final safeMetaSections =
-        metaSections?.where((e) => e != null).toList() ?? [];
     final hasAnyMetaData = metaMaps.any((map) => map.isNotEmpty);
 
     return GestureDetector(
@@ -593,9 +623,12 @@ class _ServiceCardState extends State<ServiceCard> {
                 children: [
                   Expanded(
                     child: Text(
-                      widget.item.serviceName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      widget.item.serviceName.capitalize?.replaceAll(
+                            "_",
+                            " ",
+                          ) ??
+                          '',
+
                       style: TextStyle(
                         fontSize: AppFontSizes.medium,
                         fontWeight: AppFontWeights.semiBold,
@@ -857,33 +890,54 @@ class _ServiceCardState extends State<ServiceCard> {
                     ),
                   ),
                 ),
+
+                if (meta.works != null && meta.works!.isNotEmpty)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Text(
+                            "Works Included",
+                            style: TextStyle(
+                              fontSize: AppFontSizes.medium,
+                              fontWeight: AppFontWeights.semiBold,
+                              color: ColorRes.textPrimary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: ColorRes.background,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: ColorRes.border, width: 1),
+                        ),
+                        child: Text(
+                          meta.works!
+                              .map(
+                                (work) =>
+                                    work.replaceAll('_', ' ').capitalizeFirst ??
+                                    work,
+                              )
+                              .join(', '),
+                          style: TextStyle(
+                            fontSize: AppFontSizes.caption,
+                            color: ColorRes.textPrimary,
+                            fontWeight: AppFontWeights.regular,
+                            height: 1.5,
+                          ),
+                        ),
+                      ),
+
+                    ],
+                  ),
                 const SizedBox(height: 16),
 
-                /*  if (safeMetaSections.isNotEmpty) ...[
-
-                  ...safeMetaSections
-                      .take(showAllMeta ? safeMetaSections.length : 2)
-                      .toList(),
-
-                 if(safeMetaSections.isNotEmpty)...[
-                   if (safeMetaSections.length > 2)
-                     Center(
-                       child: TextButton.icon(
-                         onPressed: () {
-                           setState(() => showAllMeta = !showAllMeta);
-                         },
-                         icon: Icon(
-                           showAllMeta ? Icons.expand_less : Icons.expand_more,
-                         ),
-                         label: Text(
-                           showAllMeta
-                               ? "Show less details"
-                               : "Show more details",
-                         ),
-                       ),
-                     ),
-                 ]
-                ],*/
                 if (hasAnyMetaData) ...[
                   ...metaSections
                       .take(showAllMeta ? metaSections.length : 2)

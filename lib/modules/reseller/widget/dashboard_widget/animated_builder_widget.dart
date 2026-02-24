@@ -30,10 +30,8 @@ class _AnimatedIconScalerState extends State<AnimatedIconScaler>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    )..repeat(reverse: true);
+    _controller = AnimationController(vsync: this, duration: widget.duration)
+      ..repeat(reverse: true);
   }
 
   @override
@@ -49,19 +47,15 @@ class _AnimatedIconScalerState extends State<AnimatedIconScaler>
       builder: (_, __) {
         // Smooth scaling between min and max size
         final scale =
-            widget.minSize + (widget.maxSize - widget.minSize) * (sin(_controller.value * 2 * pi) + 1) / 2;
-        return Icon(
-          widget.icon,
-          color: widget.color,
-          size: scale,
-        );
+            widget.minSize +
+            (widget.maxSize - widget.minSize) *
+                (sin(_controller.value * 2 * pi) + 1) /
+                2;
+        return Icon(widget.icon, color: widget.color, size: scale);
       },
     );
   }
 }
-
-
-
 
 class AnimatedContainerScaler extends StatefulWidget {
   final Widget child;
@@ -91,10 +85,8 @@ class _AnimatedContainerScalerState extends State<AnimatedContainerScaler>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    )..repeat(reverse: true);
+    _controller = AnimationController(vsync: this, duration: widget.duration)
+      ..repeat(reverse: true);
   }
 
   @override
@@ -109,11 +101,11 @@ class _AnimatedContainerScalerState extends State<AnimatedContainerScaler>
       animation: _controller,
       builder: (_, __) {
         // Create a smooth oscillation between min and max scale
-     /*   final double scale = widget.minScale +
+        /*   final double scale = widget.minScale +
             (widget.maxScale - widget.minScale) *
                 (sin(_controller.value * 2 * pi) + 1) /
                 2;*/
-        final double dy=cos(_controller.value*2*pi)*2;
+        final double dy = cos(_controller.value * 2 * pi) * 2;
 
         return Transform.translate(
           // scale: scale,
@@ -124,6 +116,7 @@ class _AnimatedContainerScalerState extends State<AnimatedContainerScaler>
     );
   }
 }
+
 class ProgressWithLabel extends StatelessWidget {
   final double progressValue; // between 0 and 1
   final Color progressColor;
@@ -163,13 +156,16 @@ class ProgressWithLabel extends StatelessWidget {
                     tween: Tween<double>(begin: 0, end: clampedProgress),
                     duration: const Duration(milliseconds: 800),
                     curve: Curves.easeInOut,
-                    builder: (context, value, _) => LinearProgressIndicator(
-                      value: value,
-                      backgroundColor: backgroundColor.withOpacity(0.1),
+                    builder:
+                        (context, value, _) => LinearProgressIndicator(
+                          value: value,
+                          backgroundColor: backgroundColor.withOpacity(0.1),
 
-                      valueColor: AlwaysStoppedAnimation<Color>(progressColor),
-                      minHeight: thickness,
-                    ),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            progressColor,
+                          ),
+                          minHeight: thickness,
+                        ),
                   ),
                   // ✨ Shimmer overlay (optional)
                   Positioned.fill(
@@ -190,8 +186,10 @@ class ProgressWithLabel extends StatelessWidget {
               left: labelPosition,
               top: thickness + 6,
               child: Container(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: progressColor,
                   borderRadius: BorderRadius.circular(6),
@@ -219,6 +217,96 @@ class ProgressWithLabel extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
+class ProgressWithLabelAndImage extends StatelessWidget {
+  final double progressValue;
+  final Color progressColor;
+  final Color backgroundColor;
+  final double thickness;
+  final Color labelColor;
+  final double imageSize; // 👈 add this for flexibility
+
+  const ProgressWithLabelAndImage({
+    super.key,
+    required this.progressValue,
+    this.progressColor = const Color(0xff725AB7),
+    this.backgroundColor = const Color(0xff725AB7),
+    this.thickness = 8.0,
+    this.labelColor = Colors.white,
+    this.imageSize = 40.0, // 👈 default image size
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double barWidth = constraints.maxWidth;
+        final double clampedProgress = progressValue.clamp(0.0, 1.0);
+
+        // ✅ Center image on progress tip
+        final double imageLeft =
+            (barWidth * clampedProgress) - (imageSize / 2);
+
+        final percent = (clampedProgress * 100).toInt();
+
+        return Padding(
+          padding: EdgeInsets.only(top: imageSize), // 👈 make room above bar
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // 🟣 Progress bar with shimmer
+              ClipRRect(
+                borderRadius: BorderRadius.circular(thickness),
+                child: Stack(
+                  children: [
+                    TweenAnimationBuilder<double>(
+                      tween: Tween<double>(begin: 0, end: clampedProgress),
+                      duration: const Duration(milliseconds: 800),
+                      curve: Curves.easeInOut,
+                      builder: (context, value, _) => LinearProgressIndicator(
+                        value: value,
+                        backgroundColor: backgroundColor.withOpacity(0.1),
+                        valueColor: AlwaysStoppedAnimation<Color>(progressColor),
+                        minHeight: thickness,
+                      ),
+                    ),
+                    // ✨ Shimmer overlay
+                    Positioned.fill(
+                      child: Shimmer.fromColors(
+                        baseColor: Colors.transparent,
+                        highlightColor: Colors.white.withOpacity(0.4),
+                        period: const Duration(seconds: 2),
+                        child: Container(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // 🐦 Image positioned ABOVE the progress bar tip
+              Positioned(
+                left: imageLeft.clamp(0.0, barWidth - imageSize), // 👈 prevent overflow
+                top: -imageSize, // 👈 sits directly above the bar
+                child: SizedBox(
+                  width: imageSize,
+                  child: Image.asset(
+                    "assets/gif/bird_animation.gif",
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
 class TiltingIcon extends StatefulWidget {
   /// The icon widget to animate (required)
   final Icon icon;
@@ -255,10 +343,8 @@ class _TiltingIconState extends State<TiltingIcon>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    )..repeat(reverse: true);
+    _controller = AnimationController(vsync: this, duration: widget.duration)
+      ..repeat(reverse: true);
   }
 
   @override
@@ -277,9 +363,10 @@ class _TiltingIconState extends State<TiltingIcon>
         final angle = value * widget.tiltAmount;
 
         // Choose rotation axis based on direction
-        final transform = widget.direction == TiltDirection.horizontal
-            ? Matrix4.rotationZ(angle)
-            : (Matrix4.identity()..rotateX(angle));
+        final transform =
+            widget.direction == TiltDirection.horizontal
+                ? Matrix4.rotationZ(angle)
+                : (Matrix4.identity()..rotateX(angle));
 
         return Transform(
           alignment: Alignment.bottomCenter,
@@ -291,9 +378,6 @@ class _TiltingIconState extends State<TiltingIcon>
     );
   }
 }
-
-
-
 
 class RotationIconWidget extends StatefulWidget {
   final Widget child;
@@ -320,10 +404,8 @@ class _RotationIconWidgetState extends State<RotationIconWidget>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    )..repeat();
+    _controller = AnimationController(vsync: this, duration: widget.duration)
+      ..repeat();
   }
 
   @override
@@ -341,23 +423,21 @@ class _RotationIconWidgetState extends State<RotationIconWidget>
         final double angle = _controller.value * 2 * math.pi;
 
         // smooth oscillation for scaling
-        final double scale = widget.minScale +
+        final double scale =
+            widget.minScale +
             (widget.maxScale - widget.minScale) *
-                (math.sin(_controller.value * 2 * math.pi) + 1) / 2;
+                (math.sin(_controller.value * 2 * math.pi) + 1) /
+                2;
 
         return Transform.rotate(
           angle: angle,
-          child: Transform.scale(
-            scale: scale,
-            child: child,
-          ),
+          child: Transform.scale(scale: scale, child: child),
         );
       },
       child: widget.child,
     );
   }
 }
-
 
 class ScaleIconWidget extends StatefulWidget {
   final Widget child;
@@ -384,10 +464,8 @@ class _ScaleIconWidgetState extends State<ScaleIconWidget>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    )..repeat();
+    _controller = AnimationController(vsync: this, duration: widget.duration)
+      ..repeat();
   }
 
   @override
@@ -404,19 +482,15 @@ class _ScaleIconWidgetState extends State<ScaleIconWidget>
         // full rotation from 0 → 2π (360°)
 
         // smooth oscillation for scaling
-        final double scale = widget.minScale +
+        final double scale =
+            widget.minScale +
             (widget.maxScale - widget.minScale) *
-                (math.sin(_controller.value * 2 * math.pi) + 1) / 2;
+                (math.sin(_controller.value * 2 * math.pi) + 1) /
+                2;
 
-        return Transform.scale(
-          scale: scale,
-          child: child,
-        );
+        return Transform.scale(scale: scale, child: child);
       },
       child: widget.child,
     );
   }
 }
-
-
-

@@ -32,7 +32,6 @@ class ResellerPropertyFilter extends StatefulWidget {
 
   const ResellerPropertyFilter({super.key, this.isProjectItemFilter = true});
 
-
   @override
   State<ResellerPropertyFilter> createState() => _ResellerPropertyFilterState();
 }
@@ -42,7 +41,8 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
   final PropertyController propertyController = Get.find();
   late final ProjectWizardController controllerProject;
   PropertyFilterControllerForFilter controllerForFilter = Get.put(
-      PropertyFilterControllerForFilter());
+    PropertyFilterControllerForFilter(),
+  );
   CityController cityController = Get.put(CityController());
 
   double tempMinPrice = 0.0;
@@ -68,13 +68,13 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       setState(() {
         Get.lazyPut(
-              () => ProjectWizardController(isBuilderView: true),
+          () => ProjectWizardController(isBuilderView: true),
           tag: "builder",
         );
         controllerProject = Get.find<ProjectWizardController>(tag: "builder");
       });
       _initializeUserData();
-    },);
+    });
 
     if (tempMinPrice < controller.resellerMinPrice.value ||
         tempMaxPrice > controller.resellerMaxPrice.value ||
@@ -116,8 +116,6 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
     // }
     //
     // // Add listeners to focus nodes
-
-
   }
 
   Future<void> _initializeUserData() async {
@@ -131,20 +129,21 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
         // ✅ Filter property list based on user ID
         log("USer ID ${userId}");
 
-        AppLogger.structured("Check any Reseller",
-            propertyController.items.map((element) => element.state,));
+        AppLogger.structured(
+          "Check any Reseller",
+          propertyController.items.map((element) => element.state),
+        );
 
         final userProperties =
-        (UserHelper.isReseller)
-            ? propertyController.items.value
-
-            .where((e) => e.assignedTo?.contains(userId) ?? false)
-            .toList()
-            : propertyController.items.value
-            .where(
-              (e) => e.createdBy == userId,
-        ) // adjust field name as per your model
-            .toList();
+            (UserHelper.isReseller)
+                ? propertyController.items.value
+                    .where((e) => e.assignedTo?.contains(userId) ?? false)
+                    .toList()
+                : propertyController.items.value
+                    .where(
+                      (e) => e.createdBy == userId,
+                    ) // adjust field name as per your model
+                    .toList();
 
         controller.resellerStatePropertyList.value =
             cityController.allCities.map((e) => e.state ?? '').toSet().toList();
@@ -156,28 +155,26 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
         );
       } else {
         log("USer ID ${userId}");
-        AppLogger.structured("Check any Builder and State",
-            controllerProject.items.map((element) => element.toJson(),));
+        AppLogger.structured(
+          "Check any Builder and State",
+          controllerProject.items.map((element) => element.toJson()),
+        );
 
         log(
-          "USer IDdkjgfdi dhfjdfhsdj${controllerProject.items.value.map((e) =>
-          e.state)}",
+          "USer IDdkjgfdi dhfjdfhsdj${controllerProject.items.value.map((e) => e.state)}",
         );
 
         final userProjects =
-        controllerProject.items.value
-            .where((e) => e.createdBy == userId)
-            .toList();
+            controllerProject.items.value
+                .where((e) => e.createdBy == userId)
+                .toList();
         print("fdjdfgh ${userProjects.map((e) => e.toJson())}");
 
         controller.resellerStatePropertyList.value =
             cityController.allCities.map((e) => e.state ?? '').toSet().toList();
 
         log(
-          "USer IDdkjgfdi ${controllerProject.items
-              .map((e) => e.state ?? '')
-              .toSet()}",
-
+          "USer IDdkjgfdi ${controllerProject.items.map((e) => e.state ?? '').toSet()}",
         );
 
         controller.propertyTypeList.value =
@@ -195,7 +192,6 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
     super.dispose();
   }
 
-
   Future<void> _updateCitiesForSelectedState(String state) async {
     final user = await SecureStorage.getUserData();
     final userId = user?.user?.id;
@@ -208,7 +204,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
             cityController.allCities
                 .where(
                   (e) => (e.state ?? '').toLowerCase() == state.toLowerCase(),
-            )
+                )
                 .map((e) => e.city ?? '')
                 .toSet()
                 .toList();
@@ -217,7 +213,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
             cityController.allCities
                 .where(
                   (e) => (e.state ?? '').toLowerCase() == state.toLowerCase(),
-            )
+                )
                 .map((e) => e.city ?? '')
                 .toSet()
                 .toList();
@@ -225,7 +221,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
     });
   }
 
-
+  /*
   Map<String, dynamic> _buildFilterResult() {
     log('Price Range ${jsonEncode(controller.priceRangeSeller)}');
     log('Min Price → ${controller.priceRangeSeller['min']}');
@@ -311,6 +307,82 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
           controller.resellerFurnishingType.value,
         ),
     };
+  }*/
+  Map<String, dynamic> _buildFilterResult() {
+    // ✅ Only include price if user actually selected something
+    final bool hasPriceFilter =
+        controller.resellerMinPrice.value != 0.0 ||
+        controller.resellerMaxPrice.value != 0.0;
+
+    return {
+      // Date Range
+      if (controller.txtStartDate.text.isNotEmpty &&
+          controller.startDate != null)
+        'createdAtFrom': controller.txtStartDate.text,
+      if (controller.txtEndDate.text.isNotEmpty && controller.endDate != null)
+        'createdAtTo': controller.txtEndDate.text,
+
+      // Location
+      if (controller.resellerSelectedState.value.isNotEmpty)
+        'state': controller.resellerSelectedState.value,
+      if (controller.resellerSelectedCity.value.isNotEmpty)
+        'city': controller.resellerSelectedCity.value,
+
+      // Property Category
+      if (controller.resellerPropertyCategory.value.isNotEmpty)
+        'type': controller.resellerPropertyCategory.value.toLowerCase(),
+
+      // Listing Type
+      if (controller.resellerListingType.value.isNotEmpty)
+        'listingType': controller.resellerListingType.value,
+
+      // Approval Status
+      if (controller.resellerApprovalStatus.value.isNotEmpty)
+        'approval_status':
+            controller.resellerApprovalStatus.value.toLowerCase(),
+
+      // Property Type
+      if (controller.resellerPropertyType.value.isNotEmpty)
+        'propertyType': controller.resellerPropertyType.value,
+      if (controller.txtBuilderProjectName.text.isNotEmpty)
+        'projectName': controller.txtBuilderProjectName.text,
+      if (controller.txtBuilderRERAID.text.isNotEmpty)
+        'reraId': controller.txtBuilderRERAID.text,
+      if (controller.builderProjectStatus.value.isNotEmpty)
+        'status': controller.builderProjectStatus.value,
+
+      // BHK
+      if (controller.resellerBHKType.value.isNotEmpty)
+        ...() {
+          final bhkValue = controller.resellerBHKType.value.split(' ')[0];
+          if (bhkValue == '5+') {
+            return {'bhk': 5, 'bhkPlus': true};
+          } else {
+            return {'bhk': int.tryParse(bhkValue)};
+          }
+        }(),
+
+      // ✅ Price Range - ONLY when user actually changed values
+      if (hasPriceFilter)
+        'priceRange': jsonEncode({
+          'min': controller.resellerMinPrice.value,
+          'max': controller.resellerMaxPrice.value,
+        }),
+
+      // Verification Status
+      if (controller.resellerVerified.value.isNotEmpty)
+        'isVerified': controller.resellerVerified.value == 'Verified',
+
+      // Possession Status
+      if (controller.resellerPossessionStatus.value.isNotEmpty)
+        'possessionStatus': controller.resellerPossessionStatus.value,
+
+      // Furnishing Type
+      if (controller.resellerFurnishingType.value.isNotEmpty)
+        'furnish_type': controller.matchFurnishType(
+          controller.resellerFurnishingType.value,
+        ),
+    };
   }
 
   @override
@@ -327,8 +399,10 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
             controller.txtSearchPropertyByID.clear();
             controllerForFilter.availableStates.clear();
             controllerForFilter.availableCities.clear();
-            controllerForFilter.selectedState.value='';
-            controllerForFilter.selectedCity.value='';
+            controllerForFilter.selectedState.value = '';
+            controllerForFilter.selectedCity.value = '';
+            controller.txtBuilderProjectName.clear();
+            controller.txtBuilderRERAID.clear();
             controller.resellerApprovalStatus.value = '';
             controller.resellerBHKType.value = '';
             controller.resellerFurnishingType.value = '';
@@ -337,12 +411,13 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
             controller.resellerPropertyCategory.value = '';
             controller.resellerPropertyType.value = '';
             controller.resellerVerified.value = '';
+            controller.builderProjectStatus.value = '';
 
             // ✅ Clear the dropdown lists
             controllerForFilter.availableStates.clear();
             controllerForFilter.availableCities.clear();
-            controllerForFilter.selectedState.value='';
-            controllerForFilter.selectedCity.value='';
+            controllerForFilter.selectedState.value = '';
+            controllerForFilter.selectedCity.value = '';
 
             controller.resellerStatePropertyList.value =
                 propertyController.items.value
@@ -370,9 +445,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
           icon: Icon(Icons.arrow_back),
         ),
         title: Text(
-          "${UserHelper.isSellerBuilder
-              ? "Project Filter"
-              : "Property Filter"}",
+          "${UserHelper.isSellerBuilder ? "Project Filter" : "Property Filter"}",
           style: TextStyle(
             color: ColorRes.textColor,
             fontWeight: AppFontWeights.bold,
@@ -445,7 +518,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                             }
                           });
                           controller.txtStartDate.text =
-                          "${picked.year}-${picked.month}-${picked.day}-";
+                              "${picked.year}-${picked.month}-${picked.day}-";
                           // controller.getPropertyType(propertyController.items);
                         }
                       },
@@ -483,7 +556,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                         DateTime? picked = await showDatePicker(
                           context: context,
                           initialDate:
-                          endDate ??
+                              endDate ??
                               (startDate!.isAfter(DateTime.now())
                                   ? startDate!
                                   : DateTime.now()),
@@ -514,7 +587,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                             controller.endDate = picked;
                           });
                           controller.txtEndDate.text =
-                          "${picked.year}-${picked.month}-${picked.day}";
+                              "${picked.year}-${picked.month}-${picked.day}";
                           // controller.getPropertyType(propertyController.items);
                         }
                       },
@@ -526,15 +599,19 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
 
               SizedBox(height: 16),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 8,
+                ),
                 child: SearchableDropdownWidget(
                   label: 'State',
                   hint: 'Select your state',
-                  items: controllerForFilter.availableStates, // now RxList
+                  items: controllerForFilter.availableStates,
+                  // now RxList
                   selectedValue: controllerForFilter.selectedState,
                   prefixIcon: Icons.location_city,
                   onChanged: (value) {
-                    controller.resellerSelectedState.value=value??'';
+                    controller.resellerSelectedState.value = value ?? '';
                     if (value != null) controllerForFilter.updateState(value);
                   },
                 ),
@@ -542,7 +619,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
 
               // City Dropdown
               Obx(
-                    () => Padding(
+                () => Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 8,
@@ -550,26 +627,27 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                   child: SearchableDropdownWidget(
                     label: 'City',
                     hint:
-                    controllerForFilter.selectedState.value.isEmpty
-                        ? 'Select state first'
-                        : 'Select your city',
+                        controllerForFilter.selectedState.value.isEmpty
+                            ? 'Select state first'
+                            : 'Select your city',
                     items: controllerForFilter.availableCities,
                     selectedValue: controllerForFilter.selectedCity,
                     prefixIcon: Icons.location_on,
                     enabled: controllerForFilter.selectedState.value.isNotEmpty,
                     onChanged:
-                    controllerForFilter.selectedState.value.isEmpty
-                        ? null
-                        : (value) {
-                      if (value != null)
-                        controllerForFilter.updateCity(value);
-                      controller.resellerSelectedCity.value=value??'';
-                    },
+                        controllerForFilter.selectedState.value.isEmpty
+                            ? null
+                            : (value) {
+                              if (value != null)
+                                controllerForFilter.updateCity(value);
+                              controller.resellerSelectedCity.value =
+                                  value ?? '';
+                            },
                   ),
                 ),
               ),
 
-/*              SizedBox(
+              /*              SizedBox(
                 height: 85,
                 child: NesticoPeTextField(
                   title: "State",
@@ -1009,7 +1087,6 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                   ),
                 );
               }),*/
-
               if (!UserHelper.isSellerBuilder) ...[
                 SizedBox(height: 16),
                 buildSectionTitle('Property Category'),
@@ -1020,29 +1097,27 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                     child: Row(
                       spacing: 12,
                       children:
-                      ['Residential', 'Commercial']
-                          .map(
-                            (option) =>
-                            buildChoice(
-                              title: option.toString(),
-                              selected:
-                              controller
-                                  .resellerPropertyCategory
-                                  .value ==
-                                  option,
-                              onTap: () {
-                                controller.setValue(
-                                  controller.resellerPropertyCategory,
-                                  option,
-                                );
-                                log(
-                                  "resellerListingType Type Reseller PropertyFilter ${controller
-                                      .resellerPropertyCategory}",
-                                );
-                              },
-                            ),
-                      )
-                          .toList(),
+                          ['Residential', 'Commercial']
+                              .map(
+                                (option) => buildChoice(
+                                  title: option.toString(),
+                                  selected:
+                                      controller
+                                          .resellerPropertyCategory
+                                          .value ==
+                                      option,
+                                  onTap: () {
+                                    controller.setValue(
+                                      controller.resellerPropertyCategory,
+                                      option,
+                                    );
+                                    log(
+                                      "resellerListingType Type Reseller PropertyFilter ${controller.resellerPropertyCategory}",
+                                    );
+                                  },
+                                ),
+                              )
+                              .toList(),
                     ),
                   );
                 }),
@@ -1055,27 +1130,25 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                     child: Row(
                       spacing: 12,
                       children:
-                      ['Rent', 'Sell', 'PG']
-                          .map(
-                            (option) =>
-                            buildChoice(
-                              title: option.toString(),
-                              selected:
-                              controller.resellerListingType.value ==
-                                  option,
-                              onTap: () {
-                                controller.setValue(
-                                  controller.resellerListingType,
-                                  option,
-                                );
-                                log(
-                                  "resellerListingType Type Reseller PropertyFilter ${controller
-                                      .resellerListingType}",
-                                );
-                              },
-                            ),
-                      )
-                          .toList(),
+                          ['Rent', 'Sell', 'PG']
+                              .map(
+                                (option) => buildChoice(
+                                  title: option.toString(),
+                                  selected:
+                                      controller.resellerListingType.value ==
+                                      option,
+                                  onTap: () {
+                                    controller.setValue(
+                                      controller.resellerListingType,
+                                      option,
+                                    );
+                                    log(
+                                      "resellerListingType Type Reseller PropertyFilter ${controller.resellerListingType}",
+                                    );
+                                  },
+                                ),
+                              )
+                              .toList(),
                     ),
                   );
                 }),
@@ -1089,28 +1162,26 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                   child: Row(
                     spacing: 12,
                     children:
-                    ['Approved', 'Pending', 'Rejected']
-                        .map(
-                          (option) =>
-                          buildChoice(
-                            width: 110,
-                            title: option.toString(),
-                            selected:
-                            controller.resellerApprovalStatus.value ==
-                                option,
-                            onTap: () {
-                              controller.setValue(
-                                controller.resellerApprovalStatus,
-                                option,
-                              );
-                              log(
-                                "resellerListingType Type Reseller PropertyFilter ${controller
-                                    .resellerApprovalStatus}",
-                              );
-                            },
-                          ),
-                    )
-                        .toList(),
+                        ['Approved', 'Pending', 'Rejected']
+                            .map(
+                              (option) => buildChoice(
+                                width: 110,
+                                title: option.toString(),
+                                selected:
+                                    controller.resellerApprovalStatus.value ==
+                                    option,
+                                onTap: () {
+                                  controller.setValue(
+                                    controller.resellerApprovalStatus,
+                                    option,
+                                  );
+                                  log(
+                                    "resellerListingType Type Reseller PropertyFilter ${controller.resellerApprovalStatus}",
+                                  );
+                                },
+                              ),
+                            )
+                            .toList(),
                   ),
                 );
               }),
@@ -1124,28 +1195,26 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                     child: Row(
                       spacing: 12,
                       children:
-                      ['UpComing', 'Ongoing', 'Completed']
-                          .map(
-                            (option) =>
-                            buildChoice(
-                              width: 110,
-                              title: option.toString(),
-                              selected:
-                              controller.builderProjectStatus.value ==
-                                  option,
-                              onTap: () {
-                                controller.setValue(
-                                  controller.builderProjectStatus,
-                                  option,
-                                );
-                                log(
-                                  "resellerListingType Type Reseller PropertyFilter ${controller
-                                      .builderProjectStatus}",
-                                );
-                              },
-                            ),
-                      )
-                          .toList(),
+                          ['UpComing', 'Ongoing', 'Completed']
+                              .map(
+                                (option) => buildChoice(
+                                  width: 110,
+                                  title: option.toString(),
+                                  selected:
+                                      controller.builderProjectStatus.value ==
+                                      option,
+                                  onTap: () {
+                                    controller.setValue(
+                                      controller.builderProjectStatus,
+                                      option,
+                                    );
+                                    log(
+                                      "resellerListingType Type Reseller PropertyFilter ${controller.builderProjectStatus}",
+                                    );
+                                  },
+                                ),
+                              )
+                              .toList(),
                     ),
                   );
                 }),
@@ -1165,8 +1234,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                   onChanged: (value) {
                     if (value.isNotEmpty) {
                       log(
-                        "Property  search: $value → ${controller
-                            .txtBuilderProjectName.value}",
+                        "Property  search: $value → ${controller.txtBuilderProjectName.value}",
                       );
                     }
                   },
@@ -1188,8 +1256,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                   onChanged: (value) {
                     if (value.isNotEmpty) {
                       log(
-                        "Property  search: $value → ${controller
-                            .txtBuilderRERAID.value}",
+                        "Property  search: $value → ${controller.txtBuilderRERAID.value}",
                       );
                     }
                   },
@@ -1206,30 +1273,29 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                   child: Row(
                     spacing: 12,
                     children:
-                    controller.propertyTypeList.value.map((option) {
-                      // Safely capitalize the first letter
-                      final formattedOption =
-                      option.isNotEmpty
-                          ? option[0].toUpperCase() +
-                          option.substring(1).toLowerCase()
-                          : option;
+                        controller.propertyTypeList.value.map((option) {
+                          // Safely capitalize the first letter
+                          final formattedOption =
+                              option.isNotEmpty
+                                  ? option[0].toUpperCase() +
+                                      option.substring(1).toLowerCase()
+                                  : option;
 
-                      return buildChoice(
-                        title: formattedOption,
-                        selected:
-                        controller.resellerPropertyType.value == option,
-                        onTap: () {
-                          controller.setValue(
-                            controller.resellerPropertyType,
-                            option,
+                          return buildChoice(
+                            title: formattedOption,
+                            selected:
+                                controller.resellerPropertyType.value == option,
+                            onTap: () {
+                              controller.setValue(
+                                controller.resellerPropertyType,
+                                option,
+                              );
+                              log(
+                                "resellerListingType Type Reseller PropertyFilter ${controller.resellerPropertyType}",
+                              );
+                            },
                           );
-                          log(
-                            "resellerListingType Type Reseller PropertyFilter ${controller
-                                .resellerPropertyType}",
-                          );
-                        },
-                      );
-                    }).toList(),
+                        }).toList(),
                   ),
                 );
               }),
@@ -1244,33 +1310,29 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                     child: Row(
                       spacing: 12,
                       children:
-                      ['1 BHK', '2 BHK', '3 BHK', '4 BHK', '5+ BHK']
-                          .map(
-                            (option) =>
-                            buildChoice(
-                              width: 80,
-                              title: option.toString(),
-                              selected:
-                              controller.resellerBHKType.value ==
-                                  option,
-                              onTap: () {
-                                controller.setValue(
-                                  controller.resellerBHKType,
-                                  option,
-                                );
-                                log(
-                                  "BHK Type Reseller PropertyFilter ${controller
-                                      .resellerBHKType}",
-                                );
-                              },
-                            ),
-                      )
-                          .toList(),
+                          ['1 BHK', '2 BHK', '3 BHK', '4 BHK', '5+ BHK']
+                              .map(
+                                (option) => buildChoice(
+                                  width: 80,
+                                  title: option.toString(),
+                                  selected:
+                                      controller.resellerBHKType.value ==
+                                      option,
+                                  onTap: () {
+                                    controller.setValue(
+                                      controller.resellerBHKType,
+                                      option,
+                                    );
+                                    log(
+                                      "BHK Type Reseller PropertyFilter ${controller.resellerBHKType}",
+                                    );
+                                  },
+                                ),
+                              )
+                              .toList(),
                     ),
                   );
                 }),
-
-
               ],
               SizedBox(height: 16),
               buildSectionTitle('Price'),
@@ -1320,31 +1382,30 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
               //   );
               // }),
               Obx(
-                    () =>
-                    BudgetFilterChange(
-                      minSelected: controller.resellerMinPrice.value,
-                      maxSelected: controller.resellerMaxPrice.value,
-                      budgetList: controller.budgetValues.value,
-                      onMinChanged: (val) {
-                        if (val != null) {
-                          controller.resellerMinPrice.value = val;
+                () => BudgetFilterChange(
+                  minSelected: controller.resellerMinPrice.value,
+                  maxSelected: controller.resellerMaxPrice.value,
+                  budgetList: controller.budgetValues.value,
+                  onMinChanged: (val) {
+                    if (val != null) {
+                      controller.resellerMinPrice.value = val;
 
-                          print("Main ${controller.resellerMinPrice.value}");
-                        }
-                      },
-                      onMaxChanged: (val) {
-                        if (val != null) {
-                          controller.resellerMaxPrice.value = val;
-                          controller.buyerPriceRange(
-                            RangeValues(controller.resellerMinPrice.value, val),
-                          );
+                      print("Main ${controller.resellerMinPrice.value}");
+                    }
+                  },
+                  onMaxChanged: (val) {
+                    if (val != null) {
+                      controller.resellerMaxPrice.value = val;
+                      controller.buyerPriceRange(
+                        RangeValues(controller.resellerMinPrice.value, val),
+                      );
 
-                          print("mxa ${controller.resellerMaxPrice.value}");
-                        }
-                      },
-                      minLabel: "Min Budget",
-                      maxLabel: "Max Budget",
-                    ),
+                      print("mxa ${controller.resellerMaxPrice.value}");
+                    }
+                  },
+                  minLabel: "Min Budget",
+                  maxLabel: "Max Budget",
+                ),
               ),
 
               // buildSectionTitle('Price Range'),
@@ -1415,26 +1476,24 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                   child: Row(
                     spacing: 12,
                     children:
-                    ['Verified', 'Unverified']
-                        .map(
-                          (option) =>
-                          buildChoice(
-                            title: option.toString(),
-                            selected:
-                            controller.resellerVerified.value == option,
-                            onTap: () {
-                              controller.setValue(
-                                controller.resellerVerified,
-                                option,
-                              );
-                              log(
-                                "resellerListingType Type Reseller PropertyFilter ${controller
-                                    .resellerVerified}",
-                              );
-                            },
-                          ),
-                    )
-                        .toList(),
+                        ['Verified', 'Unverified']
+                            .map(
+                              (option) => buildChoice(
+                                title: option.toString(),
+                                selected:
+                                    controller.resellerVerified.value == option,
+                                onTap: () {
+                                  controller.setValue(
+                                    controller.resellerVerified,
+                                    option,
+                                  );
+                                  log(
+                                    "resellerListingType Type Reseller PropertyFilter ${controller.resellerVerified}",
+                                  );
+                                },
+                              ),
+                            )
+                            .toList(),
                   ),
                 );
               }),
@@ -1448,29 +1507,27 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                     child: Row(
                       spacing: 12,
                       children:
-                      ['Ready to Move', 'Under Construction']
-                          .map(
-                            (option) =>
-                            buildChoice(
-                              title: option.toString(),
-                              selected:
-                              controller
-                                  .resellerPossessionStatus
-                                  .value ==
-                                  option,
-                              onTap: () {
-                                controller.setValue(
-                                  controller.resellerPossessionStatus,
-                                  option,
-                                );
-                                log(
-                                  "resellerListingType Type Reseller PropertyFilter ${controller
-                                      .resellerPossessionStatus}",
-                                );
-                              },
-                            ),
-                      )
-                          .toList(),
+                          ['Ready to Move', 'Under Construction']
+                              .map(
+                                (option) => buildChoice(
+                                  title: option.toString(),
+                                  selected:
+                                      controller
+                                          .resellerPossessionStatus
+                                          .value ==
+                                      option,
+                                  onTap: () {
+                                    controller.setValue(
+                                      controller.resellerPossessionStatus,
+                                      option,
+                                    );
+                                    log(
+                                      "resellerListingType Type Reseller PropertyFilter ${controller.resellerPossessionStatus}",
+                                    );
+                                  },
+                                ),
+                              )
+                              .toList(),
                     ),
                   );
                 }),
@@ -1483,27 +1540,25 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                     child: Row(
                       spacing: 12,
                       children:
-                      ['Unfurnished', 'Semi', 'Fully']
-                          .map(
-                            (option) =>
-                            buildChoice(
-                              title: option.toString(),
-                              selected:
-                              controller.resellerFurnishingType.value ==
-                                  option,
-                              onTap: () {
-                                controller.setValue(
-                                  controller.resellerFurnishingType,
-                                  option,
-                                );
-                                log(
-                                  "resellerListingType Type Reseller PropertyFilter ${controller
-                                      .resellerFurnishingType}",
-                                );
-                              },
-                            ),
-                      )
-                          .toList(),
+                          ['Unfurnished', 'Semi', 'Fully']
+                              .map(
+                                (option) => buildChoice(
+                                  title: option.toString(),
+                                  selected:
+                                      controller.resellerFurnishingType.value ==
+                                      option,
+                                  onTap: () {
+                                    controller.setValue(
+                                      controller.resellerFurnishingType,
+                                      option,
+                                    );
+                                    log(
+                                      "resellerListingType Type Reseller PropertyFilter ${controller.resellerFurnishingType}",
+                                    );
+                                  },
+                                ),
+                              )
+                              .toList(),
                     ),
                   );
                 }),
@@ -1522,7 +1577,8 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                           controller.txtStateSearch.clear();
                           controller.txtCitySearch.clear();
                           controller.txtSearchPropertyByID.clear();
-
+                          controller.txtBuilderProjectName.clear();
+                          controller.txtBuilderRERAID.clear();
                           controller.resellerApprovalStatus.value = '';
                           controller.resellerBHKType.value = '';
                           controller.resellerFurnishingType.value = '';
@@ -1541,8 +1597,8 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                                   .toList();
                           controllerForFilter.availableStates.clear();
                           controllerForFilter.availableCities.clear();
-                          controllerForFilter.selectedState.value='';
-                          controllerForFilter.selectedCity.value='';
+                          controllerForFilter.selectedState.value = '';
+                          controllerForFilter.selectedCity.value = '';
 
                           // ✅ Repopulate the property type list
                           controller.propertyTypeList.value =
@@ -1553,6 +1609,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                           // ✅ Clear the selected values
                           controller.resellerSelectedState.value = '';
                           controller.resellerSelectedCity.value = '';
+                          controller.builderProjectStatus.value = '';
 
                           setState(() {
                             startDate = null;
@@ -1593,15 +1650,60 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
 
                           // Build filter result and return it
                           Map<String, dynamic> filterResult =
-                          _buildFilterResult();
+                              _buildFilterResult();
 
                           Get.back(
                             result: filterResult,
                           ); // ✅ Return the filter result
                           controllerForFilter.availableStates.clear();
                           controllerForFilter.availableCities.clear();
-                          controllerForFilter.selectedState.value='';
-                          controllerForFilter.selectedCity.value='';
+                          controllerForFilter.selectedState.value = '';
+                          controllerForFilter.selectedCity.value = '';
+                          controller.txtStartDate.clear();
+                          controller.txtEndDate.clear();
+                          controller.txtStateSearch.clear();
+                          controller.txtCitySearch.clear();
+                          controller.txtSearchPropertyByID.clear();
+
+                          controller.resellerApprovalStatus.value = '';
+                          controller.resellerBHKType.value = '';
+                          controller.resellerFurnishingType.value = '';
+                          controller.resellerListingType.value = '';
+                          controller.resellerPossessionStatus.value = '';
+                          controller.resellerPropertyCategory.value = '';
+                          controller.resellerPropertyType.value = '';
+                          controller.resellerVerified.value = '';
+                          controller.txtBuilderProjectName.clear();
+                          controller.txtBuilderRERAID.clear();
+                          // ✅ Clear the dropdown lists
+
+                          controller.resellerStatePropertyList.value =
+                              propertyController.items.value
+                                  .map((e) => e.state ?? '')
+                                  .toSet()
+                                  .toList();
+                          controllerForFilter.availableStates.clear();
+                          controllerForFilter.availableCities.clear();
+                          controllerForFilter.selectedState.value = '';
+                          controllerForFilter.selectedCity.value = '';
+
+                          // ✅ Repopulate the property type list
+                          controller.propertyTypeList.value =
+                              propertyController.items.value
+                                  .map((e) => e.propertyType ?? '')
+                                  .toSet()
+                                  .toList();
+                          // ✅ Clear the selected values
+                          controller.resellerSelectedState.value = '';
+                          controller.resellerSelectedCity.value = '';
+                          controller.builderProjectStatus.value = '';
+
+                          setState(() {
+                            startDate = null;
+                            endDate = null;
+                            tempMinPrice = controller.resellerMinPrice.value;
+                            tempMaxPrice = controller.resellerMaxPrice.value;
+                          });
 
                           // Get.snackbar(
                           //   'Filters Applied',
@@ -1637,13 +1739,13 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
   }
 }
 
-
 class ResellerPropertyFilterScreen extends StatefulWidget {
   final bool isProjectItemFilter;
 
-  const ResellerPropertyFilterScreen(
-      {super.key, this.isProjectItemFilter = true});
-
+  const ResellerPropertyFilterScreen({
+    super.key,
+    this.isProjectItemFilter = true,
+  });
 
   @override
   State<ResellerPropertyFilterScreen> createState() =>
@@ -1654,9 +1756,9 @@ class _ResellerPropertyFilterScreenState
     extends State<ResellerPropertyFilterScreen> {
   final DashboardController controller = Get.put(DashboardController());
   PropertyFilterControllerForFilter controllerForFilter = Get.put(
-      PropertyFilterControllerForFilter());
+    PropertyFilterControllerForFilter(),
+  );
   CityController cityController = Get.put(CityController());
-
 
   ResellerPropertyController? propertyController;
   final RxBool isInitialized = false.obs;
@@ -1713,24 +1815,26 @@ class _ResellerPropertyFilterScreenState
     if (userId == null) return;
 
     setState(() {
-      AppLogger.structured("Check any Reseller",
-          propertyController?.items.map((element) => element.state,));
+      AppLogger.structured(
+        "Check any Reseller",
+        propertyController?.items.map((element) => element.state),
+      );
 
-      final userProperties =
-      propertyController?.items.value
-          .toList();
+      final userProperties = propertyController?.items.value.toList();
 
       controller.resellerStatePropertyList.value =
           propertyController?.items
               .map((e) => e.state ?? '')
               .toSet()
-              .toList() ?? [];
+              .toList() ??
+          [];
 
       controller.propertyTypeList.value =
           propertyController?.items
               .map((e) => e.propertyType ?? '')
               .toSet()
-              .toList() ?? [];
+              .toList() ??
+          [];
       print(
         " Filtered States:propertyuy shdgs  ${controller.propertyTypeList}",
       );
@@ -1751,14 +1855,14 @@ class _ResellerPropertyFilterScreenState
     setState(() {
       controller.resellerStatePropertyList.value =
           propertyController?.items.value
-
               .map((e) => e.state ?? '')
               .where(
                 (state) =>
-                state.toLowerCase().contains(searchValue.toLowerCase()),
-          )
+                    state.toLowerCase().contains(searchValue.toLowerCase()),
+              )
               .toSet()
-              .toList() ?? [];
+              .toList() ??
+          [];
       showStateDropdown.value = controller.resellerStatePropertyList.isNotEmpty;
     });
   }
@@ -1773,16 +1877,15 @@ class _ResellerPropertyFilterScreenState
           propertyController?.items.value
               .where(
                 (e) => (e.state ?? '').toLowerCase() == state.toLowerCase(),
-          )
+              )
               .map((e) => e.city ?? '')
               .toSet()
               .toList() ??
-              [];
+          [];
     });
   }
 
-
-  Map<String, dynamic> _buildFilterResult() {
+/*  Map<String, dynamic> _buildFilterResult() {
     log('Price Range ${jsonEncode(controller.priceRangeSeller)}');
     log('Min Price → ${controller.priceRangeSeller['min']}');
     log('Max Price → ${controller.priceRangeSeller['max']}');
@@ -1814,7 +1917,7 @@ class _ResellerPropertyFilterScreenState
       // Approval Status
       if (controller.resellerApprovalStatus.value.isNotEmpty)
         'approval_status':
-        controller.resellerApprovalStatus.value.toLowerCase(),
+            controller.resellerApprovalStatus.value.toLowerCase(),
 
       // Property Type
       if (controller.resellerPropertyType.value.isNotEmpty)
@@ -1842,17 +1945,88 @@ class _ResellerPropertyFilterScreenState
       if (!UserHelper.isSellerBuilder) ...{
         'priceRange': jsonEncode({
           'min':
-          controller.resellerMinPrice.value == 0.0 &&
-              controller.resellerMaxPrice.value == 0.0
-              ? DEFAULT_MIN_PRICE
-              : controller.resellerMinPrice.value,
+              controller.resellerMinPrice.value == 0.0 &&
+                      controller.resellerMaxPrice.value == 0.0
+                  ? DEFAULT_MIN_PRICE
+                  : controller.resellerMinPrice.value,
           'max':
-          controller.resellerMinPrice.value == 0.0 &&
-              controller.resellerMaxPrice.value == 0.0
-              ? DEFAULT_MAX_PRICE
-              : controller.resellerMaxPrice.value,
+              controller.resellerMinPrice.value == 0.0 &&
+                      controller.resellerMaxPrice.value == 0.0
+                  ? DEFAULT_MAX_PRICE
+                  : controller.resellerMaxPrice.value,
         }),
       },
+
+      // Verification Status
+      if (controller.resellerVerified.value.isNotEmpty)
+        'isVerified': controller.resellerVerified.value == 'Verified',
+
+      // Possession Status
+      if (controller.resellerPossessionStatus.value.isNotEmpty)
+        'possessionStatus': controller.resellerPossessionStatus.value,
+
+      // Furnishing Type
+      if (controller.resellerFurnishingType.value.isNotEmpty)
+        'furnish_type': controller.matchFurnishType(
+          controller.resellerFurnishingType.value,
+        ),
+    };
+  }*/
+  Map<String, dynamic> _buildFilterResult() {
+    // ✅ Only include price if user actually selected something
+    final bool hasPriceFilter =
+        controller.resellerMinPrice.value != 0.0 ||
+            controller.resellerMaxPrice.value != 0.0;
+
+    return {
+      // Date Range
+      if (controller.txtStartDate.text.isNotEmpty &&
+          controller.startDate != null)
+        'createdAtFrom': controller.txtStartDate.text,
+      if (controller.txtEndDate.text.isNotEmpty &&
+          controller.endDate != null)
+        'createdAtTo': controller.txtEndDate.text,
+
+      // Location
+      if (controller.resellerSelectedState.value.isNotEmpty)
+        'state': controller.resellerSelectedState.value,
+      if (controller.resellerSelectedCity.value.isNotEmpty)
+        'city': controller.resellerSelectedCity.value,
+
+      // Property Category
+      if (controller.resellerPropertyCategory.value.isNotEmpty)
+        'type': controller.resellerPropertyCategory.value.toLowerCase(),
+
+      // Listing Type
+      if (controller.resellerListingType.value.isNotEmpty)
+        'listingType': controller.resellerListingType.value,
+
+      // Approval Status
+      if (controller.resellerApprovalStatus.value.isNotEmpty)
+        'approval_status':
+        controller.resellerApprovalStatus.value.toLowerCase(),
+
+      // Property Type
+      if (controller.resellerPropertyType.value.isNotEmpty)
+        'propertyType': controller.resellerPropertyType.value,
+
+      // BHK
+      if (controller.resellerBHKType.value.isNotEmpty)
+        ...() {
+          final bhkValue = controller.resellerBHKType.value.split(' ')[0];
+          if (bhkValue == '5+') {
+            return {'bhk': 5, 'bhkPlus': true};
+          } else {
+            return {'bhk': int.tryParse(bhkValue)};
+          }
+        }(),
+
+      // ✅ Price Range - only when user actually changed values
+      if (!UserHelper.isSellerBuilder && hasPriceFilter)
+        'priceRange': jsonEncode({
+          'min': controller.resellerMinPrice.value,
+          'max': controller.resellerMaxPrice.value,
+        }),
 
       // Verification Status
       if (controller.resellerVerified.value.isNotEmpty)
@@ -1893,8 +2067,8 @@ class _ResellerPropertyFilterScreenState
             controller.resellerVerified.value = '';
             controllerForFilter.availableStates.clear();
             controllerForFilter.availableCities.clear();
-            controllerForFilter.selectedState.value='';
-            controllerForFilter.selectedCity.value='';
+            controllerForFilter.selectedState.value = '';
+            controllerForFilter.selectedCity.value = '';
             // ✅ Clear the dropdown lists
 
             controller.resellerStatePropertyList.value =
@@ -1902,7 +2076,7 @@ class _ResellerPropertyFilterScreenState
                     .map((e) => e.state ?? '')
                     .toSet()
                     .toList() ??
-                    [];
+                [];
 
             // ✅ Repopulate the property type list
             controller.propertyTypeList.value =
@@ -1910,7 +2084,7 @@ class _ResellerPropertyFilterScreenState
                     .map((e) => e.propertyType ?? '')
                     .toSet()
                     .toList() ??
-                    [];
+                [];
 
             // ✅ Clear the selected values
             controller.resellerSelectedState.value = '';
@@ -1999,7 +2173,7 @@ class _ResellerPropertyFilterScreenState
                             }
                           });
                           controller.txtStartDate.text =
-                          "${picked.year}-${picked.month}-${picked.day}-";
+                              "${picked.year}-${picked.month}-${picked.day}-";
                           // controller.getPropertyType(propertyController.items);
                         }
                       },
@@ -2037,7 +2211,7 @@ class _ResellerPropertyFilterScreenState
                         DateTime? picked = await showDatePicker(
                           context: context,
                           initialDate:
-                          endDate ??
+                              endDate ??
                               (startDate!.isAfter(DateTime.now())
                                   ? startDate!
                                   : DateTime.now()),
@@ -2046,7 +2220,6 @@ class _ResellerPropertyFilterScreenState
                           lastDate: DateTime(2100),
                           builder: (context, child) {
                             return Theme(
-
                               data: Theme.of(context).copyWith(
                                 colorScheme: ColorScheme.light(
                                   primary: ColorRes.primary,
@@ -2069,7 +2242,7 @@ class _ResellerPropertyFilterScreenState
                             controller.endDate = picked;
                           });
                           controller.txtEndDate.text =
-                          "${picked.year}-${picked.month}-${picked.day}";
+                              "${picked.year}-${picked.month}-${picked.day}";
                           // controller.getPropertyType(propertyController.items);
                         }
                       },
@@ -2081,15 +2254,19 @@ class _ResellerPropertyFilterScreenState
 
               SizedBox(height: 16),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 8,
+                ),
                 child: SearchableDropdownWidget(
                   label: 'State',
                   hint: 'Select your state',
-                  items: controllerForFilter.availableStates, // now RxList
+                  items: controllerForFilter.availableStates,
+                  // now RxList
                   selectedValue: controllerForFilter.selectedState,
                   prefixIcon: Icons.location_city,
                   onChanged: (value) {
-                    controller.resellerSelectedState.value=value??'';
+                    controller.resellerSelectedState.value = value ?? '';
                     if (value != null) controllerForFilter.updateState(value);
                   },
                 ),
@@ -2097,7 +2274,7 @@ class _ResellerPropertyFilterScreenState
 
               // City Dropdown
               Obx(
-                    () => Padding(
+                () => Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 8,
@@ -2105,26 +2282,25 @@ class _ResellerPropertyFilterScreenState
                   child: SearchableDropdownWidget(
                     label: 'City',
                     hint:
-                    controllerForFilter.selectedState.value.isEmpty
-                        ? 'Select state first'
-                        : 'Select your city',
+                        controllerForFilter.selectedState.value.isEmpty
+                            ? 'Select state first'
+                            : 'Select your city',
                     items: controllerForFilter.availableCities,
                     selectedValue: controllerForFilter.selectedCity,
                     prefixIcon: Icons.location_on,
                     enabled: controllerForFilter.selectedState.value.isNotEmpty,
                     onChanged:
-                    controllerForFilter.selectedState.value.isEmpty
-                        ? null
-                        : (value) {
-                      if (value != null)
-                        controllerForFilter.updateCity(value);
-                      controller.resellerSelectedCity.value=value??'';
-                    },
+                        controllerForFilter.selectedState.value.isEmpty
+                            ? null
+                            : (value) {
+                              if (value != null)
+                                controllerForFilter.updateCity(value);
+                              controller.resellerSelectedCity.value =
+                                  value ?? '';
+                            },
                   ),
                 ),
               ),
-
-
 
               if (!UserHelper.isSellerBuilder) ...[
                 SizedBox(height: 16),
@@ -2136,29 +2312,27 @@ class _ResellerPropertyFilterScreenState
                     child: Row(
                       spacing: 12,
                       children:
-                      ['Residential', 'Commercial']
-                          .map(
-                            (option) =>
-                            buildChoice(
-                              title: option.toString(),
-                              selected:
-                              controller
-                                  .resellerPropertyCategory
-                                  .value ==
-                                  option,
-                              onTap: () {
-                                controller.setValue(
-                                  controller.resellerPropertyCategory,
-                                  option,
-                                );
-                                log(
-                                  "resellerListingType Type Reseller PropertyFilter ${controller
-                                      .resellerPropertyCategory}",
-                                );
-                              },
-                            ),
-                      )
-                          .toList(),
+                          ['Residential', 'Commercial']
+                              .map(
+                                (option) => buildChoice(
+                                  title: option.toString(),
+                                  selected:
+                                      controller
+                                          .resellerPropertyCategory
+                                          .value ==
+                                      option,
+                                  onTap: () {
+                                    controller.setValue(
+                                      controller.resellerPropertyCategory,
+                                      option,
+                                    );
+                                    log(
+                                      "resellerListingType Type Reseller PropertyFilter ${controller.resellerPropertyCategory}",
+                                    );
+                                  },
+                                ),
+                              )
+                              .toList(),
                     ),
                   );
                 }),
@@ -2171,27 +2345,25 @@ class _ResellerPropertyFilterScreenState
                     child: Row(
                       spacing: 12,
                       children:
-                      ['Rent', 'Sell', 'PG']
-                          .map(
-                            (option) =>
-                            buildChoice(
-                              title: option.toString(),
-                              selected:
-                              controller.resellerListingType.value ==
-                                  option,
-                              onTap: () {
-                                controller.setValue(
-                                  controller.resellerListingType,
-                                  option,
-                                );
-                                log(
-                                  "resellerListingType Type Reseller PropertyFilter ${controller
-                                      .resellerListingType}",
-                                );
-                              },
-                            ),
-                      )
-                          .toList(),
+                          ['Rent', 'Sell', 'PG']
+                              .map(
+                                (option) => buildChoice(
+                                  title: option.toString(),
+                                  selected:
+                                      controller.resellerListingType.value ==
+                                      option,
+                                  onTap: () {
+                                    controller.setValue(
+                                      controller.resellerListingType,
+                                      option,
+                                    );
+                                    log(
+                                      "resellerListingType Type Reseller PropertyFilter ${controller.resellerListingType}",
+                                    );
+                                  },
+                                ),
+                              )
+                              .toList(),
                     ),
                   );
                 }),
@@ -2205,28 +2377,26 @@ class _ResellerPropertyFilterScreenState
                   child: Row(
                     spacing: 12,
                     children:
-                    ['Approved', 'Pending', 'Rejected']
-                        .map(
-                          (option) =>
-                          buildChoice(
-                            width: 110,
-                            title: option.toString(),
-                            selected:
-                            controller.resellerApprovalStatus.value ==
-                                option,
-                            onTap: () {
-                              controller.setValue(
-                                controller.resellerApprovalStatus,
-                                option,
-                              );
-                              log(
-                                "resellerListingType Type Reseller PropertyFilter ${controller
-                                    .resellerApprovalStatus}",
-                              );
-                            },
-                          ),
-                    )
-                        .toList(),
+                        ['Approved', 'Pending', 'Rejected']
+                            .map(
+                              (option) => buildChoice(
+                                width: 110,
+                                title: option.toString(),
+                                selected:
+                                    controller.resellerApprovalStatus.value ==
+                                    option,
+                                onTap: () {
+                                  controller.setValue(
+                                    controller.resellerApprovalStatus,
+                                    option,
+                                  );
+                                  log(
+                                    "resellerListingType Type Reseller PropertyFilter ${controller.resellerApprovalStatus}",
+                                  );
+                                },
+                              ),
+                            )
+                            .toList(),
                   ),
                 );
               }),
@@ -2240,30 +2410,29 @@ class _ResellerPropertyFilterScreenState
                   child: Row(
                     spacing: 12,
                     children:
-                    controller.propertyTypeList.value.map((option) {
-                      // Safely capitalize the first letter
-                      final formattedOption =
-                      option.isNotEmpty
-                          ? option[0].toUpperCase() +
-                          option.substring(1).toLowerCase()
-                          : option;
+                        controller.propertyTypeList.value.map((option) {
+                          // Safely capitalize the first letter
+                          final formattedOption =
+                              option.isNotEmpty
+                                  ? option[0].toUpperCase() +
+                                      option.substring(1).toLowerCase()
+                                  : option;
 
-                      return buildChoice(
-                        title: formattedOption,
-                        selected:
-                        controller.resellerPropertyType.value == option,
-                        onTap: () {
-                          controller.setValue(
-                            controller.resellerPropertyType,
-                            option,
+                          return buildChoice(
+                            title: formattedOption,
+                            selected:
+                                controller.resellerPropertyType.value == option,
+                            onTap: () {
+                              controller.setValue(
+                                controller.resellerPropertyType,
+                                option,
+                              );
+                              log(
+                                "resellerListingType Type Reseller PropertyFilter ${controller.resellerPropertyType}",
+                              );
+                            },
                           );
-                          log(
-                            "resellerListingType Type Reseller PropertyFilter ${controller
-                                .resellerPropertyType}",
-                          );
-                        },
-                      );
-                    }).toList(),
+                        }).toList(),
                   ),
                 );
               }),
@@ -2277,28 +2446,25 @@ class _ResellerPropertyFilterScreenState
                   child: Row(
                     spacing: 12,
                     children:
-                    ['1 BHK', '2 BHK', '3 BHK', '4 BHK', '5+ BHK']
-                        .map(
-                          (option) =>
-                          buildChoice(
-                            width: 80,
-                            title: option.toString(),
-                            selected:
-                            controller.resellerBHKType.value ==
-                                option,
-                            onTap: () {
-                              controller.setValue(
-                                controller.resellerBHKType,
-                                option,
-                              );
-                              log(
-                                "BHK Type Reseller PropertyFilter ${controller
-                                    .resellerBHKType}",
-                              );
-                            },
-                          ),
-                    )
-                        .toList(),
+                        ['1 BHK', '2 BHK', '3 BHK', '4 BHK', '5+ BHK']
+                            .map(
+                              (option) => buildChoice(
+                                width: 80,
+                                title: option.toString(),
+                                selected:
+                                    controller.resellerBHKType.value == option,
+                                onTap: () {
+                                  controller.setValue(
+                                    controller.resellerBHKType,
+                                    option,
+                                  );
+                                  log(
+                                    "BHK Type Reseller PropertyFilter ${controller.resellerBHKType}",
+                                  );
+                                },
+                              ),
+                            )
+                            .toList(),
                   ),
                 );
               }),
@@ -2350,33 +2516,31 @@ class _ResellerPropertyFilterScreenState
               //   );
               // }),
               Obx(
-                    () =>
-                    BudgetFilterChange(
-                      minSelected: controller.resellerMinPrice.value,
-                      maxSelected: controller.resellerMaxPrice.value,
-                      budgetList: controller.budgetValues.value,
-                      onMinChanged: (val) {
-                        if (val != null) {
-                          controller.resellerMinPrice.value = val;
+                () => BudgetFilterChange(
+                  minSelected: controller.resellerMinPrice.value,
+                  maxSelected: controller.resellerMaxPrice.value,
+                  budgetList: controller.budgetValues.value,
+                  onMinChanged: (val) {
+                    if (val != null) {
+                      controller.resellerMinPrice.value = val;
 
-                          print("Main ${controller.resellerMinPrice.value}");
-                        }
-                      },
-                      onMaxChanged: (val) {
-                        if (val != null) {
-                          controller.resellerMaxPrice.value = val;
-                          controller.buyerPriceRange(
-                            RangeValues(controller.resellerMinPrice.value, val),
-                          );
+                      print("Main ${controller.resellerMinPrice.value}");
+                    }
+                  },
+                  onMaxChanged: (val) {
+                    if (val != null) {
+                      controller.resellerMaxPrice.value = val;
+                      controller.buyerPriceRange(
+                        RangeValues(controller.resellerMinPrice.value, val),
+                      );
 
-                          print("mxa ${controller.resellerMaxPrice.value}");
-                        }
-                      },
-                      minLabel: "Min Budget",
-                      maxLabel: "Max Budget",
-                    ),
+                      print("mxa ${controller.resellerMaxPrice.value}");
+                    }
+                  },
+                  minLabel: "Min Budget",
+                  maxLabel: "Max Budget",
+                ),
               ),
-
 
               // buildSectionTitle('Price Range'),
               // SizedBox(height: 8),
@@ -2446,26 +2610,24 @@ class _ResellerPropertyFilterScreenState
                   child: Row(
                     spacing: 12,
                     children:
-                    ['Verified', 'Unverified']
-                        .map(
-                          (option) =>
-                          buildChoice(
-                            title: option.toString(),
-                            selected:
-                            controller.resellerVerified.value == option,
-                            onTap: () {
-                              controller.setValue(
-                                controller.resellerVerified,
-                                option,
-                              );
-                              log(
-                                "resellerListingType Type Reseller PropertyFilter ${controller
-                                    .resellerVerified}",
-                              );
-                            },
-                          ),
-                    )
-                        .toList(),
+                        ['Verified', 'Unverified']
+                            .map(
+                              (option) => buildChoice(
+                                title: option.toString(),
+                                selected:
+                                    controller.resellerVerified.value == option,
+                                onTap: () {
+                                  controller.setValue(
+                                    controller.resellerVerified,
+                                    option,
+                                  );
+                                  log(
+                                    "resellerListingType Type Reseller PropertyFilter ${controller.resellerVerified}",
+                                  );
+                                },
+                              ),
+                            )
+                            .toList(),
                   ),
                 );
               }),
@@ -2479,29 +2641,25 @@ class _ResellerPropertyFilterScreenState
                   child: Row(
                     spacing: 12,
                     children:
-                    ['Ready to Move', 'Under Construction']
-                        .map(
-                          (option) =>
-                          buildChoice(
-                            title: option.toString(),
-                            selected:
-                            controller
-                                .resellerPossessionStatus
-                                .value ==
-                                option,
-                            onTap: () {
-                              controller.setValue(
-                                controller.resellerPossessionStatus,
-                                option,
-                              );
-                              log(
-                                "resellerListingType Type Reseller PropertyFilter ${controller
-                                    .resellerPossessionStatus}",
-                              );
-                            },
-                          ),
-                    )
-                        .toList(),
+                        ['Ready to Move', 'Under Construction']
+                            .map(
+                              (option) => buildChoice(
+                                title: option.toString(),
+                                selected:
+                                    controller.resellerPossessionStatus.value ==
+                                    option,
+                                onTap: () {
+                                  controller.setValue(
+                                    controller.resellerPossessionStatus,
+                                    option,
+                                  );
+                                  log(
+                                    "resellerListingType Type Reseller PropertyFilter ${controller.resellerPossessionStatus}",
+                                  );
+                                },
+                              ),
+                            )
+                            .toList(),
                   ),
                 );
               }),
@@ -2514,27 +2672,25 @@ class _ResellerPropertyFilterScreenState
                   child: Row(
                     spacing: 12,
                     children:
-                    ['Unfurnished', 'Semi', 'Fully']
-                        .map(
-                          (option) =>
-                          buildChoice(
-                            title: option.toString(),
-                            selected:
-                            controller.resellerFurnishingType.value ==
-                                option,
-                            onTap: () {
-                              controller.setValue(
-                                controller.resellerFurnishingType,
-                                option,
-                              );
-                              log(
-                                "resellerListingType Type Reseller PropertyFilter ${controller
-                                    .resellerFurnishingType}",
-                              );
-                            },
-                          ),
-                    )
-                        .toList(),
+                        ['Unfurnished', 'Semi', 'Fully']
+                            .map(
+                              (option) => buildChoice(
+                                title: option.toString(),
+                                selected:
+                                    controller.resellerFurnishingType.value ==
+                                    option,
+                                onTap: () {
+                                  controller.setValue(
+                                    controller.resellerFurnishingType,
+                                    option,
+                                  );
+                                  log(
+                                    "resellerListingType Type Reseller PropertyFilter ${controller.resellerFurnishingType}",
+                                  );
+                                },
+                              ),
+                            )
+                            .toList(),
                   ),
                 );
               }),
@@ -2555,8 +2711,8 @@ class _ResellerPropertyFilterScreenState
                           controller.txtSearchPropertyByID.clear();
                           controllerForFilter.availableStates.clear();
                           controllerForFilter.availableCities.clear();
-                          controllerForFilter.selectedState.value='';
-                          controllerForFilter.selectedCity.value='';
+                          controllerForFilter.selectedState.value = '';
+                          controllerForFilter.selectedCity.value = '';
                           controller.resellerApprovalStatus.value = '';
                           controller.resellerBHKType.value = '';
                           controller.resellerFurnishingType.value = '';
@@ -2572,14 +2728,16 @@ class _ResellerPropertyFilterScreenState
                               propertyController?.items.value
                                   .map((e) => e.state ?? '')
                                   .toSet()
-                                  .toList() ?? [];
+                                  .toList() ??
+                              [];
 
                           // ✅ Repopulate the property type list
                           controller.propertyTypeList.value =
                               propertyController?.items.value
                                   .map((e) => e.propertyType ?? '')
                                   .toSet()
-                                  .toList() ?? [];
+                                  .toList() ??
+                              [];
                           // ✅ Clear the selected values
                           controller.resellerSelectedState.value = '';
                           controller.resellerSelectedCity.value = '';
@@ -2623,15 +2781,55 @@ class _ResellerPropertyFilterScreenState
 
                           // Build filter result and return it
                           Map<String, dynamic> filterResult =
-                          _buildFilterResult();
+                              _buildFilterResult();
 
                           Get.back(
                             result: filterResult,
                           ); // ✅ Return the filter result
+                          controller.txtStartDate.clear();
+                          controller.txtEndDate.clear();
+                          controller.txtStateSearch.clear();
+                          controller.txtCitySearch.clear();
+                          controller.txtSearchPropertyByID.clear();
                           controllerForFilter.availableStates.clear();
                           controllerForFilter.availableCities.clear();
-                          controllerForFilter.selectedState.value='';
-                          controllerForFilter.selectedCity.value='';
+                          controllerForFilter.selectedState.value = '';
+                          controllerForFilter.selectedCity.value = '';
+                          controller.resellerApprovalStatus.value = '';
+                          controller.resellerBHKType.value = '';
+                          controller.resellerFurnishingType.value = '';
+                          controller.resellerListingType.value = '';
+                          controller.resellerPossessionStatus.value = '';
+                          controller.resellerPropertyCategory.value = '';
+                          controller.resellerPropertyType.value = '';
+                          controller.resellerVerified.value = '';
+
+                          // ✅ Clear the dropdown lists
+
+                          controller.resellerStatePropertyList.value =
+                              propertyController?.items.value
+                                  .map((e) => e.state ?? '')
+                                  .toSet()
+                                  .toList() ??
+                                  [];
+
+                          // ✅ Repopulate the property type list
+                          controller.propertyTypeList.value =
+                              propertyController?.items.value
+                                  .map((e) => e.propertyType ?? '')
+                                  .toSet()
+                                  .toList() ??
+                                  [];
+                          // ✅ Clear the selected values
+                          controller.resellerSelectedState.value = '';
+                          controller.resellerSelectedCity.value = '';
+
+                          setState(() {
+                            startDate = null;
+                            endDate = null;
+                            tempMinPrice = controller.resellerMinPrice.value;
+                            tempMaxPrice = controller.resellerMaxPrice.value;
+                          });
                           // Get.snackbar(
                           //   'Filters Applied',
                           //   'Your filters have been applied successfully',
@@ -2680,7 +2878,7 @@ Widget _dropdown({
     darkText: true,
     title: title,
     items:
-    items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+        items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
     onChanged: onChanged,
   );
 }

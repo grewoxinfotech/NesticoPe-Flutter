@@ -26,7 +26,7 @@ class _BuyCommercialState extends State<BuyCommercial> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildPropertyFilterHeadingPadding("Property Type"),
+        buildPropertyFilterHeadingPadding("Sub Property Type"),
         const SizedBox(height: 7),
         ListedBy(
           listedByList: widget.controllerForFilter.buyCommercialPropertyType,

@@ -78,7 +78,7 @@ class _BuyFiltersState extends State<BuyFilters> {
         ),
         const SizedBox(height: 7),
 
-        buildPropertyFilterHeadingPadding('Property Types'),
+        buildPropertyFilterHeadingPadding('Sub Property Types'),
         const SizedBox(height: 7),
         FilterPropertyTypesList(
           items: widget.controllerForFilter.propertyTypesList,

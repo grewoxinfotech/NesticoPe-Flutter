@@ -955,9 +955,13 @@ import 'package:housing_flutter_app/modules/seller/module/lead_screen/controller
 import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
 import 'package:housing_flutter_app/utils/shimmer/common_screen/lead_screen/lead_list_screen_shimmer.dart';
 
+import '../../../../data/network/builder/model/builder_model.dart';
 import '../../../../utils/excel/generate_excel.dart';
 import '../../../../widgets/bottom_sheet/widgets/lead_filter_chips.dart';
 import '../../../../widgets/messages/snack_bar.dart';
+import '../../../builder/controller/builder_form_controller.dart';
+import '../../../builder/view/widget/builder_lead_over_view.dart';
+import '../../../seller/module/lead_screen/controllers/lead_property_negotiable_price_controller.dart';
 
 /// ------------------------------------------------------------
 /// COMMON LEAD SCREEN (PROPERTY / PROJECT / BUILDER)
@@ -967,9 +971,11 @@ class CommonLeadScreen extends StatefulWidget {
   final String? entityId; // propertyId / projectId
   final String title;
   final String controllerTag;
+  final String? module;
   final bool showActionButton;
   final bool isResellerFromApp;
   final bool showDataMasking;
+  final bool isForProject;
 
   final Widget Function(LeadItem lead, VoidCallback onTap)? leadCardBuilder;
 
@@ -984,10 +990,12 @@ class CommonLeadScreen extends StatefulWidget {
     required this.onLoadMore,
     this.isViewAll = false,
     this.entityId,
+    this.module,
     this.showDataMasking = false,
     this.leadCardBuilder,
     this.showActionButton = true,
     this.isResellerFromApp = false,
+    this.isForProject = false,
   });
 
   @override
@@ -1003,9 +1011,17 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
   final LeadPropertyInquiryController propertyInquiryController = Get.put(
     LeadPropertyInquiryController(),
   );
+  final ProjectWizardController projectController = Get.put(
+    ProjectWizardController(isBuilderView: false),
+    tag: 'reseller_project',
+  );
 
   final LeadVisitController leadVisitController = Get.put(
     LeadVisitController(),
+  );
+  final LeadPropertyNegotiablePriceController
+  leadPropertyNegotiablePriceController = Get.put(
+    LeadPropertyNegotiablePriceController(),
   );
 
   final RxBool isOpeningLead = false.obs;
@@ -1042,14 +1058,15 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
 
   /// ✅ FIXED: Proper data loading without double-calling
   Future<void> _loadData() async {
-    // Clear previous data
+    // Clear previous data check any thing possible
     leadController.items.clear();
     leadController.filters.clear();
 
     leadController.currentPropertyFilterId.value = widget.entityId;
+    leadController.currentModule.value = widget.module;
 
     log(
-      "Controller Lead Project ${leadController.currentPropertyFilterId.value} ==================${widget.entityId}",
+      "Controller Lead Project ${leadController.currentModule.value} ==================${widget.module}",
     );
 
     /// Apply dashboard filters
@@ -1082,20 +1099,23 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
 
         title: Text(
           widget.title,
-          style: const TextStyle(fontWeight: AppFontWeights.bold),
+          style: const TextStyle(fontWeight: AppFontWeights.semiBold),
         ),
         actions:
             (widget.showActionButton)
                 ? [
                   /// Add Lead
-                  if (widget.isResellerFromApp) ...[
+                /*  if (widget.isResellerFromApp) ...[
                     IconButton(
                       icon: const Icon(Icons.add),
                       onPressed: () {
                         FocusScope.of(context).unfocus();
                         leadController.resetForm();
                         Get.to(
-                          () => AddLeadScreen(),
+                          () => AddLeadScreen(
+                            controller: leadController,
+                            isForProject: widget.isForProject,
+                          ),
                           binding: BindingsBuilder(() {
                             Get.lazyPut(
                               () => LeadController(),
@@ -1105,10 +1125,10 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
                         );
                       },
                     ),
-                  ],
+                  ],*/
 
                   /// Filter
-                  IconButton(
+                  /*IconButton(
                     icon: const Icon(
                       Icons.filter_list,
                       color: ColorRes.primary,
@@ -1123,42 +1143,86 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
                         },
                       );
                     },
+                  ),*/
+                  IconButton(
+                    icon: const Icon(
+                      Icons.filter_list,
+                      color: ColorRes.primary,
+                    ),
+                    onPressed: () {
+                      Get.to(
+                        () => LeadFilterScreen(
+                          selectedFilters:
+                              dashboardController.selectedLeadFilters,
+                          onApplyFilters: () async {
+                            await _loadData();
+                          },
+                        ),
+                      );
+                    },
                   ),
-                  if (widget.isResellerFromApp) ...[
-                    PopupMenuButton<String>(
-                      onSelected: (value) {
-                        if (value == 'export') {
-                          leadController.exportToPdf(leadController.items);
-                        } else if (value == 'import') {
-                          showImportLeadsDialog(context);
-                          // leadController.importFromPdf();
-                        }
-                      },
-                      itemBuilder:
-                          (context) => [
-                            const PopupMenuItem(
-                              value: 'export',
-                              child: Row(
-                                children: [
-                                  Icon(Icons.picture_as_pdf, color: Colors.red),
-                                  SizedBox(width: 8),
-                                  Text('Export PDF'),
-                                ],
-                              ),
-                            ),
-                            const PopupMenuItem(
-                              value: 'import',
-                              child: Row(
-                                children: [
-                                  Icon(Icons.upload_file, color: Colors.blue),
-                                  SizedBox(width: 8),
-                                  Text('Import PDF'),
-                                ],
-                              ),
-                            ),
-                          ],
+              if (widget.isResellerFromApp) ...[
+                PopupMenuButton<String>(
+                  onSelected: (value) {
+                    if (value == 'export') {
+                      if (widget.isForProject) {
+                        leadController.exportProjectToPdf(leadController.items);
+                      } else {
+                        leadController.exportToPdf(leadController.items);
+                      }
+                    } else if (value == 'import') {
+                      showImportLeadsDialog(context);
+                    } else if (value == 'add') {
+                      FocusScope.of(context).unfocus();
+                      leadController.resetForm();
+                      Get.to(
+                            () => AddLeadScreen(
+                          controller: leadController,
+                          isForProject: widget.isForProject,
+                        ),
+                        binding: BindingsBuilder(() {
+                          Get.lazyPut(
+                                () => LeadController(),
+                            tag: widget.controllerTag,
+                          );
+                        }),
+                      );
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(
+                      value: 'export',
+                      child: Row(
+                        children: [
+                          Icon(Icons.picture_as_pdf, color: Colors.red),
+                          SizedBox(width: 8),
+                          Text('Export PDF'),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 'import',
+                      child: Row(
+                        children: [
+                          Icon(Icons.upload_file, color: Colors.blue),
+                          SizedBox(width: 8),
+                          Text('Import PDF'),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 'add',
+                      child: Row(
+                        children: [
+                          Icon(Icons.person, color: Colors.blue),
+                          SizedBox(width: 8),
+                          Text('Add Lead'),
+                        ],
+                      ),
                     ),
                   ],
+                ),
+              ],
                 ]
                 : null,
       ),
@@ -1258,7 +1322,13 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
                                     showDataMasking: widget.showDataMasking,
                                     isCompact:
                                         MediaQuery.of(context).size.width < 600,
-                                    onTap: () => _openLead(lead),
+                                    onTap: () {
+                                      if (widget.isForProject) {
+                                        _openProjectLead(lead);
+                                      } else {
+                                        _openLead(lead);
+                                      }
+                                    },
                                   );
                             },
                           ),
@@ -1419,6 +1489,7 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
                   strokeWidth: 2,
                   color: Colors.white,
                 ),
+                /*bchdb $hjdjbn hdhb cbhdn */
               )
               : IconButton(
                 onPressed: _startDownload,
@@ -1494,12 +1565,92 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
         );
       }
 
-      await Get.to(() => LeadDetailScreen(lead: lead, isFromLead: true));
+      await Get.to(
+        () => LeadDetailScreen(lead: lead, isFromLead: true, isReseller: true),
+      );
     } catch (e, st) {
       log('❌ Lead open error: $e\n$st');
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: 'Unable to open lead',
+        contentType: ContentType.failure,
+      );
+    } finally {
+      isOpeningLead.value = false;
+    }
+  }
+
+  Future<void> _openProjectLead(LeadItem lead) async {
+    if (isOpeningLead.value) return;
+
+    isOpeningLead.value = true;
+    try {
+      leadVisitController.getLeadId(lead.id);
+
+      await leadController.getLeadDetailByID(lead.id ?? '');
+
+      final newLead = leadController.newUpdatedLeadModel.value;
+
+      if (newLead != null) {
+        propertyInquiryController.setLeadInquiryId(
+          int.tryParse(newLead.inquiryId ?? '0') ?? 0,
+        );
+      }
+
+      // ✅ Get or create the project controller
+      ProjectItem? project;
+
+      // Try to get from existing controller first
+      if (projectController != null) {
+        try {
+          project = projectController!.items.firstWhereOrNull(
+            (p) => p.id == lead.propertyId,
+          );
+          print("✅ Found project in existing controller");
+        } catch (e) {
+          print("⚠️ Error finding project in controller: $e");
+        }
+      }
+
+      // If not found and we have a propertyId, fetch it
+      if (project == null && lead.propertyId != null) {
+        print("🔍 Fetching project from API: ${lead.propertyId}");
+
+        // Get or create a temporary controller to fetch the project
+        final tempController =
+            Get.isRegistered<ProjectWizardController>(tag: "temp_lead")
+                ? Get.find<ProjectWizardController>(tag: "temp_lead")
+                : Get.put(
+                  ProjectWizardController(isBuilderView: true),
+                  tag: "temp_lead",
+                );
+
+        project = await tempController.getProjectById(lead.propertyId!);
+
+        if (project == null) {
+          throw Exception("Failed to fetch project details");
+        }
+
+        print("✅ Successfully fetched project: ${project.projectName}");
+      }
+
+      if (project == null) {
+        throw Exception("Project not found for this lead");
+      }
+
+      await Get.to(
+        () => BuilderLeadOverView(
+          lead: lead,
+          project: project!,
+          isFromResellerProject: true,
+        ),
+      );
+    } catch (e, st) {
+      log('❌ Builder lead open error: $e\n$st');
+
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to open lead details: ${e.toString()}',
         contentType: ContentType.failure,
       );
     } finally {

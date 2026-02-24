@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
 import 'package:housing_flutter_app/modules/subscription/views/widgets/cancel_subscription_dialog.dart';
 import 'package:housing_flutter_app/modules/support_ticket/controllers/support_ticket_controller.dart';
 
+import '../../../app/constants/color_res.dart';
 import '../../../app/utils/formater/formater.dart';
 import '../../../data/network/support_ticket/models/ticket_model/support_ticket_model.dart';
 import '../../../utils/shimmer/common_screen/my_subscription/my_subscription_list_screen.dart';
@@ -16,68 +18,76 @@ class MySubscriptionScreen extends StatelessWidget {
     final controller = Get.put(CurrentUserPlanController());
 
     return Scaffold(
-      appBar: AppBar(title: const Text("My Subscriptions")),
-      body: Obx(() {
-        /// Initial loading
-        if (controller.isLoading.value && controller.items.isEmpty) {
-          return MySubscriptionListScreenShimmer();
-        }
+      appBar: AppBar(
+        title: Text(
+          "My Subscriptions",
+          style: TextStyle(fontWeight: AppFontWeights.semiBold),
+        ),
+      ),
+      body: SafeArea(
 
-        /// Empty state
-        if (controller.items.isEmpty) {
-          return const Center(child: Text("No subscriptions found"));
-        }
+        child: Obx(() {
+          /// Initial loading
+          if (controller.isLoading.value && controller.items.isEmpty) {
+            return MySubscriptionListScreenShimmer();
+          }
 
-        return NotificationListener<ScrollEndNotification>(
-          onNotification: (scrollEnd) {
-            final metrics = scrollEnd.metrics;
-            if (metrics.atEdge && metrics.pixels != 0) {
-              controller.loadMore();
-            }
-            return false;
-          },
+          /// Empty state
+          if (controller.items.isEmpty) {
+            return const Center(child: Text("No subscriptions found"));
+          }
 
-          child: ListView.builder(
-            padding: const EdgeInsets.all(12),
-            itemCount: controller.items.length,
-            itemBuilder: (context, index) {
-              /// Pagination loader at bottom
-              if (index == controller.items.length) {
-                return const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  child: Center(child: CircularProgressIndicator()),
-                );
+          return NotificationListener<ScrollEndNotification>(
+            onNotification: (scrollEnd) {
+              final metrics = scrollEnd.metrics;
+              if (metrics.atEdge && metrics.pixels != 0) {
+                controller.loadMore();
               }
-
-              final item = controller.items[index];
-              final plan = item.plan;
-
-              final String startDate = Formatter.formatDate(
-                item.startDate.toString(),
-              );
-
-              final String endDate = Formatter.formatDate(
-                item.endDate.toString(),
-              );
-
-              final String price = Formatter.formatPrice(
-                double.tryParse(plan?.amount ?? "0") ?? 0,
-              );
-
-              final bool isActive = DateTime.now().isBefore(item.endDate!);
-
-              return _SubscriptionCard(
-                planName: plan?.name ?? "Unknown Plan",
-                startDate: startDate,
-                endDate: endDate,
-                price: price,
-                status: item.status ?? '',
-                planId: item.id,
-              );
+              return false;
             },
-          ),
-        );
-      }),
+
+            child: ListView.builder(
+              padding: const EdgeInsets.all(12),
+              itemCount: controller.items.length,
+              itemBuilder: (context, index) {
+                /// Pagination loader at bottom
+                if (index == controller.items.length) {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+
+                final item = controller.items[index];
+                final plan = item.plan;
+
+                final String startDate = Formatter.formatDate(
+                  item.startDate.toString(),
+                );
+
+                final String endDate = Formatter.formatDate(
+                  item.endDate.toString(),
+                );
+
+                final String price = Formatter.formatPrice(
+                  double.tryParse(plan?.amount ?? "0") ?? 0,
+                );
+
+                final bool isActive = DateTime.now().isBefore(item.endDate!);
+
+                return _SubscriptionCard(
+                  planName: plan?.name ?? "Unknown Plan",
+                  startDate: startDate,
+                  endDate: endDate,
+                  price: price,
+                  status: item.status ?? '',
+                  planId: item.id,
+                );
+              },
+            ),
+          );
+        }),
+      ),
     );
   }
 }
@@ -114,14 +124,7 @@ class _SubscriptionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: Colors.grey.shade300, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,9 +135,10 @@ class _SubscriptionCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   planName,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: ColorRes.textColor,
+                    fontWeight: AppFontWeights.semiBold,
                   ),
                 ),
               ),
@@ -151,7 +155,7 @@ class _SubscriptionCard extends StatelessWidget {
                   status.capitalize.toString(),
                   style: TextStyle(
                     color: statusColor,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w700,
                     fontSize: 12,
                   ),
                 ),
@@ -181,8 +185,6 @@ class _SubscriptionCard extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 12),
-
           /// Details
           _row("Start Date", startDate),
           _row("End Date", endDate),
@@ -199,7 +201,11 @@ class _SubscriptionCard extends StatelessWidget {
         children: [
           Text(
             "$label:",
-            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
+              color: ColorRes.textColor,
+            ),
           ),
           const SizedBox(width: 8),
           Expanded(child: Text(value, style: const TextStyle(fontSize: 13))),

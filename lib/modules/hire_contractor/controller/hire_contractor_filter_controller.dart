@@ -26,6 +26,600 @@ class HireContractorFilterProfileController
       Rxn<HireContractorUserProfile>();
   final Rxn<ContractorCityInsightsResponse> contractorCity =
       Rxn<ContractorCityInsightsResponse>();
+  RxList<String> selectedServiceNames = <String>[].obs;
+  RxString selectedServiceNameDropdown = ''.obs;
+
+  void onServiceNameSelected(String val, {String? label}) {
+    selectedServiceNameDropdown.value = val;
+    final displayName = label ?? val;
+    if (!selectedServiceNames.contains(displayName)) {
+      selectedServiceNames.add(displayName);
+    }
+  }
+  List<Map<String, dynamic>> getServiceNamesForCategory(String categoryId) {
+    log(
+      "getServiceNamesForCategory ${categoryId}",
+    );
+    return kServiceCategoryData[categoryId.toLowerCase()] ?? [];
+  }
+  Map<String, List<Map<String, dynamic>>> kServiceCategoryData = {
+    // ── Home Services ──────────────────────────────────────────
+    'home_services': [
+      {
+        'label': 'Maintenance & AMC Services',
+        'value': 'maintenance_amc_services',
+        'items': [
+          'AC Repair',
+          'Geyser Repair',
+          'Washing Machine Repair',
+          'Water Purifier Repair',
+          'Refrigerator Repair',
+          'Microwave Repair',
+        ],
+      },
+      {
+        'label': 'Home Painting',
+        'value': 'home_painting',
+        'items': ['Interior Painting', 'Exterior Painting', 'Waterproofing'],
+      },
+      {
+        'label': 'Home Cleaning',
+        'value': 'home_cleaning',
+        'items': [
+          'Full House Cleaning',
+          'Kitchen Cleaning',
+          'Bathroom Cleaning',
+          'Sintex/Water Tank Cleaning',
+        ],
+      },
+      {
+        'label': 'Electrician',
+        'value': 'electrician',
+        'items': [
+          'Fan',
+          'Switch & Socket',
+          'TV',
+          'Light',
+          'Inverter & Stabilizer',
+          'AC Repair',
+          'Geyser Repair',
+          'Washing Machine Repair',
+          'Water Purifier Repair',
+          'Refrigerator Repair',
+          'Microwave Repair',
+          'Wiring',
+          'MCB & Fuse',
+          'Door Bell',
+        ],
+      },
+      {
+        'label': 'Plumber',
+        'value': 'plumber',
+        'items': [
+          'Toilet Repair',
+          'Tap & Mixer Repair',
+          'Basin & Sink Repair',
+          'Drainage Pipe',
+          'Water Pipe Connection',
+          'Bathroom & Shower',
+          'Water Tank',
+          'Grouting',
+        ],
+      },
+      {
+        'label': 'Carpenter',
+        'value': 'carpenter',
+        'items': [
+          'Door',
+          'Drill & Hang',
+          'Cupboard & Drawer',
+          'Window & Curtain',
+          'Bed',
+          'Furniture Repair',
+          'Furniture Assembly',
+          'TV',
+          'Balcony',
+        ],
+      },
+      {
+        'label': 'Buy / Rent Furniture',
+        'value': 'buy_rent_furniture',
+        'items': [
+          'Sofa Set',
+          'Recliner & Rocker',
+          'Sofa Bed & Day Bed',
+          'Center Table',
+          'TV Unit',
+          'Shoe Rack',
+          'Balcony Set',
+          'Chairs & Stools',
+          'Office Chair',
+          'Bed (King/Queen/Single)',
+          'Mattress',
+          'Wardrobe & Almirah',
+          'Bedside Table',
+          'Chest of Drawers',
+          'Dresser & Mirror',
+          'Bookshelf & Display Unit',
+          'Storage Cabinet',
+          'Dining Table Set',
+          'Coffee Table',
+          'Study Table',
+          'Study Table with Chair',
+          'Computer Table',
+        ],
+      },
+      {
+        'label': 'Buy / Rent Appliances',
+        'value': 'buy_rent_appliances',
+        'items': [
+          'Split / Window AC',
+          'Air Cooler',
+          'Ceiling & Table Fan',
+          'Air Purifier',
+          'Refrigerator (Single/Double Door)',
+          'Washing Machine (Front/Top Load)',
+          'Microwave & Oven',
+          'Dishwasher',
+          'Water Purifier (RO/UV)',
+          'Kitchen Chimney',
+          'Mixer & Grinder',
+          'Smart TV / LED TV',
+          'Home Theater System',
+          'Gaming Console (Playstation/Xbox)',
+        ],
+      },
+    ],
+
+    // ── Home Construction ──────────────────────────────────────
+    'home_construction': [
+      {
+        'label': 'Rooftop Solar Panel Solutions',
+        'value': 'rooftop_solar_panel_solutions',
+        'items': [
+          'Solar Panel Installation (1kW - 10kW+)',
+          'On-Grid Solar System',
+          'Off-Grid Solar System',
+          'Hybrid Solar System',
+          'Solar Water Heater',
+          'Solar Inverter & Battery',
+          'Solar Panel Cleaning & Maintenance',
+        ],
+      },
+      {
+        'label': 'Home Security Solutions',
+        'value': 'home_security_solutions',
+        'items': [
+          'CCTV Camera Installation',
+          'Video Door Phone',
+          'Biometric & Digital Door Lock',
+          'Intruder Alarm System',
+          'Fire & Smoke Alarm System',
+          'Access Control System',
+          'Security Fencing',
+        ],
+      },
+      {
+        'label': 'Smart Home Solutions',
+        'value': 'smart_home_solutions',
+        'items': [
+          'Home Automation System',
+          'Smart Lighting Control',
+          'Smart Curtains & Blinds',
+          'Voice Control (Alexa/Google Home)',
+          'Smart Switches & Plugs',
+          'Smart Sensors (Motion, Door, Gas)',
+        ],
+      },
+      {
+        'label': 'Structure Planning and Design',
+        'value': 'structure_planning_and_design',
+        'items': [
+          '2D & 3D Floor Plan, Section, Elevation Architectural Drawing',
+          'Structural Engineering Drawing',
+          'Vastu Consultation',
+          'Government Approval Drawings',
+          'Landscaping Design',
+        ],
+      },
+      {
+        'label': 'Renovation and Remodeling',
+        'value': 'renovation_and_remodeling',
+        'items': [
+          'Kitchen Renovation',
+          'Bathroom Renovation',
+          'Living Room Renovation',
+          'Full House Renovation',
+          'Tiling Work Fixing',
+          'Build Extra Rooms',
+          'Balcony Renovation',
+          'Fabrication Work',
+        ],
+      },
+      {
+        'label': 'End to End New Home Construction Contractors (Turnkey Home Construction)',
+        'value': 'end_to_end_new_home_construction_contractors',
+        'items': [
+          'Budget Home Construction',
+          'Luxury / Premium Home Construction',
+          'Villa Construction',
+          'Duplex/Triplex Construction',
+          'Farmhouse Construction',
+          'Green Home Construction (Eco-friendly Homes)',
+          'Basement Home Construction',
+        ],
+      },
+      {
+        'label': 'Commercial Construction Contractors',
+        'value': 'commercial_construction_contractors',
+        'items': [
+          'Office Construction',
+          'Shop Construction',
+          'Warehouse Construction',
+          'Apartment Building Construction',
+          'Commercial Complex Construction',
+        ],
+      },
+      {
+        'label': 'Exterior Cladding & Facade Contractors',
+        'value': 'exterior_cladding_facade_contractors',
+        'items': [
+          'ACP Cladding Installation Contractors',
+          'Glass Facade Contractors',
+          'Industrial PUF Panel Installation Contractors',
+          'Industrial Shed Cladding Contractors',
+          'Premium Exterior Panel (WPC/HPL) Installation Contractors',
+          'Stone & Cement board Cladding Contractors',
+        ],
+      },
+      {
+        'label': 'Specialized Service',
+        'value': 'specialized_service',
+        'items': [
+          'Waterproofing Solution',
+          'Roofing (RCC Roof, Metal Roof) and Slab Casting',
+          'Bore and Pump Solution',
+          'Rain Water Harvesting Setup',
+          'Soil Testing, Structural Audits and Surveying',
+          'Flooring & Tiling',
+          'Glass & Aluminium Work',
+          'Boundary Wall & Compound Wall',
+          'Fabrication Work',
+        ],
+      },
+      {
+        'label': 'Construction Site Machine Rent (YantraRent)',
+        'value': 'construction_site_machine_rent_yantrarent',
+        'items': [
+          'JCB',
+          'Poclain',
+          'Dumper/Tipper',
+          'AJAX',
+          'Bobcat',
+          'Roller/Baby roller',
+          'Breaker Machine',
+          'TM (Transit Mixer)',
+          'Tractor Trolley',
+        ],
+      },
+    ],
+
+    // ── Interior Design ────────────────────────────────────────
+    'interior_design': [
+      {
+        'label': 'Residential Room Design',
+        'value': 'residential_room_design',
+        'items': [
+          'Living Room Design',
+          'Master Bedroom Design',
+          'Kids Room Design',
+          'Dining Room Design',
+          'Bathroom Design',
+          'Balcony Design',
+          'Pooja Mandir Design',
+          'Home Office Design',
+          'Foyer Design',
+          'Room Design',
+        ],
+      },
+      {
+        'label': 'Kitchen Design',
+        'value': 'kitchen_design',
+        'items': [
+          'Modular Kitchen Design',
+          'Kitchen Design',
+          'Kitchen Tiles Design',
+          'Kitchen False Ceiling Design',
+          'Kitchen Wall Design',
+          'Countertops Design',
+          'Crockery Unit Design',
+        ],
+      },
+      {
+        'label': 'Commercial & Retail',
+        'value': 'commercial_retail',
+        'items': [
+          'Office Workspaces Interior',
+          'Retail Store Interior',
+          'Restaurant Interior',
+        ],
+      },
+      {
+        'label': 'Structural & Elements',
+        'value': 'structural_elements',
+        'items': [
+          'Staircase Design',
+          'Railing Design',
+          'Partition Design',
+          'False Ceiling Design',
+          'Flooring Design',
+          'Wall Panel Design',
+          'Wall Designs Ideas',
+          'Wall Paint Design',
+          'Wall Color Combination Design',
+          'Wallpaper Design',
+          'Tiles Design',
+          'Window Design',
+          'Door Design',
+        ],
+      },
+      {
+        'label': 'Furniture Design',
+        'value': 'furniture_design',
+        'items': [
+          'Wardrobe Design',
+          'TV Unit Design',
+          'Bed Headboard Design',
+          'Shoerack Design',
+          'Table Design',
+        ],
+      },
+    ],
+
+    // ── Legal Services ─────────────────────────────────────────
+    'legal_services': [
+      {
+        'label': 'Property Documentation & Drafting',
+        'value': 'property_documentation_drafting',
+        'items': [
+          'Property Sale Deed Drafting',
+          'Sale Agreement Review & Analysis',
+          'Memorandum of Understanding (MOU) Drafting',
+          'Power of Attorney (POA) Registration',
+          'Will Registration & Probate Services',
+          'Gift Deed Drafting & Registration',
+          'Letter of Administration Services',
+          'Legal Affidavits & Declarations',
+        ],
+      },
+      {
+        'label': 'Registration & Agreements',
+        'value': 'registration_agreements',
+        'items': [
+          'Property Registration Assistance',
+          'Commercial Lease Agreement Registration',
+          'Residential Rent Agreement Services',
+          'Leave & License Agreement Drafting',
+        ],
+      },
+      {
+        'label': 'Verification & Due Diligence',
+        'value': 'verification_due_diligence',
+        'items': [
+          'Property Title Search & Verification',
+          'Property Litigation & Case Search',
+          'Complete Property Due Diligence & Verification',
+          'Legal Title Opinion Report',
+          'Public Notice & No-Objection Certificate (NOC)',
+          'Legal Court Record Verification',
+          'Encumbrance Certificate Assistance',
+          'Property Valuation Report',
+        ],
+      },
+      {
+        'label': 'Legal Consultation & Advisory',
+        'value': 'legal_consultation_advisory',
+        'items': [
+          'Property Document Review & Consultation',
+          'Expert Real Estate Legal Consultation (Call)',
+          'RERA Complaint Filing & Advisory',
+          'Legal Notice & Dispute Resolution',
+          'Tenant Verification Services',
+          'Home Loan Legal Opinion',
+          'Khata Transfer / Property Mutation',
+        ],
+      },
+    ],
+
+    // ── Material Supply ────────────────────────────────────────
+    'material_supply': [
+      {
+        'label': 'Civil / Structural Material',
+        'value': 'civil_structural_material',
+        'items': [
+          'Cement (UltraTech / ACC / Ambuja)',
+          'TMT Steel Bars (8mm, 10mm, 12mm, 16mm, 20mm)',
+          'Binding Wire',
+          'Sand (River Sand / M-Sand)',
+          'Crush Sand',
+          'Aggregates (20mm, 10mm, 40mm)',
+          'Bricks (Red / Fly Ash)',
+          'Concrete Blocks (AAC Block)',
+          'RMC (Ready Mix Concrete)',
+          'PCC Material',
+          'Waterproofing Compound',
+          'Shutterining',
+        ],
+      },
+      {
+        'label': 'Masonry & Plaster Material',
+        'value': 'masonry_plaster_material',
+        'items': [
+          'Plaster Sand',
+          'Wall Putty',
+          'POP (Plaster of Paris)',
+          'Gypsum',
+          'Tile Adhesive',
+          'Construction Chemical',
+          'Expansion Joint Material',
+        ],
+      },
+      {
+        'label': 'Flooring & Tiles',
+        'value': 'flooring_tiles',
+        'items': [
+          'Floor Tiles',
+          'Wall Tiles',
+          'Bathroom Tiles',
+          'Kitchen Tiles',
+          'Marble',
+          'Granite',
+          'Kota Stone',
+          'Skirting Tiles',
+          'Tile Spacer',
+        ],
+      },
+      {
+        'label': 'Plumbing Material',
+        'value': 'plumbing_material',
+        'items': [
+          'PVC Pipe',
+          'CPVC Pipe',
+          'UPVC Pipe',
+          'SWR Pipe',
+          'Water Tank (Sintex type)',
+          'Bathroom Fittings (Tap, Shower, Diverter)',
+          'Basin',
+          'Western/Indian Toilet Seat',
+          'Floor Trap',
+          'Ball Valve',
+          'Angle Valve',
+          'Pipe Fittings (Elbow, Tee, Socket)',
+          'Septic Tank Material',
+        ],
+      },
+      {
+        'label': 'Electrical Material',
+        'value': 'electrical_material',
+        'items': [
+          'Electrical Wire',
+          'Switch Board',
+          'Switch & Socket',
+          'MCB',
+          'Distribution Board',
+          'Concealed Box',
+          'PVC Conduit Pipe',
+          'Fan Box',
+          'LED Lights',
+          'Ceiling Fan',
+          'Exhaust Fan',
+          'Door Bell',
+          'Earthing Material',
+          'AC',
+          'Fan',
+        ],
+      },
+      {
+        'label': 'Doors & Windows',
+        'value': 'doors_windows',
+        'items': [
+          'Main Door (Teak Wood / Flush Door)',
+          'Internal Doors',
+          'Door Frames',
+          'Window Frames (Aluminium / UPVC)',
+          'Glass',
+          'Door Handle',
+          'Hinges',
+          'Lock Set',
+          'Door Closer',
+        ],
+      },
+      {
+        'label': 'Paint & Finishing',
+        'value': 'paint_finishing',
+        'items': [
+          'Primer (Wall / Metal / Wood)',
+          'Putty',
+          'Interior Paint',
+          'Exterior Paint',
+          'Waterproof Paint',
+          'Texture Paint',
+          'Enamel Paint',
+          'Thinner',
+          'Roller & Brush',
+        ],
+      },
+      {
+        'label': 'Waterproofing & Terrace',
+        'value': 'waterproofing_terrace',
+        'items': [
+          'Dr Fixit Chemical',
+          'Membrane Sheet',
+          'Bitumen',
+          'Terrace Tile',
+          'Heat Proof Coating',
+        ],
+      },
+      {
+        'label': 'Carpentry & Interior',
+        'value': 'carpentry_interior',
+        'items': [
+          'Plywood',
+          'Block Board',
+          'Laminate',
+          'Veneer',
+          'Modular Kitchen Material',
+          'Wardrobe Material',
+          'False Ceiling Material',
+          'Aluminium Channel',
+        ],
+      },
+    ],
+
+    // ── Packers & Movers ───────────────────────────────────────
+    'packers_&_movers': [
+      {
+        "label": "Within City",
+        "value": "within_city",
+        "items":[]
+      },
+      {
+        "label": "Between city",
+        "value": "between_city",
+        "items":[]
+      },
+      {
+        "label": "Moving Only",
+        "value": "moving_only"
+        ,
+        "items":[]
+      },
+      {
+        "label": "Vehicle Shifting (Bike/Car)",
+        "value": "vehicle_shifting_bike_car"
+        ,
+        "items":[]
+      },
+      {
+        "label": "City Tempo Service",
+        "value": "city_tempo_service"
+        ,
+        "items":[]
+      },
+      {
+        "label": "Rent Vehicle(Truck)",
+        "value": "rent_vehicle_truck"
+        ,
+        "items":[]
+      }
+    ],
+  };
+  void removeServiceName(String label) {
+    selectedServiceNames.remove(label);
+    if (selectedServiceNameDropdown.value == label) {
+      selectedServiceNameDropdown.value = '';
+    }
+  }
 
   RxString selectedCategoryId = ''.obs;
 

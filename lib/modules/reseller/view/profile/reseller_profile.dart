@@ -16,10 +16,12 @@ import '../../../../widgets/input/city_selection_widget.dart';
 import '../../../../widgets/messages/snack_bar.dart';
 import '../../../auth/views/delete_account.dart';
 import '../../../home/views/home_screen/home_screen.dart';
+import '../../../seller/module/lead_screen/controllers/lead_controller.dart';
 import '../../controller/fack_lead_controller/fack_lead_controller.dart';
 import '../../controller/profile/profile_controller.dart';
 import 'package:get/get.dart';
 
+import '../lead/lead_screen.dart';
 import '../subscription_plan/reseller_subscription_plan.dart';
 
 class ResellerProfileScreen extends StatelessWidget {
@@ -28,6 +30,8 @@ class ResellerProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final profileController = Get.put(ProfileController());
+    Get.lazyPut(() => LeadController(), tag: "reseller_property");
+    Get.lazyPut(() => LeadController(), tag: "reseller_project");
 
     return Scaffold(
       backgroundColor: ColorRes.white,
@@ -112,13 +116,66 @@ class ResellerProfileScreen extends StatelessWidget {
                             onTap: () {
                               Get.to(() => SuccessStoryScreen());
                             },
-                          ),  const SizedBox(height: 16),
-                          _buildActionButton(
+                          ),
+                          const SizedBox(height: 16),
+                        /*  _buildActionButton(
                             icon: Icons.card_giftcard_outlined,
                             label: "Partner Plan",
 
                             onTap: () {
-                              Get.to(() =>  ResellerSubscriptionPlanScreen());
+                              Get.to(() => ResellerSubscriptionPlanScreen());
+                            },
+                          ),*/
+                          _buildActionButton(
+                            icon: Icons.card_giftcard_outlined,
+                            label: "Project Lead",
+
+                            onTap: () {
+                              Get.to(
+                                () => CommonLeadScreen(
+                                  title: 'Project Buyer Leads',
+                                  controllerTag: 'reseller_project',
+                                  // ✅ unique
+                                  showDataMasking: true,
+                                  module: 'project',
+                                  isForProject: true,
+                                  isResellerFromApp: true,
+                                  isViewAll: false,
+                                  onLoadMore: (controller, id) async {
+                                    if (id != null) {
+                                      controller.loadMorePropertyLeads(id);
+                                    } else {
+                                      controller.loadMore();
+                                    }
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          _buildActionButton(
+                            icon: Icons.card_giftcard_outlined,
+                            label: "Property Lead",
+
+                            onTap: () {
+                              Get.to(
+                                () => CommonLeadScreen(
+                                  title: 'Property Buyer Leads',
+                                  controllerTag: 'reseller_property',
+                                  // ✅ unique
+                                  showDataMasking: true,
+                                  module: 'property',
+                                  isResellerFromApp: true,
+                                  isViewAll: false,
+                                  onLoadMore: (controller, id) async {
+                                    if (id != null) {
+                                      controller.loadMorePropertyLeads(id);
+                                    } else {
+                                      controller.loadMore();
+                                    }
+                                  },
+                                ),
+                              );
                             },
                           ),
                           /*                     const SizedBox(height: 16),

@@ -10,6 +10,7 @@ import '../common_component/listed_by.dart';
 
 class RentFilter extends StatelessWidget {
   const RentFilter({super.key, required this.controllerForFilter});
+
   final PropertyFilterControllerForFilter controllerForFilter;
 
   @override
@@ -46,7 +47,7 @@ class RentFilter extends StatelessWidget {
         //   ),
         // ),
         Obx(
-              () => BudgetFilterChange(
+          () => BudgetFilterChange(
             minSelected: controllerForFilter.rentMin.value,
             maxSelected: controllerForFilter.rentMax.value,
             budgetList: controllerForFilter.rentBudgetValues.value,
@@ -66,6 +67,17 @@ class RentFilter extends StatelessWidget {
             minLabel: "Min Budget",
             maxLabel: "Max Budget",
           ),
+        ),
+        const SizedBox(height: 7),
+        buildPropertyFilterHeadingPadding('Sub Property Types'),
+        const SizedBox(height: 7),
+        FilterPropertyTypesList(
+          items: controllerForFilter.propertyTypesList,
+          controllerForFilter: controllerForFilter,
+          selectedItems: controllerForFilter.subpropertyType,
+          onSelectionChanged: (index) {
+            debugPrint('Sub property Type $index');
+          },
         ),
         const SizedBox(height: 7),
         // buildFilterHeadingPadding('Listed By'),

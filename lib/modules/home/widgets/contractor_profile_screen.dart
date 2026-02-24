@@ -1,9 +1,14 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/constants/color_res.dart';
 import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
 import 'package:housing_flutter_app/modules/contractor/view/widget/contractor_inquiry_screen.dart';
+import 'package:housing_flutter_app/modules/property_rating/view/widget/read_more_or_less.dart';
+import 'package:housing_flutter_app/utils/logger/app_logger.dart';
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../data/network/contractor/model/contractor_profile_model/contractor_profile_model.dart';
 import '../../../data/network/contractor/model/contractot_service_model/contractor_service_model.dart';
@@ -11,7 +16,7 @@ import '../../../widgets/messages/snack_bar.dart';
 import '../controllers/contractor_profile_service_controller/contractor_profile_service_controller.dart';
 import 'contractor_add_inuiry_screen.dart';
 
-class ContractorProfileDetailsScreen extends StatelessWidget {
+class ContractorProfileDetailsScreen extends StatefulWidget {
   final Contractor contractor;
   final bool isPremium;
 
@@ -21,8 +26,17 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
     this.isPremium = false,
   });
 
+  @override
+  State<ContractorProfileDetailsScreen> createState() =>
+      _ContractorProfileDetailsScreenState();
+}
+
+class _ContractorProfileDetailsScreenState
+    extends State<ContractorProfileDetailsScreen> {
   // Make this an instance variable accessible to the controller
   final RxBool isListSelectable = false.obs;
+
+  final currentUserId = ''.obs;
 
   Future<void> contactContractor() async {
     final contractorServiceController = Get.find<ContractorServiceController>();
@@ -32,9 +46,10 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
     final bool result = await Get.to(
       () => ContractorAddInquiryScreen(
         services: contractorServiceController.selectedItems.value,
-        contractor: contractor,
+        contractor: widget.contractor,
       ),
     );
+
     // After navigation reset back
     isListSelectable.value = false;
     if (result) {
@@ -42,17 +57,30 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
     }
   }
 
+  Future<void> loadData() async {
+    final user = await SecureStorage.getUserData();
+    AppLogger.structured("Check Current User Data", user?.user?.toJson());
+    currentUserId.value = user?.user?.id ?? '';
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadData();
+  }
+
   @override
   Widget build(BuildContext context) {
     final contractorServiceController = Get.put(
-      ContractorServiceController(contractorId: contractor.userId),
+      ContractorServiceController(contractorId: widget.contractor.userId),
     );
 
     final displayName = getDisplayName(
       contractorFirstName:
           contractorServiceController.userData.value?.firstName,
       contractorLastName: contractorServiceController.userData.value?.lastName,
-      userName: contractor.username,
+      userName: widget.contractor.username,
     );
 
     return Scaffold(
@@ -116,7 +144,7 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
                               // ),
                               buildProfileAvatar(
                                 displayName: displayName,
-                                profilePic: contractor.imageUrl,
+                                profilePic: widget.contractor.imageUrl,
                               ),
                               const SizedBox(width: 16),
 
@@ -138,7 +166,8 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
 
                                     // Rating (only if valid)
                                     if (double.tryParse(
-                                          contractor.overallRating.toString(),
+                                          widget.contractor.overallRating
+                                              .toString(),
                                         ) !=
                                         null)
                                       Padding(
@@ -152,7 +181,7 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
                                             ),
                                             const SizedBox(width: 4),
                                             Text(
-                                              "${contractor.overallRating} (${contractor.totalReviews})",
+                                              "${widget.contractor.overallRating} (${widget.contractor.totalReviews})",
                                               style: TextStyle(
                                                 fontSize:
                                                     AppFontSizes.bodySmall,
@@ -172,8 +201,11 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
                         ),
                         Column(
                           children: [
-                            if (contractor.contractorType != null &&
-                                contractor.contractorType!.isNotEmpty) ...[
+                            if (widget.contractor.contractorType != null &&
+                                widget
+                                    .contractor
+                                    .contractorType!
+                                    .isNotEmpty) ...[
                               Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 8,
@@ -187,7 +219,7 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
                                   ),
                                 ),
                                 child: Text(
-                                  contractor.contractorType!,
+                                  widget.contractor.contractorType!,
                                   style: TextStyle(
                                     fontSize: AppFontSizes.caption,
                                     fontWeight: AppFontWeights.medium,
@@ -197,7 +229,10 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
                               ),
                             ],
 
-                            if (contractor.subscription.hasPremiumPlan) ...[
+                            if (widget
+                                .contractor
+                                .subscription
+                                .hasPremiumPlan) ...[
                               SizedBox(height: 6),
 
                               Container(
@@ -313,55 +348,158 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
                   //     ),
                   //   ),
                   // ),
-                  Obx(() {
+                  /*   Obx(() {
                     final bool isSelectable = isListSelectable.value;
                     final bool isGuest = UserHelper.isGuest;
 
-                    return SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (isGuest) {
-                            Get.to(() => LoginScreen());
-                            return;
-                          }
+                    return Column(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (isGuest) {
+                                Get.to(() => LoginScreen());
+                                return;
+                              }
 
-                          if (isSelectable) {
-                            if (contractorServiceController
-                                .selectedItems
-                                .isEmpty) {
-                              NesticoPeSnackBar.showAwesomeSnackbar(
-                                title: 'No Service Selected',
-                                message:
-                                    "Please select at least one service to continue",
-                                contentType: ContentType.failure,
+                              AppLogger(
+                                "Check any Contractor id ",
+                                widget.contractor.toJson(),
                               );
-                              return;
-                            }
-                            contactContractor();
-                          } else {
-                            isListSelectable.value = true;
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: ColorRes.primary,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                              AppLogger(
+                                "Check any Current UserId id ",
+                                currentUserId.value,
+                              );
+                             if(currentUserId.value!=widget.contractor.userId)
+                               {
+                                 if (isSelectable) {
+                                   if (contractorServiceController
+                                       .selectedItems
+                                       .isEmpty) {
+                                     NesticoPeSnackBar.showAwesomeSnackbar(
+                                       title: 'No Service Selected',
+                                       message:
+                                       "Please select at least one service to continue",
+                                       contentType: ContentType.failure,
+                                     );
+                                     return;
+                                   }
+                                   contactContractor();
+                                 } else {
+                                   isListSelectable.value = true;
+                                 }
+                               }else{
+
+                             }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:currentUserId.value!=widget.contractor.userId? ColorRes.primary:ColorRes.leadGreyColor.shade300,
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: Text(
+                              isGuest
+                                  ? "Login to Contact"
+                                  : isSelectable
+                                  ? "Contact Now"
+                                  : "Select Services",
+                              style: TextStyle(
+                                fontSize: AppFontSizes.bodySmall,
+                                fontWeight: AppFontWeights.semiBold,
+                              ),
+                            ),
                           ),
                         ),
-                        child: Text(
-                          isGuest
-                              ? "Login to Contact"
-                              : isSelectable
-                              ? "Contact Now"
-                              : "Select Services",
-                          style: TextStyle(
-                            fontSize: AppFontSizes.bodySmall,
-                            fontWeight: AppFontWeights.semiBold,
+                      ],
+                    );
+                  }),
+*/
+                  Obx(() {
+                    final bool isSelectable = isListSelectable.value;
+                    final bool isGuest = UserHelper.isGuest;
+                    final bool isOwnService =
+                        currentUserId.value == widget.contractor.userId;
+
+                    return Column(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed:
+                                isOwnService
+                                    ? null
+                                    : () {
+                                      if (isGuest) {
+                                        Get.to(() => LoginScreen());
+                                        return;
+                                      }
+
+                                      if (isSelectable) {
+                                        if (contractorServiceController
+                                            .selectedItems
+                                            .isEmpty) {
+                                          NesticoPeSnackBar.showAwesomeSnackbar(
+                                            title: 'No Service Selected',
+                                            message:
+                                                "Please select at least one service to continue",
+                                            contentType: ContentType.failure,
+                                          );
+                                          return;
+                                        }
+                                        contactContractor();
+                                      } else {
+                                        isListSelectable.value = true;
+                                      }
+                                    },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  isOwnService
+                                      ? ColorRes.leadGreyColor.shade300
+                                      : ColorRes.primary,
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: Text(
+                              isGuest
+                                  ? "Login to Contact"
+                                  : isSelectable
+                                  ? "Contact Now"
+                                  : "Select Services",
+                              style: TextStyle(
+                                fontSize: AppFontSizes.bodySmall,
+                                fontWeight: AppFontWeights.semiBold,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+
+                        /// 🔴 Show explanation if contractor viewing own service
+                        if (isOwnService) ...[
+                          const SizedBox(height: 8),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.red.shade50,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.red.shade200),
+                            ),
+                            child: Text(
+                              "Contractors cannot submit inquiries for their own services.",
+                              style: TextStyle(
+                                color: Colors.red.shade700,
+                                fontSize: AppFontSizes.caption,
+                                fontWeight: AppFontWeights.medium,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
                     );
                   }),
 
@@ -373,11 +511,11 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
                     children: [
                       _statCard(
                         "Total Services",
-                        contractor.totalServices.toString(),
+                        widget.contractor.totalServices.toString(),
                       ),
                       _statCard(
                         "Active Services",
-                        contractor.activeServices.toString(),
+                        widget.contractor.activeServices.toString(),
                       ),
                     ],
                   ),
@@ -389,12 +527,12 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
                     children: [
                       _statCard(
                         "Projects",
-                        contractor.projectStats.totalProjects.toString(),
+                        widget.contractor.projectStats.totalProjects.toString(),
                       ),
 
                       _statCard(
                         "Experience",
-                        "${contractor.totalExperience} years",
+                        "${widget.contractor.totalExperience} years",
                         highlight: true,
                       ),
                     ],
@@ -408,7 +546,7 @@ class ContractorProfileDetailsScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    "Services Offered (${contractor.totalServices})",
+                    "Services Offered (${widget.contractor.totalServices})",
                     style: TextStyle(
                       fontSize: AppFontSizes.body,
                       fontWeight: AppFontWeights.semiBold,
@@ -669,6 +807,18 @@ class _ServiceCardState extends State<ServiceCard> {
         "Railing": meta.railingType,
         "Chokhat": meta.chokhatType,
       }),
+      cleanMetaMap({
+        "Solar Panel": meta.solarPanelBrands,
+        "Solar Inverter": meta.solarInverterBrands,
+      }),
+      cleanMetaMap({
+        "Security": meta.securityBrands,
+        "Smart Home": meta.smartHomeBrands,
+      }),
+      cleanMetaMap({
+        "Machine": meta.machineBrands,
+        "Cladding": meta.claddingBrands,
+      }),
     ];
     final metaSections = [
       if (metaMaps[0].isNotEmpty)
@@ -694,6 +844,24 @@ class _ServiceCardState extends State<ServiceCard> {
           icon: Icons.apartment,
           title: "Structure & Safety",
           data: metaMaps[3],
+        ),
+      if (metaMaps[4].isNotEmpty)
+        _metaSection(
+          icon: Icons.solar_power,
+          title: "Solar",
+          data: metaMaps[4],
+        ),
+      if (metaMaps[5].isNotEmpty)
+        _metaSection(
+          icon: Icons.security,
+          title: "Security & Smart Home",
+          data: metaMaps[5],
+        ),
+      if (metaMaps[6].isNotEmpty)
+        _metaSection(
+          icon: Icons.construction,
+          title: "Machinery & Cladding",
+          data: metaMaps[6],
         ),
     ];
 
@@ -756,9 +924,13 @@ class _ServiceCardState extends State<ServiceCard> {
                         children: [
                           Expanded(
                             child: Text(
-                              widget.service.serviceName,
+                              widget.service.serviceName.capitalize?.replaceAll(
+                                    "_",
+                                    " ",
+                                  ) ??
+                                  '',
                               style: TextStyle(
-                                fontSize: AppFontSizes.body,
+                                fontSize: AppFontSizes.medium,
                                 fontWeight: AppFontWeights.semiBold,
                                 color: ColorRes.primary,
                               ),
@@ -776,7 +948,7 @@ class _ServiceCardState extends State<ServiceCard> {
                               Text(
                                 '${widget.service.averageRating} (${widget.service.totalReviews})',
                                 style: TextStyle(
-                                  fontSize: AppFontSizes.bodySmall,
+                                  fontSize: AppFontSizes.small,
                                   fontWeight: AppFontWeights.medium,
                                 ),
                               ),
@@ -785,15 +957,20 @@ class _ServiceCardState extends State<ServiceCard> {
                         ],
                       ),
                       const SizedBox(height: 6),
-                      Text(
+                      /*Text(
                         widget.service.description,
                         style: TextStyle(
-                          fontSize: AppFontSizes.bodySmall,
+                          fontSize: AppFontSizes.caption,
                           fontWeight: AppFontWeights.medium,
                           color: Colors.grey,
                         ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+
+                      ),*/
+                      ReadMoreClass(
+                        description: widget.service.description,
+                        trimLines: 3,
+                        size: AppFontSizes.caption,
+                        colorClickableText: ColorRes.primary,
                       ),
                     ],
                   ),
@@ -873,6 +1050,49 @@ class _ServiceCardState extends State<ServiceCard> {
               ],
             ),
           ),
+          if (meta.works != null && meta.works!.isNotEmpty) ...[
+            Divider(color: ColorRes.leadGreyColor.shade300, height: 1),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Specific Services / Works",
+                    style: TextStyle(
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: ColorRes.background,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: ColorRes.border, width: 1),
+                    ),
+                    child: Text(
+                      meta.works!
+                          .map(
+                            (w) => w.replaceAll('_', ' ').capitalizeFirst ?? w,
+                          )
+                          .join(', '),
+                      style: TextStyle(
+                        fontSize: AppFontSizes.caption,
+                        fontWeight: AppFontWeights.medium,
+                        color: ColorRes.primary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
 
           if (hasAnyMetaData) ...[
             Divider(color: ColorRes.leadGreyColor.shade300, height: 1),
@@ -906,7 +1126,7 @@ class _ServiceCardState extends State<ServiceCard> {
             meta.solarSolutions,
           ].any((e) => e != null)) ...[
             Padding(
-              padding:  EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 children: [
                   Icon(
@@ -928,7 +1148,7 @@ class _ServiceCardState extends State<ServiceCard> {
             ),
             const SizedBox(height: 8),
             Padding(
-              padding:  EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.symmetric(horizontal: 16),
               child: Wrap(
                 spacing: 8,
                 runSpacing: 8,
@@ -942,12 +1162,13 @@ class _ServiceCardState extends State<ServiceCard> {
                 ],
               ),
             ),
-            SizedBox(height: 10,),
+            SizedBox(height: 10),
           ],
         ],
       ),
     );
   }
+
   Widget _yesNoChip(String label, String? value) {
     if (value == null) return const SizedBox();
 
@@ -957,9 +1178,9 @@ class _ServiceCardState extends State<ServiceCard> {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color:
-        isYes
-            ? ColorRes.success.withOpacity(0.08)
-            : ColorRes.error.withOpacity(0.08),
+            isYes
+                ? ColorRes.success.withOpacity(0.08)
+                : ColorRes.error.withOpacity(0.08),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isYes ? ColorRes.success.shade100 : ColorRes.error.shade100,
@@ -1011,7 +1232,6 @@ class _ServiceCardState extends State<ServiceCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           Row(
             children: [
               Icon(icon, size: 18, color: ColorRes.primary),

@@ -788,11 +788,19 @@ class _BuilderLeadState extends State<BuilderLeads> {
         actions: [
           IconButton(
             icon: const Icon(Icons.filter_list, color: ColorRes.primary),
-            onPressed: () {
+            /* onPressed: () {
               showFilterBottomSheet(
                 context,
                 leadController,
                 propertyId: widget.projectId,
+              );
+            },*/
+            onPressed: () {
+              Get.to(
+                () => LeadBuildFilterScreen(
+                  controller: leadController,
+                  propertyId: widget.projectId,
+                ),
               );
             },
           ),

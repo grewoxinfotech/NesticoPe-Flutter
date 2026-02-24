@@ -182,6 +182,7 @@ class LeadService {
     int limit = 10,
     Map<String, String>? filters,
     bool fromReseller = false,
+    String? module
   }) async {
     final user = await SecureStorage.getUserData();
     try {
@@ -194,6 +195,7 @@ class LeadService {
 
         if (userId != null) 'reseller_id': userId,
         if (filters != null) ...filters,
+        if (module != null) "module":module,
       };
       // } else {
       //   // Subsequent pages: include all filters including property_id
@@ -211,7 +213,7 @@ class LeadService {
 
       final uri = Uri.parse(baseUri).replace(queryParameters: queryParameters);
 
-      print("Leads API URL: $uri");
+      print("Leads dgjfdkggrthugjrtuigPI URL: $uri");
       print("Query Parameters: $queryParameters");
 
       final response = await http.get(uri, headers: await headers());
@@ -649,8 +651,10 @@ class LeadService {
   Future<PaginationResponse<LeadItem>> getLeadsByProperty({
     int page = 1,
     String? userId,
+    String? module,
     Map<String, String>? filters,
     required String propertyId,
+
   }) async {
     try {
       final Map<String, String> queryParameters;
@@ -661,6 +665,7 @@ class LeadService {
           'page': page.toString(),
           'property_id': propertyId,
           if (userId.isNotEmpty) 'reseller_id': userId,
+
           if (filters != null) ...filters,
         };
       } else {
@@ -672,7 +677,7 @@ class LeadService {
       }
 
       final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
-      print("Lead Data URI: $uri");
+      print("Lead Datfdkokodfkodfkoa URI: $uri");
       final response = await http.get(uri, headers: await headers());
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);

@@ -320,7 +320,7 @@ class ContractorAddInquiryScreen extends StatelessWidget {
                 const SizedBox(height: 12),
 
                 /// ------------------ CITY ------------------
-                Row(
+                /*Row(
                   children: [
                     Text(
                       'City',
@@ -340,10 +340,17 @@ class ContractorAddInquiryScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 8),*/
                 CitySelectionWidget(
                   isEditing: true,
                   controller: contractorServiceController.cityController,
+                  isRequired: true,
+                  style: TextStyle(
+                    fontSize: AppFontSizes.medium,
+                    color:Get.theme.colorScheme.onSecondary,
+                    fontWeight: AppFontWeights.bold,
+                  ),
+
                   onCitySelected: (selectedCity) {
                     print("✅ Selected city: ${selectedCity.description}");
 
@@ -375,6 +382,7 @@ class ContractorAddInquiryScreen extends StatelessWidget {
                         color: Get.theme.colorScheme.primary,
                       ),
                     ),
+
                     prefixIconConstraints: const BoxConstraints(minWidth: 40),
                     enabledBorder: tile(Get.theme.dividerColor),
                     focusedBorder: tile(Get.theme.colorScheme.primary),

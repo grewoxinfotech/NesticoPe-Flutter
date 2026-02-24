@@ -23,7 +23,7 @@ class IconManager {
     IconItem(key: AppSvgRes.area, title: "Plot", icon: Icons.square_foot),
     IconItem(
       key: AppSvgRes.circleDots,
-      title: "Other",
+      title: "Others",
       icon: Icons.blur_circular,
     ),
     IconItem(key: AppSvgRes.office, title: "Office", icon: Icons.business),

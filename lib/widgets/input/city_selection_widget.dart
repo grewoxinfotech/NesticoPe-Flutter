@@ -453,7 +453,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/modules/search_property/model/search_model.dart';
-import 'package:housing_flutter_app/widgets/New%20folder/inputs/text_field.dart' hide tile;
+import 'package:housing_flutter_app/widgets/New%20folder/inputs/text_field.dart'
+    hide tile;
 
 import '../../app/constants/app_font_sizes.dart';
 import '../../app/constants/color_res.dart';
@@ -470,17 +471,23 @@ class CitySelectionWidget extends StatelessWidget {
   final Color? color;
   final Color? iconColor;
   final Color? fillColor;
+  final TextStyle? style;
   final bool isRequiredTitle;
 
   const CitySelectionWidget({
     super.key,
     required this.controller,
     this.onCitySelected,
-    this.isRequired= false,
+    this.isRequired = false,
     this.isEditing = true,
     this.decoration,
-    this.iconColor=ColorRes.primary,
-    this.isRequiredTitle=true,
+    this.iconColor = ColorRes.primary,
+    this.style = const TextStyle(
+      fontSize: AppFontSizes.medium,
+      fontWeight: AppFontWeights.semiBold,
+      color: ColorRes.textPrimary,
+    ),
+    this.isRequiredTitle = true,
     this.color,
     this.fillColor,
   });
@@ -570,80 +577,73 @@ class CitySelectionWidget extends StatelessWidget {
         //     }
         //   },
         // ),
-       if(isRequiredTitle)...[
-         NesticoPeTextField(
-           hintText: 'Select City',
-           title: "City",
-           style: TextStyle(
-             fontSize: AppFontSizes.medium,
-             fontWeight: AppFontWeights.semiBold,
-             color: ColorRes.textPrimary,
-           ),
-           controller: controller,
-           iconColor: iconColor,
-           enabled: isEditing,
+        if (isRequiredTitle) ...[
+          NesticoPeTextField(
+            hintText: 'Select City',
+            title: "City",
+            style: style??TextStyle(),
+            controller: controller,
+            iconColor: iconColor,
+            isRequired: isRequired,
+            enabled: isEditing,
 
-           prefixIcon: Icons.apartment_outlined,
+            prefixIcon: Icons.apartment_outlined,
 
+            autovalidateMode: AutovalidateMode.onUserInteraction,
 
-           autovalidateMode: AutovalidateMode.onUserInteraction,
+            // ✅ City input handler
+            onChanged: (value) async {
+              if (value.isNotEmpty) {
+                await googleMapController.fetchGooglePlaces(value);
+                log("City input: $value");
+              } else {
+                googleMapController.predictions.clear();
+                googleMapController.cityStateList.clear();
+              }
+            },
 
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please select a city';
+              }
+              return null;
+            },
+          ),
+        ] else ...[
+          NesticoPeTextField(
+            hintText: 'Select City',
+            iconColor: iconColor,
+            style: TextStyle(
+              fontSize: AppFontSizes.medium,
+              fontWeight: AppFontWeights.semiBold,
+              color: ColorRes.textPrimary,
+            ),
+            controller: controller,
+            enabled: isEditing,
 
-           // ✅ City input handler
-           onChanged: (value) async {
-             if (value.isNotEmpty) {
-               await googleMapController.fetchGooglePlaces(value);
-               log("City input: $value");
-             } else {
-               googleMapController.predictions.clear();
-               googleMapController.cityStateList.clear();
-             }
-           },
+            prefixIcon: Icons.apartment_outlined,
 
-           validator: (value) {
-             if (value == null || value.isEmpty) {
-               return 'Please select a city';
-             }
-             return null;
-           },
-         ),
-       ]else...[
-         NesticoPeTextField(
-           hintText: 'Select City',
-           iconColor: iconColor,
-           style: TextStyle(
-             fontSize: AppFontSizes.medium,
-             fontWeight: AppFontWeights.semiBold,
-             color: ColorRes.textPrimary,
-           ),
-           controller: controller,
-           enabled: isEditing,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
 
-           prefixIcon: Icons.apartment_outlined,
+            // ✅ City input handler
+            onChanged: (value) async {
+              if (value.isNotEmpty) {
+                await googleMapController.fetchGooglePlaces(value);
+                log("City input: $value");
+              } else {
+                googleMapController.predictions.clear();
+                googleMapController.cityStateList.clear();
+              }
+            },
 
-           autovalidateMode: AutovalidateMode.onUserInteraction,
-
-
-           // ✅ City input handler
-           onChanged: (value) async {
-             if (value.isNotEmpty) {
-               await googleMapController.fetchGooglePlaces(value);
-               log("City input: $value");
-             } else {
-               googleMapController.predictions.clear();
-               googleMapController.cityStateList.clear();
-             }
-           },
-
-           validator: (value) {
-             if (value == null || value.isEmpty) {
-               return 'Please select a city';
-             }
-             return null;
-           },
-         ),
-       ],
-
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please select a city';
+              }
+              return null;
+            },
+          ),
+        ],
 
         const SizedBox(height: 8),
 

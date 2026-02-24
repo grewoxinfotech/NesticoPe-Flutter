@@ -17,7 +17,7 @@ class LeadFilterHelper {
     for (var filter in filters) {
       final parts = filter.split(':');
       if (parts.length == 2) {
-        final key = parts[0].trim().toLowerCase(); // "stage" or "status"
+        final key = parts[0].trim(); // "stage" or "status"
         final value = parts[1]
             .trim()
             .toLowerCase()

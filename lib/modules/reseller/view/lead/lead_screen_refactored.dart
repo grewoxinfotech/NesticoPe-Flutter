@@ -10,7 +10,7 @@ import 'package:housing_flutter_app/modules/seller/module/lead_screen/controller
 import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
 import 'package:housing_flutter_app/modules/reseller/view/lead_overview/lead_detail.dart';
 
-class ResellerLeadScreen extends StatelessWidget {
+/*class ResellerLeadScreen extends StatelessWidget {
   final bool isViewAll;
 
   const ResellerLeadScreen({super.key, this.isViewAll = false});
@@ -47,14 +47,16 @@ class ResellerLeadScreen extends StatelessWidget {
               FocusScope.of(context).unfocus();
               leadController.resetForm();
               Get.to(
-                () => AddLeadScreen(),
+                () => AddLeadScreen(
+                  controller: leadController,
+                ),
                 binding: BindingsBuilder(() {
                   Get.lazyPut(() => LeadController(), tag: "reseller");
                 }),
               );
             },
           ),
-          IconButton(
+         *//* IconButton(
             icon: const Icon(Icons.filter_list, color: ColorRes.primary),
             onPressed: () {
               LeadFilterBottomSheet.show(
@@ -67,6 +69,25 @@ class ResellerLeadScreen extends StatelessWidget {
                   );
                   leadController.applyFilters(filterMap);
                 },
+              );
+            },
+          ),*//*
+          IconButton(
+            icon: const Icon(
+              Icons.filter_list,
+              color: ColorRes.primary,
+            ),
+            onPressed: () {
+              Get.to(
+                    () => LeadFilterScreen(
+                      selectedFilters: controller.selectedLeadFilters,
+                  onApplyFilters: () async {
+                    final filterMap = LeadFilterHelper.convertFiltersToAPIFormat(
+                      controller.selectedLeadFilters.toList(),
+                    );
+                    leadController.applyFilters(filterMap);
+                  },
+                ),
               );
             },
           ),
@@ -153,6 +174,7 @@ class ResellerLeadScreen extends StatelessWidget {
                                   () => AddLeadScreen(
                                     lead: lead,
                                     isEditMode: true,
+                                    controller: leadController,
                                   ),
                                 );
                               },
@@ -228,4 +250,4 @@ class ResellerLeadScreen extends StatelessWidget {
       },
     );
   }
-}
+}*/

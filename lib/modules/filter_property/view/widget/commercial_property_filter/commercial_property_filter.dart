@@ -5,6 +5,8 @@ import 'package:housing_flutter_app/modules/filter_property/view/widget/commerci
 import 'package:housing_flutter_app/modules/search_property/widget/suggested_list.dart';
 
 import '../buy_componet/buy_component.dart';
+import '../buy_componet/buyer_filter.dart';
+import '../rent_component/rented_filter.dart';
 import 'component/rent_commercial_property.dart';
 
 class CommercialPropertyFilter extends StatelessWidget {
@@ -16,7 +18,7 @@ class CommercialPropertyFilter extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildPropertyFilterHeadingPadding('Sub category'),
+        buildPropertyFilterHeadingPadding('Listing Type'),
         const SizedBox(height: 7),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -60,6 +62,81 @@ class CommercialPropertyFilter extends StatelessWidget {
                   BuyCommercial(controllerForFilter: controller),
                 ] else ...[
                   RentCommercialProperty(controllerForFilter: controller),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+class ResidentialPropertyFilter extends StatelessWidget {
+  const ResidentialPropertyFilter({super.key, required this.controllerForFilter});
+  final PropertyFilterControllerForFilter controllerForFilter;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        buildPropertyFilterHeadingPadding('Listing Type'),
+        const SizedBox(height: 7),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Obx(
+                () => Row(
+              children: List.generate(
+                controllerForFilter.residentialSubCategory.length,
+                    (index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: GestureDetector(
+                      onTap: () {
+                        controllerForFilter.updateFilter(
+                          controllerForFilter
+                              .residentialSelectedSubCategory,
+                          controllerForFilter
+                              .residentialSubCategory[index],
+                        );
+                        debugPrint(
+                          'category ${controllerForFilter.residentialSelectedSubCategory.value}',
+                        );
+                      },
+                      child: buildFilterPropertyTypes(
+                        title:
+                        controllerForFilter
+                            .residentialSubCategory[index],
+                        isSelected:
+                        controllerForFilter
+                            .residentialSelectedSubCategory
+                            .value ==
+                            controllerForFilter
+                                .residentialSubCategory[index],
+                        isExpanded: true,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 7),
+        SingleChildScrollView(
+          child: Obx(
+            () => Column(
+              children: [
+                if (controllerForFilter
+                    .residentialSelectedSubCategory
+                    .value ==
+                    "Buy") ...[
+                  BuyFilters(controllerForFilter: controllerForFilter),
+                ] else if (controllerForFilter
+                    .residentialSelectedSubCategory
+                    .value ==
+                    "Rent") ...[
+                  RentFilter(controllerForFilter: controllerForFilter),
                 ],
               ],
             ),

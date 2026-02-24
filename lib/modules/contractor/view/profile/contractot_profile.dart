@@ -136,7 +136,7 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                             ],
                             _buildActionButton(
                               icon: Icons.my_library_books_outlined,
-                              label: "My Service",
+                              label: "Service Categories",
 
                               onTap: () {
                                 Get.to(() => MyServiceScreen());
@@ -144,7 +144,7 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                             ),
                             _buildActionButton(
                               icon: Icons.miscellaneous_services_outlined,
-                              label: "Contractor Services",
+                              label: "My Service",
 
                               onTap: () {
                                 Get.to(() => ContractorService());

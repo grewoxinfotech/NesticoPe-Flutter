@@ -592,7 +592,7 @@ import '../../../app/utils/helper_function/contact_helper.dart';
 import '../../../data/network/referral/model/referrel_model.dart';
 import '../controller/referral_controller.dart';
 
-class ReferralProgramScreen extends StatelessWidget {
+  class ReferralProgramScreen extends StatelessWidget {
   final ReferralController controller = Get.put(ReferralController());
 
   @override
@@ -634,6 +634,7 @@ class ReferralProgramScreen extends StatelessWidget {
         return ListView(
           padding: const EdgeInsets.only(bottom: 50),
           children: [
+            /*jkmmdnjdik ndjnzajedfn nfjnr kdiumen cbdhb shwub dvcg sua nvj  */
             _buildHeader(firstReferral),
             const SizedBox(height: 12),
             _buildStatsGrid(controller.dummyReferral.value?.data),
@@ -847,7 +848,7 @@ class ReferralProgramScreen extends StatelessWidget {
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 18,
+                        horizontal: 16,
                         vertical: 14,
                       ),
                       decoration: BoxDecoration(
@@ -859,7 +860,11 @@ class ReferralProgramScreen extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.diamond_outlined, color: ColorRes.white),
+                          Icon(
+                            Icons.diamond_outlined,
+                            color: ColorRes.white,
+                            size: 20,
+                          ),
                           SizedBox(width: 12),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -890,7 +895,7 @@ class ReferralProgramScreen extends StatelessWidget {
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 18,
+                        horizontal: 16,
                         vertical: 14,
                       ),
                       decoration: BoxDecoration(
@@ -905,6 +910,7 @@ class ReferralProgramScreen extends StatelessWidget {
                           Icon(
                             Icons.watch_later_outlined,
                             color: ColorRes.white,
+                            size: 20,
                           ),
                           SizedBox(width: 8),
                           Column(

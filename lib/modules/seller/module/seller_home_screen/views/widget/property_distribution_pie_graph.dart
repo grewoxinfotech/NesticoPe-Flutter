@@ -841,7 +841,7 @@ class _LeadStatusDistributionPieGraphState
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
-              height: 240,
+              height: 230,
               child: PieChart(
                 PieChartData(
                   borderData: FlBorderData(show: false),

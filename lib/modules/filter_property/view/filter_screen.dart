@@ -22,6 +22,7 @@ import '../../../app/manager/icon_manager.dart';
 import '../../../app/utils/svg_widget.dart';
 import '../../builder/view/additional_deatil/additional_detail.dart';
 import '../../contractor/view/widget/cotractor_active_switch.dart';
+import '../../property_price_trend/view/widget/filter_type.dart';
 
 class RealEstateFilterScreen extends StatefulWidget {
   final Map<String, String> initialFilters;
@@ -57,7 +58,6 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: ColorRes.white,
@@ -173,7 +173,8 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
               child: SearchableDropdownWidget(
                 label: 'State',
                 hint: 'Select your state',
-                items: controllerForFilter.availableStates, // now RxList
+                items: controllerForFilter.availableStates,
+                // now RxList
                 selectedValue: controllerForFilter.selectedState,
                 prefixIcon: Icons.location_city,
                 onChanged: (value) {
@@ -237,11 +238,11 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
             ),
             const SizedBox(height: 16),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 12,vertical: 12),
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
 
               decoration: BoxDecoration(
-                  color: ColorRes.white,
-                  borderRadius: BorderRadius.circular(12)
+                color: ColorRes.white,
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
                 children: [
@@ -249,12 +250,12 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
                     "Verify RERA ID",
                     controllerForFilter.isRERAVerified,
                   ),
-                  SizedBox(height: 10,),
+                  SizedBox(height: 10),
                   buildToggle(
                     "Property Has Photos",
                     controllerForFilter.isPropertyHaveImage,
                   ),
-                  SizedBox(height: 10,),
+                  SizedBox(height: 10),
                   buildToggle(
                     "Property Has Videos",
                     controllerForFilter.isPropertyHaveVideo,
@@ -297,9 +298,8 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
 
             // Amenities Card
             // ------------------ AMENITIES SECTION ------------------
-
             Padding(
-              padding:  EdgeInsets.symmetric(horizontal: 12),
+              padding: EdgeInsets.symmetric(horizontal: 12),
               child: _buildCard(
                 theme: theme,
                 child: Column(
@@ -309,10 +309,12 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
 
                     Obx(() {
                       final amenitiesList = IconManager.amenitiesItems;
-                      final showAll = controllerForFilter.showAllAmenities.value;
-                      final displayList = showAll
-                          ? amenitiesList
-                          : amenitiesList.take(9).toList();
+                      final showAll =
+                          controllerForFilter.showAllAmenities.value;
+                      final displayList =
+                          showAll
+                              ? amenitiesList
+                              : amenitiesList.take(9).toList();
 
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -321,73 +323,92 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
                           Wrap(
                             spacing: 10,
                             runSpacing: 10,
-                            children: displayList.map((amenity) {
-                              final isSelected = controllerForFilter.amenities.contains(amenity.title);
+                            children:
+                                displayList.map((amenity) {
+                                  final isSelected = controllerForFilter
+                                      .amenities
+                                      .contains(amenity.title);
 
-                              return GestureDetector(
-                                onTap: () {
-                                  controllerForFilter.addBuilderAmenities(amenity.title);
-                                  debugPrint("Selected Amenities: ${controllerForFilter.amenities}");
-                                },
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width * 0.28,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 10,
-                                    horizontal: 12,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: isSelected
-                                        ? theme.primaryColor.withOpacity(0.1)
-                                        : ColorRes.white,
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: isSelected
-                                          ? theme.primaryColor
-                                          : ColorRes.leadGreyColor.shade300,
-                                      width: 1.2,
-                                    ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.08),
-                                        blurRadius: 4,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      // If you have SVG icons for amenities, uncomment:
-                                      // AppSvgIcon(
-                                      //   assetName: amenity.key,
-                                      //   size: 26,
-                                      //   folder: 'amenities',
-                                      //   color: isSelected
-                                      //       ? theme.primaryColor
-                                      //       : ColorRes.leadGreyColor.shade600,
-                                      // ),
-                                      // const SizedBox(height: 4),
-                                      Text(
+                                  return GestureDetector(
+                                    onTap: () {
+                                      controllerForFilter.addBuilderAmenities(
                                         amenity.title,
-                                        textAlign: TextAlign.center,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          color: isSelected
-                                              ? theme.primaryColor
-                                              : ColorRes.textColor.withOpacity(0.9),
-                                          fontWeight: isSelected
-                                              ? FontWeight.w600
-                                              : FontWeight.w400,
-                                          fontSize: AppFontSizes.extraSmall,
-                                          height: 1.3,
-                                        ),
+                                      );
+                                      debugPrint(
+                                        "Selected Amenities: ${controllerForFilter.amenities}",
+                                      );
+                                    },
+                                    child: Container(
+                                      width:
+                                          MediaQuery.of(context).size.width *
+                                          0.28,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 10,
+                                        horizontal: 12,
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            }).toList(),
+                                      decoration: BoxDecoration(
+                                        color:
+                                            isSelected
+                                                ? theme.primaryColor
+                                                    .withOpacity(0.1)
+                                                : ColorRes.white,
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color:
+                                              isSelected
+                                                  ? theme.primaryColor
+                                                  : ColorRes
+                                                      .leadGreyColor
+                                                      .shade300,
+                                          width: 1.2,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(
+                                              0.08,
+                                            ),
+                                            blurRadius: 4,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          // If you have SVG icons for amenities, uncomment:
+                                          // AppSvgIcon(
+                                          //   assetName: amenity.key,
+                                          //   size: 26,
+                                          //   folder: 'amenities',
+                                          //   color: isSelected
+                                          //       ? theme.primaryColor
+                                          //       : ColorRes.leadGreyColor.shade600,
+                                          // ),
+                                          // const SizedBox(height: 4),
+                                          Text(
+                                            amenity.title,
+                                            textAlign: TextAlign.center,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              color:
+                                                  isSelected
+                                                      ? theme.primaryColor
+                                                      : ColorRes.textColor
+                                                          .withOpacity(0.9),
+                                              fontWeight:
+                                                  isSelected
+                                                      ? FontWeight.w600
+                                                      : FontWeight.w400,
+                                              fontSize: AppFontSizes.extraSmall,
+                                              height: 1.3,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
                           ),
 
                           // Show More / Less toggle
@@ -396,7 +417,8 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
                               padding: const EdgeInsets.only(top: 14),
                               child: Center(
                                 child: GestureDetector(
-                                  onTap: controllerForFilter.toggleAmenitiesView,
+                                  onTap:
+                                      controllerForFilter.toggleAmenitiesView,
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -473,7 +495,9 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
                             ),
                             decoration: BoxDecoration(
                               color:
-                                  isSelected ? ColorRes.primary : ColorRes.white,
+                                  isSelected
+                                      ? ColorRes.primary
+                                      : ColorRes.white,
                               border: Border.all(
                                 color:
                                     isSelected
@@ -499,28 +523,20 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
               ),
             ),
 
-            const SizedBox(height: 16),
-
-            // Selected filters as chips
-
-            // Dynamic Filter Content
             Obx(() {
               if (controllerForFilter.propertyType[controllerForFilter
-                      .selectedPropertyTypeIndex
-                      .value] ==
-                  "Sell") {
-                return BuyFilters(controllerForFilter: controllerForFilter);
-              } else if (controllerForFilter.propertyType[controllerForFilter
-                      .selectedPropertyTypeIndex
-                      .value] ==
-                  "Rent") {
-                return RentFilter(controllerForFilter: controllerForFilter);
-              } else if (controllerForFilter.propertyType[controllerForFilter
                       .selectedPropertyTypeIndex
                       .value] ==
                   "Commercial") {
                 return CommercialPropertyFilter(
                   controller: controllerForFilter,
+                );
+              } else if (controllerForFilter.propertyType[controllerForFilter
+                      .selectedPropertyTypeIndex
+                      .value] ==
+                  "Residential") {
+                return ResidentialPropertyFilter(
+                  controllerForFilter: controllerForFilter,
                 );
               } else if (controllerForFilter.propertyType[controllerForFilter
                       .selectedPropertyTypeIndex
@@ -539,7 +555,7 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
               onTap: (index) {
                 debugPrint('Construction Status $index');
               },
-              controllerForFilter:controllerForFilter,
+              controllerForFilter: controllerForFilter,
             ),
             const SizedBox(height: 100),
           ],
@@ -567,7 +583,10 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
                 Expanded(
                   child: OutlinedButton(
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: ColorRes.primary, width: 1.5),
+                      side: const BorderSide(
+                        color: ColorRes.primary,
+                        width: 1.5,
+                      ),
                       foregroundColor: ColorRes.primary,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
@@ -593,9 +612,9 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
                 ),
 
                 // Apply Button
-                SizedBox(width: 12,),
+                SizedBox(width: 12),
                 Expanded(
-flex: 2,
+                  flex: 2,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorRes.primary,
@@ -637,7 +656,6 @@ flex: 2,
                     ),
                   ),
                 ),
-
               ],
             ),
           ),
@@ -667,9 +685,10 @@ flex: 2,
     return result;
   }
 }
+
 Widget buildToggle(String label, RxBool observable) {
   return Obx(
-        () => Row(
+    () => Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
@@ -689,7 +708,7 @@ Widget buildToggle(String label, RxBool observable) {
             // Call controller toggle
             observable.value = val;
           },
-        )
+        ),
         // Switch(
         //   value: observable.value,
         //   onChanged: (val) => observable.value = val,
@@ -699,7 +718,7 @@ Widget buildToggle(String label, RxBool observable) {
     ),
   );
 }
+
 Widget _buildCard({required ThemeData theme, required Widget child}) {
   return child;
 }
-
