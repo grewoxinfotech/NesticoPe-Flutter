@@ -1,4 +1,3 @@
-// ignore: file_names
 class FurnishingItemModel {
   final String key;
   final String title;

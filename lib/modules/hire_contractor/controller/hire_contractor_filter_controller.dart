@@ -28,26 +28,30 @@ class HireContractorFilterProfileController
       Rxn<ContractorCityInsightsResponse>();
   RxList<String> selectedServiceNames = <String>[].obs;
   RxString selectedServiceNameDropdown = ''.obs;
-
+  final selectedWorkItems = <String>[].obs;
+  final workItemOptions = <String>[].obs;
   void onServiceNameSelected(String val, {String? label}) {
     selectedServiceNameDropdown.value = val;
     final displayName = label ?? val;
     if (!selectedServiceNames.contains(displayName)) {
       selectedServiceNames.add(displayName);
     }
+    _refreshWorkItems();
   }
+
   List<Map<String, dynamic>> getServiceNamesForCategory(String categoryId) {
-    log(
-      "getServiceNamesForCategory ${categoryId}",
-    );
-    return kServiceCategoryData[categoryId.toLowerCase()] ?? [];
+    log("getServiceNamesForCategory ${categoryId}");
+    return kServiceCategoryData[categoryId] ?? [];
   }
+
   Map<String, List<Map<String, dynamic>>> kServiceCategoryData = {
     // ── Home Services ──────────────────────────────────────────
     'home_services': [
       {
         'label': 'Maintenance & AMC Services',
         'value': 'maintenance_amc_services',
+        'bestSelling': false,
+        "trending": true,
         'items': [
           'AC Repair',
           'Geyser Repair',
@@ -60,11 +64,15 @@ class HireContractorFilterProfileController
       {
         'label': 'Home Painting',
         'value': 'home_painting',
+        'bestSelling': true,
+        "trending": false,
         'items': ['Interior Painting', 'Exterior Painting', 'Waterproofing'],
       },
       {
         'label': 'Home Cleaning',
         'value': 'home_cleaning',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Full House Cleaning',
           'Kitchen Cleaning',
@@ -75,6 +83,8 @@ class HireContractorFilterProfileController
       {
         'label': 'Electrician',
         'value': 'electrician',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Fan',
           'Switch & Socket',
@@ -95,6 +105,8 @@ class HireContractorFilterProfileController
       {
         'label': 'Plumber',
         'value': 'plumber',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Toilet Repair',
           'Tap & Mixer Repair',
@@ -107,8 +119,23 @@ class HireContractorFilterProfileController
         ],
       },
       {
+        "label": "Pest Control",
+        'bestSelling': false,
+        "trending": false,
+        "value": "pest_control",
+        'items': [
+          'Home Pest Control',
+          'Sanitization & Disinfection (Anti-Viral)',
+          'Garden Pest Control',
+          'Anti Termite Treatment (For Pre & Post Construction)',
+          'Commercial & Industrial Pest Control (Hotels & Restaurants, Hospitals, Warehouses, Factories)',
+        ],
+      },
+      {
         'label': 'Carpenter',
         'value': 'carpenter',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Door',
           'Drill & Hang',
@@ -124,6 +151,8 @@ class HireContractorFilterProfileController
       {
         'label': 'Buy / Rent Furniture',
         'value': 'buy_rent_furniture',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Sofa Set',
           'Recliner & Rocker',
@@ -152,6 +181,8 @@ class HireContractorFilterProfileController
       {
         'label': 'Buy / Rent Appliances',
         'value': 'buy_rent_appliances',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Split / Window AC',
           'Air Cooler',
@@ -176,6 +207,8 @@ class HireContractorFilterProfileController
       {
         'label': 'Rooftop Solar Panel Solutions',
         'value': 'rooftop_solar_panel_solutions',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Solar Panel Installation (1kW - 10kW+)',
           'On-Grid Solar System',
@@ -188,6 +221,8 @@ class HireContractorFilterProfileController
       },
       {
         'label': 'Home Security Solutions',
+        'bestSelling': false,
+        "trending": false,
         'value': 'home_security_solutions',
         'items': [
           'CCTV Camera Installation',
@@ -201,6 +236,8 @@ class HireContractorFilterProfileController
       },
       {
         'label': 'Smart Home Solutions',
+        'bestSelling': false,
+        "trending": false,
         'value': 'smart_home_solutions',
         'items': [
           'Home Automation System',
@@ -214,6 +251,8 @@ class HireContractorFilterProfileController
       {
         'label': 'Structure Planning and Design',
         'value': 'structure_planning_and_design',
+        'bestSelling': false,
+        "trending": true,
         'items': [
           '2D & 3D Floor Plan, Section, Elevation Architectural Drawing',
           'Structural Engineering Drawing',
@@ -225,6 +264,8 @@ class HireContractorFilterProfileController
       {
         'label': 'Renovation and Remodeling',
         'value': 'renovation_and_remodeling',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Kitchen Renovation',
           'Bathroom Renovation',
@@ -237,8 +278,11 @@ class HireContractorFilterProfileController
         ],
       },
       {
-        'label': 'End to End New Home Construction Contractors (Turnkey Home Construction)',
+        'label':
+            'End to End New Home Construction Contractors (Turnkey Home Construction)',
         'value': 'end_to_end_new_home_construction_contractors',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Budget Home Construction',
           'Luxury / Premium Home Construction',
@@ -252,6 +296,8 @@ class HireContractorFilterProfileController
       {
         'label': 'Commercial Construction Contractors',
         'value': 'commercial_construction_contractors',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Office Construction',
           'Shop Construction',
@@ -263,6 +309,8 @@ class HireContractorFilterProfileController
       {
         'label': 'Exterior Cladding & Facade Contractors',
         'value': 'exterior_cladding_facade_contractors',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'ACP Cladding Installation Contractors',
           'Glass Facade Contractors',
@@ -274,6 +322,8 @@ class HireContractorFilterProfileController
       },
       {
         'label': 'Specialized Service',
+        'bestSelling': false,
+        "trending": false,
         'value': 'specialized_service',
         'items': [
           'Waterproofing Solution',
@@ -290,6 +340,8 @@ class HireContractorFilterProfileController
       {
         'label': 'Construction Site Machine Rent (YantraRent)',
         'value': 'construction_site_machine_rent_yantrarent',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'JCB',
           'Poclain',
@@ -309,6 +361,8 @@ class HireContractorFilterProfileController
       {
         'label': 'Residential Room Design',
         'value': 'residential_room_design',
+        'bestSelling': true,
+        "trending": false,
         'items': [
           'Living Room Design',
           'Master Bedroom Design',
@@ -325,6 +379,8 @@ class HireContractorFilterProfileController
       {
         'label': 'Kitchen Design',
         'value': 'kitchen_design',
+        'bestSelling': false,
+        "trending": true,
         'items': [
           'Modular Kitchen Design',
           'Kitchen Design',
@@ -337,6 +393,8 @@ class HireContractorFilterProfileController
       },
       {
         'label': 'Commercial & Retail',
+        'bestSelling': false,
+        "trending": false,
         'value': 'commercial_retail',
         'items': [
           'Office Workspaces Interior',
@@ -347,6 +405,8 @@ class HireContractorFilterProfileController
       {
         'label': 'Structural & Elements',
         'value': 'structural_elements',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Staircase Design',
           'Railing Design',
@@ -366,6 +426,8 @@ class HireContractorFilterProfileController
       {
         'label': 'Furniture Design',
         'value': 'furniture_design',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Wardrobe Design',
           'TV Unit Design',
@@ -381,6 +443,8 @@ class HireContractorFilterProfileController
       {
         'label': 'Property Documentation & Drafting',
         'value': 'property_documentation_drafting',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Property Sale Deed Drafting',
           'Sale Agreement Review & Analysis',
@@ -395,6 +459,8 @@ class HireContractorFilterProfileController
       {
         'label': 'Registration & Agreements',
         'value': 'registration_agreements',
+        'bestSelling': true,
+        "trending": false,
         'items': [
           'Property Registration Assistance',
           'Commercial Lease Agreement Registration',
@@ -405,6 +471,8 @@ class HireContractorFilterProfileController
       {
         'label': 'Verification & Due Diligence',
         'value': 'verification_due_diligence',
+        'bestSelling': false,
+        "trending": true,
         'items': [
           'Property Title Search & Verification',
           'Property Litigation & Case Search',
@@ -419,6 +487,8 @@ class HireContractorFilterProfileController
       {
         'label': 'Legal Consultation & Advisory',
         'value': 'legal_consultation_advisory',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Property Document Review & Consultation',
           'Expert Real Estate Legal Consultation (Call)',
@@ -432,10 +502,12 @@ class HireContractorFilterProfileController
     ],
 
     // ── Material Supply ────────────────────────────────────────
-    'material_supply': [
+    'building_material_supply': [
       {
         'label': 'Civil / Structural Material',
         'value': 'civil_structural_material',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Cement (UltraTech / ACC / Ambuja)',
           'TMT Steel Bars (8mm, 10mm, 12mm, 16mm, 20mm)',
@@ -453,6 +525,8 @@ class HireContractorFilterProfileController
       },
       {
         'label': 'Masonry & Plaster Material',
+        'bestSelling': false,
+        "trending": false,
         'value': 'masonry_plaster_material',
         'items': [
           'Plaster Sand',
@@ -467,6 +541,8 @@ class HireContractorFilterProfileController
       {
         'label': 'Flooring & Tiles',
         'value': 'flooring_tiles',
+        'bestSelling': true,
+        "trending": false,
         'items': [
           'Floor Tiles',
           'Wall Tiles',
@@ -482,6 +558,8 @@ class HireContractorFilterProfileController
       {
         'label': 'Plumbing Material',
         'value': 'plumbing_material',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'PVC Pipe',
           'CPVC Pipe',
@@ -500,6 +578,8 @@ class HireContractorFilterProfileController
       },
       {
         'label': 'Electrical Material',
+        'bestSelling': false,
+        "trending": true,
         'value': 'electrical_material',
         'items': [
           'Electrical Wire',
@@ -521,6 +601,8 @@ class HireContractorFilterProfileController
       },
       {
         'label': 'Doors & Windows',
+        'bestSelling': false,
+        "trending": false,
         'value': 'doors_windows',
         'items': [
           'Main Door (Teak Wood / Flush Door)',
@@ -537,6 +619,8 @@ class HireContractorFilterProfileController
       {
         'label': 'Paint & Finishing',
         'value': 'paint_finishing',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Primer (Wall / Metal / Wood)',
           'Putty',
@@ -551,6 +635,8 @@ class HireContractorFilterProfileController
       },
       {
         'label': 'Waterproofing & Terrace',
+        'bestSelling': false,
+        "trending": false,
         'value': 'waterproofing_terrace',
         'items': [
           'Dr Fixit Chemical',
@@ -562,6 +648,8 @@ class HireContractorFilterProfileController
       },
       {
         'label': 'Carpentry & Interior',
+        'bestSelling': false,
+        "trending": false,
         'value': 'carpentry_interior',
         'items': [
           'Plywood',
@@ -577,48 +665,58 @@ class HireContractorFilterProfileController
     ],
 
     // ── Packers & Movers ───────────────────────────────────────
-    'packers_&_movers': [
+    'packers_movers': [
       {
         "label": "Within City",
         "value": "within_city",
-        "items":[]
+        'bestSelling': true,
+        "trending": false,
+        "items": [],
       },
       {
         "label": "Between city",
         "value": "between_city",
-        "items":[]
+        'bestSelling': false,
+        "trending": true,
+        "items": [],
       },
       {
         "label": "Moving Only",
-        "value": "moving_only"
-        ,
-        "items":[]
+        "value": "moving_only",
+        'bestSelling': false,
+        "trending": false,
+        "items": [],
       },
       {
         "label": "Vehicle Shifting (Bike/Car)",
-        "value": "vehicle_shifting_bike_car"
-        ,
-        "items":[]
+        "value": "vehicle_shifting_bike_car",
+        'bestSelling': false,
+        "trending": false,
+        "items": [],
       },
       {
         "label": "City Tempo Service",
-        "value": "city_tempo_service"
-        ,
-        "items":[]
+        "value": "city_tempo_service",
+        'bestSelling': false,
+        "trending": false,
+        "items": [],
       },
       {
         "label": "Rent Vehicle(Truck)",
-        "value": "rent_vehicle_truck"
-        ,
-        "items":[]
-      }
+        "value": "rent_vehicle_truck",
+        'bestSelling': false,
+        "trending": false,
+        "items": [],
+      },
     ],
   };
+
   void removeServiceName(String label) {
     selectedServiceNames.remove(label);
     if (selectedServiceNameDropdown.value == label) {
       selectedServiceNameDropdown.value = '';
     }
+    _refreshWorkItems();
   }
 
   RxString selectedCategoryId = ''.obs;
@@ -702,6 +800,10 @@ class HireContractorFilterProfileController
     selectedServiceRating.value = 0.0;
     selectedCity.value = ''; // Add this to reset city
     filters.clear(); // Clear the filters map
+    selectedServiceNames.clear();
+    selectedServiceNameDropdown.value = '';
+    selectedWorkItems.clear();
+    workItemOptions.clear();
   }
 
   /// 🔁 Refresh contractor list manually
@@ -738,6 +840,10 @@ class HireContractorFilterProfileController
           'experience': selectedExperience.value,
         if (selectedAccountType.value.isNotEmpty)
           'premiumAccount': selectedAccountType.value,
+        if (selectedServiceNames.isNotEmpty)
+          'serviceNames': selectedServiceNames.map((e) => e.trim()).join(', '),
+        if (selectedWorkItems.isNotEmpty)
+          'works': selectedWorkItems.map((e) => e.trim()).join(', '),
       };
 
       log(
@@ -774,4 +880,33 @@ class HireContractorFilterProfileController
   }
 
   /// 🚫 Not used anymore since pagination removed
+}
+
+extension on HireContractorFilterProfileController {
+  void _refreshWorkItems() {
+    final catKey = selectedCategoryName.value
+        .trim()
+        .toLowerCase()
+        .replaceAll('/', ' ')
+        .replaceAll(RegExp(r'[^a-z0-9\s]'), '')
+        .trim()
+        .replaceAll(RegExp(r'\s+'), '_');
+    ;
+    final options = getServiceNamesForCategory(catKey);
+    final set = <String>{};
+    for (final label in selectedServiceNames) {
+      for (final m in options) {
+        final lbl = (m['label'] as String?) ?? '';
+        if (lbl == label) {
+          final items =
+              (m['items'] as List?)?.cast<String>() ?? const <String>[];
+          set.addAll(items);
+          break;
+        }
+      }
+    }
+    final list = set.toList()..sort();
+    workItemOptions.assignAll(list);
+    selectedWorkItems.removeWhere((e) => !workItemOptions.contains(e));
+  }
 }

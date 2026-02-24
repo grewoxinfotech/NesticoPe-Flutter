@@ -122,32 +122,45 @@ class ContractorMyServiceController
   // Ceiling
   final ceilingOptions = <String>['POP', 'Gypsum', 'PVC', 'Wooden'].obs;
   final selectedCeiling = <String>[].obs;
-// Solar Panel
+  // Solar Panel
   final solarPanelOptions =
-      <String>['Tata Power', 'Adani Solar', 'Waaree', 'Vikram Solar', 'Loom Solar'].obs;
+      <String>[
+        'Tata Power',
+        'Adani Solar',
+        'Waaree',
+        'Vikram Solar',
+        'Loom Solar',
+      ].obs;
   final selectedSolarPanel = <String>[].obs;
 
-// Solar Inverter
+  // Solar Inverter
   final solarInverterOptions =
       <String>['Luminous', 'Microtek', 'Havells', 'V-Guard', 'Growatt'].obs;
   final selectedSolarInverter = <String>[].obs;
 
-// Security
+  // Security
   final securityOptions =
       <String>['CP Plus', 'Hikvision', 'Godrej', 'Dahua', 'Honeywell'].obs;
   final selectedSecurity = <String>[].obs;
 
-// Smart Home
+  // Smart Home
   final smartHomeOptions =
       <String>['Philips Hue', 'Wipro', 'Oakter', 'Sonoff', 'Schneider'].obs;
   final selectedSmartHome = <String>[].obs;
 
-// Machine
+  // Machine
   final machineOptions =
-      <String>['JCB', 'CAT', 'Tata Hitachi', 'Mahindra', 'Komatsu', 'Volvo'].obs;
+      <String>[
+        'JCB',
+        'CAT',
+        'Tata Hitachi',
+        'Mahindra',
+        'Komatsu',
+        'Volvo',
+      ].obs;
   final selectedMachine = <String>[].obs;
 
-// Cladding
+  // Cladding
   final claddingOptions =
       <String>['Aludecor', 'Eurobond', 'Viva', 'Alstone'].obs;
   final selectedCladding = <String>[].obs;
@@ -447,9 +460,7 @@ class ContractorMyServiceController
             .trim()
             .replaceAll(RegExp(r'\s+'), '_'),
         // Description: agar Home Construction nahi hai toh workItems append karo
-        description:
-
-                descriptionController.text.trim(),
+        description: descriptionController.text.trim(),
 
         isActive: true,
         meta: ContractorMetaData(
@@ -515,20 +526,22 @@ class ContractorMyServiceController
           solarSolutions: _stringOrNull(selectedSolarSolutions.value),
           // ── Work Items (non-HomeConstruction) ──
           // works field
-          works: workItemOptions.isEmpty  // ✅ Packers & Movers or any category with no items
-              ? null
-              : _listOrNull(
-            selectedWorkItems
-                .map(
-                  (label) => label
-                  .toLowerCase()
-                  .replaceAll('/', ' ')
-                  .replaceAll(RegExp(r'[^a-z0-9\s]'), '')
-                  .trim()
-                  .replaceAll(RegExp(r'\s+'), '_'),
-            )
-                .toList(),
-          ),
+          works:
+              workItemOptions
+                      .isEmpty // ✅ Packers & Movers or any category with no items
+                  ? null
+                  : _listOrNull(
+                    selectedWorkItems
+                        .map(
+                          (label) => label
+                              .toLowerCase()
+                              .replaceAll('/', ' ')
+                              .replaceAll(RegExp(r'[^a-z0-9\s]'), '')
+                              .trim()
+                              .replaceAll(RegExp(r'\s+'), '_'),
+                        )
+                        .toList(),
+                  ),
         ),
         createdAt: DateTime.now().toIso8601String(),
         updatedAt: DateTime.now().toIso8601String(),
@@ -675,8 +688,7 @@ class ContractorMyServiceController
     // ── Home Construction check ──────────────────────────────
     // ── Home Construction check ──────────────────────────────
 
-
-      /* serviceNameController.text = service.serviceName ?? '';
+    /* serviceNameController.text = service.serviceName ?? '';
 
       // ✅ FIX: Find the value key from label stored in API
       final catId = selectedCategoryName.value.replaceAll(" ", "_").toLowerCase() ?? '';
@@ -703,66 +715,72 @@ class ContractorMyServiceController
       } else {
         selectedWorkItems.clear();
       }*/
-      serviceNameController.text = service.serviceName ?? '';
+    serviceNameController.text = service.serviceName ?? '';
 
-      // ✅ Use selectedCategory.value (already set above) as category key
-      final catId = selectedCategoryName.value;
-      final services = getServiceNamesForCategory(catId);
+    // ✅ Use selectedCategory.value (already set above) as category key
+    final catId = selectedCategoryName.value
+        .trim()
+        .toLowerCase()
+        .replaceAll('/', ' ')
+        .replaceAll(RegExp(r'[^a-z0-9\s]'), '')
+        .trim()
+        .replaceAll(RegExp(r'\s+'), '_');
+    final services = getServiceNamesForCategory(catId);
 
-      final match = services.firstWhere(
-        (s) => s['value'] == service.serviceName,
-        orElse:
-            () => {
-              'label': service.serviceName ?? '',
-              'value': service.serviceName ?? '',
-            },
+    final match = services.firstWhere(
+      (s) => s['value'] == service.serviceName,
+      orElse:
+          () => {
+            'label': service.serviceName ?? '',
+            'value': service.serviceName ?? '',
+          },
+    );
+
+    log(
+      "Check service name section ${service.serviceName}   ${selectedServiceNameDropdown.value}",
+    );
+
+    selectedServiceNameDropdown.value = match['value'] as String;
+
+    // Load workItemOptions using category ID + service value
+    workItemOptions.assignAll(
+      getWorkItemsForServiceName(catId, match['value'] as String),
+    );
+    log(
+      "Check service name section dsfdsf ${workItemOptions}   ${selectedServiceNameDropdown.value}",
+    );
+
+    // ✅ FIX: API saves work VALUES, but workItemOptions contains LABELS
+    // We need to find the label for each saved value
+    // In populateFormForEdit, after workItemOptions is populated:
+    final savedItems =
+        service.meta?.works; // these are snake_case values from API
+    if (savedItems != null && savedItems.isNotEmpty) {
+      selectedWorkItems.assignAll(
+        savedItems
+            .map((apiValue) {
+              // Convert snake_case value back to label by finding matching workItemOption
+              return workItemOptions.firstWhere(
+                (label) =>
+                    label
+                        .toLowerCase()
+                        .replaceAll('/', ' ') // treat / as word separator
+                        .replaceAll(
+                          RegExp(r'[^a-z0-9\s]'),
+                          '',
+                        ) // strip remaining special chars
+                        .trim()
+                        .replaceAll(RegExp(r'\s+'), '_') ==
+                    apiValue,
+                orElse: () => apiValue,
+              );
+            })
+            .where((item) => workItemOptions.contains(item))
+            .toList(),
       );
-
-      log(
-        "Check service name section ${service.serviceName}   ${selectedServiceNameDropdown.value}",
-      );
-
-      selectedServiceNameDropdown.value = match['value'] as String;
-
-      // Load workItemOptions using category ID + service value
-      workItemOptions.assignAll(
-        getWorkItemsForServiceName(catId, match['value'] as String),
-      );
-      log(
-        "Check service name section dsfdsf ${workItemOptions}   ${selectedServiceNameDropdown.value}",
-      );
-
-      // ✅ FIX: API saves work VALUES, but workItemOptions contains LABELS
-      // We need to find the label for each saved value
-      // In populateFormForEdit, after workItemOptions is populated:
-      final savedItems =
-          service.meta?.works; // these are snake_case values from API
-      if (savedItems != null && savedItems.isNotEmpty) {
-        selectedWorkItems.assignAll(
-          savedItems
-              .map((apiValue) {
-                // Convert snake_case value back to label by finding matching workItemOption
-                return workItemOptions.firstWhere(
-                  (label) =>
-                      label
-                          .toLowerCase()
-                          .replaceAll('/', ' ') // treat / as word separator
-                          .replaceAll(
-                            RegExp(r'[^a-z0-9\s]'),
-                            '',
-                          ) // strip remaining special chars
-                          .trim()
-                          .replaceAll(RegExp(r'\s+'), '_') ==
-                      apiValue,
-                  orElse: () => apiValue,
-                );
-              })
-              .where((item) => workItemOptions.contains(item))
-              .toList(),
-        );
-      } else {
-        selectedWorkItems.clear();
-      }
+    } else {
+      selectedWorkItems.clear();
+    }
 
     // Material Multi-selects (Home Construction)
     _populateMultiSelect(
@@ -946,7 +964,7 @@ class ContractorMyServiceController
   bool isHomeConstruction(String categoryId) =>
       categoryId.toLowerCase().replaceAll(" ", "_") ==
       kHomeConstructionCategoryId.toLowerCase();
-/*  Map<String, List<Map<String, dynamic>>> kServiceCategoryData = {
+  /*  Map<String, List<Map<String, dynamic>>> kServiceCategoryData = {
     // ── Home Services ──────────────────────────────────────────
     'home_services': [
       {
@@ -1435,6 +1453,8 @@ class ContractorMyServiceController
       {
         'label': 'Maintenance & AMC Services',
         'value': 'maintenance_amc_services',
+        'bestSelling': false,
+        "trending": true,
         'items': [
           'AC Repair',
           'Geyser Repair',
@@ -1447,11 +1467,15 @@ class ContractorMyServiceController
       {
         'label': 'Home Painting',
         'value': 'home_painting',
+        'bestSelling': true,
+        "trending": false,
         'items': ['Interior Painting', 'Exterior Painting', 'Waterproofing'],
       },
       {
         'label': 'Home Cleaning',
         'value': 'home_cleaning',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Full House Cleaning',
           'Kitchen Cleaning',
@@ -1462,6 +1486,8 @@ class ContractorMyServiceController
       {
         'label': 'Electrician',
         'value': 'electrician',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Fan',
           'Switch & Socket',
@@ -1482,6 +1508,8 @@ class ContractorMyServiceController
       {
         'label': 'Plumber',
         'value': 'plumber',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Toilet Repair',
           'Tap & Mixer Repair',
@@ -1494,8 +1522,23 @@ class ContractorMyServiceController
         ],
       },
       {
+        "label": "Pest Control",
+        'bestSelling': false,
+        "trending": false,
+        "value": "pest_control",
+        'items': [
+          'Home Pest Control',
+          'Sanitization & Disinfection (Anti-Viral)',
+          'Garden Pest Control',
+          'Anti Termite Treatment (For Pre & Post Construction)',
+          'Commercial & Industrial Pest Control (Hotels & Restaurants, Hospitals, Warehouses, Factories)',
+        ],
+      },
+      {
         'label': 'Carpenter',
         'value': 'carpenter',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Door',
           'Drill & Hang',
@@ -1511,6 +1554,8 @@ class ContractorMyServiceController
       {
         'label': 'Buy / Rent Furniture',
         'value': 'buy_rent_furniture',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Sofa Set',
           'Recliner & Rocker',
@@ -1539,6 +1584,8 @@ class ContractorMyServiceController
       {
         'label': 'Buy / Rent Appliances',
         'value': 'buy_rent_appliances',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Split / Window AC',
           'Air Cooler',
@@ -1563,6 +1610,8 @@ class ContractorMyServiceController
       {
         'label': 'Rooftop Solar Panel Solutions',
         'value': 'rooftop_solar_panel_solutions',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Solar Panel Installation (1kW - 10kW+)',
           'On-Grid Solar System',
@@ -1575,6 +1624,8 @@ class ContractorMyServiceController
       },
       {
         'label': 'Home Security Solutions',
+        'bestSelling': false,
+        "trending": false,
         'value': 'home_security_solutions',
         'items': [
           'CCTV Camera Installation',
@@ -1588,6 +1639,8 @@ class ContractorMyServiceController
       },
       {
         'label': 'Smart Home Solutions',
+        'bestSelling': false,
+        "trending": false,
         'value': 'smart_home_solutions',
         'items': [
           'Home Automation System',
@@ -1601,6 +1654,8 @@ class ContractorMyServiceController
       {
         'label': 'Structure Planning and Design',
         'value': 'structure_planning_and_design',
+        'bestSelling': false,
+        "trending": true,
         'items': [
           '2D & 3D Floor Plan, Section, Elevation Architectural Drawing',
           'Structural Engineering Drawing',
@@ -1612,6 +1667,8 @@ class ContractorMyServiceController
       {
         'label': 'Renovation and Remodeling',
         'value': 'renovation_and_remodeling',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Kitchen Renovation',
           'Bathroom Renovation',
@@ -1624,8 +1681,11 @@ class ContractorMyServiceController
         ],
       },
       {
-        'label': 'End to End New Home Construction Contractors (Turnkey Home Construction)',
+        'label':
+            'End to End New Home Construction Contractors (Turnkey Home Construction)',
         'value': 'end_to_end_new_home_construction_contractors',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Budget Home Construction',
           'Luxury / Premium Home Construction',
@@ -1639,6 +1699,8 @@ class ContractorMyServiceController
       {
         'label': 'Commercial Construction Contractors',
         'value': 'commercial_construction_contractors',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Office Construction',
           'Shop Construction',
@@ -1650,6 +1712,8 @@ class ContractorMyServiceController
       {
         'label': 'Exterior Cladding & Facade Contractors',
         'value': 'exterior_cladding_facade_contractors',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'ACP Cladding Installation Contractors',
           'Glass Facade Contractors',
@@ -1661,6 +1725,8 @@ class ContractorMyServiceController
       },
       {
         'label': 'Specialized Service',
+        'bestSelling': false,
+        "trending": false,
         'value': 'specialized_service',
         'items': [
           'Waterproofing Solution',
@@ -1677,6 +1743,8 @@ class ContractorMyServiceController
       {
         'label': 'Construction Site Machine Rent (YantraRent)',
         'value': 'construction_site_machine_rent_yantrarent',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'JCB',
           'Poclain',
@@ -1696,6 +1764,8 @@ class ContractorMyServiceController
       {
         'label': 'Residential Room Design',
         'value': 'residential_room_design',
+        'bestSelling': true,
+        "trending": false,
         'items': [
           'Living Room Design',
           'Master Bedroom Design',
@@ -1712,6 +1782,8 @@ class ContractorMyServiceController
       {
         'label': 'Kitchen Design',
         'value': 'kitchen_design',
+        'bestSelling': false,
+        "trending": true,
         'items': [
           'Modular Kitchen Design',
           'Kitchen Design',
@@ -1724,6 +1796,8 @@ class ContractorMyServiceController
       },
       {
         'label': 'Commercial & Retail',
+        'bestSelling': false,
+        "trending": false,
         'value': 'commercial_retail',
         'items': [
           'Office Workspaces Interior',
@@ -1734,6 +1808,8 @@ class ContractorMyServiceController
       {
         'label': 'Structural & Elements',
         'value': 'structural_elements',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Staircase Design',
           'Railing Design',
@@ -1753,6 +1829,8 @@ class ContractorMyServiceController
       {
         'label': 'Furniture Design',
         'value': 'furniture_design',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Wardrobe Design',
           'TV Unit Design',
@@ -1768,6 +1846,8 @@ class ContractorMyServiceController
       {
         'label': 'Property Documentation & Drafting',
         'value': 'property_documentation_drafting',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Property Sale Deed Drafting',
           'Sale Agreement Review & Analysis',
@@ -1782,6 +1862,8 @@ class ContractorMyServiceController
       {
         'label': 'Registration & Agreements',
         'value': 'registration_agreements',
+        'bestSelling': true,
+        "trending": false,
         'items': [
           'Property Registration Assistance',
           'Commercial Lease Agreement Registration',
@@ -1792,6 +1874,8 @@ class ContractorMyServiceController
       {
         'label': 'Verification & Due Diligence',
         'value': 'verification_due_diligence',
+        'bestSelling': false,
+        "trending": true,
         'items': [
           'Property Title Search & Verification',
           'Property Litigation & Case Search',
@@ -1806,6 +1890,8 @@ class ContractorMyServiceController
       {
         'label': 'Legal Consultation & Advisory',
         'value': 'legal_consultation_advisory',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Property Document Review & Consultation',
           'Expert Real Estate Legal Consultation (Call)',
@@ -1819,10 +1905,12 @@ class ContractorMyServiceController
     ],
 
     // ── Material Supply ────────────────────────────────────────
-    'material_supply': [
+    'building_material_supply': [
       {
         'label': 'Civil / Structural Material',
         'value': 'civil_structural_material',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Cement (UltraTech / ACC / Ambuja)',
           'TMT Steel Bars (8mm, 10mm, 12mm, 16mm, 20mm)',
@@ -1840,6 +1928,8 @@ class ContractorMyServiceController
       },
       {
         'label': 'Masonry & Plaster Material',
+        'bestSelling': false,
+        "trending": false,
         'value': 'masonry_plaster_material',
         'items': [
           'Plaster Sand',
@@ -1854,6 +1944,8 @@ class ContractorMyServiceController
       {
         'label': 'Flooring & Tiles',
         'value': 'flooring_tiles',
+        'bestSelling': true,
+        "trending": false,
         'items': [
           'Floor Tiles',
           'Wall Tiles',
@@ -1869,6 +1961,8 @@ class ContractorMyServiceController
       {
         'label': 'Plumbing Material',
         'value': 'plumbing_material',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'PVC Pipe',
           'CPVC Pipe',
@@ -1887,6 +1981,8 @@ class ContractorMyServiceController
       },
       {
         'label': 'Electrical Material',
+        'bestSelling': false,
+        "trending": true,
         'value': 'electrical_material',
         'items': [
           'Electrical Wire',
@@ -1908,6 +2004,8 @@ class ContractorMyServiceController
       },
       {
         'label': 'Doors & Windows',
+        'bestSelling': false,
+        "trending": false,
         'value': 'doors_windows',
         'items': [
           'Main Door (Teak Wood / Flush Door)',
@@ -1924,6 +2022,8 @@ class ContractorMyServiceController
       {
         'label': 'Paint & Finishing',
         'value': 'paint_finishing',
+        'bestSelling': false,
+        "trending": false,
         'items': [
           'Primer (Wall / Metal / Wood)',
           'Putty',
@@ -1938,6 +2038,8 @@ class ContractorMyServiceController
       },
       {
         'label': 'Waterproofing & Terrace',
+        'bestSelling': false,
+        "trending": false,
         'value': 'waterproofing_terrace',
         'items': [
           'Dr Fixit Chemical',
@@ -1949,6 +2051,8 @@ class ContractorMyServiceController
       },
       {
         'label': 'Carpentry & Interior',
+        'bestSelling': false,
+        "trending": false,
         'value': 'carpentry_interior',
         'items': [
           'Plywood',
@@ -1964,49 +2068,55 @@ class ContractorMyServiceController
     ],
 
     // ── Packers & Movers ───────────────────────────────────────
-    'packers_&_movers': [
+    'packers_movers': [
       {
         "label": "Within City",
         "value": "within_city",
-        "items":[]
+        'bestSelling': true,
+        "trending": false,
+        "items": [],
       },
       {
         "label": "Between city",
         "value": "between_city",
-  "items":[]
+        'bestSelling': false,
+        "trending": true,
+        "items": [],
       },
       {
         "label": "Moving Only",
-        "value": "moving_only"
-        ,
-        "items":[]
+        "value": "moving_only",
+        'bestSelling': false,
+        "trending": false,
+        "items": [],
       },
       {
         "label": "Vehicle Shifting (Bike/Car)",
-        "value": "vehicle_shifting_bike_car"
-        ,
-        "items":[]
+        "value": "vehicle_shifting_bike_car",
+        'bestSelling': false,
+        "trending": false,
+        "items": [],
       },
       {
         "label": "City Tempo Service",
-        "value": "city_tempo_service"
-        ,
-        "items":[]
+        "value": "city_tempo_service",
+        'bestSelling': false,
+        "trending": false,
+        "items": [],
       },
       {
         "label": "Rent Vehicle(Truck)",
-        "value": "rent_vehicle_truck"
-        ,
-        "items":[]
-      }
+        "value": "rent_vehicle_truck",
+        'bestSelling': false,
+        "trending": false,
+        "items": [],
+      },
     ],
   };
 
   List<Map<String, dynamic>> getServiceNamesForCategory(String categoryId) {
-    log(
-      "getServiceNamesForCategory ${categoryId}",
-    );
-    return kServiceCategoryData[categoryId.toLowerCase()] ?? [];
+    log("getServiceNamesForCategory ${categoryId}");
+    return kServiceCategoryData[categoryId] ?? [];
   }
 
   /*  List<String> getWorkItemsForServiceName(
@@ -2083,7 +2193,13 @@ class ContractorMyServiceController
 
     // Find label to store as serviceName for API
     final services = getServiceNamesForCategory(
-      selectedCategoryName.toLowerCase().replaceAll(" ", "_"),
+      selectedCategoryName
+          .trim()
+          .toLowerCase()
+          .replaceAll('/', ' ')
+          .replaceAll(RegExp(r'[^a-z0-9\s]'), '')
+          .trim()
+          .replaceAll(RegExp(r'\s+'), '_'),
     );
     final match = services.firstWhere(
       (s) => s['value'] == value,
@@ -2093,7 +2209,10 @@ class ContractorMyServiceController
 
     selectedWorkItems.clear();
     workItemOptions.assignAll(
-      getWorkItemsForServiceName(selectedCategoryName.value.toLowerCase().replaceAll(" ", "_"), value),
+      getWorkItemsForServiceName(
+        selectedCategoryName.value.toLowerCase().replaceAll(" ", "_"),
+        value,
+      ),
     );
   }
 
@@ -2407,9 +2526,7 @@ class ContractorMyServiceController
             .replaceAll(RegExp(r'[^a-z0-9\s]'), '')
             .trim()
             .replaceAll(RegExp(r'\s+'), '_'),
-        description:
-
-                descriptionController.text.trim(),
+        description: descriptionController.text.trim(),
 
         isActive: editingService.value!.isActive,
         meta: ContractorMetaData(
@@ -2475,20 +2592,22 @@ class ContractorMyServiceController
           solarSolutions: _stringOrNull(selectedSolarSolutions.value),
           // Work Items
           // works field
-          works:  workItemOptions.isEmpty  // ✅ Packers & Movers or any category with no items
-              ? null
-              : _listOrNull(
-            selectedWorkItems
-                .map(
-                  (label) => label
-                  .toLowerCase()
-                  .replaceAll('/', ' ')
-                  .replaceAll(RegExp(r'[^a-z0-9\s]'), '')
-                  .trim()
-                  .replaceAll(RegExp(r'\s+'), '_'),
-            )
-                .toList(),
-          ),
+          works:
+              workItemOptions
+                      .isEmpty // ✅ Packers & Movers or any category with no items
+                  ? null
+                  : _listOrNull(
+                    selectedWorkItems
+                        .map(
+                          (label) => label
+                              .toLowerCase()
+                              .replaceAll('/', ' ')
+                              .replaceAll(RegExp(r'[^a-z0-9\s]'), '')
+                              .trim()
+                              .replaceAll(RegExp(r'\s+'), '_'),
+                        )
+                        .toList(),
+                  ),
         ),
 
         createdAt: editingService.value!.createdAt,

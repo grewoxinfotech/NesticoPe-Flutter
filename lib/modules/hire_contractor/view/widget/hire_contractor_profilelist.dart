@@ -146,11 +146,42 @@ class HireContractorProfileList extends StatelessWidget {
                 child: Column(
                   children: [
                     Obx(() {
+                      final displayFilters = Map<String, String>.from(selectedFilters.value);
+                      if (controllerFilter.selectedCategoryName.value.isNotEmpty) {
+                        displayFilters['category'] = controllerFilter.selectedCategoryName.value;
+                      }
+                      if (controllerFilter.selectedCity.value.isNotEmpty) {
+                        displayFilters['city'] = controllerFilter.selectedCity.value;
+                      }
+                      if (controllerFilter.selectedContractorRating.value > 0) {
+                        displayFilters['contractorMinRating'] =
+                            controllerFilter.selectedContractorRating.value.toInt().toString();
+                      }
+                      if (controllerFilter.selectedServiceRating.value > 0) {
+                        displayFilters['serviceMinRating'] =
+                            controllerFilter.selectedServiceRating.value.toInt().toString();
+                      }
+                      if (controllerFilter.selectedExperience.value.isNotEmpty) {
+                        displayFilters['experience'] = controllerFilter.selectedExperience.value;
+                      }
+                      if (controllerFilter.selectedAccountType.value.isNotEmpty) {
+                        displayFilters['premiumAccount'] = controllerFilter.selectedAccountType.value;
+                      }
+                      if (controllerFilter.selectedServiceNames.isNotEmpty) {
+                        displayFilters['serviceNames'] =
+                            controllerFilter.selectedServiceNames.join(', ');
+                      }
+                      if (controllerFilter.selectedWorkItems.isNotEmpty) {
+                        displayFilters['works'] =
+                            controllerFilter.selectedWorkItems.join(', ');
+                      }
                       return FilterChipsBar(
-                        filters: selectedFilters.value,
+                        filters: displayFilters,
                         onClearAll: () {
                           selectedFilters.clear();
-                          controllerFilter.resetFilters();
+                           controllerFilter.selectedCategoryId.value = '';
+                          controllerFilter.selectedCategoryName.value = '';
+                          controllerFilter.resetFilters(); // keep category selection
                           controllerFilter.applyFilters(<String, String>{});
                         },
                         onRemoveFilter: (key) {
@@ -1134,7 +1165,7 @@ class _HireContractorCardState extends State<HireContractorCard> {
           children: [
             Expanded(
               child: Text(
-                serviceName,
+                serviceName.capitalize?.replaceAll("_", " ")??'',
                 style: TextStyle(
                   fontSize: AppFontSizes.caption,
                   fontWeight: AppFontWeights.medium,
@@ -1142,6 +1173,7 @@ class _HireContractorCardState extends State<HireContractorCard> {
                 ),
               ),
             ),
+            
             if (!isMore) ...[
               const SizedBox(width: 8),
               Container(

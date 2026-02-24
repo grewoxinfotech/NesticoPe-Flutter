@@ -511,11 +511,20 @@ class _HireContractorFilterScreenState
       filters['premiumAccount'] =
           controllerProfileData.selectedAccountType.value;
     }
+
+
     if (controllerProfileData.selectedServiceNames.value.isNotEmpty) {
       filters['serviceNames'] = controllerProfileData.selectedServiceNames.value
           .map((e) => e.trim())
-          .join(',');
+          .join(', ');
     }
+    if (controllerProfileData.selectedWorkItems.value.isNotEmpty) {
+
+      filters['works'] = controllerProfileData.selectedWorkItems.value
+          .map((e) => e.trim())
+          .join(', ');
+    }
+
 
     return filters;
   }
@@ -537,7 +546,7 @@ class _HireContractorFilterScreenState
         leading: IconButton(
           onPressed: () {
             Get.back();
-            controllerProfileData.resetFilters();
+          
           },
           icon: const Icon(Icons.arrow_back),
         ),
@@ -546,423 +555,531 @@ class _HireContractorFilterScreenState
           style: TextStyle(fontWeight: AppFontWeights.semiBold),
         ),
       ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            // 🔹 Scrollable Form
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 16,
-                ),
-                child: Obx(() {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      buildSectionTitle('Service Category'),
-                      NesticoPeDropdownField<String>(
-                        value: controllerProfileData.selectedCategoryId.value,
-                        hintText: "Select category",
-                        prefixIcon: Icons.category,
-                        items:
-                            controller.items
-                                .map(
-                                  (e) => DropdownMenuItem(
-                                    value: e.id,
-                                    child: Text(e.name ?? 'Unknown Category'),
-                                  ),
-                                )
-                                .toList(),
-                        onChanged: (val) {
-                          controllerProfileData.setValue(
-                            controllerProfileData.selectedCategoryId,
-                            val ?? '',
-                          );
-                          final selectedItem = controller.items
-                              .firstWhereOrNull((e) => e.id == val);
-                          if (selectedItem != null) {
-                            controllerProfileData.selectedCategoryName.value =
-                                selectedItem.name ?? '';
-                            controllerProfileData
-                                .selectedServiceNameDropdown
-                                .value = '';
-                          }
-                        },
-                        darkText: true,
-                      ),
-                      const SizedBox(height: 16),
-                      buildSectionTitle('Sub Category'),
-                      Obx(() {
-                        final options = controllerProfileData.getServiceNamesForCategory(
-                          controllerProfileData.selectedCategoryName.value
-                              .toLowerCase()
-                              .replaceAll(" ", "_"),
-                        );
-                        log("Sub-category options: $options");
-
-                        if (controllerProfileData.selectedCategoryId.value.isEmpty) {
-                          return Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                            decoration: BoxDecoration(
-                              color: ColorRes.grey.withOpacity(0.05),
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: ColorRes.grey.withOpacity(0.3)),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(Icons.business_center, size: 20, color: ColorRes.grey.withOpacity(0.5)),
-                                const SizedBox(width: 10),
-                                Text(
-                                  "Select a category first",
-                                  style: TextStyle(fontSize: AppFontSizes.small, color: ColorRes.grey.withOpacity(0.5)),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-
-                        if (options.isEmpty) {
-                          return Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                            decoration: BoxDecoration(
-                              color: ColorRes.grey.withOpacity(0.05),
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: ColorRes.grey.withOpacity(0.3)),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(Icons.info_outline, size: 20, color: ColorRes.grey.withOpacity(0.5)),
-                                const SizedBox(width: 10),
-                                Text(
-                                  "No sub-categories available",
-                                  style: TextStyle(fontSize: AppFontSizes.small, color: ColorRes.grey.withOpacity(0.5)),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // ✅ Selected chips above dropdown
-                            Obx(() {
-                              final selected = controllerProfileData.selectedServiceNames;
-                              if (selected.isEmpty) return const SizedBox.shrink();
-
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 8),
-                                child: Wrap(
-                                  spacing: 6,
-                                  runSpacing: 4,
-                                  children: selected.map((serviceName) {
-                                    return Chip(
-                                      label: Text(
-                                        serviceName,
-                                        style: const TextStyle(fontSize: AppFontSizes.caption),
-                                      ),
-                                      deleteIcon: const Icon(Icons.close, size: 14),
-                                      onDeleted: () => controllerProfileData.removeServiceName(serviceName),
-                                    );
-                                  }).toList(),
-                                ),
-                              );
-                            }),
-
-                            // ✅ Multi-select dropdown with checkbox icons
-                            Obx(() {
-                              final selected = controllerProfileData.selectedServiceNames;
-                              return NesticoPeDropdownField<String>(
-                                value: null,
-                                key: ValueKey(
-                                  '${controllerProfileData.selectedCategoryName.value}_${selected.length}',
-                                ),
-                                hintText: selected.isEmpty
-                                    ? "Select service name"
-                                    : "${selected.length} service(s) selected",
-                                prefixIcon: Icons.business_center,
-                                items: options.map((e) {
-                                  final label = e['label'] as String;
-                                  final value = e['value'] as String;
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Obx(() {
-                                      final isSelected = controllerProfileData.selectedServiceNames.contains(label);
-                                      return Row(
-                                        children: [
-                                          Icon(
-                                            isSelected ? Icons.check_box : Icons.check_box_outline_blank,
-                                            size: 18,
-                                            color: isSelected ? ColorRes.primary : ColorRes.textSecondary,
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Expanded(child: Text(label)),
-                                        ],
-                                      );
-                                    }),
-                                  );
-                                }).toList(),
-                                onChanged: (val) {
-                                  if (val == null) return;
-                                  // Find label for the selected value
-                                  final match = options.firstWhereOrNull((e) => e['value'] == val);
-                                  if (match == null) return;
-                                  final label = match['label'] as String;
-
-                                  // ✅ Toggle: add if not present, remove if already selected
-                                  if (controllerProfileData.selectedServiceNames.contains(label)) {
-                                    controllerProfileData.removeServiceName(label);
-                                  } else {
-                                    controllerProfileData.onServiceNameSelected(val, label: label);
-                                  }
-                                },
-                                darkText: true,
-                              );
-                            }),
-                          ],
-                        );
-                      }),
-                      const SizedBox(height: 16),
-                      buildSectionTitle('City'),
-                      NesticoPeDropdownField<String>(
-                        value:
-                            controllerProfileData.selectedCity.value.isEmpty
-                                ? null
-                                : controllerProfileData.selectedCity.value,
-                        hintText: "Select City",
-                        prefixIcon: Icons.location_city,
-                        items:
-                            controllerProfileData.contractorCity.value?.data
-                                ?.map(
-                                  (e) => DropdownMenuItem<String>(
-                                    value: e.city,
-                                    child: Text("${e.city} (${e.count})"),
-                                  ),
-                                )
-                                .toList() ??
-                            [],
-                        onChanged: (val) {
-                          if (val != null) {
+      body: SafeArea(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              // 🔹 Scrollable Form
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 16,
+                  ),
+                  child: Obx(() {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        buildSectionTitle('Service Category'),
+                        NesticoPeDropdownField<String>(
+                          value: controllerProfileData.selectedCategoryId.value,
+                          hintText: "Select category",
+                          prefixIcon: Icons.category,
+                          items:
+                              controller.items
+                                  .map(
+                                    (e) => DropdownMenuItem(
+                                      value: e.id,
+                                      child: Text(e.name ?? 'Unknown Category'),
+                                    ),
+                                  )
+                                  .toList(),
+                          onChanged: (val) {
                             controllerProfileData.setValue(
-                              controllerProfileData.selectedCity,
-                              val,
+                              controllerProfileData.selectedCategoryId,
+                              val ?? '',
+                            );
+                            final selectedItem = controller.items
+                                .firstWhereOrNull((e) => e.id == val);
+                            if (selectedItem != null) {
+                              controllerProfileData.selectedCategoryName.value =
+                                  selectedItem.name ?? '';
+                              controllerProfileData
+                                  .selectedServiceNameDropdown
+                                  .value = '';
+                              controllerProfileData.selectedServiceNames.clear();
+                              controllerProfileData.selectedWorkItems.clear();
+                              controllerProfileData.workItemOptions.clear();
+                            }
+                          },
+                          darkText: true,
+                        ),
+                        const SizedBox(height: 16),
+                        buildSectionTitle('Sub Category'),
+                        Obx(() {
+                          final options = controllerProfileData.getServiceNamesForCategory(
+                            controllerProfileData.selectedCategoryName.value
+                                .trim()
+        .toLowerCase()
+        .replaceAll('/', ' ')
+        .replaceAll(RegExp(r'[^a-z0-9\s]'), '')
+        .trim()
+        .replaceAll(RegExp(r'\s+'), '_'),
+                          );
+                          log("Sub-category options: $options");
+        
+                          if (controllerProfileData.selectedCategoryId.value.isEmpty) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                              decoration: BoxDecoration(
+                                color: ColorRes.grey.withOpacity(0.05),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: ColorRes.grey.withOpacity(0.3)),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.business_center, size: 20, color: ColorRes.grey.withOpacity(0.5)),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    "Select a category first",
+                                    style: TextStyle(fontSize: AppFontSizes.small, color: ColorRes.grey.withOpacity(0.5)),
+                                  ),
+                                ],
+                              ),
                             );
                           }
-                        },
-                        darkText: true,
-                      ),
-                      const SizedBox(height: 20),
-
-                      buildSectionTitle('Contractor Rating'),
-                      const SizedBox(height: 8),
-                      Slider(
-                        min: 0,
-                        max: 5,
-                        divisions: 5,
-                        value:
-                            controllerProfileData
-                                .selectedContractorRating
-                                .value,
-                        label: controllerProfileData
-                            .selectedContractorRating
-                            .value
-                            .toStringAsFixed(1),
-                        activeColor: ColorRes.primary,
-                        onChanged: (val) {
-                          controllerProfileData.setValue(
-                            controllerProfileData.selectedContractorRating,
-                            val,
+        
+                          if (options.isEmpty) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                              decoration: BoxDecoration(
+                                color: ColorRes.grey.withOpacity(0.05),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: ColorRes.grey.withOpacity(0.3)),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.info_outline, size: 20, color: ColorRes.grey.withOpacity(0.5)),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    "No sub-categories available",
+                                    style: TextStyle(fontSize: AppFontSizes.small, color: ColorRes.grey.withOpacity(0.5)),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+        
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // ✅ Selected chips above dropdown
+                              Obx(() {
+                                final selected = controllerProfileData.selectedServiceNames;
+                                if (selected.isEmpty) return const SizedBox.shrink();
+        
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 8),
+                                  child: Wrap(
+                                    spacing: 6,
+                                    runSpacing: 4,
+                                    children: selected.map((serviceName) {
+                                      return Chip(
+                                        label: Text(
+                                          serviceName,
+                                          style: const TextStyle(fontSize: AppFontSizes.caption),
+                                        ),
+                                        deleteIcon: const Icon(Icons.close, size: 14),
+                                        onDeleted: () => controllerProfileData.removeServiceName(serviceName),
+                                      );
+                                    }).toList(),
+                                  ),
+                                );
+                              }),
+        
+                              // ✅ Multi-select dropdown with checkbox icons
+                              Obx(() {
+                                final selected = controllerProfileData.selectedServiceNames;
+                                return NesticoPeDropdownField<String>(
+                                  value: null,
+                                  key: ValueKey(
+                                    '${controllerProfileData.selectedCategoryName.value}_${selected.length}',
+                                  ),
+                                  hintText: selected.isEmpty
+                                      ? "Select service name"
+                                      : "${selected.length} service(s) selected",
+                                  prefixIcon: Icons.business_center,
+                                  items: options.map((e) {
+                                    final label = e['label'] as String;
+                                    final value = e['value'] as String;
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Obx(() {
+                                        final isSelected = controllerProfileData.selectedServiceNames.contains(label);
+                                        return Row(
+                                          children: [
+                                            Icon(
+                                              isSelected ? Icons.check_box : Icons.check_box_outline_blank,
+                                              size: 18,
+                                              color: isSelected ? ColorRes.primary : ColorRes.textSecondary,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Expanded(child: Text(label)),
+                                          ],
+                                        );
+                                      }),
+                                    );
+                                  }).toList(),
+                                  onChanged: (val) {
+                                    if (val == null) return;
+                                    // Find label for the selected value
+                                    final match = options.firstWhereOrNull((e) => e['value'] == val);
+                                    if (match == null) return;
+                                    final label = match['label'] as String;
+        
+                                    // ✅ Toggle: add if not present, remove if already selected
+                                    if (controllerProfileData.selectedServiceNames.contains(label)) {
+                                      controllerProfileData.removeServiceName(label);
+                                    } else {
+                                      controllerProfileData.onServiceNameSelected(val, label: label);
+                                    }
+                                  },
+                                  darkText: true,
+                                );
+                              }),
+                            ],
                           );
-                        },
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [Text('0.0'), Text('5.0')],
-                      ),
-
-                      const SizedBox(height: 20),
-                      buildSectionTitle('Service Rating'),
-                      const SizedBox(height: 8),
-                      Slider(
-                        min: 0,
-                        max: 5,
-                        divisions: 5,
-                        value:
-                            controllerProfileData.selectedServiceRating.value,
-                        label: controllerProfileData.selectedServiceRating.value
-                            .toStringAsFixed(1),
-                        activeColor: ColorRes.primary,
-                        onChanged: (val) {
-                          controllerProfileData.setValue(
-                            controllerProfileData.selectedServiceRating,
-                            val,
-                          );
-                        },
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [Text('0.0'), Text('5.0')],
-                      ),
-
-                      const SizedBox(height: 20),
-                      buildSectionTitle('Years of Experience'),
-                      const SizedBox(height: 8),
-                      GridView.count(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
-                        childAspectRatio: 2.2,
-                        // better visual balance
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        children:
-                            ['1', '2', '3', '4', '5', '5+'].map((exp) {
-                              return Obx(() {
-                                return filterChip(
-                                  label: '$exp yr${exp == '1' ? '' : 's'}',
-                                  isSelected:
+                        }),
+                      
+                         Obx(() {
+                      if (controllerProfileData.selectedServiceNames.isEmpty) {
+                        return const SizedBox.shrink();
+                      }
+                      if (controllerProfileData.workItemOptions.isEmpty) {
+                        return const SizedBox.shrink();
+                        
+                      }
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                            const SizedBox(height: 16),
+                          buildSectionTitle('Works / Specific Services'),
+                        
+                          const SizedBox(height: 4),
+        
+                          // Selected chips
+                          if (controllerProfileData.selectedWorkItems.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: Wrap(
+                                spacing: 6,
+                                runSpacing: 4,
+                                children:
+                                    controllerProfileData.selectedWorkItems
+                                        .map(
+                                          (item) => Chip(
+                                            label: Text(
+                                              item,
+                                              style: const TextStyle(
+                                                fontSize: AppFontSizes.caption,
+                                              ),
+                                            ),
+                                            deleteIcon: const Icon(
+                                              Icons.close,
+                                              size: 14,
+                                            ),
+                                            onDeleted:
+                                                () => controllerProfileData.selectedWorkItems
+                                                    .remove(item),
+                                          ),
+                                        )
+                                        .toList(),
+                              ),
+                            ),
+        
+                          // ✅ Multi-select dropdown
+                          // key includes selectedWorkItems.length to rebuild on add/remove
+                          NesticoPeDropdownField<String>(
+                            value: null,
+                            key: ValueKey(
+                              '${controllerProfileData.selectedServiceNameDropdown.value}_${controllerProfileData.selectedWorkItems.length}',
+                            ),
+                            hintText:
+                                controllerProfileData.selectedWorkItems.isEmpty
+                                    ? "Select work items"
+                                    : "${controllerProfileData.selectedWorkItems.length} item(s) selected",
+                            prefixIcon: Icons.handyman,
+                            items:
+                                controllerProfileData.workItemOptions
+                                    .map(
+                                      (e) => DropdownMenuItem(
+                                        value: e,
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              controllerProfileData.selectedWorkItems
+                                                      .contains(e)
+                                                  ? Icons.check_box
+                                                  : Icons.check_box_outline_blank,
+                                              size: 18,
+                                              color:
+                                                  controllerProfileData.selectedWorkItems
+                                                          .contains(e)
+                                                      ? ColorRes.primary
+                                                      : ColorRes.textSecondary,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Expanded(child: Text(e)),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                            onChanged: (val) {
+                              if (val == null) return;
+                              // ✅ Toggle: add if not present, remove if already selected
+                              if (controllerProfileData.selectedWorkItems.contains(val)) {
+                                controllerProfileData.selectedWorkItems.remove(val);
+                              } else {
+                                controllerProfileData.selectedWorkItems.add(val);
+                              }
+                            },
+                            darkText: true,
+                          ),
+                        ],
+                      );
+                    }),
+                  SizedBox(height: 16),
+                        buildSectionTitle('City'),
+                        NesticoPeDropdownField<String>(
+                          value:
+                              controllerProfileData.selectedCity.value.isEmpty
+                                  ? null
+                                  : controllerProfileData.selectedCity.value,
+                          hintText: "Select City",
+                          prefixIcon: Icons.location_city,
+                          items:
+                              controllerProfileData.contractorCity.value?.data
+                                  ?.map(
+                                    (e) => DropdownMenuItem<String>(
+                                      value: e.city,
+                                      child: Text("${e.city} (${e.count})"),
+                                    ),
+                                  )
+                                  .toList() ??
+                              [],
+                          onChanged: (val) {
+                            if (val != null) {
+                              controllerProfileData.setValue(
+                                controllerProfileData.selectedCity,
+                                val,
+                              );
+                            }
+                          },
+                          darkText: true,
+                        ),
+                        const SizedBox(height: 20),
+        
+                        buildSectionTitle('Contractor Rating'),
+                        const SizedBox(height: 8),
+                        Slider(
+                          min: 0,
+                          max: 5,
+                          divisions: 5,
+                          value:
+                              controllerProfileData
+                                  .selectedContractorRating
+                                  .value,
+                          label: controllerProfileData
+                              .selectedContractorRating
+                              .value
+                              .toStringAsFixed(1),
+                          activeColor: ColorRes.primary,
+                          onChanged: (val) {
+                            controllerProfileData.setValue(
+                              controllerProfileData.selectedContractorRating,
+                              val,
+                            );
+                          },
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: const [Text('0.0'), Text('5.0')],
+                        ),
+        
+                        const SizedBox(height: 20),
+                        buildSectionTitle('Service Rating'),
+                        const SizedBox(height: 8),
+                        Slider(
+                          min: 0,
+                          max: 5,
+                          divisions: 5,
+                          value:
+                              controllerProfileData.selectedServiceRating.value,
+                          label: controllerProfileData.selectedServiceRating.value
+                              .toStringAsFixed(1),
+                          activeColor: ColorRes.primary,
+                          onChanged: (val) {
+                            controllerProfileData.setValue(
+                              controllerProfileData.selectedServiceRating,
+                              val,
+                            );
+                          },
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: const [Text('0.0'), Text('5.0')],
+                        ),
+        
+                        const SizedBox(height: 20),
+                        buildSectionTitle('Years of Experience'),
+                        const SizedBox(height: 8),
+                        GridView.count(
+                          crossAxisCount: 3,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                          childAspectRatio: 2.2,
+                          // better visual balance
+                          padding: EdgeInsets.zero,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          children:
+                              ['1', '2', '3', '4', '5', '5+'].map((exp) {
+                                return Obx(() {
+                                  return filterChip(
+                                    label: '$exp yr${exp == '1' ? '' : 's'}',
+                                    isSelected:
+                                        controllerProfileData
+                                            .selectedExperience
+                                            .value ==
+                                        exp,
+                                    onTap: () {
                                       controllerProfileData
                                           .selectedExperience
+                                          .value = exp;
+                                    },
+                                  );
+                                });
+                              }).toList(),
+                        ),
+        
+                        const SizedBox(height: 20),
+                        buildSectionTitle('Account Type'),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Obx(() {
+                                return filterChip(
+                                  label: '⭐ Premium',
+                                  isSelected:
+                                      controllerProfileData
+                                          .selectedAccountType
                                           .value ==
-                                      exp,
+                                      'premium',
                                   onTap: () {
                                     controllerProfileData
-                                        .selectedExperience
-                                        .value = exp;
+                                        .selectedAccountType
+                                        .value = 'premium';
                                   },
                                 );
-                              });
-                            }).toList(),
-                      ),
-
-                      const SizedBox(height: 20),
-                      buildSectionTitle('Account Type'),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Obx(() {
-                              return filterChip(
-                                label: '⭐ Premium',
-                                isSelected:
+                              }),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Obx(() {
+                                return filterChip(
+                                  label: 'Regular',
+                                  isSelected:
+                                      controllerProfileData
+                                          .selectedAccountType
+                                          .value ==
+                                      'regular',
+                                  onTap: () {
                                     controllerProfileData
                                         .selectedAccountType
-                                        .value ==
-                                    'premium',
-                                onTap: () {
-                                  controllerProfileData
-                                      .selectedAccountType
-                                      .value = 'premium';
-                                },
-                              );
-                            }),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Obx(() {
-                              return filterChip(
-                                label: 'Regular',
-                                isSelected:
-                                    controllerProfileData
-                                        .selectedAccountType
-                                        .value ==
-                                    'regular',
-                                onTap: () {
-                                  controllerProfileData
-                                      .selectedAccountType
-                                      .value = 'regular';
-                                },
-                              );
-                            }),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 24),
-                    ],
-                  );
-                }),
-              ),
-            ),
-
-            // 🔹 Footer Buttons
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              decoration: BoxDecoration(
-                color: ColorRes.white,
-                border: Border(
-                  top: BorderSide(
-                    color: ColorRes.grey.withOpacity(0.2),
-                    width: 1,
-                  ),
+                                        .value = 'regular';
+                                  },
+                                );
+                              }),
+                            ),
+                          ],
+                        ),
+        
+                        const SizedBox(height: 24),
+                      ],
+                    );
+                  }),
                 ),
               ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () {
-                        controllerProfileData.resetFilters();
-                        controllerProfileData.selectedCategoryId.value = '';
+        
+              // 🔹 Footer Buttons
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                decoration: BoxDecoration(
+                  color: ColorRes.white,
+                  border: Border(
+                    top: BorderSide(
+                      color: ColorRes.grey.withOpacity(0.2),
+                      width: 1,
+                    ),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          controllerProfileData.selectedCategoryId.value = '';
                         controllerProfileData.selectedCategoryName.value = '';
-                        Get.back();
-                      },
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        side: const BorderSide(color: ColorRes.primary),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text(
-                        'Clear',
-                        style: TextStyle(
-                          fontSize: AppFontSizes.medium,
-                          fontWeight: AppFontWeights.semiBold,
-                          color: ColorRes.primary,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    flex: 2,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        final filters = _buildFilterResult();
-                        filters.remove('category_ui');
-                        Get.back(result: filters);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: ColorRes.primary,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.filter_alt, size: 18),
-                          SizedBox(width: 8),
-                          Text(
-                            'Apply Filters',
-                            style: TextStyle(
-                              fontSize: AppFontSizes.medium,
-                              fontWeight: AppFontWeights.semiBold,
-                            ),
+                        controllerProfileData.resetFilters(); // keep category; clear other filters
+                        Get.back(result: <String, String>{});
+                        },
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          side: const BorderSide(color: ColorRes.primary),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                        ],
+                        ),
+                        child: const Text(
+                          'Clear',
+                          style: TextStyle(
+                            fontSize: AppFontSizes.medium,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.primary,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 2,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          final filters = _buildFilterResult();
+                          filters.remove('category_ui');
+                          Get.back(result: filters);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ColorRes.primary,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.filter_alt, size: 18),
+                            SizedBox(width: 8),
+                            Text(
+                              'Apply Filters',
+                              style: TextStyle(
+                                fontSize: AppFontSizes.medium,
+                                fontWeight: AppFontWeights.semiBold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

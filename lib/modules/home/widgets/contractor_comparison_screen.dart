@@ -2035,7 +2035,11 @@ class _ContractorServicesCard extends StatelessWidget {
                           children: [
                             // ── Service Name ──────────────────────────────
                             Text(
-                              service.serviceName,
+                              service.serviceName?.capitalize?.replaceAll(
+                                    '_',
+                                    ' ',
+                                  ) ??
+                                  '',
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.center,

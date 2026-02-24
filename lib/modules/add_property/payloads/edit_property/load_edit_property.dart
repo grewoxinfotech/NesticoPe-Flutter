@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/manager/icon_manager.dart';
 import 'package:housing_flutter_app/modules/add_property/model/add_property_model.dart';
-import 'package:housing_flutter_app/modules/add_property/model/furnishing_,model.dart';
+import 'package:housing_flutter_app/modules/add_property/model/furnishing_model.dart';
 import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 import 'package:intl/intl.dart';
 

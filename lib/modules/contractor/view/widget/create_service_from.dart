@@ -1528,153 +1528,158 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                 ),
 
                 // ── HOME CONSTRUCTION MATERIALS ──────────────────────────────
-
                 const SizedBox(height: 16),
 
                 // ── SERVICE NAME ─────────────────────────────────────────────
                 buildSectionTitle("Service Name *"),
                 const SizedBox(height: 8),
 
+                // OTHER CATEGORIES → Dropdown
+                Obx(() {
+                  final options = controller.getServiceNamesForCategory(
+                    controller.selectedCategoryName
+                        .trim()
+                        .toLowerCase()
+                        .replaceAll('/', ' ')
+                        .replaceAll(RegExp(r'[^a-z0-9\s]'), '')
+                        .trim()
+                        .replaceAll(RegExp(r'\s+'), '_'), // pass ID directly
+                  );
+                  log("option ${options}");
+                  return NesticoPeDropdownField<String>(
+                    isRequired: true,
+                    value:
+                        controller.selectedServiceNameDropdown.value.isEmpty
+                            ? null
+                            : controller.selectedServiceNameDropdown.value,
+                    hintText: "Select service name",
+                    prefixIcon: Icons.business_center,
 
-                  // OTHER CATEGORIES → Dropdown
-                  Obx(() {
-                    final options = controller.getServiceNamesForCategory(
-                      controller.selectedCategoryName.toLowerCase().replaceAll(
-                        " ",
-                        "_",
-                      ), // pass ID directly
-                    );
-                    log("option ${options}");
-                    return NesticoPeDropdownField<String>(
-                      isRequired: true,
-                      value:
-                          controller.selectedServiceNameDropdown.value.isEmpty
-                              ? null
-                              : controller.selectedServiceNameDropdown.value,
-                      hintText: "Select service name",
-                      prefixIcon: Icons.business_center,
+                    // ✅ FIX: include selectedServiceNameDropdown in key
+                    // so widget rebuilds when edit mode pre-populates the value
+                    key: ValueKey(
+                      '${controller.selectedCategoryName.value}_${controller.selectedServiceNameDropdown.value}',
+                    ),
+                    items:
+                        options
+                            .map(
+                              (e) => DropdownMenuItem(
+                                value: e['value'] as String,
+                                child: Text(e['label'] as String),
+                              ),
+                            )
+                            .toList(),
+                    onChanged: (val) {
+                      if (val == null) return;
+                      log(
+                        "Checkfehfhuewh ${val}   ${controller.selectedServiceNameDropdown.value}",
+                      );
+                      if (val == controller.selectedServiceNameDropdown.value)
+                        return;
+                      controller.onServiceNameSelected(val);
+                    },
+                    darkText: true,
+                  );
+                }),
 
-                      // ✅ FIX: include selectedServiceNameDropdown in key
-                      // so widget rebuilds when edit mode pre-populates the value
-                      key: ValueKey(
-                        '${controller.selectedCategoryName.value}_${controller.selectedServiceNameDropdown.value}',
-                      ),
-                      items:
-                          options
-                              .map(
-                                (e) => DropdownMenuItem(
-                                  value: e['value'] as String,
-                                  child: Text(e['label'] as String),
-                                ),
-                              )
-                              .toList(),
-                      onChanged: (val) {
-                        if (val == null) return;
-                        log("Checkfehfhuewh ${val}   ${controller.selectedServiceNameDropdown.value}");
-                        if(val==controller.selectedServiceNameDropdown.value)return;
-                        controller.onServiceNameSelected(val);
-                      },
-                      darkText: true,
-                    );
-                  }),
+                // ── Works / Items (service name select hone ke baad) ───────
+                Obx(() {
+                  if (controller.selectedServiceNameDropdown.value.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+                  if (controller.workItemOptions.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 16),
+                      buildSectionTitle("Works / Items *"),
+                      const SizedBox(height: 4),
 
-                  // ── Works / Items (service name select hone ke baad) ───────
-                  Obx(() {
-                    if (controller.selectedServiceNameDropdown.value.isEmpty) {
-                      return const SizedBox.shrink();
-                    }
-                    if (controller.workItemOptions.isEmpty) {
-                      return const SizedBox.shrink();
-                    }
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 16),
-                        buildSectionTitle("Works / Items *"),
-                        const SizedBox(height: 4),
-
-                        // Selected chips
-                        if (controller.selectedWorkItems.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: Wrap(
-                              spacing: 6,
-                              runSpacing: 4,
-                              children:
-                                  controller.selectedWorkItems
-                                      .map(
-                                        (item) => Chip(
-                                          label: Text(
-                                            item,
-                                            style: const TextStyle(
-                                              fontSize: AppFontSizes.caption,
-                                            ),
+                      // Selected chips
+                      if (controller.selectedWorkItems.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Wrap(
+                            spacing: 6,
+                            runSpacing: 4,
+                            children:
+                                controller.selectedWorkItems
+                                    .map(
+                                      (item) => Chip(
+                                        label: Text(
+                                          item,
+                                          style: const TextStyle(
+                                            fontSize: AppFontSizes.caption,
                                           ),
-                                          deleteIcon: const Icon(
-                                            Icons.close,
-                                            size: 14,
-                                          ),
-                                          onDeleted:
-                                              () => controller.selectedWorkItems
-                                                  .remove(item),
                                         ),
-                                      )
-                                      .toList(),
-                            ),
-                          ),
-
-                        // ✅ Multi-select dropdown
-                        // key includes selectedWorkItems.length to rebuild on add/remove
-                        NesticoPeDropdownField<String>(
-                          value: null,
-                          key: ValueKey(
-                            '${controller.selectedServiceNameDropdown.value}_${controller.selectedWorkItems.length}',
-                          ),
-                          hintText:
-                              controller.selectedWorkItems.isEmpty
-                                  ? "Select work items"
-                                  : "${controller.selectedWorkItems.length} item(s) selected",
-                          prefixIcon: Icons.handyman,
-                          items:
-                              controller.workItemOptions
-                                  .map(
-                                    (e) => DropdownMenuItem(
-                                      value: e,
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            controller.selectedWorkItems
-                                                    .contains(e)
-                                                ? Icons.check_box
-                                                : Icons.check_box_outline_blank,
-                                            size: 18,
-                                            color:
-                                                controller.selectedWorkItems
-                                                        .contains(e)
-                                                    ? ColorRes.primary
-                                                    : ColorRes.textSecondary,
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Expanded(child: Text(e)),
-                                        ],
+                                        deleteIcon: const Icon(
+                                          Icons.close,
+                                          size: 14,
+                                        ),
+                                        onDeleted:
+                                            () => controller.selectedWorkItems
+                                                .remove(item),
                                       ),
-                                    ),
-                                  )
-                                  .toList(),
-                          onChanged: (val) {
-                            if (val == null) return;
-                            // ✅ Toggle: add if not present, remove if already selected
-                            if (controller.selectedWorkItems.contains(val)) {
-                              controller.selectedWorkItems.remove(val);
-                            } else {
-                              controller.selectedWorkItems.add(val);
-                            }
-                          },
-                          darkText: true,
+                                    )
+                                    .toList(),
+                          ),
                         ),
-                      ],
-                    );
-                  }),
+
+                      // ✅ Multi-select dropdown
+                      // key includes selectedWorkItems.length to rebuild on add/remove
+                      NesticoPeDropdownField<String>(
+                        value: null,
+                        key: ValueKey(
+                          '${controller.selectedServiceNameDropdown.value}_${controller.selectedWorkItems.length}',
+                        ),
+                        hintText:
+                            controller.selectedWorkItems.isEmpty
+                                ? "Select work items"
+                                : "${controller.selectedWorkItems.length} item(s) selected",
+                        prefixIcon: Icons.handyman,
+                        items:
+                            controller.workItemOptions
+                                .map(
+                                  (e) => DropdownMenuItem(
+                                    value: e,
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          controller.selectedWorkItems.contains(
+                                                e,
+                                              )
+                                              ? Icons.check_box
+                                              : Icons.check_box_outline_blank,
+                                          size: 18,
+                                          color:
+                                              controller.selectedWorkItems
+                                                      .contains(e)
+                                                  ? ColorRes.primary
+                                                  : ColorRes.textSecondary,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Expanded(child: Text(e)),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                        onChanged: (val) {
+                          if (val == null) return;
+                          // ✅ Toggle: add if not present, remove if already selected
+                          if (controller.selectedWorkItems.contains(val)) {
+                            controller.selectedWorkItems.remove(val);
+                          } else {
+                            controller.selectedWorkItems.add(val);
+                          }
+                        },
+                        darkText: true,
+                      ),
+                    ],
+                  );
+                }),
                 SizedBox(height: 16),
 
                 if (controller.isHomeConstruction(
@@ -1683,19 +1688,19 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                   SizedBox(height: 16),
                   Obx(() {
                     final visibleCount =
-                    controller.showAllMaterials.value
-                        ? materialRows.length
-                        : 2;
+                        controller.showAllMaterials.value
+                            ? materialRows.length
+                            : 2;
                     return Column(
                       children: [
                         ...materialRows
                             .take(visibleCount)
                             .map(
                               (e) => Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: e,
-                          ),
-                        )
+                                padding: const EdgeInsets.only(bottom: 16),
+                                child: e,
+                              ),
+                            )
                             .toList(),
                         if (materialRows.length > 2)
                           GestureDetector(
@@ -1719,8 +1724,6 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                     );
                   }),
                 ],
-
-
 
                 SizedBox(height: 16),
                 buildSectionTitle("Description *"),

@@ -231,6 +231,14 @@ class _HomeScreenState extends State<HomeScreen> {
       });
 
       debugPrint("🔄 City synced to HomeScreen: $city");
+      // 🔄 Refresh Top Categories for selected city
+      try {
+        topCategoryController.fetchTopCategories();
+      } catch (_) {}
+      // 🔄 Refresh Top Rated Contractors for selected city
+      try {
+        contractorServiceController.applyFilter('city', city ?? '');
+      } catch (_) {}
     });
   }
 
@@ -280,6 +288,15 @@ class _HomeScreenState extends State<HomeScreen> {
         propertyController.selectedCity.value,
       );
       projectController.cityAssign(propertyController.selectedCity.value);
+      // ✅ Load top categories for the initial city
+      topCategoryController.fetchTopCategories();
+      // ✅ Load top contractors for the initial city
+      if ((propertyController.selectedCity.value).isNotEmpty) {
+        contractorServiceController.applyFilter(
+          'city',
+          propertyController.selectedCity.value,
+        );
+      }
 
       // ✅ Cache the unfiltered data when first loaded
       _cacheOriginalData();
@@ -1930,7 +1947,8 @@ class ReviewsAndTestimonials extends StatelessWidget {
 
           // Show reviews list
           return SizedBox(
-            height: 185,              child: ListView.separated(
+            height: 185,
+            child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: reviewController.allReviews.length,
               clipBehavior: Clip.none,

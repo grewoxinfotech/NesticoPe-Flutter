@@ -11,7 +11,7 @@ import '../../../app/constants/app_font_sizes.dart';
 import '../../../data/network/contractor/model/contractot_service_model/contractor_service_category_model.dart';
 import '../../../utils/global.dart';
 import '../../hire_contractor/controller/hire_contractor_filter_controller.dart';
-import '../../hire_contractor/view/widget/hire_contractor_profilelist.dart';
+import '../../hire_contractor/view/widget/category_service_explorer.dart';
 
 class AllCategoriesSection extends StatefulWidget {
   final List<TopCategoryItem> categories;
@@ -29,6 +29,27 @@ class _AllCategoriesSectionState extends State<AllCategoriesSection> {
   @override
   Widget build(BuildContext context) {
     final categories = widget.categories ?? [];
+    String norm(String s) => s
+        .trim()
+        .toLowerCase()
+        .replaceAll('&', 'and')
+        .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+    final order = <String, int>{
+      'home_construction': 1,
+      'building_material_supply': 2,
+      'material_supply': 2,
+      'home_services': 3,
+      'interior_design': 4,
+      'packers_and_movers': 5,
+      'packers_movers': 5,
+      'legal_services': 6,
+    };
+    final sorted = [...categories]
+      ..sort((a, b) {
+        final ai = order[norm(a.name)] ?? 999;
+        final bi = order[norm(b.name)] ?? 999;
+        return ai.compareTo(bi);
+      });
 
     return Scaffold(
       appBar: AppBar(
@@ -40,17 +61,19 @@ class _AllCategoriesSectionState extends State<AllCategoriesSection> {
           ),
         ),
       ),
-      body: categories.isEmpty
+      body: sorted.isEmpty
           ? const Center(child: Text('No categories available'))
-          : ListView.separated(
-        padding: const EdgeInsets.all(16),
-        itemCount: categories.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 16),
-        itemBuilder: (context, index) {
-          final item = categories[index];
-          return _AllCategoryCard(item: item);
-        },
-      ),
+          : SafeArea(
+            child: ListView.separated(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: sorted.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 16),
+                    itemBuilder: (context, index) {
+            final item = sorted[index];
+            return _AllCategoryCard(item: item);
+                    },
+                  ),
+          ),
     );
   }
 }
@@ -75,16 +98,28 @@ class _AllCategoryCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        // controllerFilterData.fetchHireContractorByCategoryID(item.id, item.name);
-        controllerFilterData. fetchHireContractorCategories(item.id,item.name);
-        Get.to(() => HireContractorProfileList());
+        Get.to(() => CategoryServiceExplorer(
+              categoryId: item.id,
+              categoryName: item.name,
+            ));
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 10),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.shade300),
+          border: Border.all(
+            color: (() {
+              final key = item.name
+                  .trim()
+                  .toLowerCase()
+                  .replaceAll('&', 'and')
+                  .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+              return key == 'home_construction'
+                  ? ColorRes.primary
+                  : Colors.grey.shade300;
+            })(),
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,6 +161,35 @@ class _AllCategoryCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
+                Builder(builder: (context) {
+                  final key = item.name
+                      .trim()
+                      .toLowerCase()
+                      .replaceAll('&', 'and')
+                      .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+                  final showBadge = key == 'home_construction';
+                  if (!showBadge) return const SizedBox.shrink();
+                  return Container(
+                    margin: const EdgeInsets.only(left: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: ColorRes.primary.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(
+                        color: ColorRes.primary.withOpacity(0.4),
+                      ),
+                    ),
+                    child: Text(
+                      'MOST POPULAR',
+                      style: TextStyle(
+                        color: ColorRes.primary,
+                        fontSize: 10,
+                        fontWeight: AppFontWeights.semiBold,
+                        letterSpacing: .3,
+                      ),
+                    ),
+                  );
+                }),
               ],
             ),
            /* Text(
@@ -143,12 +207,12 @@ class _AllCategoryCard extends StatelessWidget {
             Text(
               item.description ?? 'No description available',
               style: TextStyle(
-                fontSize: 11,
+             fontSize: 10,
                 color: ColorRes.leadGreyColor.shade600,
                 fontWeight: AppFontWeights.medium,
-                height: 1.4,
+                height: 1.6,
               ),
-              maxLines: 2,
+              maxLines: 5,
               overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 4),

@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
 import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
 import '../../../../data/network/contractor/model/contractor_profile_model/contractor_profile_model.dart';
 import '../../../../data/network/contractor/service/contractor_profile_service.dart';
 
@@ -38,6 +39,11 @@ class TopContractorsController extends PaginatedController<Contractor> {
   @override
   Future<PaginationResponse<Contractor>> fetchItems(int page) async {
     try {
+      final cityData=await SecureStorage.getSelectedCity();
+      if(cityData!=null){
+        filters?['city']=cityData;
+      }
+
       final response = await _service.fetchTopContractors(
         page: page,
         filters: filters,

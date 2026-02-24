@@ -28,7 +28,7 @@ import 'package:housing_flutter_app/data/network/property/services/property_serv
 import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
 
 import 'package:housing_flutter_app/app/manager/icon_manager.dart';
-import 'package:housing_flutter_app/modules/add_property/model/furnishing_,model.dart';
+import 'package:housing_flutter_app/modules/add_property/model/furnishing_model.dart';
 import 'package:housing_flutter_app/modules/add_property/model/photo_model.dart';
 import 'package:housing_flutter_app/modules/add_property/model/review_property_model.dart';
 import 'package:housing_flutter_app/modules/add_property/model/room_detail_model.dart';

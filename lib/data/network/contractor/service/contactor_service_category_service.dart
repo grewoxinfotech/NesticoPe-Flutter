@@ -21,11 +21,13 @@ class TopCategoryService {
 
   ///==================== Fetch Top Categories ====================
   Future<List<TopCategoryItem>> fetchTopCategories({
-    int? limit
-}) async {
+    int? limit,
+    String? city,
+  }) async {
     try {
       final uri = Uri.parse(baseUrl).replace(queryParameters: {
         if (limit != null) 'limit': limit.toString(),
+       
       });
       debugPrint("Fetching Top Categories from: $uri");
 
