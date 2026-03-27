@@ -103,19 +103,19 @@ class HireContractorScreen extends StatelessWidget {
                   final bi = order[norm(b.name)] ?? 999;
                   return ai.compareTo(bi);
                 });
-              return ListView.builder(
+              return GridView.builder(
+                physics: const AlwaysScrollableScrollPhysics(),
+                shrinkWrap: true,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 1,
+                ),
                 itemCount: sorted.length,
                 itemBuilder: (context, index) {
                   final category = sorted[index];
-                return GestureDetector(
-                  onTap: () {
-                      Get.to(() => CategoryServiceExplorer(
-                            categoryId: category.id,
-                            categoryName: category.name,
-                          ));
-                  },
-                  child: _buildCategoryCard(category),
-                );
+                  return _buildCategoryImageTile(context, category);
                 },
               );
             }),
@@ -355,6 +355,89 @@ class HireContractorScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildCategoryImageTile(BuildContext context, ContractorServiceCategory category) {
+    final img = _categoryImageFor(category.name);
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(14),
+        onTap: () {
+          Get.to(() => CategoryServiceExplorer(
+                categoryId: category.id,
+                categoryName: category.name,
+              ));
+        },
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Image.asset(
+                img,
+                fit: BoxFit.cover,
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withOpacity(0.0),
+                      Colors.black.withOpacity(0.45),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 10,
+                right: 10,
+                bottom: 10,
+                child: Text(
+                  category.name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: AppFontWeights.semiBold,
+                    fontSize: AppFontSizes.body,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _categoryImageFor(String name) {
+    String norm(String s) => s
+        .trim()
+        .toLowerCase()
+        .replaceAll('&', 'and')
+        .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+    final key = norm(name);
+    if (key == 'home_construction') {
+      return 'assets/images/home_construction_image.png';
+    }
+    if (key == 'building_material_supply' || key == 'material_supply') {
+      return 'assets/images/material_supply_image.png';
+    }
+    if (key == 'interior_design') {
+      return 'assets/images/interio_design_image.png';
+    }
+    if (key == 'packers_and_movers' || key == 'packers_movers') {
+      return 'assets/images/packer_and_mover_image.png';
+    }
+    if (key == 'home_services') {
+      return 'assets/images/home_service_image.png';
+    }
+    if (key == 'legal_services') {
+      return 'assets/images/legal_service_image.png';
+    }
+    return 'assets/images/not_available_image.png';
   }
 
   String _formatDate(DateTime date) {
