@@ -1,9 +1,9 @@
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-// import 'package:housing_flutter_app/modules/support_ticket/views/widgets/chat_screen_appbar.dart';
-// import 'package:housing_flutter_app/modules/support_ticket/views/widgets/chat_text_field.dart';
-// import 'package:housing_flutter_app/modules/support_ticket/views/widgets/message_list.dart';
+// import 'package:nesticope_app/data/database/secure_storage_service.dart';
+// import 'package:nesticope_app/modules/support_ticket/views/widgets/chat_screen_appbar.dart';
+// import 'package:nesticope_app/modules/support_ticket/views/widgets/chat_text_field.dart';
+// import 'package:nesticope_app/modules/support_ticket/views/widgets/message_list.dart';
 //
 // import '../../../data/network/support_ticket/models/chat_model/chat_model.dart';
 // import '../../../data/network/support_ticket/models/ticket_model/support_ticket_model.dart';
@@ -212,27 +212,32 @@
 //   }
 // }
 
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/modules/support_ticket/views/widgets/chat_screen_appbar.dart';
-import 'package:housing_flutter_app/modules/support_ticket/views/widgets/chat_text_field.dart';
-import 'package:housing_flutter_app/modules/support_ticket/views/widgets/message_list.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:nesticope_app/modules/support_ticket/views/widgets/chat_screen_appbar.dart';
+import 'package:nesticope_app/modules/support_ticket/views/widgets/chat_text_field.dart';
+import 'package:nesticope_app/modules/support_ticket/views/widgets/message_list.dart';
 
 import '../../../data/network/support_ticket/models/chat_model/chat_model.dart';
 import '../../../data/network/support_ticket/models/ticket_model/support_ticket_model.dart';
+import '../../../data/network/support_ticket/service/ticket_service/support_ticket_service.dart';
 import '../controllers/chat_socket_controller.dart';
 
 class SupportTicketChatScreen extends StatefulWidget {
-  final String ticketId;
-  final TicketItem ticket;
+  final String? ticketId;
+  final TicketItem? ticket;
+  final bool createOnFirstSend;
   const SupportTicketChatScreen({
     super.key,
-    required this.ticketId,
-    required this.ticket,
+    this.ticketId,
+    this.ticket,
+    this.createOnFirstSend = false,
   });
 
   @override
@@ -249,21 +254,20 @@ class _SupportTicketChatScreenState extends State<SupportTicketChatScreen> {
 
   final RxString currentUser = ''.obs;
 
-  late final String roomId;
+  String roomId = '';
 
   @override
   void initState() {
     super.initState();
 
-    roomId = widget.ticketId;
+    roomId = widget.ticketId ?? '';
 
-    /// Save roomId inside socket controller
     _socketController.roomId.value = roomId;
 
-    /// Join ticket manually
-    _socketController.joinTicket(roomId);
+    if (roomId.isNotEmpty) {
+      _socketController.joinTicket(roomId);
+    }
 
-    /// Scroll to bottom on new message
     ever(_socketController.messages, (_) => _scrollToBottom());
 
     loadUserId();
@@ -272,9 +276,13 @@ class _SupportTicketChatScreenState extends State<SupportTicketChatScreen> {
   Future<void> loadUserId() async {
     final user = await SecureStorage.getUserData();
     final id = user?.user?.id ?? "";
-    currentUser.value = id;
+    // Fallback to 'guest' when not logged in to avoid infinite loader
+    final effectiveId = id.isNotEmpty ? id : 'guest';
 
-    _socketController.currentUserId.value = id;
+    log('User ID: $effectiveId');
+
+    currentUser.value = effectiveId;
+    _socketController.currentUserId.value = effectiveId;
   }
 
   Future<void> _sendMessage() async {
@@ -282,6 +290,29 @@ class _SupportTicketChatScreenState extends State<SupportTicketChatScreen> {
     final hasFile = _pendingFile.value != null;
 
     if (!hasText && !hasFile) return;
+
+    if (roomId.isEmpty && widget.createOnFirstSend) {
+      final svc = TicketService();
+      final payload = TicketCreateRequest(
+        title: 'Chat Support : ${_messageController.text.trim()}',
+        description: _messageController.text.trim(),
+        category: 'other',
+        ticketType: 'custom',
+        priority: 'medium',
+      );
+      final created = await svc.createTicketSimple(payload);
+      if (created?.id != null) {
+        roomId = created!.id!;
+        _socketController.roomId.value = roomId;
+
+      if(UserHelper.isGuest){
+          await SecureStorage.saveSupportTicketId(roomId);
+      }
+        _socketController.joinTicket(roomId);
+        _messageController.clear();
+        return;
+      }
+    }
 
     // CASE 1 → Only Text
     if (hasText && !hasFile) {
@@ -377,12 +408,15 @@ class _SupportTicketChatScreenState extends State<SupportTicketChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ChatScreenAppBar(ticket: widget.ticket),
+      appBar: ChatScreenAppBar(
+        ticket: widget.ticket ?? TicketItem(title: 'Support Ticket', status: 'open'),
+      ),
       body: Obx(() {
-        /// Show loader if:
-        /// - userId not loaded yet
-        /// - OR socket initial chat loading
-        if (currentUser.value.isEmpty || _socketController.isLoading.value) {
+        final isGuest = UserHelper.isGuest;
+        // Show loader only while connecting or user id not yet available
+        if (!isGuest &&
+            (_socketController.isConnected.value == false ||
+                currentUser.value.isEmpty)) {
           return const Center(child: CircularProgressIndicator());
         }
 
@@ -396,7 +430,7 @@ class _SupportTicketChatScreenState extends State<SupportTicketChatScreen> {
               ),
             ),
 
-            if (widget.ticket.status?.toLowerCase() != 'resolved')
+            if (widget.ticket?.status?.toLowerCase() != 'resolved' || widget.ticket == null)
               ChatMessageInputField(
                 messageController: _messageController,
                 onSendTap: _sendMessage,

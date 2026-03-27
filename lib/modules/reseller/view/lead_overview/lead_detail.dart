@@ -1,21 +1,21 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/constants/svg_res.dart';
-import 'package:housing_flutter_app/app/manager/data_masker.dart';
-import 'package:housing_flutter_app/app/manager/icon_manager.dart';
-import 'package:housing_flutter_app/app/manager/property/property_name_manager.dart';
-import 'package:housing_flutter_app/app/manager/property/property_pricemanager.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/utils/helper_function/contact_helper.dart';
-import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
-import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
-import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
-import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_negotiable_price_screen.dart';
-import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_visit.dart';
-import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/svg_res.dart';
+import 'package:nesticope_app/app/manager/data_masker.dart';
+import 'package:nesticope_app/app/manager/icon_manager.dart';
+import 'package:nesticope_app/app/manager/property/property_name_manager.dart';
+import 'package:nesticope_app/app/manager/property/property_pricemanager.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/utils/helper_function/contact_helper.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:nesticope_app/modules/property/controllers/property_controller.dart';
+import 'package:nesticope_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
+import 'package:nesticope_app/modules/reseller/view/lead_overview/widget/lead_negotiable_price_screen.dart';
+import 'package:nesticope_app/modules/reseller/view/lead_overview/widget/lead_visit.dart';
+import 'package:nesticope_app/modules/seller/module/lead_screen/model/lead_model.dart';
 import '../../../../app/manager/property_highlight_manager.dart';
 import '../../../../app/utils/svg_widget.dart';
 import '../../../../data/network/property/models/property_model.dart';
@@ -85,7 +85,6 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
 
   void _initializeProperty(String propertyId) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-
       final propertyController = Get.put(
         PropertyController(),
         tag: 'property_$propertyId',
@@ -183,7 +182,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
         ),
         title: Text(
           '${(widget.isFromLead) ? 'Lead Details' : 'Property Overview'}',
-          style: TextStyle(fontWeight: AppFontWeights.bold),
+          style: TextStyle(fontWeight: AppFontWeights.semiBold),
         ),
         backgroundColor: ColorRes.white,
         elevation: 0,
@@ -539,17 +538,29 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
 
         /// Approval History
         if (!isFromLead && isLeadIsempty) ...[
-          ListTile(
-            tileColor: ColorRes.white,
-            title: Text(
-              'Approval History',
-              style: TextStyle(
-                fontSize: AppFontSizes.medium,
-                fontWeight: AppFontWeights.semiBold,
-              ),
-            ),
-            leading: Icon(Icons.history, color: ColorRes.primary),
-            trailing: Icon(Icons.arrow_forward_ios_rounded),
+          // ListTile(
+          //   tileColor: ColorRes.white,
+          //   title: Text(
+          //     'Approval History',
+          //     style: TextStyle(
+          //       fontSize: AppFontSizes.medium,
+          //       fontWeight: AppFontWeights.semiBold,
+          //     ),
+          //   ),
+          //   leading: Icon(Icons.history, color: ColorRes.primary),
+          //   trailing: Icon(Icons.arrow_forward_ios_rounded),
+          //   onTap: () {
+          //     Get.to(
+          //       () => SellerPropertyApprovalHistory(
+          //         propertyId: property.id ?? '',
+          //       ),
+          //     );
+          //   },
+          // ),
+          _buildMenuItem(
+            iconColor: ColorRes.primary,
+            title: "Approval History",
+            icon: Icons.history,
             onTap: () {
               Get.to(
                 () => SellerPropertyApprovalHistory(
@@ -557,21 +568,48 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                 ),
               );
             },
+            iconBg: ColorRes.primary.withOpacity(0.1),
+            subtitle: 'View timeline of approvals',
           ),
+
           const SizedBox(height: 8),
 
-          /// Lead Details
-          ListTile(
-            tileColor: ColorRes.white,
-            title: Text(
-              'Leads',
-              style: TextStyle(
-                fontSize: AppFontSizes.medium,
-                fontWeight: AppFontWeights.semiBold,
-              ),
-            ),
-            leading: Icon(Icons.leaderboard_outlined, color: ColorRes.primary),
-            trailing: Icon(Icons.arrow_forward_ios_rounded),
+          // ListTile(
+          //   tileColor: ColorRes.white,
+          //   title: Text(
+          //     'Leads',
+          //     style: TextStyle(
+          //       fontSize: AppFontSizes.medium,
+          //       fontWeight: AppFontWeights.semiBold,
+          //     ),
+          //   ),
+          //   leading: Icon(Icons.leaderboard_outlined, color: ColorRes.primary),
+          //   trailing: Icon(Icons.arrow_forward_ios_rounded),
+          //   onTap: () {
+          //     Get.to(
+          //       () =>
+          //           widget.isReseller
+          //               ? CommonLeadScreen(
+          //                 title: 'Property Buyer Leads',
+          //                 controllerTag: 'reseller',
+          //                 entityId: property.id,
+          //                 showDataMasking: true,
+          //                 onLoadMore: (controller, id) async {
+          //                   if (id != null) {
+          //                     controller.loadMorePropertyLeads(id);
+          //                   } else {
+          //                     controller.loadMore();
+          //                   }
+          //                 },
+          //               )
+          //               : BuilderLeads(projectId: property.id ?? ''),
+          //     );
+          //   },
+          // ),
+          _buildMenuItem(
+            title: "Leads",
+            iconColor: ColorRes.builderGridPink,
+            icon: Icons.leaderboard_outlined,
             onTap: () {
               Get.to(
                 () =>
@@ -592,100 +630,189 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                         : BuilderLeads(projectId: property.id ?? ''),
               );
             },
+            iconBg: ColorRes.builderGridPink.withOpacity(0.1),
+            subtitle: 'View negotiable price history',
           ),
         ],
         const SizedBox(height: 8),
-       if(!UserHelper.isReseller)...[
+        if (!UserHelper.isReseller) ...[
+          //  ListTile(
+          //    tileColor: ColorRes.white,
+          //    title: Text(
+          //      'Visit',
+          //      style: TextStyle(
+          //        fontSize: AppFontSizes.medium,
+          //        fontWeight: AppFontWeights.semiBold,
+          //      ),
+          //    ),
+          //    leading: Icon(Icons.history, color: ColorRes.primary),
+          //    trailing: Icon(Icons.arrow_forward_ios_rounded),
+          //    onTap: () {
+          //      // final buyerId=propertyInquiryController?.selectedInquiry.value?.userId;
+          //      // final propertyId=propertyInquiryController?.selectedInquiry.value?.propertyId;
 
-         ListTile(
-           tileColor: ColorRes.white,
-           title: Text(
-             'Visit',
-             style: TextStyle(
-               fontSize: AppFontSizes.medium,
-               fontWeight: AppFontWeights.semiBold,
-             ),
-           ),
-           leading: Icon(Icons.history, color: ColorRes.primary),
-           trailing: Icon(Icons.arrow_forward_ios_rounded),
-           onTap: () {
-             // final buyerId=propertyInquiryController?.selectedInquiry.value?.userId;
-             // final propertyId=propertyInquiryController?.selectedInquiry.value?.propertyId;
+          //      log(
+          //        "Buyer Data ${property.id}    ============== ${propertyInquiryController?.selectedInquiry.value?.propertyId}",
+          //      );
+          //      log(
+          //        "Buyer Id from api ${propertyInquiryController?.selectedInquiry.value?.userId}",
+          //      );
+          //      Get.to(
+          //            () => LeadVisit(
+          //          leadVisitController: leadVisitController,
+          //          propertyInquiryController:
+          //          propertyInquiryController ??
+          //              LeadPropertyInquiryController(),
+          //          buyerID:
+          //          propertyInquiryController?.selectedInquiry.value?.userId,
+          //          propertyId:
+          //          propertyInquiryController
+          //              ?.selectedInquiry
+          //              .value
+          //              ?.propertyId ??
+          //              property.id,
+          //        ),
+          //      );
+          //    },
+          //  ),
+          _buildMenuItem(
+            iconColor: ColorRes.deepPurpleColor,
+            title: "Visit",
+            icon: Icons.history,
+            onTap: () {
+              log(
+                "Buyer Data ${property.id}    ============== ${propertyInquiryController?.selectedInquiry.value?.propertyId}",
+              );
+              log(
+                "Buyer Id from api ${propertyInquiryController?.selectedInquiry.value?.userId}",
+              );
+              Get.to(
+                () => LeadVisit(
+                  leadVisitController: leadVisitController,
+                  propertyInquiryController:
+                      propertyInquiryController ??
+                      LeadPropertyInquiryController(),
+                  buyerID:
+                      propertyInquiryController?.selectedInquiry.value?.userId,
+                  propertyId:
+                      propertyInquiryController
+                          ?.selectedInquiry
+                          .value
+                          ?.propertyId ??
+                      property.id,
+                ),
+              );
+            },
+            iconBg: ColorRes.deepPurpleColor.withOpacity(0.1),
+            subtitle: 'View visit history',
+          ),
+          const SizedBox(height: 8),
+          // ListTile(
+          //   tileColor: ColorRes.white,
+          //   title: Text(
+          //     'Negotiable',
+          //     style: TextStyle(
+          //       fontSize: AppFontSizes.medium,
+          //       fontWeight: AppFontWeights.semiBold,
+          //     ),
+          //   ),
+          //   leading: Icon(
+          //     Icons.currency_rupee_outlined,
+          //     color: ColorRes.primary,
+          //   ),
+          //   trailing: Icon(Icons.arrow_forward_ios_rounded),
+          //   onTap: () {
+          //     final selectedInquiry =
+          //         propertyInquiryController?.selectedInquiry.value;
 
-             log(
-               "Buyer Data ${property.id}    ============== ${propertyInquiryController?.selectedInquiry.value?.propertyId}",
-             );
-             log(
-               "Buyer Id from api ${propertyInquiryController?.selectedInquiry.value?.userId}",
-             );
-             Get.to(
-                   () => LeadVisit(
-                 leadVisitController: leadVisitController,
-                 propertyInquiryController:
-                 propertyInquiryController ??
-                     LeadPropertyInquiryController(),
-                 buyerID:
-                 propertyInquiryController?.selectedInquiry.value?.userId,
-                 propertyId:
-                 propertyInquiryController
-                     ?.selectedInquiry
-                     .value
-                     ?.propertyId ??
-                     property.id,
-               ),
-             );
-           },
-         ),
-         const SizedBox(height: 8),
-         ListTile(
-           tileColor: ColorRes.white,
-           title: Text(
-             'Negotiable',
-             style: TextStyle(
-               fontSize: AppFontSizes.medium,
-               fontWeight: AppFontWeights.semiBold,
-             ),
-           ),
-           leading: Icon(Icons.currency_rupee_outlined, color: ColorRes.primary),
-           trailing: Icon(Icons.arrow_forward_ios_rounded),
-           onTap: () {
-             final selectedInquiry =
-                 propertyInquiryController?.selectedInquiry.value;
+          //     // Set visit id
+          //     log(
+          //       'Setting visit ID for user ${selectedInquiry?.userId} and property ${selectedInquiry?.propertyId}',
+          //     );
+          //     leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
+          //       selectedInquiry?.propertyId ?? property.id ?? '',
+          //       buyerID: selectedInquiry?.userId ?? '',
+          //     );
+          //     log(
+          //       'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
+          //     );
 
-             // Set visit id
-             log(
-               'Setting visit ID for user ${selectedInquiry?.userId} and property ${selectedInquiry?.propertyId}',
-             );
-             leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
-               selectedInquiry?.propertyId ?? property.id ?? '',
-               buyerID: selectedInquiry?.userId ?? '',
-             );
-             log(
-               'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
-             );
+          //     Get.to(
+          //       () => LeadNegotiablePriceScreen(
+          //         controller: leadPropertyNegotiablePriceController,
+          //       ),
+          //     );
+          //   },
+          // ),
+          _buildMenuItem(
+            title: "Negotiable",
+            iconColor: ColorRes.builderGridPink,
+            icon: Icons.currency_rupee_outlined,
+            onTap: () {
+              final selectedInquiry =
+                  propertyInquiryController?.selectedInquiry.value;
 
-             Get.to(
-                   () => LeadNegotiablePriceScreen(
-                 controller: leadPropertyNegotiablePriceController,
-               ),
-             );
-           },
-         ),
-       ],
+              // Set visit id
+              log(
+                'Setting visit ID for user ${selectedInquiry?.userId} and property ${selectedInquiry?.propertyId}',
+              );
+              leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
+                selectedInquiry?.propertyId ?? property.id ?? '',
+                buyerID: selectedInquiry?.userId ?? '',
+              );
+              log(
+                'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
+              );
+
+              Get.to(
+                () => LeadNegotiablePriceScreen(
+                  controller: leadPropertyNegotiablePriceController,
+                ),
+              );
+            },
+            iconBg: ColorRes.builderGridPink.withOpacity(0.1),
+            subtitle: 'View negotiable price history',
+          ),
+        ],
 
         const SizedBox(height: 8),
         if (widget.isFromLead) ...[
-          ListTile(
-            tileColor: ColorRes.white,
-            title: Text(
-              'Follow Ups',
-              style: TextStyle(
-                fontSize: AppFontSizes.medium,
-                fontWeight: AppFontWeights.semiBold,
-              ),
-            ),
-            leading: Icon(Icons.follow_the_signs, color: ColorRes.primary),
-            trailing: Icon(Icons.arrow_forward_ios_rounded),
+          // ListTile(
+          //   tileColor: ColorRes.white,
+          //   title: Text(
+          //     'Follow Ups',
+          //     style: TextStyle(
+          //       fontSize: AppFontSizes.medium,
+          //       fontWeight: AppFontWeights.semiBold,
+          //     ),
+          //   ),
+          //   leading: Icon(Icons.follow_the_signs, color: ColorRes.primary),
+          //   trailing: Icon(Icons.arrow_forward_ios_rounded),
+          //   onTap: () {
+          //     final selectedInquiry =
+          //         propertyInquiryController?.selectedInquiry.value;
+
+          //     // Set visit id
+          //     log(
+          //       'Setting visit ID for user ${selectedInquiry?.userId} and property ${selectedInquiry?.propertyId}',
+          //     );
+          //     leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
+          //       selectedInquiry?.propertyId ?? property.id ?? '',
+          //       buyerID: selectedInquiry?.userId ?? '',
+          //     );
+          //     log(
+          //       'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
+          //     );
+
+          //     log("Set the lead user ${widget.lead?.toJson()}");
+          //     leadVisitController.getLeadId(widget.lead?.id ?? '');
+          //     Get.to(() => LeadFollowUpScreen(controller: leadVisitController));
+          //   },
+          // ),
+          _buildMenuItem(
+            title: "Follow Ups",
+            iconColor: ColorRes.green,
+            icon: Icons.follow_the_signs,
             onTap: () {
               final selectedInquiry =
                   propertyInquiryController?.selectedInquiry.value;
@@ -706,10 +833,90 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
               leadVisitController.getLeadId(widget.lead?.id ?? '');
               Get.to(() => LeadFollowUpScreen(controller: leadVisitController));
             },
+            iconBg: ColorRes.green.withOpacity(0.1),
+            subtitle: 'View follow up history',
           ),
         ],
         const SizedBox(height: 8),
       ],
+    );
+  }
+
+  Widget _buildMenuItem({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color iconBg,
+    required Color iconColor,
+    required VoidCallback onTap,
+    bool showDivider = true,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            color: ColorRes.white,
+            child: Row(
+              children: [
+                /// Icon Box
+                Container(
+                  height: 44,
+                  width: 44,
+                  decoration: BoxDecoration(
+                    color: iconBg,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: iconColor, size: 20),
+                ),
+
+                const SizedBox(width: 14),
+
+                /// Title + Subtitle
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: AppFontSizes.medium,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.leadGreyColor[900],
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          fontSize: AppFontSizes.caption,
+                          color: ColorRes.leadGreyColor[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                /// Arrow
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 18,
+                  color: ColorRes.leadGreyColor[500],
+                ),
+              ],
+            ),
+          ),
+
+          /// Divider
+          if (showDivider)
+            Divider(
+              height: 1,
+              thickness: 1,
+              color: ColorRes.leadGreyColor.shade200,
+            ),
+        ],
+      ),
     );
   }
 
@@ -887,7 +1094,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                     label,
                     style: TextStyle(
                       fontWeight: AppFontWeights.medium,
-                      fontSize: AppFontSizes.extraSmall,
+                      fontSize: AppFontSizes.caption,
                       color: ColorRes.leadGreyColor[700],
                     ),
                   ),
@@ -1142,9 +1349,9 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
             child: Text(
               '$propertyAddress, $propertyCity, $propertyState - $propertyZipCode',
               style: TextStyle(
-                fontSize:
-                    isCompact ? AppFontSizes.extraSmall : AppFontSizes.small,
+                fontSize: isCompact ? AppFontSizes.caption : AppFontSizes.small,
                 color: ColorRes.leadGreyColor[700],
+                fontWeight: AppFontWeights.medium,
               ),
             ),
           ),
@@ -1287,6 +1494,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
           style: TextStyle(
             fontSize: isCompact ? AppFontSizes.extraSmall : AppFontSizes.small,
             color: ColorRes.leadGreyColor[700],
+            fontWeight: AppFontWeights.medium,
           ),
           textAlign: TextAlign.center,
         ),

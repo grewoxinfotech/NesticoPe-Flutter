@@ -2,11 +2,12 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/widgets/shimmer/shimmer_widget.dart';
-import 'package:housing_flutter_app/modules/home/controllers/top_builder_all_controller.dart';
-import 'package:housing_flutter_app/modules/seller/view/widget/builder_list_top.dart';
-import 'package:housing_flutter_app/data/network/top_seller_profile/model/top_builder_profile_model.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/app/widgets/shimmer/shimmer_widget.dart';
+import 'package:nesticope_app/modules/home/controllers/top_builder_all_controller.dart';
+import 'package:nesticope_app/modules/seller/view/widget/builder_list_top.dart';
+import 'package:nesticope_app/data/network/top_seller_profile/model/top_builder_profile_model.dart';
 import 'package:shimmer/shimmer.dart';
 
 class AllBuildersScreen extends StatefulWidget {
@@ -29,20 +30,18 @@ class _AllBuildersScreenState extends State<AllBuildersScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorRes.white,
       appBar: AppBar(
         title: const Text(
           "Top Builders",
           style: TextStyle(fontWeight: FontWeight.w700),
         ),
+
         backgroundColor: ColorRes.white,
-        elevation: 0,
-        foregroundColor: Colors.black87,
       ),
       body: Obx(() {
         if (topBuilderAllController.isLoading.value &&
             topBuilderAllController.items.isEmpty) {
-          return  ListView.builder(
+          return ListView.builder(
             itemCount: 4,
             padding: const EdgeInsets.symmetric(vertical: 12),
             itemBuilder: (context, index) => const BuilderCardShimmer(),
@@ -100,88 +99,242 @@ class _AllBuildersScreenState extends State<AllBuildersScreen> {
   }
 }
 
+// class BuilderCardShimmer extends StatelessWidget {
+//   const BuilderCardShimmer({super.key});
 
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+//       padding: const EdgeInsets.all(14),
+//       decoration: BoxDecoration(
+//         color: ColorRes.white,
+//         borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
+//         boxShadow: [
+//           BoxShadow(
+//             color: Colors.black.withOpacity(0.04),
+//             blurRadius: 2,
+//             offset: const Offset(0, 3),
+//           ),
+//         ],
+//       ),
+//       child: Shimmer.fromColors(
+//         baseColor: Colors.grey.shade300,
+//         highlightColor: Colors.grey.shade100,
+//         child: Row(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             /// Profile Image
+//             Container(
+//               width: 48,
+//               height: 48,
+//               decoration: BoxDecoration(
+//                 color: Colors.white,
+//                 borderRadius: BorderRadius.circular(12),
+//               ),
+//             ),
+
+//             const SizedBox(width: 12),
+
+//             /// Content
+//             Expanded(
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   /// Name
+//                   Container(
+//                     height: 16,
+//                     width: 150,
+//                     decoration: BoxDecoration(
+//                       color: Colors.white,
+//                       borderRadius: BorderRadius.circular(4),
+//                     ),
+//                   ),
+
+//                   const SizedBox(height: 6),
+
+//                   /// Location
+//                   Container(
+//                     height: 12,
+//                     width: 120,
+//                     decoration: BoxDecoration(
+//                       color: Colors.white,
+//                       borderRadius: BorderRadius.circular(4),
+//                     ),
+//                   ),
+
+//                   const SizedBox(height: 12),
+
+//                   /// Projects | Experience
+//                   Row(
+//                     children: [
+//                       Expanded(
+//                         child: Column(
+//                           crossAxisAlignment: CrossAxisAlignment.start,
+//                           children: [
+//                             Container(
+//                               height: 10,
+//                               width: double.infinity,
+//                               decoration: BoxDecoration(
+//                                 color: Colors.white,
+//                                 borderRadius: BorderRadius.circular(4),
+//                               ),
+//                             ),
+//                             const SizedBox(height: 6),
+//                             Container(
+//                               height: 16,
+//                               width: double.infinity,
+//                               decoration: BoxDecoration(
+//                                 color: Colors.white,
+//                                 borderRadius: BorderRadius.circular(4),
+//                               ),
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+
+//                       const SizedBox(width: 16),
+
+//                       Container(
+//                         height: 28,
+//                         width: 1,
+//                         color: Colors.white,
+//                       ),
+
+//                       const SizedBox(width: 16),
+
+//                       Expanded(
+//                         child: Column(
+//                           crossAxisAlignment: CrossAxisAlignment.start,
+//                           children: [
+//                             Container(
+//                               height: 10,
+//                               width: double.infinity,
+//                               decoration: BoxDecoration(
+//                                 color: Colors.white,
+//                                 borderRadius: BorderRadius.circular(4),
+//                               ),
+//                             ),
+//                             const SizedBox(height: 6),
+//                             Container(
+//                               height: 16,
+//                               width: double.infinity,
+//                               decoration: BoxDecoration(
+//                                 color: Colors.white,
+//                                 borderRadius: BorderRadius.circular(4),
+//                               ),
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ],
+//               ),
+//             ),
+
+//             const SizedBox(width: 10),
+
+//             /// Arrow Button
+//             Container(
+//               height: 40,
+//               width: 40,
+//               decoration: const BoxDecoration(
+//                 color: Colors.white,
+//                 shape: BoxShape.circle,
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 class BuilderCardShimmer extends StatelessWidget {
   const BuilderCardShimmer({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 12,vertical: 6),
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
         color: ColorRes.white,
-
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+        borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 2,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Shimmer.fromColors(
         baseColor: Colors.grey.shade300,
         highlightColor: Colors.grey.shade100,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Header Row
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            /// Profile Image with badge placeholder
+            Stack(
+              clipBehavior: Clip.none,
               children: [
-                // Profile Image Skeleton
+                /// Circular avatar
                 Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
+                  width: 80,
+                  height: 80,
+                  decoration: const BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
+                    shape: BoxShape.circle,
                   ),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Name Skeleton
-                      Container(
-                        width: double.infinity,
-                        height: 16,
-                        margin: const EdgeInsets.only(right: 40, top: 4),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      // City/State Location Skeleton
-                      Container(
-                        width: 120,
-                        height: 12,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                    ],
+
+                /// Verification badge
+                Positioned(
+                  bottom: 0,
+                  right: -4,
+                  child: Container(
+                    width: 24,
+                    height: 24,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
                   ),
                 ),
               ],
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 12),
 
-            // Stats Row Skeleton (Projects & Experience)
+            /// Name
+            Container(
+              height: 16,
+              width: 140,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+
+            const SizedBox(height: 8),
+
+            /// Location row
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
+                  width: 14,
+                  height: 14,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(7),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Container(
+                  height: 12,
                   width: 100,
-                  height: 14,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Container(
-                  width: 90,
-                  height: 14,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(4),
@@ -190,14 +343,107 @@ class BuilderCardShimmer extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
 
-            // Status Tiles Skeleton (Ready to move, Under Construction, etc.)
-            const _BuilderStatusTileShimmer(),
-            const SizedBox(height: 8),
-            const _BuilderStatusTileShimmer(),
-            const SizedBox(height: 8),
-            const _BuilderStatusTileShimmer(),
+            /// Divider
+            Container(height: 1, width: double.infinity, color: Colors.white),
+
+            const SizedBox(height: 12),
+
+            /// Projects | Divider | Experience
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                /// Projects column
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 12,
+                      width: 70,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Container(
+                          width: 18,
+                          height: 18,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Container(
+                          height: 18,
+                          width: 36,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+
+                /// Vertical divider
+                Container(height: 36, width: 1, color: Colors.white),
+
+                /// Experience column
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 12,
+                      width: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Container(
+                          width: 18,
+                          height: 18,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Container(
+                          height: 18,
+                          width: 52,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 12),
+
+            /// View Profile Button
+            Container(
+              height: 44,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
           ],
         ),
       ),
@@ -213,7 +459,9 @@ class _BuilderStatusTileShimmer extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white, // Background needs to be white for Shimmer to paint over it properly
+        color:
+            Colors
+                .white, // Background needs to be white for Shimmer to paint over it properly
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.transparent, width: 1),
       ),

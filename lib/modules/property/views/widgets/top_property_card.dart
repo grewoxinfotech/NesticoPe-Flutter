@@ -2,15 +2,16 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/constants/img_res.dart';
-import 'package:housing_flutter_app/app/constants/size_manager.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/img_res.dart';
+import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
-import 'package:housing_flutter_app/data/network/property/models/top_property_model.dart';
+import 'package:nesticope_app/data/network/property/models/top_property_model.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/manager/compare_manager.dart';
+import '../../../../app/manager/property/property_pricemanager.dart';
 import '../../../../data/network/property/models/property_model.dart';
 import '../../../saved_property/controllers/property_favorite_controller.dart';
 import '../../controllers/property_controller.dart';
@@ -97,7 +98,7 @@ class _TopPropertyCardState extends State<TopPropertyCard> {
                         // Compare toggle
                         GestureDetector(
                           onTap: () {
-                            compare.toggle(widget.property, max: 2);
+                            compare.toggle(widget.property, max: 5);
                             log("gnjignjrkjn");
                           },
                           child: Obx(() {
@@ -169,17 +170,27 @@ class _TopPropertyCardState extends State<TopPropertyCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Title
-                  if (widget.property.type?.toLowerCase() == "residential")
-                    Text(
-                      "${widget.property.propertyDetails?.bhk} BHK ${widget.property.propertyType?.capitalize}",
-                      style: TextStyle(
-                        fontWeight: AppFontWeights.semiBold,
-                        fontSize: AppFontSizes.body,
-                        color: ColorRes.blackShade87,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                  if (widget.property.type?.toLowerCase() == "residential") ...[
+                    Builder(builder: (context) {
+                      final isPg =
+                          (widget.property.listingType ?? '').toLowerCase() == 'pg';
+                      final bhk = widget.property.propertyDetails?.bhk ?? 0;
+                      final typeText = widget.property.propertyType?.capitalize ?? "";
+                      final titleText = (!isPg && bhk > 0)
+                          ? "$bhk BHK $typeText"
+                          : typeText;
+                      return Text(
+                        titleText,
+                        style: TextStyle(
+                          fontWeight: AppFontWeights.semiBold,
+                          fontSize: AppFontSizes.body,
+                          color: ColorRes.blackShade87,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      );
+                    }),
+                  ],
                   if (widget.property.type?.toLowerCase() == "commercial")
                     Text(
                       widget.property.propertyType?.capitalize ?? "",
@@ -221,36 +232,42 @@ class _TopPropertyCardState extends State<TopPropertyCard> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      if (widget.property.listingType?.toLowerCase() ==
-                              "rent" ||
-                          widget.property.listingType?.toLowerCase() ==
-                              "pg") ...[
-                        Flexible(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                "${Formatter.formatPrice(widget.property.propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}",
-                                style: TextStyle(
-                                  fontWeight: AppFontWeights.semiBold,
-                                  fontSize: AppFontSizes.body,
-                                  color: ColorRes.textColor,
-                                ),
-                              ),
-                              Text(" /month", style: TextStyle(fontSize: 10)),
-                            ],
+                      Builder(builder: (context) {
+                        final priceManager = PropertyPriceManager(
+                          listingType: widget.property.listingType ?? "",
+                          financialInfo: widget
+                                  .property.propertyDetails?.financialInfo ??
+                              FinancialInfo(),
+                          pgInfo: widget.property.propertyDetails?.pgInfo,
+                        );
+                        final lt =
+                            (widget.property.listingType ?? '').toLowerCase();
+                        String priceText;
+                        if (lt == 'pg') {
+                          priceText = priceManager.maxPgPriceDisplay;
+                        } else if (lt == 'rent') {
+                          priceText = priceManager.displayPrice;
+                        } else {
+                          priceText = Formatter.formatPrice(widget
+                                  .property
+                                  .propertyDetails
+                                  ?.financialInfo
+                                  ?.price ??
+                              0);
+                        }
+                        return Flexible(
+                          child: Text(
+                            priceText,
+                            style: TextStyle(
+                              fontWeight: AppFontWeights.semiBold,
+                              fontSize: AppFontSizes.body,
+                              color: ColorRes.textColor,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                      ] else ...[
-                        Text(
-                          "${Formatter.formatPrice(widget.property.propertyDetails?.financialInfo?.price ?? 0)}",
-                          style: TextStyle(
-                            fontWeight: AppFontWeights.semiBold,
-                            fontSize: AppFontSizes.body,
-                            color: ColorRes.textColor,
-                          ),
-                        ),
-                      ],
+                        );
+                      }),
 
                       Container(
                         padding: const EdgeInsets.symmetric(

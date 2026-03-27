@@ -4,36 +4,36 @@
 // import 'package:flutter/gestures.dart';
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-// import 'package:housing_flutter_app/app/constants/color_res.dart';
-// import 'package:housing_flutter_app/app/constants/img_res.dart';
-// import 'package:housing_flutter_app/app/constants/size_manager.dart';
-// import 'package:housing_flutter_app/app/manager/data_masker.dart';
-// import 'package:housing_flutter_app/app/manager/icon_manager.dart';
-// import 'package:housing_flutter_app/app/manager/property/property_pricemanager.dart';
-// import 'package:housing_flutter_app/app/manager/string_manager.dart';
-// import 'package:housing_flutter_app/app/utils/bottom_sheet_form.dart';
-// import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-// import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
-// import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
-// import 'package:housing_flutter_app/app/widgets/video_player/custom_video_player.dart';
-// import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-// import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
-// import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
-// import 'package:housing_flutter_app/modules/property/controllers/share_property_controller.dart';
-// import 'package:housing_flutter_app/modules/property/views/recommended_property.dart';
-// import 'package:housing_flutter_app/modules/property/views/widgets/investment_insigths_graph.dart';
-// import 'package:housing_flutter_app/modules/property/views/widgets/overall_rating_widget.dart';
-// import 'package:housing_flutter_app/modules/review/controllers/review_controller.dart';
-// import 'package:housing_flutter_app/modules/review/views/widget/add_property_review.dart';
-// import 'package:housing_flutter_app/modules/review/views/widget/property_review_card.dart';
-// import 'package:housing_flutter_app/app/manager/compare_manager.dart';
-// import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
-// import 'package:housing_flutter_app/widgets/bar/bottom_bar/customer_bottom_bar.dart';
-// import 'package:housing_flutter_app/widgets/bar/navigation_bar/navigation_Bar.dart';
+// import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+// import 'package:nesticope_app/app/constants/color_res.dart';
+// import 'package:nesticope_app/app/constants/img_res.dart';
+// import 'package:nesticope_app/app/constants/size_manager.dart';
+// import 'package:nesticope_app/app/manager/data_masker.dart';
+// import 'package:nesticope_app/app/manager/icon_manager.dart';
+// import 'package:nesticope_app/app/manager/property/property_pricemanager.dart';
+// import 'package:nesticope_app/app/manager/string_manager.dart';
+// import 'package:nesticope_app/app/utils/bottom_sheet_form.dart';
+// import 'package:nesticope_app/app/utils/formater/formater.dart';
+// import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+// import 'package:nesticope_app/app/widgets/snack_bar/custom_snackbar.dart';
+// import 'package:nesticope_app/app/widgets/video_player/custom_video_player.dart';
+// import 'package:nesticope_app/data/database/secure_storage_service.dart';
+// import 'package:nesticope_app/modules/auth/views/login_screen.dart';
+// import 'package:nesticope_app/modules/property/controllers/property_controller.dart';
+// import 'package:nesticope_app/modules/property/controllers/share_property_controller.dart';
+// import 'package:nesticope_app/modules/property/views/recommended_property.dart';
+// import 'package:nesticope_app/modules/property/views/widgets/investment_insigths_graph.dart';
+// import 'package:nesticope_app/modules/property/views/widgets/overall_rating_widget.dart';
+// import 'package:nesticope_app/modules/review/controllers/review_controller.dart';
+// import 'package:nesticope_app/modules/review/views/widget/add_property_review.dart';
+// import 'package:nesticope_app/modules/review/views/widget/property_review_card.dart';
+// import 'package:nesticope_app/app/manager/compare_manager.dart';
+// import 'package:nesticope_app/modules/saved_property/controllers/property_favorite_controller.dart';
+// import 'package:nesticope_app/widgets/bar/bottom_bar/customer_bottom_bar.dart';
+// import 'package:nesticope_app/widgets/bar/navigation_bar/navigation_Bar.dart';
 //
-// import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
-// import 'package:housing_flutter_app/widgets/button/button.dart';
+// import 'package:nesticope_app/modules/search_property/view/search_screen.dart';
+// import 'package:nesticope_app/widgets/button/button.dart';
 // import 'package:timeago/timeago.dart' as timeFormatter;
 // import 'package:video_player/video_player.dart';
 //
@@ -3276,38 +3276,38 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/constants/img_res.dart';
-import 'package:housing_flutter_app/app/constants/size_manager.dart';
-import 'package:housing_flutter_app/app/manager/data_masker.dart';
-import 'package:housing_flutter_app/app/manager/icon_manager.dart';
-import 'package:housing_flutter_app/app/manager/property/property_pricemanager.dart';
-import 'package:housing_flutter_app/app/manager/string_manager.dart';
-import 'package:housing_flutter_app/app/utils/bottom_sheet_form.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
-import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
-import 'package:housing_flutter_app/app/widgets/video_player/custom_video_player.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
-import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
-import 'package:housing_flutter_app/modules/property/controllers/share_property_controller.dart';
-import 'package:housing_flutter_app/modules/property/views/recommended_property.dart';
-import 'package:housing_flutter_app/modules/property/views/widgets/investment_insigths_graph.dart';
-import 'package:housing_flutter_app/modules/property/views/widgets/overall_rating_widget.dart';
-import 'package:housing_flutter_app/modules/property_rating/view/widget/read_more_or_less.dart';
-import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
-import 'package:housing_flutter_app/modules/review/controllers/review_controller.dart';
-import 'package:housing_flutter_app/modules/review/views/widget/add_property_review.dart';
-import 'package:housing_flutter_app/modules/review/views/widget/property_review_card.dart';
-import 'package:housing_flutter_app/app/manager/compare_manager.dart';
-import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
-import 'package:housing_flutter_app/widgets/bar/bottom_bar/customer_bottom_bar.dart';
-import 'package:housing_flutter_app/widgets/bar/navigation_bar/navigation_Bar.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/img_res.dart';
+import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/app/manager/data_masker.dart';
+import 'package:nesticope_app/app/manager/icon_manager.dart';
+import 'package:nesticope_app/app/manager/property/property_pricemanager.dart';
+import 'package:nesticope_app/app/manager/string_manager.dart';
+import 'package:nesticope_app/app/utils/bottom_sheet_form.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:nesticope_app/app/widgets/snack_bar/custom_snackbar.dart';
+import 'package:nesticope_app/app/widgets/video_player/custom_video_player.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/modules/auth/views/login_screen.dart';
+import 'package:nesticope_app/modules/property/controllers/property_controller.dart';
+import 'package:nesticope_app/modules/property/controllers/share_property_controller.dart';
+import 'package:nesticope_app/modules/property/views/recommended_property.dart';
+import 'package:nesticope_app/modules/property/views/widgets/investment_insigths_graph.dart';
+import 'package:nesticope_app/modules/property/views/widgets/overall_rating_widget.dart';
+import 'package:nesticope_app/modules/property_rating/view/widget/read_more_or_less.dart';
+import 'package:nesticope_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
+import 'package:nesticope_app/modules/review/controllers/review_controller.dart';
+import 'package:nesticope_app/modules/review/views/widget/add_property_review.dart';
+import 'package:nesticope_app/modules/review/views/widget/property_review_card.dart';
+import 'package:nesticope_app/app/manager/compare_manager.dart';
+import 'package:nesticope_app/modules/saved_property/controllers/property_favorite_controller.dart';
+import 'package:nesticope_app/widgets/bar/bottom_bar/customer_bottom_bar.dart';
+import 'package:nesticope_app/widgets/bar/navigation_bar/navigation_Bar.dart';
 
-import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
-import 'package:housing_flutter_app/widgets/button/button.dart';
+import 'package:nesticope_app/modules/search_property/view/search_screen.dart';
+import 'package:nesticope_app/widgets/button/button.dart';
 import 'package:timeago/timeago.dart' as timeFormatter;
 import 'package:video_player/video_player.dart';
 
@@ -3652,7 +3652,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                             const SizedBox(height: 8),
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
+                                horizontal: 12,
                               ),
                               child: Container(
                                 padding: const EdgeInsets.all(12),
@@ -3731,7 +3731,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
+                                horizontal: 12,
                               ),
                               child: Container(
                                 padding: const EdgeInsets.all(12),
@@ -3790,7 +3790,9 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       const TitleWithViewAll(title: 'Amenities'),
                       Builder(
                         builder: (context) {
-                          log('[PropertyDetail] 🏠 Building AmenitiesSection');
+                          log(
+                            '[PropertyDetail] 🏠 Building AmenitiesSection ${currentProperty.propertyDetails!.amenities}  ',
+                          );
                           return AmenitiesSection(
                             amenities:
                                 currentProperty.propertyDetails!.amenities ??
@@ -3845,7 +3847,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                             const SizedBox(height: 8),
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
+                                horizontal: 12,
                               ),
                               child: Container(
                                 padding: const EdgeInsets.all(12),
@@ -3930,8 +3932,9 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                             const SizedBox(height: 8),
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
+                                horizontal: 12,
                               ),
+
                               child: Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
@@ -4280,7 +4283,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       //   ),
                       // ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
                         child: ReadMoreClass(
                           description:
                               currentProperty.propertyDescription ?? '',
@@ -4466,7 +4469,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                             ),
                             decoration: BoxDecoration(
                               color: ColorRes.white,
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(8),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -4487,40 +4490,37 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                 // Conditional Area
                                 Obx(() {
                                   if (controller.hasSubmittedInquiry.value) {
-                                    return Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 6,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: ColorRes.success.withOpacity(
-                                          0.1,
-                                        ),
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
-                                          color: ColorRes.success,
-                                          width: 1,
-                                        ),
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          const Icon(
-                                            Icons.check_circle_outline,
-                                            color: ColorRes.success,
-                                            size: 16,
+                                    return SizedBox(
+                                      height: 36,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          NesticoPeSnackBar.showAwesomeSnackbar(
+                                            title: 'Already Inquired',
+                                            message:
+                                                'You have already submitted inquiry',
+                                            contentType: ContentType.warning,
+                                          );
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: ColorRes.error,
+                                          foregroundColor: ColorRes.white,
+                                          elevation: 0,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                           ),
-                                          const SizedBox(width: 6),
-                                          Text(
-                                            'Submitted',
-                                            style: TextStyle(
-                                              color: ColorRes.success,
-                                              fontSize: AppFontSizes.small,
-                                              fontWeight:
-                                                  AppFontWeights.semiBold,
-                                            ),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 14,
                                           ),
-                                        ],
+                                        ),
+                                        child: const Text(
+                                          'Already Inquired',
+                                          style: TextStyle(
+                                            fontSize: AppFontSizes.medium,
+                                            fontWeight:
+                                                AppFontWeights.semiBold,
+                                          ),
+                                        ),
                                       ),
                                     );
                                   } else {
@@ -4528,124 +4528,108 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                       title: 'Get Offer',
                                       backgroundColor: ColorRes.error,
                                       height: 36,
-                                      onTap:
-                                          (UserHelper.isGuest)
-                                              ? () async {
-                                                try {
-                                                  if (Get.context == null) {
-                                                    NesticoPeSnackBar.showAwesomeSnackbar(
-                                                      title: "Error",
-                                                      message:
-                                                          'UI not ready to show dialog.',
-                                                      contentType:
-                                                          ContentType.failure,
-                                                    );
-                                                    return;
-                                                  }
-
-                                                  addInquiryFromApp(
-                                                    '',
-                                                    '',
-                                                    '',
-                                                    currentProperty.id ?? '',
-                                                    currentProperty.listingType
-                                                            ?.toLowerCase()
-                                                            .replaceAll(
-                                                              " ",
-                                                              "_",
-                                                            ) ??
-                                                        '',
-                                                    "property",
-                                                  );
-                                                } catch (e, s) {
-                                                  debugPrint(
-                                                    '❌ Error in Get Offer button: $e',
-                                                  );
-                                                  debugPrint('$s');
-
-                                                  NesticoPeSnackBar.showAwesomeSnackbar(
-                                                    title: "Error",
-                                                    message:
-                                                        'Something went wrong. Please try again.',
-                                                    contentType:
-                                                        ContentType.failure,
-                                                  );
-                                                }
-                                              }
-                                              : () async {
-                                                try {
-                                                  final user =
-                                                      await SecureStorage.getUserData();
-
-                                                  if (user == null) {
-                                                    NesticoPeSnackBar.showAwesomeSnackbar(
-                                                      title: "Error",
-                                                      message:
-                                                          'No user data found. Please log in.',
-                                                      contentType:
-                                                          ContentType.failure,
-                                                    );
-                                                    return;
-                                                  }
-
-                                                  final fullName =
-                                                      user.user?.fullName ?? '';
-                                                  final firstName =
-                                                      user.user?.firstName ??
-                                                      '';
-                                                  final username =
-                                                      user.user?.username ?? '';
-                                                  final email =
-                                                      user.user?.email ?? '';
-                                                  final phone =
-                                                      user.user?.phone ?? '';
-
-                                                  final displayName =
-                                                      (firstName.isEmpty
-                                                              ? username
-                                                              : fullName)
-                                                          .trim();
-
-                                                  if (Get.context == null) {
-                                                    NesticoPeSnackBar.showAwesomeSnackbar(
-                                                      title: "Error",
-                                                      message:
-                                                          'UI not ready to show dialog.',
-                                                      contentType:
-                                                          ContentType.failure,
-                                                    );
-                                                    return;
-                                                  }
-
-                                                  addInquiryFromApp(
-                                                    displayName,
-                                                    email,
-                                                    phone,
-                                                    currentProperty.id ?? '',
-                                                    currentProperty.listingType
-                                                            ?.toLowerCase()
-                                                            .replaceAll(
-                                                              " ",
-                                                              "_",
-                                                            ) ??
-                                                        '',
-                                                    "property",
-                                                  );
-                                                } catch (e, s) {
-                                                  debugPrint(
-                                                    '❌ Error in Get Offer button: $e',
-                                                  );
-                                                  debugPrint('$s');
-
-                                                  NesticoPeSnackBar.showAwesomeSnackbar(
-                                                    title: "Error",
-                                                    message:
-                                                        'Something went wrong. Please try again.',
-                                                    contentType:
-                                                        ContentType.failure,
-                                                  );
-                                                }
-                                              },
+                                      borderRadius: BorderRadius.circular(10),
+                                      titleTextStyle: TextStyle(
+                                        color: ColorRes.white,
+                                        fontSize: AppFontSizes.medium,
+                                        fontWeight: AppFontWeights.semiBold,
+                                      ),
+                                      onTap: () async {
+                                        try {
+                                          if (UserHelper.isGuest) {
+                                            Get.to(() => LoginScreen());
+                                            return;
+                                          }
+                                          final user =
+                                              await SecureStorage.getUserData();
+                                          if (user == null) {
+                                            NesticoPeSnackBar.showAwesomeSnackbar(
+                                              title: "Error",
+                                              message:
+                                                  'No user data found. Please log in.',
+                                              contentType:
+                                                  ContentType.failure,
+                                            );
+                                            return;
+                                          }
+                                          final fullName =
+                                              user.user?.fullName ?? '';
+                                          final firstName =
+                                              user.user?.firstName ?? '';
+                                          final username =
+                                              user.user?.username ?? '';
+                                          final email =
+                                              user.user?.email ?? '';
+                                          final phone =
+                                              user.user?.phone ?? '';
+                                          final displayName =
+                                              (firstName.isEmpty
+                                                      ? username
+                                                      : fullName)
+                                                  .trim();
+                                          final listing = currentProperty
+                                                  .listingType
+                                                  ?.toLowerCase()
+                                                  .replaceAll(" ", "_") ??
+                                              '';
+                                          final inquiry = {
+                                            "name": displayName,
+                                            "phone": phone,
+                                            "email": email,
+                                            "agreeToContact": true,
+                                            "meta": {
+                                              "inquiryType": listing,
+                                              "type": "property",
+                                            },
+                                          };
+                                          final success =
+                                              await controller.addInquiry(
+                                            inquiry,
+                                            currentProperty.id ?? '',
+                                          );
+                                          if (success) {
+                                            controller
+                                                .hasSubmittedInquiry
+                                                .value = true;
+                                            NesticoPeSnackBar
+                                                .showAwesomeSnackbar(
+                                              title: 'Success',
+                                              message:
+                                                  'Inquiry Added Successfully',
+                                              contentType:
+                                                  ContentType.success,
+                                            );
+                                            await controller.getAllInQuireData(
+                                              widget.propertyId ?? '',
+                                            );
+                                            await controller.getHasInQuireData(
+                                              widget.propertyId ?? '',
+                                            );
+                                          } else {
+                                            NesticoPeSnackBar
+                                                .showAwesomeSnackbar(
+                                              title: 'Error',
+                                              message:
+                                                  'Failed to Submit Inquiry',
+                                              contentType:
+                                                  ContentType.failure,
+                                            );
+                                          }
+                                        } catch (e, s) {
+                                          debugPrint(
+                                            '❌ Error in Get Offer button: $e',
+                                          );
+                                          debugPrint('$s');
+                                          NesticoPeSnackBar
+                                              .showAwesomeSnackbar(
+                                            title: "Error",
+                                            message:
+                                                'Something went wrong. Please try again.',
+                                            contentType:
+                                                ContentType.failure,
+                                          );
+                                        }
+                                      },
                                     );
                                   }
                                 }),
@@ -4714,11 +4698,14 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
           financialInfo:
               currentProperty.propertyDetails?.financialInfo ?? FinancialInfo(),
           listingType: currentProperty.listingType ?? '',
+          pgInfo: currentProperty.propertyDetails?.pgInfo,
         );
 
         return SafeArea(
           child: ReusableBottomBar(
-            mainPriceText: priceManager.totalPriceDisplay,
+            mainPriceText: priceManager.isPG
+                ? priceManager.maxPgPriceDisplay
+                : priceManager.totalPriceDisplay,
             priceBreakdown: priceManager.propertyPriceSummary,
             onPrimaryAction: () {
               if (UserHelper.isGuest) {
@@ -4900,7 +4887,9 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
             primaryTitle:
                 (currentProperty.propertyStatus?.toLowerCase() == "sold")
                     ? "Property Sold"
-                    : (controller.hasSubmittedInquiry.value) ? "Submitted" :"View Contact",
+                    : (controller.hasSubmittedInquiry.value)
+                    ? "Submitted"
+                    : "View Contact",
           ),
         );
       }),
@@ -5388,7 +5377,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
   Widget _buildTitleSection(Items property) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -5587,7 +5576,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
     if (rulesList.isEmpty) {
       return const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16),
+        padding: EdgeInsets.symmetric(horizontal: 12),
         child: Text(
           'No rules specified',
           style: TextStyle(
@@ -5668,7 +5657,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   /// Room Options & Pricing Section Builder
   Widget _buildRoomOptionsSection(List<PgRoomInfo> rooms) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Column(
         children:
             rooms.map((room) {
@@ -5879,7 +5868,7 @@ class CircularIcon extends StatelessWidget {
   }
 }
 
-class Facilities extends StatelessWidget {
+class Facilities extends StatefulWidget {
   final Items property;
   final Color bgColor;
   final Color txtColor;
@@ -5892,27 +5881,118 @@ class Facilities extends StatelessWidget {
   });
 
   @override
+  State<Facilities> createState() => _FacilitiesState();
+}
+
+class _FacilitiesState extends State<Facilities> {
+  bool showAll = false;
+  @override
   Widget build(BuildContext context) {
-    final highlights = PropertyHighlightManager(property).getHighlights();
+    final highlights =
+        PropertyHighlightManager(widget.property).getHighlights();
+
+    const int maxVisible = 4;
+
+    final visibleItems =
+        showAll ? highlights : highlights.take(maxVisible).toList();
+
+    final remainingCount = highlights.length - maxVisible;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Wrap(
         spacing: 12,
         runSpacing: 12,
-        children:
-            highlights.map((item) {
-              // final key = item.keys.first;
-              // final value = item.values.first;
-              // final icon = iconMap[key] ?? Icons.info_outline;
+        children: [
+          /// ✅ Facilities
+          ...visibleItems.map(
+            (item) => FacilitiesCard(
+              label: item.value,
+              icon: item.icon ?? Icons.info_outline,
+              bgColor: widget.bgColor,
+              foreColor: widget.txtColor,
+            ),
+          ),
 
-              return FacilitiesCard(
-                label: item.value,
-                icon: item.icon ?? Icons.info_outline,
-                bgColor: bgColor,
-                foreColor: txtColor,
-              );
-            }).toList(),
+          /// ✅ + Remaining Button
+          if (!showAll && remainingCount > 0)
+            GestureDetector(
+              onTap: () {
+                setState(() => showAll = true);
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: ColorRes.primary),
+                  color: ColorRes.primary.withOpacity(0.08),
+                ),
+                child: Text(
+                  "+$remainingCount more",
+                  style: TextStyle(
+                    fontSize: AppFontSizes.caption,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.primary,
+                  ),
+                ),
+              ),
+            ),
+
+          /// ✅ Show Less Button
+          if (showAll && highlights.length > maxVisible)
+            GestureDetector(
+              onTap: () {
+                setState(() => showAll = false);
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: ColorRes.primary),
+                ),
+                child: Text(
+                  "Show Less",
+                  style: TextStyle(
+                    fontSize: AppFontSizes.caption,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.primary,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MoreFacilitiesCard extends StatelessWidget {
+  final int count;
+
+  const _MoreFacilitiesCard({required this.count});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        color: ColorRes.primary.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: ColorRes.primary),
+      ),
+      child: Text(
+        "+$count more",
+        style: TextStyle(
+          fontSize: AppFontSizes.caption,
+          fontWeight: AppFontWeights.semiBold,
+          color: ColorRes.primary,
+        ),
       ),
     );
   }
@@ -5952,11 +6032,11 @@ class FacilitiesCard extends StatelessWidget {
           const SizedBox(width: 6),
           Flexible(
             child: Text(
-              label,
+              label.capitalize?.replaceAll("_", " ") ?? "",
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis, // prevent overflow
               style: TextStyle(
-                fontSize: AppFontSizes.bodySmall,
+                fontSize: AppFontSizes.caption,
                 fontWeight: AppFontWeights.medium,
                 color: ColorRes.leadGreyColor.shade800,
               ),
@@ -6066,57 +6146,106 @@ class Details extends StatelessWidget {
   }
 }
 
-class AmenitiesSection extends StatelessWidget {
+class AmenitiesSection extends StatefulWidget {
   final List<String> amenities;
 
   AmenitiesSection({super.key, required this.amenities});
 
-  Color bgColor = ColorRes.propertyBg; // single background color
-  Color txtColor = ColorRes.propertyText; // single text/icon color
+  @override
+  State<AmenitiesSection> createState() => _AmenitiesSectionState();
+}
+
+class _AmenitiesSectionState extends State<AmenitiesSection> {
+  bool _expanded = false;
+  final Color bgColor = ColorRes.propertyBg;
+  final Color txtColor = ColorRes.propertyText;
 
   @override
   Widget build(BuildContext context) {
+    final items = widget.amenities;
+    final showCount = _expanded ? items.length : items.length.clamp(0, 3);
+    final visible = items.take(showCount).toList(growable: false);
+    final remaining = items.length > showCount ? (items.length - showCount) : 0;
+
+    List<Container> chips =
+        visible.map<Container>((item) {
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: ColorRes.overlay.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  IconManager.getAmenitiesIcon(item.replaceAll("-", "_")),
+                  size: 16,
+                  color: txtColor,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  capitalizeEachWord(item) ?? ' -',
+                  style: const TextStyle(
+                    fontSize: AppFontSizes.small,
+                    fontWeight: AppFontWeights.medium,
+                    color: ColorRes.textColor,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList();
+
+    if (!_expanded && remaining > 0) {
+      chips.add(
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: ColorRes.primary.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(24),
+            onTap: () => setState(() => _expanded = true),
+            child: Text(
+              '+$remaining more',
+              style: const TextStyle(
+                fontSize: AppFontSizes.small,
+                fontWeight: AppFontWeights.semiBold,
+                color: ColorRes.primary,
+              ),
+            ),
+          ),
+        ),
+      );
+    } else if (_expanded && items.length > 3) {
+      chips.add(
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: ColorRes.leadGreyColor.shade100,
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(24),
+            onTap: () => setState(() => _expanded = false),
+            child: const Text(
+              'Show less',
+              style: TextStyle(
+                fontSize: AppFontSizes.small,
+                fontWeight: AppFontWeights.semiBold,
+                color: ColorRes.textColor,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
-      child: Wrap(
-        spacing: 12,
-        runSpacing: 12,
-        children:
-            amenities.map((item) {
-              print("Items: $item");
-              return Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  // color: bgColor,
-                  color: ColorRes.overlay.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      IconManager.getAmenitiesIcon(item),
-                      size: 16,
-                      color: txtColor,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      capitalizeEachWord(item) ?? ' -',
-                      style: const TextStyle(
-                        fontSize: AppFontSizes.small,
-                        fontWeight: AppFontWeights.medium,
-                        // color: txtColor,
-                        color: ColorRes.textColor,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-      ),
+      child: Wrap(spacing: 12, runSpacing: 12, children: chips),
     );
   }
 }
@@ -6289,7 +6418,7 @@ class OwnerInformation extends StatelessWidget {
               child: Row(
                 children: [
                   const CircleAvatar(
-                    radius: 18,
+                    radius: 25,
                     backgroundImage: AssetImage(
                       IMGRes.home2,
                     ), // Use a real image or placeholder
@@ -6303,7 +6432,7 @@ class OwnerInformation extends StatelessWidget {
                         Text(
                           DataMasker.maskName(property.ownerName),
                           style: const TextStyle(
-                            fontSize: AppFontSizes.small,
+                            fontSize: AppFontSizes.medium,
                             fontWeight: AppFontWeights.semiBold,
                           ),
                         ),
@@ -6319,9 +6448,10 @@ class OwnerInformation extends StatelessWidget {
                               // SizedBox(width: 6),
                               Text(
                                 DataMasker.maskPhone(property.ownerPhone),
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: ColorRes.grey,
-                                  fontSize: AppFontSizes.extraSmall,
+                                  fontSize: AppFontSizes.small,
+                                  fontWeight: AppFontWeights.medium,
                                 ),
                               ),
                             ],
@@ -6332,9 +6462,10 @@ class OwnerInformation extends StatelessWidget {
                               Expanded(
                                 child: Text(
                                   DataMasker.maskEmail(property.ownerEmail),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: ColorRes.grey,
-                                    fontSize: AppFontSizes.extraSmall,
+                                    fontSize: AppFontSizes.small,
+                                    fontWeight: AppFontWeights.medium,
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),

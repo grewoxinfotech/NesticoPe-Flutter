@@ -209,9 +209,12 @@
 //   }
 // }
 
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:flutter/foundation.dart';
+import 'package:nesticope_app/app/constants/api_constants.dart';
 
 import '../data/network/user/service/notification_sync_service.dart';
 
@@ -226,8 +229,8 @@ class NotificationService {
     if (_isInitialized) return;
 
     OneSignal.Debug.setLogLevel(OSLogLevel.none);
-    OneSignal.initialize("70d48857-661a-4b36-b757-f221c97a1103");
-    // OneSignal.initialize("21e16d75-ba82-4d03-9672-b66d2c59dea3");
+    final appId = await _fetchOneSignalAppId();
+    OneSignal.initialize(appId ?? "70d48857-661a-4b36-b757-f221c97a1103");
 
     await OneSignal.Notifications.requestPermission(true);
 
@@ -236,6 +239,30 @@ class NotificationService {
 
     _isInitialized = true;
     debugPrint('✅ OneSignal initialized');
+  }
+
+  Future<String?> _fetchOneSignalAppId() async {
+    try {
+      final uri = Uri.parse(ApiConstants.thirdPartySettings)
+          .replace(queryParameters: {'page': '1', 'limit': '10'});
+      final res = await http.get(uri, headers: await ApiConstants.getHeaders());
+      if (res.statusCode != 200) return null;
+      final body = json.decode(res.body) as Map<String, dynamic>;
+      final data = body['data'] as Map<String, dynamic>? ?? {};
+      final items = data['items'] as List<dynamic>? ?? [];
+      for (final item in items) {
+        final m = item as Map<String, dynamic>;
+        final type = (m['type'] ?? '').toString().toLowerCase();
+        final name = (m['name'] ?? '').toString().toLowerCase();
+        if (type == 'push notification' || name.contains('onesignal')) {
+          final key = m['apiKey']?.toString();
+          if (key != null && key.isNotEmpty) return key;
+        }
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
   }
 
   /// ---------------- GUEST ----------------

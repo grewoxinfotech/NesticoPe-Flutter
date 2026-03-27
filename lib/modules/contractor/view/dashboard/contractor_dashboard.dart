@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
-import 'package:housing_flutter_app/modules/contractor/controller/contractor_dashboard_controller.dart';
-import 'package:housing_flutter_app/modules/contractor/view/widget/create_service_from.dart';
-import 'package:housing_flutter_app/modules/dashboard/views/widget/dashboard_layout.dart';
-import 'package:housing_flutter_app/utils/shimmer/dashboard/dashbard_shimmer.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:nesticope_app/modules/contractor/controller/contractor_dashboard_controller.dart';
+import 'package:nesticope_app/modules/contractor/view/widget/create_service_from.dart';
+import 'package:nesticope_app/modules/dashboard/views/widget/dashboard_layout.dart';
+import 'package:nesticope_app/utils/shimmer/dashboard/dashbard_shimmer.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
@@ -319,12 +319,20 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
                               .value
                               ?.data
                               ?.services
-                              ?.topRatedServices ??
-                          [];
+                              ?.topRatedServices
+                              .where((e) => (e.averageRating ?? 0) > 0)
+                              .toList();
 
-                      if (topRatedServices.isEmpty) {
-                        return const SizedBox(); // or a "No data" widget
-                      }
+                      // if (topRatedServices?.isEmpty ?? false) {
+                      //   return Container(
+                      //     padding: const EdgeInsets.symmetric(vertical: 20),
+                      //     alignment: Alignment.center,
+                      //     child: const Text(
+                      //       "No Data Found",
+                      //       style: TextStyle(fontSize: 14, color: Colors.grey),
+                      //     ),
+                      //   );
+                      // }
 
                       return Container(
                         padding: EdgeInsets.symmetric(
@@ -363,10 +371,29 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
                               ],
                             ),
                             const SizedBox(height: 12),
-                            buildTopRatedServiceList(
-                              context: context,
-                              services: topRatedServices,
-                            ),
+                            if (topRatedServices?.isNotEmpty ?? false) ...[
+                              buildTopRatedServiceList(
+                                context: context,
+                                services: topRatedServices!,
+                              ),
+                            ] else ...[
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 20,
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "No Data Found",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: ColorRes.leadGreyColor.withOpacity(
+                                      0.5,
+                                    ),
+                                    fontWeight: AppFontWeights.medium,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                       );
@@ -452,140 +479,172 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
                             const SizedBox(height: 12),
                             SizedBox(
                               height: 100,
-                              child: ListView.separated(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: reviews.length,
-                                separatorBuilder:
-                                    (_, __) => const SizedBox(width: 12),
-                                itemBuilder: (context, index) {
-                                  final data = reviews[index];
-                                  final userName = data?.reviewerName ?? '';
-                                  final timeAgo = getTimeAgo(
-                                    data?.createdAt ?? '',
-                                  );
-                                  final rating = data?.rating ?? 0.0;
-                                  final review = data?.content ?? '';
+                              child:
+                                  reviews.isNotEmpty
+                                      ? ListView.separated(
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: reviews.length,
+                                        separatorBuilder:
+                                            (_, __) =>
+                                                const SizedBox(width: 12),
+                                        itemBuilder: (context, index) {
+                                          final data = reviews[index];
+                                          final userName =
+                                              data?.reviewerName ?? '';
+                                          final timeAgo = getTimeAgo(
+                                            data?.createdAt ?? '',
+                                          );
+                                          final rating = data?.rating ?? 0.0;
+                                          final review = data?.content ?? '';
 
-                                  return SizedBox(
-                                    width: 240,
-                                    child: Card(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                        side: BorderSide(
-                                          color: ColorRes.leadGreyColor
-                                              .withOpacity(0.3),
-                                          width: 1,
-                                        ),
-                                      ),
-                                      elevation: 1.5,
-                                      margin: EdgeInsets.zero,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(12),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            // Header Row (Avatar + Name + Time)
-                                            Row(
-                                              children: [
-                                                const CircleAvatar(
-                                                  radius: 16,
-                                                  backgroundColor:
-                                                      ColorRes.primary,
-                                                  child: Icon(
-                                                    Icons.person,
-                                                    color: Colors.white,
-                                                    size: 16,
-                                                  ),
+                                          return SizedBox(
+                                            width: 240,
+                                            child: Card(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                side: BorderSide(
+                                                  color: ColorRes.leadGreyColor
+                                                      .withOpacity(0.3),
+                                                  width: 1,
                                                 ),
-                                                const SizedBox(width: 8),
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        userName,
-                                                        maxLines: 1,
+                                              ),
+                                              elevation: 1.5,
+                                              margin: EdgeInsets.zero,
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(
+                                                  12,
+                                                ),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    // Header Row (Avatar + Name + Time)
+                                                    Row(
+                                                      children: [
+                                                        const CircleAvatar(
+                                                          radius: 16,
+                                                          backgroundColor:
+                                                              ColorRes.primary,
+                                                          child: Icon(
+                                                            Icons.person,
+                                                            color: Colors.white,
+                                                            size: 16,
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 8,
+                                                        ),
+                                                        Expanded(
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Text(
+                                                                userName,
+                                                                maxLines: 1,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style: TextStyle(
+                                                                  fontWeight:
+                                                                      AppFontWeights
+                                                                          .semiBold,
+                                                                  fontSize:
+                                                                      AppFontSizes
+                                                                          .small,
+                                                                  color:
+                                                                      ColorRes
+                                                                          .textColor,
+                                                                ),
+                                                              ),
+                                                              Row(
+                                                                children: List.generate(
+                                                                  5,
+                                                                  (
+                                                                    index,
+                                                                  ) => Icon(
+                                                                    index <
+                                                                            rating
+                                                                                .round()
+                                                                        ? Icons
+                                                                            .star
+                                                                        : Icons
+                                                                            .star_border,
+                                                                    color:
+                                                                        Colors
+                                                                            .orange,
+                                                                    size: 13,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 4,
+                                                        ),
+                                                        Text(
+                                                          "$timeAgo ago",
+                                                          style: TextStyle(
+                                                            color:
+                                                                ColorRes
+                                                                    .leadGreyColor
+                                                                    .shade600,
+                                                            fontSize:
+                                                                AppFontSizes
+                                                                    .extraSmall,
+                                                            fontWeight:
+                                                                AppFontWeights
+                                                                    .medium,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+
+                                                    const SizedBox(height: 8),
+
+                                                    // Review content
+                                                    Expanded(
+                                                      child: Text(
+                                                        review,
+                                                        maxLines: 3,
                                                         overflow:
                                                             TextOverflow
                                                                 .ellipsis,
                                                         style: TextStyle(
-                                                          fontWeight:
-                                                              AppFontWeights
-                                                                  .semiBold,
                                                           fontSize:
                                                               AppFontSizes
-                                                                  .small,
+                                                                  .caption,
+                                                          fontWeight:
+                                                              AppFontWeights
+                                                                  .medium,
                                                           color:
                                                               ColorRes
-                                                                  .textColor,
+                                                                  .leadGreyColor
+                                                                  .shade600,
                                                         ),
                                                       ),
-                                                      Row(
-                                                        children: List.generate(
-                                                          5,
-                                                          (index) => Icon(
-                                                            index <
-                                                                    rating
-                                                                        .round()
-                                                                ? Icons.star
-                                                                : Icons
-                                                                    .star_border,
-                                                            color:
-                                                                Colors.orange,
-                                                            size: 13,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 4),
-                                                Text(
-                                                  "$timeAgo ago",
-                                                  style: TextStyle(
-                                                    color:
-                                                        ColorRes
-                                                            .leadGreyColor
-                                                            .shade600,
-                                                    fontSize:
-                                                        AppFontSizes.extraSmall,
-                                                    fontWeight:
-                                                        AppFontWeights.medium,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-
-                                            const SizedBox(height: 8),
-
-                                            // Review content
-                                            Expanded(
-                                              child: Text(
-                                                review,
-                                                maxLines: 3,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                  fontSize:
-                                                      AppFontSizes.caption,
-                                                  fontWeight:
-                                                      AppFontWeights.medium,
-                                                  color:
-                                                      ColorRes
-                                                          .leadGreyColor
-                                                          .shade600,
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
                                             ),
-                                          ],
+                                          );
+                                        },
+                                      )
+                                      : Center(
+                                        child: Text(
+                                          "No Reviews Found",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: ColorRes.leadGreyColor
+                                                .withOpacity(0.5),
+                                            fontWeight: AppFontWeights.medium,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  );
-                                },
-                              ),
                             ),
                           ],
                         ),

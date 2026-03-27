@@ -2,13 +2,13 @@
 // // import 'package:fl_chart/fl_chart.dart';
 // // import 'package:flutter/material.dart';
 // // import 'package:get/get.dart';
-// // import 'package:housing_flutter_app/app/constants/color_res.dart';
-// // import 'package:housing_flutter_app/app/constants/img_res.dart';
-// // import 'package:housing_flutter_app/app/manager/property/property_name_manager.dart';
-// // import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-// // import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+// // import 'package:nesticope_app/app/constants/color_res.dart';
+// // import 'package:nesticope_app/app/constants/img_res.dart';
+// // import 'package:nesticope_app/app/manager/property/property_name_manager.dart';
+// // import 'package:nesticope_app/app/utils/formater/formater.dart';
+// // import 'package:nesticope_app/app/widgets/image/custom_image.dart'
 // //     hide ColorRes;
-// // import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
+// // import 'package:nesticope_app/modules/property/controllers/property_controller.dart';
 // // import 'package:intl/intl.dart';
 // //
 // // // Import your models
@@ -1595,13 +1595,13 @@
 // import 'package:fl_chart/fl_chart.dart';
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/app/constants/color_res.dart';
-// import 'package:housing_flutter_app/app/constants/img_res.dart';
-// import 'package:housing_flutter_app/app/manager/property/property_name_manager.dart';
-// import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-// import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+// import 'package:nesticope_app/app/constants/color_res.dart';
+// import 'package:nesticope_app/app/constants/img_res.dart';
+// import 'package:nesticope_app/app/manager/property/property_name_manager.dart';
+// import 'package:nesticope_app/app/utils/formater/formater.dart';
+// import 'package:nesticope_app/app/widgets/image/custom_image.dart'
 //     hide ColorRes;
-// import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
+// import 'package:nesticope_app/modules/property/controllers/property_controller.dart';
 // import 'package:intl/intl.dart';
 //
 // // Import your models
@@ -3088,14 +3088,14 @@ import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/constants/img_res.dart';
-import 'package:housing_flutter_app/app/manager/property/property_name_manager.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/img_res.dart';
+import 'package:nesticope_app/app/manager/property/property_name_manager.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
-import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
-import 'package:housing_flutter_app/utils/logger/app_logger.dart';
+import 'package:nesticope_app/modules/property/controllers/property_controller.dart';
+import 'package:nesticope_app/utils/logger/app_logger.dart';
 import 'package:intl/intl.dart';
 
 // Import your models

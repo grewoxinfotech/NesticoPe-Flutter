@@ -133,8 +133,8 @@ import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/modules/subscription/controller/user_subscription_controller.dart';
-import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
+import 'package:nesticope_app/modules/subscription/controller/user_subscription_controller.dart';
+import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import '../../../app/care/pagination/controller/pagination_controller.dart';
@@ -157,6 +157,7 @@ class SubscriptionPlanController extends PaginatedController<SubscriptionPlan> {
 
   /// Loading state for payment
   final RxBool isProcessingPayment = false.obs;
+  final RxBool inquirySubmitted = false.obs;
 
   late bool _autoRenew;
   late String _userId;
@@ -232,6 +233,12 @@ class SubscriptionPlanController extends PaginatedController<SubscriptionPlan> {
 
     await refreshList();
     isLoading.value = false;
+  }
+
+  /// Flag inquiry submitted to filter plans accordingly
+  Future<void> markInquirySubmitted() async {
+    inquirySubmitted.value = true;
+    await applyFilters({});
   }
 
   ///==================== Helpers ====================
@@ -369,7 +376,11 @@ class SubscriptionPlanController extends PaginatedController<SubscriptionPlan> {
 
   Future<bool> subscriptionPlanInquiry(Map<String, dynamic> payload) async {
     try {
-      return await _service.subscriptionInquiryPlan(payload);
+      final ok = await _service.subscriptionInquiryPlan(payload);
+      if (ok) {
+        await markInquirySubmitted();
+      }
+      return ok;
     } catch (e) {
       debugPrint("Exception in InquiryPlan: $e");
       return false;

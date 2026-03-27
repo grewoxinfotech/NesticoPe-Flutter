@@ -1,7 +1,12 @@
 import 'dart:async';
 import 'dart:developer';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/modules/auth/views/login_screen.dart';
+import 'package:lottie/lottie.dart';
 import '../../../data/network/auth/model/user_model.dart';
 import '../../../data/network/property/models/favorite_item_model.dart';
 import '../../../data/network/property/models/inquiry_model.dart';
@@ -20,6 +25,11 @@ class PropertyFavoriteController extends GetxController {
       Rx<FavoriteResponseModel?>(null);
   RxList<Inquiry> inquiryResponse = <Inquiry>[].obs;
   final RxMap<String, bool> hasSubmittedInquiryMap = <String, bool>{}.obs;
+
+  /// Negotiable offer tracking per property
+  final RxMap<String, bool> hasNegotiableOfferMap = <String, bool>{}.obs;
+  final RxMap<String, String?> negotiableOfferPriceMap =
+      <String, String?>{}.obs;
 
   /// Reactive favorites (property IDs)
   final RxSet<String> favorites = <String>{}.obs;
@@ -50,6 +60,7 @@ class PropertyFavoriteController extends GetxController {
 
         // ✅ Check if specific inquiry exists
         await getHasInQuireData(propertyId);
+        await loadNegotiableMetaForProperty(propertyId);
       }
     }
   }
@@ -66,6 +77,7 @@ class PropertyFavoriteController extends GetxController {
 
         // ✅ Check if specific inquiry exists
         await getHasInQuireData(propertyId);
+        await loadNegotiableMetaForProperty(propertyId);
       }
     }
   }
@@ -113,6 +125,14 @@ class PropertyFavoriteController extends GetxController {
   Future<void> addFavorite(String id) async {
     favorites.add(id);
     final success = await _favoriteService.addFavorite(id);
+    if (success) {
+      loadData();
+      favoriteResponse.refresh();
+      favorites.refresh();
+      print("✅ Added to favorites: $id");
+    } else {
+      print("❌ Failed to add to favorites: $id");
+    }
   }
 
   Future<void> removeFavorite(String propertyId) async {
@@ -121,7 +141,9 @@ class PropertyFavoriteController extends GetxController {
       (element) => element.propertyId == propertyId,
     );
     favorites.remove(propertyId);
+    loadData();
     favoriteResponse.refresh();
+    favorites.refresh();
     print("🗑️ Removed from favorites: $propertyId");
   }
 
@@ -129,21 +151,28 @@ class PropertyFavoriteController extends GetxController {
     favorites
       ..clear()
       ..addAll(items);
+
     print("✅ Added all favorites (${items.length})");
   }
 
   /// --- TOGGLE FAVORITE ---
 
   Future<void> toggleFavorite(String propertyId) async {
-    try {
-      if (isFavorite(propertyId)) {
-        removeFavorite(propertyId);
-      } else {
-        addFavorite(propertyId);
+    if (UserHelper.isGuest) {
+      _showGuestFavoriteSheet(Get.context!);
+      return;
+    } else {
+      try {
+        if (isFavorite(propertyId)) {
+          
+          removeFavorite(propertyId);
+        } else {
+          addFavorite(propertyId);
+        }
+        favorites.refresh();
+      } catch (e) {
+        print("❌ Exception in toggleFavorite: $e");
       }
-      favorites.refresh();
-    } catch (e) {
-      print("❌ Exception in toggleFavorite: $e");
     }
   }
 
@@ -153,8 +182,10 @@ class PropertyFavoriteController extends GetxController {
     try {
       final UserModel user = await SecureStorage.getUserData() ?? UserModel();
       final userId = user.user?.id ?? '';
-      final inquiries = await _contactedService.fetchContactedInquiries(userId);
-      inquiryResponse.assignAll(inquiries);
+      if (inquiryResponse.isEmpty) {
+        final inquiries = await _contactedService.fetchContactedInquiries(userId);
+        inquiryResponse.assignAll(inquiries);
+      }
 
       final result = inquiryResponse.any((e) => e.propertyId == propertyId);
 
@@ -191,6 +222,129 @@ class PropertyFavoriteController extends GetxController {
       print("Error fetching inquiries: $e");
       rethrow;
     }
+  }
+
+  /// Fetch inquiries for a specific property and collect negotiable meta (for current user)
+  Future<void> loadNegotiableMetaForProperty(String propertyId) async {
+    try {
+      final UserModel user = await SecureStorage.getUserData() ?? UserModel();
+      final userId = user.user?.id ?? '';
+      final list = await _contactedService.fetchInquiriesByPropertyId(userId);
+      Inquiry? mine;
+      for (final item in list) {
+        if ((item.userId).toString() == userId &&
+            item.propertyId == propertyId) {
+          mine = item;
+          break;
+        }
+      }
+      final bool hasNegotiable =
+          mine?.meta?.isNegotiable == true &&
+          (mine?.meta?.negotiablePrice != null);
+      final String? priceStr = mine?.meta?.negotiablePrice?.toString();
+      hasNegotiableOfferMap[propertyId] = hasNegotiable;
+      negotiableOfferPriceMap[propertyId] = hasNegotiable ? priceStr : null;
+      hasNegotiableOfferMap.refresh();
+      negotiableOfferPriceMap.refresh();
+    } catch (e) {
+      hasNegotiableOfferMap[propertyId] = false;
+      negotiableOfferPriceMap[propertyId] = null;
+      hasNegotiableOfferMap.refresh();
+      negotiableOfferPriceMap.refresh();
+      print("Error fetching negotiable meta: $e");
+    }
+  }
+
+  void _showGuestFavoriteSheet(BuildContext context) {
+    final theme = Theme.of(context);
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 20,
+              right: 20,
+              top: 12,
+              bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.black12,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Lottie.asset(
+                    'assets/lottie/sign_in.json',
+                    width: double.infinity,
+
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                const Text(
+                  'Login Required',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: ColorRes.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Please login to save properties to your wishlist and access personalized recommendations tailored to you.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.black54,
+                    fontSize: 12,
+                    height: 1.3,
+                  ),
+                ),
+                const SizedBox(height: 18),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                      Get.to(() => LoginScreen());
+                    },
+                    child: Text('Login', style: TextStyle(letterSpacing: 0.5)),
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: const Text(
+                    'Maybe Later',
+                    style: TextStyle(color: Colors.black54),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   /// --- UTILITY ---

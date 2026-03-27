@@ -340,4 +340,39 @@ class ContactHelper {
 
     await launchUrl(googleMapsUri, mode: LaunchMode.platformDefault);
   }
+
+  static void showContactOptions(BuildContext context, String phoneNumber,
+      {String message = ""}) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Column( 
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.call),
+                title: const Text('Dialer'),
+                onTap: () async {
+                  Navigator.pop(ctx);
+                  await openDialer(phoneNumber);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.chat_bubble_outline),
+                title: const Text('WhatsApp'),
+                onTap: () async {
+                  Navigator.pop(ctx);
+                  await openWhatsApp(phoneNumber, message: message);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }

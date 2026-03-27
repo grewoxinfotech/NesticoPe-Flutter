@@ -3,11 +3,11 @@
 // import 'package:flutter/material.dart';
 // import 'package:flutter/services.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/data/network/contractor/model/contractor_lead_model/contractor_lead_model.dart';
-// import 'package:housing_flutter_app/modules/contractor/controller/contractor_lead_controller.dart';
-// import 'package:housing_flutter_app/modules/contractor/controller/contractor_my_service_controller.dart';
-// import 'package:housing_flutter_app/modules/contractor/controller/contractor_project_controller.dart';
-// import 'package:housing_flutter_app/modules/contractor/controller/contractot_employee_controller.dart';
+// import 'package:nesticope_app/data/network/contractor/model/contractor_lead_model/contractor_lead_model.dart';
+// import 'package:nesticope_app/modules/contractor/controller/contractor_lead_controller.dart';
+// import 'package:nesticope_app/modules/contractor/controller/contractor_my_service_controller.dart';
+// import 'package:nesticope_app/modules/contractor/controller/contractor_project_controller.dart';
+// import 'package:nesticope_app/modules/contractor/controller/contractot_employee_controller.dart';
 //
 // import '../../../../../app/constants/app_font_sizes.dart';
 // import '../../../../../app/constants/color_res.dart';

@@ -2,14 +2,19 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
-import 'package:housing_flutter_app/data/network/getProfile/service/getProfile_service.dart';
-import 'package:housing_flutter_app/data/network/profile/reseller_profile/service/reseller_profile_service.dart';
-import 'package:housing_flutter_app/widgets/location_permission/location_permission_method.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/data/network/auth/model/user_model.dart';
+import 'package:nesticope_app/data/network/getProfile/service/getProfile_service.dart';
+import 'package:nesticope_app/data/network/profile/reseller_profile/service/reseller_profile_service.dart';
+import 'package:nesticope_app/data/network/visit/service/get_my_certificate_service.dart';
+import 'package:nesticope_app/modules/profile/controllers/buyer_profiledata.dart';
+import 'package:nesticope_app/widgets/location_permission/location_permission_method.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../../../app/constants/color_res.dart';
 import '../../../../data/network/getProfile/model/getProfile_model.dart';
@@ -18,7 +23,74 @@ import '../../../../data/network/user/service/user_service.dart';
 import '../../../../widgets/messages/snack_bar.dart';
 import '../../model/user/user_model.dart';
 
+
 class ProfileController extends GetxController {
+  final RxBool isDownloadingCertificate = false.obs;
+  RxDouble downloadProgress = 0.0.obs;
+
+ Future<void> downloadCertificate() async {
+  try {
+    isDownloadingCertificate.value = true;
+    downloadProgress.value = 0;
+
+    final response = await GetMyCertificateService.getMyCertificate();
+
+    if (response['success'] == true && response['data'] != null) {
+      final certificateUrl = response['data']['certificateUrl'];
+
+      if (certificateUrl != null && certificateUrl.isNotEmpty) {
+
+        final dir = await getApplicationDocumentsDirectory();
+        final filePath =
+            "${dir.path}/certificate_${DateTime.now().millisecondsSinceEpoch}.pdf";
+
+        final dio = Dio();
+
+        await dio.download(
+          certificateUrl,
+          filePath,
+          onReceiveProgress: (received, total) {
+            if (total != -1) {
+              downloadProgress.value = received / total;
+            }
+          },
+        );
+
+        /// Open downloaded PDF
+        await OpenFilex.open(filePath);
+
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: 'Certificate downloaded successfully',
+          contentType: ContentType.success,
+        );
+      } else {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Info',
+          message: 'No certificate found',
+          contentType: ContentType.warning,
+        );
+      }
+    } else {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: response['message'] ?? 'Failed to get certificate',
+        contentType: ContentType.failure,
+      );
+    }
+  } catch (e) {
+    print('Error downloading certificate: $e');
+
+    NesticoPeSnackBar.showAwesomeSnackbar(
+      title: 'Error',
+      message: 'Something went wrong while downloading certificate',
+      contentType: ContentType.failure,
+    );
+  } finally {
+    isDownloadingCertificate.value = false;
+    downloadProgress.value = 0;
+  }
+}
   final RxBool isLoading = false.obs;
   final RxBool isEditing = false.obs;
   final RxBool isSaving = false.obs;
@@ -519,6 +591,11 @@ class ProfileController extends GetxController {
             token: profileData.value?.token,
           );
           await SecureStorage.saveUserData(profileData.value!);
+          BuyerProfileDataController b = Get.isRegistered<BuyerProfileDataController>()
+              ? Get.find<BuyerProfileDataController>()
+              : Get.put(BuyerProfileDataController());
+          b.userProfile.value = profileData.value?.user;
+          b.userProfile.refresh();
         }
 
         // Refresh user profile data from API
@@ -616,6 +693,11 @@ class ProfileController extends GetxController {
           );
 
           await SecureStorage.saveUserData(profileData.value!);
+          BuyerProfileDataController b = Get.isRegistered<BuyerProfileDataController>()
+              ? Get.find<BuyerProfileDataController>()
+              : Get.put(BuyerProfileDataController());
+          b.userProfile.value = profileData.value?.user;
+          b.userProfile.refresh();
 
           await getUserProfileData();
         }

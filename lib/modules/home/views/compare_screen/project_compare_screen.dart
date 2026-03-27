@@ -2,14 +2,15 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/constants/size_manager.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
-import 'package:housing_flutter_app/app/manager/project_compare_manager.dart';
-import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
-import 'package:housing_flutter_app/modules/new_project/view/latest_project.dart';
+import 'package:nesticope_app/app/manager/project_compare_manager.dart';
+import 'package:nesticope_app/data/network/builder/model/builder_model.dart';
+import 'package:nesticope_app/modules/builder/view/project_detail/project_detail.dart';
+import 'package:nesticope_app/modules/new_project/view/latest_project.dart';
 
 import '../../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../../app/widgets/snack_bar/custom_snackbar.dart';
@@ -33,6 +34,7 @@ class ProjectCompareScreen extends StatefulWidget {
 class _ProjectCompareScreenState extends State<ProjectCompareScreen> {
   final projectController = Get.put(ProjectController());
   final PropertyContactedService _contactedService = PropertyContactedService();
+  String? _activeProjectId;
 
   @override
   void initState() {
@@ -90,7 +92,7 @@ class _ProjectCompareScreenState extends State<ProjectCompareScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorRes.leadGreyColor[50],
+     
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -107,74 +109,123 @@ class _ProjectCompareScreenState extends State<ProjectCompareScreen> {
             fontWeight: AppFontWeights.bold,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert, color: ColorRes.black, size: 20),
-            onPressed: () {},
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: const Icon(Icons.more_vert, color: ColorRes.black, size: 20),
+        //     onPressed: () {},
+        //   ),
+        // ],
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppPadding.medium),
-          child: Obx(() {
-            final selected = ProjectCompareManager.to.selectedList;
-
-            // If no projects selected
-            if (selected.isEmpty) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 40),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.compare_arrows,
-                        size: 64,
-                        color: ColorRes.leadGreyColor[400],
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'No projects selected',
-                        style: TextStyle(
-                          fontSize: AppFontSizes.medium,
-                          fontWeight: AppFontWeights.semiBold,
-                          color: ColorRes.leadGreyColor[700],
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Select projects from Explore Projects to compare',
-                        style: TextStyle(
-                          fontSize: AppFontSizes.small,
-                          color: ColorRes.leadGreyColor[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }
-
-            // If only 1 project selected
-            if (selected.length == 1) {
-              final item = selected[0];
-              return SingleChildScrollView(
+        child: Obx(() {
+          final selected = ProjectCompareManager.to.selectedList;
+        
+          // If no projects selected
+          if (selected.isEmpty) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 40),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Obx(
-                      () => ProjectCardForCompare(
-                        item: item,
-                        isSubmitted:
-                            projectController.isCompareProjectFirst.value,
-                        onRemove: () {
-                          ProjectCompareManager.to.remove(item.id);
-                        },
+                    Icon(
+                      Icons.compare_arrows,
+                      size: 64,
+                      color: ColorRes.leadGreyColor[400],
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No projects selected',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.medium,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.leadGreyColor[700],
                       ),
                     ),
-                    const SizedBox(height: 24),
-                    Center(
+                    const SizedBox(height: 8),
+                    Text(
+                      'Select projects from Explore Projects to compare',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.small,
+                        color: ColorRes.leadGreyColor[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+        
+          // // If only 1 project selected
+          // if (selected.length == 1) {
+          //   final item = selected[0];
+          //   return SingleChildScrollView(
+          //     child: Column(
+          //       crossAxisAlignment: CrossAxisAlignment.start,
+          //       children: [
+          //         Obx(
+          //           () => ProjectCardForCompare(
+          //             item: item,
+          //             isSubmitted:
+          //                 projectController.isCompareProjectFirst.value,
+          //             onRemove: () {
+          //               ProjectCompareManager.to.remove(item.id);
+          //             },
+          //           ),
+          //         ),
+          //         const SizedBox(height: 24),
+          //         Center(
+          //           child: Column(
+          //             children: [
+          //               GestureDetector(
+          //                 onTap: () {
+          //                   Get.back();
+          //                 },
+          //                 child: const Icon(
+          //                   Icons.add_circle_outline,
+          //                   size: 25,
+          //                   color: ColorRes.primary,
+          //                 ),
+          //               ),
+          //               const SizedBox(height: 12),
+          //               Text(
+          //                 'Select one more project to compare',
+          //                 style: TextStyle(
+          //                   fontSize: AppFontSizes.medium,
+          //                   fontWeight: AppFontWeights.medium,
+          //                   color: ColorRes.leadGreyColor[700],
+          //                 ),
+          //               ),
+          //             ],
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //   );
+          // }
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                 SizedBox(height: 16),
+                ...selected.map((item) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: ProjectCardForCompare(
+                      item: item,
+                      isActive: item.id == _activeProjectId,
+                      isSubmitted:
+                          projectController.isCompareProjectFirst.value,
+                      onRemove: () {
+                        ProjectCompareManager.to.remove(item.id);
+                      },
+                    ),
+                  );
+                }).toList(),
+                if (selected.length < 5)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                    child: Center(
                       child: Column(
                         children: [
                           GestureDetector(
@@ -183,55 +234,27 @@ class _ProjectCompareScreenState extends State<ProjectCompareScreen> {
                             },
                             child: const Icon(
                               Icons.add_circle_outline,
-                              size: 25,
+                              size: 30,
                               color: ColorRes.primary,
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 8),
                           Text(
-                            'Select one more project to compare',
+                            'Add up to ${5 - selected.length} more projects to compare',
                             style: TextStyle(
-                              fontSize: AppFontSizes.medium,
+                              fontSize: AppFontSizes.small,
                               fontWeight: AppFontWeights.medium,
-                              color: ColorRes.leadGreyColor[700],
+                              color: ColorRes.leadGreyColor[600],
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ],
-                ),
-              );
-            }
-            final a = selected[0];
-            final b = selected[1];
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Obx(
-                    () => ProjectCardForCompare(
-                      item: a,
-                      isSubmitted:
-                          projectController.isCompareProjectFirst.value,
-                      onRemove: () {
-                        ProjectCompareManager.to.remove(a.id);
-                      },
-                    ),
                   ),
-                  const SizedBox(height: AppSpacing.small),
-                  Obx(
-                    () => ProjectCardForCompare(
-                      item: b,
-                      isSubmitted:
-                          projectController.isCompareProjectSecond.value,
-                      onRemove: () {
-                        ProjectCompareManager.to.remove(b.id);
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
+                const SizedBox(height: 16),
+                Padding(
+              padding: EdgeInsets.symmetric(horizontal: AppPadding.medium,),
+                  child: Text(
                     'Detailed Comparison',
                     style: TextStyle(
                       fontSize: AppFontSizes.medium,
@@ -239,14 +262,21 @@ class _ProjectCompareScreenState extends State<ProjectCompareScreen> {
                       color: ColorRes.black,
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  _ProjectComparisonTable(a: a, b: b),
-                  const SizedBox(height: 10),
-                ],
-              ),
-            );
-          }),
-        ),
+                ),
+                const SizedBox(height: 12),
+                _ProjectComparisonTable(
+                  items: selected,
+                  onActiveChange: (id) {
+                    setState(() {
+                      _activeProjectId = id;
+                    });
+                  },
+                ),
+                const SizedBox(height: 10),
+              ],
+            ),
+          );
+        }),
       ),
     );
   }
@@ -256,12 +286,14 @@ class ProjectCardForCompare extends StatefulWidget {
   final ProjectItem item;
   final VoidCallback? onRemove;
   final bool isSubmitted;
+  final bool isActive;
 
   const ProjectCardForCompare({
     super.key,
     required this.item,
     this.onRemove,
     required this.isSubmitted,
+    this.isActive = false,
   });
 
   @override
@@ -287,305 +319,338 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: ColorRes.white,
-      borderRadius: BorderRadius.circular(12),
-      elevation: 1,
-      shadowColor: ColorRes.black.withOpacity(0.06),
-      child: Container(
-        height: 115,
-        decoration: BoxDecoration(
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: AppPadding.medium,),
+      child: GestureDetector(
+        onTap: () {
+         Get.to(() => ProjectDetailsScreen(projectItem: widget.item,));
+        },
+        child: Material(
+          color: ColorRes.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: ColorRes.leadGreyColor.shade200, width: 1),
-        ),
-        child: Stack(
-          children: [
-            Row(
-              children: [
-                // Image Section
-                ClipRRect(
-                  borderRadius: const BorderRadius.horizontal(
-                    left: Radius.circular(11),
-                  ),
-                  child:
-                      (_firstImage(widget.item).isNotEmpty)
-                          ? CustomImage(
-                            type: CustomImageType.network,
-                            src: _firstImage(widget.item),
-                            width: 120,
-                            height: 121,
-                            fit: BoxFit.cover,
-                          )
-                          : Container(
-                            width: 120,
-                            height: 121,
-                            color: ColorRes.leadGreyColor.shade200,
-                            child: const Icon(
-                              Icons.image,
-                              color: ColorRes.grey,
-                            ),
-                          ),
+          elevation: 1,
+          shadowColor: ColorRes.black.withOpacity(0.06),
+          child: Container(
+            height: 115,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: widget.isActive
+                    ? [
+                        BoxShadow(
+                          color: ColorRes.primary.withOpacity(0.1),
+                          spreadRadius: 2,
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ]
+                    :  [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 2,
+                 
+                  offset: const Offset(0, 3),
                 ),
-
-                // Content Section
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Title
-                        Text(
-                          _title(widget.item),
-                          style: const TextStyle(
-                            fontSize: AppFontSizes.bodyMedium,
-                            fontWeight: AppFontWeights.semiBold,
-                            color: ColorRes.textColor,
-                            height: 1.2,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-
-                        // Address
-                        Text(
-                          widget.item.address,
-                          style: TextStyle(
-                            fontSize: AppFontSizes.caption,
-                            color: ColorRes.leadGreyColor[600],
-                            height: 1.3,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        // SizedBox(height: 10,),
-                        // Status Badge
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 3,
-                              ),
-                              decoration: BoxDecoration(
-                                color: _getStatusColor(widget.item.status),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                widget.item.status.toUpperCase(),
-                                style: const TextStyle(
-                                  fontSize: AppFontSizes.mini,
-                                  fontWeight: AppFontWeights.medium,
-                                  color: ColorRes.white,
+              ],
+                border: widget.isActive
+                    ? Border.all(
+                        color: ColorRes.primary,
+                        width: 2,
+                      )
+                    : null
+              
+            ),
+            child: Stack(
+              children: [
+                Row(
+                  children: [
+                    // Image Section
+                    ClipRRect(
+                      borderRadius: const BorderRadius.horizontal(
+                        left: Radius.circular(11),
+                      ),
+                      child:
+                          (_firstImage(widget.item).isNotEmpty)
+                              ? CustomImage(
+                                type: CustomImageType.network,
+                                src: _firstImage(widget.item),
+                                width: 120,
+                                height: 121,
+                                fit: BoxFit.cover,
+                              )
+                              : Container(
+                                width: 120,
+                                height: 121,
+                                color: ColorRes.leadGreyColor.shade200,
+                                child: const Icon(
+                                  Icons.image,
+                                  color: ColorRes.grey,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-
-                        // Price Row
-                        Row(
+                    ),
+        
+                    // Content Section
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Expanded(
-                              child: Text(
-                                _price(widget.item),
-                                style: const TextStyle(
-                                  fontSize: AppFontSizes.medium,
-                                  fontWeight: AppFontWeights.bold,
-                                  color: ColorRes.textColor,
-                                  height: 1,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                            // Title
+                            Text(
+                              _title(widget.item),
+                              style: const TextStyle(
+                                fontSize: AppFontSizes.bodyMedium,
+                                fontWeight: AppFontWeights.semiBold,
+                                color: ColorRes.textColor,
+                                height: 1.2,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            SizedBox(width: 10),
-                            if (widget.isSubmitted) ...[
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: ColorRes.success.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                    color: ColorRes.success,
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      Icons.check_circle_outline,
-                                      color: ColorRes.success,
-                                      size: 16,
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      'Submitted',
-                                      style: TextStyle(
-                                        color: ColorRes.success,
-                                        fontSize: AppFontSizes.small,
-                                        fontWeight: AppFontWeights.semiBold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                            
+        
+                            // Address
+                            Text(
+                              widget.item.address,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.caption,
+                                color: ColorRes.leadGreyColor[600],
+                                height: 1.3,
                               ),
-                            ] else ...[
-                              GestureDetector(
-                                onTap:
-                                    (UserHelper.isGuest)
-                                        ? () async {
-                                          try {
-                                            if (Get.context == null) {
-                                              NesticoPeSnackBar.showAwesomeSnackbar(
-                                                title: 'Error',
-                                                message:
-                                                    'UI not ready to show dialog.',
-                                                contentType:
-                                                    ContentType.failure,
-                                              );
-                                              return;
-                                            }
-
-                                            addInquiryFromProject(
-                                              '',
-                                              '',
-                                              '',
-                                              widget.item.id,
-                                              'sell',
-                                              "project",
-                                            );
-                                          } catch (e, s) {
-                                            debugPrint(
-                                              '❌ Error in Get Offer button: $e',
-                                            );
-                                            debugPrint('$s');
-
-                                            NesticoPeSnackBar.showAwesomeSnackbar(
-                                              title: 'Error',
-                                              message:
-                                                  'Something went wrong. Please try again.',
-                                              contentType: ContentType.failure,
-                                            );
-                                          }
-                                        }
-                                        : () async {
-                                          try {
-                                            final user =
-                                                await SecureStorage.getUserData();
-
-                                            if (user == null) {
-                                              NesticoPeSnackBar.showAwesomeSnackbar(
-                                                title: 'Error',
-                                                message:
-                                                    'No user data found. Please log in.',
-                                                contentType:
-                                                    ContentType.failure,
-                                              );
-                                              return;
-                                            }
-
-                                            final fullName =
-                                                user.user?.fullName ?? '';
-                                            final firstName =
-                                                user.user?.firstName ?? '';
-                                            final username =
-                                                user.user?.username ?? '';
-                                            final email =
-                                                user.user?.email ?? '';
-                                            final phone =
-                                                user.user?.phone ?? '';
-
-                                            final displayName =
-                                                (firstName.isEmpty
-                                                        ? username
-                                                        : fullName)
-                                                    .trim();
-
-                                            if (Get.context == null) {
-                                              NesticoPeSnackBar.showAwesomeSnackbar(
-                                                title: 'Error',
-                                                message:
-                                                    'UI not ready to show dialog.',
-                                                contentType:
-                                                    ContentType.failure,
-                                              );
-                                              return;
-                                            }
-
-                                            addInquiryFromProject(
-                                              displayName,
-                                              email,
-                                              phone,
-                                              widget.item.id,
-                                              'sell',
-                                              "project",
-                                            );
-                                          } catch (e, s) {
-                                            debugPrint(
-                                              '❌ Error in Get Offer button: $e',
-                                            );
-                                            debugPrint('$s');
-
-                                            NesticoPeSnackBar.showAwesomeSnackbar(
-                                              title: 'Error',
-                                              message:
-                                                  'Something went wrong. Please try again.',
-                                              contentType: ContentType.failure,
-                                            );
-                                          }
-                                        },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 14,
-                                    vertical: 8,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            // SizedBox(height: 10,),
+                            // Status Badge
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 3,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: ColorRes.primary,
-                                    borderRadius: BorderRadius.circular(6),
+                                    color: _getStatusColor(widget.item.status),
+                                    borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
-                                    '${projectController.hasSubmittedInquiry.value ? 'Submitted' : 'Contact Now'}',
-                                    style: TextStyle(
-                                      fontWeight: AppFontWeights.semiBold,
-                                      fontSize: AppFontSizes.small,
+                                    widget.item.status.toUpperCase(),
+                                    style: const TextStyle(
+                                      fontSize: AppFontSizes.mini,
+                                      fontWeight: AppFontWeights.medium,
                                       color: ColorRes.white,
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
+        
+                            // Price Row
+                            Row(
+                              
+                              // crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    _price(widget.item),
+                                    style: const TextStyle(
+                                      fontSize: AppFontSizes.medium,
+                                      fontWeight: AppFontWeights.bold,
+                                      color: ColorRes.textColor,
+                                      height: 1,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                if (widget.isSubmitted) ...[
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: ColorRes.success.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                        color: ColorRes.success,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(
+                                          Icons.check_circle_outline,
+                                          color: ColorRes.success,
+                                          size: 16,
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          'Submitted',
+                                          style: TextStyle(
+                                            color: ColorRes.success,
+                                            fontSize: AppFontSizes.small,
+                                            fontWeight: AppFontWeights.semiBold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ] else ...[
+                                  GestureDetector(
+                                    onTap:
+                                        (UserHelper.isGuest)
+                                            ? () async {
+                                              try {
+                                                if (Get.context == null) {
+                                                  NesticoPeSnackBar.showAwesomeSnackbar(
+                                                    title: 'Error',
+                                                    message:
+                                                        'UI not ready to show dialog.',
+                                                    contentType:
+                                                        ContentType.failure,
+                                                  );
+                                                  return;
+                                                }
+        
+                                                addInquiryFromProject(
+                                                  '',
+                                                  '',
+                                                  '',
+                                                  widget.item.id,
+                                                  'sell',
+                                                  "project",
+                                                );
+                                              } catch (e, s) {
+                                                debugPrint(
+                                                  '❌ Error in Get Offer button: $e',
+                                                );
+                                                debugPrint('$s');
+        
+                                                NesticoPeSnackBar.showAwesomeSnackbar(
+                                                  title: 'Error',
+                                                  message:
+                                                      'Something went wrong. Please try again.',
+                                                  contentType: ContentType.failure,
+                                                );
+                                              }
+                                            }
+                                            : () async {
+                                              try {
+                                                final user =
+                                                    await SecureStorage.getUserData();
+        
+                                                if (user == null) {
+                                                  NesticoPeSnackBar.showAwesomeSnackbar(
+                                                    title: 'Error',
+                                                    message:
+                                                        'No user data found. Please log in.',
+                                                    contentType:
+                                                        ContentType.failure,
+                                                  );
+                                                  return;
+                                                }
+        
+                                                final fullName =
+                                                    user.user?.fullName ?? '';
+                                                final firstName =
+                                                    user.user?.firstName ?? '';
+                                                final username =
+                                                    user.user?.username ?? '';
+                                                final email =
+                                                    user.user?.email ?? '';
+                                                final phone =
+                                                    user.user?.phone ?? '';
+        
+                                                final displayName =
+                                                    (firstName.isEmpty
+                                                            ? username
+                                                            : fullName)
+                                                        .trim();
+        
+                                                if (Get.context == null) {
+                                                  NesticoPeSnackBar.showAwesomeSnackbar(
+                                                    title: 'Error',
+                                                    message:
+                                                        'UI not ready to show dialog.',
+                                                    contentType:
+                                                        ContentType.failure,
+                                                  );
+                                                  return;
+                                                }
+        
+                                                addInquiryFromProject(
+                                                  displayName,
+                                                  email,
+                                                  phone,
+                                                  widget.item.id,
+                                                  'sell',
+                                                  "project",
+                                                );
+                                              } catch (e, s) {
+                                                debugPrint(
+                                                  '❌ Error in Get Offer button: $e',
+                                                );
+                                                debugPrint('$s');
+        
+                                                NesticoPeSnackBar.showAwesomeSnackbar(
+                                                  title: 'Error',
+                                                  message:
+                                                      'Something went wrong. Please try again.',
+                                                  contentType: ContentType.failure,
+                                                );
+                                              }
+                                            },
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 14,
+                                        vertical: 8,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: ColorRes.primary,
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: Text(
+                                        '${projectController.hasSubmittedInquiry.value ? 'Submitted' : 'Contact Now'}',
+                                        style: TextStyle(
+                                          fontWeight: AppFontWeights.semiBold,
+                                          fontSize: AppFontSizes.small,
+                                          color: ColorRes.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
                           ],
                         ),
-                      ],
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                  ],
+                ),
+                // Remove button
+                if (widget.onRemove != null)
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: GestureDetector(
+                      onTap: widget.onRemove,
+                      child: const Icon(
+                        Icons.cancel,
+                        color: ColorRes.error,
+                        size: 16,
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
-            // Remove button
-            if (widget.onRemove != null)
-              Positioned(
-                top: 8,
-                right: 8,
-                child: GestureDetector(
-                  onTap: widget.onRemove,
-                  child: const Icon(
-                    Icons.cancel,
-                    color: ColorRes.error,
-                    size: 16,
-                  ),
-                ),
-              ),
-          ],
+          ),
         ),
       ),
     );
@@ -877,15 +942,105 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
   }
 }
 
-class _ProjectComparisonTable extends StatelessWidget {
-  final ProjectItem a;
-  final ProjectItem b;
+class _ProjectComparisonTable extends StatefulWidget {
+  final List<ProjectItem> items;
+  final ValueChanged<String>? onActiveChange;
+  const _ProjectComparisonTable({required this.items, this.onActiveChange});
 
-  const _ProjectComparisonTable({required this.a, required this.b});
+  @override
+  State<_ProjectComparisonTable> createState() => _ProjectComparisonTableState();
+}
+
+class _ProjectComparisonTableState extends State<_ProjectComparisonTable> {
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+
+  bool _didInitialNotify = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_didInitialNotify && widget.items.isNotEmpty) {
+        final first = widget.items[0];
+        if ((first.id ?? '').isNotEmpty) {
+          widget.onActiveChange?.call(first.id!);
+        }
+        _didInitialNotify = true;
+      }
+    });
+  }
+
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          height: 540,
+          child: PageView.builder(
+            controller: _pageController,
+            itemCount: widget.items.length,
+            onPageChanged: (i) {
+              setState(() {
+                _currentPage = i;
+              });
+              final item = widget.items[i];
+              widget.onActiveChange?.call(item.id);
+            },
+            itemBuilder: (context, index) {
+              final item = widget.items[index];
+              return _ProjectDetailsCard(item: item);
+            },
+          ),
+        ),
+        const SizedBox(height: 12),
+        if (widget.items.length > 1)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              widget.items.length,
+              (index) => GestureDetector(
+                onTap: () {
+                  _pageController.animateToPage(
+                    index,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                },
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  width: _currentPage == index ? 24 : 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: _currentPage == index
+                        ? ColorRes.primary
+                        : ColorRes.leadGreyColor[300],
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _ProjectDetailsCard extends StatelessWidget {
+  final ProjectItem item;
+  const _ProjectDetailsCard({required this.item});
 
   @override
   Widget build(BuildContext context) {
     return Container(
+       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -893,153 +1048,98 @@ class _ProjectComparisonTable extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _header(),
-
-          // Comparison Rows - Only show if both values exist
-          if (!_shouldHide(a.projectName, b.projectName))
-            _ComparisonRow(
-              icon: Icons.apartment_outlined,
-              label: 'Project Name',
-              valueA: a.projectName,
-              valueB: b.projectName,
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
+            decoration: BoxDecoration(
+              color: ColorRes.primary,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(11),
+                topRight: Radius.circular(11),
+              ),
             ),
-
-          if (!_shouldHide(a.address, b.address))
-            _ComparisonRow(
-              icon: Icons.location_on_outlined,
-              label: 'Location',
-              valueA: a.address,
-              isAddress: true,
-              valueB: b.address,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    item.projectName,
+                    style: const TextStyle(
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.bold,
+                      color: ColorRes.white,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
             ),
-
-          if (!_shouldHide(a.projectArea, b.projectArea))
-            _ComparisonRow(
-              icon: Icons.landscape_outlined,
-              label: 'Project Area',
-              valueA: a.projectArea,
-              valueB: b.projectArea,
+          ),
+          SizedBox(
+            height: 470,
+            child: ListView(
+              padding: const EdgeInsets.all(0),
+              children: [
+                _row('Location', item.address),
+                Divider(color: ColorRes.leadGreyColor.shade300),
+                _row('Project Area', item.projectArea),
+                Divider(color: ColorRes.leadGreyColor.shade300),
+                _row('Status', item.status.capitalize ?? item.status),
+                Divider(color: ColorRes.leadGreyColor.shade300),
+                _row('Total Units', _getTotalUnits(item)),
+                Divider(color: ColorRes.leadGreyColor.shade300),
+                _row('Buildings', _getTotalBuildings(item)),
+                Divider(color: ColorRes.leadGreyColor.shade300),
+                _row('Configurations', _getConfigurations(item)),
+                Divider(color: ColorRes.leadGreyColor.shade300),
+                _row('Possession', _getPossessionDate(item)),
+                Divider(color: ColorRes.leadGreyColor.shade300),
+                _row('Amenities', _getAmenities(item)),
+                Divider(color: ColorRes.leadGreyColor.shade300),
+                _row('Price Range', item.getPriceRange()),
+              ],
             ),
-
-          if (!_shouldHide(a.status, b.status))
-            _ComparisonRow(
-              icon: Icons.construction_outlined,
-              label: 'Status',
-              valueA: a.status.capitalize ?? a.status,
-              valueB: b.status.capitalize ?? b.status,
-            ),
-
-          if (!_shouldHide(_getTotalUnits(a), _getTotalUnits(b)))
-            _ComparisonRow(
-              icon: Icons.home_work_outlined,
-              label: 'Total Units',
-              valueA: _getTotalUnits(a),
-              valueB: _getTotalUnits(b),
-              highlightB:
-                  (b.projectSize?.totalUnits ?? 0) >
-                  (a.projectSize?.totalUnits ?? 0),
-            ),
-
-          if (!_shouldHide(_getTotalBuildings(a), _getTotalBuildings(b)))
-            _ComparisonRow(
-              icon: Icons.business_outlined,
-              label: 'Buildings',
-              valueA: _getTotalBuildings(a),
-              valueB: _getTotalBuildings(b),
-              highlightB:
-                  (b.projectSize?.totalBuildings ?? 0) >
-                  (a.projectSize?.totalBuildings ?? 0),
-            ),
-
-          if (!_shouldHide(_getConfigurations(a), _getConfigurations(b)))
-            _ComparisonRow(
-              icon: Icons.bed_outlined,
-              label: 'Configurations',
-              valueA: _getConfigurations(a),
-              valueB: _getConfigurations(b),
-            ),
-
-          if (!_shouldHide(_getPossessionDate(a), _getPossessionDate(b)))
-            _ComparisonRow(
-              icon: Icons.event_available_outlined,
-              label: 'Possession',
-              valueA: _getPossessionDate(a),
-              valueB: _getPossessionDate(b),
-            ),
-
-          if (!_shouldHide(_getAmenities(a), _getAmenities(b)))
-            _ComparisonRow(
-              icon: Icons.checklist_rtl,
-              label: 'Amenities',
-              isAddress: true,
-              valueA: _getAmenities(a),
-              valueB: _getAmenities(b),
-              highlightB: b.amenities.length > a.amenities.length,
-            ),
-
-          if (!_shouldHide(a.getPriceRange(), b.getPriceRange()))
-            _ComparisonRow(
-              icon: Icons.currency_rupee,
-              label: 'Price Range',
-              valueA: a.getPriceRange(),
-              valueB: b.getPriceRange(),
-              isLast: true,
-            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _header() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: ColorRes.leadGreyColor[200]!)),
-      ),
+  Widget _row(String title, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text(
-            'Features',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: AppFontSizes.small,
-              fontWeight: AppFontWeights.medium,
-            ),
-          ),
           Expanded(
+            flex: 2,
             child: Text(
-              a.projectName,
-              textAlign: TextAlign.center,
-              maxLines: 1,
+              title,
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: AppFontSizes.small,
+              style: TextStyle(
+                fontSize: AppFontSizes.caption,
                 fontWeight: AppFontWeights.medium,
+                color: ColorRes.leadGreyColor[700],
               ),
             ),
           ),
+          const SizedBox(width: 10),
           Expanded(
+            flex: 3,
             child: Text(
-              b.projectName,
-              textAlign: TextAlign.center,
-              maxLines: 1,
+              value,
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 fontSize: AppFontSizes.small,
-                fontWeight: AppFontWeights.medium,
+                fontWeight: AppFontWeights.semiBold,
+                color: ColorRes.textColor,
               ),
             ),
           ),
         ],
       ),
     );
-  }
-
-  bool _shouldHide(String? a, String? b) {
-    bool empty(String? v) =>
-        v == null || v.trim().isEmpty || v == '-' || v == '0';
-    return empty(a) && empty(b);
   }
 
   String _getTotalUnits(ProjectItem item) {

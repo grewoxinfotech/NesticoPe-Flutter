@@ -1,13 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
-import 'package:housing_flutter_app/app/widgets/expandable_tile/expandable_widget.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
-import 'package:housing_flutter_app/modules/profile/controllers/buyer_profiledata.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:nesticope_app/app/widgets/expandable_tile/expandable_widget.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/data/network/auth/model/user_model.dart';
+import 'package:nesticope_app/modules/profile/controllers/buyer_profiledata.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 
@@ -27,7 +27,7 @@ class BuyerProfileScreen extends StatelessWidget {
     final profileController = Get.find<BuyerProfileDataController>();
 
     return Scaffold(
-      backgroundColor: ColorRes.white,
+      backgroundColor: const Color(0xFFF5F6FA),
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
@@ -40,7 +40,7 @@ class BuyerProfileScreen extends StatelessWidget {
           style: TextStyle(fontWeight: AppFontWeights.bold),
         ),
 
-        backgroundColor: ColorRes.white,
+        backgroundColor: const Color(0xFFF5F6FA),
         elevation: 0,
         centerTitle: false,
       ),
@@ -58,19 +58,31 @@ class BuyerProfileScreen extends StatelessWidget {
               _buildProfileHeader(profileController),
               const SizedBox(height: 16),
 
+              // ── Personal Information ──
+              _buildSectionTitle('Personal Information'),
+              const SizedBox(height: 10),
+
               // Contact Info Section (Editable)
               Obx(() => _buildContactInfoSection(profileController)),
               const SizedBox(height: 16),
 
               // Business Details Section (Editable)
               // Profile Options
-
-              // _buildProfileOptionsSection(),
-              const SizedBox(height: 16),
             ],
           ),
         );
       }),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: TextStyle(
+        fontSize: 16,
+        fontWeight: AppFontWeights.semiBold,
+        color: ColorRes.textPrimary,
+      ),
     );
   }
 
@@ -558,78 +570,113 @@ class BuyerProfileScreen extends StatelessWidget {
 
   // Contact Info Section (Editable)
   Widget _buildContactInfoSection(BuyerProfileDataController controller) {
+    final user = controller.userProfile.value;
+
     return Container(
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: ColorRes.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: ColorRes.leadGreyColor.withOpacity(0.3),
-          width: 1,
-        ),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              // Container(
-              //   padding: const EdgeInsets.all(8),
-              //   decoration: BoxDecoration(
-              //     color: ColorRes.blueColor.withOpacity(0.1),
-              //     borderRadius: BorderRadius.circular(8),
-              //   ),
-              //   child: Icon(
-              //     Icons.contacts_outlined,
-              //     color: ColorRes.blueColor[700],
-              //     size: 20,
-              //   ),
-              // ),
-              // const SizedBox(width: 12),
-              Text(
-                'Profile Info',
-                style: TextStyle(
-                  // fontSize: AppFontSizes.bodyMedium,
-                  // color: ColorRes.homeBlackFade,
-                  // fontWeight: AppFontWeights.medium,
-                  fontSize: AppFontSizes.bodyMedium,
-                  fontWeight: AppFontWeights.bold,
-                  color: ColorRes.textPrimary,
-                ),
-              ),
-            ],
+          _infoRow(
+            icon: Icons.person_outline,
+            iconColor: const Color(0xFF6366F1),
+            iconBg: const Color(0xFFEEF2FF),
+            label: 'Username',
+            value: user?.username ?? '',
           ),
-          const SizedBox(height: 20),
-
-          // Read-only display
-          _buildInfoRow(
-            Icons.person_outline,
-            '${controller.userProfile.value?.username ?? ''}',
+          _divider(),
+          _infoRow(
+            icon: Icons.email_outlined,
+            iconColor: const Color(0xFF10B981),
+            iconBg: const Color(0xFFD1FAE5),
+            label: 'Email Address',
+            value: user?.email ?? '',
           ),
-          const SizedBox(height: 12),
-          _buildInfoRow(
-            Icons.email_outlined,
-            controller.userProfile.value?.email ?? '',
+          _divider(),
+          _infoRow(
+            icon: Icons.phone_outlined,
+            iconColor: const Color(0xFFF59E0B),
+            iconBg: const Color(0xFFFEF3C7),
+            label: 'Phone Number',
+            value: user?.phone ?? '',
           ),
-          const SizedBox(height: 12),
-          _buildInfoRow(
-            Icons.phone_outlined,
-            controller.userProfile.value?.phone ?? '',
-          ),
-          const SizedBox(height: 12),
-          if (controller.userProfile.value?.city != null &&
-              controller.userProfile.value!.city!.isNotEmpty) ...[
-            _buildInfoRow(
-              Icons.location_on_outlined,
-
-              '${controller.userProfile.value?.city ?? ''}',
+          if (user?.city != null && user!.city!.isNotEmpty) ...[
+            _divider(),
+            _infoRow(
+              icon: Icons.location_on_outlined,
+              iconColor: const Color(0xFFEC4899),
+              iconBg: const Color(0xFFFCE7F3),
+              label: 'City',
+              value: user.city ?? '',
             ),
-            const SizedBox(height: 12),
           ],
         ],
       ),
     );
   }
+
+  Widget _infoRow({
+    required IconData icon,
+    required Color iconColor,
+    required Color iconBg,
+    required String label,
+    required String value,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(9),
+            decoration: BoxDecoration(
+              color: iconBg,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, size: 20, color: iconColor),
+          ),
+          const SizedBox(width: 14),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Color.fromARGB(255, 155, 161, 172),
+                  fontWeight: AppFontWeights.medium,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                value.isNotEmpty ? value : 'Not Provided',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: AppFontWeights.medium,
+                  color: ColorRes.textPrimary,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _divider() => const Divider(
+    height: 1,
+    indent: 16,
+    endIndent: 16,
+    color: Color(0xFFF3F4F6),
+  );
 
   // Business Details Section (Editable)
   Widget _buildBusinessDetailsSection(SellerProfileController controller) {

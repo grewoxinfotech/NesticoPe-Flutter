@@ -2,9 +2,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
-import 'package:housing_flutter_app/modules/reseller/view/reseller_success_stories/add_reseller_success_stories_screen.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
+import 'package:nesticope_app/modules/reseller/view/reseller_success_stories/add_reseller_success_stories_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:readmore/readmore.dart';
 import '../../../../app/constants/color_res.dart';

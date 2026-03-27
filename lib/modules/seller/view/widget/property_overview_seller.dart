@@ -2,13 +2,13 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/manager/icon_manager.dart';
-import 'package:housing_flutter_app/app/manager/property/property_name_manager.dart';
-import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
-import 'package:housing_flutter_app/modules/seller/view/widget/seller_property_approval_history.dart';
-import 'package:housing_flutter_app/utils/property_mapper/property_mapper.dart';
-import 'package:housing_flutter_app/widgets/dialog/delete_confirmation_dialog.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/manager/icon_manager.dart';
+import 'package:nesticope_app/app/manager/property/property_name_manager.dart';
+import 'package:nesticope_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
+import 'package:nesticope_app/modules/seller/view/widget/seller_property_approval_history.dart';
+import 'package:nesticope_app/utils/property_mapper/property_mapper.dart';
+import 'package:nesticope_app/widgets/dialog/delete_confirmation_dialog.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/manager/property/property_pricemanager.dart';
@@ -237,26 +237,27 @@ class _PropertyOverviewSellerScreenState
         ),
         title: const Text(
           'Property Overview',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          style: TextStyle(fontWeight: AppFontWeights.semiBold),
         ),
         backgroundColor: ColorRes.white,
         elevation: 0,
       ),
 
       body: SafeArea(
-
         child: Obx(() {
           if (_isLoading.value) {
             return const Center(child: CircularProgressIndicator());
           }
-        
+
           if (_property.value == null) {
             return const Center(child: Text("Property not found"));
           }
-          log('Rendering property overview for ID: ${_property.value!.toJson()}');
-        
+          log(
+            'Rendering property overview for ID: ${_property.value!.toJson()}',
+          );
+
           final property = _property.value!;
-        
+
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -271,88 +272,117 @@ class _PropertyOverviewSellerScreenState
                   showFavorite: false,
                   showShare: false,
                 ),
-        
+
                 Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-        
+
                 _buildStatusSection(context, isCompact),
                 Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-        
+
                 _buildPropertyOverviewSection(context, isCompact),
                 Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-        
+
                 _buildFinancialSection(context, isCompact),
                 Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-        
+
                 _buildPropertyDetailsSection(context, isCompact),
                 Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-        
-                if (property.propertyDetails?.amenities?.isNotEmpty ?? false) ...[
+
+                if (property.propertyDetails?.amenities?.isNotEmpty ??
+                    false) ...[
                   _buildAmenitiesSection(context, isCompact),
                   Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
                 ],
-        
+
                 _buildPerformanceSection(context, isCompact),
                 Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-        
+
                 if (property.assignedTo != null) ...[
                   _buildAssignmentSection(context, isCompact),
                   Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
                 ],
-        
+
                 if (property.scoreBreakdown != null) ...[
                   PerformanceScoreWidget(score: property.scoreBreakdown!),
                   Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
                 ],
-        
-                _buildMenuItem("Approval History", Icons.history, () {
-                  Get.to(
-                    () => SellerPropertyApprovalHistory(
-                      propertyId: property.id ?? '',
-                    ),
-                  );
-                }),
+
+                _buildMenuItem(
+                  iconColor: ColorRes.primary,
+                  title: "Approval History",
+                  icon: Icons.history,
+                  onTap: () {
+                    Get.to(
+                      () => SellerPropertyApprovalHistory(
+                        propertyId: property.id ?? '',
+                      ),
+                    );
+                  },
+                  iconBg: ColorRes.primary.withOpacity(0.1),
+                  subtitle: 'View timeline of approvals',
+                ),
                 SizedBox(height: 10),
                 _buildMenuItem(
-                  "Property lead",
-                  Icons.label_important_outline,
-                  () {
-                    Get.to(() => SellerLeadScreen(propertyId: property.id ?? ''));
+                  iconColor: ColorRes.green,
+                  title: "Property lead",
+                  icon: Icons.label_important_outline,
+                  onTap: () {
+                    Get.to(
+                      () => SellerLeadScreen(propertyId: property.id ?? ''),
+                    );
                   },
+                  iconBg: ColorRes.green.withOpacity(0.1),
+
+                  subtitle: 'New potential buyers',
                 ),
                 SizedBox(height: 10),
-                _buildMenuItem("Visit", Icons.history, () {
-                  Get.to(
-                    () => LeadVisit(
-                      leadVisitController: leadVisitController,
-                      propertyInquiryController: leadPropertyInquiryController,
-                      propertyId: property.id,
-                    ),
-                  );
-                }),
-                SizedBox(height: 10),
-                _buildMenuItem("Negotiable", Icons.currency_rupee_outlined, () {
-                  leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
-                    property.id ?? '',
-                  );
-                  log(
-                    'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
-                  );
-                  Get.to(
-                    () => LeadNegotiablePriceScreen(
-                      controller: leadPropertyNegotiablePriceController,
-                    ),
-                  );
-                }),
-        
-              if(property.propertyStatus?.toLowerCase()!="sold")...[
-                _buildActionButtons(
-                  context,
-                  isCompact,
-                  property,
-                  widget.onDelete,
+                _buildMenuItem(
+                  title: "Visit",
+                  iconColor: ColorRes.deepPurpleColor,
+                  icon: Icons.history,
+                  onTap: () {
+                    Get.to(
+                      () => LeadVisit(
+                        leadVisitController: leadVisitController,
+                        propertyInquiryController:
+                            leadPropertyInquiryController,
+                        propertyId: property.id,
+                      ),
+                    );
+                  },
+                  iconBg: ColorRes.deepPurpleColor.withOpacity(0.1),
+                  subtitle: 'View visit history',
                 ),
-              ],
-        
+                SizedBox(height: 10),
+                _buildMenuItem(
+                  title: "Negotiable",
+                  iconColor: ColorRes.builderGridPink,
+                  icon: Icons.currency_rupee_outlined,
+                  onTap: () {
+                    leadPropertyNegotiablePriceController
+                        .setLeadNegotiablePriceId(property.id ?? '');
+                    log(
+                      'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
+                    );
+                    Get.to(
+                      () => LeadNegotiablePriceScreen(
+                        controller: leadPropertyNegotiablePriceController,
+                      ),
+                    );
+                  },
+                  iconBg: ColorRes.builderGridPink.withOpacity(0.1),
+                  subtitle: 'View negotiable price history',
+                ),
+                SizedBox(height: 10),
+
+                if (property.propertyStatus?.toLowerCase() != "sold") ...[
+                  _buildActionButtons(
+                    context,
+                    isCompact,
+                    property,
+                    widget.onDelete,
+                  ),
+                ],
+
                 const SizedBox(height: 20),
               ],
             ),
@@ -362,38 +392,80 @@ class _PropertyOverviewSellerScreenState
     );
   }
 
-  GestureDetector _buildMenuItem(
-    String label,
-    IconData icon,
-    Function() onTap,
-  ) {
+  Widget _buildMenuItem({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color iconBg,
+    required Color iconColor,
+    required VoidCallback onTap,
+    bool showDivider = true,
+  }) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.all(12),
-        margin: EdgeInsets.symmetric(horizontal: 16),
-        decoration: BoxDecoration(
-          color: ColorRes.white,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, color: ColorRes.primary),
-            SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontSize: AppFontSizes.body,
-                  fontWeight: AppFontWeights.semiBold,
-                  color: ColorRes.leadGreyColor[800],
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            color: ColorRes.white,
+            child: Row(
+              children: [
+                /// Icon Box
+                Container(
+                  height: 44,
+                  width: 44,
+                  decoration: BoxDecoration(
+                    color: iconBg,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: iconColor, size: 20),
                 ),
-              ),
+
+                const SizedBox(width: 14),
+
+                /// Title + Subtitle
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: AppFontSizes.medium,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.leadGreyColor[900],
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          fontSize: AppFontSizes.caption,
+                          color: ColorRes.leadGreyColor[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                /// Arrow
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 18,
+                  color: ColorRes.leadGreyColor[500],
+                ),
+              ],
             ),
-            SizedBox(width: 10),
-            Icon(Icons.arrow_forward_ios, color: ColorRes.leadGreyColor[600]),
-          ],
-        ),
+          ),
+
+          /// Divider
+          if (showDivider)
+            Divider(
+              height: 1,
+              thickness: 1,
+              color: ColorRes.leadGreyColor.shade200,
+            ),
+        ],
       ),
     );
   }
@@ -511,10 +583,10 @@ class _PropertyOverviewSellerScreenState
                 style: TextStyle(
                   fontSize: AppFontSizes.body,
                   fontWeight: AppFontWeights.semiBold,
-                  color: ColorRes.leadGreyColor[800],
+                  color: ColorRes.textColor,
                 ),
               ),
-              if(property.propertyStatus?.toLowerCase()=="sold")...[
+              if (property.propertyStatus?.toLowerCase() == "sold") ...[
                 Container(
                   decoration: BoxDecoration(
                     color: ColorRes.error.withOpacity(0.1),
@@ -532,7 +604,7 @@ class _PropertyOverviewSellerScreenState
                     ),
                   ),
                 ),
-              ]else...[
+              ] else ...[
                 Container(
                   decoration: BoxDecoration(
                     color: ColorRes.primary.withOpacity(0.1),
@@ -551,7 +623,6 @@ class _PropertyOverviewSellerScreenState
                   ),
                 ),
               ],
-
             ],
           ),
           SizedBox(height: 16),
@@ -559,7 +630,7 @@ class _PropertyOverviewSellerScreenState
             children: [
               Expanded(
                 child: _buildStatusCard(
-                  'Approval',
+                  'Approval Status',
                   _formatStatus(property.approvalStatus ?? 'pending'),
                   _getStatusColor(property.approvalStatus ?? 'pending'),
                   Icons.verified_outlined,
@@ -592,7 +663,7 @@ class _PropertyOverviewSellerScreenState
     return Container(
       padding: EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
+        color: color.withOpacity(0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: color.withOpacity(0.3), width: 1),
       ),
@@ -607,7 +678,7 @@ class _PropertyOverviewSellerScreenState
                 label,
                 style: TextStyle(
                   fontSize: AppFontSizes.small,
-                  color: ColorRes.leadGreyColor[600],
+                  color: ColorRes.leadGreyColor[700],
                   fontWeight: AppFontWeights.medium,
                 ),
               ),
@@ -618,7 +689,7 @@ class _PropertyOverviewSellerScreenState
             value,
             style: TextStyle(
               fontSize: AppFontSizes.medium,
-              fontWeight: AppFontWeights.bold,
+              fontWeight: AppFontWeights.semiBold,
               color: color,
             ),
           ),
@@ -672,8 +743,9 @@ class _PropertyOverviewSellerScreenState
                 child: Text(
                   '${property.address ?? ''}, ${property.city ?? ''}, ${property.state ?? ''} - ${property.zipCode ?? ''}',
                   style: TextStyle(
-                    fontSize: AppFontSizes.bodySmall,
-                    color: ColorRes.leadGreyColor[600],
+                    fontSize: AppFontSizes.caption,
+                    color: ColorRes.leadGreyColor[700],
+                    fontWeight: AppFontWeights.medium,
                   ),
                 ),
               ),
@@ -709,7 +781,7 @@ class _PropertyOverviewSellerScreenState
             style: TextStyle(
               fontSize: AppFontSizes.body,
               fontWeight: AppFontWeights.semiBold,
-              color: ColorRes.leadGreyColor[800],
+              color: ColorRes.textColor,
             ),
           ),
           const SizedBox(height: 16),
@@ -735,7 +807,7 @@ class _PropertyOverviewSellerScreenState
                               ? 'Monthly Rent'
                               : 'Property Price',
                           style: TextStyle(
-                            fontSize: AppFontSizes.bodySmall,
+                            fontSize: AppFontSizes.small,
                             fontWeight: AppFontWeights.medium,
                             color: ColorRes.leadGreyColor[700],
                           ),
@@ -744,8 +816,8 @@ class _PropertyOverviewSellerScreenState
                         Text(
                           priceManager.displayPrice,
                           style: TextStyle(
-                            fontSize: AppFontSizes.body,
-                            fontWeight: AppFontWeights.bold,
+                            fontSize: AppFontSizes.large,
+                            fontWeight: AppFontWeights.semiBold,
                             color: ColorRes.success.shade800,
                           ),
                         ),
@@ -812,14 +884,14 @@ class _PropertyOverviewSellerScreenState
   /// Reusable Row Builder for financial items
   Widget _buildInfoRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             label,
             style: TextStyle(
-              fontSize: AppFontSizes.bodySmall,
+              fontSize: AppFontSizes.small,
               color: ColorRes.leadGreyColor[700],
               fontWeight: AppFontWeights.medium,
             ),
@@ -844,13 +916,13 @@ class _PropertyOverviewSellerScreenState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           child: Text(
             'Property Details',
             style: TextStyle(
               fontSize: AppFontSizes.body,
               fontWeight: AppFontWeights.semiBold,
-              color: ColorRes.leadGreyColor[800],
+              color: ColorRes.textPrimary,
             ),
           ),
         ),
@@ -891,28 +963,23 @@ class _PropertyOverviewSellerScreenState
   Widget _buildDetailRow(String label, String value) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 120,
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: AppFontSizes.bodySmall,
-                color: ColorRes.leadGreyColor[600],
-                fontWeight: AppFontWeights.medium,
-              ),
+          Text(
+            label.toUpperCase(),
+            style: TextStyle(
+              fontSize: AppFontSizes.small,
+              color: Color(0xff4F47E5),
+              fontWeight: AppFontWeights.medium,
             ),
           ),
-          Expanded(
-            child: Text(
-              value,
-              style: TextStyle(
-                fontSize: AppFontSizes.bodySmall,
-                fontWeight: AppFontWeights.semiBold,
-                color: ColorRes.leadGreyColor[900],
-              ),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: AppFontSizes.bodySmall,
+              fontWeight: AppFontWeights.semiBold,
+              color: ColorRes.textPrimary,
             ),
           ),
         ],
@@ -994,7 +1061,7 @@ class _PropertyOverviewSellerScreenState
             style: TextStyle(
               fontSize: AppFontSizes.body,
               fontWeight: AppFontWeights.semiBold,
-              color: ColorRes.leadGreyColor[800],
+              color: ColorRes.textPrimary,
             ),
           ),
           SizedBox(height: 16),
@@ -1112,33 +1179,45 @@ class _PropertyOverviewSellerScreenState
             style: TextStyle(
               fontSize: AppFontSizes.body,
               fontWeight: AppFontWeights.semiBold,
-              color: ColorRes.leadGreyColor[800],
+              color: ColorRes.textPrimary,
             ),
           ),
           SizedBox(height: 16),
           Container(
             padding: EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: ColorRes.purpleColor.shade50,
+              color: Color(0xffEEF2FF),
+
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: ColorRes.purpleColor.shade200),
+
+              border: Border.all(color: Color.fromARGB(255, 199, 210, 245)),
             ),
             child: Column(
               children: [
-                _buildDetailRow(
-                  'Status',
-                  _formatStatus(property.assignmentStatus ?? 'N/A'),
+                Row(
+                  children: [
+                    _buildDetailRow(
+                      'Assignment Status',
+                      _formatStatus(property.assignmentStatus ?? 'N/A'),
+                    ),
+                    Spacer(),
+                    if (property.assignmentDate != null)
+                      _buildDetailRow(
+                        'Assigned Date',
+                        _formatDate(property.assignmentDate!),
+                      ),
+                  ],
                 ),
-                if (property.assignmentDate != null)
-                  _buildDetailRow(
-                    'Assigned On',
-                    _formatDate(property.assignmentDate!),
+
+                if (property.potentialEarnings != null) ...[
+                  SizedBox(height: 12),
+                  Expanded(
+                    child: _buildDetailRow(
+                      'Potential Earnings',
+                      '₹${_formatPrice(double.tryParse(property.potentialEarnings!) ?? 0)}',
+                    ),
                   ),
-                if (property.potentialEarnings != null)
-                  _buildDetailRow(
-                    'Potential Earnings',
-                    '₹${_formatPrice(double.tryParse(property.potentialEarnings!) ?? 0)}',
-                  ),
+                ],
               ],
             ),
           ),
@@ -1174,11 +1253,11 @@ class _PropertyOverviewSellerScreenState
                   'Edit Property',
                   style: TextStyle(
                     fontSize: AppFontSizes.medium,
-                    fontWeight: AppFontWeights.extraBold,
+                    fontWeight: AppFontWeights.semiBold,
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: ColorRes.blueColor.shade700,
+                  backgroundColor: ColorRes.primary,
                   foregroundColor: ColorRes.white,
                   padding: EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
@@ -1209,7 +1288,7 @@ class _PropertyOverviewSellerScreenState
                   // ),
                   // SizedBox(width: 12),
                   Expanded(
-                    child: ElevatedButton(
+                    child: ElevatedButton.icon(
                       onPressed: () {
                         // Share property
                         showDeleteConfirmationDialog(
@@ -1227,7 +1306,14 @@ class _PropertyOverviewSellerScreenState
                               "Are you sure you want to delete this property?",
                         );
                       },
-                      child: Icon(Icons.delete_outline),
+                      icon: Icon(Icons.delete_outline),
+                      label: Text(
+                        'Delete Property',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.medium,
+                          fontWeight: AppFontWeights.semiBold,
+                        ),
+                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: ColorRes.error.shade700,
                         foregroundColor: ColorRes.white,

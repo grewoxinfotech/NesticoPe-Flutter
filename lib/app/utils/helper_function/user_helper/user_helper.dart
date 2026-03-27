@@ -80,6 +80,29 @@ class UserHelper {
         return null;
     }
   }
+  static String? getOfferUserType() {
+  switch (_cachedUserType) {
+    case UserType.reseller:
+      return "reseller";
+
+    case UserType.buyer:
+      return "buyer";
+
+    case UserType.contractor:
+      return "contractor";
+
+    case UserType.seller:
+      if (_cachedSellerType == SellerType.owner) {
+        return "seller-owner";
+      } else if (_cachedSellerType == SellerType.builder) {
+        return "seller-builder";
+      }
+      return "seller";
+
+    default:
+      return null;
+  }
+}
 
   /// Clear on logout
   static void clearUserType() {

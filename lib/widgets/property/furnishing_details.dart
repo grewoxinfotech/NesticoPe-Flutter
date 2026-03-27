@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
 
-import 'package:housing_flutter_app/app/manager/property_highlight_manager.dart';
-import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
+import 'package:nesticope_app/app/manager/property_highlight_manager.dart';
+import 'package:nesticope_app/data/network/property/models/property_model.dart';
 
 import '../../app/constants/app_font_sizes.dart';
 

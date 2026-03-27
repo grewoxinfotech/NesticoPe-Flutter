@@ -1,7 +1,7 @@
 // // import 'package:flutter/material.dart';
 // // import 'package:get/get.dart';
-// // import 'package:housing_flutter_app/app/constants/color_res.dart';
-// // import 'package:housing_flutter_app/app/constants/size_manager.dart';
+// // import 'package:nesticope_app/app/constants/color_res.dart';
+// // import 'package:nesticope_app/app/constants/size_manager.dart';
 // //
 // // import '../controller/seller_listing_controller.dart';
 // // import '../widget/property_card.dart';
@@ -251,8 +251,8 @@
 //
 // // import 'package:flutter/material.dart';
 // // import 'package:get/get.dart';
-// // import 'package:housing_flutter_app/app/constants/color_res.dart';
-// // import 'package:housing_flutter_app/app/constants/size_manager.dart';
+// // import 'package:nesticope_app/app/constants/color_res.dart';
+// // import 'package:nesticope_app/app/constants/size_manager.dart';
 // //
 // // import '../controller/seller_listing_controller.dart';
 // // import '../widget/property_card.dart';
@@ -763,8 +763,8 @@
 //
 // // import 'package:flutter/material.dart';
 // // import 'package:get/get.dart';
-// // import 'package:housing_flutter_app/app/constants/color_res.dart';
-// // import 'package:housing_flutter_app/app/constants/size_manager.dart';
+// // import 'package:nesticope_app/app/constants/color_res.dart';
+// // import 'package:nesticope_app/app/constants/size_manager.dart';
 // //
 // // import '../controller/seller_listing_controller.dart';
 // // import '../widget/property_card.dart';
@@ -1204,8 +1204,8 @@
 //
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/app/constants/color_res.dart';
-// import 'package:housing_flutter_app/app/constants/size_manager.dart';
+// import 'package:nesticope_app/app/constants/color_res.dart';
+// import 'package:nesticope_app/app/constants/size_manager.dart';
 //
 // import '../controller/seller_listing_controller.dart';
 // import '../widget/property_card.dart';

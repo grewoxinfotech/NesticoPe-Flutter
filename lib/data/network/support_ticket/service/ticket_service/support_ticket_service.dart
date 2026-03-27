@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
 import 'package:http/http.dart' as http;
-import 'package:housing_flutter_app/app/constants/api_constants.dart';
+import 'package:nesticope_app/app/constants/api_constants.dart';
 
 import '../../../../../app/care/pagination/models/pagination_models.dart';
 import '../../../../../app/widgets/snackbar/snackbar.dart';
@@ -99,6 +99,56 @@ class TicketService {
     } catch (e) {
       print("❌ Error creating ticket: $e");
       return false;
+    }
+  }
+
+  /// 🆕 POST – Create Ticket (JSON only, no file)
+  Future<TicketItem?> createTicketSimple(TicketCreateRequest ticket) async {
+    try {
+      final uri = Uri.parse(baseUrl);
+      final response = await http.post(
+        uri,
+        headers: {
+          ...(await headers()),
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(ticket.toJson()),
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        final item = data['data'];
+        if (item != null) {
+          return TicketItem.fromJson(item);
+        }
+        return null;
+      } else {
+        print("❌ Ticket creation failed: ${response.body}");
+        return null;
+      }
+    } catch (e) {
+      print("❌ Error creating ticket (simple): $e");
+      return null;
+    }
+  }
+
+  /// 📌 GET – Fetch a single ticket by ID
+  Future<TicketItem?> fetchTicketById(String id) async {
+    try {
+      final uri = Uri.parse('$baseUrl/$id');
+      final res = await http.get(uri, headers: await headers());
+      if (res.statusCode == 200) {
+        final data = jsonDecode(res.body);
+        if (data['success'] == true && data['data'] != null) {
+          return TicketItem.fromJson(data['data']);
+        }
+        return null;
+      } else {
+        print('❌ fetchTicketById failed: ${res.statusCode} ${res.body}');
+        return null;
+      }
+    } catch (e) {
+      print('❌ fetchTicketById exception: $e');
+      return null;
     }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
 
 import '../../../../app/constants/color_res.dart';
 import '../dashboard_screen.dart';
@@ -11,18 +12,23 @@ class DashboardLayout extends StatelessWidget {
   final Widget child;
   final RefreshCallback onRefresh;
 
-  DashboardLayout({super.key, this.floatingButton, required this.child,required this.onRefresh,});
+  DashboardLayout({
+    super.key,
+    this.floatingButton,
+    required this.child,
+    required this.onRefresh,
+  });
   RxString name = ''.obs;
-  RxString image="".obs;
+  RxString image = "".obs;
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final user = await SecureStorage.getUserData();
       if (user != null) {
-        if(user.user?.profilePic!=null && (user.user?.profilePic?.isNotEmpty??false))
-          {
-            image.value=user.user?.profilePic??'';
-          }
+        if (user.user?.profilePic != null &&
+            (user.user?.profilePic?.isNotEmpty ?? false)) {
+          image.value = user.user?.profilePic ?? '';
+        }
         if (user.user?.firstName != null && user.user?.lastName != null) {
           name.value = '${user.user!.firstName} ${user.user!.lastName}';
         } else {
@@ -35,15 +41,44 @@ class DashboardLayout extends StatelessWidget {
     return Scaffold(
       backgroundColor: ColorRes.white,
       appBar: AppBar(
-        title: const Text('Dashboard'),
+        title: Text(
+          'Dashboard',
+          style: TextStyle(fontWeight: AppFontWeights.semiBold),
+        ),
         backgroundColor: ColorRes.white,
 
         automaticallyImplyLeading: false,
         elevation: 0,
         actions: [
-          TextButton(
-            onPressed: () => Get.offAll(() => DashboardScreen()),
-            child: const Text('Switch To Buyer'),
+          InkWell(
+            onTap: () => Get.offAll(() => DashboardScreen()),
+            child: Container(
+              margin: const EdgeInsets.symmetric( horizontal: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: ColorRes.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(color: ColorRes.primary.withOpacity(0.3), width: 1.2),
+              ),
+              child:  Row(
+                children: [
+                  Text(
+                    'Switch to Buyer',
+                    style: TextStyle(
+                      color: ColorRes.primary,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.arrow_forward,
+                    size: 16,
+                    color: ColorRes.primary,
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),

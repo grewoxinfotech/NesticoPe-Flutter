@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
-import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
-import 'package:housing_flutter_app/data/network/property/services/seller_property_service.dart';
+import 'package:nesticope_app/app/care/pagination/controller/pagination_controller.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/data/network/property/models/property_model.dart';
+import 'package:nesticope_app/data/network/property/services/seller_property_service.dart';
 
 class TopSellerPropertyController extends PaginatedController<Items> {
   final SellerPropertyService _service = SellerPropertyService();

@@ -1,17 +1,19 @@
+
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:collection/collection.dart';
 
-import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
-import 'package:housing_flutter_app/data/network/property/models/inquiry_model.dart';
-import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
-import 'package:housing_flutter_app/data/network/property/models/top_property_model.dart';
-import 'package:housing_flutter_app/data/network/property/services/property_service.dart';
+import 'package:nesticope_app/app/care/pagination/controller/pagination_controller.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:nesticope_app/data/network/property/models/inquiry_model.dart';
+import 'package:nesticope_app/data/network/property/models/property_model.dart';
+import 'package:nesticope_app/data/network/property/models/top_property_model.dart';
+import 'package:nesticope_app/data/network/property/services/property_service.dart';
 
 import '../../../app/care/pagination/models/pagination_models.dart';
 import '../../../data/database/secure_storage_service.dart';
@@ -32,6 +34,8 @@ class PropertyController extends PaginatedController<Items> {
   final RxBool hasSubmittedInquiry = false.obs;
   final RxBool isAcceptableTermsAndCondition = false.obs;
 
+  RxInt propertyLimit = 0.obs;
+
   // Reactive fields
   Rxn<PropertyMedia> propertyMedia = Rxn<PropertyMedia>();
 
@@ -41,7 +45,7 @@ class PropertyController extends PaginatedController<Items> {
   RxString approvalStatus = "pending".obs;
   RxString assignmentStatus = "available".obs;
   RxList<Inquiry> inquiryResponse = <Inquiry>[].obs;
-
+  RxBool youWantWithoutCity = false.obs;
   RxBool isVerified = false.obs;
   RxBool isExpanded = false.obs;
   RxBool isDeveloper = false.obs;
@@ -52,9 +56,8 @@ class PropertyController extends PaginatedController<Items> {
   // Optional filters
   Map<String, String>? filters = {};
 
-
-  RxBool isComparePropertyFirst=false.obs;
-  RxBool isComparePropertySecond=false.obs;
+  RxBool isComparePropertyFirst = false.obs;
+  RxBool isComparePropertySecond = false.obs;
 
   // var favoriteIds = <String>{}.obs;
 
@@ -95,6 +98,10 @@ class PropertyController extends PaginatedController<Items> {
 
   Future<void> loadTopProperties({int page = 1}) async {
     try {
+      if (apiLoading.value) {
+        return;
+      }
+      apiLoading.value = true;
       if (page == 1) {
         topProperties.clear(); // ✅ CRITICAL FIX
       }
@@ -105,6 +112,8 @@ class PropertyController extends PaginatedController<Items> {
       print("Loaded ${topProperties.length} top properties");
     } catch (e) {
       print("Error loading top properties:fdvbfdbgbg $e");
+    } finally {
+      apiLoading.value = false;
     }
   }
 
@@ -302,12 +311,14 @@ class PropertyController extends PaginatedController<Items> {
     } else if (key == 'city') {
       filters = {'city': val};
       selectedCity.value = val;
+
       loadTopProperties();
     } else if (key == 'listingType') {
+      // applyFilters(newFilters);
       final cityValue = includeCity ? filters!['city'] : null;
       filters = {
         if (includeCity && cityValue != null) 'city': cityValue,
-        'listingType': val.toUpperCase(),
+        'listingType': val,
       };
     } else {
       // Generic filter
@@ -331,9 +342,18 @@ class PropertyController extends PaginatedController<Items> {
   @override
   Future<PaginationResponse<Items>> fetchItems(int page) async {
     try {
+      var current = Map<String, String>.from(filters ?? {});
+      if (youWantWithoutCity.value) {
+        current.remove('city');
+      }
+
+      filters = current;
+        filters!['approval_status'] = 'approved';
+        filters!['isVerified'] = true.toString();
       final response = await _service.fetchProperties(
         page: page,
         filters: filters,
+        limit: propertyLimit.value > 0 ? propertyLimit.value : 10,
       );
 
       print("Fetched items: ${response.items.length}");
@@ -344,19 +364,51 @@ class PropertyController extends PaginatedController<Items> {
     }
   }
 
+  void setPropertyLimit(int limit) {
+    propertyLimit.value = limit;
+    log("Property Limit: ${propertyLimit.value}");
+    refreshList();
+  }
+
   Future<PaginationResponse<Items>> fetchTopProperty(int page) async {
     try {
-      final response = await _service.fetchTopProperties(
-        page: page,
-        filters: filters,
-      );
+      final current = Map<String, String>.from(filters ?? {});
+      if (youWantWithoutCity.value) {
+        current.remove('city');
+      }
+      filters = current;
 
-      print("Fetched Top Properties: ${response.items.length}");
-      return response; // contains items + meta (page/total)
+      if (propertyLimit.value == 0) {
+        final response = await _service.fetchTopProperties(
+          page: page,
+          filters: filters,
+        );
+        print("Fetched Top Properties: ${response.items.length}");
+        return response; // contains items + meta (page/total)
+      }
+      else{
+        filters!['approval_status'] = 'approved';
+        filters!['isVerified'] = true.toString();
+        final response = await _service.fetchProperties(
+          page: page,
+          filters: filters,
+          limit: propertyLimit.value > 0 ? propertyLimit.value : 10,
+        );
+        print("Fetched Topdfgdgdf Properties: ${response.items.length}");
+        return response; // contains items + meta (page/total)
+      }
     } catch (e) {
       print("Exception in fetchItemsdsfsgdvfdv: $e");
       rethrow;
     }
+  }
+
+  void fetchCreatedBy({bool withoutCity = false}) {
+    log('Without City $withoutCity');
+
+    youWantWithoutCity.value = withoutCity;
+
+    loadInitial();
   }
 
   /// Get single property by ID (returns cached one if found)
@@ -482,7 +534,55 @@ class PropertyController extends PaginatedController<Items> {
     try {
       log("djfhyu $newFilters");
       isLoading.value = true;
-      filters = Map<String, String>.from(newFilters);
+      final incoming = Map<String, String>.from(newFilters);
+      // Normalize priceRange -> minPrice/maxPrice (do NOT send priceRange to API)
+      if (incoming.containsKey('priceRange')) {
+        try {
+          final parsed = jsonDecode(incoming['priceRange']!);
+          if (parsed is Map &&
+              parsed.containsKey('min') &&
+              parsed.containsKey('max')) {
+            final min = parsed['min'] ?? '';
+            final max = parsed['max'] ?? '';
+            final minStr = min.toString();
+            final maxStr = max.toString();
+            if (minStr.isNotEmpty && minStr != '0' && minStr != '0.0') {
+              incoming['minPrice'] = minStr;
+            }
+            if (maxStr.isNotEmpty && maxStr != '0' && maxStr != '0.0') {
+              incoming['maxPrice'] = maxStr;
+            } else {
+              incoming.remove('maxPrice');
+            }
+          }
+        } catch (_) {
+          // ignore parse error, proceed with given filters
+        }
+        // Remove priceRange so it doesn't go to API
+        incoming.remove('priceRange');
+      }
+
+      // Remove default extremes (0 or very large UI max) from API params
+      bool isZero(String? v) =>
+          v == null || v.isEmpty || v == '0' || v == '0.0';
+      bool isUiMax(String? v) => v == '100000000' || v == '100000000.0';
+
+      if (isZero(incoming['minPrice'])) {
+        incoming.remove('minPrice');
+      }
+      if (incoming['maxPrice'] != null &&
+          (isUiMax(incoming['maxPrice']!) || isZero(incoming['maxPrice']))) {
+        // If user didn't explicitly set a max beyond default UI bound, drop it
+        incoming.remove('maxPrice');
+      }
+      if (incoming['minPrice'] != null && incoming['maxPrice'] != null) {
+        final minVal = double.tryParse(incoming['minPrice']!) ?? 0.0;
+        final maxVal = double.tryParse(incoming['maxPrice']!) ?? 0.0;
+        if (maxVal <= 0 || maxVal < minVal) {
+          incoming.remove('maxPrice');
+        }
+      }
+      filters = incoming;
       log("djfhyu dfhjd $filters");
       currentPage.value = 1;
       items.clear();

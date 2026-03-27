@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
-import 'package:housing_flutter_app/widgets/New%20folder/inputs/text_field.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/widgets/image/custom_image.dart';
+import 'package:nesticope_app/widgets/New%20folder/inputs/text_field.dart';
 
 class CancelSubscriptionDialog extends StatefulWidget {
   final Function(String reason) onSubmit;

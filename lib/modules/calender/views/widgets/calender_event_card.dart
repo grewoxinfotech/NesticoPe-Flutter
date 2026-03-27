@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 
 import '../../../../widgets/dialogs/show_long_text_dialog.dart';
 

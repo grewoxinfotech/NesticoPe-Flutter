@@ -1,10 +1,272 @@
+// import 'dart:developer';
+
+// import 'package:flutter/material.dart';
+// import 'package:get/get.dart';
+// import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+// import 'package:nesticope_app/app/constants/color_res.dart';
+// import 'package:lottie/lottie.dart';
+// import 'package:nesticope_app/app/constants/size_manager.dart';
+
+// import '../../../data/network/contractor/model/contractot_service_model/contractor_service_category_model.dart';
+// import '../../../utils/global.dart';
+// import '../../hire_contractor/controller/hire_contractor_controller.dart';
+// import '../../hire_contractor/controller/hire_contractor_filter_controller.dart';
+// import '../../hire_contractor/controller/hire_contractor_list_of_profile_controller.dart';
+// import '../../hire_contractor/controller/hire_contractor_new_controller.dart';
+// import '../../hire_contractor/view/widget/hire_contractor_profilelist.dart';
+// import '../../hire_contractor/view/widget/category_service_explorer.dart';
+
+// class TopCategoriesSection extends StatelessWidget {
+//   final List<TopCategoryItem> categories;
+
+//   const TopCategoriesSection({super.key, required this.categories});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     String norm(String s) => s
+//         .trim()
+//         .toLowerCase()
+//         .replaceAll('&', 'and')
+//         .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+//     final order = <String, int>{
+//       'home_construction': 1,
+//       'building_material_supply': 2,
+//       'material_supply': 2,
+//       'home_services': 3,
+//       'interior_design': 4,
+//       'packers_and_movers': 5,
+//       'packers_movers': 5,
+//       'legal_services': 6,
+//     };
+//     final sorted = [...categories]..sort((a, b) {
+//       final ai = order[norm(a.name)] ?? 999;
+//       final bi = order[norm(b.name)] ?? 999;
+//       return ai.compareTo(bi);
+//     });
+//     return SizedBox(
+//       height: 255, // Increased height to accommodate shadow
+//       child: ListView.separated(
+//         padding: const EdgeInsets.symmetric(
+//           horizontal: 16,
+//           vertical: 12,
+//         ), // Added vertical padding
+//         scrollDirection: Axis.horizontal,
+//         itemCount: sorted.length,
+//         separatorBuilder: (_, __) => const SizedBox(width: 16),
+
+//         itemBuilder: (context, index) {
+//           return _CategoryCard(item: sorted[index]);
+//         },
+//       ),
+//     );
+//   }
+// }
+
+// class _CategoryCard extends StatelessWidget {
+//   final TopCategoryItem item;
+
+//   const _CategoryCard({required this.item});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final matched = contractorServiceCategories.firstWhere(
+//       (c) => c["name"] == item.name,
+//       orElse: () => {"icon": Icons.category, "color": Colors.grey},
+//     );
+
+//     final fallbackIcon = matched["icon"] as IconData;
+//     final fallbackColor = matched["color"] as Color;
+
+//     final controller = Get.put(HireContractorController());
+//     final controllerNew = Get.put(HireContractorNewController());
+//     final controllerProfileData = Get.put(
+//       HireContractorListOfProfileController(),
+//     );
+//     final controllerFilterData = Get.put(
+//       HireContractorFilterProfileController(),
+//     );
+//     return GestureDetector(
+//       onTap: () {
+//         Get.to(
+//           () => CategoryServiceExplorer(
+//             categoryId: item.id,
+//             categoryName: item.name,
+//           ),
+//         );
+//       },
+//       child: Container(
+//         width: 250,
+//         padding: const EdgeInsets.all(16),
+//         decoration: BoxDecoration(
+//           color: Colors.white,
+//           borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
+//           border:
+//               (() {
+//                 final key = item.name
+//                     .trim()
+//                     .toLowerCase()
+//                     .replaceAll('&', 'and')
+//                     .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+
+//                 return key == 'home_construction'
+//                     ? Border.all(color: ColorRes.primary, width: 1.5)
+//                     : null;
+//               })(),
+//           boxShadow:
+//               (() {
+//                 final key = item.name
+//                     .trim()
+//                     .toLowerCase()
+//                     .replaceAll('&', 'and')
+//                     .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+
+//                 return key != 'home_construction'
+//                     ? [
+//                       BoxShadow(
+//                         color: Colors.black.withOpacity(0.04),
+//                         blurRadius: 2,
+//                         offset: const Offset(0, 3),
+//                       ),
+//                     ]
+//                     : null;
+//               })(),
+//         ),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             /// Top Blue Line
+//             Align(
+//               alignment: Alignment.topRight,
+//               child: Builder(
+//                 builder: (context) {
+//                   final key = item.name
+//                       .trim()
+//                       .toLowerCase()
+//                       .replaceAll('&', 'and')
+//                       .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+//                   final showBadge = key == 'home_construction';
+//                   if (!showBadge) return const SizedBox.shrink();
+//                   return Container(
+//                     margin: const EdgeInsets.only(left: 8),
+//                     padding: const EdgeInsets.symmetric(
+//                       horizontal: 8,
+//                       vertical: 4,
+//                     ),
+//                     decoration: BoxDecoration(
+//                       color: ColorRes.primary.withOpacity(0.15),
+//                       borderRadius: BorderRadius.circular(24),
+//                       border: Border.all(
+//                         color: ColorRes.primary.withOpacity(0.4),
+//                       ),
+//                     ),
+//                     child: Text(
+//                       'MOST POPULAR',
+//                       style: TextStyle(
+//                         color: ColorRes.primary,
+//                         fontSize: 8,
+//                         fontWeight: AppFontWeights.bold,
+//                         letterSpacing: .3,
+//                       ),
+//                     ),
+//                   );
+//                 },
+//               ),
+//             ),
+//             Row(
+//               children: [
+//                 if (item.icon != null && (item.icon?.isNotEmpty ?? false))
+//                   SizedBox(
+//                     height: 50,
+//                     width: 50,
+//                     child: Image.network(item.icon ?? '', fit: BoxFit.contain),
+//                   )
+//                 else
+//                   Container(
+//                     height: 50,
+//                     width: 50,
+//                     decoration: BoxDecoration(
+//                       color: fallbackColor.withOpacity(0.1),
+//                       borderRadius: BorderRadius.circular(
+//                         12,
+//                       ), // 👈 square with rounded corners
+//                     ),
+//                     child: Icon(fallbackIcon, color: fallbackColor, size: 25),
+//                   ),
+
+//                 const SizedBox(width: 12),
+
+//                 Expanded(
+//                   child: Text(
+//                     item.name.capitalize?.replaceAll("_", " ") ?? '',
+//                     style: TextStyle(
+//                       fontSize: 13,
+//                       fontWeight: FontWeight.w700,
+//                       color: ColorRes.primary,
+//                     ),
+//                     maxLines: 2,
+//                     overflow: TextOverflow.ellipsis,
+//                   ),
+//                 ),
+//               ],
+//             ),
+
+//             const SizedBox(height: 8),
+
+//             /// Description
+//             Text(
+//               '${item.description}',
+//               style: TextStyle(
+//                 fontSize: 10,
+//                 color: ColorRes.leadGreyColor.shade600,
+//                 fontWeight: AppFontWeights.medium,
+//                 height: 1.6,
+//               ),
+//               maxLines: 5,
+//               overflow: TextOverflow.ellipsis,
+//             ),
+//             Spacer(),
+//             Divider(color: ColorRes.leadGreyColor.shade300),
+//             SizedBox(height: 2),
+
+//             /// Rating Row (only if available)
+//             Row(
+//               children: [
+//                 Icon(Icons.star, color: ColorRes.homeAmber, size: 15),
+//                 const SizedBox(width: 6),
+//                 Text(
+//                   item.averageRating.toStringAsFixed(1),
+//                   style: TextStyle(
+//                     fontWeight: FontWeight.w700,
+//                     color: ColorRes.textColor,
+//                     fontSize: 12,
+//                   ),
+//                 ),
+//                 const SizedBox(width: 6),
+//                 Text(
+//                   '(${item.serviceCount} services)',
+//                   style: TextStyle(
+//                     fontSize: 10,
+//                     fontWeight: FontWeight.w500,
+//                     color: Colors.grey.shade600,
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:lottie/lottie.dart';
+import 'package:nesticope_app/app/constants/size_manager.dart';
 
 import '../../../data/network/contractor/model/contractot_service_model/contractor_service_category_model.dart';
 import '../../../utils/global.dart';
@@ -37,16 +299,18 @@ class TopCategoriesSection extends StatelessWidget {
       'packers_movers': 5,
       'legal_services': 6,
     };
-    final sorted = [...categories]
-      ..sort((a, b) {
-        final ai = order[norm(a.name)] ?? 999;
-        final bi = order[norm(b.name)] ?? 999;
-        return ai.compareTo(bi);
-      });
+    final sorted = [...categories]..sort((a, b) {
+      final ai = order[norm(a.name)] ?? 999;
+      final bi = order[norm(b.name)] ?? 999;
+      return ai.compareTo(bi);
+    });
     return SizedBox(
-      height: 230,
+      height: 225, // Increased height to accommodate shadow
       child: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ), // Added vertical padding
         scrollDirection: Axis.horizontal,
         itemCount: sorted.length,
         separatorBuilder: (_, __) => const SizedBox(width: 16),
@@ -84,149 +348,214 @@ class _CategoryCard extends StatelessWidget {
     );
     return GestureDetector(
       onTap: () {
-        Get.to(() => CategoryServiceExplorer(
-              categoryId: item.id,
-              categoryName: item.name,
-            ));
+        Get.to(
+          () => CategoryServiceExplorer(
+            categoryId: item.id,
+            categoryName: item.name,
+          ),
+        );
       },
       child: Container(
-        width: 250,
+        width: 160,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: (() {
-              final key = item.name
-                  .trim()
-                  .toLowerCase()
-                  .replaceAll('&', 'and')
-                  .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
-              return key == 'home_construction'
-                  ? ColorRes.primary
-                  : Colors.grey.shade300;
-            })(),
-          ),
+          borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
+          border:
+              (() {
+                final key = item.name
+                    .trim()
+                    .toLowerCase()
+                    .replaceAll('&', 'and')
+                    .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+
+                return key == 'home_construction'
+                    ? Border.all(color: ColorRes.primary, width: 1.5)
+                    : null;
+              })(),
+          boxShadow:
+              (() {
+                final key = item.name
+                    .trim()
+                    .toLowerCase()
+                    .replaceAll('&', 'and')
+                    .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+
+                return key != 'home_construction'
+                    ? [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 2,
+                        offset: const Offset(0, 3),
+                      ),
+                    ]
+                    : null;
+              })(),
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            /// Top Blue Line
+            // Align(
+            //   alignment: Alignment.topRight,
+            //   child: Builder(
+            //     builder: (context) {
+            //       final key = item.name
+            //           .trim()
+            //           .toLowerCase()
+            //           .replaceAll('&', 'and')
+            //           .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+            //       final showBadge = key == 'home_construction';
+            //       if (!showBadge) return  SizedBox(
+            //         height: 20,
+            //       );
+            //       return Container(
+            //         margin: const EdgeInsets.only(left: 8),
+            //         padding: const EdgeInsets.symmetric(
+            //           horizontal: 8,
+            //           vertical: 4,
+            //         ),
+            //         decoration: BoxDecoration(
+            //           color: ColorRes.primary.withOpacity(0.15),
+            //           borderRadius: BorderRadius.circular(24),
+            //           border: Border.all(
+            //             color: ColorRes.primary.withOpacity(0.4),
+            //           ),
+            //         ),
+            //         child: Text(
+            //           'MOST POPULAR',
+            //           style: TextStyle(
+            //             color: ColorRes.primary,
+            //             fontSize: 8,
+            //             fontWeight: AppFontWeights.bold,
+            //             letterSpacing: .3,
+            //           ),
+            //         ),
+            //       );
+            //     },
+            //   ),
+            // ),
             Align(
               alignment: Alignment.topRight,
-              child: Builder(builder: (context) {
-                    final key = item.name
-                        .trim()
-                        .toLowerCase()
-                        .replaceAll('&', 'and')
-                        .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
-                    final showBadge = key == 'home_construction';
-                    if (!showBadge) return const SizedBox.shrink();
-                    return Container(
-                      margin: const EdgeInsets.only(left: 8),
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: ColorRes.primary.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(
-                          color: ColorRes.primary.withOpacity(0.4),
-                        ),
-                      ),
-                      child: Text(
-                        'MOST POPULAR',
-                        style: TextStyle(
-                          color: ColorRes.primary,
-                          fontSize: 8,
-                          fontWeight: AppFontWeights.bold,
-                          letterSpacing: .3,
-              
-                        ),
-                      ),
-                    );
-                  }),
+              child: Builder(
+                builder: (context) {
+                  final key = item.name
+                      .trim()
+                      .toLowerCase()
+                      .replaceAll('&', 'and')
+                      .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+
+                  final showBadge = key == 'home_construction';
+
+                  return SizedBox(
+                    height: 20,
+                    child:
+                        showBadge
+                            ? Container(
+                              margin: const EdgeInsets.only(left: 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: ColorRes.primary.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(24),
+                                border: Border.all(
+                                  color: ColorRes.primary.withOpacity(0.4),
+                                ),
+                              ),
+                              child: Text(
+                                'MOST POPULAR',
+                                style: TextStyle(
+                                  color: ColorRes.primary,
+                                  fontSize: 8,
+                                  fontWeight: AppFontWeights.bold,
+                                  letterSpacing: .3,
+                                ),
+                              ),
+                            )
+                            : const SizedBox(), // keeps space
+                  );
+                },
+              ),
             ),
-            Row(
-              children: [
-                if (item.icon != null && (item.icon?.isNotEmpty ?? false))
-                  SizedBox(
-                    height: 50,
-                    width: 50,
-                    child: Image.network(item.icon ?? '', fit: BoxFit.contain),
-                  )
-                else
-                  Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                      color: fallbackColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(
-                        12,
-                      ), // 👈 square with rounded corners
-                    ),
-                    child: Icon(fallbackIcon, color: fallbackColor, size: 25),
-                  ),
 
-                const SizedBox(width: 12),
+            if (item.icon != null && (item.icon?.isNotEmpty ?? false))
+              SizedBox(
+                height: 60,
 
-                Expanded(
-                  child: Text(
-                    item.name.capitalize?.replaceAll("_", " ") ?? '',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: ColorRes.primary,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                width: 60,
+                child: Image.network(item.icon ?? '', fit: BoxFit.contain),
+              )
+            else
+              Container(
+                height: 50,
+                width: 50,
+                decoration: BoxDecoration(
+                  color: fallbackColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(
+                    12,
+                  ), // 👈 square with rounded corners
                 ),
-              
-              ],
+                child: Icon(fallbackIcon, color: fallbackColor, size: 25),
+              ),
+
+            const SizedBox(width: 12),
+
+            Text(
+              item.name.capitalize?.replaceAll("_", " ") ?? '',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: AppFontSizes.medium,
+                fontWeight: AppFontWeights.semiBold,
+                color: ColorRes.primary,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
 
             const SizedBox(height: 8),
 
             /// Description
             Text(
-              '${item.description}',
+              '${item.description?.take(1).map((e) => e.trim().replaceAll('\n', ' ')).join(' ')}',
+              textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 10,
+                fontSize: AppFontSizes.caption,
                 color: ColorRes.leadGreyColor.shade600,
                 fontWeight: AppFontWeights.medium,
                 height: 1.6,
               ),
-              maxLines: 5,
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            Spacer(),
-            Divider(color: ColorRes.leadGreyColor.shade300),
-            SizedBox(height: 2),
+            // Spacer(),
+            // Divider(color: ColorRes.leadGreyColor.shade300),
+            // SizedBox(height: 2),
 
-            /// Rating Row (only if available)
-            Row(
-              children: [
-                Icon(Icons.star, color: ColorRes.homeAmber, size: 15),
-                const SizedBox(width: 6),
-                Text(
-                  item.averageRating.toStringAsFixed(1),
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    color: ColorRes.textColor,
-                    fontSize: 12,
-                  ),
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  '(${item.serviceCount} services)',
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-              ],
-            ),
+            // /// Rating Row (only if available)
+            // Row(
+            //   children: [
+            //     Icon(Icons.star, color: ColorRes.homeAmber, size: 15),
+            //     const SizedBox(width: 6),
+            //     Text(
+            //       item.averageRating.toStringAsFixed(1),
+            //       style: TextStyle(
+            //         fontWeight: FontWeight.w700,
+            //         color: ColorRes.textColor,
+            //         fontSize: 12,
+            //       ),
+            //     ),
+            //     const SizedBox(width: 6),
+            //     Text(
+            //       '(${item.serviceCount} services)',
+            //       style: TextStyle(
+            //         fontSize: 10,
+            //         fontWeight: FontWeight.w500,
+            //         color: Colors.grey.shade600,
+            //       ),
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       ),

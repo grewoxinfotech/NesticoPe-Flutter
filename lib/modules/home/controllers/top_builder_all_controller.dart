@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
-import 'package:housing_flutter_app/data/network/top_seller_profile/model/top_builder_profile_model.dart';
-import 'package:housing_flutter_app/data/network/top_seller_profile/service/top_seller_profile_service.dart';
-import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
+import 'package:nesticope_app/app/care/pagination/controller/pagination_controller.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/data/network/top_seller_profile/model/top_builder_profile_model.dart';
+import 'package:nesticope_app/data/network/top_seller_profile/service/top_seller_profile_service.dart';
+import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 
 class TopBuilderAllController extends PaginatedController<BuilderItem> {
   final TopSellerService _service = TopSellerService();
@@ -17,7 +17,7 @@ class TopBuilderAllController extends PaginatedController<BuilderItem> {
 
   @override
   Future<PaginationResponse<BuilderItem>> fetchItems(int page) async {
-    return _service.fetchTopBuilderProfiles(page: page);
+    return _service.fetchTopBuilderProfiles(page: page, limit: 'all');
   }
 
   Future<void> refreshTopBuilderAll() async {

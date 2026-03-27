@@ -151,7 +151,7 @@
 // }
 
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/data/network/builder/service/builder_service.dart';
+import 'package:nesticope_app/data/network/builder/service/builder_service.dart';
 
 import '../../../../app/care/pagination/controller/pagination_controller.dart';
 import '../../../../app/care/pagination/models/pagination_models.dart';

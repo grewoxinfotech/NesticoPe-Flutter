@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/data/network/referral/service/referrel_service.dart';
+import 'package:nesticope_app/data/network/referral/service/referrel_service.dart';
 
 import '../../../data/network/referral/model/referrel_model.dart';
 

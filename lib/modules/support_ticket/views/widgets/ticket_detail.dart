@@ -1,7 +1,7 @@
 // Bottom Sheet Widget
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../data/network/support_ticket/models/ticket_model/support_ticket_model.dart';

@@ -212,23 +212,35 @@ Widget buildLevelBadge(String text) {
       alignment: Alignment.center,
       children: [
         // Shimmer moving across the badge
-        Shimmer.fromColors(
-          baseColor: const Color(0xff725AB7),
-          highlightColor: Colors.white.withOpacity(0.5),
-          period: const Duration(seconds: 5),
-          child: Container(
-            height: 30,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-            decoration: BoxDecoration(
-              color: const Color(0xff725AB7),
-              borderRadius: BorderRadius.circular(30),
-              border: Border.all(
-                color: const Color(0xff725AB7).withOpacity(0.4),
-                width: 1,
-              ),
-            ),
-          ),
-        ),
+        // Shimmer.fromColors(
+        //   baseColor: const Color(0xff725AB7),
+        //   highlightColor: Colors.white.withOpacity(0.2),
+        //   period: const Duration(seconds: 5),
+        //   child: Container(
+        //     height: 30,
+        //     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        //     decoration: BoxDecoration(
+        //       color: const Color(0xff725AB7),
+        //       borderRadius: BorderRadius.circular(30),
+        //       border: Border.all(
+        //         color: const Color(0xff725AB7).withOpacity(0.4),
+        //         width: 1,
+        //       ),
+        //     ),
+        //   ),
+        // ),
+                Container(
+                  height: 30,
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xff725AB7),
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(
+                      color: const Color(0xff725AB7).withOpacity(0.4),
+                      width: 1,
+                    ),
+                  ),
+                ),
 
         // Visible text on top
         Padding(

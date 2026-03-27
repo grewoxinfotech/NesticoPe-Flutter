@@ -110,6 +110,7 @@ class Items {
   String? reraId;
   String? propertyStatus;
   String? builderName;
+  String? buildingName;
   String? projectName;
   String? ownerPhone;
   String? ownerName;
@@ -172,6 +173,7 @@ class Items {
     this.nearbyLocations,
     this.reraId,
     this.propertyStatus,
+    this.buildingName,
     this.builderName,
     this.propertyId,
     this.calculatedPerformanceScore,
@@ -238,26 +240,29 @@ class Items {
     calculatedPerformanceScore = TypeConverter.parseDouble(
       json['calculatedPerformanceScore'],
     );
-    keywords = (json['keywords'] as List?)?.map((e) => e as String).toList();
-    propertyImages =
-        (json['propertyImages'] as List?)?.map((e) => e as String).toList();
+    keywords = json['keywords'] is List
+        ? (json['keywords'] as List).map((e) => e as String).toList()
+        : [];
+    propertyImages = json['propertyImages'] is List
+        ? (json['propertyImages'] as List).map((e) => e as String).toList()
+        : [];
     propertyDetails =
         json['propertyDetails'] != null
             ? PropertyDetails.fromJson(
               json['propertyDetails'] as Map<String, dynamic>,
             )
             : null;
+    buildingName = json['nearbyLocations'] as String?;
     address = json['address'] as String?;
     city = json['city'] as String?;
     state = json['state'] as String?;
     zipCode = json['zipCode'] as String?;
     location = json['location'];
-    nearbyLocations =
-        json['nearbyLocations'] != null
-            ? (json['nearbyLocations'] as List)
-                .map((v) => NearbyLocations.fromJson(v as Map<String, dynamic>))
-                .toList()
-            : null;
+    nearbyLocations = json['nearbyLocatons'] is List
+        ? (json['nearbyLocaions'] as List)
+            .map((v) => NearbyLocations.fromJson(v as Map<String, dynamic>))
+            .toList()
+        : [];
     reraId = json['reraId'] as String?;
     propertyStatus = json['property_status'] as String?;
     builderName = json['builderName'] as String?;
@@ -279,10 +284,11 @@ class Items {
     totalVisits = TypeConverter.parseInt(json['totalVisits']);
     totalSales = TypeConverter.parseInt(json['totalSales']);
     totalCommissions = json['totalCommissions'] as String?;
-    assignedTo =
-        (json['assignedTo'] as List<dynamic>?)
-            ?.map((e) => AssignToInfo.fromJson(e))
-            .toList();
+    assignedTo = json['assignedTo'] is List
+        ? (json['assignedTo'] as List<dynamic>)
+            .map((e) => AssignToInfo.fromJson(e))
+            .toList()
+        : [];
     assignmentDate = json['assignmentDate'] as String?;
     assignmentExpiryDate = json['assignmentExpiryDate'] as String?;
     potentialEarnings = json['potentialEarnings'] as String?;
@@ -546,9 +552,21 @@ class PropertyMedia {
   PropertyMedia({this.images, this.videos, this.documents});
 
   PropertyMedia.fromJson(Map<String, dynamic> json) {
-    images = (json['images'] as List?)?.map((e) => e as String).toList();
-    videos = (json['videos'] as List?)?.map((e) => e as String).toList();
-    documents = (json['documents'] as List?)?.map((e) => e as String).toList();
+    if (json['images'] is List) {
+      images = (json['images'] as List).map((e) => e as String).toList();
+    } else {
+      images = [];
+    }
+    if (json['videos'] is List) {
+      videos = (json['videos'] as List).map((e) => e as String).toList();
+    } else {
+      videos = [];
+    }
+    if (json['documents'] is List) {
+      documents = (json['documents'] as List).map((e) => e as String).toList();
+    } else {
+      documents = [];
+    }
   }
 
   Map<String, dynamic> toJson() => {

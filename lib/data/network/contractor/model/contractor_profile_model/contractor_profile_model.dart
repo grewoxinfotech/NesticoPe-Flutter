@@ -84,6 +84,9 @@ class Contractor {
   ProjectStats projectStats;
   final String? contractorType;
   final Subscription subscription;
+  final String? city;
+  final String? state;
+  final List<ServiceItem> services;
 
   Contractor({
     required this.imageUrl,
@@ -100,6 +103,9 @@ class Contractor {
     required this.projectStats,
     this.contractorType,
     required this.subscription,
+    this.city,
+    this.state,
+    this.services = const [],
   });
 
   factory Contractor.fromJson(Map<String, dynamic> json) {
@@ -118,6 +124,11 @@ class Contractor {
       projectStats: ProjectStats.fromJson(json['projectData'] ?? {}),
       subscription: Subscription.fromJson(json['subscription'] ?? {}),
       contractorType: json['contractorType'] ?? null,
+      city: json['city']?.toString(),
+      state: json['state']?.toString(),
+      services: (json['services'] as List? ?? [])
+          .map((e) => ServiceItem.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -137,6 +148,9 @@ class Contractor {
       'projectData': projectStats.toJson(),
       'subscription': subscription.toJson(),
       'contractorType': contractorType,
+      'city': city,
+      'state': state,
+      'services': services.map((e) => e.toJson()).toList(),
     };
   }
 }
@@ -179,7 +193,7 @@ class ProjectStats {
 
 class Subscription {
   final bool hasPremiumPlan;
-  final int planAmount;
+  final double planAmount;
   final String? planName;
 
   Subscription({
@@ -191,7 +205,11 @@ class Subscription {
   factory Subscription.fromJson(Map<String, dynamic> json) {
     return Subscription(
       hasPremiumPlan: json['hasPremiumPlan'] ?? false,
-      planAmount: json['planAmount'] ?? 0,
+      planAmount: (json['planAmount'] is int)
+          ? (json['planAmount'] as int).toDouble()
+          : (json['planAmount'] is String)
+              ? double.tryParse(json['planAmount']) ?? 0.0
+              : (json['planAmount'] ?? 0).toDouble(),
       planName: json['planName'],
     );
   }
@@ -211,5 +229,33 @@ class TypeConverter {
     if (value is int) return value;
     if (value is String) return int.tryParse(value);
     return null;
+  }
+}
+
+class ServiceItem {
+  final String id;
+  final String serviceName;
+  final String category;
+
+  ServiceItem({
+    required this.id,
+    required this.serviceName,
+    required this.category,
+  });
+
+  factory ServiceItem.fromJson(Map<String, dynamic> json) {
+    return ServiceItem(
+      id: json['id']?.toString() ?? '',
+      serviceName: json['serviceName']?.toString() ?? '',
+      category: json['category']?.toString() ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'serviceName': serviceName,
+      'category': category,
+    };
   }
 }

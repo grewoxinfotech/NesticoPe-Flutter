@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/manager/icon_manager.dart';
-import 'package:housing_flutter_app/app/utils/svg_widget.dart';
-import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
-import 'package:housing_flutter_app/modules/add_property/view/create_property.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/manager/icon_manager.dart';
+import 'package:nesticope_app/app/utils/svg_widget.dart';
+import 'package:nesticope_app/modules/add_property/controller/create_property_controller.dart';
+import 'package:nesticope_app/modules/add_property/view/create_property.dart';
 
 import '../../../../../app/constants/color_res.dart';
 

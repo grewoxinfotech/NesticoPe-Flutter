@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
 
 class ScoreGauge extends StatelessWidget {
   final double totalScore;
@@ -24,7 +24,7 @@ class ScoreGauge extends StatelessWidget {
             style: TextStyle(
               fontSize: AppFontSizes.body,
               fontWeight: AppFontWeights.semiBold,
-              color: ColorRes.leadGreyColor[800],
+              color: ColorRes.textPrimary,
             ),
           ),
 
@@ -41,7 +41,7 @@ class ScoreGauge extends StatelessWidget {
                     value: percentage,
                     strokeWidth: 12,
                     strokeCap: StrokeCap.round,
-                    backgroundColor: Colors.grey.shade300,
+                    backgroundColor: Colors.grey.shade200,
                     valueColor: AlwaysStoppedAnimation(
                       percentage < 0.5 ? ColorRes.error : ColorRes.success,
                     ),
@@ -61,9 +61,9 @@ class ScoreGauge extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "out of ${maxScore.toStringAsFixed(0)}%",
+                      "OUT OF ${maxScore.toStringAsFixed(0)}%",
                       style: TextStyle(
-                        color: Colors.grey,
+                        color: ColorRes.leadGreyColor.shade600,
                         fontWeight: AppFontWeights.semiBold,
                       ),
                     ),

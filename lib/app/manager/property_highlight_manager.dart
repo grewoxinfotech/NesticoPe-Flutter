@@ -1,4 +1,4 @@
-// import 'package:housing_flutter_app/app/utils/formater/formater.dart';
+// import 'package:nesticope_app/app/utils/formater/formater.dart';
 //
 // import '../../data/network/property/models/property_model.dart';
 //
@@ -130,7 +130,7 @@
 // // }
 
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
 import '../../data/network/property/models/property_model.dart';
 
 /// Handles property highlights and icons centrally.

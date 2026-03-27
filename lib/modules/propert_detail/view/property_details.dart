@@ -4,12 +4,12 @@
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
 //
-// import 'package:housing_flutter_app/app/constants/color_res.dart';
-// import 'package:housing_flutter_app/app/constants/size_manager.dart';
-// import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-// import 'package:housing_flutter_app/modules/filter_property/view/filter_screen.dart';
-// import 'package:housing_flutter_app/modules/propert_detail/view/widget/property_card_widget.dart';
-// import 'package:housing_flutter_app/widgets/bar/app_bar/list_screen_appbar.dart';
+// import 'package:nesticope_app/app/constants/color_res.dart';
+// import 'package:nesticope_app/app/constants/size_manager.dart';
+// import 'package:nesticope_app/app/utils/formater/formater.dart';
+// import 'package:nesticope_app/modules/filter_property/view/filter_screen.dart';
+// import 'package:nesticope_app/modules/propert_detail/view/widget/property_card_widget.dart';
+// import 'package:nesticope_app/widgets/bar/app_bar/list_screen_appbar.dart';
 //
 // import '../../../app/constants/app_font_sizes.dart';
 // import '../../../app/manager/compare_manager.dart';
@@ -388,13 +388,13 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/constants/size_manager.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/modules/filter_property/view/filter_screen.dart';
-import 'package:housing_flutter_app/modules/propert_detail/view/widget/property_card_widget.dart';
-import 'package:housing_flutter_app/utils/shimmer/buyer/property/buyer_property_list_screen_shimmer.dart';
-import 'package:housing_flutter_app/widgets/bar/app_bar/list_screen_appbar.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/modules/filter_property/view/filter_screen.dart';
+import 'package:nesticope_app/modules/propert_detail/view/widget/property_card_widget.dart';
+import 'package:nesticope_app/utils/shimmer/buyer/property/buyer_property_list_screen_shimmer.dart';
+import 'package:nesticope_app/widgets/bar/app_bar/list_screen_appbar.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/manager/compare_manager.dart';
@@ -410,12 +410,12 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/constants/size_manager.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/modules/filter_property/view/filter_screen.dart';
-import 'package:housing_flutter_app/modules/propert_detail/view/widget/property_card_widget.dart';
-import 'package:housing_flutter_app/widgets/bar/app_bar/list_screen_appbar.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/modules/filter_property/view/filter_screen.dart';
+import 'package:nesticope_app/modules/propert_detail/view/widget/property_card_widget.dart';
+import 'package:nesticope_app/widgets/bar/app_bar/list_screen_appbar.dart';
 
 import '../../../app/manager/compare_manager.dart';
 import '../../../data/network/property/models/property_model.dart';
@@ -424,174 +424,7 @@ import '../../../widgets/empty_state/empty_state.dart';
 import '../../home/widgets/unified_comparison_floating_button.dart';
 import '../../property/controllers/property_controller.dart';
 
-// class PropertyDetail extends StatefulWidget {
-//   final List<Map<String, String>>? filters;
-//   final bool isAppBarShow;
-//   final Color backgroundColor;
-//   final bool isFromSeeAll;
-//
-//   const PropertyDetail({
-//     super.key,
-//     this.isAppBarShow = true,
-//     this.backgroundColor = ColorRes.white,
-//     this.filters,
-//     this.isFromSeeAll = false,
-//   });
-//
-//   @override
-//   State<PropertyDetail> createState() => _PropertyDetailState();
-// }
-//
-// class _PropertyDetailState extends State<PropertyDetail> {
-//   final PropertyController controller = Get.put(
-//     PropertyController(),
-//     tag: 'listing_view',
-//   );
-//
-//   /// 🔹 User-visible filters only
-//   final RxMap<String, String> selectedFilters = <String, String>{}.obs;
-//
-//   final CompareManager compare = Get.find<CompareManager>();
-//
-//   /// 🔒 Hard-locked filter (never visible, never removable)
-//   static const Map<String, String> _lockedFilters = {
-//     "approval_status": "approved",
-//   };
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//
-//     WidgetsBinding.instance.addPostFrameCallback((_) {
-//       final Map<String, String> uiFilters = {};
-//
-//       if (widget.filters != null && widget.filters!.isNotEmpty) {
-//         for (final filter in widget.filters!) {
-//           uiFilters.addAll(filter);
-//         }
-//       }
-//
-//       selectedFilters.addAll(uiFilters);
-//       _applyFilters();
-//     });
-//   }
-//
-//   void _applyFilters() {
-//     controller.applyFilters({
-//       ..._lockedFilters, // 🔒 always applied
-//       ...selectedFilters, // user filters
-//     });
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: widget.backgroundColor,
-//       appBar: ListScreenAppbar(
-//         showAppBar: widget.isAppBarShow,
-//         title: "Property List",
-//         isFormScreen: widget.isFromSeeAll,
-//         onBack: () => Get.back(),
-//
-//         onFilterTap: () async {
-//           final result = await Get.to<Map<String, String>>(
-//             () => RealEstateFilterScreen(
-//               initialFilters: Map<String, String>.from(
-//                 selectedFilters.value, // ✅ READ VALUE
-//               ),
-//             ),
-//             transition: Transition.rightToLeft,
-//           );
-//
-//           if (result != null) {
-//             selectedFilters
-//               ..clear()
-//               ..addAll(result);
-//             _applyFilters();
-//           }
-//         },
-//       ),
-//
-//       body: SafeArea(
-//         child: Stack(
-//           children: [
-//             Column(
-//               children: [
-//                 /// ✅ FIXED Obx — observable is READ
-//                 Obx(() {
-//                   final filters = selectedFilters.value;
-//
-//                   return FilterChipsBar(
-//                     filters: filters, // plain Map now
-//                     onClearAll: () {
-//                       selectedFilters.clear();
-//                       _applyFilters();
-//                     },
-//                     onRemoveFilter: (key) {
-//                       selectedFilters.remove(key);
-//                       _applyFilters();
-//                     },
-//                     priceRangeFormatter:
-//                         (min, max) => formatPriceRange(min, max),
-//                   );
-//                 }),
-//
-//                 Expanded(
-//                   child: Obx(() {
-//                     if (controller.isLoading.value &&
-//                         controller.items.isEmpty) {
-//                       return BuyerPropertyListScreenShimmer();
-//                     }
-//
-//                     if (!controller.isLoading.value &&
-//                         controller.items.isEmpty) {
-//                       return const EmptyStateWidget(
-//                         icon: Icons.search_off_rounded,
-//                         title: "No properties found",
-//                         subtitle: "No approved properties available",
-//                       );
-//                     }
-//
-//                     return NotificationListener<ScrollNotification>(
-//                       onNotification: (notification) {
-//                         if (notification.metrics.pixels >=
-//                             notification.metrics.maxScrollExtent - 200) {
-//                           controller.loadMore();
-//                         }
-//                         return false;
-//                       },
-//                       child: RefreshIndicator(
-//                         onRefresh: controller.refreshList,
-//                         child: ListView.builder(
-//                           padding: const EdgeInsets.symmetric(
-//                             vertical: AppPadding.small,
-//                             horizontal: AppPadding.small,
-//                           ),
-//                           itemCount: controller.items.length,
-//                           itemBuilder: (context, index) {
-//                             final Items data = controller.items[index];
-//                             return PropertyCardWidget(
-//                               property: data,
-//                               role: 'Developer',
-//                             );
-//                           },
-//                         ),
-//                       ),
-//                     );
-//                   }),
-//                 ),
-//               ],
-//             ),
-//
-//             const UnifiedComparisonFloatingButton(bottom: 16),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
 
-// String formatPriceRange(dynamic min, dynamic max) {
 //   double minVal =
 //       (min is num) ? min.toDouble() : double.tryParse(min.toString()) ?? 0;
 //   double maxVal =

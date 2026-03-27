@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 
-import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
+import 'package:nesticope_app/data/network/auth/model/user_model.dart';
 
 class SecureStorage {
   static const FlutterSecureStorage _storage = FlutterSecureStorage();
@@ -20,12 +20,83 @@ class SecureStorage {
   static const String _keyAadharVerified = 'isAadharVerified';
   static const String _keyHasLaunched = 'hasLaunchedApp';
   static const String _keyNotificationToken = 'notificationToken';
-  static const String _keyIsGuestUserPropertyInquiry = 'isGuestUserPropertyInquiry';
+  static const String _keyIsGuestUserPropertyInquiry =
+      'isGuestUserPropertyInquiry';
+  static const String _keySubscriptionInquiry = 'subscriptionInquiry';
+  static const String _keyOfferInquiry = 'offerInquiry';
+  static const String _keyLoginSkipped = 'loginSkipped';
+  static const String _keyLoginWithOtpToken = 'loginWithOtpToken';
+  static const String _keySupportTicketId = 'supportTicketId';
+  static const String _keyHomeCategory = 'homeCategory';
 
-
- static Future <void> savePropertyInquiryData(String value) async {
+  static Future<void> savePropertyInquiryData(String value) async {
     await _storage.write(key: _keyIsGuestUserPropertyInquiry, value: value);
   }
+
+  static Future<void> saveOfferInquiryData(String value) async {
+    await _storage.write(key: _keyOfferInquiry, value: value);
+  }
+
+  static Future<String?> getOfferInquiryData() async {
+    return _storage.read(key: _keyOfferInquiry);
+  }
+
+  static Future<bool> hasOfferInquiry(
+    int offerId, {
+    String? email,
+    String? phone,
+  }) async {
+    try {
+      final data = await getOfferInquiryData();
+      if (data == null || data.isEmpty) return false;
+      final decoded = jsonDecode(data);
+      List<dynamic> inquiryList = [];
+      if (decoded is List) {
+        inquiryList = decoded;
+      } else if (decoded is Map) {
+        inquiryList = [decoded];
+      }
+
+      return inquiryList.any(
+        (item) =>
+            item['offerId'] == offerId &&
+            (email == null || item['email'] == email) &&
+            (phone == null || item['phone'] == phone),
+      );
+    } catch (e) {
+      print('❌ Error reading offer inquiry data: $e');
+      return false;
+    }
+  }
+
+  static Future<void> addOfferInquiry(Map<String, dynamic> newInquiry) async {
+    try {
+      final data = await getOfferInquiryData();
+      List<dynamic> inquiryList = [];
+      if (data != null && data.isNotEmpty) {
+        final decoded = jsonDecode(data);
+        if (decoded is List) {
+          inquiryList = decoded;
+        } else if (decoded is Map) {
+          inquiryList = [decoded];
+        }
+      }
+      final exists = inquiryList.any(
+        (item) =>
+            item['offerId'] == newInquiry['offerId'] &&
+            (item['email'] == newInquiry['email'] ||
+                item['phone'] == newInquiry['phone']),
+      );
+      if (!exists) {
+        inquiryList.add(newInquiry);
+        await saveOfferInquiryData(jsonEncode(inquiryList));
+        print('✅ New offer inquiry saved');
+      }
+    } catch (e) {
+      print('❌ Error saving offer inquiry: $e');
+    }
+  }
+
   static Future<String?> getPropertyInquiryData() async {
     return _storage.read(key: _keyIsGuestUserPropertyInquiry);
   }
@@ -34,7 +105,6 @@ class SecureStorage {
     try {
       final data = await getPropertyInquiryData();
       if (data == null || data.isEmpty) return false;
-
 
       log('Property Inquiry Data: $data');
 
@@ -57,7 +127,9 @@ class SecureStorage {
   }
 
   /// ✅ Add a new inquiry (only if not duplicate)
-  static Future<void> addPropertyInquiry(Map<String, dynamic> newInquiry) async {
+  static Future<void> addPropertyInquiry(
+    Map<String, dynamic> newInquiry,
+  ) async {
     try {
       final data = await getPropertyInquiryData();
       List<dynamic> inquiryList = [];
@@ -71,8 +143,9 @@ class SecureStorage {
         }
       }
 
-      final exists =
-      inquiryList.any((item) => item['property'] == newInquiry['property']);
+      final exists = inquiryList.any(
+        (item) => item['property'] == newInquiry['property'],
+      );
 
       if (!exists) {
         inquiryList.add(newInquiry);
@@ -86,6 +159,84 @@ class SecureStorage {
     }
   }
 
+  static Future<void> saveSubscriptionInquiryData(String value) async {
+    await _storage.write(key: _keySubscriptionInquiry, value: value);
+  }
+
+  static Future<String?> getSubscriptionInquiryData() async {
+    return _storage.read(key: _keySubscriptionInquiry);
+  }
+
+  static Future<void> addSubscriptionInquiry(
+    Map<String, dynamic> newInquiry,
+  ) async {
+    try {
+      final data = await getSubscriptionInquiryData();
+      List<dynamic> inquiryList = [];
+      if (data != null && data.isNotEmpty) {
+        final decoded = jsonDecode(data);
+        if (decoded is List) {
+          inquiryList = decoded;
+        } else if (decoded is Map) {
+          inquiryList = [decoded];
+        }
+      }
+      final String role = (newInquiry['role'] ?? '').toString();
+      // Device-level de-dup by role so any user on this device sees "submitted"
+      final exists = inquiryList.any(
+        (item) => (item['role'] ?? '').toString() == role,
+      );
+      if (!exists) {
+        inquiryList.add(newInquiry);
+      }
+      await saveSubscriptionInquiryData(jsonEncode(inquiryList));
+    } catch (e) {
+      print('❌ Error saving subscription inquiry: $e');
+    }
+  }
+
+  static Future<bool> hasSubscriptionInquiryForUser(
+    String name, {
+    required String userId,
+    required String role,
+  }) async {
+    try {
+      final data = await getSubscriptionInquiryData();
+      log('Subscription Inquiry Data: $data');
+      if (data == null || data.isEmpty) return false;
+      final decoded = jsonDecode(data);
+      if (decoded is List) {
+        if (userId.isNotEmpty) {
+          return decoded.any((item) {
+            final r = (item['role'] ?? '').toString();
+            // final u = (item['userId'] ?? '').toString();
+            // Match either same user or same role (device-level)
+            return r == role;
+          });
+        } else {
+          return decoded.any((item) {
+            final r = (item['role'] ?? '').toString();
+            return r == role; // device-level role flag
+          });
+        }
+      } else if (decoded is Map) {
+        if (userId.isNotEmpty) {
+          final r = (decoded['role'] ?? '').toString();
+          // final u = (decoded['userId'] ?? '').toString();
+          // return u == userId && r == role;
+          return r == role;
+        } else {
+          final r = (decoded['role'] ?? '').toString();
+          return r == role;
+        }
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print('❌ Error reading subscription inquiry data: $e');
+      return false;
+    }
+  }
 
   // Notification Token
   static Future<void> saveNotificationToken(String token) async {
@@ -133,7 +284,7 @@ class SecureStorage {
     return _storage.read(key: _keyToken);
   }
 
-/*
+  /*
   static Future<void> deleteToken() async {
     await _storage.delete(key: _keyToken);
   }
@@ -189,10 +340,36 @@ class SecureStorage {
     await _storage.delete(key: _keyLoggedIn);
   }
 
+  static Future<void> deleteLoginSkipped() async {
+    await _storage.delete(key: _keyLoginSkipped);
+  }
+
+  static Future<void> saveLoginSkipped(bool value) async {
+    await _storage.write(key: _keyLoginSkipped, value: value.toString());
+  }
+
+  static Future<bool> getLoginSkipped() async {
+    final value = await _storage.read(key: _keyLoginSkipped);
+    return value?.toLowerCase() == "true";
+  }
+
   static Future<void> saveSelectedCity(String city) async {
     final storage = FlutterSecureStorage();
     log('Save city work or not $city');
     await storage.write(key: _selectedCityKey, value: city);
+  }
+
+  // Support Ticket Id (persist across logout)
+  static Future<void> saveSupportTicketId(String id) async {
+    await _storage.write(key: _keySupportTicketId, value: id);
+  }
+
+  static Future<String?> getSupportTicketId() async {
+    return _storage.read(key: _keySupportTicketId);
+  }
+
+  static Future<void> deleteSupportTicketId() async {
+    await _storage.delete(key: _keySupportTicketId);
   }
 
   // Get selected city
@@ -221,15 +398,54 @@ class SecureStorage {
     await _storage.delete(key: _keyUpdatePhoneToken);
   }
 
+  static Future<void> saveLoginWithOtpToken(String token) async {
+    await _storage.write(key: _keyLoginWithOtpToken, value: token);
+  }
+
+  static Future<String?> getLoginWithOtpToken() async {
+    return _storage.read(key: _keyLoginWithOtpToken);
+  }
+
+  static Future<void> deleteLoginWithOtpToken() async {
+    await _storage.delete(key: _keyLoginWithOtpToken);
+  }
+
+  // Home category (Buy/Rent/Lease/Commercial/PG/Plots)
+  static Future<void> saveHomeCategory(String value) async {
+    await _storage.write(key: _keyHomeCategory, value: value);
+  }
+
+  static Future<String?> getHomeCategory() async {
+    return _storage.read(key: _keyHomeCategory);
+  }
+
   // Clear everything
   static Future<void> clearAll() async {
     final city = await SecureStorage.getSelectedCity();
+    final offerInquiry = await getOfferInquiryData();
+    final subscriptionInquiry = await getSubscriptionInquiryData();
+    final loginSkipped = await getLoginSkipped();
+    final storedTicketId = await getSupportTicketId();
 
     await _storage.deleteAll();
+
     if (city != null && city.isNotEmpty) {
       await SecureStorage.saveSelectedCity(city);
     }
+    if (offerInquiry != null && offerInquiry.isNotEmpty) {
+      await saveOfferInquiryData(offerInquiry);
+    }
+    if (subscriptionInquiry != null && subscriptionInquiry.isNotEmpty) {
+      await saveSubscriptionInquiryData(subscriptionInquiry);
+    }
+    if (storedTicketId != null && storedTicketId.isNotEmpty) {
+      await saveSupportTicketId(storedTicketId);
+    }
+
     await _storage.write(key: _keyHasLaunched, value: 'true');
+    if (loginSkipped) {
+      await saveLoginSkipped(true);
+    }
   }
 
   static Future<void> updateAadharVerified({required bool value}) async {

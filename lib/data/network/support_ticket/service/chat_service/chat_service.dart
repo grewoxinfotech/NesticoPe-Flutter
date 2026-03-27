@@ -1,6 +1,6 @@
 // import 'dart:async';
 // import 'dart:convert';
-// import 'package:housing_flutter_app/app/constants/api_constants.dart';
+// import 'package:nesticope_app/app/constants/api_constants.dart';
 // import 'package:socket_io_client/socket_io_client.dart' as IO;
 //
 // import '../../../../database/secure_storage_service.dart';
@@ -161,7 +161,7 @@
 
 // import 'dart:async';
 // import 'dart:convert';
-// import 'package:housing_flutter_app/utils/logger/app_logger.dart';
+// import 'package:nesticope_app/utils/logger/app_logger.dart';
 // import 'package:socket_io_client/socket_io_client.dart' as IO;
 //
 // import '../../../../../app/constants/api_constants.dart';
@@ -329,19 +329,27 @@ class WebSocketService {
 
     try {
       final url = ApiConstants.ticketChat;
+
+      
       final token = await SecureStorage.getToken();
 
       /// IMPORTANT FIX — Always create new socket only ONCE
-      _socket = IO.io(
-        url,
-        IO.OptionBuilder()
-            .setTransports(['websocket']).setAuth({'token': token})
-            .disableAutoConnect()
-            .setReconnectionAttempts(1000000)
-            .setReconnectionDelay(1000)
-            .setTimeout(20000)
-            .build(),
-      );
+      final builder = IO.OptionBuilder()
+          .setTransports(['websocket'])
+          .disableAutoConnect()
+          .setReconnectionAttempts(1000000)
+          .setReconnectionDelay(1000)
+          .setTimeout(20000);
+      // Attach token only when available
+      if (token != null && token.isNotEmpty) {
+        print("🔐 Socket auth: token attached");
+        _safeAdd(SocketEvent('auth_mode', {}));
+        builder.setAuth({'token': token});
+      } else {
+        print("👤 Socket guest mode: no token, connecting without auth");
+        _safeAdd(SocketEvent('guest_mode', {}));
+      }
+      _socket = IO.io(url, builder.build());
 
       // ========== CONNECT ==========
       _socket!.onConnect((_) {
@@ -447,6 +455,33 @@ class WebSocketService {
   }
 
   bool get isConnected => _isConnected;
+
+  // ============================
+  // HELPER: Ensure connection and wait for result
+  // ============================
+  Future<bool> ensureConnectedAndWait({
+    Duration timeout = const Duration(seconds: 6),
+  }) async {
+    if (_isConnected) return true;
+    await connect();
+    if (_isConnected) return true;
+    final completer = Completer<bool>();
+    void onOk(_) {
+      if (!completer.isCompleted) completer.complete(true);
+    }
+    void onErr(dynamic _) {
+      if (!completer.isCompleted) completer.complete(false);
+    }
+    _socket?.once('connect', onOk);
+    _socket?.once('connect_error', onErr);
+    _socket?.once('error', onErr);
+    try {
+      return await completer.future
+          .timeout(timeout, onTimeout: () => false);
+    } finally {
+      // no cleanup necessary for once listeners
+    }
+  }
 
   // ============================
   // SAFE STREAM ADD

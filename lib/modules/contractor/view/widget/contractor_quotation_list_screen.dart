@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-// import 'package:housing_flutter_app/app/care/pagination/view/pagination_list_view.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/data/network/contractor/model/contractor_quotation/contractor_quotation.dart';
-import 'package:housing_flutter_app/modules/contractor/controller/contractor_quotation_controller.dart';
-import 'package:housing_flutter_app/modules/contractor/view/widget/contractor_quotation_screen.dart';
-import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
-import 'package:housing_flutter_app/utils/logger/app_logger.dart';
+// import 'package:nesticope_app/app/care/pagination/view/pagination_list_view.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/data/network/contractor/model/contractor_quotation/contractor_quotation.dart';
+import 'package:nesticope_app/modules/contractor/controller/contractor_quotation_controller.dart';
+import 'package:nesticope_app/modules/contractor/view/widget/contractor_quotation_screen.dart';
+import 'package:nesticope_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
+import 'package:nesticope_app/utils/logger/app_logger.dart';
 
 import '../../../../utils/shimmer/contractor/my_quotations/contractor_my_quotation_list_screen_shimmer.dart';
 

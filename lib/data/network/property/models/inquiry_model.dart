@@ -258,13 +258,16 @@ class Inquiry {
 }
 
 class Meta {
-  final int? negotiablePrice;
+  final num? negotiablePrice;
   final bool? isNegotiable;
   final String? timePeriod;
   final String? inquiryType;
   final String? visitDate;
   final String? visitTime;
   final SelectedVariant? selectedVariant;
+  final SelectedRoomType? selectedRoomType;
+  final String? refShareId;
+  final bool? bookSiteVisit;
 
   Meta({
     this.negotiablePrice,
@@ -274,24 +277,40 @@ class Meta {
     this.visitDate,
     this.visitTime,
     this.selectedVariant,
+    this.selectedRoomType,
+    this.refShareId,
+    this.bookSiteVisit,
   });
 
   factory Meta.fromJson(Map<String, dynamic> json) {
     final dynamic price = json['negotiablePrice'];
 
     return Meta(
-      negotiablePrice: price == null
-          ? null
-          : price is int
-          ? price
-          : int.tryParse(price.toString()),
+      negotiablePrice: () {
+        if (price == null) return null;
+        if (price is num) return price;
+        if (price is String) {
+          final d = double.tryParse(price);
+          if (d != null) return d;
+          final i = int.tryParse(price);
+          return i;
+        }
+        return null;
+      }(),
       isNegotiable: json['isNegotiable'] ?? false,
       timePeriod: json['timePeriod'] ?? '',
       inquiryType: json['inquiryType'] ?? '',
       visitDate: json['visitDate'] ?? '',
       visitTime: json['visitTime'] ?? '',
+      refShareId: json['refShareId']?.toString(),
+      bookSiteVisit: json['bookSiteVisit'] is bool
+          ? json['bookSiteVisit']
+          : (json['bookSiteVisit']?.toString().toLowerCase() == 'true'),
       selectedVariant: json['selectedVariant'] != null
           ? SelectedVariant.fromJson(json['selectedVariant'])
+          : null,
+      selectedRoomType: json['selectedRoomType'] != null
+          ? SelectedRoomType.fromJson(json['selectedRoomType'])
           : null,
     );
   }
@@ -304,6 +323,9 @@ class Meta {
     'visitDate': visitDate,
     'visitTime': visitTime,
     'selectedVariant': selectedVariant?.toJson(),
+    'selectedRoomType': selectedRoomType?.toJson(),
+    'refShareId': refShareId,
+    'bookSiteVisit': bookSiteVisit,
   };
 }
 
@@ -334,6 +356,30 @@ class SelectedVariant {
     'name': name,
     'bhk': bhk,
     'price': price,
+  };
+}
+
+class SelectedRoomType {
+  final num price;
+  final String roomType;
+
+  SelectedRoomType({
+    required this.price,
+    required this.roomType,
+  });
+
+  factory SelectedRoomType.fromJson(Map<String, dynamic> json) {
+    return SelectedRoomType(
+      price: json['price'] is num
+          ? json['price']
+          : num.tryParse(json['price']?.toString() ?? '') ?? 0,
+      roomType: json['roomType']?.toString() ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'price': price,
+    'roomType': roomType,
   };
 }
 
@@ -430,6 +476,9 @@ class InquiryDetails {
     } else if (priceData is num) {
       // it's a single number like 1234567
       singlePrice = priceData;
+    }
+    if (priceRange == null && json['priceRange'] is Map<String, dynamic>) {
+      priceRange = PriceRange.fromJson(json['priceRange'] as Map<String, dynamic>);
     }
 
     return InquiryDetails(

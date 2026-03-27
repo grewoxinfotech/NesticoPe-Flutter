@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/widgets/New%20folder/inputs/text_field.dart';
-import 'package:housing_flutter_app/widgets/input/custom_text_field.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/widgets/New%20folder/inputs/text_field.dart';
+import 'package:nesticope_app/widgets/input/custom_text_field.dart';
 
 class OtpLoginScreen extends StatefulWidget {
   const OtpLoginScreen({Key? key}) : super(key: key);

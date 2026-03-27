@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
+import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 import 'package:signature/signature.dart';
 import '../../../../data/network/verification/mou_verification/mou_post_service.dart';
 import 'mou_verification_controller.dart';

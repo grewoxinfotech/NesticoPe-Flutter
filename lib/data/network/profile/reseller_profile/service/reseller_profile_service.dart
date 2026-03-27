@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
+import 'package:nesticope_app/data/network/auth/model/user_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 

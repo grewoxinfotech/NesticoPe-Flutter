@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
-import 'package:housing_flutter_app/modules/property/views/widgets/recommended_card.dart';
+import 'package:nesticope_app/modules/property/controllers/property_controller.dart';
+import 'package:nesticope_app/modules/property/views/widgets/recommended_card.dart';
 
 class RecommendedProperty extends StatelessWidget {
   const RecommendedProperty({super.key});
@@ -25,7 +25,7 @@ class RecommendedProperty extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: SizedBox(
-                  height: 325,
+                  height: 302,
                   child: Obx(() {
                     final items = controller.recommendedProperties;
                     return ListView.separated(

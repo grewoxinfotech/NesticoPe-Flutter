@@ -1,9 +1,9 @@
 // ///MARK:New City Card Widget Change in 13-09-2025
 // import 'package:flutter/material.dart';
-// import 'package:housing_flutter_app/app/constants/color_res.dart';
+// import 'package:nesticope_app/app/constants/color_res.dart';
 
 // import 'package:flutter/material.dart';
-// import 'package:housing_flutter_app/app/constants/color_res.dart';
+// import 'package:nesticope_app/app/constants/color_res.dart';
 
 // class CityCard extends StatelessWidget {
 //   final String imageUrl;
@@ -124,7 +124,7 @@
 
 
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
 

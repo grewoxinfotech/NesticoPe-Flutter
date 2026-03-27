@@ -3,15 +3,15 @@
 // // // import 'package:flutter/material.dart';
 // // // import 'package:flutter/services.dart';
 // // // import 'package:get/get.dart';
-// // // import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-// // // import 'package:housing_flutter_app/app/constants/color_res.dart';
-// // // import 'package:housing_flutter_app/data/network/contractor/model/contractot_service_model/contractor_inquiry_model.dart';
-// // // import 'package:housing_flutter_app/data/network/contractor/model/contractor_quotation/contractor_quotation.dart';
-// // // import 'package:housing_flutter_app/modules/contractor/controller/contractor_inquiry_controller.dart';
-// // // import 'package:housing_flutter_app/modules/contractor/controller/contractor_quotation_controller.dart';
-// // // import 'package:housing_flutter_app/modules/contractor/controller/contractor_referral_controller.dart';
-// // // import 'package:housing_flutter_app/utils/logger/app_logger.dart';
-// // // import 'package:housing_flutter_app/widgets/New%20folder/inputs/dropdown_field.dart';
+// // // import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+// // // import 'package:nesticope_app/app/constants/color_res.dart';
+// // // import 'package:nesticope_app/data/network/contractor/model/contractot_service_model/contractor_inquiry_model.dart';
+// // // import 'package:nesticope_app/data/network/contractor/model/contractor_quotation/contractor_quotation.dart';
+// // // import 'package:nesticope_app/modules/contractor/controller/contractor_inquiry_controller.dart';
+// // // import 'package:nesticope_app/modules/contractor/controller/contractor_quotation_controller.dart';
+// // // import 'package:nesticope_app/modules/contractor/controller/contractor_referral_controller.dart';
+// // // import 'package:nesticope_app/utils/logger/app_logger.dart';
+// // // import 'package:nesticope_app/widgets/New%20folder/inputs/dropdown_field.dart';
 // // // import 'package:intl/intl.dart';
 // // //
 // // // /// Screen for submitting or editing quotation for a contractor inquiry
@@ -968,15 +968,15 @@
 // // import 'package:flutter/material.dart';
 // // import 'package:flutter/services.dart';
 // // import 'package:get/get.dart';
-// // import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-// // import 'package:housing_flutter_app/app/constants/color_res.dart';
-// // import 'package:housing_flutter_app/data/network/contractor/model/contractot_service_model/contractor_inquiry_model.dart';
-// // import 'package:housing_flutter_app/data/network/contractor/model/contractor_quotation/contractor_quotation.dart';
-// // import 'package:housing_flutter_app/modules/contractor/controller/contractor_inquiry_controller.dart';
-// // import 'package:housing_flutter_app/modules/contractor/controller/contractor_quotation_controller.dart';
-// // import 'package:housing_flutter_app/modules/contractor/controller/contractor_referral_controller.dart';
-// // import 'package:housing_flutter_app/utils/logger/app_logger.dart';
-// // import 'package:housing_flutter_app/widgets/New%20folder/inputs/dropdown_field.dart';
+// // import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+// // import 'package:nesticope_app/app/constants/color_res.dart';
+// // import 'package:nesticope_app/data/network/contractor/model/contractot_service_model/contractor_inquiry_model.dart';
+// // import 'package:nesticope_app/data/network/contractor/model/contractor_quotation/contractor_quotation.dart';
+// // import 'package:nesticope_app/modules/contractor/controller/contractor_inquiry_controller.dart';
+// // import 'package:nesticope_app/modules/contractor/controller/contractor_quotation_controller.dart';
+// // import 'package:nesticope_app/modules/contractor/controller/contractor_referral_controller.dart';
+// // import 'package:nesticope_app/utils/logger/app_logger.dart';
+// // import 'package:nesticope_app/widgets/New%20folder/inputs/dropdown_field.dart';
 // // import 'package:intl/intl.dart';
 // //
 // // /// Screen for submitting or editing quotation for a contractor inquiry
@@ -1895,15 +1895,15 @@
 // import 'package:flutter/material.dart';
 // import 'package:flutter/services.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-// import 'package:housing_flutter_app/app/constants/color_res.dart';
-// import 'package:housing_flutter_app/data/network/contractor/model/contractot_service_model/contractor_inquiry_model.dart';
-// import 'package:housing_flutter_app/data/network/contractor/model/contractor_quotation/contractor_quotation.dart';
-// import 'package:housing_flutter_app/modules/contractor/controller/contractor_inquiry_controller.dart';
-// import 'package:housing_flutter_app/modules/contractor/controller/contractor_quotation_controller.dart';
-// import 'package:housing_flutter_app/modules/contractor/controller/contractor_referral_controller.dart';
-// import 'package:housing_flutter_app/utils/logger/app_logger.dart';
-// import 'package:housing_flutter_app/widgets/New%20folder/inputs/dropdown_field.dart';
+// import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+// import 'package:nesticope_app/app/constants/color_res.dart';
+// import 'package:nesticope_app/data/network/contractor/model/contractot_service_model/contractor_inquiry_model.dart';
+// import 'package:nesticope_app/data/network/contractor/model/contractor_quotation/contractor_quotation.dart';
+// import 'package:nesticope_app/modules/contractor/controller/contractor_inquiry_controller.dart';
+// import 'package:nesticope_app/modules/contractor/controller/contractor_quotation_controller.dart';
+// import 'package:nesticope_app/modules/contractor/controller/contractor_referral_controller.dart';
+// import 'package:nesticope_app/utils/logger/app_logger.dart';
+// import 'package:nesticope_app/widgets/New%20folder/inputs/dropdown_field.dart';
 // import 'package:intl/intl.dart';
 //
 // /// Screen for submitting or editing quotation for a contractor inquiry
@@ -2848,14 +2848,14 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/data/network/contractor/model/contractot_service_model/contractor_inquiry_model.dart';
-import 'package:housing_flutter_app/data/network/contractor/model/contractor_quotation/contractor_quotation.dart';
-import 'package:housing_flutter_app/modules/contractor/controller/contractor_inquiry_controller.dart';
-import 'package:housing_flutter_app/modules/contractor/controller/contractor_quotation_controller.dart';
-import 'package:housing_flutter_app/modules/contractor/controller/contractor_referral_controller.dart';
-import 'package:housing_flutter_app/utils/logger/app_logger.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/data/network/contractor/model/contractot_service_model/contractor_inquiry_model.dart';
+import 'package:nesticope_app/data/network/contractor/model/contractor_quotation/contractor_quotation.dart';
+import 'package:nesticope_app/modules/contractor/controller/contractor_inquiry_controller.dart';
+import 'package:nesticope_app/modules/contractor/controller/contractor_quotation_controller.dart';
+import 'package:nesticope_app/modules/contractor/controller/contractor_referral_controller.dart';
+import 'package:nesticope_app/utils/logger/app_logger.dart';
 import 'package:intl/intl.dart';
 
 /// Screen for submitting or editing quotation for a contractor inquiry

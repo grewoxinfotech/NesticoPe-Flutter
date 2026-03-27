@@ -3,10 +3,10 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
-import 'package:housing_flutter_app/modules/add_property/view/create_property.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/modules/add_property/controller/create_property_controller.dart';
+import 'package:nesticope_app/modules/add_property/view/create_property.dart';
 import 'package:intl/intl.dart';
 
 class RentPriceDetail extends StatelessWidget {
@@ -44,7 +44,14 @@ class RentPriceDetail extends StatelessWidget {
 
                   if (rent > 0) {
                     // Calculate 5% of rent as Platform Fees
-                    final platformFee = rent * 0.05;
+                    var platformFee;
+                    if (rent < 10000000) {
+                      // Below 1 Cr → 2%
+                      platformFee = rent * 0.02;
+                    } else {
+                      // 1 Cr & Above → 1%
+                      platformFee = rent * 0.01;
+                    }
                     controller.platformFees.text = platformFee.toStringAsFixed(
                       1,
                     );
@@ -63,28 +70,27 @@ class RentPriceDetail extends StatelessWidget {
                 },
               ),
 
-              const SizedBox(height: 16),
-              const Text("Platform Fees (5%)"),
-              const SizedBox(height: 8),
-              buildTextField(
-                "Platform Fees",
-                Icons.currency_rupee_outlined,
-                controller.platformFees,
-                isPhoneKey: true,
-                isEnable: false,
-              ),
+              // const SizedBox(height: 16),
+              // const Text("Platform Fees (5%)"),
+              // const SizedBox(height: 8),
+              // buildTextField(
+              //   "Platform Fees",
+              //   Icons.currency_rupee_outlined,
+              //   controller.platformFees,
+              //   isPhoneKey: true,
+              //   isEnable: false,
+              // ),
 
-              const SizedBox(height: 16),
-              const Text("Broker Commission (2%) of Platform Fees"),
-              const SizedBox(height: 8),
-              buildTextField(
-                "Broker Commission",
-                Icons.currency_rupee_outlined,
-                controller.brokerRageCommission,
-                isPhoneKey: true,
-                isEnable: false,
-              ),
-
+              // const SizedBox(height: 16),
+              // const Text("Broker Commission (2%) of Platform Fees"),
+              // const SizedBox(height: 8),
+              // buildTextField(
+              //   "Broker Commission",
+              //   Icons.currency_rupee_outlined,
+              //   controller.brokerRageCommission,
+              //   isPhoneKey: true,
+              //   isEnable: false,
+              // ),
               const SizedBox(height: 16),
               buildSectionTitle('Also for Sell?'),
               const SizedBox(height: 8),
@@ -252,7 +258,14 @@ class RentPriceDetail extends StatelessWidget {
 
                   if (rent > 0) {
                     // Calculate 5% of rent as Platform Fees
-                    final platformFee = rent * 0.05;
+                   var platformFee;
+                      if (rent < 10000000) {
+                        // Below 1 Cr → 2%
+                        platformFee = rent * 0.02;
+                      } else {
+                        // 1 Cr & Above → 1%
+                        platformFee = rent * 0.01;
+                      }
                     controller.platformFees.text = platformFee.toStringAsFixed(
                       1,
                     );
@@ -271,28 +284,28 @@ class RentPriceDetail extends StatelessWidget {
                 },
                 isPhoneKey: true,
               ),
-              const SizedBox(height: 16),
-              const Text("Platform Fees (5%)"),
-              const SizedBox(height: 8),
-              buildTextField(
-                "Platform Fees",
-                Icons.currency_rupee_outlined,
-                controller.platformFees,
-                isPhoneKey: true,
-                isEnable: false,
-              ),
 
-              const SizedBox(height: 16),
-              const Text("Broker Commission (2%) of Platform Fees"),
-              const SizedBox(height: 8),
-              buildTextField(
-                "Broker Commission",
-                Icons.currency_rupee_outlined,
-                controller.brokerRageCommission,
-                isPhoneKey: true,
-                isEnable: false,
-              ),
+              // const SizedBox(height: 16),
+              // const Text("Platform Fees (5%)"),
+              // const SizedBox(height: 8),
+              // buildTextField(
+              //   "Platform Fees",
+              //   Icons.currency_rupee_outlined,
+              //   controller.platformFees,
+              //   isPhoneKey: true,
+              //   isEnable: false,
+              // ),
 
+              // const SizedBox(height: 16),
+              // const Text("Broker Commission (2%) of Platform Fees"),
+              // const SizedBox(height: 8),
+              // buildTextField(
+              //   "Broker Commission",
+              //   Icons.currency_rupee_outlined,
+              //   controller.brokerRageCommission,
+              //   isPhoneKey: true,
+              //   isEnable: false,
+              // ),
               const SizedBox(height: 16),
               buildSectionTitle('Also for Rent?'),
               const SizedBox(height: 8),
@@ -677,7 +690,14 @@ class RentPriceDetail extends StatelessWidget {
 
                     if (rent > 0) {
                       // Calculate 5% of rent as Platform Fees
-                      final platformFee = rent * 0.05;
+                      var platformFee;
+                      if (rent < 10000000) {
+                        // Below 1 Cr → 2%
+                        platformFee = rent * 0.02;
+                      } else {
+                        // 1 Cr & Above → 1%
+                        platformFee = rent * 0.01;
+                      }
                       controller.platformFees.text = platformFee
                           .toStringAsFixed(1);
 
@@ -698,27 +718,28 @@ class RentPriceDetail extends StatelessWidget {
 
                   isPhoneKey: true,
                 ),
-                const SizedBox(height: 16),
-                const Text("Platform Fees (5%)"),
-                const SizedBox(height: 8),
-                buildTextField(
-                  "Platform Fees",
-                  Icons.currency_rupee_outlined,
-                  controller.platformFees,
-                  isPhoneKey: true,
-                  isEnable: false,
-                ),
+                // const SizedBox(height: 16),
+                // const Text("Platform Fees (5%)"),
+                // const SizedBox(height: 8),
+                // buildTextField(
+                //   "Platform Fees",
 
-                const SizedBox(height: 16),
-                const Text("Broker Commission (2%) of Platform Fees"),
-                const SizedBox(height: 8),
-                buildTextField(
-                  "Broker Commission",
-                  Icons.currency_rupee_outlined,
-                  controller.brokerRageCommission,
-                  isPhoneKey: true,
-                  isEnable: false,
-                ),
+                //   Icons.currency_rupee_outlined,
+                //   controller.platformFees,
+                //   isPhoneKey: true,
+                //   isEnable: false,
+                // ),
+
+                // const SizedBox(height: 16),
+                // const Text("Broker Commission (2%) of Platform Fees"),
+                // const SizedBox(height: 8),
+                // buildTextField(
+                //   "Broker Commission",
+                //   Icons.currency_rupee_outlined,
+                //   controller.brokerRageCommission,
+                //   isPhoneKey: true,
+                //   isEnable: false,
+                // ),
                 const SizedBox(height: 16),
                 buildSectionTitle('Also for Sell?'),
                 const SizedBox(height: 8),
@@ -828,7 +849,14 @@ class RentPriceDetail extends StatelessWidget {
                     }
                     if (rent > 0) {
                       // Calculate 5% of rent as Platform Fees
-                      final platformFee = rent * 0.05;
+                      var platformFee;
+                      if (rent < 10000000) {
+                        // Below 1 Cr → 2%
+                        platformFee = rent * 0.02;
+                      } else {
+                        // 1 Cr & Above → 1%
+                        platformFee = rent * 0.01;
+                      }
                       controller.platformFees.text = platformFee
                           .toStringAsFixed(1);
 
@@ -848,27 +876,27 @@ class RentPriceDetail extends StatelessWidget {
 
                   isPhoneKey: true,
                 ),
-                const SizedBox(height: 16),
-                const Text("Platform Fees (5%)"),
-                const SizedBox(height: 8),
-                buildTextField(
-                  "Platform Fees",
-                  Icons.currency_rupee_outlined,
-                  controller.platformFees,
-                  isPhoneKey: true,
-                  isEnable: false,
-                ),
+                // const SizedBox(height: 16),
+                // const Text("Platform Fees (5%)"),
+                // const SizedBox(height: 8),
+                // buildTextField(
+                //   "Platform Fees",
+                //   Icons.currency_rupee_outlined,
+                //   controller.platformFees,
+                //   isPhoneKey: true,
+                //   isEnable: false,
+                // ),
 
-                const SizedBox(height: 16),
-                const Text("Broker Commission (2%) of Platform Fees"),
-                const SizedBox(height: 8),
-                buildTextField(
-                  "Broker Commission",
-                  Icons.currency_rupee_outlined,
-                  controller.brokerRageCommission,
-                  isPhoneKey: true,
-                  isEnable: false,
-                ),
+                // const SizedBox(height: 16),
+                // const Text("Broker Commission (2%) of Platform Fees"),
+                // const SizedBox(height: 8),
+                // buildTextField(
+                //   "Broker Commission",
+                //   Icons.currency_rupee_outlined,
+                //   controller.brokerRageCommission,
+                //   isPhoneKey: true,
+                //   isEnable: false,
+                // ),
                 const SizedBox(height: 16),
                 buildSectionTitle('Also for Sell?'),
                 const SizedBox(height: 8),
@@ -1110,7 +1138,14 @@ class RentPriceDetail extends StatelessWidget {
 
                     if (rent > 0) {
                       // Calculate 5% of rent as Platform Fees
-                      final platformFee = rent * 0.05;
+                      var platformFee;
+                      if (rent < 10000000) {
+                        // Below 1 Cr → 2%
+                        platformFee = rent * 0.02;
+                      } else {
+                        // 1 Cr & Above → 1%
+                        platformFee = rent * 0.01;
+                      }
                       controller.platformFees.text = platformFee
                           .toStringAsFixed(1);
 
@@ -1131,27 +1166,27 @@ class RentPriceDetail extends StatelessWidget {
 
                   isPhoneKey: true,
                 ),
-                const SizedBox(height: 16),
-                const Text("Platform Fees (5%)"),
-                const SizedBox(height: 8),
-                buildTextField(
-                  "Platform Fees",
-                  Icons.currency_rupee_outlined,
-                  controller.platformFees,
-                  isPhoneKey: true,
-                  isEnable: false,
-                ),
+                // const SizedBox(height: 16),
+                // const Text("Platform Fees (5%)"),
+                // const SizedBox(height: 8),
+                // buildTextField(
+                //   "Platform Fees",
+                //   Icons.currency_rupee_outlined,
+                //   controller.platformFees,
+                //   isPhoneKey: true,
+                //   isEnable: false,
+                // ),
 
-                const SizedBox(height: 16),
-                const Text("Broker Commission (2%) of Platform Fees"),
-                const SizedBox(height: 8),
-                buildTextField(
-                  "Broker Commission",
-                  Icons.currency_rupee_outlined,
-                  controller.brokerRageCommission,
-                  isPhoneKey: true,
-                  isEnable: false,
-                ),
+                // const SizedBox(height: 16),
+                // const Text("Broker Commission (2%) of Platform Fees"),
+                // const SizedBox(height: 8),
+                // buildTextField(
+                //   "Broker Commission",
+                //   Icons.currency_rupee_outlined,
+                //   controller.brokerRageCommission,
+                //   isPhoneKey: true,
+                //   isEnable: false,
+                // ),
                 const SizedBox(height: 16),
                 buildSectionTitle('Also for Rent?'),
                 const SizedBox(height: 8),
@@ -1336,7 +1371,14 @@ class RentPriceDetail extends StatelessWidget {
                     final rent = int.tryParse(value) ?? 0; // parse once
                     if (rent > 0) {
                       // Calculate 5% of rent as Platform Fees
-                      final platformFee = rent * 0.05;
+                      var platformFee;
+                      if (rent < 10000000) {
+                        // Below 1 Cr → 2%
+                        platformFee = rent * 0.02;
+                      } else {
+                        // 1 Cr & Above → 1%
+                        platformFee = rent * 0.01;
+                      }
                       controller.platformFees.text = platformFee
                           .toStringAsFixed(1);
 
@@ -1357,27 +1399,27 @@ class RentPriceDetail extends StatelessWidget {
 
                   isPhoneKey: true,
                 ),
-                const SizedBox(height: 16),
-                const Text("Platform Fees (5%)"),
-                const SizedBox(height: 8),
-                buildTextField(
-                  "Platform Fees",
-                  Icons.currency_rupee_outlined,
-                  controller.platformFees,
-                  isPhoneKey: true,
-                  isEnable: false,
-                ),
+                // const SizedBox(height: 16),
+                // const Text("Platform Fees (5%)"),
+                // const SizedBox(height: 8),
+                // buildTextField(
+                //   "Platform Fees",
+                //   Icons.currency_rupee_outlined,
+                //   controller.platformFees,
+                //   isPhoneKey: true,
+                //   isEnable: false,
+                // ),
 
-                const SizedBox(height: 16),
-                const Text("Broker Commission (2%) of Platform Fees"),
-                const SizedBox(height: 8),
-                buildTextField(
-                  "Broker Commission",
-                  Icons.currency_rupee_outlined,
-                  controller.brokerRageCommission,
-                  isPhoneKey: true,
-                  isEnable: false,
-                ),
+                // const SizedBox(height: 16),
+                // const Text("Broker Commission (2%) of Platform Fees"),
+                // const SizedBox(height: 8),
+                // buildTextField(
+                //   "Broker Commission",
+                //   Icons.currency_rupee_outlined,
+                //   controller.brokerRageCommission,
+                //   isPhoneKey: true,
+                //   isEnable: false,
+                // ),
                 const SizedBox(height: 16),
                 buildSectionTitle('Also for Rent?'),
                 const SizedBox(height: 8),

@@ -3,13 +3,13 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
-import 'package:housing_flutter_app/utils/logger/app_logger.dart';
+import 'package:nesticope_app/data/network/builder/model/builder_model.dart';
+import 'package:nesticope_app/utils/logger/app_logger.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:housing_flutter_app/app/constants/api_constants.dart';
-import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/app/constants/api_constants.dart';
+import 'package:nesticope_app/app/widgets/snack_bar/custom_snackbar.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
 import 'package:http_parser/http_parser.dart';
 
 import '../../../../widgets/messages/snack_bar.dart';
@@ -32,15 +32,17 @@ class BuilderService {
   Future<PaginationResponse<ProjectItem>> fetchProjects({
     int page = 1,
     Map<String, String>? filters,
+    String? limit,
   }) async {
     try {
       final queryParameters = {
         'page': page.toString(),
+        'limit': limit ?? 'all',
         if (filters != null) ...filters,
       };
 
       final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
-      print("📡 Fetching Projects from: $uri");
+      print("📡 Fetching Projects fromsdlkjfdsk: $uri");
 
       final response = await http.get(uri, headers: await headers());
 
@@ -74,7 +76,7 @@ class BuilderService {
         if (filters != null) ...filters,
       };
 
-      final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
+      final uri = Uri.parse(topProjectUrl).replace(queryParameters: queryParameters);
       print("📡 Fetching Projects from: $uri");
 
       final response = await http.get(uri, headers: await headers());

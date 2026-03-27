@@ -1,7 +1,7 @@
   import 'package:flutter/material.dart';
   import 'package:get/get.dart';
-  import 'package:housing_flutter_app/modules/filter_property/controller/property_filter_controller.dart';
-  import 'package:housing_flutter_app/modules/search_property/widget/suggested_list.dart';
+  import 'package:nesticope_app/modules/filter_property/controller/property_filter_controller.dart';
+  import 'package:nesticope_app/modules/search_property/widget/suggested_list.dart';
 
   import '../../buy_componet/buy_component.dart';
   import '../../common_component/budget_filter.dart';

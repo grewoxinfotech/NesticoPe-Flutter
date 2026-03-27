@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/app/constants/size_manager.dart';
-import 'package:housing_flutter_app/modules/search_property/widget/suggested_list.dart';
+import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/modules/search_property/widget/suggested_list.dart';
 
 
 

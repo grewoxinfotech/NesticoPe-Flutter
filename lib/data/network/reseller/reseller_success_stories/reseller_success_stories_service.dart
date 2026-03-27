@@ -3,15 +3,15 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/data/network/reseller/reseller_success_stories/reseller_success_stories_model.dart';
-import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
+import 'package:nesticope_app/data/network/reseller/reseller_success_stories/reseller_success_stories_model.dart';
+import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
-import 'package:housing_flutter_app/app/constants/api_constants.dart';
-import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/app/constants/api_constants.dart';
+import 'package:nesticope_app/app/widgets/snack_bar/custom_snackbar.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
 
 class ResellerSuccessStoryService {
   final String baseUrl = ApiConstants.resellerSuccessStory;

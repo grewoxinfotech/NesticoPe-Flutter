@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/modules/add_property/model/room_detail_model.dart';
-import 'package:housing_flutter_app/modules/add_property/view/create_property.dart'
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/modules/add_property/model/room_detail_model.dart';
+import 'package:nesticope_app/modules/add_property/view/create_property.dart'
     hide Obx;
 import '../../../../app/manager/icon_manager.dart';
 import '../../../../app/utils/svg_widget.dart';

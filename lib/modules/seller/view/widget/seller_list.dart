@@ -3,10 +3,10 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
-import 'package:housing_flutter_app/modules/seller/view/seller_profile.dart';
+import 'package:nesticope_app/modules/seller/view/seller_profile.dart';
 
 import '../../../../app/constants/color_res.dart';
 import '../../../../data/network/top_seller_profile/model/top_seller_profile_model.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/modules/property/views/property_detail_screen.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/modules/property/views/property_detail_screen.dart';
 
 import '../../../../app/constants/color_res.dart';
 import '../../../data/network/visit/model/visit_model.dart';
@@ -16,7 +16,8 @@ class VisitScreen extends StatelessWidget {
     final VisitController controller = Get.put(VisitController());
 
     return Scaffold(
-      appBar: AppBar(title: const Text("My Visits")),
+
+      appBar: AppBar(title: const Text("My Visits"),backgroundColor: ColorRes.white,),
       body: Obx(() {
         if (controller.isLoading.value && controller.items.isEmpty) {
           return BuyerMyVisitListScreenShimmer();
@@ -291,7 +292,7 @@ class _VisitCard extends StatelessWidget {
                           style: const TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 16,
-                            color: Colors.black87,
+                            color: ColorRes.textPrimary,
                           ),
                         ),
                       ),
@@ -427,15 +428,17 @@ class _InfoRow extends StatelessWidget {
                 title,
                 style: TextStyle(
                   fontSize: AppFontSizes.bodySmall,
-                  fontWeight: AppFontWeights.bold,
+                  fontWeight: AppFontWeights.semiBold,
+                  color: ColorRes.textPrimary,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 value,
                 style: TextStyle(
-                  fontSize: AppFontSizes.bodySmall,
+                  fontSize: AppFontSizes.small,
                   color: Colors.grey.shade700,
+                  fontWeight: AppFontWeights.medium,
                 ),
               ),
             ],

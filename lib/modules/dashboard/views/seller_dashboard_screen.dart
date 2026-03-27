@@ -116,11 +116,12 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/modules/dashboard/views/dashboard_screen.dart';
-import 'package:housing_flutter_app/modules/dashboard/views/widget/seller_property_screen.dart';
-import 'package:housing_flutter_app/modules/profile/views/profile_screen.dart';
-import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/modules/dashboard/views/dashboard_screen.dart';
+import 'package:nesticope_app/modules/dashboard/views/widget/seller_property_screen.dart';
+import 'package:nesticope_app/modules/profile/controllers/seller_profile_controller.dart';
+import 'package:nesticope_app/modules/profile/views/profile_screen.dart';
+import 'package:nesticope_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 import '../../../app/constants/color_res.dart';
@@ -132,7 +133,6 @@ import '../../home/views/home_screen/home_screen.dart';
 import '../../profile/views/seller_profile_detail.dart';
 import '../../property/controllers/property_controller.dart';
 import '../../saved_property/views/saved_property_screen.dart';
-
 
 import '../../seller/module/lead_screen/views/lead_screen_enhanced.dart';
 import '../../seller/module/package_screen/views/package_screen.dart';
@@ -148,10 +148,20 @@ class SellerDashboardScreen extends StatefulWidget {
 
 class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
   final controller = Get.put(PropertyController());
+  final navigationController = Get.put(NavigationController());
+  final profileController = Get.put(SellerProfileController());
+  late final List<Widget> screens;
 
   @override
   void initState() {
     loadPropertyBySeller();
+    screens = [
+      const SellerHomeScreen(),
+      const SellerLeadScreen(isViewAll: true),
+      PropertyOverviewScreen(),
+      SellerSubscriptionPlanScreen(),
+      SellerProfileScreen(),
+    ];
     super.initState();
   }
 
@@ -179,113 +189,147 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final navigationController = Get.put(NavigationController());
+    return Obx(() {
+      final index = navigationController.currentIndex.value;
+      return PopScope(
+        canPop: index == 0,
+        onPopInvokedWithResult: (didPop, result) {
+          if (!didPop) {
+            // 👉 Not on home → go to home
+            navigationController.changeIndex(0);
+          }
+        },
+        child: Scaffold(
+          bottomNavigationBar: SafeArea(
+            child: Builder(
+              builder: (context) {
+                TextStyle style = TextStyle(
+                  fontSize: AppFontSizes.caption,
+                  fontWeight: AppFontWeights.semiBold,
+                  color: Get.theme.colorScheme.primary,
+                );
+                double iconSize = 18;
 
-    final screens = [
-      const SellerHomeScreen(),
-      const SellerLeadScreen(isViewAll: true),
-      // Obx(() {
-      //   if (controller.isLoading.value && controller.items.isEmpty) {
-      //     return const Center(child: CircularProgressIndicator());
-      //   }
-      //
-      //   if (!controller.isLoading.value && controller.items.isEmpty) {
-      //     return const Center(child: Text("No Property found."));
-      //   }
-      //
-      //   return NotificationListener<ScrollEndNotification>(
-      //     onNotification: (notification) {
-      //       final metrics = notification.metrics;
-      //       if (metrics.pixels >= metrics.maxScrollExtent) {
-      //         controller.loadMore();
-      //       }
-      //       return true;
-      //     },
-      //     child: RefreshIndicator(
-      //       onRefresh: refreshPropertyBySeller,
-      //       child: PropertyOverviewScreen(
-      //         properties: controller.items,
-      //         onDelete: () => refreshPropertyBySeller(),
-      //       ),
-      //     ),
-      //   );
-      // }),
-      // SellerPropertyScreen(),
-      PropertyOverviewScreen(),
-      SellerSubscriptionPlanScreen(),
-      SellerProfileScreen(),
-    ];
+                return Card(
+                  elevation: 6,
+                  shadowColor: Colors.black12,
+                  color: Get.theme.colorScheme.surface,
+                  margin: const EdgeInsets.only(
+                    left: AppMargin.small,
+                    right: AppMargin.small,
+                    bottom: AppMargin.small,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.large),
+                  ),
+                  child: Container(
+                    height: kToolbarHeight,
+                    alignment: Alignment.center,
+                    child: SalomonBottomBar(
+                      duration: const Duration(milliseconds: 200),
+                      margin: const EdgeInsets.all(AppPadding.small),
+                      itemPadding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 8,
+                      ),
+                      itemShape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.large),
+                      ),
+                      currentIndex: index,
+                      onTap: navigationController.changeIndex,
+                      unselectedItemColor: Get.theme.colorScheme.onSurface
+                          .withOpacity(0.6),
 
-    return Scaffold(
-      bottomNavigationBar: Obx(
-        () => SafeArea(
-          child: BottomNavigationBar(
-            currentIndex: navigationController.currentIndex.value,
-            onTap: navigationController.changeIndex,
-            type: BottomNavigationBarType.fixed,
-            selectedItemColor: Colors.blue,
-            unselectedItemColor: Colors.grey,
-            selectedLabelStyle: TextStyle(
-              fontSize: AppFontSizes.caption,
-              fontWeight: AppFontWeights.semiBold,
+                      items: [
+                        /// ✅ Dashboard
+                        SalomonBottomBarItem(
+                          icon: Icon(
+                            Icons.dashboard_outlined,
+                            size: iconSize * 1.2,
+                          ),
+                          title: Text("Dashboard", style: style),
+                        ),
+
+                        /// ✅ Leads
+                        SalomonBottomBarItem(
+                          icon: Icon(
+                            Icons.groups_outlined,
+                            size: iconSize * 1.2,
+                          ),
+
+                          title: Text("Leads", style: style),
+                        ),
+
+                        /// ✅ Property
+                        SalomonBottomBarItem(
+                          icon: Icon(
+                            Icons.apartment_outlined,
+                            size: iconSize * 1.2,
+                          ),
+                          title: Text("Property", style: style),
+                        ),
+
+                        /// ✅ Plans
+                        SalomonBottomBarItem(
+                          icon: Icon(
+                            Icons.credit_card,
+                            size: iconSize * 1.2,
+                          ),
+                          title: Text("Plans", style: style),
+                        ),
+
+                        /// ✅ Profile Avatar
+                        SalomonBottomBarItem(
+                          icon: Obx(() {
+                            final selected =
+                                navigationController.currentIndex.value == 4;
+
+                            final imageUrl =
+                                profileController
+                                    .profileData
+                                    .value
+                                    ?.user
+                                    ?.profilePic ??
+                                "";
+
+                            return Container(
+                              height: 26,
+                              width: 26,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color:
+                                      selected
+                                          ? Get.theme.colorScheme.primary
+                                          : Colors.grey.shade400,
+                                  width: selected ? 1.5 : 1,
+                                ),
+                              ),
+                              child: CircleAvatar(
+                                radius: 14,
+                                backgroundColor: Get.theme.colorScheme.primary,
+
+                                child: const Icon(
+                                  Icons.person,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                              ),
+                            );
+                          }),
+                          title: Text("Profile", style: style),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
-            unselectedLabelStyle: TextStyle(
-              fontSize: AppFontSizes.caption,
-              fontWeight: AppFontWeights.medium,
-            ),
-            backgroundColor: ColorRes.white,
-            elevation: 0,
-            items: const [
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.dashboard_outlined, size: 22),
-                ),
-                label: 'Dashboard',
-              ),
-
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.groups_outlined, size: 22),
-                ),
-                label: 'Leads',
-              ),
-
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.apartment_outlined, size: 22),
-                ),
-                label: 'Property',
-              ),
-
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.workspace_premium_outlined, size: 22),
-                ),
-                label: 'Plans',
-              ),
-
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.person_outline_outlined, size: 22),
-                ),
-                label: 'Profile',
-              ),
-            ],
           ),
-        ),
-      ),
 
-      body: Obx(
-        () => IndexedStack(
-          index: navigationController.currentIndex.value,
-          children: screens,
+          body: IndexedStack(index: index, children: screens),
         ),
-      ),
-    );
+      );
+    });
   }
 }

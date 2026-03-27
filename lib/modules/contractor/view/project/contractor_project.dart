@@ -2,11 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/data/network/contractor/model/contractor_project_model/contracto_project_model.dart';
-import 'package:housing_flutter_app/modules/contractor/controller/contractor_lead_controller.dart';
-import 'package:housing_flutter_app/modules/contractor/view/project/widget/contractor_project_filter.dart';
-import 'package:housing_flutter_app/modules/contractor/view/project/widget/contractor_project_overview_screen.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/data/network/contractor/model/contractor_project_model/contracto_project_model.dart';
+import 'package:nesticope_app/modules/contractor/controller/contractor_lead_controller.dart';
+import 'package:nesticope_app/modules/contractor/view/project/widget/contractor_project_filter.dart';
+import 'package:nesticope_app/modules/contractor/view/project/widget/contractor_project_overview_screen.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';

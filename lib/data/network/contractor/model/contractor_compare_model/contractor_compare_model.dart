@@ -77,8 +77,11 @@ class ContractorData {
 class ContractorItem {
   final String id;
   final String username;
+  final String? firstName;
+  final String? lastName;
   final String email;
   final String phone;
+  final String? profilePic;
   final String? city;
   final String? state;
   final String userType;
@@ -87,8 +90,11 @@ class ContractorItem {
   ContractorItem({
     required this.id,
     required this.username,
+    this.firstName,
+    this.lastName,
     required this.email,
     required this.phone,
+    this.profilePic,
     this.city,
     this.state,
     required this.userType,
@@ -99,8 +105,13 @@ class ContractorItem {
     return ContractorItem(
       id: json['id'] ?? '',
       username: json['username'] ?? '',
+      firstName: (json['firstName'] is String) ? (json['firstName'] as String) : null,
+      lastName: (json['lastName'] is String) ? (json['lastName'] as String) : null,
       email: json['email'] ?? '',
       phone: json['phone'] ?? '',
+      profilePic: (json['profilePic'] is String)
+          ? (json['profilePic'] as String).trim().replaceAll('`', '')
+          : null,
       city: json['city'],
       state: json['state'],
       userType: json['userType'] ?? 'contractor',
@@ -114,8 +125,11 @@ class ContractorItem {
     return {
       'id': id,
       'username': username,
+      'firstName': firstName,
+      'lastName': lastName,
       'email': email,
       'phone': phone,
+      'profilePic': profilePic,
       'city': city,
       'state': state,
       'userType': userType,
@@ -164,6 +178,7 @@ class Profile {
       'totalReviews': totalReviews,
       'isBlocked': isBlocked,
       'warningCount': warningCount,
+      'contractorType': contractorType,
     };
   }
 }
@@ -172,7 +187,7 @@ class Profile {
 class ServiceCategory {
   final String categoryId;
   final String categoryName;
-  final String categoryDescription;
+  final List<String> categoryDescription;
   final List<Service> services;
   final int totalServices;
   final int activeServices;
@@ -194,7 +209,10 @@ class ServiceCategory {
     return ServiceCategory(
       categoryId: json['categoryId'] ?? '',
       categoryName: json['categoryName'] ?? '',
-      categoryDescription: json['categoryDescription'] ?? '',
+      categoryDescription: (json['categoryDescription'] as List<dynamic>?)
+          ?.map((e) => e.toString())
+          .toList() ??
+          [],
       services: (json['services'] as List<dynamic>?)
           ?.map((e) => Service.fromJson(e))
           .toList() ??
@@ -211,6 +229,7 @@ class ServiceCategory {
       'categoryId': categoryId,
       'categoryName': categoryName,
       'categoryDescription': categoryDescription,
+
       'services': services.map((e) => e.toMap()).toList(),
       'totalServices': totalServices,
       'activeServices': activeServices,
@@ -472,6 +491,7 @@ class ServiceMeta {
   final List<String>? acceptedPaymentModes;
   final int advanceRequiredPercentage;
   final String billingType;
+  final List<String>? works;
   final List<String>? cementBrand;
   final List<String>? steelBrand;
   final List<String>? brickType;
@@ -510,6 +530,7 @@ class ServiceMeta {
     required this.workAvailability,
     required this.provideMaterials,
     this.brandsUsed,
+    this.works,
     this.cementBrand,
     this.steelBrand,
     this.brickType,
@@ -546,19 +567,22 @@ class ServiceMeta {
 
   factory ServiceMeta.fromJson(Map<String, dynamic> json) {
     return ServiceMeta(
-      priceModel: json['priceModel'],
-      minPrice: json['minPrice'],
-      maxPrice: json['maxPrice'],
-      visitCharge: json['visitCharge'],
-      workAvailability: json['workAvailability'] ,
-      provideMaterials: json['provideMaterials'] ,
+      priceModel: json['priceModel']?.toString() ?? 'fixed',
+      minPrice: (json['minPrice'] as num?)?.toInt() ?? 0,
+      maxPrice: (json['maxPrice'] as num?)?.toInt() ?? 0,
+      visitCharge: (json['visitCharge'] as num?)?.toInt() ?? 0,
+      workAvailability: json['workAvailability']?.toString() ?? 'immediate',
+      provideMaterials: json['provideMaterials'] ?? false,
       brandsUsed: json['brandsUsed'],
-      equipmentProvided: json['equipmentProvided'],
-      insuranceAvailable: json['insuranceAvailable'],
-      acceptedPaymentModes:
-      (json['acceptedPaymentModes'] as List?)?.cast<String>(),
-      advanceRequiredPercentage: json['advanceRequiredPercentage'],
+      equipmentProvided: json['equipmentProvided'] ?? false,
+      insuranceAvailable: json['insuranceAvailable'] ?? false,
+      acceptedPaymentModes: (json['acceptedPaymentModes'] as List?)
+          ?.map((e) => e.toString())
+          .toList(),
+      advanceRequiredPercentage:
+          (json['advanceRequiredPercentage'] as num?)?.toInt() ?? 0,
       billingType: json['billingType'] ?? 'non_gst',
+      works: (json['works'] as List?)?.map((e) => e.toString()).toList(),
       cementBrand: (json['cementBrand'] as List?)?.cast<String>(),
       steelBrand: (json['steelBrand'] as List?)?.cast<String>(),
       brickType: (json['brickType'] as List?)?.cast<String>(),
@@ -605,6 +629,7 @@ class ServiceMeta {
       'workAvailability': workAvailability,
       'provideMaterials': provideMaterials,
       'brandsUsed': brandsUsed,
+      'works': works,
       'equipmentProvided': equipmentProvided,
       'insuranceAvailable': insuranceAvailable,
       'acceptedPaymentModes': acceptedPaymentModes,

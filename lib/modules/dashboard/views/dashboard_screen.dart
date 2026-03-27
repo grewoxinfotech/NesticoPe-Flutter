@@ -1,20 +1,20 @@
 // import 'dart:ui';
 //
 // import 'package:flutter/material.dart';
-// import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
-// import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
-// import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
-// import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
-// import 'package:housing_flutter_app/modules/auth/views/role_convert/convert_to_seller/convert_to_seller.dart';
-// import 'package:housing_flutter_app/modules/builder/controller/builder_form_controller.dart';
-// import 'package:housing_flutter_app/modules/calender/views/calender_screen.dart';
-// import 'package:housing_flutter_app/modules/dashboard/views/seller_dashboard_screen.dart';
-// import 'package:housing_flutter_app/modules/dashboard/views/widget/favourite_screen.dart';
-// import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
-// import 'package:housing_flutter_app/modules/reseller/view/property_reseller.dart';
-// import 'package:housing_flutter_app/modules/saved_property/views/user_activity_screen.dart';
-// import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
-// import 'package:housing_flutter_app/widgets/bar/navigation_bar/navigation_Bar.dart';
+// import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+// import 'package:nesticope_app/data/network/auth/model/user_model.dart';
+// import 'package:nesticope_app/modules/auth/views/login_screen.dart';
+// import 'package:nesticope_app/modules/auth/views/register_screen.dart';
+// import 'package:nesticope_app/modules/auth/views/role_convert/convert_to_seller/convert_to_seller.dart';
+// import 'package:nesticope_app/modules/builder/controller/builder_form_controller.dart';
+// import 'package:nesticope_app/modules/calender/views/calender_screen.dart';
+// import 'package:nesticope_app/modules/dashboard/views/seller_dashboard_screen.dart';
+// import 'package:nesticope_app/modules/dashboard/views/widget/favourite_screen.dart';
+// import 'package:nesticope_app/modules/property/controllers/property_controller.dart';
+// import 'package:nesticope_app/modules/reseller/view/property_reseller.dart';
+// import 'package:nesticope_app/modules/saved_property/views/user_activity_screen.dart';
+// import 'package:nesticope_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
+// import 'package:nesticope_app/widgets/bar/navigation_bar/navigation_Bar.dart';
 // import '../../../data/database/secure_storage_service.dart';
 // import '../../../widgets/dialogs/delete_dialog.dart';
 // import '../../../widgets/drawer/drawer.dart';
@@ -43,9 +43,9 @@
 // import '../../support_ticket/views/support_ticket_screen.dart';
 //
 // import 'package:flutter/material.dart';
-// import 'package:housing_flutter_app/modules/dashboard/views/widget/favourite_screen.dart';
-// import 'package:housing_flutter_app/modules/saved_property/views/saved_property_screen.dart';
-// import 'package:housing_flutter_app/widgets/bar/navigation_bar/navigation_Bar.dart';
+// import 'package:nesticope_app/modules/dashboard/views/widget/favourite_screen.dart';
+// import 'package:nesticope_app/modules/saved_property/views/saved_property_screen.dart';
+// import 'package:nesticope_app/widgets/bar/navigation_bar/navigation_Bar.dart';
 // import 'package:get/get.dart';
 //
 // import '../../home/views/home_screen/home_screen.dart';
@@ -109,9 +109,13 @@
 //
 
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/modules/dashboard/views/widget/favourite_screen.dart';
-import 'package:housing_flutter_app/modules/saved_property/views/saved_property_screen.dart';
-import 'package:housing_flutter_app/widgets/bar/navigation_bar/navigation_Bar.dart';
+import 'package:nesticope_app/modules/dashboard/views/widget/favourite_screen.dart';
+import 'package:nesticope_app/modules/profile/controllers/buyer_profiledata.dart';
+import 'package:nesticope_app/modules/profile/views/profile_screen.dart';
+import 'package:nesticope_app/modules/property/controllers/property_controller.dart';
+import 'package:nesticope_app/modules/saved_property/views/saved_property_screen.dart';
+import 'package:nesticope_app/modules/saved_property/views/user_activity_screen.dart';
+import 'package:nesticope_app/widgets/bar/navigation_bar/navigation_Bar.dart';
 import 'package:get/get.dart';
 
 import '../../../data/database/secure_storage_service.dart';
@@ -131,42 +135,57 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  late final BuyerProfileDataController profileController = Get.put(
+    BuyerProfileDataController(),
+  );
+  late final NavigationController navigationController = Get.put(
+    NavigationController(),
+  );
+  late final PropertyController listingController = Get.put(
+    PropertyController(),
+    tag: 'listing_view',
+  );
+
+  late final List<Widget> _screens;
+  bool _didFetchListing = false;
   @override
   void initState() {
     super.initState();
     // ✅ Removed _setAppLaunched() - it's now handled in onboarding
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final navigationController = Get.put(NavigationController());
     Get.lazyPut(
       () => ProjectWizardController(isBuilderView: false),
       tag: 'builder',
     );
+    _screens = [
+      HomeScreen(),
+      PropertyDetail(isFromSeeAll: true),
+      UserActivityScreen(),
+      InsightsScreen(),
+      HireContractorScreen(fromDashboard: true),
+    ];
+  }
 
-    return Scaffold(
-      extendBody: true,
-      bottomNavigationBar: const SafeArea(child: NesticoPeNavigationBar()),
-      body: Obx(() {
-        switch (navigationController.currentIndex.value) {
-          case 0:
-            return HomeScreen();
-          case 1:
-            return PropertyDetail(
-              isFromSeeAll: true,
-              // filters: widget.propertyFilter,
-            );
-          case 2:
-            return AllProjectListScreen(isFromSeeAll: true, isbuilder: false);
-          case 3:
-            return InsightsScreen();
-          case 4:
-            return HireContractorScreen();
-          default:
-            return const SizedBox();
-        }
-      }),
-    );
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      final index = navigationController.currentIndex.value;
+      if (index == 1 && !_didFetchListing) {
+        listingController.fetchCreatedBy(withoutCity: true);
+        _didFetchListing = true;
+      }
+      return PopScope(
+        canPop: index == 0,
+        onPopInvokedWithResult: (didPop, result) {
+          if (!didPop) {
+            navigationController.changeIndex(0);
+          }
+        },
+        child: Scaffold(
+          extendBody: true,
+          bottomNavigationBar: const SafeArea(child: NesticoPeNavigationBar()),
+          body: IndexedStack(index: index, children: _screens),
+        ),
+      );
+    });
   }
 }

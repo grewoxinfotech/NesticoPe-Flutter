@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:intl/intl.dart';
 
 import '../../controller/builder_form_controller.dart';

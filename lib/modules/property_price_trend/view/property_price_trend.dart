@@ -4,19 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
 
-import 'package:housing_flutter_app/app/utils/dummy_data.dart';
-import 'package:housing_flutter_app/modules/home/views/home_screen/home_screen.dart';
-import 'package:housing_flutter_app/modules/home/widgets/home_header.dart';
-import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
-import 'package:housing_flutter_app/modules/property/views/property_detail_screen.dart';
-import 'package:housing_flutter_app/modules/property_price_trend/controller/price_trend_controller.dart';
-import 'package:housing_flutter_app/modules/property_price_trend/view/widget/filter_type.dart';
-import 'package:housing_flutter_app/modules/property_price_trend/view/widget/line_chart.dart';
-import 'package:housing_flutter_app/modules/property_price_trend/view/widget/price_property_card.dart';
-import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
+import 'package:nesticope_app/app/utils/dummy_data.dart';
+import 'package:nesticope_app/modules/home/views/home_screen/home_screen.dart';
+import 'package:nesticope_app/modules/home/widgets/home_header.dart';
+import 'package:nesticope_app/modules/property/controllers/property_controller.dart';
+import 'package:nesticope_app/modules/property/views/property_detail_screen.dart';
+import 'package:nesticope_app/modules/property_price_trend/controller/price_trend_controller.dart';
+import 'package:nesticope_app/modules/property_price_trend/view/widget/filter_type.dart';
+import 'package:nesticope_app/modules/property_price_trend/view/widget/line_chart.dart';
+import 'package:nesticope_app/modules/property_price_trend/view/widget/price_property_card.dart';
+import 'package:nesticope_app/modules/search_property/view/search_screen.dart';
 
 enum FilterType { Locality, Projects }
 
@@ -540,6 +540,7 @@ class BlurredHeader extends StatelessWidget {
                     child: buildPositionedTextField(context, () {
                       Get.to(() => const CommonSearchField());
                     }),
+
                   ),
                   const SizedBox(width: 8),
                   GestureDetector(

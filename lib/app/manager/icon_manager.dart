@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/app/constants/svg_res.dart';
+import 'package:nesticope_app/app/constants/svg_res.dart';
 
 class IconItem {
   final String key; // e.g. AppSvgRes.office

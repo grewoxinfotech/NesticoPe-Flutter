@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
-import 'package:housing_flutter_app/modules/property/views/widgets/property_list_screen_card.dart';
+import 'package:nesticope_app/modules/property/controllers/property_controller.dart';
+import 'package:nesticope_app/modules/property/views/widgets/property_list_screen_card.dart';
 
 import '../../../app/widgets/search_bar/custom_search_bar.dart';
 

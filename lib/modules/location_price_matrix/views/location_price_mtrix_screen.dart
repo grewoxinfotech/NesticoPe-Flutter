@@ -1,7 +1,7 @@
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-// import 'package:housing_flutter_app/data/network/location_price_matrix/model/location_price_matrix_model.dart';
+// import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+// import 'package:nesticope_app/data/network/location_price_matrix/model/location_price_matrix_model.dart';
 // import '../../../app/constants/color_res.dart';
 // import '../controllers/location_price_matrix_controller.dart';
 //

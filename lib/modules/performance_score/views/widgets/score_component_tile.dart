@@ -24,7 +24,7 @@ class ScoreComponentTile extends StatelessWidget {
             style: TextStyle(
               fontSize: AppFontSizes.body,
               fontWeight: AppFontWeights.semiBold,
-              color: ColorRes.leadGreyColor[800],
+              color: ColorRes.textPrimary,
             ),
           ),
           SizedBox(height: 15),
@@ -98,8 +98,9 @@ class ScoreComponentTile extends StatelessWidget {
               title,
               style: TextStyle(
                 color: ColorRes.textPrimary,
-                fontWeight: AppFontWeights.semiBold,
+                fontWeight: AppFontWeights.medium,
                 fontSize: AppFontSizes.caption,
+                letterSpacing: 0.5,
               ),
             ),
             SizedBox(height: 4),
@@ -116,7 +117,7 @@ class ScoreComponentTile extends StatelessWidget {
               minHeight: 7,
               borderRadius: BorderRadius.circular(10),
               color: color,
-              backgroundColor: Colors.grey.shade300,
+              backgroundColor: Colors.grey.shade200,
             ),
           ],
         ),

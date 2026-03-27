@@ -1,12 +1,12 @@
 // import 'package:flutter/material.dart';
 // import 'package:flutter/services.dart';
-// import 'package:housing_flutter_app/app/constants/color_res.dart';
-// import 'package:housing_flutter_app/app/utils/validation.dart';
-// import 'package:housing_flutter_app/widgets/New%20folder/inputs/dropdown_field.dart';
-// import 'package:housing_flutter_app/widgets/New%20folder/inputs/text_field.dart'
+// import 'package:nesticope_app/app/constants/color_res.dart';
+// import 'package:nesticope_app/app/utils/validation.dart';
+// import 'package:nesticope_app/widgets/New%20folder/inputs/dropdown_field.dart';
+// import 'package:nesticope_app/widgets/New%20folder/inputs/text_field.dart'
 //     hide tile;
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/widgets/button/button.dart';
+// import 'package:nesticope_app/widgets/button/button.dart';
 //
 // import '../../../app/constants/app_font_sizes.dart';
 // import '../../../app/constants/size_manager.dart';
@@ -250,13 +250,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/utils/validation.dart';
-import 'package:housing_flutter_app/widgets/New%20folder/inputs/dropdown_field.dart';
-import 'package:housing_flutter_app/widgets/New%20folder/inputs/text_field.dart'
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/utils/validation.dart';
+import 'package:nesticope_app/widgets/New%20folder/inputs/dropdown_field.dart';
+import 'package:nesticope_app/widgets/New%20folder/inputs/text_field.dart'
     hide tile;
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/widgets/button/button.dart';
+import 'package:nesticope_app/widgets/button/button.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/size_manager.dart';
@@ -269,6 +269,7 @@ class ContractorAddInquiryScreen extends StatelessWidget {
   final Contractor contractor;
   final List<ContractorServiceItem> services;
 
+
   const ContractorAddInquiryScreen({
     super.key,
     required this.contractor,
@@ -277,13 +278,14 @@ class ContractorAddInquiryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final contractorServiceController = Get.find<ContractorServiceController>();
+    final contractorServiceController =
+        Get.find<ContractorServiceController>(tag: contractor.userId);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text(
           "Property Details",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle( fontWeight: FontWeight.bold),
         ),
       ),
       body: SingleChildScrollView(

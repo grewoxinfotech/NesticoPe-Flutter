@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/modules/home/controllers/contractor_profile_controller/contractor_profile_controller.dart';
-import 'package:housing_flutter_app/modules/home/widgets/contractor_profile_card.dart';
-import 'package:housing_flutter_app/utils/shimmer/buyer/hire_contractor/buyer_hire_contractor_list_screen_shimmer.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/modules/home/controllers/contractor_profile_controller/contractor_profile_controller.dart';
+import 'package:nesticope_app/modules/home/widgets/contractor_profile_card.dart';
+import 'package:nesticope_app/utils/shimmer/buyer/hire_contractor/buyer_hire_contractor_list_screen_shimmer.dart';
 import '../../home/widgets/unified_comparison_floating_button.dart';
 
 class AllContractorsListScreen extends StatelessWidget {
@@ -18,7 +18,6 @@ class AllContractorsListScreen extends StatelessWidget {
     );
 
     return Scaffold(
-      backgroundColor: ColorRes.white,
       appBar: AppBar(
         backgroundColor: ColorRes.white,
         elevation: 0,

@@ -2,8 +2,9 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 
 import '../../../../../app/constants/color_res.dart';
 import '../../../controllers/auth_controller.dart';
@@ -182,6 +183,10 @@ class ResellerConversionScreen extends StatelessWidget {
                                   controller.isLoading.value
                                       ? null
                                       : () {
+                                        if(UserHelper.isGuest){
+                                          Get.to(() => LoginScreen());
+
+                                        }else{
                                         if (_cityController.text.isEmpty ||
                                             _zipcodeController.text.isEmpty) {
                                           NesticoPeSnackBar.showAwesomeSnackbar(
@@ -197,7 +202,7 @@ class ResellerConversionScreen extends StatelessWidget {
                                             _zipcodeController.text.trim(),
                                           );
 
-                                        }
+                                        }}
                                       },
                               child:
                                   controller.isLoading.value

@@ -1,15 +1,15 @@
 // // // import 'package:flutter/material.dart';
 // // // import 'package:get/get.dart';
-// // // import 'package:housing_flutter_app/app/constants/color_res.dart';
-// // // import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-// // // import 'package:housing_flutter_app/app/manager/property/property_pricemanager.dart';
-// // // import 'package:housing_flutter_app/modules/common/lead_components/lead_components.dart';
-// // // import 'package:housing_flutter_app/modules/common/lead_components/lead_filter_helper.dart';
-// // // import 'package:housing_flutter_app/modules/reseller/view/lead/add_lead_screen.dart';
-// // // import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
-// // // import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
-// // // import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
-// // // import 'package:housing_flutter_app/modules/reseller/view/lead_overview/lead_detail.dart';
+// // // import 'package:nesticope_app/app/constants/color_res.dart';
+// // // import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+// // // import 'package:nesticope_app/app/manager/property/property_pricemanager.dart';
+// // // import 'package:nesticope_app/modules/common/lead_components/lead_components.dart';
+// // // import 'package:nesticope_app/modules/common/lead_components/lead_filter_helper.dart';
+// // // import 'package:nesticope_app/modules/reseller/view/lead/add_lead_screen.dart';
+// // // import 'package:nesticope_app/modules/seller/module/lead_screen/model/lead_model.dart';
+// // // import 'package:nesticope_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
+// // // import 'package:nesticope_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
+// // // import 'package:nesticope_app/modules/reseller/view/lead_overview/lead_detail.dart';
 // // //
 // // // import '../../../../data/network/property/models/property_model.dart';
 // // //
@@ -275,21 +275,21 @@
 // //
 // // import 'package:flutter/material.dart';
 // // import 'package:get/get.dart';
-// // import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-// // import 'package:housing_flutter_app/app/constants/color_res.dart';
-// // import 'package:housing_flutter_app/modules/common/lead_components/lead_components.dart';
+// // import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+// // import 'package:nesticope_app/app/constants/color_res.dart';
+// // import 'package:nesticope_app/modules/common/lead_components/lead_components.dart';
 // // // Assuming this is where showFilterBottomSheet and buildSelectedFiltersChips are defined
 // // // If they are in a different file, please import that file.
-// // import 'package:housing_flutter_app/modules/common/lead_components/lead_filter_helper.dart';
-// // import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
-// // import 'package:housing_flutter_app/modules/reseller/view/lead/add_lead_screen.dart';
-// // import 'package:housing_flutter_app/modules/reseller/view/lead_overview/lead_detail.dart';
-// // import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
-// // import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
+// // import 'package:nesticope_app/modules/common/lead_components/lead_filter_helper.dart';
+// // import 'package:nesticope_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
+// // import 'package:nesticope_app/modules/reseller/view/lead/add_lead_screen.dart';
+// // import 'package:nesticope_app/modules/reseller/view/lead_overview/lead_detail.dart';
+// // import 'package:nesticope_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
+// // import 'package:nesticope_app/modules/seller/module/lead_screen/model/lead_model.dart';
 // //
 // // // Additional controllers needed for the logic copied from BuilderLeads
-// // import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_property_inquiry_controller.dart';
-// // import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_visit_controller.dart';
+// // import 'package:nesticope_app/modules/seller/module/lead_screen/controllers/lead_property_inquiry_controller.dart';
+// // import 'package:nesticope_app/modules/seller/module/lead_screen/controllers/lead_visit_controller.dart';
 // //
 // // import '../../../../widgets/bottom_sheet/widgets/lead_filter_chips.dart';
 // // import '../../../../widgets/messages/snack_bar.dart';
@@ -577,20 +577,20 @@
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
 //
-// import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-// import 'package:housing_flutter_app/app/constants/color_res.dart';
+// import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+// import 'package:nesticope_app/app/constants/color_res.dart';
 //
-// import 'package:housing_flutter_app/modules/common/lead_components/lead_components.dart';
-// import 'package:housing_flutter_app/modules/common/lead_components/lead_filter_helper.dart';
+// import 'package:nesticope_app/modules/common/lead_components/lead_components.dart';
+// import 'package:nesticope_app/modules/common/lead_components/lead_filter_helper.dart';
 //
-// import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
-// import 'package:housing_flutter_app/modules/reseller/view/lead/add_lead_screen.dart';
-// import 'package:housing_flutter_app/modules/reseller/view/lead_overview/lead_detail.dart';
+// import 'package:nesticope_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
+// import 'package:nesticope_app/modules/reseller/view/lead/add_lead_screen.dart';
+// import 'package:nesticope_app/modules/reseller/view/lead_overview/lead_detail.dart';
 //
-// import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
-// import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_property_inquiry_controller.dart';
-// import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_visit_controller.dart';
-// import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
+// import 'package:nesticope_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
+// import 'package:nesticope_app/modules/seller/module/lead_screen/controllers/lead_property_inquiry_controller.dart';
+// import 'package:nesticope_app/modules/seller/module/lead_screen/controllers/lead_visit_controller.dart';
+// import 'package:nesticope_app/modules/seller/module/lead_screen/model/lead_model.dart';
 //
 // import '../../../../widgets/bottom_sheet/widgets/lead_filter_chips.dart';
 // import '../../../../widgets/messages/snack_bar.dart';
@@ -939,21 +939,21 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
 
-import 'package:housing_flutter_app/modules/common/lead_components/lead_components.dart';
-import 'package:housing_flutter_app/modules/common/lead_components/lead_filter_helper.dart';
+import 'package:nesticope_app/modules/common/lead_components/lead_components.dart';
+import 'package:nesticope_app/modules/common/lead_components/lead_filter_helper.dart';
 
-import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
-import 'package:housing_flutter_app/modules/reseller/view/lead/add_lead_screen.dart';
-import 'package:housing_flutter_app/modules/reseller/view/lead_overview/lead_detail.dart';
+import 'package:nesticope_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
+import 'package:nesticope_app/modules/reseller/view/lead/add_lead_screen.dart';
+import 'package:nesticope_app/modules/reseller/view/lead_overview/lead_detail.dart';
 
-import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
-import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_property_inquiry_controller.dart';
-import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_visit_controller.dart';
-import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
-import 'package:housing_flutter_app/utils/shimmer/common_screen/lead_screen/lead_list_screen_shimmer.dart';
+import 'package:nesticope_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
+import 'package:nesticope_app/modules/seller/module/lead_screen/controllers/lead_property_inquiry_controller.dart';
+import 'package:nesticope_app/modules/seller/module/lead_screen/controllers/lead_visit_controller.dart';
+import 'package:nesticope_app/modules/seller/module/lead_screen/model/lead_model.dart';
+import 'package:nesticope_app/utils/shimmer/common_screen/lead_screen/lead_list_screen_shimmer.dart';
 
 import '../../../../data/network/builder/model/builder_model.dart';
 import '../../../../utils/excel/generate_excel.dart';

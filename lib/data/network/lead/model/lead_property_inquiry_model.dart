@@ -168,6 +168,11 @@ class PropertyInquireMeta {
   final String? timePeriod;
   final String? visitDate;
   final String? visitTime;
+  final String? notes;
+  final String? userType;
+  final String? offerTitle;
+  final String? offerDiscount;
+
 
   PropertyInquireMeta({
     this.negotiablePrice,
@@ -175,6 +180,10 @@ class PropertyInquireMeta {
     this.timePeriod,
     this.visitDate,
     this.visitTime,
+    this.notes,
+    this.userType,
+    this.offerTitle,
+    this.offerDiscount,
   });
 
   factory PropertyInquireMeta.fromMap(Map<String, dynamic> map) {
@@ -189,6 +198,10 @@ class PropertyInquireMeta {
       timePeriod: map['timePeriod'],
       visitDate: map['visitDate'],
       visitTime: map['visitTime'],
+      notes: map['notes'],
+      userType: map['userType'],
+      offerTitle: map['offerTitle'],
+      offerDiscount: map['offerDiscount'],
     );
   }
 
@@ -199,6 +212,10 @@ class PropertyInquireMeta {
       'timePeriod': timePeriod,
       'visitDate': visitDate,
       'visitTime': visitTime,
+      'notes': notes,
+      'userType': userType,
+      'offerTitle': offerTitle,
+      'offerDiscount': offerDiscount,
     };
   }
 }
@@ -226,7 +243,7 @@ class PropertyDetails {
       propertyType: map['propertyType'],
       listingType: map['listingType'],
       city: map['city'],
-      price: map['price'],
+      price: _parseNum(map['price']),
       priceType: map['priceType'],
     );
   }
@@ -240,6 +257,24 @@ class PropertyDetails {
       'price': price,
       'priceType': priceType,
     };
+  }
+
+  static num? _parseNum(dynamic value) {
+    if (value == null) return null;
+    if (value is num) return value;
+    if (value is String) return num.tryParse(value);
+    if (value is Map<String, dynamic>) {
+      final candidates = ['price', 'amount', 'value'];
+      for (final key in candidates) {
+        final v = value[key];
+        if (v is num) return v;
+        if (v is String) {
+          final n = num.tryParse(v);
+          if (n != null) return n;
+        }
+      }
+    }
+    return null;
   }
 }
 

@@ -1,7 +1,7 @@
 // import 'dart:convert';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-// import 'package:housing_flutter_app/data/network/support_ticket/models/chat_model/chat_model.dart';
+// import 'package:nesticope_app/data/database/secure_storage_service.dart';
+// import 'package:nesticope_app/data/network/support_ticket/models/chat_model/chat_model.dart';
 // import '../../../data/network/support_ticket/service/chat_service/chat_service.dart';
 // import '../../../utils/logger/app_logger.dart';
 //
@@ -184,8 +184,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/data/network/support_ticket/models/chat_model/chat_model.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/data/network/support_ticket/models/chat_model/chat_model.dart';
 import '../../../data/network/support_ticket/service/chat_service/chat_service.dart';
 import '../../../utils/logger/app_logger.dart';
 
@@ -231,9 +231,22 @@ class SocketController extends GetxController {
           case 'connect':
             isConnected.value = true;
             connectionError.value = '';
+            // Ensure UI does not spin forever even if no initial payload arrives
+            if (isLoading.value) {
+              isLoading.value = false;
+            }
+            final rid = roomId.value;
+            if (rid.isNotEmpty) {
+              _socketService.joinTicket(rid);
+            }
             break;
 
           case 'initial_chat':
+            initialChat(event.data);
+            break;
+
+          // Some backends return chat history under a different event
+          case 'ticket_messages':
             initialChat(event.data);
             break;
 
@@ -267,7 +280,9 @@ class SocketController extends GetxController {
   //---------------------------------------------------------------------------
   void joinTicket(String ticketId) {
     roomId.value = ticketId;
-    _socketService.joinTicket(ticketId);
+    if (isConnected.value) {
+      _socketService.joinTicket(ticketId);
+    }
   }
 
   void leaveTicket(String ticketId) {

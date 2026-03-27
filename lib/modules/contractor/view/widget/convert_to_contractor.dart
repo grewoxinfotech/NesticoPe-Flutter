@@ -3,7 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
 
 import '../../../../../app/constants/color_res.dart';
 import '../../../../widgets/input/city_selection_widget.dart';
@@ -213,15 +214,19 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
                                           controller.isLoading.value
                                               ? null
                                               : () {
-                                                controller
-                                                    .convertBuyerToContractor(
-                                                      controller
-                                                          .selectedCityZ
-                                                          .text,
-                                                      controller
-                                                          .contractorType
-                                                          .value,
-                                                    );
+                                                if (UserHelper.isGuest) {
+                                                  Get.to(() => LoginScreen());
+                                                } else {
+                                                  controller
+                                                      .convertBuyerToContractor(
+                                                        controller
+                                                            .selectedCityZ
+                                                            .text,
+                                                        controller
+                                                            .contractorType
+                                                            .value,
+                                                      );
+                                                }
                                               },
                                       child:
                                           controller.isLoading.value
@@ -357,16 +362,16 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Positioned(
-                    top: 0,
-                    right: 16,
-                    child: SafeArea(
-                      child: IconButton(
-                        icon: const Icon(Icons.close, color: Colors.white),
-                        onPressed: () => Get.back(),
-                      ),
-                    ),
-                  ),
+                  // Positioned(
+                  //   top: 0,
+                  //   right: 16,
+                  //   child: SafeArea(
+                  //     child: IconButton(
+                  //       icon: const Icon(Icons.close, color: Colors.white),
+                  //       onPressed: () => Get.back(),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),

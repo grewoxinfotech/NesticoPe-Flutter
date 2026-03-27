@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/modules/contractor/controller/contractor_lead_controller.dart' hide capitalizeEachWord;
-import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/modules/contractor/controller/contractor_lead_controller.dart'
+    hide capitalizeEachWord;
+import 'package:nesticope_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../app/constants/svg_res.dart';
@@ -26,14 +27,23 @@ class BuilderLeadOverView extends StatelessWidget {
   final ProjectItem project;
   final bool isFromResellerProject;
 
-  BuilderLeadOverView({super.key, required this.lead, required this.project, this.isFromResellerProject=false});
+  BuilderLeadOverView({
+    super.key,
+    required this.lead,
+    required this.project,
+    this.isFromResellerProject = false,
+  });
 
   final BuilderLeadOverviewController controller = Get.put(
     BuilderLeadOverviewController(),
   );
-  final LeadPropertyInquiryController leadPropertyInquiryController=Get.find<LeadPropertyInquiryController>();
-  final LeadVisitController leadVisitController=Get.find<LeadVisitController>();
-  final LeadPropertyNegotiablePriceController leadPropertyNegotiablePriceController=Get.find<LeadPropertyNegotiablePriceController>();
+  final LeadPropertyInquiryController leadPropertyInquiryController =
+      Get.find<LeadPropertyInquiryController>();
+  final LeadVisitController leadVisitController =
+      Get.find<LeadVisitController>();
+  final LeadPropertyNegotiablePriceController
+  leadPropertyNegotiablePriceController =
+      Get.find<LeadPropertyNegotiablePriceController>();
 
   @override
   Widget build(BuildContext context) {
@@ -71,141 +81,237 @@ class BuilderLeadOverView extends StatelessWidget {
             if (project.mediaGallery != null &&
                 project.mediaGallery!.images.isNotEmpty)
               SizedBox(height: 15),
-              _buildMediaGallery(
-
-                project
-              ),
+            _buildMediaGallery(project),
 
             /// ================= Configurations =================
-              SizedBox(height: 15),
+            SizedBox(height: 15),
             _buildSectionTitle("Configurations"),
             SizedBox(height: 10),
             _buildConfigurations(),
 
             /// ================= Amenities =================
-            if (project.amenities.isNotEmpty)
-
-              _buildAmenities(),
+            if (project.amenities.isNotEmpty) _buildAmenities(),
 
             if (project?.brochures.isNotEmpty ?? false) ...[
               _buildDocuments(controller, project!),
             ],
+
             /// ================= Project Highlights =================
             if (project.projectHighlights.isNotEmpty)
               const SizedBox(height: 15),
-              _buildProjectHighlights(),
+            _buildProjectHighlights(),
 
             /// ================= Interest & Documents =================
             _buildInterestSection(),
             const SizedBox(height: 8),
-           if(!isFromResellerProject)...[
-             ListTile(
-               tileColor: ColorRes.white,
-               title: Text(
-                 'Visit',
-                 style: TextStyle(
-                   fontSize: AppFontSizes.medium,
-                   fontWeight: AppFontWeights.semiBold,
-                 ),
-               ),
-               leading: Icon(Icons.history, color: ColorRes.primary),
-               trailing: Icon(Icons.arrow_forward_ios_rounded),
-               onTap: () {
-                 debugPrint('Fetching lead details for ${lead.id}');
-                 leadVisitController.getLeadId(lead.id);
+            if (!isFromResellerProject) ...[
+              //  ListTile(
+              //    tileColor: ColorRes.white,
+              //    title: Text(
+              //      'Visit',
+              //      style: TextStyle(
+              //        fontSize: AppFontSizes.medium,
+              //        fontWeight: AppFontWeights.semiBold,
+              //      ),
+              //    ),
+              //    leading: Icon(Icons.history, color: ColorRes.primary),
+              //    trailing: Icon(Icons.arrow_forward_ios_rounded),
+              //    onTap: () {
+              //      debugPrint('Fetching lead details for ${lead.id}');
+              //      leadVisitController.getLeadId(lead.id);
 
+              //      // final buyerId=propertyInquiryController?.selectedInquiry.value?.userId;
+              //      // final propertyId=propertyInquiryController?.selectedInquiry.value?.propertyId;
 
-                 // final buyerId=propertyInquiryController?.selectedInquiry.value?.userId;
-                 // final propertyId=propertyInquiryController?.selectedInquiry.value?.propertyId;
+              //      print(
+              //        "Buyer Data ${leadPropertyInquiryController?.selectedInquiry.value?.userId}============== ${leadPropertyInquiryController?.selectedInquiry.value?.propertyId}",
+              //      );
 
-                 print(
-                   "Buyer Data ${leadPropertyInquiryController?.selectedInquiry.value?.userId}============== ${leadPropertyInquiryController?.selectedInquiry.value?.propertyId}",
-                 );
+              //      Get.to(
+              //            () => LeadVisit(
+              //          leadVisitController: leadVisitController,
+              //          propertyInquiryController:
 
-                 Get.to(
-                       () => LeadVisit(
-                     leadVisitController: leadVisitController,
-                     propertyInquiryController:
+              //          leadPropertyInquiryController,
+              //          buyerID: leadPropertyInquiryController?.selectedInquiry.value?.userId,
+              //          propertyId:
+              //          project.id,
+              //        ),
+              //      );
+              //    },
+              //  ),
+              _buildMenuItem(
+                iconColor: ColorRes.primary,
+                title: "Visit",
+                icon: Icons.history,
+                onTap: () {
+                  debugPrint('Fetching lead details for ${lead.id}');
+                  leadVisitController.getLeadId(lead.id);
 
-                     leadPropertyInquiryController,
-                     buyerID: leadPropertyInquiryController?.selectedInquiry.value?.userId,
-                     propertyId:
-                     project.id,
-                   ),
-                 );
-               },
-             ),
-             const SizedBox(height: 8),
-             ListTile(
-               tileColor: ColorRes.white,
-               title: Text(
-                 'Negotiable',
-                 style: TextStyle(
-                   fontSize: AppFontSizes.medium,
-                   fontWeight: AppFontWeights.semiBold,
-                 ),
-               ),
-               leading: Icon(Icons.currency_rupee_outlined, color: ColorRes.primary),
-               trailing: Icon(Icons.arrow_forward_ios_rounded),
-               onTap: () {
-                 final selectedInquiry =
-                     leadPropertyInquiryController?.selectedInquiry.value;
+                  // final buyerId=propertyInquiryController?.selectedInquiry.value?.userId;
+                  // final propertyId=propertyInquiryController?.selectedInquiry.value?.propertyId;
 
-                 if (selectedInquiry != null) {
-                   // Set visit id
-                   print(
-                     'Setting visit ID for user ${selectedInquiry.userId} and property ${selectedInquiry.propertyId}',
-                   );
-                   leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
-                     selectedInquiry.propertyId ?? '',
-                     buyerID:  selectedInquiry.userId ?? '',
-                   );
-                   print(
-                     'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
-                   );
-                 }
-                 Get.to(
-                       () => LeadNegotiablePriceScreen(
-                     controller: leadPropertyNegotiablePriceController,
-                   ),
-                 );
-               },
-             ),
-             const SizedBox(height: 8),
-           ],
+                  print(
+                    "Buyer Data ${leadPropertyInquiryController?.selectedInquiry.value?.userId}============== ${leadPropertyInquiryController?.selectedInquiry.value?.propertyId}",
+                  );
 
-            SafeArea(
+                  Get.to(
+                    () => LeadVisit(
+                      leadVisitController: leadVisitController,
+                      propertyInquiryController: leadPropertyInquiryController,
+                      buyerID:
+                          leadPropertyInquiryController
+                              ?.selectedInquiry
+                              .value
+                              ?.userId,
+                      propertyId: project.id,
+                    ),
+                  );
+                },
+                iconBg: ColorRes.primary.withOpacity(0.1),
 
-              child: ListTile(
-                tileColor: ColorRes.white,
-                title: Text(
-                  'Follow Ups',
-                  style: TextStyle(
-                    fontSize: AppFontSizes.medium,
-                    fontWeight: AppFontWeights.semiBold,
-                  ),
-                ),
-                leading: Icon(Icons.follow_the_signs, color: ColorRes.primary),
-                trailing: Icon(Icons.arrow_forward_ios_rounded),
+                subtitle: 'View visit history',
+              ),
+
+              const SizedBox(height: 8),
+              // ListTile(
+              //   tileColor: ColorRes.white,
+              //   title: Text(
+              //     'Negotiable',
+              //     style: TextStyle(
+              //       fontSize: AppFontSizes.medium,
+              //       fontWeight: AppFontWeights.semiBold,
+              //     ),
+              //   ),
+              //   leading: Icon(
+              //     Icons.currency_rupee_outlined,
+              //     color: ColorRes.primary,
+              //   ),
+              //   trailing: Icon(Icons.arrow_forward_ios_rounded),
+              //   onTap: () {
+              //     final selectedInquiry =
+              //         leadPropertyInquiryController?.selectedInquiry.value;
+
+              //     if (selectedInquiry != null) {
+              //       // Set visit id
+              //       print(
+              //         'Setting visit ID for user ${selectedInquiry.userId} and property ${selectedInquiry.propertyId}',
+              //       );
+              //       leadPropertyNegotiablePriceController
+              //           .setLeadNegotiablePriceId(
+              //             selectedInquiry.propertyId ?? '',
+              //             buyerID: selectedInquiry.userId ?? '',
+              //           );
+              //       print(
+              //         'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
+              //       );
+              //     }
+              //     Get.to(
+              //       () => LeadNegotiablePriceScreen(
+              //         controller: leadPropertyNegotiablePriceController,
+              //       ),
+              //     );
+              //   },
+              // ),
+              _buildMenuItem(
+                iconColor: ColorRes.green,
+                title: "Negotiable",
+                icon: Icons.currency_rupee_outlined,
                 onTap: () {
                   final selectedInquiry =
                       leadPropertyInquiryController?.selectedInquiry.value;
+
                   if (selectedInquiry != null) {
                     // Set visit id
                     print(
                       'Setting visit ID for user ${selectedInquiry.userId} and property ${selectedInquiry.propertyId}',
                     );
-                    leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
-                      selectedInquiry.propertyId ?? '',
-                      buyerID:   selectedInquiry.userId??'',
-                    );
+                    leadPropertyNegotiablePriceController
+                        .setLeadNegotiablePriceId(
+                          selectedInquiry.propertyId ?? '',
+                          buyerID: selectedInquiry.userId ?? '',
+                        );
                     print(
                       'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
                     );
                   }
-                  Get.to(() => LeadFollowUpScreen(controller: leadVisitController));
+                  Get.to(
+                    () => LeadNegotiablePriceScreen(
+                      controller: leadPropertyNegotiablePriceController,
+                    ),
+                  );
                 },
+                iconBg: ColorRes.green.withOpacity(0.1),
+
+                subtitle: 'New potential buyers',
               ),
+              const SizedBox(height: 8),
+            ],
+
+            // SafeArea(
+            //   child: ListTile(
+            //     tileColor: ColorRes.white,
+            //     title: Text(
+            //       'Follow Ups',
+            //       style: TextStyle(
+            //         fontSize: AppFontSizes.medium,
+            //         fontWeight: AppFontWeights.semiBold,
+            //       ),
+            //     ),
+            //     leading: Icon(Icons.follow_the_signs, color: ColorRes.primary),
+            //     trailing: Icon(Icons.arrow_forward_ios_rounded),
+            //     onTap: () {
+            //       final selectedInquiry =
+            //           leadPropertyInquiryController?.selectedInquiry.value;
+            //       if (selectedInquiry != null) {
+            //         // Set visit id
+            //         print(
+            //           'Setting visit ID for user ${selectedInquiry.userId} and property ${selectedInquiry.propertyId}',
+            //         );
+            //         leadPropertyNegotiablePriceController
+            //             .setLeadNegotiablePriceId(
+            //               selectedInquiry.propertyId ?? '',
+            //               buyerID: selectedInquiry.userId ?? '',
+            //             );
+            //         print(
+            //           'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
+            //         );
+            //       }
+            //       Get.to(
+            //         () => LeadFollowUpScreen(controller: leadVisitController),
+            //       );
+            //     },
+            //   ),
+            SafeArea(
+              child: _buildMenuItem(
+                  iconColor: ColorRes.purpleColor,
+                  title: "Follow Ups",
+                  icon: Icons.follow_the_signs,
+                   onTap: () {
+                    final selectedInquiry =
+                        leadPropertyInquiryController?.selectedInquiry.value;
+                    if (selectedInquiry != null) {
+                      // Set visit id
+                      print(
+                        'Setting visit ID for user ${selectedInquiry.userId} and property ${selectedInquiry.propertyId}',
+                      );
+                      leadPropertyNegotiablePriceController
+                          .setLeadNegotiablePriceId(
+                            selectedInquiry.propertyId ?? '',
+                            buyerID: selectedInquiry.userId ?? '',
+                          );
+                      print(
+                        'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
+                      );
+                    }
+                    Get.to(
+                      () => LeadFollowUpScreen(controller: leadVisitController),
+                    );
+                  },
+                  iconBg: ColorRes.purpleColor.withOpacity(0.1),
+              
+                  subtitle: 'View follow ups',
+                ),
             ),
 
             const SizedBox(height: 32),
@@ -214,7 +320,89 @@ class BuilderLeadOverView extends StatelessWidget {
       ),
     );
   }
-  Widget _buildDocuments(BuilderLeadOverviewController controller, ProjectItem project) {
+
+  Widget _buildMenuItem({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color iconBg,
+    required Color iconColor,
+    required VoidCallback onTap,
+    bool showDivider = true,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            color: ColorRes.white,
+            child: Row(
+              children: [
+                /// Icon Box
+                Container(
+                  height: 44,
+                  width: 44,
+                  decoration: BoxDecoration(
+                    color: iconBg,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: iconColor, size: 20),
+                ),
+
+                const SizedBox(width: 14),
+
+                /// Title + Subtitle
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: AppFontSizes.medium,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.leadGreyColor[900],
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          fontSize: AppFontSizes.caption,
+                          color: ColorRes.leadGreyColor[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                /// Arrow
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 18,
+                  color: ColorRes.leadGreyColor[500],
+                ),
+              ],
+            ),
+          ),
+
+          /// Divider
+          if (showDivider)
+            Divider(
+              height: 1,
+              thickness: 1,
+              color: ColorRes.leadGreyColor.shade200,
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDocuments(
+    BuilderLeadOverviewController controller,
+    ProjectItem project,
+  ) {
     return Container(
       margin: const EdgeInsets.only(top: 8),
       padding: const EdgeInsets.all(16),
@@ -269,8 +457,8 @@ class BuilderLeadOverView extends StatelessWidget {
         ],
       ),
     );
-
   }
+
   Widget _buildDocumentItem({
     required IconData icon,
     required String title,
@@ -318,6 +506,7 @@ class BuilderLeadOverView extends StatelessWidget {
       ),
     );
   }
+
   Widget _buildLeadHeader() {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -579,13 +768,12 @@ class BuilderLeadOverView extends StatelessWidget {
                     ),
                   ),
                 ),
-
               ],
             ),
 
           // Project Info
           Padding(
-            padding:  EdgeInsets.symmetric(horizontal: 16,vertical: 12),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -602,11 +790,10 @@ class BuilderLeadOverView extends StatelessWidget {
                 const SizedBox(height: 6),
                 Row(
                   children: [
-
                     Expanded(
                       child: Text(
                         "${project.city}, ${project.state}",
-                        style:  TextStyle(
+                        style: TextStyle(
                           fontSize: AppFontSizes.small,
                           color: ColorRes.textSecondary,
                         ),
@@ -671,7 +858,6 @@ class BuilderLeadOverView extends StatelessWidget {
                     color: ColorRes.textSecondary,
                   ),
                 ),
-
               ],
             ),
           ),
@@ -686,7 +872,7 @@ class BuilderLeadOverView extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorRes.surface,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: ColorRes.leadGreyColor.shade300,width: 1),
+        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -730,8 +916,7 @@ class BuilderLeadOverView extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16,),
-
+      padding: const EdgeInsets.symmetric(horizontal: 16),
 
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -774,8 +959,10 @@ class BuilderLeadOverView extends StatelessWidget {
                       color: Colors.black12,
                       borderRadius: BorderRadius.circular(8),
 
-                          border: Border.all(color: ColorRes.leadGreyColor.shade300,width: 1)
-
+                      border: Border.all(
+                        color: ColorRes.leadGreyColor.shade300,
+                        width: 1,
+                      ),
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
@@ -784,25 +971,25 @@ class BuilderLeadOverView extends StatelessWidget {
                         children: [
                           isVideo
                               ? buildVideoThumbnail(
-                            url,
-                            height: 120,
-                            width: 160,
-                          )
+                                url,
+                                height: 120,
+                                width: 160,
+                              )
                               : Image.network(
-                            url,
-                            fit: BoxFit.cover,
-                            height: 120,
-                            width: 160,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                color: Colors.grey[300],
-                                child: const Icon(
-                                  Icons.broken_image,
-                                  color: Colors.grey,
-                                ),
-                              );
-                            },
-                          ),
+                                url,
+                                fit: BoxFit.cover,
+                                height: 120,
+                                width: 160,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    color: Colors.grey[300],
+                                    child: const Icon(
+                                      Icons.broken_image,
+                                      color: Colors.grey,
+                                    ),
+                                  );
+                                },
+                              ),
 
                           /// ✅ Play icon overlay for videos
                           if (isVideo)
@@ -830,11 +1017,12 @@ class BuilderLeadOverView extends StatelessWidget {
       ),
     );
   }
+
   Widget _buildConfigurations() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Obx(
-            () => Column(
+        () => Column(
           children: List.generate(project.configuration.length, (index) {
             final config = project.configuration[index];
             final expanded = controller.isConfigExpanded[index];
@@ -894,193 +1082,219 @@ class BuilderLeadOverView extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                       child: Column(
-                        children: List.generate(
-                          config.variants.length,
-                              (variantIndex) {
-                            final variant = config.variants[variantIndex];
-                            final isLastVariant = variantIndex == config.variants.length - 1;
+                        children: List.generate(config.variants.length, (
+                          variantIndex,
+                        ) {
+                          final variant = config.variants[variantIndex];
+                          final isLastVariant =
+                              variantIndex == config.variants.length - 1;
 
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Divider before each variant
-                                _buildDivider(),
-                                const SizedBox(height: 12),
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Divider before each variant
+                              _buildDivider(),
+                              const SizedBox(height: 12),
 
-                                // Variant Name and Details
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        variant.name,
-                                        style: const TextStyle(
-                                          fontWeight: AppFontWeights.semiBold,
-                                          color: ColorRes.textPrimary,
-                                          fontSize: AppFontSizes.medium,
-                                        ),
+                              // Variant Name and Details
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      variant.name,
+                                      style: const TextStyle(
+                                        fontWeight: AppFontWeights.semiBold,
+                                        color: ColorRes.textPrimary,
+                                        fontSize: AppFontSizes.medium,
                                       ),
                                     ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-
-                                // Area Information
-                                Text(
-                                  "${Formatter.formatNumber(variant.builtUpArea)} sqft Built-up  -  ${Formatter.formatNumber(variant.carpetArea.toInt())} sqft Carpet",
-                                  style: const TextStyle(
-                                    color: ColorRes.textSecondary,
-                                    fontSize: AppFontSizes.small,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-
-                                // Price Information
-                                Text(
-                                  "${Formatter.formatPrice(variant.price)}",
-                                  style: const TextStyle(
-                                    color: ColorRes.primary,
-                                    fontSize: AppFontSizes.body,
-                                    fontWeight: AppFontWeights.semiBold,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-
-                                // Units Information
-                                Text(
-                                  "${variant.availableUnits} available of ${variant.totalUnits} units",
-                                  style: const TextStyle(
-                                    color: ColorRes.textSecondary,
-                                    fontSize: AppFontSizes.caption,
-                                  ),
-                                ),
-
-                                // Specifications
-                                if (variant.specifications.isNotEmpty) ...[
-                                  const SizedBox(height: 12),
-                                  const Text(
-                                    "SPECIFICATIONS",
-                                    style: TextStyle(
-                                      color: ColorRes.textSecondary,
-                                      fontSize: AppFontSizes.caption,
-                                      fontWeight: AppFontWeights.semiBold,
-                                      letterSpacing: 0.5,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Wrap(
-                                    spacing: 8,
-                                    runSpacing: 8,
-                                    children: variant.specifications.map((spec) {
-                                      return Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 6,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: ColorRes.primary.withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(6),
-                                        ),
-                                        child: Text(
-                                          spec,
-                                          style: const TextStyle(
-                                            color: ColorRes.textPrimary,
-                                            fontSize: AppFontSizes.caption,
-                                          ),
-                                        ),
-                                      );
-                                    }).toList(),
                                   ),
                                 ],
+                              ),
+                              const SizedBox(height: 8),
 
-                                // Gallery Images
-                                if (variant.images.isNotEmpty) ...[
-                                  const SizedBox(height: 12),
-                                  const Text(
-                                    "GALLERY",
-                                    style: TextStyle(
-                                      color: ColorRes.textSecondary,
-                                      fontSize: AppFontSizes.caption,
-                                      fontWeight: AppFontWeights.semiBold,
-                                      letterSpacing: 0.5,
-                                    ),
+                              // Area Information
+                              Text(
+                                "${Formatter.formatNumber(variant.builtUpArea)} sqft Built-up  -  ${Formatter.formatNumber(variant.carpetArea.toInt())} sqft Carpet",
+                                style: const TextStyle(
+                                  color: ColorRes.textSecondary,
+                                  fontSize: AppFontSizes.small,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+
+                              // Price Information
+                              Text(
+                                "${Formatter.formatPrice(variant.price)}",
+                                style: const TextStyle(
+                                  color: ColorRes.primary,
+                                  fontSize: AppFontSizes.body,
+                                  fontWeight: AppFontWeights.semiBold,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+
+                              // Units Information
+                              Text(
+                                "${variant.availableUnits} available of ${variant.totalUnits} units",
+                                style: const TextStyle(
+                                  color: ColorRes.textSecondary,
+                                  fontSize: AppFontSizes.caption,
+                                ),
+                              ),
+
+                              // Specifications
+                              if (variant.specifications.isNotEmpty) ...[
+                                const SizedBox(height: 12),
+                                const Text(
+                                  "SPECIFICATIONS",
+                                  style: TextStyle(
+                                    color: ColorRes.textSecondary,
+                                    fontSize: AppFontSizes.caption,
+                                    fontWeight: AppFontWeights.semiBold,
+                                    letterSpacing: 0.5,
                                   ),
-                                  const SizedBox(height: 8),
-                                  SizedBox(
-                                    height: 80,
-                                    child: ListView.builder(
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: variant.images.length > 3
-                                          ? 3
-                                          : variant.images.length,
-                                      itemBuilder: (context, imgIndex) {
-                                        final img = variant.images[imgIndex];
-                                        final remainingCount = variant.images.length - 3;
+                                ),
+                                const SizedBox(height: 8),
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children:
+                                      variant.specifications.map((spec) {
+                                        return Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 6,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: ColorRes.primary.withOpacity(
+                                              0.1,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              6,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            spec,
+                                            style: const TextStyle(
+                                              color: ColorRes.textPrimary,
+                                              fontSize: AppFontSizes.caption,
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                ),
+                              ],
 
-                                        return Stack(
-                                          children: [
-                                            Container(
-                                              margin: const EdgeInsets.only(right: 8),
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(8),
-                                                border: Border.all(
-                                                  color: ColorRes.border,
-                                                ),
-                                              ),
-                                              child: ClipRRect(
-                                                borderRadius: BorderRadius.circular(8),
-                                                child: Image.network(
-                                                  img,
-                                                  width: 100,
-                                                  height: 80,
-                                                  fit: BoxFit.cover,
-                                                  errorBuilder: (context, error, stackTrace) {
-                                                    return Container(
-                                                      width: 100,
-                                                      height: 80,
-                                                      color: ColorRes.leadGreyColor.shade200,
-                                                      child: const Icon(
-                                                        Icons.image_not_supported,
-                                                        color: ColorRes.textSecondary,
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
+                              // Gallery Images
+                              if (variant.images.isNotEmpty) ...[
+                                const SizedBox(height: 12),
+                                const Text(
+                                  "GALLERY",
+                                  style: TextStyle(
+                                    color: ColorRes.textSecondary,
+                                    fontSize: AppFontSizes.caption,
+                                    fontWeight: AppFontWeights.semiBold,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                SizedBox(
+                                  height: 80,
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount:
+                                        variant.images.length > 3
+                                            ? 3
+                                            : variant.images.length,
+                                    itemBuilder: (context, imgIndex) {
+                                      final img = variant.images[imgIndex];
+                                      final remainingCount =
+                                          variant.images.length - 3;
+
+                                      return Stack(
+                                        children: [
+                                          Container(
+                                            margin: const EdgeInsets.only(
+                                              right: 8,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              border: Border.all(
+                                                color: ColorRes.border,
                                               ),
                                             ),
-                                            // Show "+X" overlay on last image if more images exist
-                                            if (imgIndex == 2 && remainingCount > 0)
-                                              Positioned.fill(
-                                                child: Container(
-                                                  margin: const EdgeInsets.only(right: 8),
-                                                  decoration: BoxDecoration(
-                                                    color: ColorRes.overlay,
-                                                    borderRadius: BorderRadius.circular(8),
-                                                  ),
-                                                  child: Center(
-                                                    child: Text(
-                                                      "+$remainingCount",
-                                                      style: const TextStyle(
-                                                        color: ColorRes.white,
-                                                        fontSize: AppFontSizes.body,
-                                                        fontWeight: AppFontWeights.bold,
-                                                      ),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              child: Image.network(
+                                                img,
+                                                width: 100,
+                                                height: 80,
+                                                fit: BoxFit.cover,
+                                                errorBuilder: (
+                                                  context,
+                                                  error,
+                                                  stackTrace,
+                                                ) {
+                                                  return Container(
+                                                    width: 100,
+                                                    height: 80,
+                                                    color:
+                                                        ColorRes
+                                                            .leadGreyColor
+                                                            .shade200,
+                                                    child: const Icon(
+                                                      Icons.image_not_supported,
+                                                      color:
+                                                          ColorRes
+                                                              .textSecondary,
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                          // Show "+X" overlay on last image if more images exist
+                                          if (imgIndex == 2 &&
+                                              remainingCount > 0)
+                                            Positioned.fill(
+                                              child: Container(
+                                                margin: const EdgeInsets.only(
+                                                  right: 8,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: ColorRes.overlay,
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                child: Center(
+                                                  child: Text(
+                                                    "+$remainingCount",
+                                                    style: const TextStyle(
+                                                      color: ColorRes.white,
+                                                      fontSize:
+                                                          AppFontSizes.body,
+                                                      fontWeight:
+                                                          AppFontWeights.bold,
                                                     ),
                                                   ),
                                                 ),
                                               ),
-                                          ],
-                                        );
-                                      },
-                                    ),
+                                            ),
+                                        ],
+                                      );
+                                    },
                                   ),
-                                ],
-
-                                // Bottom spacing (only if not last variant)
-                                if (!isLastVariant) const SizedBox(height: 12),
+                                ),
                               ],
-                            );
-                          },
-                        ),
+
+                              // Bottom spacing (only if not last variant)
+                              if (!isLastVariant) const SizedBox(height: 12),
+                            ],
+                          );
+                        }),
                       ),
                     ),
                 ],
@@ -1092,8 +1306,7 @@ class BuilderLeadOverView extends StatelessWidget {
     );
   }
 
-// Helper method for divider
-
+  // Helper method for divider
 
   // Widget _buildConfigurations() {
   //   return Padding(
@@ -1332,7 +1545,10 @@ class BuilderLeadOverView extends StatelessWidget {
             ),
             itemCount: project.amenities.length,
             itemBuilder: (context, index) {
-              final amenity = project.amenities[index].toLowerCase().replaceAll(" ", "_");
+              final amenity = project.amenities[index].toLowerCase().replaceAll(
+                " ",
+                "_",
+              );
               print("Project deatils ${project.amenities.map((e) => e)}");
               /*final Map<String, String> amenityIcons = {
                 'Swimming Pool': AppSvgRes.swimming,
@@ -1422,12 +1638,19 @@ class BuilderLeadOverView extends StatelessWidget {
                 children: [
                   const SizedBox(height: 16),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                     decoration: BoxDecoration(
                       color: color.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: AppSvgIcon(assetName: icon, color: color, folder: 'amenities'),
+                    child: AppSvgIcon(
+                      assetName: icon,
+                      color: color,
+                      folder: 'amenities',
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -1443,7 +1666,6 @@ class BuilderLeadOverView extends StatelessWidget {
                   ),
                 ],
               );
-
             },
           ),
           // Wrap(
@@ -1465,11 +1687,11 @@ class BuilderLeadOverView extends StatelessWidget {
 
   Widget _buildProjectHighlights() {
     return Padding(
-      padding:  EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: Container(
-        padding:  EdgeInsets.symmetric(horizontal: 16),
+        padding: EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          border: Border.all(color: ColorRes.leadGreyColor.shade300,width: 1),
+          border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
           borderRadius: BorderRadius.circular(12),
           color: ColorRes.white,
         ),
@@ -1507,10 +1729,10 @@ class BuilderLeadOverView extends StatelessWidget {
                           Expanded(
                             child: Text(
                               highlight,
-                              style:  TextStyle(
+                              style: TextStyle(
                                 fontSize: AppFontSizes.small,
                                 color: ColorRes.textColor,
-                                fontWeight:AppFontWeights.regular ,
+                                fontWeight: AppFontWeights.regular,
                                 height: 1.5,
                               ),
                             ),
@@ -1528,7 +1750,7 @@ class BuilderLeadOverView extends StatelessWidget {
 
   Widget _buildInterestSection() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
           Expanded(
@@ -1537,8 +1759,10 @@ class BuilderLeadOverView extends StatelessWidget {
               decoration: BoxDecoration(
                 color: ColorRes.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: ColorRes.leadGreyColor.shade300,width: 1),
-
+                border: Border.all(
+                  color: ColorRes.leadGreyColor.shade300,
+                  width: 1,
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1572,7 +1796,8 @@ class BuilderLeadOverView extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    formatDateForGlobal(project.launchDate.toString()) ?? "Jan 10, 2024",
+                    formatDateForGlobal(project.launchDate.toString()) ??
+                        "Jan 10, 2024",
                     style: const TextStyle(
                       color: ColorRes.textSecondary,
                       fontSize: AppFontSizes.bodySmall,
@@ -1590,7 +1815,10 @@ class BuilderLeadOverView extends StatelessWidget {
               decoration: BoxDecoration(
                 color: ColorRes.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: ColorRes.leadGreyColor.shade300,width: 1),
+                border: Border.all(
+                  color: ColorRes.leadGreyColor.shade300,
+                  width: 1,
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1623,8 +1851,8 @@ class BuilderLeadOverView extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                   Text(
-                    "${project.isActive?"Active":"Inactive"}",
+                  Text(
+                    "${project.isActive ? "Active" : "Inactive"}",
                     style: TextStyle(
                       color: ColorRes.textSecondary,
                       fontWeight: AppFontWeights.medium,
@@ -1674,6 +1902,6 @@ class BuilderLeadOverView extends StatelessWidget {
   }
 
   Widget _buildDivider() {
-    return  Divider(color:  ColorRes.leadGreyColor.shade200, height: 1);
+    return Divider(color: ColorRes.leadGreyColor.shade200, height: 1);
   }
 }

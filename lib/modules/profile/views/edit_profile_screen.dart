@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/font_res.dart';
-import 'package:housing_flutter_app/widgets/New%20folder/inputs/dropdown_field.dart';
-import 'package:housing_flutter_app/widgets/button/button.dart';
+import 'package:nesticope_app/app/constants/font_res.dart';
+import 'package:nesticope_app/widgets/New%20folder/inputs/dropdown_field.dart';
+import 'package:nesticope_app/widgets/button/button.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../widgets/New folder/inputs/text_field.dart';
@@ -53,7 +53,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               Text(
                 "User Type",
                 style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                  fontFamily: FontRes.nuNunitoSans,
+                  fontFamily: FontRes.poppins,
                   fontWeight: AppFontWeights.extraBold,
                 ),
               ),

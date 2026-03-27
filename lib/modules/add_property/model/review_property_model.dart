@@ -1,6 +1,6 @@
 // ...existing code...
-import 'package:housing_flutter_app/modules/add_property/model/photo_model.dart';
-import 'package:housing_flutter_app/modules/add_property/model/room_detail_model.dart';
+import 'package:nesticope_app/modules/add_property/model/photo_model.dart';
+import 'package:nesticope_app/modules/add_property/model/room_detail_model.dart';
 
 class PropertyReviewModel {
   final bool isOwner;

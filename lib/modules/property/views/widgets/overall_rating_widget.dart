@@ -1,6 +1,6 @@
 // import 'package:flutter/material.dart';
-// import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-// import 'package:housing_flutter_app/app/constants/color_res.dart';
+// import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+// import 'package:nesticope_app/app/constants/color_res.dart';
 //
 // import '../../../../data/network/overall_rating/model/overall_rating_model.dart';
 //
@@ -124,8 +124,8 @@
 // }
 
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
 import '../../../../data/network/overall_rating/model/overall_rating_model.dart';
 
 class OverallRatingWidget extends StatelessWidget {

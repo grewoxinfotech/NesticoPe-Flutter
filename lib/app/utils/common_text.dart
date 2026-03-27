@@ -86,7 +86,7 @@ class CustomText extends StatelessWidget {
         decoration: decoration,
         decorationColor: decorationColor,
         decorationThickness: decorationThickness,
-        fontFamily: fontFamily,
+        fontFamily: fontFamily ?? 'Poppins',
         shadows: shadows,
         foreground: foreground,
         background: background,

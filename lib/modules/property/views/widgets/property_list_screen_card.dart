@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/modules/home/views/compare_screen/comapre_screen.dart';
-import 'package:housing_flutter_app/modules/property/views/property_detail_screen.dart';
+import 'package:nesticope_app/modules/home/views/compare_screen/comapre_screen.dart';
+import 'package:nesticope_app/modules/property/views/property_detail_screen.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
@@ -95,7 +95,7 @@ class PropertyListScreenCard extends StatelessWidget {
                           return GestureDetector(
                             onTap: () {
                               final before = compare.count;
-                              compare.toggle(items!, max: 2);
+                              compare.toggle(items!, max: 5);
                               final after = compare.count;
 
                               final ctx = Get.overlayContext;

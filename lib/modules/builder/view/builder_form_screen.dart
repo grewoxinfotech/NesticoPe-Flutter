@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
-import 'package:housing_flutter_app/modules/builder/view/media/upload_media_screen.dart';
-import 'package:housing_flutter_app/modules/builder/view/property_detail/property_detail.dart';
-import 'package:housing_flutter_app/modules/builder/view/review/builder_property_review.dart';
-import 'package:housing_flutter_app/modules/builder/view/widget/progress_line.dart';
-import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
+import 'package:nesticope_app/data/network/builder/model/builder_model.dart';
+import 'package:nesticope_app/modules/builder/view/media/upload_media_screen.dart';
+import 'package:nesticope_app/modules/builder/view/property_detail/property_detail.dart';
+import 'package:nesticope_app/modules/builder/view/review/builder_property_review.dart';
+import 'package:nesticope_app/modules/builder/view/widget/progress_line.dart';
+import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/color_res.dart';
 import '../controller/builder_form_controller.dart';

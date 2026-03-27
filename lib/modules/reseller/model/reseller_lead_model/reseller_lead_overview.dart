@@ -1,4 +1,4 @@
-import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
+import 'package:nesticope_app/data/network/property/models/property_model.dart';
 
 class ResellerLeadOverview {
   String id;

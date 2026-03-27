@@ -3,12 +3,12 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
-import 'package:housing_flutter_app/app/constants/api_constants.dart';
-import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/data/network/lead/model/lead_visit_model.dart';
-import 'package:housing_flutter_app/utils/logger/app_logger.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/app/constants/api_constants.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/data/network/lead/model/lead_visit_model.dart';
+import 'package:nesticope_app/utils/logger/app_logger.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../modules/seller/module/lead_screen/model/lead_model.dart';
@@ -303,13 +303,14 @@ class LeadService {
         // First page: include all filters including property_id
         queryParameters = {
           'page': page.toString(),
-          if (userId != null) 'id': userId.toString(),
+          if (userId != null && userId != 0) 'id': userId.toString(),
+          'limit': '10',
 
           if (filters != null) ...filters,
         };
       } else {
         // Subsequent pages: include all filters including property_id
-        queryParameters = {if (filters != null) ...filters, 'limit': 'all'};
+        queryParameters = {if (filters != null) ...filters,};
       }
 
       // Build the base URL

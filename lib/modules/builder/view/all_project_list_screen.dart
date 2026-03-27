@@ -1,14 +1,14 @@
 // import 'dart:developer';
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/app/constants/color_res.dart';
-// import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
-// import 'package:housing_flutter_app/modules/builder/controller/all_project_controller.dart';
-// import 'package:housing_flutter_app/modules/builder/view/project_detail/project_detail.dart';
-// import 'package:housing_flutter_app/modules/builder/view/widget/project_filter_screen.dart';
-// import 'package:housing_flutter_app/widgets/bar/app_bar/list_screen_appbar.dart';
-// import 'package:housing_flutter_app/widgets/bar/filter_bar/filter_chip_bar.dart';
-// import 'package:housing_flutter_app/widgets/empty_state/empty_state.dart';
+// import 'package:nesticope_app/app/constants/color_res.dart';
+// import 'package:nesticope_app/data/network/builder/model/builder_model.dart';
+// import 'package:nesticope_app/modules/builder/controller/all_project_controller.dart';
+// import 'package:nesticope_app/modules/builder/view/project_detail/project_detail.dart';
+// import 'package:nesticope_app/modules/builder/view/widget/project_filter_screen.dart';
+// import 'package:nesticope_app/widgets/bar/app_bar/list_screen_appbar.dart';
+// import 'package:nesticope_app/widgets/bar/filter_bar/filter_chip_bar.dart';
+// import 'package:nesticope_app/widgets/empty_state/empty_state.dart';
 //
 // import '../../../app/constants/img_res.dart';
 // import '../../filter_property/view/filter_screen.dart';
@@ -255,19 +255,20 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
-import 'package:housing_flutter_app/modules/builder/controller/all_project_controller.dart';
-import 'package:housing_flutter_app/modules/builder/view/project_detail/project_detail.dart';
-import 'package:housing_flutter_app/modules/builder/view/widget/project_filter_screen.dart';
-import 'package:housing_flutter_app/widgets/bar/app_bar/list_screen_appbar.dart';
-import 'package:housing_flutter_app/widgets/bar/filter_bar/filter_chip_bar.dart';
-import 'package:housing_flutter_app/widgets/empty_state/empty_state.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/data/network/builder/model/builder_model.dart';
+import 'package:nesticope_app/modules/builder/controller/all_project_controller.dart';
+import 'package:nesticope_app/modules/builder/view/project_detail/project_detail.dart';
+import 'package:nesticope_app/modules/builder/view/widget/project_filter_screen.dart';
+import 'package:nesticope_app/widgets/bar/app_bar/list_screen_appbar.dart';
+import 'package:nesticope_app/widgets/bar/filter_bar/filter_chip_bar.dart';
+import 'package:nesticope_app/widgets/empty_state/empty_state.dart';
 
 import '../../../app/constants/img_res.dart';
 import '../../../utils/shimmer/buyer/project/buyer_project_list_screen_shimmer.dart';
 import '../../home/widgets/unified_comparison_floating_button.dart';
-import '../../reseller/view/listing/property_listing.dart' show convertFiltersToString;
+import '../../reseller/view/listing/property_listing.dart'
+    show convertFiltersToString;
 import 'builder_property_listing.dart';
 
 // class AllProjectListScreen extends StatefulWidget {
@@ -468,12 +469,12 @@ import 'builder_property_listing.dart';
 //   }
 // }
 
-
 class AllProjectListScreen extends StatefulWidget {
   final List<Map<String, String>>? filters;
   final bool isAppBarShow;
   final bool isFromSeeAll;
   final bool isbuilder;
+  final bool withoutApprovalAndVerification;
 
   const AllProjectListScreen({
     super.key,
@@ -481,6 +482,7 @@ class AllProjectListScreen extends StatefulWidget {
     this.isAppBarShow = true,
     this.isFromSeeAll = false,
     this.isbuilder = true,
+    this.withoutApprovalAndVerification = false,
   });
 
   @override
@@ -500,6 +502,7 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
   /// 🔒 Hard-locked filter (never shown, never removed)
   static const Map<String, String> _lockedFilters = {
     "approval_status": "approved",
+    "isVerified": "true",
   };
 
   bool _isLoading = true; // ✅ Start with loading state
@@ -519,7 +522,6 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
       }
 
       setState(() {
-
         selectedFilters = uiFilters;
       });
       _applyFilters();
@@ -545,7 +547,17 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
 
   /// 🔁 Always merges locked + user filters
   void _applyFilters() {
-    controller.applyFilters({..._lockedFilters, ...selectedFilters});
+    if (widget.withoutApprovalAndVerification) {
+      selectedFilters.removeWhere(
+        (key, value) => key == 'approval_status' || key == 'isVerified',
+      );
+    }
+
+    if (widget.withoutApprovalAndVerification) {
+      controller.applyFilters({..._lockedFilters, ...selectedFilters});
+    } else {
+      controller.applyFilters({...selectedFilters});
+    }
   }
 
   @override
@@ -560,14 +572,13 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
 
         onFilterTap: () async {
           final result = await Get.to(
-                () => ResellerProjectFilterScreen(
-             /* initialFilters: Map<String, String>.from(selectedFilters),
+            () => ResellerProjectFilterScreen(
+              /* initialFilters: Map<String, String>.from(selectedFilters),
               onApply: (filterData) {
                 filterData.removeWhere((key, value) => ( value == 'false'),);
 
                 Get.back(result: filterData);
               },*/
-
             ),
             transition: Transition.downToUp,
             duration: const Duration(milliseconds: 300),
@@ -609,69 +620,78 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
                 ),
 
                 Expanded(
-                  child: _isLoading && _items.isEmpty
-                      ? BuyerProjectListScreenShimmer()
-                      : !_isLoading && _items.isEmpty
-                      ? const EmptyStateWidget(
-                    icon: Icons.search_off_rounded,
-                    title: "No projects found",
-                    subtitle: "No approved projects available",
-                  )
-                      : NotificationListener<ScrollNotification>(
-                    onNotification: (scrollEnd) {
-                      final metrics = scrollEnd.metrics;
-                      if (metrics.atEdge && metrics.pixels != 0) {
-                        controller.loadMore();
-                      }
-                      return false;
-                    },
-                    child: RefreshIndicator(
-                      onRefresh: controller.refreshList,
-                      child: ListView.separated(
-                        padding: const EdgeInsets.all(12),
-                        separatorBuilder: (_, __) => const SizedBox(height: 12),
-                        itemCount: _items.length,
-                        itemBuilder: (context, index) {
-                          final ProjectItem data = _items[index];
-
-
-                          return GestureDetector(
-                            onTap: () {
-                              Get.to(
-                                    () => ProjectDetailsScreen(
-                                  projectItem: data,
-                                  isFromPanel: true,
-                                  isBuilder: widget.isbuilder,
-                                ),
-                              );
+                  child:
+                      _isLoading && _items.isEmpty
+                          ? BuyerProjectListScreenShimmer()
+                          : !_isLoading && _items.isEmpty
+                          ? const EmptyStateWidget(
+                            icon: Icons.search_off_rounded,
+                            title: "No projects found",
+                            subtitle: "No approved projects available",
+                          )
+                          : NotificationListener<ScrollNotification>(
+                            onNotification: (scrollEnd) {
+                              final metrics = scrollEnd.metrics;
+                              if (metrics.atEdge && metrics.pixels != 0) {
+                                controller.loadMore();
+                              }
+                              return false;
                             },
-                            child: BuilderProjectCard(
-                              forHome: true,
-                              project: data,
-                              width: double.infinity,
-                              height: 150,
-                              developersName:
-                              data.projectContactInfo?.name ?? 'Unknown',
-                              imageUrl: (data.mediaGallery?.images?.isNotEmpty ??
-                                  false)
-                                  ? data.mediaGallery!.images.first
-                                  : IMGRes.home3,
-                              projectName: data.projectName.isNotEmpty
-                                  ? data.projectName
-                                  : 'N/A',
-                              location: data.address.isNotEmpty
-                                  ? data.address
-                                  : 'Not specified',
-                              price: data.getPriceRange(),
-                              propertySize:
-                              data.projectSize?.totalBuildings?.toString() ??
-                                  '—',
+                            child: RefreshIndicator(
+                              onRefresh: controller.refreshList,
+                              child: ListView.separated(
+                                padding: const EdgeInsets.all(12),
+                                separatorBuilder:
+                                    (_, __) => const SizedBox(height: 12),
+                                itemCount: _items.length,
+                                itemBuilder: (context, index) {
+                                  final ProjectItem data = _items[index];
+
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Get.to(
+                                        () => ProjectDetailsScreen(
+                                          projectItem: data,
+                                          isFromPanel: true,
+                                          isBuilder: widget.isbuilder,
+                                        ),
+                                      );
+                                    },
+                                    child: BuilderProjectCard(
+                                      forHome: true,
+                                      project: data,
+                                      width: double.infinity,
+                                      height: 150,
+                                      developersName:
+                                          data.projectContactInfo?.name ??
+                                          'Unknown',
+                                      imageUrl:
+                                          (data
+                                                      .mediaGallery
+                                                      ?.images
+                                                      ?.isNotEmpty ??
+                                                  false)
+                                              ? data.mediaGallery!.images.first
+                                              : IMGRes.home3,
+                                      projectName:
+                                          data.projectName.isNotEmpty
+                                              ? data.projectName
+                                              : 'N/A',
+                                      location:
+                                          data.address.isNotEmpty
+                                              ? data.address
+                                              : 'Not specified',
+                                      price: data.getPriceRange(),
+                                      propertySize:
+                                          data.projectSize?.totalBuildings
+                                              ?.toString() ??
+                                          '—',
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
+                          ),
                 ),
               ],
             ),

@@ -1,11 +1,11 @@
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
-import 'package:housing_flutter_app/modules/add_property/view/create_property.dart'
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/modules/add_property/controller/create_property_controller.dart';
+import 'package:nesticope_app/modules/add_property/view/create_property.dart'
     hide Obx;
-import 'package:housing_flutter_app/modules/add_property/view/widget/stepper_property.dart';
-import 'package:housing_flutter_app/modules/search_property/model/search_model.dart';
+import 'package:nesticope_app/modules/add_property/view/widget/stepper_property.dart';
+import 'package:nesticope_app/modules/search_property/model/search_model.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -1023,6 +1023,51 @@ class PostProperty extends StatelessWidget {
                   dropdownItems: ['sq.ft.', 'sq.yd.', 'sq.mt.'],
                   isPhoneKey: true,
                 ),
+                const Text('Building'),
+                SizedBox(height: 8),
+                buildTextField(
+                  'Building / Project / Society',
+                  Icons.apartment_outlined,
+                  controller.commercial_rent_building_Name,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter building name';
+                    }
+                    return null;
+                  },
+                  onTap: () async {
+                    Prediction selectedCity = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CommonSearchField(
+                          onCitySelected: (city) {
+                            Navigator.pop(context, city);
+                          },
+                          isFromAddProperty: true,
+                          isSearchForBuilding: true,
+                          selectedCity: controller.cityController.text,
+                          initialSearchText:
+                              controller.commercial_rent_building_Name.text,
+                          hintText: 'Building / Project / Society',
+                        ),
+                      ),
+                    );
+
+                    controller.commercial_rent_building_Name.text =
+                        selectedCity.structuredFormatting?.mainText ??
+                        selectedCity.description ??
+                        '';
+
+                    if (controller.commercial_rent_building_Name.text.isNotEmpty) {
+                      controller.localityController.text =
+                          selectedCity.structuredFormatting?.secondaryText ?? '';
+                      controller.sell_rent_Address.text =
+                          selectedCity.structuredFormatting?.secondaryText ?? '';
+                    }
+                  },
+                  isEnable: false,
+                ),
+                SizedBox(height: 16),
                 const Text('Locality'),
                 SizedBox(height: 8),
                 buildTextField(
@@ -1035,35 +1080,30 @@ class PostProperty extends StatelessWidget {
                     }
                     return null;
                   },
-                  onTap:
-                      (controller.localityController.text.trim().isEmpty)
-                          ? () async {
-                            Prediction selectedCity = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) => CommonSearchField(
-                                      selectedCity:
-                                          controller.cityController.text,
-                                      isLocality: true,
-                                      onCitySelected: (city) {
-                                        Navigator.pop(context, city);
-                                      },
-                                      isFromAddProperty: true,
-                                      initialSearchText:
-                                          controller.localityController.text,
-                                      hintText: 'Locality',
-                                    ),
-                              ),
-                            );
+                  onTap: () async {
+                    Prediction selectedCity = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) => CommonSearchField(
+                              selectedCity: controller.cityController.text,
+                              isLocality: true,
+                              onCitySelected: (city) {
+                                Navigator.pop(context, city);
+                              },
+                              isFromAddProperty: true,
+                              initialSearchText: controller.localityController.text,
+                              hintText: 'Locality',
+                            ),
+                      ),
+                    );
 
-                            controller.localityController.text =
-                                selectedCity.description ?? '';
-                            controller.sell_rent_Address.text =
-                                selectedCity.description ?? '';
-                            print("city ${controller.localityController.text}");
-                          }
-                          : null,
+                    controller.localityController.text =
+                        selectedCity.description ?? '';
+                    controller.sell_rent_Address.text =
+                        selectedCity.description ?? '';
+                    print("city ${controller.localityController.text}");
+                  },
                   isEnable: false,
                 ),
                 SizedBox(height: 16),
@@ -1220,6 +1260,51 @@ class PostProperty extends StatelessWidget {
                           : SizedBox.shrink(),
                 ),
                 SizedBox(height: 16),
+                const Text('Building'),
+                SizedBox(height: 8),
+                buildTextField(
+                  'Building / Project / Society',
+                  Icons.apartment_outlined,
+                  controller.commercial_rent_building_Name,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter building name';
+                    }
+                    return null;
+                  },
+                  onTap: () async {
+                    Prediction selectedCity = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CommonSearchField(
+                          onCitySelected: (city) {
+                            Navigator.pop(context, city);
+                          },
+                          isFromAddProperty: true,
+                          isSearchForBuilding: true,
+                          selectedCity: controller.cityController.text,
+                          initialSearchText:
+                              controller.commercial_rent_building_Name.text,
+                          hintText: 'Building / Project / Society',
+                        ),
+                      ),
+                    );
+
+                    controller.commercial_rent_building_Name.text =
+                        selectedCity.structuredFormatting?.mainText ??
+                        selectedCity.description ??
+                        '';
+
+                    if (controller.commercial_rent_building_Name.text.isNotEmpty) {
+                      controller.localityController.text =
+                          selectedCity.structuredFormatting?.secondaryText ?? '';
+                      controller.sell_rent_Address.text =
+                          selectedCity.structuredFormatting?.secondaryText ?? '';
+                    }
+                  },
+                  isEnable: false,
+                ),
+                SizedBox(height: 16),
 
                 const Text('Locality'),
                 SizedBox(height: 8),
@@ -1233,36 +1318,31 @@ class PostProperty extends StatelessWidget {
                     }
                     return null;
                   },
-                  onTap:
-                      (controller.localityController.text.trim().isEmpty)
-                          ? () async {
-                            Prediction selectedCity = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) => CommonSearchField(
-                                      selectedCity:
-                                          controller.cityController.text,
-                                      isLocality: true,
-                                      onCitySelected: (city) {
-                                        Navigator.pop(context, city);
-                                      },
-                                      isFromAddProperty: true,
-                                      initialSearchText:
-                                          controller.localityController.text,
-                                      hintText: 'Locality',
-                                    ),
-                              ),
-                            );
+                  onTap: () async {
+                    Prediction selectedCity = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) => CommonSearchField(
+                              selectedCity: controller.cityController.text,
+                              isLocality: true,
+                              onCitySelected: (city) {
+                                Navigator.pop(context, city);
+                              },
+                              isFromAddProperty: true,
+                              initialSearchText: controller.localityController.text,
+                              hintText: 'Locality',
+                            ),
+                      ),
+                    );
 
-                            controller.localityController.text =
-                                selectedCity.description ?? '';
-                            controller.sell_rent_Address.text =
-                                selectedCity.description ?? '';
-                            print("city ${controller.localityController.text}");
-                          }
-                          : null,
-                  isEnable: false,
+                    controller.localityController.text =
+                        selectedCity.description ?? '';
+                    controller.sell_rent_Address.text =
+                        selectedCity.description ?? '';
+                    print("city ${controller.localityController.text}");
+                  },
+                  isEnable: false
                 ),
                 SizedBox(height: 16),
                 const Text('Full Address'),

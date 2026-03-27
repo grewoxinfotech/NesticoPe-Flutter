@@ -1,15 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io' as io;
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
-import 'package:housing_flutter_app/app/constants/api_constants.dart';
-import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
-import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
-import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
-import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
+import 'package:logger/logger.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/app/constants/api_constants.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:nesticope_app/app/widgets/snack_bar/custom_snackbar.dart';
+import 'package:nesticope_app/data/network/property/models/property_model.dart';
+import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
@@ -36,25 +38,33 @@ class PropertyService {
   Future<PaginationResponse<Items>> fetchProperties({
     int page = 1,
     Map<String, String>? filters,
+    int? limit,
     List<String>? fields,
   }) async {
     try {
       final queryParameters = {
         'page': page.toString(),
         if (fields != null) ...{'fields': fields.join(',')},
+        if (limit != null) ...{'limit': limit.toString()},
         if (filters != null) ...filters,
       };
 
       final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
-      print("Reseller uri: $uri");
+      print("Reseller uri Property Approved : $uri");
       final response = await http.get(uri, headers: await headers());
 
-      print("response: ${response.body}");
+      var logger = Logger();
+
+      // logger.d("📦 Response Body → ${response.body}");
+
+      AppLogger.structured("New ly add proeprtyu response: ", response.body);
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        AppLogger.structured("PROPERTY DATA XJFNSDFSDJ ", data);
 
         return PaginationResponse<Items>.fromJson(
+          
           data,
           (json) => Items.fromJson(json),
         );
@@ -74,14 +84,20 @@ class PropertyService {
     Map<String, String>? filters,
   }) async {
     try {
+      // Remove keys that should not be sent to top properties API
+      final sanitized = <String, String>{};
+      if (filters != null) {
+        sanitized.addAll(filters);
+        sanitized.remove('approval_status');
+        sanitized.remove('isVerified');
+      }
       final queryParameters = {
         'page': page.toString(),
-        if (filters != null) ...filters,
+        'limit':"5",
+        if (sanitized.isNotEmpty) ...sanitized,
       };
 
-      final uri = Uri.parse(
-        topPropertyUrl,
-      ).replace(queryParameters: queryParameters);
+      final uri = Uri.parse(topPropertyUrl).replace(queryParameters: queryParameters);
       print("top property uri: $uri");
       final response = await http.get(uri, headers: await headers());
 
@@ -217,6 +233,127 @@ class PropertyService {
   }
 
   /// Update property
+  //   Future<bool> updateProperty(
+  //     String id,
+  //     Map<String, dynamic> property,
+  //     List<io.File>? images,
+  //     List<io.File>? videos,
+  //     List<io.File>? documents,
+  //   ) async {
+  //     try {
+  //       final url = Uri.parse('$baseUrl/$id');
+  //       print("url: $url");
+  //       debugPrint("Property JSON: ${jsonEncode(property['financial_info'])}");
+
+  //       AppLogger.structured("Property JSON Update property : ", jsonEncode(property['propertyMedia']));
+  //       debugPrint("Property Images: ${images?.map((e) => e.path).toList()}");
+
+  //       debugPrint("Property Videos: ${videos?.map((e) => e.path).toList()}");
+  //       debugPrint("Property Documents: ${documents?.map((e) => e.path).toList()}");
+
+  //       var request = http.MultipartRequest("PUT", url);
+
+  //       // Add headers
+  //       request.headers.addAll(await headers());
+
+  //       property.forEach((key, value) {
+
+  //         if (value is Map || value is List) {
+
+  //           log("Property JSON Update property hjbdjfjds: $key $value");
+
+  //           request.fields[key] = jsonEncode(
+  //             value,
+  //           ); // nested objects/lists as JSON string
+  //         } else {
+  //            log("Property JSON Update property hjbdjsssfjds: $key $value");
+  //           request.fields[key] = value.toString();
+  //         }
+  //       });
+  //  List<String> retainImageUrls = [];
+  //       // ==== Attach Images ====
+  //       if (images != null && images.isNotEmpty) {
+  //         for (var image in images) {
+  //           if (isNetworkFile(image.path)) {
+  //             print("Skipping network image: ${image.path}");
+  //             retainImageUrls.add(image.path);
+  //             continue; // Skip upload
+  //           }
+  //           log("Property JSON Update property Image section : ${image.path}");
+
+  //           request.files.add(
+  //             await http.MultipartFile.fromPath(
+  //               'property_images',
+  //               image.path,
+  //               contentType: MediaType('image', 'jpeg'),
+  //             ),
+  //           );
+  //         }
+  //       }
+  //       log("Property JSON Update property Image sectionfdsvd : $retainImageUrls");
+
+  //       // ==== Attach Videos ====
+  //       if (videos != null && videos.isNotEmpty) {
+  //         for (var video in videos) {
+  //           if (isNetworkFile(video.path)) {
+  //             print("Skipping network video: ${video.path}");
+  //             continue; // Skip upload
+  //           }
+
+  //           request.files.add(
+  //             await http.MultipartFile.fromPath(
+  //               'property_videos',
+  //               video.path,
+  //               contentType: MediaType('video', 'mp4'),
+  //             ),
+  //           );
+  //         }
+  //       }
+
+  //       // ==== Attach Documents ====
+  //       if (documents != null && documents.isNotEmpty) {
+  //         for (var document in documents) {
+  //           if (isNetworkFile(document.path)) {
+  //             print("Skipping network document: ${document.path}");
+  //             continue; // Skip upload
+  //           }
+
+  //           request.files.add(
+  //             await http.MultipartFile.fromPath(
+  //               'property_documents',
+  //               document.path,
+  //               contentType: MediaType('application', 'pdf'),
+  //             ),
+  //           );
+  //         }
+  //       }
+
+  //       // Send request
+  //       final streamedResponse = await request.send();
+  //       final response = await http.Response.fromStream(streamedResponse);
+
+  //       debugPrint("Update property response: ${response.body}");
+  //       if (response.statusCode == 200 || response.statusCode == 201) {
+  //         NesticoPeSnackBar.showAwesomeSnackbar(
+  //           title: "Success",
+  //           message: "Update Property Successful",
+  //           contentType: ContentType.success,
+  //         );
+  //       } else {
+  //         NesticoPeSnackBar.showAwesomeSnackbar(
+  //           title: "Error",
+  //           message: "Failed to Update property. Please try again.",
+  //           contentType: ContentType.failure,
+  //         );
+  //       }
+
+  //       return response.statusCode == 200 || response.statusCode == 201;
+  //     } catch (e) {
+  //       print("Update property exception: $e");
+  //       return false;
+  //     }
+  //   }
+
   Future<bool> updateProperty(
     String id,
     Map<String, dynamic> property,
@@ -226,83 +363,100 @@ class PropertyService {
   ) async {
     try {
       final url = Uri.parse('$baseUrl/$id');
-      print("url: $url");
-      debugPrint("Property JSON: ${jsonEncode(property)}");
 
       var request = http.MultipartRequest("PUT", url);
-
-      // Add headers
       request.headers.addAll(await headers());
 
       property.forEach((key, value) {
         if (value is Map || value is List) {
-          request.fields[key] = jsonEncode(
-            value,
-          ); // nested objects/lists as JSON string
+          request.fields[key] = jsonEncode(value);
         } else {
           request.fields[key] = value.toString();
         }
       });
 
-      // ==== Attach Images ====
+      // ─── IMAGES ───────────────────────────────────────────────
+      List<String> retainImageUrls = [];
+      List<String> retainVideoUrls = [];
+      List<String> retainDocumentUrls = [];
+
       if (images != null && images.isNotEmpty) {
         for (var image in images) {
           if (isNetworkFile(image.path)) {
-            print("Skipping network image: ${image.path}");
-            continue; // Skip upload
+            retainImageUrls.add(image.path); // old URL → keep
+          } else {
+            request.files.add(
+              // new local file → upload
+              await http.MultipartFile.fromPath(
+                'property_images',
+                image.path,
+                contentType: MediaType('image', 'jpeg'),
+              ),
+            );
           }
-
-          request.files.add(
-            await http.MultipartFile.fromPath(
-              'property_images',
-              image.path,
-              contentType: MediaType('image', 'jpeg'),
-            ),
-          );
         }
       }
 
-      // ==== Attach Videos ====
+      // ─── VIDEOS ───────────────────────────────────────────────
       if (videos != null && videos.isNotEmpty) {
         for (var video in videos) {
           if (isNetworkFile(video.path)) {
-            print("Skipping network video: ${video.path}");
-            continue; // Skip upload
+            retainVideoUrls.add(video.path);
+          } else {
+            request.files.add(
+              await http.MultipartFile.fromPath(
+                'property_videos',
+                video.path,
+                contentType: MediaType('video', 'mp4'),
+              ),
+            );
           }
-
-          request.files.add(
-            await http.MultipartFile.fromPath(
-              'property_videos',
-              video.path,
-              contentType: MediaType('video', 'mp4'),
-            ),
-          );
         }
       }
 
-      // ==== Attach Documents ====
+      // ─── DOCUMENTS ────────────────────────────────────────────
       if (documents != null && documents.isNotEmpty) {
         for (var document in documents) {
           if (isNetworkFile(document.path)) {
-            print("Skipping network document: ${document.path}");
-            continue; // Skip upload
+            retainDocumentUrls.add(document.path);
+          } else {
+            request.files.add(
+              await http.MultipartFile.fromPath(
+                'property_documents',
+                document.path,
+                contentType: MediaType('application', 'pdf'),
+              ),
+            );
           }
-
-          request.files.add(
-            await http.MultipartFile.fromPath(
-              'property_documents',
-              document.path,
-              contentType: MediaType('application', 'pdf'),
-            ),
-          );
         }
       }
 
-      // Send request
+      // ─── Send retained URLs to backend as propertyMedia ───────
+      //
+      // Case 1: user removed ALL old images → retainImageUrls is []
+      //         → propertyMedia.images = [] on backend
+      //
+      // Case 2: user kept some/all old images → retainImageUrls has URLs
+      //         → backend merges them with newly uploaded property_images
+      //
+      final propertyMedia = {
+        'images': retainImageUrls,
+        'videos': retainVideoUrls,
+        'documents': retainDocumentUrls,
+      };
+      request.fields['propertyMedia'] = jsonEncode(propertyMedia);
+
+      log("retainImageUrls: $retainImageUrls");
+      log("retainVideoUrls: $retainVideoUrls");
+      log("retainDocumentUrls: $retainDocumentUrls");
+      log("propertyMedia field sent: ${request.fields['propertyMedia']}");
+
+      // ─── Send ─────────────────────────────────────────────────
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
 
-      debugPrint("Update property response: ${response.body}");
+      AppLogger.structured("Update property response: ", response.body);
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: "Success",
@@ -345,6 +499,27 @@ class PropertyService {
       print("baseUrl : $baseUrl/$id/inquiry");
       final response = await http.post(
         Uri.parse("$baseUrl/$id/inquiry"),
+        headers:
+            UserHelper.isGuest
+                ? await ApiConstants.getHeadersWithoutToken()
+                : await ApiConstants.getHeaders(),
+        body: jsonEncode(data),
+      );
+      print("response : ${response.body}");
+      print("Status code : ${response.statusCode}");
+      return (response.statusCode == 200 || response.statusCode == 201);
+    } catch (e) {
+      print("Delete property exception: $e");
+      return false;
+    }
+  }
+
+  Future<bool> addInquiryForNesticoPeService(Map<String, dynamic> data) async {
+    try {
+      print("data : ${data}");
+      print("baseUrl : $baseUrl/general-inquiry");
+      final response = await http.post(
+        Uri.parse("$baseUrl/general-inquiry"),
         headers:
             UserHelper.isGuest
                 ? await ApiConstants.getHeadersWithoutToken()

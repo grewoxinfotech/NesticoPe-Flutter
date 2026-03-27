@@ -1,4 +1,4 @@
-import 'package:housing_flutter_app/utils/logger/app_logger.dart';
+import 'package:nesticope_app/utils/logger/app_logger.dart';
 
 import '../../data/network/property/models/property_model.dart' as Items;
 import '../../modules/add_property/model/add_property_model.dart'
@@ -26,8 +26,9 @@ extension ItemsMapper on Items.Items {
       zipCode: zipCode,
       location: location,
       reraId: reraId,
+      buildingName: buildingName,
       propertyStatus: propertyStatus,
-      builderName: builderName,
+    builderName: builderName,
       projectName: projectName,
       ownerPhone: ownerPhone,
       ownerName: ownerName,

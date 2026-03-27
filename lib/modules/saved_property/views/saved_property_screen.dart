@@ -41,9 +41,9 @@
 // }
 
 // import 'package:flutter/material.dart';
-// import 'package:housing_flutter_app/app/constants/color_res.dart';
-// import 'package:housing_flutter_app/app/constants/size_manager.dart';
-// import 'package:housing_flutter_app/modules/property/views/widgets/property_list_screen_card.dart';
+// import 'package:nesticope_app/app/constants/color_res.dart';
+// import 'package:nesticope_app/app/constants/size_manager.dart';
+// import 'package:nesticope_app/modules/property/views/widgets/property_list_screen_card.dart';
 //
 // import '../../../app/constants/img_res.dart';
 // import '../../../data/network/property/models/property_model.dart';
@@ -203,17 +203,17 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
-import 'package:housing_flutter_app/modules/builder/view/project_detail/project_detail.dart';
-import 'package:housing_flutter_app/modules/history/controller/search_history_controller.dart';
-import 'package:housing_flutter_app/modules/property/views/property_detail_screen.dart';
-import 'package:housing_flutter_app/modules/property/views/widgets/property_list_screen_card.dart';
-import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
-import 'package:housing_flutter_app/modules/saved_property/views/widget/saved_property_card.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/modules/auth/views/login_screen.dart';
+import 'package:nesticope_app/modules/builder/view/project_detail/project_detail.dart';
+import 'package:nesticope_app/modules/history/controller/search_history_controller.dart';
+import 'package:nesticope_app/modules/property/views/property_detail_screen.dart';
+import 'package:nesticope_app/modules/property/views/widgets/property_list_screen_card.dart';
+import 'package:nesticope_app/modules/saved_property/controllers/property_favorite_controller.dart';
+import 'package:nesticope_app/modules/saved_property/views/widget/saved_property_card.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/img_res.dart';
@@ -257,6 +257,7 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
   // final FavoriteManager favoriteManager = FavoriteManager();
   final PropertyContactedController contactedController = Get.put(
     PropertyContactedController(),
+    permanent: true,
   );
   final SearchHistoryController searchHistoryController = Get.put(
     SearchHistoryController(),
@@ -275,128 +276,144 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorRes.white,
-      appBar: AppBar(title: const Text("My Activity")),
-      body: Column(
-        children: [
-          /// Header Tabs
-          Card(
-            elevation: 5,
-            child: Container(
-              padding: const EdgeInsets.only(
-                top: 0,
-                left: 10,
-                right: 10,
-                bottom: 16,
-              ),
-              decoration: const BoxDecoration(
-                color: ColorRes.white,
-                borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(20),
-                ),
-              ),
-              child: Obx(() {
-                // Reactive counts from GetX observables
-                final savedCount = favoriteManager.favorites.length;
-                final seenCount = viewController.viewedProperties.length;
-                final contactedCount =
-                    contactedController.contactedPropertyIds.length;
-                final recentCount =
-                    searchHistoryController
-                        .searchHistoryResponse
-                        .value
-                        ?.data
-                        .item
-                        .length; // TODO: link with recent searches
-
-                final List<int> tabsCount = [
-                  savedCount,
-                  seenCount,
-                  contactedCount,
-                  recentCount ?? 0,
-                ];
-
-                return Row(
-                  children: List.generate(tabs.length, (index) {
-                    final bool isSelected = selectedIndex == index;
-                    return Expanded(
-                      child: GestureDetector(
-                        onTap: () => setState(() => selectedIndex = index),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color:
-                                isSelected
-                                    ? ColorRes.primary.withOpacity(0.15)
-                                    : ColorRes.white,
-                            border: Border.all(
-                              color:
-                                  isSelected
-                                      ? ColorRes.primary
-                                      : ColorRes.leadGreyColor[300]!,
-                              width: 1.5,
-                            ),
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                tabsIcon[index],
-                                size: 20,
-                                color:
-                                    isSelected
-                                        ? ColorRes.primary
-                                        : ColorRes.blackShade54,
-                              ),
-                              Text(
-                                tabs[index],
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: AppFontSizes.small,
-                                  color:
-                                      isSelected
-                                          ? ColorRes.primary
-                                          : ColorRes.blackShade87,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                "(${tabsCount[index]})",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: AppFontSizes.small,
-                                  color:
-                                      isSelected
-                                          ? ColorRes.primary
-                                          : ColorRes.blackShade87,
-                                ),
-                              ),
-                            ],
-                          ),
+      appBar: AppBar(
+        title: Text(
+          "My Activity",
+          style: TextStyle(fontWeight: AppFontWeights.semiBold),
+        ),
+      ),
+      body:
+          (UserHelper.isGuest)
+              ? SizedBox.shrink()
+              : Column(
+                children: [
+                  /// Header Tabs
+                  Card(
+                    elevation: 5,
+                    child: Container(
+                      padding: const EdgeInsets.only(
+                        top: 0,
+                        left: 10,
+                        right: 10,
+                        bottom: 16,
+                      ),
+                      decoration: const BoxDecoration(
+                        color: ColorRes.white,
+                        borderRadius: BorderRadius.vertical(
+                          bottom: Radius.circular(20),
                         ),
                       ),
-                    );
-                  }),
-                );
-              }),
-            ),
-          ),
+                      child: Obx(() {
+                        // Reactive counts from GetX observables
+                        final savedCount = favoriteManager.favorites.length;
+                        final seenCount =
+                            viewController.viewedProperties.length;
+                        final contactedCount =
+                            contactedController.contactedPropertyIds.length;
+                        final recentCount =
+                            searchHistoryController
+                                .searchHistoryResponse
+                                .value
+                                ?.data
+                                .item
+                                .length; // TODO: link with recent searches
 
-          /// Tab Content
-          Expanded(
-            child: IndexedStack(
-              index: selectedIndex,
-              children: const [
-                SavedPropertiesTab(),
-                SeenPropertiesTab(),
-                ContactedPropertiesTab(),
-                RecentSearchesTab(),
-              ],
-            ),
-          ),
-        ],
-      ),
+                        final List<int> tabsCount = [
+                          savedCount,
+                          seenCount,
+                          contactedCount,
+                          recentCount ?? 0,
+                        ];
+
+                        return Row(
+                          children: List.generate(tabs.length, (index) {
+                            final bool isSelected = selectedIndex == index;
+                            return Expanded(
+                              child: GestureDetector(
+                                onTap:
+                                    () => setState(() => selectedIndex = index),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 10,
+                                  ),
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                      AppRadius.mediumLarge,
+                                    ),
+                                    color:
+                                        isSelected
+                                            ? ColorRes.primary.withOpacity(0.15)
+                                            : ColorRes.white,
+                                    border: Border.all(
+                                      color:
+                                          isSelected
+                                              ? ColorRes.primary
+                                              : ColorRes.leadGreyColor[300]!,
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        tabsIcon[index],
+                                        size: 20,
+                                        color:
+                                            isSelected
+                                                ? ColorRes.primary
+                                                : ColorRes.blackShade54,
+                                      ),
+                                      Text(
+                                        tabs[index],
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: AppFontSizes.small,
+                                          color:
+                                              isSelected
+                                                  ? ColorRes.primary
+                                                  : ColorRes.blackShade87,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        "(${tabsCount[index]})",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: AppFontSizes.small,
+                                          color:
+                                              isSelected
+                                                  ? ColorRes.primary
+                                                  : ColorRes.blackShade87,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                        );
+                      }),
+                    ),
+                  ),
+
+                  /// Tab Content
+                  Expanded(
+                    child: IndexedStack(
+                      index: selectedIndex,
+                      children: const [
+                        SavedPropertiesTab(),
+                        SeenPropertiesTab(),
+                        ContactedPropertiesTab(),
+                        RecentSearchesTab(),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
     );
   }
 }
@@ -489,10 +506,37 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
                       final price = property.details?.price;
                       if (price != null) {
                         formattedPrice = Formatter.formatPrice(price);
+                      } else {
+                        log(
+                          "Project Price Range ${property.details?.priceRange}",
+                        );
+                        final range = property.details?.priceRange;
+                        log("Project Price Range min ${range?.minPrice}");
+                        log("Project Price Range max ${range?.maxPrice}");
+
+                        if (range != null) {
+                          final minPrice = range.minPrice;
+                          final maxPrice = range.maxPrice;
+
+                          if (minPrice == maxPrice) {
+                            formattedPrice = Formatter.formatPrice(minPrice);
+                          } else {
+                            formattedPrice =
+                                '${Formatter.formatPrice(minPrice)} - ${Formatter.formatNumber(maxPrice)}';
+                          }
+                        } else {
+                          formattedPrice = 'Price on Request';
+                        }
                       }
                     } else {
                       // For projects - format price range
+                      log(
+                        "Project Price Range ${property.details?.priceRange}",
+                      );
                       final range = property.details?.priceRange;
+                      log("Project Price Range min ${range?.minPrice}");
+                      log("Project Price Range max ${range?.maxPrice}");
+
                       if (range != null) {
                         final minPrice = range.minPrice;
                         final maxPrice = range.maxPrice;
@@ -534,6 +578,14 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
                       }
                     }
 
+                    final pid = property.details?.id ?? '';
+                    if (pid.isNotEmpty) {
+                      final hasKey = favoriteController.hasNegotiableOfferMap
+                          .containsKey(pid);
+                      if (!hasKey) {
+                        favoriteController.loadNegotiableMetaForProperty(pid);
+                      }
+                    }
                     return HorizontalPropertyCard(
                       // Image
                       imageUrl: property.details?.images ?? '',
@@ -622,6 +674,10 @@ class SavedPropertiesTab extends StatefulWidget {
 class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
   final controller = Get.find<PropertyController>();
   final manager = Get.find<PropertyFavoriteController>();
+  final contactedController =
+      Get.isRegistered<PropertyContactedController>()
+          ? Get.find<PropertyContactedController>()
+          : Get.put(PropertyContactedController());
 
   // final RxList<Items> favoriteProperties = <Items>[].obs;
 
@@ -652,6 +708,17 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
           onRefresh: () async {
             await controller.refreshList();
             await manager.loadData();
+            await contactedController.fetchContactedProperties();
+            final favoriteController = Get.find<PropertyFavoriteController>();
+            for (final inquiry in contactedController.inquiries) {
+              final pid = inquiry.details?.id ?? inquiry.propertyId;
+              if (pid.isNotEmpty) {
+                await favoriteController.loadNegotiableMetaForProperty(pid);
+              }
+            }
+            log(
+              "Contacted Properties: ${manager.favoriteResponse.value?.data?.favorite.map((e) => e.details?.priceRange).toList()}",
+            );
           },
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(
@@ -696,6 +763,21 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
                     if (price != null) {
                       // Crore
                       formattedPrice = Formatter.formatPrice(price);
+                    } else {
+                      final range = property.details.priceRange;
+                      if (range != null) {
+                        final minPrice = range.minPrice;
+                        final maxPrice = range.maxPrice;
+
+                        if (minPrice == maxPrice) {
+                          formattedPrice = Formatter.formatPrice(minPrice);
+                        } else {
+                          formattedPrice =
+                              '${Formatter.formatPrice(minPrice)} - ${Formatter.formatNumber(maxPrice)}';
+                        }
+                      } else {
+                        formattedPrice = 'Price on Request';
+                      }
                     }
                   } else {
                     // For projects - format price range
@@ -811,9 +893,13 @@ class ContactedPropertiesTab extends StatefulWidget {
 }
 
 class _ContactedPropertiesTabState extends State<ContactedPropertiesTab> {
-  final PropertyContactedController controller = Get.put(
-    PropertyContactedController(),
-  );
+  // final PropertyContactedController controller = Get.put(
+  //   PropertyContactedController(),
+  // );
+  final controller =
+      Get.isRegistered<PropertyContactedController>()
+          ? Get.find<PropertyContactedController>()
+          : Get.put(PropertyContactedController());
 
   @override
   Widget build(BuildContext context) {
@@ -906,7 +992,16 @@ class _ContactedPropertiesTabState extends State<ContactedPropertiesTab> {
             return false;
           },
           child: RefreshIndicator(
-            onRefresh: controller.fetchContactedProperties,
+            onRefresh: () async {
+              await controller.fetchContactedProperties();
+              final favoriteController = Get.find<PropertyFavoriteController>();
+              for (final inquiry in controller.inquiries) {
+                final pid = inquiry.details?.id ?? inquiry.propertyId;
+                if (pid.isNotEmpty) {
+                  await favoriteController.loadNegotiableMetaForProperty(pid);
+                }
+              }
+            },
             color: ColorRes.primary,
             child: ListView.builder(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -921,6 +1016,13 @@ class _ContactedPropertiesTabState extends State<ContactedPropertiesTab> {
                   return Obx(() {
                     final PropertyFavoriteController favoriteController =
                         Get.find<PropertyFavoriteController>();
+                    final pid = property.details?.id ?? property.propertyId;
+                    if (pid.isNotEmpty &&
+                        !favoriteController.hasNegotiableOfferMap.containsKey(
+                          pid,
+                        )) {
+                      favoriteController.loadNegotiableMetaForProperty(pid);
+                    }
 
                     final isFavorite = favoriteController.favorites.contains(
                       property.details?.id,
@@ -936,16 +1038,67 @@ class _ContactedPropertiesTabState extends State<ContactedPropertiesTab> {
                     }
 
                     // Format price based on entity type
+                    // String formattedPrice = '';
+                    // if (property.entityType == 'property') {
+                    //   // For properties - format monthly rent or sale price
+                    //   final price = property.details?.price;
+                    //   if (price != null) {
+                    //     formattedPrice = Formatter.formatPrice(price);
+                    //   }
+                    // } else {
+                    //   // For projects - format price range
+                    //   final range = property.details?.priceRange;
+                    //   if (range != null) {
+                    //     final minPrice = range.minPrice;
+                    //     final maxPrice = range.maxPrice;
+
+                    //     if (minPrice == maxPrice) {
+                    //       formattedPrice = Formatter.formatPrice(minPrice);
+                    //     } else {
+                    //       formattedPrice =
+                    //           '${Formatter.formatPrice(minPrice)} - ${Formatter.formatNumber(maxPrice)}';
+                    //     }
+                    //   } else {
+                    //     formattedPrice = 'Price on Request';
+                    //   }
+                    // }
                     String formattedPrice = '';
                     if (property.entityType == 'property') {
                       // For properties - format monthly rent or sale price
                       final price = property.details?.price;
                       if (price != null) {
                         formattedPrice = Formatter.formatPrice(price);
+                      } else {
+                        log(
+                          "Project Price Range ${property.details?.priceRange}",
+                        );
+                        final range = property.details?.priceRange;
+                        log("Project Price Range min ${range?.minPrice}");
+                        log("Project Price Range max ${range?.maxPrice}");
+
+                        if (range != null) {
+                          final minPrice = range.minPrice;
+                          final maxPrice = range.maxPrice;
+
+                          if (minPrice == maxPrice) {
+                            formattedPrice = Formatter.formatPrice(minPrice);
+                          } else {
+                            formattedPrice =
+                                '${Formatter.formatPrice(minPrice)} - ${Formatter.formatNumber(maxPrice)}';
+                          }
+                        } else {
+                          formattedPrice = 'Price on Request';
+                        }
                       }
                     } else {
                       // For projects - format price range
+                      log(
+                        "Project Price Range ${property.details?.priceRange}",
+                      );
                       final range = property.details?.priceRange;
+                      log("Project Price Range min ${range?.minPrice}");
+                      log("Project Price Range max ${range?.maxPrice}");
+
                       if (range != null) {
                         final minPrice = range.minPrice;
                         final maxPrice = range.maxPrice;
@@ -1191,7 +1344,9 @@ class _RecentSearchesTabState extends State<RecentSearchesTab> {
                           vertical: 6,
                         ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(
+                            AppRadius.mediumLarge,
+                          ),
                           side: BorderSide(
                             color: Colors.grey.shade300,
                             width: 1,
@@ -1204,7 +1359,7 @@ class _RecentSearchesTabState extends State<RecentSearchesTab> {
                           ),
                           leading: Container(
                             decoration: BoxDecoration(
-                              color: Colors.grey.shade100,
+                              color: Colors.grey.shade200,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             padding: const EdgeInsets.all(8),

@@ -1,7 +1,7 @@
 /*
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/widgets/bar/app_bar/common_bar.dart';
+import 'package:nesticope_app/widgets/bar/app_bar/common_bar.dart';
 
 import '../../../widgets/New folder/inputs/text_field.dart';
 import '../../../widgets/button/button.dart';
@@ -81,8 +81,8 @@ class ResetPasswordScreen extends StatelessWidget {
 }*/
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/widgets/New folder/inputs/text_field.dart';
-import 'package:housing_flutter_app/widgets/button/button.dart';
+import 'package:nesticope_app/widgets/New folder/inputs/text_field.dart';
+import 'package:nesticope_app/widgets/button/button.dart';
 import '../../../app/constants/color_res.dart';
 import '../../../widgets/bar/app_bar/common_bar.dart';
 import '../controllers/auth_controller.dart';

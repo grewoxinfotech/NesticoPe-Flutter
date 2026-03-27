@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
+import 'package:nesticope_app/data/network/property/models/property_model.dart';
 
-import 'package:housing_flutter_app/app/manager/project_compare_manager.dart';
-import 'package:housing_flutter_app/modules/home/controllers/contractor_profile_controller/contractor_compare_manager.dart';
+import 'package:nesticope_app/app/manager/project_compare_manager.dart';
+import 'package:nesticope_app/modules/home/controllers/contractor_profile_controller/contractor_compare_manager.dart';
 
 class CompareManager extends GetxController {
   static CompareManager get to => Get.find<CompareManager>();
@@ -15,7 +15,7 @@ class CompareManager extends GetxController {
   bool isSelected(String? id) => id != null && _selected.containsKey(id);
 
 
-  void toggle(Items item, {int max = 2}) {
+  void toggle(Items item, {int max = 5}) {
     
     final id = item.id;
     if (id == null) return;

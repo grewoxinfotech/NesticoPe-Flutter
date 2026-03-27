@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/constants/img_res.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/img_res.dart';
 import '../../../../widgets/New folder/inputs/text_field.dart';
 import '../controllers/aadhar_auth_controller.dart';
 
@@ -18,7 +19,11 @@ class AadharAuthScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Aadhar Authentication'),
+        title: Text(
+          'Aadhar Authentication',
+          style: TextStyle(fontWeight: AppFontWeights.semiBold),
+        ),
+
         centerTitle: true,
       ),
       body: SizedBox(
@@ -44,25 +49,30 @@ class AadharAuthScreen extends StatelessWidget {
                   const SizedBox(height: 24),
 
                   Text(
-                    'Verify Your Aadhar',
+                    'Verify Your Aadhaar',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w600,
+                      color: ColorRes.textPrimary,
+                    ),
                   ),
                   const SizedBox(height: 8),
 
                   Text(
-                    'Enter your 12-digit Aadhar number to receive OTP',
+                    'Enter your 12-digit Aadhaar number to receive OTP',
                     textAlign: TextAlign.center,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.grey[600],
+                      fontWeight: AppFontWeights.medium,
+                    ),
                   ),
                   const SizedBox(height: 40),
 
                   // Aadhar input field
                   NesticoPeTextField(
-                    title: 'Aadhar Number',
-                    hintText: 'Enter 12-digit Aadhar Number',
+                    title: 'Aadhaar Number',
+                    hintText: 'Enter 12-digit Aadhaar Number',
                     controller: aadharNumberController,
                     keyboardType: TextInputType.number,
                     formatter: [
@@ -71,13 +81,13 @@ class AadharAuthScreen extends StatelessWidget {
                     ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter Aadhar Number';
+                        return 'Please enter Aadhaar Number';
                       }
                       if (value.length != 12) {
-                        return 'Aadhar Number must be 12 digits';
+                        return 'Aadhaar Number must be 12 digits';
                       }
                       if (!RegExp(r'^[2-9][0-9]{11}$').hasMatch(value)) {
-                        return 'Please enter a valid Aadhar Number';
+                        return 'Please enter a valid Aadhaar Number';
                       }
                       return null;
                     },
@@ -155,10 +165,11 @@ class AadharAuthScreen extends StatelessWidget {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            'OTP will be sent to your Aadhar registered mobile number',
+                            'OTP will be sent to your Aadhaar registered mobile number',
                             style: TextStyle(
-                              fontSize: 13,
+                              fontSize: 11,
                               color: ColorRes.primary,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),

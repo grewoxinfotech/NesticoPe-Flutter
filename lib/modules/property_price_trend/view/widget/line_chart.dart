@@ -1,9 +1,9 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/modules/property_price_trend/view/widget/price_formate.dart';
-import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/modules/property_price_trend/view/widget/price_formate.dart';
+import 'package:nesticope_app/modules/search_property/view/search_screen.dart';
 
 Padding buildPriceTrendingChart(
   List<FlSpot> spots,

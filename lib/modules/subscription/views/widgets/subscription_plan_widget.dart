@@ -3,10 +3,10 @@
 // import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/app/constants/color_res.dart';
-// import 'package:housing_flutter_app/app/constants/font_res.dart';
-// import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
-// import 'package:housing_flutter_app/app/widgets/snackbar/snackbar.dart';
+// import 'package:nesticope_app/app/constants/color_res.dart';
+// import 'package:nesticope_app/app/constants/font_res.dart';
+// import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+// import 'package:nesticope_app/app/widgets/snackbar/snackbar.dart';
 //
 // import '../../../../app/constants/app_font_sizes.dart';
 // import '../../../../app/widgets/snack_bar/custom_snackbar.dart';
@@ -658,15 +658,16 @@
 //   );
 // }
 
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/constants/font_res.dart';
-import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
-import 'package:housing_flutter_app/app/widgets/snackbar/snackbar.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/font_res.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:nesticope_app/app/widgets/snackbar/snackbar.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/widgets/snack_bar/custom_snackbar.dart';
@@ -703,7 +704,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
         separatorBuilder: (_, __) => const SizedBox(height: 12),
         itemBuilder: (_, index) {
           return SizedBox(
-            height: 300,
+            height: 350,
             child: _buildPlanCard(plans[index], index),
           );
         },
@@ -718,6 +719,8 @@ class SubscriptionPlansWidget extends StatelessWidget {
     return Obx(() {
       log("Plan is Active or Not  ${plan.isActive}");
       final bool isSelected = selectedPlanIndex.value == index;
+      final bool rec = plan.isRecommended == true;
+      final bool premium = plan.isPremium == true;
 
       log("Plan Selected : ${selectedPlanIndex.value == index}");
 
@@ -727,15 +730,28 @@ class SubscriptionPlansWidget extends StatelessWidget {
         },
         child: Container(
           decoration: BoxDecoration(
-            color: ColorRes.white,
+            color: rec ? Colors.amber.shade50 : ColorRes.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color:
-                  isSelected
-                      ? ColorRes.primary
-                      : ColorRes.leadGreyColor.withOpacity(0.2),
-              width: isSelected ? 2 : 1,
-            ),
+            border:
+                rec
+                    ? Border.all(color: Colors.amber.shade300, width: 2)
+                    : (isSelected
+                        ? Border.all(color: ColorRes.primary, width: 2)
+                        : null),
+            boxShadow: [
+              if (rec)
+                BoxShadow(
+                  color: Colors.amber.withOpacity(0.2),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              if (!rec)
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
+                ),
+            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -759,6 +775,8 @@ class SubscriptionPlansWidget extends StatelessWidget {
   // Header
   // ------------------------------------------------------
   Widget _buildHeader(SubscriptionPlan plan) {
+    final bool rec = plan.isRecommended == true;
+    final bool premium = plan.isPremium == true;
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 6),
       child: Column(
@@ -766,25 +784,49 @@ class SubscriptionPlansWidget extends StatelessWidget {
         children: [
           Row(
             children: [
+              Icon(
+                Icons.engineering,
+                size: 18,
+                color: rec ? Colors.amber.shade700 : ColorRes.primary,
+              ),
+              const SizedBox(width: 8),
               Text(
                 plan.name,
                 style: TextStyle(
                   fontSize: AppFontSizes.large,
                   fontWeight: AppFontWeights.bold,
-                  color: ColorRes.primary,
+                  color: rec ? Colors.amber.shade800 : ColorRes.primary,
                 ),
               ),
-              if (plan.isPremium) ...[
-                const SizedBox(width: 4),
-                NesticoPeIc(
-                  iconPath: "assets/icons/gemini.svg",
-                  height: 14,
-                  width: 14,
-                ),
-              ],
               const Spacer(),
-              if (plan.isPremium) _buildPopularBadge(plan),
+              if (rec) _buildRecommendedBadge(),
+              // if (!rec && premium) _buildPopularBadge(plan),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRecommendedBadge() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.amber.shade600,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: const Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.recommend, size: 14, color: Colors.white),
+          SizedBox(width: 4),
+          Text(
+            'Recommended',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: AppFontSizes.extraSmall,
+              fontWeight: AppFontWeights.semiBold,
+            ),
           ),
         ],
       ),
@@ -804,7 +846,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
         style: TextStyle(
           color: Colors.white,
           fontSize: AppFontSizes.extraSmall,
-          fontWeight: AppFontWeights.extraBold,
+          fontWeight: AppFontWeights.semiBold,
         ),
       ),
     );
@@ -814,30 +856,87 @@ class SubscriptionPlansWidget extends StatelessWidget {
   // Price
   // ------------------------------------------------------
   Widget _buildPriceSection(SubscriptionPlan plan) {
+    final double newPrice = double.tryParse(plan.amount) ?? 0;
+    final double oldPrice = double.tryParse(plan.originalPrice) ?? 0;
+    final bool hasDiscount =
+        oldPrice > 0 && newPrice > 0 && oldPrice > newPrice;
+    final int offPercent =
+        hasDiscount ? (((oldPrice - newPrice) / oldPrice) * 100).round() : 0;
+    final String period =
+        plan.durationMonths == 12
+            ? "per year"
+            : "per ${plan.durationMonths} months";
+    final String gstText =
+        (plan.gstRate.isNotEmpty && plan.gstRate != '0.00')
+            ? "Inclusive of ${plan.gstRate}% GST"
+            : "Taxes may apply";
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                plan.amount,
-                style: TextStyle(
-                  fontSize: AppFontSizes.heading,
-                  fontWeight: AppFontWeights.bold,
-                  color: ColorRes.textPrimary,
+          if (hasDiscount)
+            Row(
+              children: [
+                Text(
+                  "₹${plan.originalPrice}",
+                  style: TextStyle(
+                    fontSize: AppFontSizes.body,
+                    color: ColorRes.leadGreyColor,
+                    decoration: TextDecoration.lineThrough,
+                  ),
                 ),
-              ),
-            ],
-          ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade50,
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(color: Colors.red.shade200),
+                  ),
+                  child: Text(
+                    "$offPercent% OFF",
+                    style: TextStyle(
+                      color: Colors.red.shade600,
+                      fontSize: AppFontSizes.extraSmall,
+                      fontWeight: AppFontWeights.semiBold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          const SizedBox(height: 2),
           Text(
-            "${plan.durationMonths} Month",
+            "₹${plan.amount}",
+            style: TextStyle(
+              fontSize: AppFontSizes.heading,
+              fontWeight: AppFontWeights.bold,
+              color:
+                  plan.isRecommended
+                      ? Colors.amber.shade800
+                      : ColorRes.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            period,
             style: TextStyle(
               fontSize: AppFontSizes.small,
               color: ColorRes.leadGreyColor[600],
-              fontWeight: AppFontWeights.semiBold,
+              fontWeight: AppFontWeights.medium,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            gstText,
+            style: TextStyle(
+              fontSize: AppFontSizes.extraSmall,
+              color: ColorRes.leadGreyColor[600],
+              fontWeight: AppFontWeights.regular,
             ),
           ),
         ],
@@ -874,6 +973,8 @@ class SubscriptionPlansWidget extends StatelessWidget {
                           Expanded(
                             child: Text(
                               f.name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontSize: AppFontSizes.bodySmall,
                                 fontWeight: AppFontWeights.medium,
@@ -930,6 +1031,15 @@ class SubscriptionPlansWidget extends StatelessWidget {
         width: double.infinity,
         child: Obx(() {
           final isProcessing = controller.isProcessingPayment.value;
+          final bool rec = plan.isRecommended == true;
+          final Color bg =
+              isSelected
+                  ? (rec ? Colors.amber.shade700 : ColorRes.primary)
+                  : (rec
+                      ? Colors.amber.shade300
+                      : ColorRes.leadGreyColor.shade100);
+          final Color fg =
+              isSelected ? (rec ? Colors.black : Colors.white) : Colors.black;
 
           return ElevatedButton(
             onPressed:
@@ -995,11 +1105,8 @@ class SubscriptionPlansWidget extends StatelessWidget {
                     }
                     : () => selectedPlanIndex.value = index,
             style: ElevatedButton.styleFrom(
-              backgroundColor:
-                  isSelected
-                      ? ColorRes.primary
-                      : ColorRes.leadGreyColor.shade100,
-              foregroundColor: isSelected ? Colors.white : Colors.black,
+              backgroundColor: bg,
+              foregroundColor: fg,
               elevation: 0,
               padding: const EdgeInsets.symmetric(vertical: 12),
               shape: RoundedRectangleBorder(
@@ -1039,51 +1146,55 @@ class SubscriptionPlansWidget extends StatelessWidget {
   // Expanded bottom sheet
   // ------------------------------------------------------
   Widget _buildPlanExpanded(SubscriptionPlan plan, int index) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeader(plan),
-            if (plan.plansFor != "sellerBuilder") ...[_buildPriceSection(plan)],
-            const SizedBox(height: 12),
+    return SafeArea(
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(plan),
+              if (plan.plansFor != "sellerBuilder") ...[
+                _buildPriceSection(plan),
+              ],
+              const SizedBox(height: 12),
 
-            // Full feature list
-            ...plan.features.toFeatureList().map((f) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Row(
-                  children: [
-                    Icon(
-                      f.isIncluded ? Icons.check : Icons.close,
-                      size: 20,
-                      color: f.isIncluded ? ColorRes.primary : ColorRes.error,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        f.name,
-                        style: TextStyle(
-                          fontSize: AppFontSizes.bodySmall,
-                          fontWeight: AppFontWeights.medium,
+              // Full feature list
+              ...plan.features.toFeatureList().map((f) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    children: [
+                      Icon(
+                        f.isIncluded ? Icons.check : Icons.close,
+                        size: 20,
+                        color: f.isIncluded ? ColorRes.primary : ColorRes.error,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          f.name,
+                          style: TextStyle(
+                            fontSize: AppFontSizes.bodySmall,
+                            fontWeight: AppFontWeights.medium,
 
-                          color:
-                              f.isIncluded
-                                  ? ColorRes.textPrimary
-                                  : ColorRes.leadGreyColor,
+                            color:
+                                f.isIncluded
+                                    ? ColorRes.textPrimary
+                                    : ColorRes.leadGreyColor,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ],
+                    ],
+                  ),
+                );
+              }).toList(),
+            ],
+          ),
         ),
       ),
     );
@@ -1290,7 +1401,7 @@ void addInquiryForPlanBuy(
                               // );
                               NesticoPeSnackBar.showAwesomeSnackbar(
                                 title: 'Successfully',
-                                message:" Inquiry submitted Successfully",
+                                message: " Inquiry submitted Successfully",
                                 contentType: ContentType.success,
                               );
                               Get.back();

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/utils/validation.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/utils/validation.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
 
 import '../../../widgets/New folder/inputs/text_field.dart';
 import '../../dashboard/views/dashboard_screen.dart';

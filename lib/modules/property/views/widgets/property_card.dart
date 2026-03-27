@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/constants/img_res.dart';
-import 'package:housing_flutter_app/app/constants/size_manager.dart';
-import 'package:housing_flutter_app/app/constants/svg_res.dart';
-import 'package:housing_flutter_app/app/manager/property/property_name_manager.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/app/utils/svg_widget.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
-    hide ColorRes;
-import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
-import 'package:housing_flutter_app/modules/property/views/property_detail_screen.dart';
-import 'package:housing_flutter_app/utils/global.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/img_res.dart';
+import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/app/constants/svg_res.dart';
+import 'package:nesticope_app/app/manager/property/property_name_manager.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/app/utils/svg_widget.dart';
+import 'package:nesticope_app/app/widgets/image/custom_image.dart'
+    hide ColorRes, imageOfNotAvailable;
+import 'package:nesticope_app/modules/property/controllers/property_controller.dart';
+import 'package:nesticope_app/modules/property/views/property_detail_screen.dart';
+import 'package:nesticope_app/utils/global.dart';
+import 'package:lottie/lottie.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/manager/compare_manager.dart';
 import '../../../../app/widgets/snack_bar/custom_snackbar.dart';
@@ -20,6 +21,9 @@ import '../../../../app/manager/property/property_pricemanager.dart';
 import '../../../../app/manager/property_highlight_manager.dart';
 import '../../../../data/network/property/models/property_model.dart';
 import '../../../saved_property/controllers/property_favorite_controller.dart';
+import '../../../auth/views/login_screen.dart';
+import '../../../auth/views/register_screen.dart';
+import '../../../../app/utils/helper_function/user_helper/user_helper.dart';
 
 class PropertyCard extends StatefulWidget {
   final Items property;
@@ -70,14 +74,15 @@ class _PropertyCardState extends State<PropertyCard> {
         decoration: BoxDecoration(
           color: ColorRes.white,
           borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
-          border: Border.all(color: ColorRes.grey.withOpacity(0.3), width: 0.8),
-          // boxShadow: [
-          //   BoxShadow(
-          //     color: Colors.black.withOpacity(0.05),
-          //     blurRadius: 6,
-          //     offset: const Offset(0, 3),
-          //   ),
-          // ],
+          // border: Border.all(color: ColorRes.grey.withOpacity(0.3), width: 0.8),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 2,
+             
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,11 +110,41 @@ class _PropertyCardState extends State<PropertyCard> {
                     height: 170,
                     width: double.infinity,
                   ),
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      height: 70,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withOpacity(0.3),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
 
                   Positioned(
                     top: 12,
                     left: 12,
                     child: _buildTag(widget.property.listingType ?? "-"),
+                  ),
+                  Positioned(
+                    bottom: widget.isRecentlyViewed ? 40 : 12,
+                    left: 12,
+                    child: Text(
+                      priceManager.displayPrice,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 18,
+                      ),
+                    ),
                   ),
                   Positioned(
                     top: 12,
@@ -120,7 +155,7 @@ class _PropertyCardState extends State<PropertyCard> {
                         // Compare toggle
                         GestureDetector(
                           onTap: () {
-                            compare.toggle(widget.property, max: 2);
+                            compare.toggle(widget.property, max: 5);
                           },
                           child: Obx(() {
                             final selected = compare.isSelected(
@@ -208,12 +243,12 @@ class _PropertyCardState extends State<PropertyCard> {
                   // Location
                   Row(
                     children: [
-                      // const Icon(
-                      //   Icons.location_on_rounded,
-                      //   size: 14,
-                      //   color: ColorRes.grey,
-                      // ),
-                      //const SizedBox(width: 4),
+                      const Icon(
+                        Icons.location_on_outlined,
+                        size: 14,
+                        color: ColorRes.grey,
+                      ),
+                      const SizedBox(width: 4),
                       Expanded(
                         child: Text(
                           widget.property.address ?? "-",
@@ -381,53 +416,69 @@ class _PropertyCardState extends State<PropertyCard> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      if (widget.property.listingType?.toLowerCase() ==
-                              "rent" ||
-                          widget.property.listingType?.toLowerCase() ==
-                              "pg") ...[
-                        Flexible(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                      // if (widget.property.listingType?.toLowerCase() ==
+                      //         "rent" ||
+                      //     widget.property.listingType?.toLowerCase() ==
+                      //         "pg") ...[
+                      //   Flexible(
+                      //     child: Row(
+                      //       crossAxisAlignment: CrossAxisAlignment.center,
+                      //       children: [
+                      //         Text(
+                      //           "${Formatter.formatPrice(widget.property.propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}",
+                      //           style: TextStyle(
+                      //             fontWeight: AppFontWeights.semiBold,
+                      //             fontSize: AppFontSizes.body,
+                      //             color: ColorRes.textColor,
+                      //           ),
+                      //         ),
+
+                      //         Text(" /month", style: TextStyle(fontSize: 10)),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ] else ...[
+                      //   Text(
+                      //     "${Formatter.formatPrice(widget.property.propertyDetails?.financialInfo?.price ?? 0)}",
+                      //     style: TextStyle(
+                      //       fontWeight: AppFontWeights.semiBold,
+                      //       fontSize: AppFontSizes.body,
+                      //       color: ColorRes.textColor,
+                      //     ),
+                      //   ),
+                      // ],
+
+                      Expanded(
+                        child: Container(
+                          height: 40,
+                          
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: ColorRes.primary,
+                          ),
+                          alignment: Alignment.center,
+                          child:  Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              Icon(
+                                Icons.call_outlined,
+                                color: ColorRes.white,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 4),
                               Text(
-                                "${Formatter.formatPrice(widget.property.propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}",
+                                'Contact Now',
                                 style: TextStyle(
+                                  fontSize: AppFontSizes.small,
                                   fontWeight: AppFontWeights.semiBold,
-                                  fontSize: AppFontSizes.body,
-                                  color: ColorRes.textColor,
+                                  color: ColorRes.white,
                                 ),
                               ),
-
-                              Text(" /month", style: TextStyle(fontSize: 10)),
                             ],
-                          ),
-                        ),
-                      ] else ...[
-                        Text(
-                          "${Formatter.formatPrice(widget.property.propertyDetails?.financialInfo?.price ?? 0)}",
-                          style: TextStyle(
-                            fontWeight: AppFontWeights.semiBold,
-                            fontSize: AppFontSizes.body,
-                            color: ColorRes.textColor,
-                          ),
-                        ),
-                      ],
-
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: ColorRes.primary,
-                        ),
-                        child: const Text(
-                          'Contact Now',
-                          style: TextStyle(
-                            fontSize: AppFontSizes.small,
-                            fontWeight: AppFontWeights.semiBold,
-                            color: ColorRes.white,
                           ),
                         ),
                       ),

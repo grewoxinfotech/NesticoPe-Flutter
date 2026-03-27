@@ -292,10 +292,12 @@
 //     }
 //   }
 // }
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
@@ -308,9 +310,14 @@ import '../../controller/contractor_my_service_controller.dart';
 import '../widget/cotractor_active_switch.dart';
 import '../widget/create_service_from.dart';
 
-class ContractorService extends StatelessWidget {
+class ContractorService extends StatefulWidget {
   const ContractorService({super.key});
 
+  @override
+  State<ContractorService> createState() => _ContractorServiceState();
+}
+
+class _ContractorServiceState extends State<ContractorService> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ContractorMyServiceController>();
@@ -441,6 +448,14 @@ class ServiceCard extends StatefulWidget {
 }
 
 class _ServiceCardState extends State<ServiceCard> {
+  final PageController _pageController = PageController(viewportFraction: 0.9);
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
   final contractorDashboardController =
       Get.find<ContractorDashboardController>();
 
@@ -674,6 +689,79 @@ class _ServiceCardState extends State<ServiceCard> {
               ),
 
               const SizedBox(height: 8),
+
+              if (widget.item.serviceImage != null &&
+                  widget.item.serviceImage!.isNotEmpty)
+                Column(
+                  children: [
+                    SizedBox(
+                      height: 150,
+                      child: PageView.builder(
+                        controller: _pageController,
+                        itemCount: widget.item.serviceImage!.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: ColorRes.border,
+                                  width: 1,
+                                ),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: CachedNetworkImage(
+                                  imageUrl: widget.item.serviceImage![index],
+                                  height: 180,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                  placeholder:
+                                      (context, url) => Container(
+                                        height: 180,
+                                        width: double.infinity,
+                                        color: ColorRes.leadGreyColor.shade200,
+                                        child: const Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                      ),
+                                  errorWidget:
+                                      (context, url, error) => Container(
+                                        height: 180,
+                                        width: double.infinity,
+                                        color: ColorRes.leadGreyColor.shade200,
+                                        child: const Icon(
+                                          Icons.error,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    if (widget.item.serviceImage!.length > 1) ...[
+                      const SizedBox(height: 8),
+                      Center(
+                        child: SmoothPageIndicator(
+                          controller: _pageController,
+                          count: widget.item.serviceImage!.length,
+                          effect: ScrollingDotsEffect(
+                            dotHeight: 8,
+                            dotWidth: 8,
+                            activeDotColor: ColorRes.primary,
+                            dotColor: ColorRes.disabled,
+                          ),
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 12),
+                  ],
+                ),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -933,7 +1021,6 @@ class _ServiceCardState extends State<ServiceCard> {
                           ),
                         ),
                       ),
-
                     ],
                   ),
                 const SizedBox(height: 16),

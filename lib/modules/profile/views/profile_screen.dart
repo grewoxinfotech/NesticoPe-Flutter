@@ -2,22 +2,22 @@
 //
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/app/constants/color_res.dart';
-// import 'package:housing_flutter_app/app/constants/font_res.dart';
-// import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
-// import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-// import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
-// import 'package:housing_flutter_app/data/network/review/model/review_model.dart';
-// import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
-// import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
-// import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
-// import 'package:housing_flutter_app/modules/profile/views/seller_profile_detail.dart';
-// import 'package:housing_flutter_app/modules/profile/views/widget/buyer_profile.dart';
-// import 'package:housing_flutter_app/modules/referral/view/referral_dashboard.dart';
-// import 'package:housing_flutter_app/modules/review/views/widget/add_app_review_screen.dart';
-// import 'package:housing_flutter_app/modules/review/views/widget/app_review_card.dart';
-// import 'package:housing_flutter_app/widgets/bar/app_bar/common_bar.dart';
-// import 'package:housing_flutter_app/widgets/button/button.dart';
+// import 'package:nesticope_app/app/constants/color_res.dart';
+// import 'package:nesticope_app/app/constants/font_res.dart';
+// import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+// import 'package:nesticope_app/data/database/secure_storage_service.dart';
+// import 'package:nesticope_app/data/network/auth/model/user_model.dart';
+// import 'package:nesticope_app/data/network/review/model/review_model.dart';
+// import 'package:nesticope_app/modules/auth/controllers/auth_controller.dart';
+// import 'package:nesticope_app/modules/auth/views/login_screen.dart';
+// import 'package:nesticope_app/modules/auth/views/register_screen.dart';
+// import 'package:nesticope_app/modules/profile/views/seller_profile_detail.dart';
+// import 'package:nesticope_app/modules/profile/views/widget/buyer_profile.dart';
+// import 'package:nesticope_app/modules/referral/view/referral_dashboard.dart';
+// import 'package:nesticope_app/modules/review/views/widget/add_app_review_screen.dart';
+// import 'package:nesticope_app/modules/review/views/widget/app_review_card.dart';
+// import 'package:nesticope_app/widgets/bar/app_bar/common_bar.dart';
+// import 'package:nesticope_app/widgets/button/button.dart';
 //
 // import '../../../app/constants/app_font_sizes.dart';
 // import '../../../app/widgets/expandable_tile/expandable_widget.dart';
@@ -28,8 +28,8 @@
 // import '../../saved_property/views/saved_property_screen.dart';
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/app/constants/color_res.dart';
-// import 'package:housing_flutter_app/app/constants/font_res.dart';
+// import 'package:nesticope_app/app/constants/color_res.dart';
+// import 'package:nesticope_app/app/constants/font_res.dart';
 //
 // import '../controllers/buyer_profiledata.dart';
 //
@@ -84,7 +84,7 @@
 //                                 "Don't have an account?",
 //                                 style: TextStyle(
 //                                   color: ColorRes.leadGreyColor.shade700,
-//                                   fontFamily: FontRes.nuNunitoSans,
+//                                   fontFamily: FontRes.poppins,
 //                                 ),
 //                               ),
 //                               TextButton(
@@ -99,7 +99,7 @@
 //                                     color: ColorRes.success,
 //                                     // fontWeight: FontWeight.bold,
 //                                     fontWeight: AppFontWeights.extraBold,
-//                                     fontFamily: FontRes.nuNunitoSans,
+//                                     fontFamily: FontRes.poppins,
 //                                   ),
 //                                 ),
 //                               ),
@@ -573,25 +573,32 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/constants/font_res.dart';
-import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
-import 'package:housing_flutter_app/data/network/review/model/review_model.dart';
-import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
-import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
-import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
-import 'package:housing_flutter_app/modules/profile/views/seller_profile_detail.dart';
-import 'package:housing_flutter_app/modules/profile/views/widget/buyer_profile.dart';
-import 'package:housing_flutter_app/modules/profile/views/widget/my_contractor_screen.dart';
-import 'package:housing_flutter_app/modules/referral/view/referral_dashboard.dart';
-import 'package:housing_flutter_app/modules/review/views/widget/add_app_review_screen.dart';
-import 'package:housing_flutter_app/modules/review/views/widget/app_review_card.dart';
-import 'package:housing_flutter_app/modules/saved_property/views/user_activity_screen.dart';
-import 'package:housing_flutter_app/modules/subscription/views/my_subscription_screen.dart';
-import 'package:housing_flutter_app/widgets/bar/app_bar/common_bar.dart';
-import 'package:housing_flutter_app/widgets/button/button.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/font_res.dart';
+import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/data/network/auth/model/user_model.dart';
+import 'package:nesticope_app/data/network/review/model/review_model.dart';
+import 'package:nesticope_app/data/network/support_ticket/models/ticket_model/support_ticket_model.dart';
+import 'package:nesticope_app/data/network/support_ticket/service/ticket_service/support_ticket_service.dart';
+import 'package:nesticope_app/modules/auth/controllers/auth_controller.dart';
+import 'package:nesticope_app/modules/auth/views/delete_account.dart';
+import 'package:nesticope_app/modules/auth/views/login_screen.dart';
+import 'package:nesticope_app/modules/auth/views/register_screen.dart';
+import 'package:nesticope_app/modules/profile/views/offers_discounts_screen.dart';
+import 'package:nesticope_app/modules/profile/views/seller_profile_detail.dart';
+import 'package:nesticope_app/modules/profile/views/widget/buyer_profile.dart';
+import 'package:nesticope_app/modules/profile/views/widget/my_contractor_screen.dart';
+import 'package:nesticope_app/modules/referral/view/referral_dashboard.dart';
+import 'package:nesticope_app/modules/review/views/widget/add_app_review_screen.dart';
+import 'package:nesticope_app/modules/review/views/widget/app_review_card.dart';
+import 'package:nesticope_app/modules/saved_property/views/user_activity_screen.dart';
+import 'package:nesticope_app/modules/subscription/views/my_subscription_screen.dart';
+import 'package:nesticope_app/widgets/bar/app_bar/common_bar.dart';
+import 'package:nesticope_app/widgets/button/button.dart';
+import 'package:nesticope_app/widgets/messages/snack_bar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/widgets/expandable_tile/expandable_widget.dart';
@@ -600,6 +607,7 @@ import '../../calender/views/calender_screen.dart';
 import '../../profile/views/edit_profile_screen.dart';
 import '../../review/controllers/review_controller.dart';
 import '../../saved_property/views/saved_property_screen.dart';
+import '../../in_app_message/view/in_app_message_screen.dart';
 
 // Import additional screens
 import '../../auth/views/role_convert/convert_to_seller/convert_to_seller.dart';
@@ -609,6 +617,10 @@ import '../../hire_contractor/view/hire_contractor_screen.dart';
 import '../../subscription/views/user_subscription_details.dart';
 import '../../support_ticket/views/support_ticket_screen.dart';
 import '../../support_ticket/controllers/chat_socket_controller.dart';
+import '../../support_ticket/views/instant_support_chat_screen.dart';
+import '../../support_ticket/views/support_ticket_chat_screen.dart';
+// import '../../data/network/support_ticket/service/ticket_service/support_ticket_service.dart';
+// import '../../data/network/support_ticket/models/ticket_model/support_ticket_model.dart';
 import '../../dashboard/views/seller_dashboard_screen.dart';
 import '../../reseller/view/property_reseller.dart';
 import '../../builder/view/builder_main_screen.dart';
@@ -631,7 +643,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorRes.white,
+      backgroundColor: const Color(0xFFF5F6FA),
       appBar: _buildAppBar(),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -641,6 +653,26 @@ class ProfileScreen extends StatelessWidget {
                   ? Column(
                     children: [
                       _buildProfileCard(BuyerProfileDataController(), imageUrl),
+                      const SizedBox(height: 20),
+
+                      // 🎯 Role-Based Action Buttons Section
+                      _buildRoleBasedActions(),
+                      // const SizedBox(height: 10),
+                      SettingsMenuTile(
+                        icon: Icons.help_outlined,
+                        title: "Help & Support",
+                        subTitle: "Get help and support",
+                        onTap: () async {
+                          final uri = Uri.parse(
+                            'https://nesticope.grewoxinfotech.com/contact',
+                          );
+                          await launchUrl(
+                            uri,
+                            mode: LaunchMode.externalApplication,
+                          );
+                        },
+                      ),
+
                       SizedBox(height: 24),
                       SizedBox(
                         width: double.infinity,
@@ -649,9 +681,15 @@ class ProfileScreen extends StatelessWidget {
                             Get.to(() => LoginScreen());
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: ColorRes.success,
+                            backgroundColor: ColorRes.primary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
-                          child: Text('Login'),
+                          child: Text(
+                            'Login',
+                            style: TextStyle(letterSpacing: 0.5),
+                          ),
                         ),
                       ),
                       SizedBox(height: 12),
@@ -665,7 +703,7 @@ class ProfileScreen extends StatelessWidget {
                                 "Don't have an account?",
                                 style: TextStyle(
                                   color: ColorRes.leadGreyColor.shade700,
-                                  fontFamily: FontRes.nuNunitoSans,
+                                  fontFamily: FontRes.poppins,
                                 ),
                               ),
                               TextButton(
@@ -677,9 +715,9 @@ class ProfileScreen extends StatelessWidget {
                                 child: Text(
                                   'Sign Up here',
                                   style: TextStyle(
-                                    color: ColorRes.success,
+                                    color: ColorRes.primary,
                                     fontWeight: AppFontWeights.extraBold,
-                                    fontFamily: FontRes.nuNunitoSans,
+                                    fontFamily: FontRes.poppins,
                                   ),
                                 ),
                               ),
@@ -699,46 +737,78 @@ class ProfileScreen extends StatelessWidget {
                       _buildRoleBasedActions(),
 
                       // Existing Menu Items
-                      SettingsMenuTile(
-                        icon: Icons.monitor_heart_outlined,
-                        title: "My Activity",
-                        subTitle: "Track your interactions",
-                        onTap: () => Get.to(() => UserActivityScreen()),
-                      ),
-                      if (!UserHelper.isGuest || !UserHelper.isBuyer)
+                      // const SizedBox(height: 10),
+                      // SettingsMenuTile(
+                      //   icon: Icons.monitor_heart_outlined,
+                      //   title: "My Activity",
+                      //   subTitle: "Track your interactions",
+                      //   onTap: () => Get.to(() => UserActivityScreen()),
+                      // ),
+                      // const SizedBox(height: 10),
+                      if (!UserHelper.isGuest && !UserHelper.isBuyer)...[
                         SettingsMenuTile(
                           icon: Icons.workspace_premium,
                           title: "My Subscription",
                           subTitle: "Track your Subscription",
                           onTap: () => Get.to(() => MySubscriptionScreen()),
                         ),
-                      SettingsMenuTile(
-                        icon: Icons.travel_explore,
-                        title: "Visits",
-                        subTitle: "Track your Visit",
-                        onTap: () => Get.to(() => VisitScreen()),
-                      ),
+                      const SizedBox(height: 10),
+                      ],
+                      // SettingsMenuTile(
+                      //   icon: Icons.travel_explore,
+                      //   title: "Visits",
+                      //   subTitle: "Track your Visit",
+                      //   onTap: () => Get.to(() => VisitScreen()),
+                      // ),
+                      // const SizedBox(height: 10),
+                      // SettingsMenuTile(
+                      //   icon: Icons.notifications_outlined,
+                      //   title: "Notifications",
+                      //   subTitle: "Notifications and messages",
+                      //   onTap: () => Get.to(() => InAppMessageScreen()),
+                      // ),
                       // SettingsMenuTile(
                       //   icon: Icons.subscriptions_outlined,
                       //   title: "My Subscription",
                       //   subTitle: "show your all plan",
                       //   onTap: () => Get.to(() => UserSubscriptionDetails()),
                       // ),
-                      if (!UserHelper.isGuest) ...[
-                        SettingsMenuTile(
-                          icon: Icons.card_giftcard,
-                          title: "Referral",
-                          subTitle: "Refer And Earn",
-                          onTap: () => Get.to(() => ReferralProgramScreen()),
-                        ),
-                      ],
+                      // const SizedBox(height: 10),
+                      // if (!UserHelper.isGuest) ...[
+                      // SettingsMenuTile(
+                      //   icon: Icons.card_giftcard,
+                      //   title: "Referral",
+                      //   subTitle: "Refer And Earn",
+                      //   onTap:
+                      //       () =>
+                      //           !UserHelper.isGuest
+                      //               ? Get.to(() => ReferralProgramScreen())
+                      //               : Get.to(() => LoginScreen()),
+                      // ),
+                      // const SizedBox(height: 10),
+
+                      // ],
+                      _buildActionButton(
+                        icon: Icons.local_offer_outlined,
+                        label: "Offers & Discounts",
+                        subtitle: "View available offers and discounts",
+                        onTap: () {
+                          Get.to(
+                            () => OffersDiscountsScreen(
+                              userType: UserHelper.getOfferUserType(),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 10),
                       _buildActionButton(
                         icon: Icons.engineering_outlined,
                         label: "My Contractors",
                         subtitle: "Service contractor",
                         onTap: () => Get.to(() => MyContractorScreen()),
                       ),
-                      if (!UserHelper.isGuest && !UserHelper.isBuyer) ...[
+                      const SizedBox(height: 10),
+                      if (!UserHelper.isGuest) ...[
                         Obx(() {
                           final controller = Get.put(ReviewController());
                           final review = controller.appReview.value;
@@ -758,6 +828,7 @@ class ProfileScreen extends StatelessWidget {
                             return _buildReviewSection(review);
                           }
                         }),
+                        const SizedBox(height: 10),
                       ],
                       if (!UserHelper.isGuest && !UserHelper.isBuyer) ...[
                         SettingsMenuTile(
@@ -766,7 +837,24 @@ class ProfileScreen extends StatelessWidget {
                           subTitle: "Upcoming events",
                           onTap: () => Get.to(() => CalendarScreen()),
                         ),
+                        const SizedBox(height: 10),
                       ],
+
+                      // const SizedBox(height: 10),
+                      SettingsMenuTile(
+                        icon: Icons.help_outlined,
+                        title: "Help & Support",
+                        subTitle: "Get help and support",
+                        onTap: () async {
+                          final uri = Uri.parse(
+                            'https://nesticope.grewoxinfotech.com/contact',
+                          );
+                          await launchUrl(
+                            uri,
+                            mode: LaunchMode.externalApplication,
+                          );
+                        },
+                      ),
 
                       // SettingsMenuTile(
                       //   icon: Icons.diamond_outlined,
@@ -827,6 +915,14 @@ class ProfileScreen extends StatelessWidget {
                         width: double.infinity,
                         child: NesticoPeButton(
                           width: double.infinity,
+                          borderRadius: BorderRadius.circular(10),
+                          titleTextStyle: TextStyle(
+                            fontSize: AppFontSizes.medium,
+                            color: ColorRes.white,
+                            fontWeight: AppFontWeights.semiBold,
+                          ),
+
+                          height: 45,
                           onTap: () {
                             Get.lazyPut(() => AuthController());
                             final controller = Get.find<AuthController>();
@@ -835,6 +931,8 @@ class ProfileScreen extends StatelessWidget {
                           title: 'Logout',
                         ),
                       ),
+                      const SizedBox(height: 10),
+                      if (!UserHelper.isGuest) _buildDeleteAccountButton(),
                     ],
                   ),
         ),
@@ -848,34 +946,172 @@ class ProfileScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // 👤 BUYER ACTIONS
-        if (UserHelper.isBuyer) ...[
+        if (UserHelper.isBuyer || UserHelper.isGuest) ...[
           SettingsMenuTile(
             icon: Icons.person_add_outlined,
             title: "Convert to Seller",
             subTitle: "Become the seller",
-            onTap: () => Get.to(() => SellerConversionScreen()),
+            onTap:
+                () =>
+                    (!UserHelper.isGuest)
+                        ? Get.to(() => SellerConversionScreen())
+                        : Get.to(() => LoginScreen()),
           ),
+          const SizedBox(height: 10),
 
           SettingsMenuTile(
             icon: Icons.group_add_outlined,
             title: "Convert to Partner",
             subTitle: "Become the Partner",
-            onTap: () => Get.to(() => ResellerConversionScreen()),
+            onTap:
+                () =>
+                    (!UserHelper.isGuest)
+                        ? Get.to(() => ResellerConversionScreen())
+                        : Get.to(() => LoginScreen()),
           ),
-
+          const SizedBox(height: 10),
           SettingsMenuTile(
             icon: Icons.construction_outlined,
             title: "Convert to Contractor",
             subTitle: "Become the contractor",
-            onTap: () => Get.to(() => ConvertToContractorConversionScreen()),
+            onTap:
+                () =>
+                    (!UserHelper.isGuest)
+                        ? Get.to(() => ConvertToContractorConversionScreen())
+                        : Get.to(() => LoginScreen()),
+          ),
+          const SizedBox(height: 10),
+          SettingsMenuTile(
+            icon: Icons.notifications_outlined,
+            title: "Notifications",
+            subTitle: "Notifications and messages",
+            onTap:
+                () =>
+                    (!UserHelper.isGuest)
+                        ? Get.to(() => InAppMessageScreen())
+                        : Get.to(() => LoginScreen()),
+          ),
+          const SizedBox(height: 10),
+          SettingsMenuTile(
+            icon: Icons.monitor_heart_outlined,
+            title: "My Activity",
+            subTitle: "Track your interactions",
+            onTap:
+                () =>
+                    !UserHelper.isGuest
+                        ? Get.to(() => UserActivityScreen())
+                        : Get.to(() => LoginScreen()),
+          ),
+          const SizedBox(height: 10),
+
+       SettingsMenuTile(
+                        icon: Icons.travel_explore,
+                        title: "Visits",
+                        subTitle: "Track your Visit",
+                        onTap: () => (!UserHelper.isGuest)
+                            ? Get.to(() => VisitScreen())
+                            : Get.to(() => LoginScreen()),
+                      ),
+          const SizedBox(height: 10),
+          // if (!UserHelper.isGuest) ...[
+          SettingsMenuTile(
+            icon: Icons.card_giftcard,
+            title: "Referral",
+            subTitle: "Refer And Earn",
+            onTap:
+                () =>
+                    !UserHelper.isGuest
+                        ? Get.to(() => ReferralProgramScreen())
+                        : Get.to(() => LoginScreen()),
+          ),
+          const SizedBox(height: 10),
+
+          SettingsMenuTile(
+            icon: Icons.engineering_outlined,
+            title: "Hire Contractor",
+            subTitle: "Hire top contractors",
+            onTap: () => Get.to(() => HireContractorScreen()),
+          ),
+          const SizedBox(height: 10),
+          _buildActionButton(
+            icon: Icons.support_agent_outlined,
+            label: "Contact Support",
+            subtitle: 'Chat with us',
+            onTap: () async {
+              Get.put(SocketController());
+              try {
+                final service = TicketService();
+                if (UserHelper.isGuest) {
+                  final storedId = await SecureStorage.getSupportTicketId();
+                  if (storedId != null && storedId.isNotEmpty) {
+                    final t = TicketItem(
+                      id: storedId,
+                      status: 'open',
+                      title: 'Support Ticket',
+                    );
+                    Get.to(
+                      () => SupportTicketChatScreen(ticketId: t.id!, ticket: t),
+                    );
+                  } else {
+                    Get.to(
+                      () => const SupportTicketChatScreen(
+                        createOnFirstSend: true,
+                      ),
+                    );
+                  }
+                } else if (UserHelper.isBuyer) {
+                  // Buyer: use API to find existing ticket by created_by; no secure storage
+                  final user = await SecureStorage.getUserData();
+                  final userId = user?.user?.id ?? '';
+                  final resp = await service.fetchTickets(
+                    page: 1,
+                    filters: {
+                      'created_by': userId,
+                      'limit': '100',
+                    },
+                  );
+                  final items = resp.items;
+                  log('Fetched tickets: $items');
+
+                  if (items.isNotEmpty && (items.first.id?.isNotEmpty ?? false)) {
+                    final id = items.first.id!;
+                    final ticket =
+                        await service.fetchTicketById(id) ?? items.first;
+                    Get.to(
+                      () => SupportTicketChatScreen(ticketId: id, ticket: ticket),
+                    );
+                  } else {
+                    // No previous ticket found → create on first send
+                    Get.to(
+                      () => const SupportTicketChatScreen(
+                        createOnFirstSend: true,
+                      ),
+                    );
+                  }
+                } else {
+                  // Other roles: prefer existing open ticket; fallback to first-message screen
+                  final response = await service.fetchTickets(
+                    page: 1,
+                    filters: {'status': 'open'},
+                  );
+                  final List<TicketItem> items = response.items;
+                  if (items.isNotEmpty &&
+                      (items.first.id?.isNotEmpty ?? false)) {
+                    final t = items.first;
+                    Get.to(
+                      () => SupportTicketChatScreen(ticketId: t.id!, ticket: t),
+                    );
+                  } else {
+                    Get.to(() => const InstantSupportChatScreen());
+                  }
+                }
+              } catch (_) {
+                Get.to(() => const InstantSupportChatScreen());
+              }
+            },
           ),
 
-          // SettingsMenuTile(
-          //   icon: Icons.engineering_outlined,
-          //   title: "Hire Contractor",
-          //   subTitle: "Hire top contractors",
-          //   onTap: () => Get.to(() => HireContractorScreen()),
-          // ),
+          const SizedBox(height: 10),
         ],
 
         // 🏠 SELLER ACTIONS
@@ -893,22 +1129,23 @@ class ProfileScreen extends StatelessWidget {
               );
             },
           ),
-
-          // _buildActionButton(
-          //   icon: Icons.engineering_outlined,
-          //   subtitle: "Hire top contractors",
-          //   label: "Hire Contractor",
-          //   onTap: () => Get.to(() => HireContractorScreen()),
-          // ),
+          const SizedBox(height: 10),
           _buildActionButton(
-            icon: Icons.support_agent_outlined,
-            label: "Support Ticket",
-            subtitle: 'Talk to support',
-            onTap: () {
-              Get.put(SocketController());
-              Get.to(() => SupportTicketScreen());
-            },
+            icon: Icons.engineering_outlined,
+            subtitle: "Hire top contractors",
+            label: "Hire Contractor",
+            onTap: () => Get.to(() => HireContractorScreen()),
           ),
+          const SizedBox(height: 10),
+          // _buildActionButton(
+          //   icon: Icons.support_agent_outlined,
+          //   label: "Support Ticket",
+          //   subtitle: 'Talk to support',
+          //   onTap: () {
+          //     Get.put(SocketController());
+          //     Get.to(() => const InstantSupportChatScreen());
+          //   },
+          // ),
         ],
 
         // 🔄 RESELLER ACTIONS
@@ -919,22 +1156,23 @@ class ProfileScreen extends StatelessWidget {
             subtitle: 'Navigate to Partner Panel',
             onTap: () => Get.to(() => MainNavigationScreen()),
           ),
-
-          // _buildActionButton(
-          //   icon: Icons.engineering_outlined,
-          //   label: "Hire Contractor",
-          //   subtitle: "Hire top contractors",
-          //   onTap: () => Get.to(() => HireContractorScreen()),
-          // ),
+          const SizedBox(height: 10),
           _buildActionButton(
-            icon: Icons.support_agent_outlined,
-            label: "Support Ticket",
-            subtitle: 'Talk to support',
-            onTap: () {
-              Get.put(SocketController());
-              Get.to(() => SupportTicketScreen());
-            },
+            icon: Icons.engineering_outlined,
+            label: "Hire Contractor",
+            subtitle: "Hire top contractors",
+            onTap: () => Get.to(() => HireContractorScreen()),
           ),
+          const SizedBox(height: 10),
+          // _buildActionButton(
+          //   icon: Icons.support_agent_outlined,
+          //   label: "Support Ticket",
+          //   subtitle: 'Talk to support',
+          //   onTap: () {
+          //     Get.put(SocketController());
+          //     Get.to(() => const InstantSupportChatScreen());
+          //   },
+          // ),
         ],
 
         // 🏗️ CONTRACTOR ACTIONS
@@ -945,21 +1183,23 @@ class ProfileScreen extends StatelessWidget {
             subtitle: 'Navigate to Contractor Panel',
             onTap: () => Get.to(() => ContractorMainScreen()),
           ),
-          // _buildActionButton(
-          //   icon: Icons.engineering_outlined,
-          //   label: "Hire Contractor",
-          //   subtitle: "Hire top contractors",
-          //   onTap: () => Get.to(() => HireContractorScreen()),
-          // ),
+          const SizedBox(height: 10),
           _buildActionButton(
-            icon: Icons.support_agent_outlined,
-            label: "Support Ticket",
-            subtitle: 'Talk to support',
-            onTap: () {
-              Get.put(SocketController());
-              Get.to(() => SupportTicketScreen());
-            },
+            icon: Icons.engineering_outlined,
+            label: "Hire Contractor",
+            subtitle: "Hire top contractors",
+            onTap: () => Get.to(() => HireContractorScreen()),
           ),
+          const SizedBox(height: 10),
+          // _buildActionButton(
+          //   icon: Icons.support_agent_outlined,
+          //   label: "Support Ticket",
+          //   subtitle: 'Talk to support',
+          //   onTap: () {
+          //     Get.put(SocketController());
+          //     Get.to(() => const InstantSupportChatScreen());
+          //   },
+          // ),
         ],
 
         // 🏢 BUILDER ACTIONS (Seller with Builder type)
@@ -971,28 +1211,66 @@ class ProfileScreen extends StatelessWidget {
 
             onTap: () => Get.to(() => BuilderMainScreen()),
           ),
-
-          // _buildActionButton(
-          //   icon: Icons.engineering_outlined,
-          //   label: "Hire Contractor",
-          //   subtitle: "Hire top contractors",
-          //   onTap: () => Get.to(() => HireContractorScreen()),
-          // ),
+          const SizedBox(height: 10),
           _buildActionButton(
-            icon: Icons.support_agent_outlined,
-            label: "Support Ticket",
-            subtitle: 'Talk to support',
-            onTap: () {
-              Get.put(SocketController());
-              Get.to(() => SupportTicketScreen());
-            },
+            icon: Icons.engineering_outlined,
+            label: "Hire Contractor",
+            subtitle: "Hire top contractors",
+            onTap: () => Get.to(() => HireContractorScreen()),
           ),
+          const SizedBox(height: 10),
+          // _buildActionButton(
+          //   icon: Icons.support_agent_outlined,
+          //   label: "Support Ticket",
+          //   subtitle: 'Talk to support',
+          //   onTap: () {
+          //     Get.put(SocketController());
+          //     Get.to(() => const InstantSupportChatScreen());
+          //   },
+          // ),
         ],
       ],
     );
   }
 
   /// Action Button Widget
+  // Widget _buildActionButton({
+  //   required IconData icon,
+  //   required String label,
+  //   required String subtitle,
+  //   required VoidCallback onTap,
+  //   Widget? trailing,
+  // }) {
+  //   return ListTile(
+  //     leading: Icon(icon, size: 28, color: ColorRes.primary),
+  //     title: Text(
+  //       label,
+  //       style: TextStyle(
+  //         fontSize: AppFontSizes.medium,
+  //         fontWeight: AppFontWeights.semiBold,
+  //       ),
+  //     ),
+  //     subtitle: Text(
+  //       subtitle,
+  //       style: TextStyle(
+  //         fontSize: AppFontSizes.caption,
+  //         color: ColorRes.leadGreyColor[600],
+  //       ),
+  //     ),
+  //     trailing: trailing ?? const Icon(Icons.chevron_right),
+  //     onTap: onTap,
+  //   );
+  // }
+  Widget _buildDeleteAccountButton() {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF1F2),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: const RequestDeleteAccount(),
+    );
+  }
+
   Widget _buildActionButton({
     required IconData icon,
     required String label,
@@ -1000,31 +1278,75 @@ class ProfileScreen extends StatelessWidget {
     required VoidCallback onTap,
     Widget? trailing,
   }) {
-    return ListTile(
-      leading: Icon(icon, size: 28, color: ColorRes.primary),
-      title: Text(
-        label,
-        style: TextStyle(
-          fontSize: AppFontSizes.medium,
-          fontWeight: AppFontWeights.semiBold,
-        ),
-      ),
-      subtitle: Text(
-        subtitle,
-        style: TextStyle(
-          fontSize: AppFontSizes.caption,
-          color: ColorRes.leadGreyColor[600],
-        ),
-      ),
-      trailing: trailing ?? const Icon(Icons.chevron_right),
+    return GestureDetector(
       onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(.04),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+
+        child: Row(
+          children: [
+            /// ✅ Icon Box
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: ColorRes.primary.withOpacity(.1),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Icon(icon, size: 24, color: ColorRes.primary),
+            ),
+
+            const SizedBox(width: 14),
+
+            /// ✅ Text Section
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.black,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: AppFontSizes.caption,
+                      color: ColorRes.leadGreyColor[600],
+                      fontWeight: AppFontWeights.medium,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            /// ✅ Arrow
+            trailing ??
+                Icon(Icons.chevron_right, color: ColorRes.leadGreyColor[400]),
+          ],
+        ),
+      ),
     );
   }
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       elevation: 0,
-      backgroundColor: ColorRes.white,
+      backgroundColor: const Color(0xFFF5F6FA),
       title: const Text(
         "My Profile",
         style: TextStyle(
@@ -1043,11 +1365,11 @@ class ProfileScreen extends StatelessWidget {
       padding: const EdgeInsets.all(_defaultPadding),
       decoration: BoxDecoration(
         color: ColorRes.white,
-        borderRadius: BorderRadius.circular(_cardRadius),
-        boxShadow: const [
+        borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
+        boxShadow: [
           BoxShadow(
-            color: ColorRes.blackShade12,
-            blurRadius: 8,
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 12,
             offset: Offset(0, 4),
           ),
         ],
@@ -1247,7 +1569,7 @@ class ProfileScreen extends StatelessWidget {
 }
 
 class _ProfileWelcomeSection extends StatelessWidget {
-  var name;
+  String name;
 
   _ProfileWelcomeSection({required this.name});
 
@@ -1257,13 +1579,13 @@ class _ProfileWelcomeSection extends StatelessWidget {
     final sellerType = UserHelper.sellerTypeStringValue;
 
     String displayRole = userType[0].toUpperCase() + userType.substring(1);
-    String displaySellerType = sellerType != null ? "(${name})" : "";
+    String displaySellerType = sellerType != null ? "${name}" : "";
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Hello 👋 ${name ?? 'Guest'}",
+          "Hello 👋 ${name.capitalize?.replaceAll("_", " ") ?? 'Guest'}",
           style: TextStyle(
             fontSize: AppFontSizes.medium,
             fontWeight: AppFontWeights.bold,
@@ -1272,17 +1594,19 @@ class _ProfileWelcomeSection extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          "✓ Easy contact with sellers",
+          "Easy contact with sellers",
           style: TextStyle(
-            color: ColorRes.leadGreyColor,
-            fontSize: AppFontSizes.small,
+            color: ColorRes.leadGreyColor.shade600,
+            fontSize: AppFontSizes.caption,
+            fontWeight: AppFontWeights.medium,
           ),
         ),
         Text(
-          "✓ Personalized experience",
+          "Personalized experience",
           style: TextStyle(
-            color: ColorRes.leadGreyColor,
-            fontSize: AppFontSizes.small,
+            color: ColorRes.leadGreyColor.shade600,
+            fontWeight: AppFontWeights.medium,
+            fontSize: AppFontSizes.caption,
           ),
         ),
       ],
@@ -1307,24 +1631,68 @@ class SettingsMenuTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: Icon(icon, size: 28, color: ColorRes.primary),
-      title: Text(
-        title,
-        style: TextStyle(
-          fontSize: AppFontSizes.medium,
-          fontWeight: AppFontWeights.semiBold,
-        ),
-      ),
-      subtitle: Text(
-        subTitle,
-        style: TextStyle(
-          fontSize: AppFontSizes.caption,
-          color: ColorRes.leadGreyColor[600],
-        ),
-      ),
-      trailing: trailing ?? const Icon(Icons.chevron_right),
+    return GestureDetector(
       onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        decoration: BoxDecoration(
+          color: ColorRes.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+
+        child: Row(
+          children: [
+            /// ✅ Icon Container
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: ColorRes.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Icon(icon, size: 24, color: ColorRes.primary),
+            ),
+
+            const SizedBox(width: 14),
+
+            /// ✅ Title + Subtitle
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.black,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subTitle,
+                    style: TextStyle(
+                      fontSize: AppFontSizes.caption,
+                      color: ColorRes.leadGreyColor[600],
+                      fontWeight: AppFontWeights.medium,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            /// ✅ Trailing Arrow
+            trailing ??
+                Icon(Icons.chevron_right, color: ColorRes.leadGreyColor[400]),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -77,6 +77,7 @@ class GoogleMapApi {
     String cityName,
     String input,
   ) async {
+    await ApiConfig.ensureMapKey();
     // Combine user input with keywords for better targeting
     final query = Uri.encodeComponent(
       '$input society OR apartment OR building in $cityName',
@@ -120,6 +121,7 @@ class GoogleMapApi {
     String types, {
     String? cityFilter, // optional city name for filtering
   }) async {
+    await ApiConfig.ensureMapKey();
     // Build components parameter
     String components = 'country:in';
 
@@ -145,6 +147,7 @@ class GoogleMapApi {
   /// Get city coordinates using Geocoding API
   Future<Map<String, double>?> _getCityCoordinates(String cityName) async {
     try {
+      await ApiConfig.ensureMapKey();
       final geoUri = Uri.parse(
         'https://maps.googleapis.com/maps/api/geocode/json?address=$cityName,India&key=${ApiConfig.mapkey}',
       );
@@ -186,6 +189,7 @@ class GoogleMapApi {
     String? cityFilter,
   }) async {
     try {
+      await ApiConfig.ensureMapKey();
       // If city filter is provided, get coordinates and use location bias
       if (cityFilter != null && cityFilter.isNotEmpty) {
         final coords = await _getCityCoordinates(cityFilter);

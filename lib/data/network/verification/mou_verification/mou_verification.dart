@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:housing_flutter_app/app/constants/api_constants.dart';
+import 'package:nesticope_app/app/constants/api_constants.dart';
 import 'package:http/http.dart' as http;
 
 class DigitalSignatureService {

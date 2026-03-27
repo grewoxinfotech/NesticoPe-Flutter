@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/widgets/location_permission/location_permission_method.dart';
+import 'package:nesticope_app/app/care/pagination/controller/pagination_controller.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/widgets/location_permission/location_permission_method.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../data/network/reseller/reseller_success_stories/reseller_success_stories_model.dart';

@@ -2,15 +2,15 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/constants/img_res.dart';
-import 'package:housing_flutter_app/app/constants/size_manager.dart';
-import 'package:housing_flutter_app/app/manager/property/property_name_manager.dart';
-import 'package:housing_flutter_app/app/manager/property/property_pricemanager.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/modules/home/views/compare_screen/comapre_screen.dart';
-import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/img_res.dart';
+import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/app/manager/property/property_name_manager.dart';
+import 'package:nesticope_app/app/manager/property/property_pricemanager.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/modules/home/views/compare_screen/comapre_screen.dart';
+import 'package:nesticope_app/modules/property/controllers/property_controller.dart';
 import '../../../../app/manager/property/proiperty_feature_manager.dart';
 import '../../../../app/manager/property_highlight_manager.dart';
 import '../../../../app/manager/compare_manager.dart';
@@ -68,7 +68,10 @@ class _RecommendedCardState extends State<RecommendedCard> {
         width: 200,
         decoration: BoxDecoration(
           // color: ColorRes.overlay.withOpacity(0.1),
-          border: Border.all(color: ColorRes.grey.withOpacity(0.3), width: 0.8),
+          border: Border.all(
+            color: ColorRes.leadGreyColor.withOpacity(0.3),
+            width: 0.8,
+          ),
           borderRadius: BorderRadius.circular(AppRadius.large),
         ),
         child: Column(
@@ -77,7 +80,7 @@ class _RecommendedCardState extends State<RecommendedCard> {
             // 🔹 Image Section
             ClipRRect(
               borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(16),
+                top: Radius.circular(20),
               ),
               child: Stack(
                 children: [
@@ -144,7 +147,7 @@ class _RecommendedCardState extends State<RecommendedCard> {
                         // Compare button
                         GestureDetector(
                           onTap: () {
-                            compare.toggle(widget.property, max: 2);
+                            compare.toggle(widget.property, max: 5);
                           },
                           child: Obx(() {
                             final selected = compare.isSelected(
@@ -155,6 +158,7 @@ class _RecommendedCardState extends State<RecommendedCard> {
                                   selected ? ColorRes.primary : ColorRes.white,
 
                               radius: 16,
+
                               child: Icon(
                                 Icons.compare_arrows,
                                 color:
@@ -264,7 +268,7 @@ class _RecommendedCardState extends State<RecommendedCard> {
                       ],
                     ),
 
-                    const SizedBox(height: 6),
+                    // const SizedBox(height: 6),
 
                     // Property Info
                     // if (widget.property.propertyDetails?.bhk != null) ...[
@@ -277,40 +281,39 @@ class _RecommendedCardState extends State<RecommendedCard> {
                     //   ),
                     // ],
                     // Inside your property card
-                    if (widget.property.propertyDetails != null) ...[
-                      // Text(
-                      //   [
-                      //     if (widget.property.propertyDetails!.bhk != null)
-                      //       "${widget.property.propertyDetails!.bhk} BHK",
-                      //     // if (widget.property.propertyDetails!.area != null)
-                      //     //   "${widget.property.propertyDetails!.area} sqft",
-                      //     if (widget
-                      //             .property
-                      //             .propertyDetails
-                      //             ?.furnishInfo
-                      //             ?.furnishType !=
-                      //         null)
-                      //       widget
-                      //           .property
-                      //           .propertyDetails!
-                      //           .furnishInfo!
-                      //           .furnishType,
-                      //     if (widget.property.propertyDetails?.propertyFacing !=
-                      //         null)
-                      //       widget.property.propertyDetails!.propertyFacing!,
-                      //     // if (widget.property.propertyDetails!.bathrooms != null)
-                      //     //   "${widget.property.propertyDetails!.bathrooms} Bath",
-                      //   ].join(" · "),
-                      //   style: TextStyle(
-                      //     fontSize: AppFontSizes.caption,
-                      //     color: ColorRes.leadGreyColor.shade800,
-                      //     fontWeight: AppFontWeights.medium,
-                      //   ),
-                      //   overflow: TextOverflow.ellipsis,
-                      // ),
-                      Facilities(property: widget.property),
-                    ],
-
+                    // if (widget.property.propertyDetails != null) ...[
+                    //   // Text(
+                    //   //   [
+                    //   //     if (widget.property.propertyDetails!.bhk != null)
+                    //   //       "${widget.property.propertyDetails!.bhk} BHK",
+                    //   //     // if (widget.property.propertyDetails!.area != null)
+                    //   //     //   "${widget.property.propertyDetails!.area} sqft",
+                    //   //     if (widget
+                    //   //             .property
+                    //   //             .propertyDetails
+                    //   //             ?.furnishInfo
+                    //   //             ?.furnishType !=
+                    //   //         null)
+                    //   //       widget
+                    //   //           .property
+                    //   //           .propertyDetails!
+                    //   //           .furnishInfo!
+                    //   //           .furnishType,
+                    //   //     if (widget.property.propertyDetails?.propertyFacing !=
+                    //   //         null)
+                    //   //       widget.property.propertyDetails!.propertyFacing!,
+                    //   //     // if (widget.property.propertyDetails!.bathrooms != null)
+                    //   //     //   "${widget.property.propertyDetails!.bathrooms} Bath",
+                    //   //   ].join(" · "),
+                    //   //   style: TextStyle(
+                    //   //     fontSize: AppFontSizes.caption,
+                    //   //     color: ColorRes.leadGreyColor.shade800,
+                    //   //     fontWeight: AppFontWeights.medium,
+                    //   //   ),
+                    //   //   overflow: TextOverflow.ellipsis,
+                    //   // ),
+                    //   Facilities(property: widget.property),
+                    // ],
                     const SizedBox(height: 6),
 
                     // Row(
@@ -371,7 +374,7 @@ class _RecommendedCardState extends State<RecommendedCard> {
                     ),
                     const SizedBox(height: 5),
                     SizedBox(
-                      height: 30,
+                      height: 32,
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
@@ -382,7 +385,7 @@ class _RecommendedCardState extends State<RecommendedCard> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(10),
 
                                 // ignore: deprecated_member_use
                                 border: Border.all(

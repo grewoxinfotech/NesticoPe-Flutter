@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:housing_flutter_app/widgets/location_permission/location_permission_method.dart';
+import 'package:nesticope_app/widgets/location_permission/location_permission_method.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:multi_image_picker_view/multi_image_picker_view.dart';
 

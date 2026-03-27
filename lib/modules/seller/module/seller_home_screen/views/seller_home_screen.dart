@@ -2,19 +2,19 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/modules/add_property/view/create_property.dart';
-import 'package:housing_flutter_app/modules/dashboard/views/dashboard_screen.dart';
-import 'package:housing_flutter_app/modules/home/views/home_screen/home_screen.dart';
-import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
-import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
-import 'package:housing_flutter_app/modules/seller/controllers/seller_overview_controller.dart';
-import 'package:housing_flutter_app/modules/seller/model/overview_model.dart';
-import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
-import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
-import 'package:housing_flutter_app/modules/seller/module/seller_home_screen/views/widget/property_distribution_pie_graph.dart';
-import 'package:housing_flutter_app/utils/shimmer/dashboard/dashbard_shimmer.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/modules/add_property/view/create_property.dart';
+import 'package:nesticope_app/modules/dashboard/views/dashboard_screen.dart';
+import 'package:nesticope_app/modules/home/views/home_screen/home_screen.dart';
+import 'package:nesticope_app/modules/property/controllers/property_controller.dart';
+import 'package:nesticope_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
+import 'package:nesticope_app/modules/seller/controllers/seller_overview_controller.dart';
+import 'package:nesticope_app/modules/seller/model/overview_model.dart';
+import 'package:nesticope_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
+import 'package:nesticope_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
+import 'package:nesticope_app/modules/seller/module/seller_home_screen/views/widget/property_distribution_pie_graph.dart';
+import 'package:nesticope_app/utils/shimmer/dashboard/dashbard_shimmer.dart';
 
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/utils/formater/formater.dart';
@@ -1039,40 +1039,78 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
 
     return DashboardLayout(
       onRefresh: overviewController.refreshSellerDashboard,
-      floatingButton: FloatingActionButton.extended(
+      // floatingButton: FloatingActionButton.extended(
+      //   extendedPadding: EdgeInsets.zero,
+      //   shape: RoundedRectangleBorder(
+      //     borderRadius: BorderRadius.circular(10),
+      //   ),
+
+      //   onPressed: () async {
+      //     /// 1️⃣ Check Aadhar first
+      //     if (!UserHelper.isAadharVerified) {
+      //       Get.to(() => AadharAuthScreen());
+      //       return;
+      //     }
+
+      //     /// 2️⃣ Ensure signatures are loaded
+      //     if (signatureController!.signatures.isEmpty &&
+      //         !signatureController!.isLoading.value) {
+      //       await signatureController!.fetchDigitalSignatures();
+      //     }
+
+      //     /// 3️⃣ Check MOU verification
+      //     /// 3️⃣ Check MOU verification
+      //     if (!signatureController!.isSignatureVerified.value) {
+      //       // Pass the controller to MouVerificationScreen
+      //       Get.to(
+      //         () => MouVerificationScreen(controller: signatureController),
+      //       );
+      //       return;
+      //     }
+
+      //     /// 4️⃣ All verified → go to property screen
+      //     Get.to(CreatePropertyScreen(isLogin: true));
+      //   },
+      //   label: Text(
+      //     'Add Property',
+      //     style: TextStyle(
+      //       color: ColorRes.white,
+      //       fontWeight: AppFontWeights.semiBold,
+      //       fontSize: AppFontSizes.bodySmall,
+      //     ),
+      //   ),
+      // ),
+      floatingButton: FloatingActionButton(
+        backgroundColor: ColorRes.primary,
+        elevation: 6,
+        shape: const CircleBorder(),
+
         onPressed: () async {
-          /// 1️⃣ Check Aadhar first
+          /// 1️⃣ Check Aadhar
           if (!UserHelper.isAadharVerified) {
             Get.to(() => AadharAuthScreen());
             return;
           }
 
-          /// 2️⃣ Ensure signatures are loaded
+          /// 2️⃣ Load signatures
           if (signatureController!.signatures.isEmpty &&
               !signatureController!.isLoading.value) {
             await signatureController!.fetchDigitalSignatures();
           }
 
-          /// 3️⃣ Check MOU verification
-          /// 3️⃣ Check MOU verification
+          /// 3️⃣ MOU verification
           if (!signatureController!.isSignatureVerified.value) {
-            // Pass the controller to MouVerificationScreen
             Get.to(
               () => MouVerificationScreen(controller: signatureController),
             );
             return;
           }
 
-          /// 4️⃣ All verified → go to property screen
+          /// 4️⃣ Navigate
           Get.to(CreatePropertyScreen(isLogin: true));
         },
-        label: Text(
-          '+ Add Property',
-          style: TextStyle(
-            color: ColorRes.white,
-            fontWeight: AppFontWeights.semiBold,
-          ),
-        ),
+
+        child: const Icon(Icons.add, color: Colors.white, size: 28),
       ),
       child: FutureBuilder(
         future: overviewController.getFetchSellerApi(
@@ -1191,10 +1229,10 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 12,
-                              vertical: 8,
+                              vertical: 6,
                             ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
                         ),
@@ -1263,9 +1301,12 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
         ),
       ),
       child: DropdownButtonHideUnderline(
+
         child: DropdownButton<int>(
+          padding: EdgeInsets.zero,
           value: overviewController.selectedGraphYear.value,
           icon: const Icon(Icons.keyboard_arrow_down_rounded),
+
           style: TextStyle(
             color: ColorRes.textColor,
             fontSize: AppFontSizes.medium,

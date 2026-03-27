@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/data/network/city/tending_city/trending_city_model.dart';
+import 'package:nesticope_app/data/network/city/tending_city/trending_city_model.dart';
 import 'package:http/http.dart' as http;
 import '../../../../app/constants/api_constants.dart';
 import '../../../../widgets/messages/snack_bar.dart';

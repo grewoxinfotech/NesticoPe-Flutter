@@ -1,5 +1,5 @@
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/modules/propert_detail/view/property_details.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/modules/propert_detail/view/property_details.dart';
 
 import '../../../../../modules/propert_detail/view/property_details.dart';
 import '../../../../../modules/propert_detail/view/property_details.dart'
@@ -92,6 +92,7 @@ class ContractorServiceItem {
   bool? isBlocked;
   String? blockReason;
   String? blockedAt;
+  List<String>? serviceImage;
   ContractorMetaData meta;
   String createdAt;
   String updatedAt;
@@ -111,6 +112,7 @@ class ContractorServiceItem {
     this.isBlocked,
     this.blockReason,
     this.blockedAt,
+    this.serviceImage,
     required this.meta,
     required this.createdAt,
     required this.updatedAt,
@@ -132,6 +134,7 @@ class ContractorServiceItem {
       isBlocked: json['isBlocked'] ?? false,
       blockReason: json['blockReason'],
       blockedAt: json['blockedAt'],
+      serviceImage: (json['serviceImage'] as List?)?.cast<String>(),
       meta: ContractorMetaData.fromJson(json['meta'] ?? {}),
       createdAt: json['createdAt'] ?? '',
       updatedAt: json['updatedAt'] ?? '',
@@ -154,6 +157,7 @@ class ContractorServiceItem {
       'isBlocked': isBlocked,
       'blockReason': blockReason,
       'blockedAt': blockedAt,
+      'serviceImage': serviceImage,
       'meta': meta.toJson(),
       'createdAt': createdAt,
       'updatedAt': updatedAt,

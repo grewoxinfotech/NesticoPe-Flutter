@@ -2,14 +2,15 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/data/network/contractor/model/contractor_compare_model/contractor_compare_model.dart';
-import 'package:housing_flutter_app/data/network/contractor/model/contractor_profile_model/contractor_profile_model.dart';
-import 'package:housing_flutter_app/modules/hire_contractor/view/widget/hire_contractor_filter.dart';
-import 'package:housing_flutter_app/utils/logger/app_logger.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/data/network/contractor/model/contractor_compare_model/contractor_compare_model.dart';
+import 'package:nesticope_app/data/network/contractor/model/contractor_profile_model/contractor_profile_model.dart';
+import 'package:nesticope_app/modules/hire_contractor/view/widget/hire_contractor_filter.dart';
+import 'package:nesticope_app/utils/logger/app_logger.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
@@ -480,7 +481,7 @@ class _HireContractorCardState extends State<HireContractorCard> {
                       if (contractorProfile != null) {
                         compare.toggle(
                           contractorProfile ?? Contractor.fromJson({}),
-                          max: 2,
+                          max: 5,
                         );
                       }
                     },
@@ -828,7 +829,14 @@ class _HireContractorCardState extends State<HireContractorCard> {
         decoration: BoxDecoration(
           color: ColorRes.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: ColorRes.leadGreyColor.shade300),
+          // border: Border.all(color: ColorRes.leadGreyColor.shade300),
+           boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 2,
+            offset: const Offset(2, 3),
+          ),
+        ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1052,7 +1060,7 @@ class _HireContractorCardState extends State<HireContractorCard> {
                     if (contractorProfile != null) {
                       compare.toggle(
                         contractorProfile ?? Contractor.fromJson({}),
-                        max: 2,
+                        max: 5,
                       );
                     }
                   },
@@ -1346,7 +1354,7 @@ class _HireContractorCardState extends State<HireContractorCard> {
                       if (contractorProfile != null) {
                         compare.toggle(
                           contractorProfile ?? Contractor.fromJson({}),
-                          max: 2,
+                          max: 5,
                         );
                       }
                     },
@@ -1548,6 +1556,8 @@ class _AllContractorCardState extends State<AllContractorCard> {
   void _fetchUserByID() async {
     final userId = widget.data.userId;
 
+    log('userId jdjkcdj dkjcsdkj : $userId');
+
     contractorProfile = await widget.contractor.getContractorById(userId);
   }
 
@@ -1559,6 +1569,7 @@ class _AllContractorCardState extends State<AllContractorCard> {
 
     return GestureDetector(
       onTap: () async {
+          log('userId jdjkcdj dkjcsdkj : ${user.userId}');
         log("Tapped Contractor Profile Data: ${contractorProfile?.toJson()}");
 
         contractorProfile?.username = widget.data.username ?? '';
@@ -1586,8 +1597,15 @@ class _AllContractorCardState extends State<AllContractorCard> {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: ColorRes.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+          borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
+          // border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+           boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 2,
+            offset: const Offset(2, 3),
+          ),
+        ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1660,7 +1678,7 @@ class _AllContractorCardState extends State<AllContractorCard> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
-                                '\$${widget.data.contractorVisitCharge}/visit',
+                                '${Formatter.formatPrice(widget.data.contractorVisitCharge ?? 0)}/visit',
                                 style: TextStyle(
                                   fontSize: AppFontSizes.small,
                                   fontWeight: FontWeight.w600,
@@ -1798,7 +1816,7 @@ class _AllContractorCardState extends State<AllContractorCard> {
                     if (contractorProfile != null) {
                       compare.toggle(
                         contractorProfile ?? Contractor.fromJson({}),
-                        max: 2,
+                        max: 5,
                       );
                     }
                   },
@@ -1896,7 +1914,7 @@ class _AllContractorCardState extends State<AllContractorCard> {
           mainAxisSize: MainAxisSize.min, // <-- important
           children: [
             Text(
-              serviceName,
+              serviceName?.capitalize?.replaceAll('_', ' ') ?? '',
               style: TextStyle(
                 fontSize: AppFontSizes.caption,
                 fontWeight: AppFontWeights.medium,

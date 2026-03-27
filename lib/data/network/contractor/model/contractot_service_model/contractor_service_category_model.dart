@@ -59,7 +59,7 @@ class TopCategoryItem {
   final String createdBy;
   final String? updatedBy;
   final String name;
-  final String description;
+  final List<String> description;
   final String? icon;
   final int isActive;
   final int displayOrder;
@@ -92,7 +92,7 @@ class TopCategoryItem {
       updatedBy: json['updated_by'],
       name: json['name'] ?? '',
       icon: json['icon']??'',
-      description: json['description'] ?? '',
+      description: List<String>.from(json['description'] ?? []),
       isActive: json['isActive'] ?? 0,
       displayOrder: json['displayOrder'] ?? 0,
       createdAt: DateTime.parse(json['createdAt']),

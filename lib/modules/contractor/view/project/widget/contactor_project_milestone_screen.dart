@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/modules/contractor/view/project/widget/add_milestone_screen.dart';
-import 'package:housing_flutter_app/modules/property_rating/view/widget/read_more_or_less.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/modules/contractor/view/project/widget/add_milestone_screen.dart';
+import 'package:nesticope_app/modules/property_rating/view/widget/read_more_or_less.dart';
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/constants/color_res.dart';
 import '../../../../../data/network/contractor/model/contractor_project_model/contractor_project_milestone_model.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/modules/contractor/controller/contractor_project_controller.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/modules/contractor/controller/contractor_project_controller.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../../../app/constants/color_res.dart';

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/modules/hire_contractor/controller/hire_contractor_filter_controller.dart';
-import 'package:housing_flutter_app/modules/hire_contractor/view/widget/hire_contractor_profilelist.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/modules/hire_contractor/controller/hire_contractor_filter_controller.dart';
+import 'package:nesticope_app/modules/hire_contractor/view/widget/hire_contractor_profilelist.dart';
 import '../../../../../app/constants/app_font_sizes.dart';
 
 class CategoryServiceExplorer extends StatefulWidget {
@@ -62,6 +63,7 @@ class _CategoryServiceExplorerState extends State<CategoryServiceExplorer> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: ColorRes.white,
         title: Text(
           widget.categoryName,
           style: const TextStyle(fontWeight: AppFontWeights.semiBold),
@@ -111,19 +113,36 @@ class _CategoryServiceExplorerState extends State<CategoryServiceExplorer> {
                             : (items.length > 5 ? 5 : items.length);
                     return Material(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(
+                        AppRadius.mediumLarge,
+                      ),
                       child: Container(
+
                         decoration: BoxDecoration(
-                          border: Border.all(
-                            color:
-                                (isTrending)
-                                    ? Color(0xFF7C4DFF)
-                                    : (isBestSelling)
-                                    ? ColorRes.green
-                                    : ColorRes.grey.withOpacity(0.2),
-                            width: (isTrending || isBestSelling) ? 2.5 : 1,
+                          color: ColorRes.white,
+                          border:
+                              isTrending || isBestSelling
+                                  ? Border.all(
+                                    color:
+                                        (isTrending)
+                                            ? Color(0xFF7C4DFF)
+                                            : (isBestSelling)
+                                            ? ColorRes.green
+                                            : ColorRes.grey.withOpacity(0.2),
+                                    width:
+                                        (isTrending || isBestSelling) ? 2.5 : 1,
+                                  )
+                                  : null,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.04),
+                              blurRadius: 2,
+                              offset: const Offset(2, 3),
+                            ),
+                          ],
+                          borderRadius: BorderRadius.circular(
+                            AppRadius.mediumLarge,
                           ),
-                          borderRadius: BorderRadius.circular(16),
                         ),
                         padding: const EdgeInsets.all(16),
                         child: Column(

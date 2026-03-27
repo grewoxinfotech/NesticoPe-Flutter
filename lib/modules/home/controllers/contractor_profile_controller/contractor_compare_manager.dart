@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 // adjust path to your Contractor model
-import 'package:housing_flutter_app/app/manager/project_compare_manager.dart';
+import 'package:nesticope_app/app/manager/project_compare_manager.dart';
 
 import '../../../../app/manager/compare_manager.dart';
 import '../../../../data/network/contractor/model/contractor_profile_model/contractor_profile_model.dart';
@@ -18,7 +18,7 @@ class ContractorCompareManager extends GetxController {
 
   bool isSelected(String? id) => id != null && _selected.containsKey(id);
 
-  void toggle(Contractor contractor, {int max = 2}) {
+  void toggle(Contractor contractor, {int max = 5}) {
     final id = contractor.userId;
     if (id.isEmpty) return;
 

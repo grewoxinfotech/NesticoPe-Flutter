@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:housing_flutter_app/app/constants/api_constants.dart';
+import 'package:nesticope_app/app/constants/api_constants.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../database/secure_storage_service.dart';

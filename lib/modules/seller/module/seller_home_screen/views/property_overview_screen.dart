@@ -1,13 +1,15 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/constants/img_res.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/img_res.dart';
+import 'package:nesticope_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
-import 'package:housing_flutter_app/modules/seller/view/widget/property_overview_seller.dart';
-import 'package:housing_flutter_app/utils/property_mapper/property_mapper.dart';
-import 'package:housing_flutter_app/utils/shimmer/seller/owner/property_screen/proeprty_list_screen_shimmer.dart';
+import 'package:nesticope_app/modules/property_price_trend/view/widget/price_formate.dart'
+    as Formatter;
+import 'package:nesticope_app/modules/seller/view/widget/property_overview_seller.dart';
+import 'package:nesticope_app/utils/property_mapper/property_mapper.dart';
+import 'package:nesticope_app/utils/shimmer/seller/owner/property_screen/proeprty_list_screen_shimmer.dart';
 
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/manager/property/property_pricemanager.dart';
@@ -44,7 +46,7 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
         foregroundColor: ColorRes.textPrimary,
         automaticallyImplyLeading: false,
         title: const Text(
-          "Property Overview",
+          "My Properties",
           style: TextStyle(fontWeight: AppFontWeights.semiBold),
         ),
         actions: [
@@ -258,7 +260,7 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
                     // Property Image with Status Badge
                     Stack(
                       children: [
-                        Container(
+                        SizedBox(
                           height: 200,
                           width: double.infinity,
                           child: CustomImage(
@@ -374,11 +376,12 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
 
                     // Property Details
                     Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.symmetric(horizontal: 16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Title and Price
+                          SizedBox(height: 12),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -390,7 +393,9 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   Text(
-                                    property.propertyType ?? 'Property Title',
+                                    property.propertyType?.capitalize
+                                            ?.replaceAll('_', ' ') ??
+                                        'Property Title',
                                     style: TextStyle(
                                       fontSize: AppFontSizes.body,
                                       fontWeight: AppFontWeights.semiBold,
@@ -404,7 +409,7 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
                                       vertical: 6,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: ColorRes.blueColor[50],
+                                      color: ColorRes.primary.withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
@@ -412,18 +417,18 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
                                       style: TextStyle(
                                         fontSize: AppFontSizes.small,
                                         fontWeight: AppFontWeights.semiBold,
-                                        color: ColorRes.blueColor[700],
+                                        color: ColorRes.primary,
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 8),
+                              SizedBox(height: 4),
                               Row(
                                 children: [
                                   const Icon(
                                     Icons.location_on,
-                                    size: 14,
+                                    size: 12,
                                     color: ColorRes.leadGreyColor,
                                   ),
                                   const SizedBox(width: 4),
@@ -431,8 +436,9 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
                                     child: Text(
                                       property.location ?? 'Location',
                                       style: TextStyle(
-                                        fontSize: AppFontSizes.medium,
+                                        fontSize: AppFontSizes.caption,
                                         color: ColorRes.leadGreyColor[600],
+                                        fontWeight: AppFontWeights.medium,
                                       ),
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
@@ -471,22 +477,23 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
                                 Icons.favorite,
                                 _formatNumber(property.totalFavorites ?? 0),
                                 'Likes',
-                                ColorRes.primary,
+                                Color(0xffEF4444),
                               ),
                               _buildAnalyticsItem(
                                 Icons.share,
                                 _formatNumber(property.totalShares ?? 0),
                                 'Shares',
-                                ColorRes.primary,
+                                Color(0xff6366F1),
                               ),
                               _buildAnalyticsItem(
                                 Icons.people,
                                 _formatNumber(property.totalVisits ?? 0),
                                 'Visits',
-                                ColorRes.primary,
+                                Color(0xff10B981),
                               ),
                             ],
                           ),
+                          SizedBox(height: 16),
                         ],
                       ),
                     ),
@@ -587,7 +594,7 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
+            shape: BoxShape.circle,
           ),
           child: Icon(icon, size: 16, color: color),
         ),
@@ -614,8 +621,7 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
   }
 
   String _formatNumber(int number) {
-    if (number >= 1000) return '${(number / 1000).toStringAsFixed(1)}K';
-    return number.toString();
+    return Formatter.formatNumber(number);
   }
 }
 

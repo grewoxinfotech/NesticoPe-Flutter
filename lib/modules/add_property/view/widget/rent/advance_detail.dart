@@ -3,12 +3,12 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
-import 'package:housing_flutter_app/modules/add_property/view/create_property.dart';
-import 'package:housing_flutter_app/modules/add_property/view/widget/stepper_property.dart';
-import 'package:housing_flutter_app/modules/search_property/model/search_model.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/modules/add_property/controller/create_property_controller.dart';
+import 'package:nesticope_app/modules/add_property/view/create_property.dart';
+import 'package:nesticope_app/modules/add_property/view/widget/stepper_property.dart';
+import 'package:nesticope_app/modules/search_property/model/search_model.dart';
 
 import '../../../../search_property/view/search_screen.dart';
 

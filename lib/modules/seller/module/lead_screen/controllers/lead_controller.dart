@@ -3,11 +3,11 @@
 //
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
-// import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
-// import 'package:housing_flutter_app/app/manager/property/property_name_manager.dart';
-// import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
-// import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
+// import 'package:nesticope_app/app/care/pagination/controller/pagination_controller.dart';
+// import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
+// import 'package:nesticope_app/app/manager/property/property_name_manager.dart';
+// import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+// import 'package:nesticope_app/data/network/property/models/property_model.dart';
 //
 // import '../../../../../app/constants/color_res.dart';
 // import '../../../../../data/database/secure_storage_service.dart';
@@ -524,11 +524,11 @@ import 'dart:math' hide log;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
-import 'package:housing_flutter_app/app/manager/property/property_name_manager.dart';
-import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
-import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
+import 'package:nesticope_app/app/care/pagination/controller/pagination_controller.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/app/manager/property/property_name_manager.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:nesticope_app/data/network/property/models/property_model.dart';
 
 import '../../../../../app/constants/color_res.dart';
 import '../../../../../data/database/secure_storage_service.dart';

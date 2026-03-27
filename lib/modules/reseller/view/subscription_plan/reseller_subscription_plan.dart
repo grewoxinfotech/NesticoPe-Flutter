@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/app/constants/enum.dart';
+import 'package:nesticope_app/app/constants/enum.dart';
 
 import '../../../subscription/views/suscription_plan_screen.dart';
 
@@ -11,6 +11,8 @@ class ResellerSubscriptionPlanScreen extends StatelessWidget {
     return SubscriptionPlansScreen(
       role: Roles.reseller.name,
       isShowCurrentPlan: true,
+      isNotFromBuyerSide: true,
+      showArrow: false,
     );
   }
 }

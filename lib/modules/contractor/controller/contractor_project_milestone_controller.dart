@@ -1,7 +1,7 @@
 // import 'package:flutter/material.dart';
 // import 'package:get/state_manager.dart';
-// import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
-// import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+// import 'package:nesticope_app/app/care/pagination/controller/pagination_controller.dart';
+// import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
 //
 // import '../../../data/network/contractor/model/contractor_project_model/contractor_project_milestone_model.dart';
 // import '../../../data/network/contractor/service/project/contactor_project_mileston_service.dart';
@@ -127,10 +127,10 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/state_manager.dart';
-import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
+import 'package:nesticope_app/app/care/pagination/controller/pagination_controller.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 
 import '../../../data/network/contractor/model/contractor_project_model/contractor_project_milestone_model.dart';
 import '../../../data/network/contractor/service/project/contactor_project_mileston_service.dart';

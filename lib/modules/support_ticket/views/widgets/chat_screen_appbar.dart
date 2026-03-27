@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/data/network/support_ticket/models/ticket_model/support_ticket_model.dart';
-import 'package:housing_flutter_app/modules/support_ticket/views/widgets/ticket_detail.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/data/network/support_ticket/models/ticket_model/support_ticket_model.dart';
+import 'package:nesticope_app/modules/support_ticket/views/widgets/ticket_detail.dart';
 
 import '../../../../app/constants/color_res.dart';
 

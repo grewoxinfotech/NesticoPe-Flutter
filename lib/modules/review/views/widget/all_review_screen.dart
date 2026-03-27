@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/modules/review/views/widget/property_review_card.dart';
+import 'package:nesticope_app/modules/review/views/widget/property_review_card.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../controllers/review_controller.dart';

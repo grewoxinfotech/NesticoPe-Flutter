@@ -1,10 +1,10 @@
 // import 'dart:async';
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
+// import 'package:nesticope_app/modules/auth/controllers/auth_controller.dart';
 // import '../../../data/database/secure_storage_service.dart';
 // import '../../../widgets/button/button.dart';
-// import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
+// import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 // import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 //
 // import '../../dashboard/views/dashboard_screen.dart';
@@ -354,8 +354,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/data/network/auth/service/auth_service.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/data/network/auth/service/auth_service.dart';
 
 import '../../../app/constants/color_res.dart';
 import '../../../data/database/secure_storage_service.dart';

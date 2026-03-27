@@ -1,13 +1,13 @@
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-// import 'package:housing_flutter_app/app/constants/color_res.dart';
-// import 'package:housing_flutter_app/app/constants/img_res.dart';
-// import 'package:housing_flutter_app/app/constants/size_manager.dart';
-// import 'package:housing_flutter_app/app/constants/svg_res.dart';
-// import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-// import 'package:housing_flutter_app/app/utils/svg_widget.dart';
-// import 'package:housing_flutter_app/modules/property/views/property_detail_screen.dart';
+// import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+// import 'package:nesticope_app/app/constants/color_res.dart';
+// import 'package:nesticope_app/app/constants/img_res.dart';
+// import 'package:nesticope_app/app/constants/size_manager.dart';
+// import 'package:nesticope_app/app/constants/svg_res.dart';
+// import 'package:nesticope_app/app/utils/formater/formater.dart';
+// import 'package:nesticope_app/app/utils/svg_widget.dart';
+// import 'package:nesticope_app/modules/property/views/property_detail_screen.dart';
 // import '../../../../data/network/property/models/property_model.dart';
 
 // class SellerPropertyCard extends StatefulWidget {
@@ -323,12 +323,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/constants/svg_res.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/app/utils/svg_widget.dart';
-import 'package:housing_flutter_app/modules/property/views/property_detail_screen.dart';
-import 'package:housing_flutter_app/modules/seller/view/seller_profile.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/svg_res.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/app/utils/svg_widget.dart';
+import 'package:nesticope_app/modules/property/views/property_detail_screen.dart';
+import 'package:nesticope_app/modules/seller/view/seller_profile.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../data/network/property/models/property_model.dart';
 

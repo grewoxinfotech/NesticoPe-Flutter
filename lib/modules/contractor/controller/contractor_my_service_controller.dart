@@ -2,11 +2,12 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
-import 'package:housing_flutter_app/data/network/contractor/service/contractor_my_service.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/data/network/contractor/model/contractot_service_model/contractor_service_model.dart';
-import 'package:housing_flutter_app/utils/logger/app_logger.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/data/network/contractor/service/contractor_my_service.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/data/network/contractor/model/contractot_service_model/contractor_service_model.dart';
+import 'package:nesticope_app/utils/logger/app_logger.dart';
 import '../../../app/care/pagination/controller/pagination_controller.dart';
 import '../../../app/constants/color_res.dart';
 import '../../../data/network/contractor/model/contractot_service_model/contractor_category_model.dart';
@@ -250,6 +251,55 @@ class ContractorMyServiceController
 
   // Loading & form state
   final isCreating = false.obs;
+
+  // Image Picking
+  final selectedImagePaths = <String>[].obs;
+  final existingImageUrls = <String>[].obs;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> pickImages() async {
+    try {
+      final int totalCount =
+          selectedImagePaths.length + existingImageUrls.length;
+      if (totalCount >= 5) {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Limit Exceeded",
+          message: "You can only pick up to 5 images",
+          contentType: ContentType.warning,
+        );
+        return;
+      }
+
+      final List<XFile>? images = await _picker.pickMultiImage();
+      if (images != null && images.isNotEmpty) {
+        final int remainingSlots = 5 - totalCount;
+        final List<XFile> imagesToAdd =
+            images.take(remainingSlots).toList();
+
+        for (var image in imagesToAdd) {
+          selectedImagePaths.add(image.path);
+        }
+
+        if (images.length > remainingSlots) {
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: "Limit Exceeded",
+            message: "Only first $remainingSlots images were added",
+            contentType: ContentType.warning,
+          );
+        }
+      }
+    } catch (e) {
+      print("Error picking images: $e");
+    }
+  }
+
+  void removeSelectedImage(int index) {
+    selectedImagePaths.removeAt(index);
+  }
+
+  void removeExistingImage(int index) {
+    existingImageUrls.removeAt(index);
+  }
 
   // ---------------- INIT ----------------
   @override
@@ -553,7 +603,7 @@ class ContractorMyServiceController
       AppLogger.structured("Create service payload: ", payload);
 
       final response = await ContractorMyService.contractorMyService
-          .createService(payload);
+          .createService(payload, imagePaths: selectedImagePaths);
       print("Create Service Response: $response");
 
       if (response) {
@@ -741,6 +791,10 @@ class ContractorMyServiceController
     );
 
     selectedServiceNameDropdown.value = match['value'] as String;
+
+    // Image handling
+    existingImageUrls.assignAll(service.serviceImage ?? []);
+    selectedImagePaths.clear();
 
     // Load workItemOptions using category ID + service value
     workItemOptions.assignAll(
@@ -2314,6 +2368,10 @@ class ContractorMyServiceController
     brandController.clear();
     advanceController.text = '0';
 
+    // Image fields
+    selectedImagePaths.clear();
+    existingImageUrls.clear();
+
     // Single dropdowns
     selectedCategory.value = '';
     selectedCategoryName.value = '';
@@ -2612,13 +2670,18 @@ class ContractorMyServiceController
 
         createdAt: editingService.value!.createdAt,
         updatedAt: DateTime.now().toIso8601String(),
+        serviceImage: existingImageUrls,
       );
 
       final payload = updatedServiceItem.toMap();
       AppLogger.structured("Update service payload: ", payload);
 
       final response = await ContractorMyService.contractorMyService
-          .updateContractorService(payload, editingService.value!.id ?? '');
+          .updateContractorService(
+        payload,
+        editingService.value!.id ?? '',
+        imagePaths: selectedImagePaths,
+      );
 
       if (response) {
         Get.back();

@@ -174,7 +174,7 @@
 import 'dart:developer';
 
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
 
 import '../../data/network/property/models/property_model.dart';
 
@@ -242,8 +242,8 @@ class PropertyDetailManager {
 
               final rentText =
                   (minRent == maxRent)
-                      ? "$minRent INR / month"
-                      : "$minRent - $maxRent INR / month";
+                      ? "${Formatter.formatPrice(minRent)} / month"
+                      : "${Formatter.formatPrice(minRent)} - ${Formatter.formatPrice(maxRent)} / month";
               details.add({"Rent Range": rentText});
             }
 

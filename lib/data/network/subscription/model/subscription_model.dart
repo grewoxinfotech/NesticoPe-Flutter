@@ -1,3 +1,13 @@
+bool _asBool(dynamic v) {
+  if (v is bool) return v;
+  if (v is num) return v != 0;
+  if (v is String) {
+    final s = v.toLowerCase();
+    return s == 'true' || s == '1' || s == 'yes';
+  }
+  return false;
+}
+
 class SubscriptionPlansResponse {
   final bool success;
   final String message;
@@ -58,10 +68,13 @@ class SubscriptionPlan {
   final String type;
   final String plansFor;
   final String amount;
+  final String originalPrice;
   final int durationMonths;
   final bool isPremium;
   final bool isActive;
   final PlanFeatures features;
+  final String gstRate;
+  final bool isRecommended;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -73,10 +86,13 @@ class SubscriptionPlan {
     required this.type,
     required this.plansFor,
     required this.amount,
+    required this.originalPrice,
     required this.durationMonths,
     required this.isPremium,
     required this.isActive,
     required this.features,
+    required this.gstRate,
+    required this.isRecommended,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -90,10 +106,13 @@ class SubscriptionPlan {
       type: json['type'] ?? "",
       plansFor: json['plansFor'] ?? "",
       amount: json['amount'] ?? "",
+      originalPrice: json['originalPrice'] ?? "",
       durationMonths: json['durationMonths'] ?? 0,
-      isPremium: json['isPremium'] ?? false,
-      isActive: json['isActive'] ?? false,
+      isPremium: _asBool(json['isPremium']),
+      isActive: _asBool(json['isActive']),
       features: PlanFeatures.fromJson(json['features'] ?? {}),
+      gstRate: json['gstRate'] ?? "",
+      isRecommended: _asBool(json['isRecommended']),
       createdAt: DateTime.tryParse(json['createdAt'] ?? "") ?? DateTime.now(),
       updatedAt: DateTime.tryParse(json['updatedAt'] ?? "") ?? DateTime.now(),
     );
@@ -105,6 +124,7 @@ class PlanFeatures {
   final dynamic maxService; // can be "unlimited" or int
   final dynamic maxLeads; // can be "unlimited" or int
   final dynamic maxUsers; // can be "unlimited" or int
+  final dynamic maxProjects; // can be "unlimited" or int
   final String? commission;
   final dynamic analytics; // can be bool or String (depending on API)
   final dynamic support; // can be bool or String
@@ -113,6 +133,8 @@ class PlanFeatures {
   final bool? verifiedBadge;
   final String? marketingTools;
   final bool? dedicatedSupport;
+  final String? leadGeneration;
+  final String? projectShowcase;
 
   final bool? exportData;
   final bool? advancedReports;
@@ -126,6 +148,7 @@ class PlanFeatures {
     this.maxService,
     this.maxLeads,
     this.maxUsers,
+    this.maxProjects,
     this.commission,
     this.analytics,
     this.support,
@@ -134,6 +157,8 @@ class PlanFeatures {
     this.verifiedBadge,
     this.marketingTools,
     this.dedicatedSupport,
+    this.leadGeneration,
+    this.projectShowcase,
     this.exportData,
     this.advancedReports,
     this.customBranding,
@@ -148,6 +173,7 @@ class PlanFeatures {
       maxService: json['maxServices'],
       maxLeads: json['maxLeads'],
       maxUsers: json['maxUsers'],
+      maxProjects: json['maxProjects'],
       commission: json['commission'],
       analytics: json['analytics'],
       support: json['support'],
@@ -156,6 +182,8 @@ class PlanFeatures {
       verifiedBadge: json['verifiedBadge'],
       marketingTools: json['marketingTools'],
       dedicatedSupport: json['dedicatedSupport'],
+      leadGeneration: json['leadGeneration'],
+      projectShowcase: json['projectShowcase'],
       exportData: json['exportData'],
       advancedReports: json['advancedReports'],
       customBranding: json['customBranding'],
@@ -171,6 +199,7 @@ class PlanFeatures {
       'maxServices': maxService,
       'maxLeads': maxLeads,
       'maxUsers': maxUsers,
+      'maxProjects': maxProjects,
       'commission': commission,
       'analytics': analytics,
       'support': support,
@@ -179,6 +208,8 @@ class PlanFeatures {
       'verifiedBadge': verifiedBadge,
       'marketingTools': marketingTools,
       'dedicatedSupport': dedicatedSupport,
+      'leadGeneration': leadGeneration,
+      'projectShowcase': projectShowcase,
       'exportData': exportData,
       'advancedReports': advancedReports,
       'customBranding': customBranding,
@@ -240,6 +271,7 @@ const Map<String, String> featureLabels = {
   'maxServices': 'Max Services',
   'maxLeads': 'Max Leads',
   'maxUsers': 'Max Users',
+  'maxProjects': 'Max Projects',
   'commission': 'Commission',
   'analytics': 'Analytics',
   'support': 'Support',
@@ -256,7 +288,9 @@ const Map<String, String> featureLabels = {
   'dedicatedManager': 'Dedicated Manager',
   'profileListing': 'Profile Listing',
   'projectGallery': 'Project Gallery',
+  'projectShowcase': 'Project Showcase',
   'leadGeneration': 'Lead Generation',
+  // 'leadGeneration': 'Lead Generation',
 };
 
 extension PlanFeaturesMap on PlanFeatures {
@@ -266,6 +300,7 @@ extension PlanFeaturesMap on PlanFeatures {
       'maxServices': maxService,
       'maxLeads': maxLeads,
       'maxUsers': maxUsers,
+      'maxProjects': maxProjects,
       'commission': commission,
       'analytics': analytics,
       'support': support,
@@ -274,6 +309,8 @@ extension PlanFeaturesMap on PlanFeatures {
       'verifiedBadge': verifiedBadge,
       'marketingTools': marketingTools,
       'dedicatedSupport': dedicatedSupport,
+      'leadGeneration': leadGeneration,
+      'projectShowcase': projectShowcase,
       'exportData': exportData,
       'advancedReports': advancedReports,
       'customBranding': customBranding,

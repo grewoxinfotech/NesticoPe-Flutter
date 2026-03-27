@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
+import 'package:nesticope_app/modules/auth/controllers/auth_controller.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../app/widgets/snackbar/snackbar.dart';

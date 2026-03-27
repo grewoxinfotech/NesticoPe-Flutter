@@ -1,9 +1,9 @@
 import 'dart:developer';
 import 'dart:math' show cos, sqrt, asin;
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/confige/search_api/search_api.dart';
-import 'package:housing_flutter_app/data/network/property/services/property_service.dart';
-import 'package:housing_flutter_app/modules/search_property/model/search_model.dart';
+import 'package:nesticope_app/confige/search_api/search_api.dart';
+import 'package:nesticope_app/data/network/property/services/property_service.dart';
+import 'package:nesticope_app/modules/search_property/model/search_model.dart';
 
 import '../../../data/network/builder/service/builder_service.dart';
 

@@ -1,12 +1,13 @@
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/app/care/pagination/controller/pagination_controller.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
 import '../../../../data/network/contractor/model/contractor_profile_model/contractor_profile_model.dart';
 import '../../../../data/network/contractor/service/contractor_profile_service.dart';
 
 class TopContractorsController extends PaginatedController<Contractor> {
   final TopContractorsService _service = TopContractorsService();
+  final bool withoutCity;
 
   /// Reactive UI states
   RxBool isExpanded = false.obs;
@@ -20,10 +21,13 @@ class TopContractorsController extends PaginatedController<Contractor> {
     loadInitial(); // auto-load page 1
   }
 
+  TopContractorsController({this.withoutCity = false});
+
   Future<Contractor?> getContractorById(String id) async {
     print("Contactor Id : ${id}");
     final data = await _service.fetchContractorById(id);
     print("Contactor Data : ${data?.toJson()}");
+    
 
     if (data != null) {
       items.removeWhere((element) => element.id == id);
@@ -39,9 +43,11 @@ class TopContractorsController extends PaginatedController<Contractor> {
   @override
   Future<PaginationResponse<Contractor>> fetchItems(int page) async {
     try {
-      final cityData=await SecureStorage.getSelectedCity();
-      if(cityData!=null){
-        filters?['city']=cityData;
+      final cityData = await SecureStorage.getSelectedCity();
+      if (!withoutCity && cityData != null) {
+        filters?['city'] = cityData;
+      } else {
+        filters?.remove('city');
       }
 
       final response = await _service.fetchTopContractors(

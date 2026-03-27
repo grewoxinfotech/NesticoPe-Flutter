@@ -1,32 +1,44 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/img_res.dart';
-import 'package:housing_flutter_app/app/constants/size_manager.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/app/widgets/cards/banner_card_with_text.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/img_res.dart';
+import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/app/widgets/cards/banner_card_with_text.dart';
+import 'package:nesticope_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
-import 'package:housing_flutter_app/app/widgets/texts/headline_text.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/data/network/trending_area/model/trending_area_model.dart';
-import 'package:housing_flutter_app/modules/builder/controller/builder_form_controller.dart';
-import 'package:housing_flutter_app/modules/builder/view/all_project_list_screen.dart';
-import 'package:housing_flutter_app/modules/contractor/controller/top_contractor_service_category_controller.dart';
-import 'package:housing_flutter_app/modules/home/widgets/contractor_profile_card.dart';
-import 'package:housing_flutter_app/modules/home/widgets/home_header.dart';
-import 'package:housing_flutter_app/modules/news/controllers/news_controller.dart';
-import 'package:housing_flutter_app/modules/platform_service/controllers/platform_service_controller.dart';
-import 'package:housing_flutter_app/modules/propert_detail/view/property_details.dart';
-import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
-import 'package:housing_flutter_app/modules/property/controllers/recommended_property_controller.dart';
-import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
-import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
-import 'package:housing_flutter_app/modules/seller/view/widget/seller_list.dart';
+import 'package:nesticope_app/app/widgets/texts/headline_text.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/data/network/contractor/model/contractot_service_model/contractor_service_category_model.dart';
+import 'package:nesticope_app/data/network/trending_area/model/trending_area_model.dart';
+import 'package:nesticope_app/modules/builder/controller/builder_form_controller.dart';
+import 'package:nesticope_app/modules/builder/view/all_project_list_screen.dart';
+import 'package:nesticope_app/modules/contractor/controller/top_contractor_service_category_controller.dart';
+import 'package:nesticope_app/modules/contractor/view/all_contractors_list_screen.dart';
+import 'package:nesticope_app/modules/hire_contractor/controller/hire_contractor_filter_controller.dart';
+import 'package:nesticope_app/modules/hire_contractor/view/widget/hire_contractor_profilelist.dart';
+import 'package:nesticope_app/modules/home/controllers/top_builder_all_controller.dart';
+import 'package:nesticope_app/modules/home/controllers/top_builder_controller.dart';
+import 'package:nesticope_app/modules/home/widgets/contractor_profile_card.dart';
+import 'package:nesticope_app/modules/home/widgets/home_header.dart';
+import 'package:nesticope_app/modules/news/controllers/news_controller.dart';
+import 'package:nesticope_app/modules/platform_service/controllers/platform_service_controller.dart';
+import 'package:nesticope_app/modules/propert_detail/view/property_details.dart';
+import 'package:nesticope_app/modules/property/controllers/property_controller.dart';
+import 'package:nesticope_app/modules/property/controllers/recommended_property_controller.dart';
+import 'package:nesticope_app/modules/saved_property/controllers/property_favorite_controller.dart';
+import 'package:nesticope_app/modules/search_property/view/search_screen.dart';
+import 'package:nesticope_app/modules/seller/view/widget/builder_list_top.dart';
+import 'package:nesticope_app/modules/seller/view/widget/seller_list.dart';
+import 'package:nesticope_app/utils/global.dart';
+import 'package:nesticope_app/widgets/New%20folder/inputs/text_field.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:nesticope_app/app/utils/helper_function/contact_helper.dart';
+import 'package:nesticope_app/modules/home/controllers/contact_controller.dart';
+
 import '../../../../app/constants/color_res.dart';
 import '../../../../app/manager/compare_manager.dart' show CompareManager;
 import '../../../../app/widgets/mic_search/search_mic.dart';
@@ -40,6 +52,8 @@ import '../../../search_property/model/search_model.dart';
 import '../../controllers/contractor_profile_controller/contractor_profile_controller.dart';
 import '../../widgets/all_categories_section.dart';
 import '../../widgets/all_news_&_articles_screen.dart';
+import '../../../../widgets/button/button.dart';
+import '../../../../widgets/display/card.dart';
 
 // import '../../widgets/success_srory_detail_screen.dart';
 import '../../widgets/partner_success_stories_detail_screen.dart';
@@ -49,6 +63,8 @@ import '../../../../data/network/builder/model/builder_model.dart';
 import '../../../../data/network/news/news_model.dart';
 import '../../../../data/network/platform_review/model/platform_review_model.dart';
 import '../../../builder/view/builder_property_listing.dart';
+import 'package:nesticope_app/data/network/top_seller_profile/model/top_builder_profile_model.dart';
+import '../../views/all_builders_screen.dart';
 import '../../../builder/view/project_detail/project_detail.dart';
 import '../../../filter_property/controller/property_filter_controller.dart';
 import '../../../news/view/news_detail_screen.dart';
@@ -59,6 +75,7 @@ import '../../../property/views/widgets/top_property_card.dart';
 import '../../../property/views/widgets/property_card.dart';
 import '../../../top_seller/controller/top_seller_controller.dart';
 import '../../controllers/home_controller/platform_review-controller.dart';
+import 'package:nesticope_app/widgets/drawer/drawer.dart';
 
 class HomeScreen extends StatefulWidget {
   final List<Map<String, String>> propertyTypes;
@@ -159,7 +176,11 @@ class _HomeScreenState extends State<HomeScreen> {
   late final ProjectWizardController projectController;
   late final PlatformReviewController reviewController;
   late final TopSellerController topSellerController;
+  late final TopBuilderController topBuilderController;
   late final CompareManager compareManager;
+  late final HireContractorFilterProfileController ctrl;
+  late final ContactController contactController;
+
   late final TopCategoryController topCategoryController;
   final searchHistoryController = Get.put(SearchHistoryController());
 
@@ -180,6 +201,12 @@ class _HomeScreenState extends State<HomeScreen> {
     _initializeControllers();
     _setupCityChangeListener();
     _getCity();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (selectedIndex == -1 && widget.propertyTypes.isNotEmpty) {
+        _onPropertyTypeSelected(0, widget.propertyTypes[0]);
+      }
+      _loadInitialData();
+    });
   }
 
   Future<void> _getCity() async {
@@ -187,6 +214,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (city != null && propertyController.selectedCity.value.isEmpty) {
       propertyController.selectedCity.value = city;
+      topBuilderController.selectedCity.value = city;
+      projectController.selectedCity.value = city;
+
       selectedCity = city;
     }
   }
@@ -207,14 +237,19 @@ class _HomeScreenState extends State<HomeScreen> {
     platformServicesController = Get.put(PlatformServicesController());
     contractorServiceController = Get.put(TopContractorsController());
     projectController = Get.put(ProjectWizardController(isBuilderView: false));
+    ctrl =
+        Get.isRegistered<HireContractorFilterProfileController>()
+            ? Get.find<HireContractorFilterProfileController>()
+            : Get.put(HireContractorFilterProfileController());
+
     reviewController = Get.put(
-      PlatformReviewController(
-        type: ['site', 'seller', 'reseller', 'contractor'],
-      ),
+      PlatformReviewController(type: ['site'], filters: {}),
     );
     topSellerController = Get.put(TopSellerController());
+    topBuilderController = Get.put(TopBuilderController());
     compareManager = Get.put(CompareManager(), permanent: true);
     topCategoryController = Get.put(TopCategoryController());
+    contactController = Get.put(ContactController());
   }
 
   void _setupCityChangeListener() {
@@ -222,8 +257,10 @@ class _HomeScreenState extends State<HomeScreen> {
       if (!mounted) return;
 
       setState(() {
-        selectedCity = city; // ✅ sync local copy
-        selectedIndex = -1;
+        //    selectedCity = city; // ✅ sync local copy
+        // selectedIndex = -1;
+        selectedCity = city;
+        selectedIndex = 0;
         _homePropertyTypeFilter = null;
         _homeListingTypeFilter = null;
         _cachedNewlyAddedProperties = [];
@@ -231,6 +268,15 @@ class _HomeScreenState extends State<HomeScreen> {
       });
 
       debugPrint("🔄 City synced to HomeScreen: $city");
+
+      //=================================For ===================================
+
+      if (widget.propertyTypes.isNotEmpty) {
+        _onPropertyTypeSelected(0, widget.propertyTypes[0]);
+      }
+
+      //=====================================================================
+
       // 🔄 Refresh Top Categories for selected city
       try {
         topCategoryController.fetchTopCategories();
@@ -239,15 +285,18 @@ class _HomeScreenState extends State<HomeScreen> {
       try {
         contractorServiceController.applyFilter('city', city ?? '');
       } catch (_) {}
+      // 🔄 Refresh Top Builders for selected city
+      try {
+        topBuilderController.selectedCity.value = city ?? '';
+        topBuilderController.refreshList();
+      } catch (_) {}
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) => _loadInitialData());
-
     return Scaffold(
-      backgroundColor: ColorRes.bgColor,
+      // backgroundColor: ColorRes.bgColor,
       body: SafeArea(
         child: Stack(
           children: [
@@ -287,6 +336,7 @@ class _HomeScreenState extends State<HomeScreen> {
       propertyController.fetchTradingArea(
         propertyController.selectedCity.value,
       );
+      topBuilderController.selectedCity.value;
       projectController.cityAssign(propertyController.selectedCity.value);
       // ✅ Load top categories for the initial city
       topCategoryController.fetchTopCategories();
@@ -323,28 +373,32 @@ class _HomeScreenState extends State<HomeScreen> {
       return baseList;
     }
 
-    return baseList.where((property) {
-      bool matchesPropertyType = true;
-      bool matchesListingType = true;
+    final filtered =
+        baseList.where((property) {
+          bool matchesPropertyType = true;
+          bool matchesListingType = true;
 
-      if (_homePropertyTypeFilter != null) {
-        final propertyType = property.propertyType
-            ?.toString()
-            .toLowerCase()
-            .replaceAll(" ", "_");
-        matchesPropertyType = propertyType == _homePropertyTypeFilter;
-      }
+          if (_homePropertyTypeFilter != null) {
+            final propertyType = property.propertyType
+                ?.toString()
+                .toLowerCase()
+                .replaceAll(" ", "_");
+            matchesPropertyType = propertyType == _homePropertyTypeFilter;
+          }
 
-      if (_homeListingTypeFilter != null) {
-        final listingType = property.listingType
-            ?.toString()
-            .toLowerCase()
-            .replaceAll(" ", "_");
-        matchesListingType = listingType == _homeListingTypeFilter;
-      }
+          if (_homeListingTypeFilter != null) {
+            final listingType = property.listingType
+                ?.toString()
+                .toLowerCase()
+                .replaceAll(" ", "_");
+            matchesListingType = listingType == _homeListingTypeFilter;
+          }
 
-      return matchesPropertyType && matchesListingType;
-    }).toList();
+          return matchesPropertyType && matchesListingType;
+        }).toList();
+
+    // Fallback: if filters yield empty, show unfiltered list
+    return filtered.isNotEmpty ? filtered : baseList;
   }
 
   Widget _buildHeader() {
@@ -354,6 +408,52 @@ class _HomeScreenState extends State<HomeScreen> {
         onCityChanged: (city) {
           selectedCity = city;
         },
+        onCategoryChanged: (category) {
+          final norm = category.toLowerCase();
+          setState(() {
+            _homePropertyTypeFilter = null;
+            _homeListingTypeFilter = null;
+            if (norm.startsWith('buy')) {
+              _homeListingTypeFilter = 'buy';
+            } else if (norm.startsWith('rent')) {
+              _homeListingTypeFilter = 'rent';
+            } else if (norm.startsWith('pg')) {
+              _homeListingTypeFilter = 'pg';
+            } else if (norm.startsWith('commercial')) {
+              _homePropertyTypeFilter = 'commercial';
+            } else if (norm.startsWith('plots')) {
+              _homePropertyTypeFilter = 'plot';
+            }
+          });
+          try {
+            // Map UI selection to API listingType values
+            String? listingType;
+             final Map<String, String> f = {};
+            if (norm.startsWith('buy')) listingType = 'Sell';
+            else if (norm.startsWith('rent')) listingType = 'Rent';
+            else if (norm.startsWith('pg')) listingType = 'PG';
+
+            if (listingType != null) {
+              propertyController.applyFilter('listingType', listingType);
+              propertyController.loadTopProperties();
+            } else {
+              propertyController.clearFilter('listingType');
+            }
+
+            if (norm.startsWith('commercial')) {
+              // projectController.applyFilter('projectType', 'commercial');
+              propertyController.applyFilter('type', 'commercial');
+                propertyController.loadTopProperties();
+            } else if (norm.startsWith('plots')) {
+              propertyController.applyFilter('propertyType', 'plot');
+                propertyController.loadTopProperties();
+              // projectController.applyFilter('projectType', '');
+            } else {
+              propertyController.clearFilter('propertyType');
+              // projectController.applyFilter('projectType', '');
+            }
+          } catch (_) {}
+        },
       ),
     );
   }
@@ -362,25 +462,34 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        SizedBox(height: 10),
         _buildPropertyTypeSelector(),
-        const SizedBox(height: 10),
+        const SizedBox(height: 15),
         _buildNewlyAddedProperties(),
+
         _buildRecommendedProperties(),
         _buildCitySection(),
         _buildExploreProjects(),
+
         const SizedBox(height: 15),
         _buildFurnishingTypeSection(),
+        // const SizedBox(height: 5),
         _buildTopProperties(),
         _buildTopProjectsInCity(),
-        _buildRecommendedSellers(),
+        // _buildRecommendedSellers(),
+        _buildRecommendedBuilders(),
         _buildTopContractors(),
         _buildTopCategories(),
+        _buildLimitedOfferCard(),
+
         _buildPlatformServices(),
         _buildNewsAndArticles(),
         _resellerSuccessStories(),
         // const SizedBox(height: 15),
-        _buildWhyChooseUs(),
-        _buildReviewsAndTestimonials(),
+        // _buildWhyChooseUs(),
+        // _buildReviewsAndTestimonials(),
+        // _buildHomeProcessSteps(),
+        const SizedBox(height: 12),
       ],
     );
   }
@@ -403,6 +512,7 @@ class _HomeScreenState extends State<HomeScreen> {
       }
 
       if (searchHistoryController.items.isEmpty) {
+        //ncj njdbsndkn
         return const SizedBox.shrink();
       }
 
@@ -556,10 +666,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: ColorRes.leadGreyColor.shade300,
-                        width: 1,
-                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.04),
+                          blurRadius: 2,
+                          offset: const Offset(2, 3),
+                        ),
+                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -743,22 +856,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return GestureDetector(
       onTap: () => _onPropertyTypeSelected(index, type),
-      child: IntrinsicWidth(
-        child: Container(
-          margin: EdgeInsets.only(
-            left: index == 0 ? 8 : 2,
-            right: index == widget.propertyTypes.length - 1 ? 8 : 0,
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildPropertyTypeIcon(type, isSelected),
-              const SizedBox(height: 8),
-              _buildPropertyTypeLabel(type, isSelected),
-            ],
-          ),
+      child: Container(
+        margin: EdgeInsets.only(
+          left: index == 0 ? 16 : 8,
+          right: index == widget.propertyTypes.length - 1 ? 16 : 0,
         ),
+        child: _buildPropertyTypeLabel(type, isSelected),
       ),
     );
   }
@@ -785,20 +888,33 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildPropertyTypeLabel(Map<String, String> type, bool isSelected) {
-    return SizedBox(
-      width: 76,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      decoration: BoxDecoration(
+        color: isSelected ? ColorRes.primary : Colors.white,
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(
+          color: isSelected ? ColorRes.primary : Colors.grey.shade200,
+          width: 1,
+        ),
+        boxShadow:
+            isSelected
+                ? [
+                  BoxShadow(
+                    color: ColorRes.primary.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+                : null,
+      ),
       child: Text(
         type['title'] ?? '',
         textAlign: TextAlign.center,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
         style: TextStyle(
-          fontSize: AppFontSizes.caption,
-          fontWeight:
-              isSelected ? AppFontWeights.semiBold : AppFontWeights.medium,
-          color: isSelected ? ColorRes.primary : ColorRes.black,
-          letterSpacing: 0.4,
-          height: 1.2,
+          fontSize: 12,
+          fontWeight: isSelected ? AppFontWeights.semiBold : FontWeight.w500,
+          color: isSelected ? Colors.white : Colors.grey.shade700,
         ),
       ),
     );
@@ -807,13 +923,14 @@ class _HomeScreenState extends State<HomeScreen> {
   // ✅ Updated to apply filters locally only
   void _onPropertyTypeSelected(int index, Map<String, String> type) {
     final filterValue = type['title']!.toLowerCase().replaceAll(" ", "_");
-    final filterKey = (filterValue == "pg") ? "listingType" : "propertyType";
+    final filterKey = (filterValue == "pg") ? "listingType" : "propertyTypes";
 
     // ✅ Only apply filters to home screen state, not to shared controller
     setState(() {
       selectedIndex = index;
 
       if (filterKey == "listingType") {
+
         _homeListingTypeFilter = filterValue;
         _homePropertyTypeFilter = null;
       } else {
@@ -823,23 +940,92 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     // ✅ Apply filter to project controller (if needed for projects section)
-    projectController.applyFilter(filterKey, filterValue);
+    log(
+      "Selected: hjfdskjkj ZJdjSid zskjDhasjd : ${filterValue} (Home filter only) $filterKey",
+    );
+
+    // projectController.applyFilter(filterKey, filterValue);
 
     debugPrint("Selected: ${type['title']} (Home filter only)");
   }
 
+  // Widget _buildNewlyAddedProperties() {
+  //   return Obx(() {
+
+  //     log("Newly added properties: ${propertyController.items.value.map((e) => e.city).toList()}");
+  //     // ✅ Cache data when it loads
+  //     if (propertyController.items.isNotEmpty &&
+  //         _cachedNewlyAddedProperties.isEmpty) {
+  //       _cachedNewlyAddedProperties = List.from(propertyController.items.value);
+  //     }
+
+  //     if (propertyController.isLoading.value &&
+  //         _cachedNewlyAddedProperties.isEmpty) {
+  //       return Column(
+  //         children: [
+  //           const SizedBox(height: 12),
+  //           TitleWithViewAll(
+  //             title: "Newly added properties",
+  //             showViewAll: false,
+  //           ),
+  //           const SizedBox(height: 12),
+  //           const HorizontalPropertyListShimmer(),
+  //         ],
+  //       );
+  //     }
+
+  //     // ✅ Use cached data and apply home-specific filters
+  //     final activeProperties =
+  //         _getFilteredProperties(
+  //           _cachedNewlyAddedProperties,
+  //         ).where((e) => e.approvalStatus == "approved").toList();
+
+  //     if (propertyController.isRefreshing.value) {
+  //       return const HorizontalPropertyListShimmer();
+  //     }
+
+  //     if (activeProperties.isEmpty) {
+  //       return const SizedBox.shrink();
+  //     }
+
+  //     return Column(
+  //       children: [
+  //         TitleWithViewAll(
+  //           title: "Newly added properties",
+  //           showViewAll: true,
+  //           onViewAll: () {
+  //             if (selectedCity == null) {
+  //               Get.to(() => PropertyDetail());
+  //             } else {
+  //               Get.to(
+  //                 () => PropertyDetail(
+  //                   filters: [
+  //                     {'city': selectedCity!},
+  //                   ],
+  //                 ),
+  //               );
+  //             }
+  //           },
+  //         ),
+  //         const SizedBox(height: 12),
+
+  //         _buildHorizontalPropertyList(activeProperties),
+  //       ],
+  //     );
+  //   });
+  // }
   Widget _buildNewlyAddedProperties() {
     return Obx(() {
-      // ✅ Cache data when it loads
-      if (propertyController.items.isNotEmpty &&
-          _cachedNewlyAddedProperties.isEmpty) {
-        _cachedNewlyAddedProperties = List.from(propertyController.items.value);
-      }
+      log(
+        "Newly added properties: ${propertyController.items.map((e) => e.toJson()).toList()}",
+      );
 
+      // 🔄 Loading state
       if (propertyController.isLoading.value &&
-          _cachedNewlyAddedProperties.isEmpty) {
+          propertyController.items.isEmpty) {
         return Column(
           children: [
+            const SizedBox(height: 12),
             TitleWithViewAll(
               title: "Newly added properties",
               showViewAll: false,
@@ -850,16 +1036,15 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }
 
-      // ✅ Use cached data and apply home-specific filters
-      final activeProperties =
-          _getFilteredProperties(
-            _cachedNewlyAddedProperties,
-          ).where((e) => e.approvalStatus == "approved").toList();
-
+      // 🔄 Refreshing state
       if (propertyController.isRefreshing.value) {
         return const HorizontalPropertyListShimmer();
       }
 
+      // ✅ Direct controller data (NO cache, NO approved filter)
+      final activeProperties = _getFilteredProperties(propertyController.items);
+
+      // ❌ Empty state
       if (activeProperties.isEmpty) {
         return const SizedBox.shrink();
       }
@@ -884,6 +1069,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           const SizedBox(height: 12),
+
           _buildHorizontalPropertyList(activeProperties),
         ],
       );
@@ -914,7 +1100,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           const SizedBox(height: 12),
           const TitleWithViewAll(title: "Recommended Properties"),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           _buildHorizontalPropertyList(
             propertyController.recommendedProperties,
           ),
@@ -929,6 +1115,7 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: const EdgeInsets.only(left: 12),
       child: SizedBox(
         height: 310,
+
         child: NotificationListener<ScrollNotification>(
           onNotification: (scrollEnd) {
             final metrics = scrollEnd.metrics;
@@ -940,6 +1127,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: properties.length,
+
             separatorBuilder: (_, __) => const SizedBox(width: 12),
             itemBuilder: (context, index) {
               final data = properties[index];
@@ -962,8 +1150,11 @@ class _HomeScreenState extends State<HomeScreen> {
           trendingCityController.allTrendingCities.isEmpty) {
         return Column(
           children: [
-            const SizedBox(height: 20),
-            TitleWithViewAll(title: "City", showViewAll: false),
+            const SizedBox(height: 15),
+            TitleWithViewAll(
+              title: "Top Cities to Explore",
+              showViewAll: false,
+            ),
             const SizedBox(height: 12),
             const CityFilterListShimmer(),
           ],
@@ -976,8 +1167,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
       return Column(
         children: [
-          const SizedBox(height: 20),
-          TitleWithViewAll(title: "City", showViewAll: false),
+          const SizedBox(height: 15),
+          TitleWithViewAll(title: "Top Cities to Explore", showViewAll: false),
           const SizedBox(height: 12),
           const CityFilterList(),
         ],
@@ -991,17 +1182,25 @@ class _HomeScreenState extends State<HomeScreen> {
           projectController.items.isEmpty) {
         return Column(
           children: [
-            const SizedBox(height: 20),
-            TitleWithViewAll(title: "Explore Projects", showViewAll: false),
+            const SizedBox(height: 12),
+            TitleWithViewAll(
+              title:
+                  "Builder Projects in ${projectController.selectedCity ?? ''}",
+              showViewAll: false,
+            ),
             const SizedBox(height: 12),
             const ProjectListShimmer(),
           ],
         );
-      }
+      } //HDYJSB jduwj jdbb    bch
 
       final activeProjects =
           projectController.items
-              .where((element) => element.approvalStatus == "approved")
+              .where(
+                (element) =>
+                    element.approvalStatus == "approved" &&
+                    element.isVerified.toString() == "true",
+              )
               .toList();
 
       if (activeProjects.isEmpty) {
@@ -1010,12 +1209,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
       return Column(
         children: [
-          const SizedBox(height: 20),
+          const SizedBox(height: 12),
+
           TitleWithViewAll(
-            title: "Explore Projects",
+            title:
+                "Builder Projects in ${projectController.selectedCity ?? ''}",
             showViewAll: true,
             onViewAll: () {
-              if (selectedCity == null) {
+              if (projectController.selectedCity == null) {
                 Get.to(() => AllProjectListScreen());
               } else {
                 Get.to(
@@ -1037,7 +1238,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildProjectList(List<ProjectItem> projects) {
     return SizedBox(
-      height: 256,
+      height: 260,
       width: double.infinity,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
@@ -1075,10 +1276,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       children: [
         const TitleWithViewAll(title: "Explore by furnishing type"),
+        const SizedBox(height: 10),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             child: Row(
               children: List.generate(
                 HomeScreen.furnishedType.length,
@@ -1100,6 +1302,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: NesticoPeCardWithText(
           height: 120,
           width: 200,
+
           imageUrl: furnished["image"]!,
           title: furnished["name"]!,
           opacity: ColorRes.black,
@@ -1128,18 +1331,80 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  // Widget _buildTopProperties() {
+  //   return Obx(() {
+  //     // ✅ Cache data when it loads
+  //     if (propertyController.topProperties.isNotEmpty &&
+  //         _cachedTopProperties.isEmpty) {
+  //       _cachedTopProperties = List.from(propertyController.topProperties);
+  //     }
+
+  //     if (propertyController.isLoading.value && _cachedTopProperties.isEmpty) {
+  //       return Column(
+  //         children: [
+  //           const SizedBox(height: 12),
+  //           TitleWithViewAll(
+  //             title:
+  //                 "Top Properties in ${propertyController.selectedCity.value}",
+  //             showViewAll: false,
+  //           ),
+  //           const SizedBox(height: 12),
+  //           const HorizontalPropertyListShimmer(),
+  //         ],
+  //       );
+  //     }
+  //     //ndhjcjunjsijwbkdihj hkdiehnnknndn jdi
+  //     // ✅ Use cached data and apply home-specific filters
+  //     final activeTopProperties =
+  //         _getFilteredProperties(
+  //           _cachedTopProperties,
+  //         ).where((element) => element.approvalStatus == "approved").toList();
+
+  //     if (activeTopProperties.isEmpty) {
+  //       return const SizedBox.shrink();
+  //     }
+
+  //     return Column(
+  //       children: [
+  //         const SizedBox(height: 12),
+  //         TitleWithViewAll(
+  //           title: "Top Properties in ${propertyController.selectedCity.value}",
+  //           showViewAll: true,
+  //           onViewAll: () => Get.to(() => PropertyDetail()),
+  //         ),
+  //         const SizedBox(height: 12),
+  //         Padding(
+  //           padding: const EdgeInsets.symmetric(horizontal: 12),
+  //           child: SizedBox(
+  //             height: 310,
+  //             child: ListView.separated(
+  //               scrollDirection: Axis.horizontal,
+  //               itemCount: activeTopProperties.length,
+  //               separatorBuilder: (_, __) => const SizedBox(width: 12),
+  //               itemBuilder: (context, index) {
+  //                 final data = activeTopProperties[index];
+  //                 return MediaQuery(
+  //                   data: MediaQuery.of(
+  //                     context,
+  //                   ).copyWith(textScaler: const TextScaler.linear(1.0)),
+  //                   child: TopPropertyCard(property: data),
+  //                 );
+  //               },
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     );
+  //   });
+  // }
   Widget _buildTopProperties() {
     return Obx(() {
-      // ✅ Cache data when it loads
-      if (propertyController.topProperties.isNotEmpty &&
-          _cachedTopProperties.isEmpty) {
-        _cachedTopProperties = List.from(propertyController.topProperties);
-      }
-
-      if (propertyController.isLoading.value && _cachedTopProperties.isEmpty) {
+      // 🔄 Loading state
+      if (propertyController.isLoading.value &&
+          propertyController.topProperties.isEmpty) {
         return Column(
           children: [
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             TitleWithViewAll(
               title:
                   "Top Properties in ${propertyController.selectedCity.value}",
@@ -1151,19 +1416,19 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }
 
-      // ✅ Use cached data and apply home-specific filters
-      final activeTopProperties =
-          _getFilteredProperties(
-            _cachedTopProperties,
-          ).where((element) => element.approvalStatus == "approved").toList();
+      // ✅ Direct controller data (NO cache, NO approved filter)
+      final activeTopProperties = _getFilteredProperties(
+        propertyController.topProperties,
+      );
 
+      // ❌ Empty state
       if (activeTopProperties.isEmpty) {
         return const SizedBox.shrink();
       }
 
       return Column(
         children: [
-          const SizedBox(height: 4),
+          const SizedBox(height: 12),
           TitleWithViewAll(
             title: "Top Properties in ${propertyController.selectedCity.value}",
             showViewAll: true,
@@ -1201,7 +1466,7 @@ class _HomeScreenState extends State<HomeScreen> {
           projectController.topProjects.isEmpty) {
         return Column(
           children: [
-            const SizedBox(height: 15),
+            const SizedBox(height: 12),
             TitleWithViewAll(
               title: "Top Project in ${projectController.selectedCity.value}",
               showViewAll: false,
@@ -1223,7 +1488,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       return Column(
         children: [
-          const SizedBox(height: 15),
+          const SizedBox(height: 12),
           TitleWithViewAll(
             title: "Top Project in ${projectController.selectedCity.value}",
             showViewAll: true,
@@ -1254,7 +1519,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 15),
             const TitleWithViewAll(title: "Recommended Sellers"),
             const SizedBox(height: 12),
-            const SellerListShimmer(),
+            const BuilderListShimmer(),
           ],
         );
       }
@@ -1276,16 +1541,90 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Widget _buildRecommendedBuilders() {
+    return Obx(() {
+      if (topBuilderController.isLoading.value &&
+          topBuilderController.items.isEmpty) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 12),
+            TitleWithViewAll(
+              title: "Top Developer in ${projectController.selectedCity.value}",
+              showViewAll: false,
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 310,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: 3,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                separatorBuilder: (context, index) => const SizedBox(width: 12),
+                itemBuilder: (context, index) {
+                  return const SizedBox(
+                    width: 250,
+                    child: BuilderCardShimmer(),
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      }
+
+      if (topBuilderController.items.isEmpty) {
+        return const SizedBox.shrink();
+      }
+
+      final builders = topBuilderController.items.take(3).toList();
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 12),
+          TitleWithViewAll(
+            title: "Top Developer in ${projectController.selectedCity.value}",
+            showViewAll: true,
+            onViewAll: () => Get.to(() => AllBuildersScreen()),
+          ),
+          const SizedBox(height: 12),
+
+          SizedBox(
+            height: 310,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              itemCount: builders.length,
+              separatorBuilder: (context, index) => const SizedBox(width: 12),
+              itemBuilder: (context, index) {
+                final builder = builders[index];
+                return SizedBox(
+                  width: 250,
+                  child: BuilderCard(builder: builder),
+                );
+              },
+            ),
+          ),
+          
+        ],
+      );
+    });
+  }
+
   Widget _buildTopContractors() {
     return Obx(() {
+
       if (contractorServiceController.isLoading.value &&
           contractorServiceController.items.isEmpty) {
         return Column(
           children: [
-            const SizedBox(height: 15),
-            const TitleWithViewAll(
+            const SizedBox(height: 12),
+
+            TitleWithViewAll(
               title: "Top Rated Contractors",
-              showViewAll: false,
+              showViewAll: true,
+              onViewAll: () => Get.to(() => const AllContractorsListScreen()),
             ),
             const SizedBox(height: 6),
             const ContractorCardShimmer(),
@@ -1299,14 +1638,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
       return Column(
         children: [
-          const SizedBox(height: 15),
-          const TitleWithViewAll(
+          const SizedBox(height: 12),
+          TitleWithViewAll(
             title: "Top Rated Contractors",
-            showViewAll: false,
+            showViewAll: true,
+            onViewAll: () => Get.to(() => const AllContractorsListScreen()),
           ),
           const SizedBox(height: 6),
           SizedBox(
-            height: 250,
+            height: 338,
             child: ListView.separated(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               separatorBuilder: (context, index) => const SizedBox(width: 12),
@@ -1332,12 +1672,14 @@ class _HomeScreenState extends State<HomeScreen> {
           topCategoryController.categories.isEmpty) {
         return Column(
           children: [
-            const SizedBox(height: 8),
+            const SizedBox(height: 15),
+
             const TitleWithViewAll(
-              title: "Build & Manage Ecosystem",
+              title: "NesticoPe Verified Services",
               showViewAll: true,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
+
             const TopCategoriesShimmer(),
           ],
         );
@@ -1349,9 +1691,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
       return Column(
         children: [
-          const SizedBox(height: 8),
+          const SizedBox(height: 15),
+
           TitleWithViewAll(
-            title: "Build & Manage Ecosystem",
+            title: "NesticoPe Verified Services",
             showViewAll: true,
             onViewAll:
                 () => Get.to(
@@ -1360,9 +1703,359 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
           ),
-          const SizedBox(height: 12),
+
           TopCategoriesSection(categories: topCategoryController.categories),
         ],
+      );
+    });
+  }
+
+  Widget _buildLimitedOfferCard() {
+    return Obx(() {
+      String norm(String s) => s
+          .trim()
+          .toLowerCase()
+          .replaceAll('&', 'and')
+          .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+      final isLoading = topCategoryController.isLoading.value;
+      final categories = topCategoryController.categories ?? const [];
+      if (isLoading && categories.isEmpty) {
+        return const SizedBox.shrink();
+      }
+      if (categories.isEmpty) {
+        return const SizedBox.shrink();
+      }
+
+      IconData iconFor(TopCategoryItem c) {
+        final n = norm(c.name ?? '');
+        switch (n) {
+          case 'building_material_supply':
+          case 'material_supply':
+            return Icons.local_shipping_rounded;
+          case 'home_construction':
+          case 'construction':
+            return Icons.construction_rounded;
+          case 'painting':
+            return Icons.format_paint_rounded;
+          case 'plumbing':
+            return Icons.plumbing_rounded;
+          case 'electrical':
+            return Icons.electric_bolt_rounded;
+          case 'cleaning':
+            return Icons.cleaning_services_rounded;
+          case 'interior_design':
+            return Icons.chair_alt_rounded;
+          case 'packers_and_movers':
+          case 'packers_movers':
+            return Icons.electric_moped_outlined;
+          case 'home_services':
+            return Icons.home_repair_service_rounded;
+          case 'legal_services':
+            return Icons.gavel_outlined;
+          default:
+            return Icons.home_repair_service_rounded;
+        }
+      }
+
+      String getChipText(String name) {
+        final n = name
+            .toLowerCase()
+            .replaceAll('&', 'and')
+            .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+
+        switch (n) {
+          case 'painting':
+            return 'Hire Painter';
+
+          case 'plumbing':
+            return 'Book Plumber';
+
+          case 'electrical':
+            return 'Hire Electrician';
+
+          case 'cleaning':
+            return 'Book Cleaning';
+
+          case 'interior_design':
+            return 'Get Interior Designer';
+
+          case 'home_construction':
+          case 'construction':
+            return 'Start Construction';
+
+          case 'building_material_supply':
+          case 'material_supply':
+            return 'Order Materials';
+
+          case 'packers_and_movers':
+          case 'packers_movers':
+            return 'Book Movers';
+
+          case 'legal_services':
+            return 'Get Legal Help';
+
+          case 'home_services':
+            return 'Book Service';
+
+          default:
+            return 'Hire ${name.split(' ').first}';
+        }
+      }
+
+      return SizedBox(
+        height: 280,
+        child: ListView.separated(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          scrollDirection: Axis.horizontal,
+          itemCount: categories.length,
+          separatorBuilder: (_, __) => const SizedBox(width: 12),
+          itemBuilder: (context, index) {
+            final TopCategoryItem item = categories[index];
+            final String title =
+                (item.name ?? '').toString().replaceAll('_', ' ').capitalize ??
+                'Service';
+            final List<String> features =
+                (item.description)
+                    .map((e) => e.trim())
+                    .where((e) => e.isNotEmpty)
+                    .take(4)
+                    .toList();
+            final chipText = getChipText(item.name ?? '');
+
+            return SizedBox(
+              width: MediaQuery.of(context).size.width * 0.85,
+              child: NesticoPeCard(
+                width: double.infinity,
+                color: ColorRes.primary.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(AppRadius.large),
+                boxShadow: [
+                  
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+
+                child: Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: Opacity(
+                          opacity: 0.15,
+                          child: Icon(
+                            iconFor(item),
+                            size: 120,
+                            color: ColorRes.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: ColorRes.primary,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                chipText,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: AppFontSizes.caption,
+                                  fontWeight: AppFontWeights.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: AppFontSizes.large,
+                              fontWeight: AppFontWeights.semiBold,
+                              color: ColorRes.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children:
+                                features
+                                    .map(
+                                      (f) => Padding(
+                                        padding: const EdgeInsets.only(
+                                          bottom: 8,
+                                        ),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const Icon(
+                                              Icons.check_circle,
+                                              size: 15,
+                                              color: ColorRes.primary,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Expanded(
+                                              child: Text(
+                                                f,
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      AppFontSizes.caption,
+                                                  fontWeight:
+                                                      AppFontWeights.medium,
+                                                  color:
+                                                      ColorRes
+                                                          .leadGreyColor
+                                                          .shade700,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                          ),
+                          const SizedBox(height: 14),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: NesticoPeButton(
+                                  title: 'Book Now',
+                                  onTap: () {
+                                    try {
+                                      final ctrl = Get.put(
+                                        HireContractorFilterProfileController(),
+                                      );
+                                      final String categoryId =
+                                          (item.id ?? '').toString();
+                                      final String categoryName =
+                                          (item.name ?? 'Service').toString();
+                                      ctrl.selectedCategoryId.value =
+                                          categoryId;
+                                      ctrl.selectedCategoryName.value =
+                                          categoryName;
+                                      ctrl.selectedServiceNames.clear();
+                                      ctrl.selectedWorkItems.clear();
+                                      ctrl.workItemOptions.clear();
+                                      ctrl.applyFilters(<String, String>{});
+                                      Get.to(
+                                        () => const HireContractorProfileList(),
+                                      );
+                                    } catch (_) {
+                                      Get.to(
+                                        () => AllCategoriesSection(
+                                          categories:
+                                              topCategoryController.categories ??
+                                              const [],
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  height: 40,
+                                  titleTextStyle: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: AppFontSizes.medium,
+                                    fontWeight: AppFontWeights.semiBold,
+                                  ),
+                                  backgroundColor: ColorRes.primary,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Container(
+                                width: 44,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: ColorRes.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: ColorRes.primary,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: IconButton(
+                                  onPressed: () async {
+                                    final cc =
+                                        Get.isRegistered<ContactController>()
+                                            ? Get.find<ContactController>()
+                                            : Get.put(ContactController());
+                                    if (cc.primaryPhone.value.isEmpty) {
+                                      await cc.loadContacts(reset: true);
+                                    }
+                                    final number = cc.primaryPhone.value;
+                                    if (number.isNotEmpty) {
+                                      
+                                      await ContactHelper.openDialer(number);
+                                    }
+                                  },
+                                  icon: const Icon(Icons.call, size: 20),
+                                  color: ColorRes.primary,
+                                  tooltip: 'Call',
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Container(
+                                width: 44,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: ColorRes.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: ColorRes.primary,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: IconButton(
+                                  onPressed: () async {
+                                    final cc =
+                                        Get.isRegistered<ContactController>()
+                                            ? Get.find<ContactController>()
+                                            : Get.put(ContactController());
+                                    if (cc.primaryPhone.value.isEmpty) {
+                                      await cc.loadContacts(reset: true);
+                                    }
+                                    final number = cc.primaryPhone.value;
+                                    if (number.isNotEmpty) {
+                                      await ContactHelper.openWhatsApp(number);
+                                    }
+                                  },
+                                  icon: Image.asset(
+                                    'assets/images/whatsapp.png',
+                                    width: 20,
+                                    height: 20,
+                                  ),
+                                  tooltip: 'WhatsApp',
+
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
       );
     });
   }
@@ -1373,12 +2066,16 @@ class _HomeScreenState extends State<HomeScreen> {
           platformServicesController.items.isEmpty) {
         return Column(
           children: [
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
             const TitleWithViewAll(
-              title: "Explore Services",
+              title: "Why Choose NesticoPe",
+              
+              isSubTitle: true,
+              subTitle: "Simple, Secure & Transparent Property Services.",
+
               showViewAll: false,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
             const PlatformServiceShimmer(),
           ],
         );
@@ -1390,9 +2087,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
       return Column(
         children: [
-          const SizedBox(height: 12),
-          const TitleWithViewAll(title: "Explore Services", showViewAll: false),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
+
+          const TitleWithViewAll(
+            title: "Why Choose NesticoPe",
+            isSubTitle: true,
+            subTitle: "Simple, Secure & Transparent Property Services.",
+
+            showViewAll: false,
+          ),
+
+          const SizedBox(height: 5),
           PlatformServiceHorizontalList(
             services: platformServicesController.items,
           ),
@@ -1406,12 +2111,12 @@ class _HomeScreenState extends State<HomeScreen> {
       if (newsController.isLoading.value && newsController.items.isEmpty) {
         return Column(
           children: [
-            const SizedBox(height: 15),
+            const SizedBox(height: 5),
             const TitleWithViewAll(
               title: "Latest News & Articles",
               showViewAll: false,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             const NewsArticlesShimmer(),
             const SizedBox(height: 20),
           ],
@@ -1424,7 +2129,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       return Column(
         children: [
-          const SizedBox(height: 15),
+          const SizedBox(height: 5),
           TitleWithViewAll(
             title: "Latest News & Articles",
             showViewAll: true,
@@ -1434,9 +2139,9 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           NewsAndArticles(articles: newsController.items),
-          const SizedBox(height: 20),
+          const SizedBox(height: 18),
         ],
       );
     });
@@ -1445,10 +2150,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildWhyChooseUs() {
     return Column(
       children: [
-        SizedBox(height: 15),
+        // const SizedBox(height: 5),
         TitleWithViewAll(
-          title: "Why Choose Us",
-          showViewAll: true,
+          title: "Why Choose NesticoPe",
+          showViewAll: false,
           onViewAll: () {},
         ),
         const SizedBox(height: 12),
@@ -1470,7 +2175,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
       return Column(
         children: [
-          const SizedBox(height: 15),
           const TitleWithViewAll(
             title: "What Our Customers Say",
             showViewAll: false,
@@ -1483,24 +2187,247 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Widget _buildHomeProcessSteps() {
+    final steps = [
+      {
+        'icon': Icons.search,
+        'title': 'Searches',
+        'subtitle': 'Only Verified Suggestion',
+        'color': ColorRes.blueColor,
+      },
+      {
+        'icon': Icons.task_alt_outlined,
+        'title': 'Finalizing',
+        'subtitle': 'NesticoPe Help You find best property and best price',
+        'color': ColorRes.leadTealColor,
+      },
+      {
+        'icon': Icons.article_outlined,
+        'title': 'Legal',
+        'subtitle': 'We will Help you on all paperwork.',
+        'color': ColorRes.purpleColor,
+      },
+      {
+        'icon': Icons.emoji_events_outlined,
+        'title': 'Congratulations',
+        'subtitle': 'Celebrate your new home with us!',
+        'color': ColorRes.orangeColor,
+      },
+      {
+        'icon': Icons.home_repair_service_outlined,
+        'title': 'Construction & Services',
+        'subtitle': 'Vastu, Interior & Home Services',
+        'color': ColorRes.success,
+      },
+    ];
+
+    return Column(
+      children: [
+        const SizedBox(height: 15),
+        const TitleWithViewAll(
+          title: "Support at Every Step",
+          showViewAll: false,
+        ),
+        const SizedBox(height: 20),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: List.generate(steps.length * 2 - 1, (i) {
+                  if (i.isOdd) {
+                    return Container(
+                      margin: const EdgeInsets.only(top: 28),
+                      width: 40,
+                      height: 2,
+                      decoration: BoxDecoration(
+                        color: ColorRes.leadGreyColor.shade300,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    );
+                  } else {
+                    final stepIndex = i ~/ 2;
+                    final s = steps[stepIndex];
+                    return _buildMinimalStepWithText(
+                      index: stepIndex + 1,
+                      icon: s['icon'] as IconData,
+                      ringColor: s['color'] as Color,
+                      title: s['title'] as String,
+                      subtitle: s['subtitle'] as String,
+                    );
+                  }
+                }),
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMinimalStep({
+    required int index,
+    required IconData icon,
+    required Color ringColor,
+  }) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          width: 60,
+          height: 60,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: ringColor, width: 2),
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: ringColor.withOpacity(0.08),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Center(child: Icon(icon, color: ringColor, size: 24)),
+        ),
+        Positioned(
+          // top: -8,
+          left: -4,
+          child: Container(
+            width: 22,
+            height: 22,
+            decoration: BoxDecoration(
+              color: ColorRes.primary,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 2),
+            ),
+            child: Center(
+              child: Text(
+                '$index',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: AppFontSizes.extraSmall,
+                  fontWeight: AppFontWeights.bold,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMinimalStepWithText({
+    required int index,
+    required IconData icon,
+    required Color ringColor,
+    required String title,
+    required String subtitle,
+  }) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 8.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildMinimalStep(index: index, icon: icon, ringColor: ringColor),
+          const SizedBox(height: 10),
+          SizedBox(
+            width: 140,
+            child: Column(
+              children: [
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: AppFontSizes.body,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  subtitle,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: AppFontSizes.extraSmall,
+                    // fontFamily: FontRes.poppins,
+                    fontWeight: AppFontWeights.medium,
+                    color: ColorRes.leadGreyColor.shade600,
+                    height: 1.35,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Widget _buildFindPropertyButton() {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+  //     child: ElevatedButton.icon(
+  //       icon: const Icon(Icons.search, size: 22),
+  //       onPressed:
+  //           () => showFindPropertyDialog(
+  //             propertyController,
+  //             googleMapController,
+  //             context,
+  //           ),
+  //       style: ElevatedButton.styleFrom(
+  //         minimumSize: const Size(double.infinity, 48),
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(12),
+  //         ),
+  //       ),
+  //       label: const Text("Find Your Property"),
+  //     ),
+  //   );
+  // }
   Widget _buildFindPropertyButton() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      child: ElevatedButton.icon(
-        icon: const Icon(Icons.search, size: 22),
-        onPressed:
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap:
             () => showFindPropertyDialog(
               propertyController,
               googleMapController,
               context,
             ),
-        style: ElevatedButton.styleFrom(
-          minimumSize: const Size(double.infinity, 48),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+        child: Container(
+          width: double.infinity,
+          height: 42,
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          decoration: BoxDecoration(
+            color: ColorRes.primary,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: ColorRes.primary.withOpacity(0.25),
+                blurRadius: 6,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Icon(Icons.search, color: Colors.white, size: 20),
+              SizedBox(width: 8),
+              Text(
+                "Find Your Property",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ),
         ),
-        label: const Text("Find Your Property"),
       ),
     );
   }
@@ -1947,7 +2874,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
 
           // Show reviews list
           return SizedBox(
-            height: 185,
+            height: 160,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: reviewController.allReviews.length,
@@ -1979,11 +2906,19 @@ class ReviewsAndTestimonials extends StatelessWidget {
         width: 280,
         decoration: BoxDecoration(
           color: ColorRes.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: ColorRes.leadGreyColor.shade200, width: 1),
+          borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
+          // border: Border.all(color: ColorRes.leadGreyColor.shade200, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 2,
+
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         child: Padding(
-          padding: EdgeInsets.all(16),
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -2168,7 +3103,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
                     color: ColorRes.leadGreyColor.shade700,
                     height: 1.5,
                   ),
-                  maxLines: 3,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -2233,7 +3168,7 @@ class NewsAndArticles extends StatelessWidget {
     }
 
     return SizedBox(
-      height: 270,
+      height: 280,
       child: ListView.separated(
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
@@ -2250,14 +3185,22 @@ class NewsAndArticles extends StatelessWidget {
               Get.to(() => NewsDetailScreen(newsItem: article));
             },
             child: Container(
-              width: 250,
+              width: 270,
               decoration: BoxDecoration(
                 color: ColorRes.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: ColorRes.leadGreyColor.withOpacity(0.3),
-                  width: 1,
-                ),
+                borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
+                // border: Border.all(
+                //   color: ColorRes.leadGreyColor.withOpacity(0.3),
+                //   width: 1,
+                // ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 2,
+
+                    offset: const Offset(0, 3),
+                  ),
+                ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -2302,7 +3245,7 @@ class NewsAndArticles extends StatelessWidget {
                           ),
                           SizedBox(height: 4),
                           Text(
-                            article.content ?? '',
+                            article.summary ?? '',
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -2317,40 +3260,86 @@ class NewsAndArticles extends StatelessWidget {
                           Row(
                             children: [
                               // Author avatar
-                              Container(
-                                width: 35,
-                                height: 35,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade700,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.person,
-                                  color: Colors.white,
-                                  size: 18,
+                              ClipOval(
+                                child: Container(
+                                  height: 40,
+                                  width: 40,
+                                  alignment: Alignment.center,
+                                  decoration: const BoxDecoration(
+                                    color: ColorRes.primary,
+                                  ),
+                                  child: Text(
+                                    (article.title?.isNotEmpty ?? false)
+                                        ? article.title![0].toUpperCase()
+                                        : '',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ),
                               ),
-                              const SizedBox(width: 12),
                               // Author name and date
+                              SizedBox(width: 6),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      article.author ?? '',
-                                      style: TextStyle(
-                                        fontSize: AppFontSizes.small,
-                                        color: ColorRes.textPrimary,
-                                        fontWeight: AppFontWeights.medium,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
                                     Row(
                                       children: [
                                         Expanded(
                                           child: Text(
-                                            article.slug ?? '',
+                                            article.author ?? '',
                                             maxLines: 1,
+
+                                            style: TextStyle(
+                                              fontSize: AppFontSizes.small,
+                                              color: ColorRes.textPrimary,
+                                              fontWeight:
+                                                  AppFontWeights.semiBold,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        SizedBox(width: 4),
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 6,
+                                            vertical: 2,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                ColorRes.leadGreyColor.shade200,
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            _formatDate(article.publishDate),
+                                            style: TextStyle(
+                                              fontSize: AppFontSizes.caption,
+                                              color:
+                                                  ColorRes
+                                                      .leadGreyColor
+                                                      .shade700,
+                                              fontWeight: AppFontWeights.medium,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 2),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            article.authorDesignation
+                                                    ?.replaceAll("-", " ")
+                                                    .capitalize ??
+                                                '',
+
+                                            maxLines: 2,
                                             overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
                                               fontSize: AppFontSizes.extraSmall,
@@ -2361,15 +3350,6 @@ class NewsAndArticles extends StatelessWidget {
                                               fontWeight:
                                                   AppFontWeights.regular,
                                             ),
-                                          ),
-                                        ),
-                                        SizedBox(width: 12),
-                                        Text(
-                                          _formatDate(article.publishDate),
-                                          style: TextStyle(
-                                            fontSize: AppFontSizes.caption,
-                                            color: ColorRes.leadGreyColor,
-                                            fontWeight: AppFontWeights.medium,
                                           ),
                                         ),
                                       ],
@@ -2673,82 +3653,91 @@ class CompactInsightCard extends StatelessWidget {
 class WhyChooseUsSection extends StatelessWidget {
   final items = [
     {
-      "title": "Over 7 Properties",
-      "subtitle": "10,000+ properties added every day",
+      "title": "Over 8 Properties",
+      "subtitle":
+          "A wide range of residential and commercial properties updated daily.",
       "icon": Icons.home_outlined,
     },
     {
-      "title": "Verified by Our Team",
-      "subtitle": "Photos, videos and details verified on location",
+      "title": "Verified by Experts",
+      "subtitle":
+          "Photos, videos and property details are verified on-site by our team.",
       "icon": Icons.verified_outlined,
     },
     {
-      "title": "Large User Base",
-      "subtitle": "High active user count and engagement",
+      "title": "Direct Connections",
+      "subtitle":
+          "Connect directly with trusted builders and owners without middlemen.",
       "icon": Icons.group_outlined,
     },
     {
-      "title": "Instant Updates",
-      "subtitle": "Real-time notifications for new listings",
+      "title": "Smart Alerts",
+      "subtitle":
+          "Get real-time notifications for price drops and new property matches.",
       "icon": Icons.notifications_active_outlined,
     },
   ];
 
   @override
+  @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, // number of columns
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 1.4, // controls height/width ratio
-      ),
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        final item = items[index];
-        return Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: ColorRes.leadGreyColor.shade300,
-              width: 1,
+    return SizedBox(
+      height: 145,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        itemCount: items.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        itemBuilder: (context, index) {
+          final item = items[index];
+
+          return Container(
+            width: 220,
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: ColorRes.leadGreyColor.shade300),
             ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(item["icon"] as IconData, size: 28, color: ColorRes.primary),
-              const SizedBox(height: 4),
-              Text(
-                "${item['title']}",
-                style: TextStyle(
-                  fontSize: AppFontSizes.medium,
-                  fontWeight: AppFontWeights.semiBold,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  item["icon"] as IconData,
+                  size: 28,
                   color: ColorRes.primary,
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                "${item['subtitle']}",
-                style: TextStyle(
-                  fontSize: AppFontSizes.caption,
-                  color: ColorRes.leadGreyColor.shade600,
-                  fontWeight: AppFontWeights.medium,
+
+                const SizedBox(height: 8),
+
+                Text(
+                  "${item['title']}",
+                  style: TextStyle(
+                    fontSize: AppFontSizes.medium,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.primary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        );
-      },
+
+                const SizedBox(height: 6),
+
+                Text(
+                  "${item['subtitle']}",
+                  style: TextStyle(
+                    fontSize: AppFontSizes.caption,
+                    color: ColorRes.leadGreyColor.shade600,
+                    fontWeight: AppFontWeights.medium,
+                  ),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }
@@ -3579,14 +4568,29 @@ class _ReviewHighlightsState extends State<ReviewHighlights> {
 class StateSelectionWidget extends StatelessWidget {
   final TextEditingController controller;
   final bool isEditing;
+  final bool isRequired;
+  final Color? color;
+  final Color? iconColor;
+  final Color? fillColor;
+  final TextStyle? style;
+  final bool isRequiredTitle;
   final Function(Prediction)? onCitySelected; // ✅ callback for selected city
 
   const StateSelectionWidget({
     super.key,
     required this.controller,
-
+    this.isRequired = false,
     this.onCitySelected,
     this.isEditing = true,
+    this.iconColor = ColorRes.primary,
+    this.style = const TextStyle(
+      fontSize: AppFontSizes.medium,
+      fontWeight: AppFontWeights.semiBold,
+      color: ColorRes.textPrimary,
+    ),
+    this.isRequiredTitle = true,
+    this.color,
+    this.fillColor,
   });
 
   @override
@@ -3595,73 +4599,123 @@ class StateSelectionWidget extends StatelessWidget {
     return Column(
       children: [
         // 🔹 Custom TextField
-        TextFormField(
-          controller: controller,
-          enabled: isEditing,
-          style: TextStyle(
-            fontSize: AppFontSizes.small,
-            color: ColorRes.homeBlackFade,
+        // TextFormField(
+        //   controller: controller,
+        //   enabled: isEditing,
+        //   style: TextStyle(
+        //     fontSize: AppFontSizes.small,
+        //     color: ColorRes.homeBlackFade,
+        //   ),
+        //   decoration: InputDecoration(
+        //     labelText: "Select State",
+        //     labelStyle: TextStyle(
+        //       fontSize: AppFontSizes.small,
+        //       color: ColorRes.leadGreyColor[500],
+        //     ),
+        //     prefixIcon: Icon(
+        //       Icons.location_city_outlined,
+        //       size: 20,
+        //       color: ColorRes.leadGreyColor[600],
+        //     ),
+        //     border: OutlineInputBorder(
+        //       borderRadius: BorderRadius.circular(12),
+        //       borderSide: BorderSide(
+        //         color: ColorRes.leadGreyColor.withOpacity(0.3),
+        //       ),
+        //     ),
+        //     enabledBorder: OutlineInputBorder(
+        //       borderRadius: BorderRadius.circular(12),
+        //       borderSide: BorderSide(
+        //         color: ColorRes.leadGreyColor.withOpacity(0.3),
+        //       ),
+        //     ),
+        //     focusedBorder: OutlineInputBorder(
+        //       borderRadius: BorderRadius.circular(12),
+        //       borderSide: const BorderSide(
+        //         color: ColorRes.blueColor,
+        //         width: 1.5,
+        //       ),
+        //     ),
+        //     disabledBorder: OutlineInputBorder(
+        //       borderRadius: BorderRadius.circular(12),
+        //       borderSide: BorderSide(
+        //         color: ColorRes.leadGreyColor.withOpacity(0.2),
+        //       ),
+        //     ),
+        //     errorBorder: OutlineInputBorder(
+        //       borderRadius: BorderRadius.circular(12),
+        //       borderSide: const BorderSide(color: ColorRes.error, width: 1),
+        //     ),
+        //     focusedErrorBorder: OutlineInputBorder(
+        //       borderRadius: BorderRadius.circular(12),
+        //       borderSide: const BorderSide(color: ColorRes.error, width: 1.5),
+        //     ),
+        //     filled: true,
+        //     fillColor: ColorRes.leadGreyColor[50],
+        //     contentPadding: const EdgeInsets.symmetric(
+        //       horizontal: 16,
+        //       vertical: 14,
+        //     ),
+        //   ),
+        //   onChanged: (value) async {
+        //     if (value.isNotEmpty) {
+        //       await googleMapController.fetchGooglePlaces(value);
+        //       log("City input: $value");
+        //     } else {
+        //       googleMapController.predictions.clear();
+        //     }
+        //   },
+        // ),
+        if (isRequiredTitle) ...[
+          NesticoPeTextField(
+            hintText: 'Select State',
+            title: "State",
+            controller: controller,
+            iconColor: iconColor,
+            style: style ?? TextStyle(),
+            enabled: isEditing,
+            isRequired: isRequired,
+            prefixIcon: Icons.map_outlined,
+
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+
+            onChanged: (value) async {
+              if (value.isNotEmpty) {
+                await googleMapController.fetchGooglePlaces(value);
+                log("State input: $value");
+              } else {
+                googleMapController.predictions.clear();
+                googleMapController.cityStateList.clear();
+              }
+            },
+
+            validator: (value) {
+              if (isRequired && (value == null || value.isEmpty)) {
+                return 'Please select a state';
+              }
+              return null;
+            },
           ),
-          decoration: InputDecoration(
-            labelText: "Select State",
-            labelStyle: TextStyle(
-              fontSize: AppFontSizes.small,
-              color: ColorRes.leadGreyColor[500],
-            ),
-            prefixIcon: Icon(
-              Icons.location_city_outlined,
-              size: 20,
-              color: ColorRes.leadGreyColor[600],
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(
-                color: ColorRes.leadGreyColor.withOpacity(0.3),
-              ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(
-                color: ColorRes.leadGreyColor.withOpacity(0.3),
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: ColorRes.blueColor,
-                width: 1.5,
-              ),
-            ),
-            disabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(
-                color: ColorRes.leadGreyColor.withOpacity(0.2),
-              ),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: ColorRes.error, width: 1),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: ColorRes.error, width: 1.5),
-            ),
-            filled: true,
-            fillColor: ColorRes.leadGreyColor[50],
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 14,
-            ),
+        ] else ...[
+          NesticoPeTextField(
+            hintText: 'Select State',
+            controller: controller,
+            iconColor: iconColor,
+            enabled: isEditing,
+            prefixIcon: Icons.map_outlined,
+
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+
+            onChanged: (value) async {
+              if (value.isNotEmpty) {
+                await googleMapController.fetchGooglePlaces(value);
+              } else {
+                googleMapController.predictions.clear();
+                googleMapController.cityStateList.clear();
+              }
+            },
           ),
-          onChanged: (value) async {
-            if (value.isNotEmpty) {
-              await googleMapController.fetchGooglePlaces(value);
-              log("City input: $value");
-            } else {
-              googleMapController.predictions.clear();
-            }
-          },
-        ),
+        ],
 
         const SizedBox(height: 8),
 
@@ -3951,20 +5005,49 @@ class SellerListShimmer extends StatelessWidget {
   }
 }
 
-/// Shimmer for Contractor Cards
+class BuilderListShimmer extends StatelessWidget {
+  const BuilderListShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 140,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        itemCount: 4,
+        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        itemBuilder: (context, index) {
+          return SizedBox(
+            width: 120,
+            child: Column(
+              children: [
+                ShimmerShapes.circle(size: 80),
+                const SizedBox(height: 8),
+                ShimmerShapes.text(width: 100, height: 14),
+                const SizedBox(height: 4),
+                ShimmerShapes.text(width: 80, height: 12),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
 class ContractorCardShimmer extends StatelessWidget {
   const ContractorCardShimmer({super.key});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 250,
+      height: 320,
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 12),
-        separatorBuilder: (context, index) => const SizedBox(width: 12),
         scrollDirection: Axis.horizontal,
+        separatorBuilder: (_, __) => const SizedBox(width: 12),
         itemCount: 3,
-        itemBuilder: (context, index) {
+        itemBuilder: (_, __) {
           return SizedBox(
             width: 300,
             child: Container(
@@ -3972,45 +5055,109 @@ class ContractorCardShimmer extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade300),
+                border: Border.all(color: Colors.grey.shade200),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  /// 🔹 TOP ROW
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ShimmerShapes.circle(size: 60),
+                      ShimmerShapes.circle(size: 52),
                       const SizedBox(width: 12),
+
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            ShimmerShapes.text(
-                              width: double.infinity,
-                              height: 16,
+                            /// Name + compare
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: ShimmerShapes.text(
+                                    width: double.infinity,
+                                    height: 14,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                ShimmerShapes.rounded(
+                                  width: 32,
+                                  height: 32,
+                                  borderRadius: 8,
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 6),
+
+                            const SizedBox(height: 8),
+
+                            /// Experience
                             ShimmerShapes.text(width: 120, height: 12),
+
+                            const SizedBox(height: 8),
+
+                            /// Rating row
+                            Row(
+                              children: [
+                                ShimmerShapes.circle(size: 12),
+                                const SizedBox(width: 6),
+                                ShimmerShapes.text(width: 30, height: 12),
+                                const SizedBox(width: 6),
+                                ShimmerShapes.text(width: 60, height: 10),
+                              ],
+                            ),
+
+                            const SizedBox(height: 8),
+
+                            /// Tags (Premium + Type)
+                            Row(
+                              children: [
+                                ShimmerShapes.rounded(
+                                  width: 70,
+                                  height: 18,
+                                  borderRadius: 6,
+                                ),
+                                const SizedBox(width: 8),
+                                ShimmerShapes.rounded(
+                                  width: 80,
+                                  height: 18,
+                                  borderRadius: 6,
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
                     ],
                   ),
+
                   const SizedBox(height: 12),
-                  ShimmerShapes.text(width: double.infinity, height: 14),
+
+                  /// 🔹 SERVICES TEXT
+                  ShimmerShapes.text(width: double.infinity, height: 12),
                   const SizedBox(height: 6),
-                  ShimmerShapes.text(width: 200, height: 14),
-                  const SizedBox(height: 12),
+                  ShimmerShapes.text(width: 220, height: 12),
+
+                  const SizedBox(height: 16),
+
+                  /// 🔹 STATS ROW
                   Row(
                     children: [
-                      ShimmerShapes.text(width: 80, height: 12),
-                      const Spacer(),
-                      ShimmerShapes.rounded(
-                        width: 100,
-                        height: 32,
-                        borderRadius: 8,
-                      ),
+                      Expanded(child: _statBox()),
+                      const SizedBox(width: 8),
+                      Expanded(child: _statBox()),
+                      const SizedBox(width: 8),
+                      Expanded(child: _statBox()),
                     ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  /// 🔹 BUTTON
+                  ShimmerShapes.rounded(
+                    width: double.infinity,
+                    height: 44,
+                    borderRadius: 30,
                   ),
                 ],
               ),
@@ -4018,6 +5165,17 @@ class ContractorCardShimmer extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+  
+
+  Widget _statBox() {
+    return Column(
+      children: [
+        ShimmerShapes.text(width: 40, height: 12),
+        const SizedBox(height: 6),
+        ShimmerShapes.text(width: 30, height: 14),
+      ],
     );
   }
 }

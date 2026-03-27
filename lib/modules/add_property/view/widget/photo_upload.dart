@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/modules/add_property/view/create_property.dart'
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/modules/add_property/view/create_property.dart'
     hide Obx;
 import 'package:path_provider/path_provider.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';

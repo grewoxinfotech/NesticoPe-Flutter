@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:nesticope_app/modules/contractor/controller/contractor_category_service_controller.dart';
+import 'package:nesticope_app/modules/contractor/view/widget/contractor_subcategory_service.dart';
+import 'package:nesticope_app/modules/hire_contractor/view/widget/category_service_explorer.dart';
+import 'package:nesticope_app/utils/shimmer/buyer/hire_contractor/buyer_hire_contractor_category_list_screen_shimmer.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../data/network/contractor/model/contractot_service_model/contractor_category_model.dart';
@@ -11,7 +15,9 @@ class MyServiceScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<ContractorMyServiceController>();
+    final controller = Get.put(ContractorCategoryServiceController());
+
+    
     return Scaffold(
       backgroundColor: ColorRes.background,
       appBar: AppBar(
@@ -29,17 +35,161 @@ class MyServiceScreen extends StatelessWidget {
         ),
         centerTitle: false,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: ListView.builder(
-          itemCount: controller.contractorServiceCategory.value?.data.items.length,
-          itemBuilder: (context, index) {
-            final service = controller.contractorServiceCategory.value?.data.items[index];
-            return GestureDetector(onTap: () {
-              _showServiceDialog(context, service??ContractorServiceCategory.fromMap({}));
-            },child: _buildServiceCard(service??ContractorServiceCategory.fromMap({})));
-          },
+      body: Obx(() {
+        if (controller.isLoading.value && controller.items.isEmpty) {
+          return BuyerHireContractorCategoryListScreenShimmer();
+        }
+
+        if (controller.items.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.category_outlined,
+                  size: 64,
+                  color: ColorRes.textDisabled,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'No categories available',
+                  style: TextStyle(
+                    fontSize: AppFontSizes.medium,
+                    color: ColorRes.textSecondary,
+                    fontWeight: AppFontWeights.medium,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return RefreshIndicator(
+          onRefresh: () => controller.refreshService(),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Builder(builder: (context) {
+              String norm(String s) => s
+                  .trim()
+                  .toLowerCase()
+                  .replaceAll('&', 'and')
+                  .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+              final order = <String, int>{
+                'home_construction': 1,
+                'building_material_supply': 2,
+                'material_supply': 2,
+                'home_services': 3,
+                'interior_design': 4,
+                'packers_and_movers': 5,
+                'packers_movers': 5,
+                'legal_services': 6,
+              };
+              final sorted = [...controller.items]..sort((a, b) {
+                  final ai = order[norm(a.name)] ?? 999;
+                  final bi = order[norm(b.name)] ?? 999;
+                  return ai.compareTo(bi);
+                });
+              return ListView.builder(
+                itemCount: sorted.length,
+                itemBuilder: (context, index) {
+                  final category = sorted[index];
+                return GestureDetector(
+                  onTap: () {
+                      Get.to(() => ContractorCategoryServiceExplorer(
+                            categoryId: category.id,
+                            categoryName: category.name,
+                          ));
+                  },
+                  child: _buildCategoryCard(category),
+                );
+                },
+              );
+            }),
+          ),
+        );
+      }),
+    );
+  }
+  Widget _buildCategoryCard(ContractorServiceCategory category) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: ColorRes.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: ColorRes.leadGreyColor.shade300,
+          width: 1,
         ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Title and status row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if ((category.icon ?? '').isNotEmpty)
+                SizedBox(
+                  height: 50,
+                  width: 50,
+                  child: Image.network(category.icon ?? '', fit: BoxFit.contain),
+                )
+              else
+                Container(
+                  height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(
+                    color: ColorRes.leadGreyColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.category,
+                    color: ColorRes.textSecondary,
+                    size: 24,
+                  ),
+                ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  category.name,
+                  style: TextStyle(
+                    fontSize: AppFontSizes.medium,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.textPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 6),
+
+          // Description
+          Text(
+            category.description.join('\n'),
+            maxLines: 5,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: AppFontSizes.extraSmall,
+              color: ColorRes.textSecondary,
+              height: 1.6,
+              
+              fontWeight: AppFontWeights.regular,
+            ),
+          ),
+
+          const SizedBox(height: 10),
+
+          // Date
+          Text(
+            _formatDate(category.createdAt),
+            style: TextStyle(
+              fontSize: AppFontSizes.caption,
+              color: ColorRes.textDisabled,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -95,7 +245,7 @@ class MyServiceScreen extends StatelessWidget {
                 const SizedBox(height: 12),
                 // Description
                 Text(
-                  service.description,
+                  service.description.join('\n'),
                   style: TextStyle(
                     fontSize: AppFontSizes.caption,
                     color: ColorRes.textSecondary,
@@ -180,7 +330,7 @@ class MyServiceScreen extends StatelessWidget {
 
           // Description
           Text(
-            service.description,
+            service.description.join('\n'),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(

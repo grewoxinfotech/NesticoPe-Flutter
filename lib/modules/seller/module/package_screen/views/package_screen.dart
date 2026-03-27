@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/app/constants/enum.dart';
+import 'package:nesticope_app/app/constants/enum.dart';
 
 import '../../../../subscription/views/suscription_plan_screen.dart';
 
@@ -11,15 +11,17 @@ class SellerSubscriptionPlanScreen extends StatelessWidget {
     return SubscriptionPlansScreen(
       role: Roles.sellerOwner.name,
       isShowCurrentPlan: true,
+      isNotFromBuyerSide: true,
+      showArrow: false,
     );
   }
 }
 
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/app/constants/color_res.dart';
-// import 'package:housing_flutter_app/app/constants/ic_res.dart';
-// import 'package:housing_flutter_app/widgets/display/ic.dart';
+// import 'package:nesticope_app/app/constants/color_res.dart';
+// import 'package:nesticope_app/app/constants/ic_res.dart';
+// import 'package:nesticope_app/widgets/display/ic.dart';
 //
 // import '../../../../../app/constants/app_font_sizes.dart';
 //

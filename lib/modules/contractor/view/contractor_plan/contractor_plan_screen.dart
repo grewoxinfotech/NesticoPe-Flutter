@@ -11,6 +11,8 @@ class ContractorPlanScreen extends StatelessWidget {
     return SubscriptionPlansScreen(
       role: Roles.contractor.name,
       isShowCurrentPlan: true,
+      isNotFromBuyerSide: true,
+      showArrow: true,
     );
   }
 }

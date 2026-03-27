@@ -3,11 +3,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/modules/builder/view/property_detail/widget/variation_media_upload_widget.dart';
-import 'package:housing_flutter_app/modules/saved_property/views/saved_property_screen.dart';
-import 'package:housing_flutter_app/utils/logger/app_logger.dart';
-import 'package:housing_flutter_app/widgets/button/button.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/modules/builder/view/property_detail/widget/variation_media_upload_widget.dart';
+import 'package:nesticope_app/modules/saved_property/views/saved_property_screen.dart';
+import 'package:nesticope_app/utils/logger/app_logger.dart';
+import 'package:nesticope_app/widgets/button/button.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';

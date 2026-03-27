@@ -27,7 +27,7 @@ class AddressAndMapDetails extends StatelessWidget {
     if (zipCode?.isNotEmpty ?? false) buffer.write(", ${zipCode}");
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

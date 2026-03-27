@@ -2,15 +2,15 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/data/network/contractor/model/contractor_lead_model/contractor_lead_model.dart';
-import 'package:housing_flutter_app/modules/contractor/controller/contractor_lead_controller.dart';
-import 'package:housing_flutter_app/modules/contractor/view/lead/follow_up/contractor_lead_filter.dart';
-import 'package:housing_flutter_app/modules/contractor/view/lead/widget/contractor_lead_edit_screen.dart';
-import 'package:housing_flutter_app/modules/contractor/view/lead/widget/contractor_lead_overview.dart';
-import 'package:housing_flutter_app/modules/contractor/view/lead/widget/convert_to_project_form.dart';
-import 'package:housing_flutter_app/utils/shimmer/common_screen/lead_screen/lead_list_screen_shimmer.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/data/network/contractor/model/contractor_lead_model/contractor_lead_model.dart';
+import 'package:nesticope_app/modules/contractor/controller/contractor_lead_controller.dart';
+import 'package:nesticope_app/modules/contractor/view/lead/follow_up/contractor_lead_filter.dart';
+import 'package:nesticope_app/modules/contractor/view/lead/widget/contractor_lead_edit_screen.dart';
+import 'package:nesticope_app/modules/contractor/view/lead/widget/contractor_lead_overview.dart';
+import 'package:nesticope_app/modules/contractor/view/lead/widget/convert_to_project_form.dart';
+import 'package:nesticope_app/utils/shimmer/common_screen/lead_screen/lead_list_screen_shimmer.dart';
 
 import '../../../../app/utils/formater/formater.dart';
 import '../../../../data/network/contractor/model/contractot_service_model/contractor_service_model.dart';

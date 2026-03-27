@@ -4,18 +4,18 @@ import 'dart:typed_data';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/app/manager/compare_manager.dart';
-import 'package:housing_flutter_app/app/manager/data_masker.dart';
-import 'package:housing_flutter_app/app/manager/icon_manager.dart';
-import 'package:housing_flutter_app/app/manager/project_compare_manager.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
-    hide ColorRes;
-import 'package:housing_flutter_app/modules/builder/view/project_detail/widgets/model_render_screen.dart';
-import 'package:housing_flutter_app/modules/property/controllers/overall_rating_controller.dart';
-import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
-import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
-import 'package:housing_flutter_app/utils/logger/app_logger.dart';
+import 'package:nesticope_app/app/manager/compare_manager.dart';
+import 'package:nesticope_app/app/manager/data_masker.dart';
+import 'package:nesticope_app/app/manager/icon_manager.dart';
+import 'package:nesticope_app/app/manager/project_compare_manager.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/app/widgets/image/custom_image.dart'
+    hide ColorRes, imageOfNotAvailable;
+import 'package:nesticope_app/modules/builder/view/project_detail/widgets/model_render_screen.dart';
+import 'package:nesticope_app/modules/property/controllers/overall_rating_controller.dart';
+import 'package:nesticope_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
+import 'package:nesticope_app/modules/saved_property/controllers/property_favorite_controller.dart';
+import 'package:nesticope_app/utils/logger/app_logger.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
@@ -308,37 +308,35 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                             // Conditional Area
                             Obx(() {
                               if (controller.hasSubmittedInquiry.value) {
-                                return Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: ColorRes.success.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(
-                                      color: ColorRes.success,
-                                      width: 1,
+                                return SizedBox(
+                                  height: 36,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      NesticoPeSnackBar.showAwesomeSnackbar(
+                                        title: 'Already Inquired',
+                                        message:
+                                            'You have already submitted inquiry',
+                                        contentType: ContentType.warning,
+                                      );
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: ColorRes.error,
+                                      foregroundColor: ColorRes.white,
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 14,
+                                      ),
                                     ),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(
-                                        Icons.check_circle_outline,
-                                        color: ColorRes.success,
-                                        size: 16,
+                                    child: const Text(
+                                      'Already Inquired',
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.medium,
+                                        fontWeight: AppFontWeights.semiBold,
                                       ),
-                                      const SizedBox(width: 6),
-                                      Text(
-                                        'Submitted',
-                                        style: TextStyle(
-                                          color: ColorRes.success,
-                                          fontSize: AppFontSizes.small,
-                                          fontWeight: AppFontWeights.semiBold,
-                                        ),
-                                      ),
-                                    ],
+                                    ),
                                   ),
                                 );
                               } else {
@@ -346,111 +344,72 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                   title: 'Get Offer',
                                   backgroundColor: ColorRes.error,
                                   height: 36,
-                                  onTap:
-                                      (UserHelper.isGuest)
-                                          ? () async {
-                                            try {
-                                              if (Get.context == null) {
-                                                NesticoPeSnackBar.showAwesomeSnackbar(
-                                                  title: 'Error',
-                                                  message:
-                                                      'UI not ready to show dialog.',
-                                                  contentType:
-                                                      ContentType.failure,
-                                                );
-                                                return;
-                                              }
-
-                                              addInquiryFromProject(
-                                                '',
-                                                '',
-                                                '',
-                                                project?.value?.id ?? '',
-                                                'sell',
-                                                "project",
-                                              );
-                                            } catch (e, s) {
-                                              debugPrint(
-                                                '❌ Error in Get Offer button: $e',
-                                              );
-                                              debugPrint('$s');
-
-                                              NesticoPeSnackBar.showAwesomeSnackbar(
-                                                title: 'Error',
-                                                message:
-                                                    'Something went wrong. Please try again.',
-                                                contentType:
-                                                    ContentType.failure,
-                                              );
-                                            }
-                                          }
-                                          : () async {
-                                            try {
-                                              final user =
-                                                  await SecureStorage.getUserData();
-
-                                              if (user == null) {
-                                                NesticoPeSnackBar.showAwesomeSnackbar(
-                                                  title: 'Error',
-                                                  message:
-                                                      'No user data found. Please log in.',
-                                                  contentType:
-                                                      ContentType.failure,
-                                                );
-                                                return;
-                                              }
-
-                                              final fullName =
-                                                  user.user?.fullName ?? '';
-                                              final firstName =
-                                                  user.user?.firstName ?? '';
-                                              final username =
-                                                  user.user?.username ?? '';
-                                              final email =
-                                                  user.user?.email ?? '';
-                                              final phone =
-                                                  user.user?.phone ?? '';
-
-                                              final displayName =
-                                                  (firstName.isEmpty
-                                                          ? username
-                                                          : fullName)
-                                                      .trim();
-
-                                              if (Get.context == null) {
-                                                NesticoPeSnackBar.showAwesomeSnackbar(
-                                                  title: 'Error',
-                                                  message:
-                                                      'UI not ready to show dialog.',
-                                                  contentType:
-                                                      ContentType.failure,
-                                                );
-                                                return;
-                                              }
-
-                                              addInquiryFromProject(
-                                                displayName,
-                                                email,
-                                                phone,
-                                                project?.value?.id ?? '',
-                                                'sell',
-                                                "project",
-                                              );
-                                            } catch (e, s) {
-                                              debugPrint(
-                                                '❌ Error in Get Offer button: $e',
-                                              );
-                                              debugPrint('$s');
-
-                                              NesticoPeSnackBar.showAwesomeSnackbar(
-                                                title: 'Error',
-                                                message:
-                                                    'Something went wrong. Please try again.',
-                                                contentType:
-                                                    ContentType.failure,
-                                              );
-                                            }
-                                          },
+                                  onTap: () async {
+                                    try {
+                                      if (UserHelper.isGuest) {
+                                        Get.to(() => LoginScreen());
+                                        return;
+                                      }
+                                      final user = await SecureStorage.getUserData();
+                                      if (user == null) {
+                                        NesticoPeSnackBar.showAwesomeSnackbar(
+                                          title: 'Error',
+                                          message: 'No user data found. Please log in.',
+                                          contentType: ContentType.failure,
+                                        );
+                                        return;
+                                      }
+                                      final fullName = user.user?.fullName ?? '';
+                                      final firstName = user.user?.firstName ?? '';
+                                      final username = user.user?.username ?? '';
+                                      final email = user.user?.email ?? '';
+                                      final phone = user.user?.phone ?? '';
+                                      final displayName =
+                                          (firstName.isEmpty ? username : fullName).trim();
+                                      final inquiry = {
+                                        "name": displayName,
+                                        "phone": phone,
+                                        "email": email,
+                                        "agreeToContact": true,
+                                        "meta": {
+                                          "inquiryType": "sell",
+                                          "type": "project",
+                                        },
+                                      };
+                                      final success = await controller.addInquiry(
+                                        inquiry,
+                                        project?.value?.id ?? '',
+                                      );
+                                      if (success) {
+                                        controller.hasSubmittedInquiry.value = true;
+                                        NesticoPeSnackBar.showAwesomeSnackbar(
+                                          title: 'Success',
+                                          message: 'Inquiry Added Successfully',
+                                          contentType: ContentType.success,
+                                        );
+                                        await controller.getAllInQuireData(
+                                          project?.value?.id ?? '',
+                                        );
+                                        await controller.getHasInQuireData(
+                                          project?.value?.id ?? '',
+                                        );
+                                      } else {
+                                        NesticoPeSnackBar.showAwesomeSnackbar(
+                                          title: 'Error',
+                                          message: 'Failed to Submit Inquiry',
+                                          contentType: ContentType.failure,
+                                        );
+                                      }
+                                    } catch (e, s) {
+                                      debugPrint('❌ Error in Get Offer button: $e');
+                                      debugPrint('$s');
+                                      NesticoPeSnackBar.showAwesomeSnackbar(
+                                        title: 'Error',
+                                        message: 'Something went wrong. Please try again.',
+                                        contentType: ContentType.failure,
+                                      );
+                                    }
+                                  },
                                 );
                               }
                             }),
@@ -477,17 +436,30 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                       ],
 
                       if (widget.isBuilder) ...[
-                        ListTile(
-                          tileColor: ColorRes.white,
-                          title: Text(
-                            'Approval History',
-                            style: TextStyle(
-                              fontSize: AppFontSizes.medium,
-                              fontWeight: AppFontWeights.semiBold,
-                            ),
-                          ),
-                          leading: Icon(Icons.history, color: ColorRes.primary),
-                          trailing: Icon(Icons.arrow_forward_ios_rounded),
+                        // ListTile(
+                        //   tileColor: ColorRes.white,
+                        //   title: Text(
+                        //     'Approval History',
+                        //     style: TextStyle(
+                        //       fontSize: AppFontSizes.medium,
+                        //       fontWeight: AppFontWeights.semiBold,
+                        //     ),
+                        //   ),
+                        //   leading: Icon(Icons.history, color: ColorRes.primary),
+                        //   trailing: Icon(Icons.arrow_forward_ios_rounded),
+                        //   onTap: () {
+                        // Get.to(
+                        //   () => SellerPropertyApprovalHistory(
+                        //     propertyId: project?.value?.id ?? '',
+                        //     isProject: true,
+                        //   ),
+                        // );
+                        //   },
+                        // ),
+                        _buildMenuItem(
+                          iconColor: ColorRes.primary,
+                          title: "Approval History",
+                          icon: Icons.history,
                           onTap: () {
                             Get.to(
                               () => SellerPropertyApprovalHistory(
@@ -496,27 +468,63 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                               ),
                             );
                           },
+                          iconBg: ColorRes.primary.withOpacity(0.1),
+                          subtitle: 'View timeline of approvals',
                         ),
                         const SizedBox(height: 8),
-                        ListTile(
-                          tileColor: ColorRes.white,
-                          title: Text(
-                            'Leads',
-                            style: TextStyle(
-                              fontSize: AppFontSizes.medium,
-                              fontWeight: AppFontWeights.semiBold,
-                            ),
-                          ),
-                          leading: Icon(
-                            Icons.leaderboard_outlined,
-                            color: ColorRes.primary,
-                          ),
-                          trailing: Icon(Icons.arrow_forward_ios_rounded),
-                          onTap: () {
-                            log(
-                              "Check it is from project pass project id ${project?.value?.id}",
-                            );
+                        // ListTile(
+                        //   tileColor: ColorRes.white,
+                        //   title: Text(
+                        //     'Leads',
+                        //     style: TextStyle(
+                        //       fontSize: AppFontSizes.medium,
+                        //       fontWeight: AppFontWeights.semiBold,
+                        //     ),
+                        //   ),
+                        //   leading: Icon(
+                        //     Icons.leaderboard_outlined,
+                        //     color: ColorRes.primary,
+                        //   ),
+                        //   trailing: Icon(Icons.arrow_forward_ios_rounded),
+                        //   onTap: () {
+                        //     log(
+                        //       "Check it is from project pass project id ${project?.value?.id}",
+                        //     );
 
+                        //     Get.to(
+                        //       () => CommonLeadScreen(
+                        //         title: 'Project Buyer Leads',
+                        //         controllerTag: 'project',
+                        //         entityId: project?.value?.id,
+                        //         showActionButton: true,
+                        //         showDataMasking: false,
+                        //         onLoadMore: (controller, id) async {
+                        //           if (id != null) {
+                        //             controller.loadMorePropertyLeads(id);
+                        //           } else {
+                        //             controller.loadMore();
+                        //           }
+                        //         },
+
+                        //         /// 👇 Custom lead card builder
+                        //         leadCardBuilder: (lead, onTap) {
+                        //           return LeadCardWidget(
+                        //             lead: lead,
+                        //             isCompact:
+                        //                 MediaQuery.of(context).size.width < 600,
+                        //             showDataMasking: false,
+                        //             onTap: onTap,
+                        //           );
+                        //         },
+                        //       ),
+                        //     );
+                        //   },
+                        // ),
+                        _buildMenuItem(
+                          iconColor: ColorRes.green,
+                          title: "Leads",
+                          icon: Icons.label_important_outline,
+                          onTap: () {
                             Get.to(
                               () => CommonLeadScreen(
                                 title: 'Project Buyer Leads',
@@ -545,6 +553,9 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                               ),
                             );
                           },
+                          iconBg: ColorRes.green.withOpacity(0.1),
+
+                          subtitle: 'New potential buyers',
                         ),
                         const SizedBox(height: 8),
                       ],
@@ -717,6 +728,84 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
           ),
         );
       }),
+    );
+  }
+
+  Widget _buildMenuItem({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color iconBg,
+    required Color iconColor,
+    required VoidCallback onTap,
+    bool showDivider = true,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            color: ColorRes.white,
+            child: Row(
+              children: [
+                /// Icon Box
+                Container(
+                  height: 44,
+                  width: 44,
+                  decoration: BoxDecoration(
+                    color: iconBg,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: iconColor, size: 20),
+                ),
+
+                const SizedBox(width: 14),
+
+                /// Title + Subtitle
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: AppFontSizes.medium,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.leadGreyColor[900],
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          fontSize: AppFontSizes.caption,
+                          color: ColorRes.leadGreyColor[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                /// Arrow
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 18,
+                  color: ColorRes.leadGreyColor[500],
+                ),
+              ],
+            ),
+          ),
+
+          /// Divider
+          if (showDivider)
+            Divider(
+              height: 1,
+              thickness: 1,
+              color: ColorRes.leadGreyColor.shade200,
+            ),
+        ],
+      ),
     );
   }
 

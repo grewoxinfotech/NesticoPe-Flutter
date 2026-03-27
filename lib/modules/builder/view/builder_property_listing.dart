@@ -2,16 +2,16 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/img_res.dart';
-import 'package:housing_flutter_app/app/manager/project_compare_manager.dart';
-import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
-import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
-import 'package:housing_flutter_app/modules/builder/controller/project_controller.dart';
-import 'package:housing_flutter_app/modules/builder/view/project_detail/project_detail.dart';
-import 'package:housing_flutter_app/utils/logger/app_logger.dart';
-import 'package:housing_flutter_app/utils/shimmer/seller/builder/project_screen/project_list_screen_shimmer.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/img_res.dart';
+import 'package:nesticope_app/app/manager/project_compare_manager.dart';
+import 'package:nesticope_app/app/widgets/snack_bar/custom_snackbar.dart';
+import 'package:nesticope_app/data/network/builder/model/builder_model.dart';
+import 'package:nesticope_app/modules/builder/controller/project_controller.dart';
+import 'package:nesticope_app/modules/builder/view/project_detail/project_detail.dart';
+import 'package:nesticope_app/utils/logger/app_logger.dart';
+import 'package:nesticope_app/utils/shimmer/seller/builder/project_screen/project_list_screen_shimmer.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../app/constants/size_manager.dart';
@@ -437,10 +437,17 @@ class BuilderProjectCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
-        border: Border.all(
-          color: ColorRes.leadGreyColor.withOpacity(0.3),
-          width: 1,
-        ),
+        // border: Border.all(
+        //   color: ColorRes.leadGreyColor.withOpacity(0.3),
+        //   width: 1,
+        // ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 2,
+            offset: const Offset(2, 3),
+          ),
+        ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
@@ -541,7 +548,7 @@ class BuilderProjectCard extends StatelessWidget {
                         // Compare toggle
                         GestureDetector(
                           onTap: () {
-                            compare.toggle(project, max: 2);
+                            compare.toggle(project, max: 5);
                           },
                           child: Obx(() {
                             final selected = compare.isSelected(project.id);
@@ -765,7 +772,12 @@ class BuilderProjectCard extends StatelessWidget {
                           ),
                         ],
                       ),
-
+                      SizedBox(height: 6),
+                      Divider(
+                        height: 1,
+                        color: ColorRes.leadGreyColor.shade300,
+                      ),
+                    
                       // Developer Info Card
                       if (!forHome) ...[
                         const SizedBox(height: 10),
@@ -1004,7 +1016,7 @@ class BuilderProjectCard extends StatelessWidget {
                               price,
                               style: TextStyle(
                                 fontSize: AppFontSizes.body,
-                                fontWeight: AppFontWeights.semiBold,
+                                fontWeight: AppFontWeights.bold,
                                 color: ColorRes.primary,
 
                                 height: 1.1,

@@ -92,7 +92,7 @@ import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../data/network/property/models/analytics_model.dart';
@@ -362,7 +362,7 @@ class _EngagementPieChartState extends State<EngagementPieChart> {
             style: TextStyle(
               fontSize: AppFontSizes.body,
               fontWeight: AppFontWeights.semiBold,
-              color: ColorRes.leadGreyColor[800],
+              color: ColorRes.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
@@ -439,7 +439,11 @@ class _EngagementPieChartState extends State<EngagementPieChart> {
         const SizedBox(width: 6),
         Text(
           title,
-          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: AppFontWeights.medium,
+            color: ColorRes.leadGreyColor.shade700,
+          ),
         ),
         const SizedBox(width: 6),
         Text(

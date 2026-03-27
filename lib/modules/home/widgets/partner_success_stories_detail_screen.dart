@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/modules/property_rating/view/widget/read_more_or_less.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/modules/property_rating/view/widget/read_more_or_less.dart';
 import 'package:intl/intl.dart';
 import '../../../app/constants/color_res.dart';
 import '../../../data/network/history/model/success_story_model.dart';

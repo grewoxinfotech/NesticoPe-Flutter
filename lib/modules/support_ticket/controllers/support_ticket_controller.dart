@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
-import 'package:housing_flutter_app/app/services/image_picker_helper.dart';
-import 'package:housing_flutter_app/app/widgets/snackbar/snackbar.dart';
-import 'package:housing_flutter_app/data/network/support_ticket/service/ticket_service/support_ticket_service.dart';
+import 'package:nesticope_app/app/care/pagination/controller/pagination_controller.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/app/services/image_picker_helper.dart';
+import 'package:nesticope_app/app/widgets/snackbar/snackbar.dart';
+import 'package:nesticope_app/data/network/support_ticket/service/ticket_service/support_ticket_service.dart';
 
 import '../../../data/network/support_ticket/models/ticket_model/support_ticket_model.dart';
 import '../../../widgets/messages/snack_bar.dart';
@@ -86,9 +86,9 @@ class SupportTicketController extends PaginatedController<TicketItem> {
       }
 
       final ticket =
-          payload != null
-              ? payload
-              : TicketCreateRequest(
+          payload ??
+              // ? 
+               TicketCreateRequest(
                 title: titleController.text,
                 description: descriptionController.text,
                 category: selectedCategory.value,

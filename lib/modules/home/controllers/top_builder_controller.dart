@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
-import 'package:housing_flutter_app/data/network/top_seller_profile/model/top_builder_profile_model.dart';
-import 'package:housing_flutter_app/modules/profile/model/seller_profile.dart';
+import 'package:nesticope_app/app/care/pagination/controller/pagination_controller.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/data/network/auth/model/user_model.dart';
+import 'package:nesticope_app/data/network/top_seller_profile/model/top_builder_profile_model.dart';
+import 'package:nesticope_app/modules/profile/model/seller_profile.dart';
 import '../../../../app/constants/api_constants.dart';
 import '../../../data/network/top_seller_profile/model/top_seller_profile_model.dart';
 import '../../../data/network/top_seller_profile/service/top_seller_profile_service.dart';
@@ -20,6 +20,7 @@ class TopBuilderController extends PaginatedController<BuilderItem> {
   // Reactive states
   RxBool isExpanded = false.obs;
   RxString selectedState = ''.obs;
+  RxString selectedCity = ''.obs;
 
   // Optional filters
   Map<String, String>? filters = {};
@@ -36,7 +37,7 @@ class TopBuilderController extends PaginatedController<BuilderItem> {
     final cityData = await SecureStorage.getSelectedCity();
     final response = await _service.fetchTopBuilderProfiles(
       page: page,
-      city: cityData ?? "",
+      city: selectedCity.value??cityData,
     );
 
     AppLogger.structured(

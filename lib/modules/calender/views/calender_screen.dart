@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/data/network/calender/model/calender_model.dart';
-import 'package:housing_flutter_app/modules/calender/views/widgets/add_event_widget.dart';
-import 'package:housing_flutter_app/modules/calender/views/widgets/calender_event_card.dart';
-import 'package:housing_flutter_app/utils/shimmer/common_screen/calender_screen/calender_screen_shimmer.dart';
-import 'package:housing_flutter_app/widgets/dialog/delete_confirmation_dialog.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/data/network/calender/model/calender_model.dart';
+import 'package:nesticope_app/modules/calender/views/widgets/add_event_widget.dart';
+import 'package:nesticope_app/modules/calender/views/widgets/calender_event_card.dart';
+import 'package:nesticope_app/utils/shimmer/common_screen/calender_screen/calender_screen_shimmer.dart';
+import 'package:nesticope_app/widgets/dialog/delete_confirmation_dialog.dart';
 
 import 'package:intl/intl.dart';
 

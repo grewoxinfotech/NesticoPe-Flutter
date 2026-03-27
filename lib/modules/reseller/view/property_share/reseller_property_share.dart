@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/constants/size_manager.dart';
-import 'package:housing_flutter_app/data/network/property_share/property_share_model.dart';
-import 'package:housing_flutter_app/widgets/button/button.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/data/network/property_share/property_share_model.dart';
+import 'package:nesticope_app/widgets/button/button.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../data/network/interest_form/interest_form_model.dart';
 import '../../controller/property_share/reseller_property_share_controller.dart';

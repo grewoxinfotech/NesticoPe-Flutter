@@ -2,20 +2,20 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
-import 'package:housing_flutter_app/modules/builder/view/project_detail/project_detail.dart';
-import 'package:housing_flutter_app/modules/home/controllers/top_builder_controller.dart';
-import 'package:housing_flutter_app/modules/builder/controller/builder_listed_project_controller.dart';
-import 'package:housing_flutter_app/modules/builder/controller/builder_form_controller.dart';
-import 'package:housing_flutter_app/modules/builder/view/property_detail/property_detail.dart';
-import 'package:housing_flutter_app/modules/builder/view/builder_property_listing.dart';
-import 'package:housing_flutter_app/utils/global.dart';
-import 'package:housing_flutter_app/utils/shimmer/seller/builder/project_screen/project_list_screen_shimmer.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/app/widgets/image/custom_image.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/data/network/builder/model/builder_model.dart';
+import 'package:nesticope_app/modules/builder/view/project_detail/project_detail.dart';
+import 'package:nesticope_app/modules/home/controllers/top_builder_controller.dart';
+import 'package:nesticope_app/modules/builder/controller/builder_listed_project_controller.dart';
+import 'package:nesticope_app/modules/builder/controller/builder_form_controller.dart';
+import 'package:nesticope_app/modules/builder/view/property_detail/property_detail.dart';
+import 'package:nesticope_app/modules/builder/view/builder_property_listing.dart';
+import 'package:nesticope_app/utils/global.dart';
+import 'package:nesticope_app/utils/shimmer/seller/builder/project_screen/project_list_screen_shimmer.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../home/widgets/unified_comparison_floating_button.dart';
 
@@ -76,7 +76,7 @@ class _TopDeveloperProfileScreenState extends State<TopDeveloperProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorRes.white,
+     
       appBar: AppBar(
         leading: IconButton(
           onPressed: () async {
@@ -296,7 +296,14 @@ class _TopDeveloperProfileScreenState extends State<TopDeveloperProfileScreen> {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+        // border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+         boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 2,
+            offset: const Offset(2, 3),
+          ),
+        ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -523,11 +530,13 @@ class _StatusTabs extends StatelessWidget {
         decoration: BoxDecoration(
           color: selected ? ColorRes.primary.withOpacity(0.12) : ColorRes.white,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color:
-                selected ? ColorRes.primary : ColorRes.leadGreyColor.shade300,
-            width: selected ? 1.4 : 1,
-          ),
+          border: selected
+              ? Border.all(
+                  color: ColorRes.primary,
+                  width: 1.4,
+                )
+              : null,
+              
           boxShadow:
               selected
                   ? [

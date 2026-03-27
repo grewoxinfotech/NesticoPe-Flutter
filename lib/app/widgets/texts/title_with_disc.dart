@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
 
 import '../../constants/app_font_sizes.dart';
 

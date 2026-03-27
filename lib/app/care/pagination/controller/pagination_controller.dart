@@ -28,12 +28,14 @@ abstract class PaginatedController<T> extends GetxController {
 
   /// Load next page
   Future<void> loadMore() async {
-    // if (hasMore.value && !isPaging.value && !isLoading.value) {
+    if (!hasMore.value || isPaging.value || isLoading.value) {
+      return;
+    }
     print(
       "Pagination: loadMore called. Current page: ${currentPage.value}, Total pages: ${totalPages.value}",
     );
-    currentPage.value += 1;
-    await _loadPage(page: currentPage.value);
+    final nextPage = currentPage.value + 1;
+    await _loadPage(page: nextPage);
   }
 
   /// Pull-to-refresh

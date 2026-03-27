@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:housing_flutter_app/app/constants/api_constants.dart';
+import 'package:nesticope_app/app/constants/api_constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
@@ -23,7 +23,7 @@ class ContractorCompareService {
         headers: await header(),
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
-        log("Compare Contractor ${response.body}");
+        // avoid logging full payload to reduce log spam and potential jank
         final data=jsonDecode(response.body);
         return data;
       }

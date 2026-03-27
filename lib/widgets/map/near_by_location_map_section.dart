@@ -187,58 +187,57 @@ class _NearbyLocationMapSectionState extends State<NearbyLocationMapSection> {
               const SizedBox(height: 12),
 
               // Category Tabs
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Schools around your location',
-                      style: TextStyle(
-                        fontSize: AppFontSizes.medium,
-                        fontWeight: AppFontWeights.semiBold,
-                        color: ColorRes.textPrimary,
-                      ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    '   Schools around your location',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.textPrimary,
                     ),
-                    const SizedBox(height: 12),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          _buildCategoryButton(
-                            'Education',
-                            Icons.school_outlined,
-                            'school',
-                          ),
-                          const SizedBox(width: 8),
-                          _buildCategoryButton(
-                            'Healthcare',
-                            Icons.local_hospital_outlined,
-                            'hospital',
-                          ),
-                          const SizedBox(width: 8),
-                          _buildCategoryButton(
-                            'Food & Dining',
-                            Icons.restaurant_outlined,
-                            'restaurant',
-                          ),
-                          const SizedBox(width: 8),
-                          _buildCategoryButton(
-                            'Shopping',
-                            Icons.shopping_bag_outlined,
-                            'shopping_mall',
-                          ),
-                          const SizedBox(width: 8),
-                          _buildCategoryButton(
-                            'Entertainment',
-                            Icons.movie_outlined,
-                            'movie_theater',
-                          ),
-                        ],
-                      ),
+                  ),
+                  const SizedBox(height: 12),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        SizedBox(width: 12),
+                        _buildCategoryButton(
+                          'Education',
+                          Icons.school_outlined,
+                          'school',
+                        ),
+                        const SizedBox(width: 8),
+                        _buildCategoryButton(
+                          'Healthcare',
+                          Icons.local_hospital_outlined,
+                          'hospital',
+                        ),
+                        const SizedBox(width: 8),
+                        _buildCategoryButton(
+                          'Food & Dining',
+                          Icons.restaurant_outlined,
+                          'restaurant',
+                        ),
+                        const SizedBox(width: 8),
+                        _buildCategoryButton(
+                          'Shopping',
+                          Icons.shopping_bag_outlined,
+                          'shopping_mall',
+                        ),
+                        const SizedBox(width: 8),
+                        _buildCategoryButton(
+                          'Entertainment',
+                          Icons.movie_outlined,
+                          'movie_theater',
+                        ),
+                            SizedBox(width: 12),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
 
               const SizedBox(height: 12),

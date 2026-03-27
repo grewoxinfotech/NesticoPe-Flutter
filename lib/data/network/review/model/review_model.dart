@@ -28,6 +28,8 @@ class ReviewItem {
   final int? reportCount;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final Reviewer? reviewer;
+  final EntityUser? entityUser;
 
   ReviewItem({
     this.id,
@@ -57,6 +59,8 @@ class ReviewItem {
     this.reportCount,
     this.createdAt,
     this.updatedAt,
+    this.reviewer,
+    this.entityUser,
   });
 
   factory ReviewItem.fromJson(Map<String, dynamic> json) {
@@ -96,6 +100,8 @@ class ReviewItem {
       reportCount: json['report_count'] ?? 0,
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
+      reviewer: json['reviewer'] != null ? Reviewer.fromJson(json['reviewer']) : null,
+      entityUser: json['entityUser'] != null ? EntityUser.fromJson(json['entityUser']) : null,
     );
   }
 
@@ -131,6 +137,8 @@ class ReviewItem {
     if (reportCount != null) map['report_count'] = reportCount;
     if (createdAt != null) map['createdAt'] = createdAt?.toIso8601String();
     if (updatedAt != null) map['updatedAt'] = updatedAt?.toIso8601String();
+    if (reviewer != null) map['reviewer'] = reviewer?.toJson();
+    if (entityUser != null) map['entityUser'] = entityUser?.toJson();
 
     return map;
   }
@@ -198,6 +206,44 @@ extension ReviewItemCopy on ReviewItem {
   }
 }
 
+class Reviewer {
+  final String? id;
+  final String? username;
+  final String? userType;
+  Reviewer({this.id, this.username, this.userType});
+  factory Reviewer.fromJson(Map<String, dynamic> json) {
+    return Reviewer(
+      id: json['id'],
+      username: json['username'],
+      userType: json['userType'],
+    );
+  }
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    if (id != null) map['id'] = id;
+    if (username != null) map['username'] = username;
+    if (userType != null) map['userType'] = userType;
+    return map;
+  }
+}
+
+class EntityUser {
+  final String? username;
+  final String? userType;
+  EntityUser({this.username, this.userType});
+  factory EntityUser.fromJson(Map<String, dynamic> json) {
+    return EntityUser(
+      username: json['username'],
+      userType: json['userType'],
+    );
+  }
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    if (username != null) map['username'] = username;
+    if (userType != null) map['userType'] = userType;
+    return map;
+  }
+}
 class ReviewProsCons {
   final String? text;
   final List<String>? tags;

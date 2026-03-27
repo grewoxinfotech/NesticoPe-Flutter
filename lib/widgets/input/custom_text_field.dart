@@ -89,7 +89,7 @@
 //       ),
 //       style: TextStyle(
 //         fontSize: AppFontSizes.body,
-//         fontFamily: FontRes.nuNunitoSans,
+//         fontFamily: FontRes.poppins,
 //         fontWeight: AppFontWeights.medium,
 //       ),
 //     );

@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
-import 'package:housing_flutter_app/data/network/contractor/model/contractor_project_model/contracto_project_model.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/data/network/contractor/model/contractor_project_model/contracto_project_model.dart';
 import 'package:http/http.dart' as http;
-import 'package:housing_flutter_app/app/constants/api_constants.dart';
+import 'package:nesticope_app/app/constants/api_constants.dart';
 
 import '../../../../../utils/logger/app_logger.dart';
 

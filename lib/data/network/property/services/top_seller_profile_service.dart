@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:housing_flutter_app/modules/profile/model/seller_profile.dart';
+import 'package:nesticope_app/modules/profile/model/seller_profile.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../../app/constants/api_constants.dart';

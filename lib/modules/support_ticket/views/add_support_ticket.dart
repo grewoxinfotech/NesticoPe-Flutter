@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/utils/validation.dart';
-import 'package:housing_flutter_app/modules/support_ticket/controllers/support_ticket_controller.dart';
-import 'package:housing_flutter_app/widgets/New%20folder/inputs/dropdown_field.dart';
-import 'package:housing_flutter_app/widgets/New%20folder/inputs/text_field.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/utils/validation.dart';
+import 'package:nesticope_app/modules/support_ticket/controllers/support_ticket_controller.dart';
+import 'package:nesticope_app/widgets/New%20folder/inputs/dropdown_field.dart';
+import 'package:nesticope_app/widgets/New%20folder/inputs/text_field.dart';
 
 class CreateTicketScreen extends StatelessWidget {
   const CreateTicketScreen({super.key});

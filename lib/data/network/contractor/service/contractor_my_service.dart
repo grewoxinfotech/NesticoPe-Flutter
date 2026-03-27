@@ -1,7 +1,10 @@
 import 'dart:convert';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
-import 'package:housing_flutter_app/utils/logger/app_logger.dart';
+import 'package:nesticope_app/utils/logger/app_logger.dart';
+
+import 'package:http_parser/http_parser.dart';
+import 'package:mime/mime.dart';
 
 import '../../../../app/care/pagination/models/pagination_models.dart';
 import '../../../../app/constants/api_constants.dart';
@@ -35,6 +38,7 @@ class ContractorMyService {
       print("Category API URI: $uri");
 
       final response = await http.get(uri, headers: await headers());
+      print("Contractor Service Response Status: ${response.statusCode}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -64,13 +68,13 @@ class ContractorMyService {
       };
 
       final uri = Uri.parse("$_baseUrl").replace(queryParameters: queryParams);
-      print("Review URI: $uri");
+      print("Contractor Service URI: $uri");
 
       final response = await http.get(uri, headers: await headers());
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print("Contractor Review data: $data");
+        print("Contractor Service data: $data");
 
         return PaginationResponse<ContractorServiceItem>.fromJson(
           data,
@@ -167,37 +171,89 @@ class ContractorMyService {
     }
   }
 
-  Future<bool> createService(Map<String, dynamic> data) async {
-    final uri = Uri.parse('$_baseUrl');
-    try {
-      final response = await http.post(
-        uri,
-        headers: await headers(),
-        body: jsonEncode({'data': data}),
-      );
+  Future<PaginationResponse<ContractorServiceCategory>>
+  getContractorCategoryService(
+    {int page = 1,
+    String? limit = '10',}
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
+  ) async {
+    final uri = Uri.parse('$_baseCategory').replace(
+      queryParameters: {
+        'page': page.toString(),
+        if (limit != null) 'limit': limit,
+      },
+    );
+    try {
+      final response = await http.get(uri, headers: await headers());
+
+      if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final jsonData = json.decode(response.body);
-        // final jsonData = json.decode(response.body);
-        NesticoPeSnackBar.showAwesomeSnackbar(
-          title: 'Success',
-          message: jsonData['message'],
-          contentType: ContentType.success,
+        return PaginationResponse<ContractorServiceCategory>.fromJson(
+          data,
+          (json) => ContractorServiceCategory.fromMap(json),
         );
-        print("Change the active and Inactive: $data");
-        return data['success'];
       } else {
-        final jsonData = json.decode(response.body);
-        // final jsonData = json.decode(response.body);
-        // NesticoPeSnackBar.showAwesomeSnackbar(
-        //   title: 'Failed',
-        //   message: jsonData['message'],
-        //   contentType: ContentType.failure,
-        // );
         print("Failed to load Active: ${response.statusCode}");
         print("Response body: ${response.body}");
-        throw Exception(jsonData['message'] ?? "Failed to load Active");
+        throw Exception("Failed to load Active");
+      }
+    } catch (e) {
+      print("Response body: ${e}");
+      rethrow;
+    }
+  }
+
+  Future<bool> createService(
+    Map<String, dynamic> data, {
+    List<String>? imagePaths,
+  }) async {
+    final uri = Uri.parse('$_baseUrl');
+    try {
+      var request = http.MultipartRequest('POST', uri);
+      request.headers.addAll(await headers());
+
+      // Add other fields
+      data.forEach((key, value) {
+        if (key == 'meta') {
+          request.fields[key] = jsonEncode(value);
+        } else {
+          request.fields[key] = value.toString();
+        }
+      });
+
+      // Add images if available
+      if (imagePaths != null && imagePaths.isNotEmpty) {
+        for (var imagePath in imagePaths) {
+          final mimeType = lookupMimeType(imagePath);
+          final file = await http.MultipartFile.fromPath(
+            'serviceImage',
+            imagePath,
+            contentType:
+                mimeType != null
+                    ? MediaType.parse(mimeType)
+                    : MediaType('image', 'png'),
+          );
+          request.files.add(file);
+        }
+      }
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final resData = jsonDecode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: resData['message'],
+          contentType: ContentType.success,
+        );
+        print("Service created successfully: $resData");
+        return resData['success'];
+      } else {
+        final resData = jsonDecode(response.body);
+        print("Failed to create service: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception(resData['message'] ?? "Failed to create service");
       }
     } catch (e) {
       final errorMessage =
@@ -211,45 +267,66 @@ class ContractorMyService {
         contentType: ContentType.failure,
       );
 
-      print("Error: $e");
+      print("Error creating service: $e");
       return false;
     }
   }
 
   Future<bool> updateContractorService(
     Map<String, dynamic> service,
-    String id,
-  ) async {
+    String id, {
+    List<String>? imagePaths,
+  }) async {
     final uri = Uri.parse('$_baseUrl/$id');
     try {
-      final response = await http.put(
-        uri,
-        headers: await headers(),
-        body: jsonEncode(service),
-      );
+      var request = http.MultipartRequest('PUT', uri);
+      request.headers.addAll(await headers());
+
+      // Add other fields
+      service.forEach((key, value) {
+        if (key == 'meta') {
+          request.fields[key] = jsonEncode(value);
+        } else if (key == 'serviceImage') {
+          // Send remaining existing image URLs
+          request.fields[key] = jsonEncode(value);
+        } else {
+          request.fields[key] = value.toString();
+        }
+      });
+
+      // Add new images if available
+      if (imagePaths != null && imagePaths.isNotEmpty) {
+        for (var imagePath in imagePaths) {
+          final mimeType = lookupMimeType(imagePath);
+          final file = await http.MultipartFile.fromPath(
+            'serviceImage',
+            imagePath,
+            contentType:
+                mimeType != null
+                    ? MediaType.parse(mimeType)
+                    : MediaType('image', 'png'),
+          );
+          request.files.add(file);
+        }
+      }
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final jsonData = json.decode(response.body);
-        // final jsonData = json.decode(response.body);
+        final resData = jsonDecode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: 'Success',
-          message: jsonData['message'],
+          message: resData['message'],
           contentType: ContentType.success,
         );
-        AppLogger.structured("Service Updated Successfully: ",data);
-        return data['success'];
+        AppLogger.structured("Service Updated Successfully: ", resData);
+        return resData['success'];
       } else {
-        final jsonData = json.decode(response.body);
-        // final jsonData = json.decode(response.body);
-        // NesticoPeSnackBar.showAwesomeSnackbar(
-        //   title: 'Failed',
-        //   message: jsonData['message'],
-        //   contentType: ContentType.failure,
-        // );
+        final resData = jsonDecode(response.body);
         print("Failed to update service: ${response.statusCode}");
         print("Response body: ${response.body}");
-        throw Exception(jsonData['message'] ?? "Failed to update service");
+        throw Exception(resData['message'] ?? "Failed to update service");
       }
     } catch (e) {
       final errorMessage =
@@ -262,7 +339,7 @@ class ContractorMyService {
         message: errorMessage,
         contentType: ContentType.failure,
       );
-      print("Response body for update service: ${e}");
+      print("Error updating service: $e");
       return false;
     }
   }

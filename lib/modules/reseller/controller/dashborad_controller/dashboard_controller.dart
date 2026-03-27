@@ -609,16 +609,17 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
-import 'package:housing_flutter_app/data/network/property/services/property_service.dart';
-import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
-import 'package:housing_flutter_app/modules/reseller/controller/reseller_success_stories_controller/reseller_success_stories_controller.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/data/network/auth/model/user_model.dart';
+import 'package:nesticope_app/data/network/property/services/property_service.dart';
+import 'package:nesticope_app/modules/property/controllers/property_controller.dart';
+import 'package:nesticope_app/modules/reseller/controller/reseller_success_stories_controller/reseller_success_stories_controller.dart';
 
-import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
-import 'package:housing_flutter_app/widgets/location_permission/location_permission_method.dart';
+import 'package:nesticope_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
+import 'package:nesticope_app/widgets/location_permission/location_permission_method.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../../../app/constants/color_res.dart';
 import '../../../../data/network/property/models/property_model.dart';
@@ -1006,18 +1007,22 @@ class DashboardController extends GetxController {
     );
 
     // 🧩 Log for debugging
-    log('📊 buyerPriceRange called');
-    log('   ▶ Original values: start=${value.start}, end=${value.end}');
-    log('   ▶ Clamped with bounds: lower=$lower, upper=$upper');
-    log('   ▶ Result: start=$clampedStart, end=$clampedEnd');
-    log('   ▶ priceRangeSeller: ${priceRangeSeller.value}');
+    if (kDebugMode) {
+      debugPrint('📊 buyerPriceRange called');
+      debugPrint('   ▶ Original values: start=${value.start}, end=${value.end}');
+      debugPrint('   ▶ Clamped with bounds: lower=$lower, upper=$upper');
+      debugPrint('   ▶ Result: start=$clampedStart, end=$clampedEnd');
+      debugPrint('   ▶ priceRangeSeller: ${priceRangeSeller.value}');
+    }
   }
 
   Map<String, dynamic> priceRange(double min, double max) {
     final rangeMap = {'min': min.toInt(), 'max': max.toInt()};
 
     // 🧩 Log the computed range
-    log('💰 priceRange() → $rangeMap');
+    if (kDebugMode) {
+      debugPrint('💰 priceRange() → $rangeMap');
+    }
 
     return rangeMap;
   }
@@ -1039,7 +1044,12 @@ class DashboardController extends GetxController {
     fetchCityWiseLeaderboardColor();
     fetchCityFromApi();
     resellerInsightsModel.value = ResellerInsightsModel.fromJson(data ?? {});
-    print("Reseller Dashboard controller${resellerInsightsModel.toJson()}");
+    if (kDebugMode) {
+      debugPrint(
+        "Reseller Dashboard: assigned=${resellerInsightsModel.value?.data.totalAssignedProperties ?? 0}, "
+        "topProperties=${resellerInsightsModel.value?.data.leaderboard.topProperties.length ?? 0}",
+      );
+    }
 
     return resellerInsightsModel;
   }
@@ -1130,20 +1140,24 @@ class DashboardController extends GetxController {
   }
 
   void getPropertyType() {
-    print('🔍 Running getPropertyType...');
-    print('======================================');
-    print('📊 Total properties: ${propertyController.items.length}');
-    print('🧩 Active filters:');
-    print('  • Category: "${resellerPropertyCategory.value}"');
-    print('  • Listing: "${resellerListingType.value}"');
-    print('  • Furnishing: "${resellerFurnishingType.value}"');
-    print('  • Verified: "${resellerVerified.value}"');
-    print('  • State: "${resellerSelectedState.value}"');
-    print('  • City: "${resellerSelectedCity.value}"');
-    print('======================================\n');
+    if (kDebugMode) {
+      debugPrint('🔍 Running getPropertyType...');
+      debugPrint('======================================');
+      debugPrint('📊 Total properties: ${propertyController.items.length}');
+      debugPrint('🧩 Active filters:');
+      debugPrint('  • Category: "${resellerPropertyCategory.value}"');
+      debugPrint('  • Listing: "${resellerListingType.value}"');
+      debugPrint('  • Furnishing: "${resellerFurnishingType.value}"');
+      debugPrint('  • Verified: "${resellerVerified.value}"');
+      debugPrint('  • State: "${resellerSelectedState.value}"');
+      debugPrint('  • City: "${resellerSelectedCity.value}"');
+      debugPrint('======================================\n');
+    }
     final matchFurnishing = matchFurnishType(resellerFurnishingType.value);
 
-    print('  • City: "${matchFurnishing}"');
+    if (kDebugMode) {
+      debugPrint('  • City: "${matchFurnishing}"');
+    }
   }
 
   String matchFurnishType(String filterValue) {

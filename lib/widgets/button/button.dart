@@ -46,7 +46,7 @@ class NesticoPeButton extends StatelessWidget {
               titleTextStyle ??
               TextStyle(
                 fontSize: AppFontSizes.body,
-                fontFamily: FontRes.nuNunitoSans,
+                fontFamily: FontRes.poppins,
                 fontWeight: AppFontWeights.bold,
                 color: Get.theme.colorScheme.surface,
               ),

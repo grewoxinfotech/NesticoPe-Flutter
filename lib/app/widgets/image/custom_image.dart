@@ -205,7 +205,10 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:nesticope_app/utils/global.dart';
 import 'package:shimmer/shimmer.dart'; // Import added
+
+
 
 class ColorResImg {
   static const Color leadGreyColor = Colors.grey;
@@ -286,11 +289,23 @@ class CustomImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget fallback() {
+      return Image.asset(
+        imageOfNotAvailable,
+        fit: fit,
+        width: width,
+        height: height,
+      );
+    }
+
     final int? cacheW = _getCacheWidth(context);
     final int? cacheH = _getCacheHeight(context);
 
     switch (type) {
       case CustomImageType.asset:
+        if (src == null || src!.trim().isEmpty) {
+          return fallback();
+        }
         return Image.asset(
           src ?? "",
           fit: fit,
@@ -303,6 +318,9 @@ class CustomImage extends StatelessWidget {
         );
 
       case CustomImageType.network:
+        if (src == null || src!.trim().isEmpty) {
+          return fallback();
+        }
         return CachedNetworkImage(
           imageUrl: src ?? "",
           fit: fit,
@@ -310,19 +328,16 @@ class CustomImage extends StatelessWidget {
           height: height,
           memCacheWidth: cacheW,
           memCacheHeight: cacheH,
-          // UPDATED: Replaced CircularProgressIndicator with Shimmer
           placeholder:
               networkPlaceholder ?? (context, url) => _shimmerPlaceholder(),
           errorWidget:
-              networkError ??
-              (context, url, error) => const Icon(
-                Icons.broken_image,
-                size: 40,
-                color: ColorResImg.leadGreyColor,
-              ),
+              networkError ?? (context, url, error) => fallback(),
         );
 
       case CustomImageType.file:
+        if (file == null) {
+          return fallback();
+        }
         return Image.file(
           file ?? File(""),
           fit: fit,
@@ -335,6 +350,9 @@ class CustomImage extends StatelessWidget {
         );
 
       case CustomImageType.memory:
+        if (bytes == null || bytes!.isEmpty) {
+          return fallback();
+        }
         return Image.memory(
           bytes ?? Uint8List(0),
           fit: fit,
@@ -353,10 +371,11 @@ class CustomImage extends StatelessWidget {
     Object error,
     StackTrace? stackTrace,
   ) {
-    return const Icon(
-      Icons.broken_image,
-      color: ColorResImg.leadGreyColor,
-      size: 40,
+    return Image.asset(
+      imageOfNotAvailable,
+      fit: fit,
+      width: width,
+      height: height,
     );
   }
 

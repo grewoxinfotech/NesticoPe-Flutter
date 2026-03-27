@@ -4,12 +4,12 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/constants/img_res.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
-import 'package:housing_flutter_app/modules/contractor/controller/contractor_lead_controller.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/img_res.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/data/network/property/models/property_model.dart';
+import 'package:nesticope_app/modules/contractor/controller/contractor_lead_controller.dart';
 import 'package:intl/intl.dart';
 
 import '../../data/network/builder/model/builder_model.dart';
@@ -193,9 +193,10 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
   Future<void> loadData() async {
     final user = await SecureStorage.getUserData();
     if (user != null) {
-      _nameController.text = user.user?.username ?? '';
+      _nameController.text =
+          user.user?.username?.capitalize?.replaceAll("_", " ") ?? '';
       _phoneController.text = user.user?.phone ?? '';
-      _emailController.text = user.user?.email ?? '';
+      _emailController.text = user.user?.email?.replaceAll("_", " ") ?? '';
     }
   }
 
@@ -453,8 +454,9 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
                 fontSize: AppFontSizes.bodySmall,
                 color: ColorRes.leadGreyColor,
                 height: 1.6,
-              ),),
-              Text(
+              ),
+            ),
+            Text(
               "Please look for other properties.",
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -774,14 +776,17 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
             const SizedBox(height: 20),
             if (widget.listingType.toLowerCase() == "pg") ...[
               NesticoPeDropdownField<String>(
-                value: roomDetail?['roomType'],
+                value:
+                    roomDetail.isEmpty
+                        ? null
+                        : '${roomDetail['roomType']}_${roomDetail['price']}', // ✅ rebuild value
                 // store only the roomType
                 hintText: "Select date",
                 prefixIcon: Icons.calendar_today_outlined,
                 items:
                     widget.pgRoomData?.map((date) {
                       return DropdownMenuItem<String>(
-                        value: date.roomType,
+                        value: '${date.roomType}_${date.rent}',
                         child: Text(
                           '${capitalizeEachWord(date.roomType)} ${Formatter.formatPrice(num.tryParse(date.rent.toString()) ?? 0)}',
                           style: const TextStyle(
@@ -795,7 +800,7 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
                 onChanged: (val) {
                   setState(() {
                     final selected = widget.pgRoomData!.firstWhere(
-                      (d) => d.roomType == val,
+                      (d) => '${d.roomType}_${d.rent}' == val,
                     );
                     currentPrice =
                         double.tryParse(selected.rent.toString()) ?? 0.0;
@@ -867,30 +872,30 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
               const SizedBox(height: 20),
             ],
 
-            Row(
-              children: [
-                Checkbox(
-                  value: _negotiable,
-                  side: BorderSide(color: ColorRes.grey, width: 1),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      _negotiable = value ?? false;
-                    });
-                    if (widget.onHomeLoanInterestChanged != null) {
-                      widget.onHomeLoanInterestChanged!(value);
-                    }
-                  },
-                  activeColor: ColorRes.primary,
-                ),
-                Expanded(
-                  child: Text("Negotiable", style: TextStyle(fontSize: 11)),
-                ),
-              ],
-            ),
-            if (_negotiable) ...[
+            // Row(
+            //   children: [
+            //     Checkbox(
+            //       value: _negotiable,
+            //       side: BorderSide(color: ColorRes.grey, width: 1),
+            //       shape: RoundedRectangleBorder(
+            //         borderRadius: BorderRadius.circular(4),
+            //       ),
+            //       onChanged: (value) {
+            //         setState(() {
+            //           _negotiable = value ?? false;
+            //         });
+            //         if (widget.onHomeLoanInterestChanged != null) {
+            //           widget.onHomeLoanInterestChanged!(value);
+            //         }
+            //       },
+            //       activeColor: ColorRes.primary,
+            //     ),
+            //     Expanded(
+            //       child: Text("Negotiable", style: TextStyle(fontSize: 11)),
+            //     ),
+            //   ],
+            // ),
+            // if (_negotiable) ...[
               const SizedBox(height: 16),
               Text(
                 "When are you planning to buy",
@@ -1069,7 +1074,7 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
                   );
                 },
               ),
-            ],
+            // ],
 
             Row(
               children: [

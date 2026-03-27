@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:intl/intl.dart';
 
 import '../../../data/network/in_app_messaging/model/in_app_messaging_model.dart';
@@ -13,15 +13,17 @@ class InAppMessageScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NotificationController controller =
-        Get.find<NotificationController>();
+    final NotificationController controller = Get.isRegistered<NotificationController>()
+    ? Get.find<NotificationController>()
+    : Get.put(NotificationController());
+        
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: const Text(
           "Notifications",
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+          style: TextStyle(fontWeight: FontWeight.w700,),
         ),
 
         elevation: 0,
@@ -43,44 +45,47 @@ class InAppMessageScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: controller.refreshNotifications,
-        color: Theme.of(context).primaryColor,
-        child: Obx(() {
-          if (controller.isLoading.value && controller.items.isEmpty) {
-            return InAppMessageListScreenShimmer();
-          }
+      body: SafeArea(
 
-          if (controller.items.isEmpty) {
-            return RefreshIndicator(onRefresh: controller.refreshNotifications,child: _EmptyState());
-
-          }
-
-          return ListView.builder(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            itemCount:
-                controller.items.length + (controller.hasMore.value ? 1 : 0),
-            itemBuilder: (context, index) {
-              if (index >= controller.items.length) {
-                controller.loadMore();
-                return const Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Center(
-                    child: CircularProgressIndicator(strokeWidth: 3),
-                  ),
+        child: RefreshIndicator(
+          onRefresh: controller.refreshNotifications,
+          color: Theme.of(context).primaryColor,
+          child: Obx(() {
+            if (controller.isLoading.value && controller.items.isEmpty) {
+              return InAppMessageListScreenShimmer();
+            }
+        
+            if (controller.items.isEmpty) {
+              return RefreshIndicator(onRefresh: controller.refreshNotifications,child: _EmptyState());
+        
+            }
+        
+            return ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              itemCount:
+                  controller.items.length + (controller.hasMore.value ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index >= controller.items.length) {
+                  controller.loadMore();
+                  return const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Center(
+                      child: CircularProgressIndicator(strokeWidth: 3),
+                    ),
+                  );
+                }
+        
+                final notification = controller.items[index];
+        
+                return _NotificationCard(
+                  notification: notification,
+                  index: index,
                 );
-              }
-
-              final notification = controller.items[index];
-
-              return _NotificationCard(
-                notification: notification,
-                index: index,
-              );
-            },
-          );
-        }),
+              },
+            );
+          }),
+        ),
       ),
     );
   }

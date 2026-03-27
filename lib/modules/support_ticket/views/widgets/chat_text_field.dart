@@ -95,6 +95,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../../app/constants/color_res.dart';
 
 class ChatMessageInputField extends StatefulWidget {
@@ -186,11 +187,13 @@ class _ChatMessageInputFieldState extends State<ChatMessageInputField> {
                 child: Row(
                   children: [
                     // Attachment Button
-                    IconButton(
-                      icon: const Icon(Icons.attach_file),
-                      color: Colors.grey,
-                      onPressed: pickDocument,
-                    ),
+                    if (!UserHelper.isBuyer && !UserHelper.isGuest) ...[
+                      IconButton(
+                        icon: const Icon(Icons.attach_file),
+                        color: Colors.grey,
+                        onPressed: pickDocument,
+                      ),
+                    ],
 
                     // Input Field
                     Expanded(

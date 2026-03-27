@@ -1,9 +1,9 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/data/network/contractor/model/hire-contractor_service_model.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/data/network/contractor/model/hire-contractor_service_model.dart';
 import '../../../app/care/pagination/controller/pagination_controller.dart';
 import '../../../data/network/auth/model/user_model.dart';
 import '../../../data/network/contractor/model/contractor_hire_profile_model.dart';

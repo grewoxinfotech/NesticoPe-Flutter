@@ -2,12 +2,12 @@
 //
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/app/constants/color_res.dart';
-// import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-// import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
-// import 'package:housing_flutter_app/modules/builder/view/widget/project_widget_binding.dart';
-// import 'package:housing_flutter_app/modules/dashboard/views/widget/dashboard_layout.dart';
-// import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
+// import 'package:nesticope_app/app/constants/color_res.dart';
+// import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+// import 'package:nesticope_app/data/network/property/models/property_model.dart';
+// import 'package:nesticope_app/modules/builder/view/widget/project_widget_binding.dart';
+// import 'package:nesticope_app/modules/dashboard/views/widget/dashboard_layout.dart';
+// import 'package:nesticope_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
 //
 // import '../../../app/utils/formater/formater.dart';
 // import '../../../app/utils/helper_function/user_helper/user_helper.dart';
@@ -623,13 +623,13 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
-import 'package:housing_flutter_app/modules/builder/view/widget/project_widget_binding.dart';
-import 'package:housing_flutter_app/modules/dashboard/views/widget/dashboard_layout.dart';
-import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
-import 'package:housing_flutter_app/utils/shimmer/dashboard/dashbard_shimmer.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/data/network/property/models/property_model.dart';
+import 'package:nesticope_app/modules/builder/view/widget/project_widget_binding.dart';
+import 'package:nesticope_app/modules/dashboard/views/widget/dashboard_layout.dart';
+import 'package:nesticope_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
+import 'package:nesticope_app/utils/shimmer/dashboard/dashbard_shimmer.dart';
 
 import '../../../app/utils/formater/formater.dart';
 import '../../../app/utils/helper_function/user_helper/user_helper.dart';

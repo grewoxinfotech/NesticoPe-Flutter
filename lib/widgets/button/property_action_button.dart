@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/utils/helper_function/contact_helper.dart';
+import 'package:nesticope_app/app/utils/helper_function/contact_helper.dart';
 
 import '../../app/constants/color_res.dart';
 import '../../app/manager/compare_manager.dart';

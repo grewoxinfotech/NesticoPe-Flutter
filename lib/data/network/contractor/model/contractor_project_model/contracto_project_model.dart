@@ -678,10 +678,12 @@ class ContractorProjectPhoto {
   });
 
   factory ContractorProjectPhoto.fromJson(Map<String, dynamic> json) {
+    final rawUrl = (json['url'] ?? '').toString();
+    final cleanedUrl = rawUrl.trim().replaceAll('`', '');
     return ContractorProjectPhoto(
       uid: json['uid'] ?? '',
       name: json['name'] ?? '',
-      url: json['url'] ?? '',
+      url: cleanedUrl,
       uploadedAt: json['uploadedAt'] ?? '',
     );
   }

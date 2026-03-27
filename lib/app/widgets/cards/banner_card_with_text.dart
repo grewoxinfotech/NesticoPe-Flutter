@@ -1,8 +1,9 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
 
 import '../../constants/app_font_sizes.dart';
@@ -715,9 +716,15 @@ class NesticoPeCardWithText extends StatelessWidget {
     return Container(
       height: height,
       width: width,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(AppRadius.mediumLarge), boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.04),
+          blurRadius: 2,
+          offset: const Offset(2, 3),
+        ),
+      ]),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
         child: Stack(
           children: [
             // Image or fallback color
@@ -735,7 +742,7 @@ class NesticoPeCardWithText extends StatelessWidget {
             if (isCenterText) ...[
               // Blurred background
               ClipRRect(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
                 // optional for rounded corners
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5),
@@ -773,7 +780,7 @@ class NesticoPeCardWithText extends StatelessWidget {
                   style: TextStyle(
                     color: textColor,
                     fontSize: AppFontSizes.body,
-                    fontWeight: AppFontWeights.extraBold,
+                    fontWeight: AppFontWeights.bold,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -790,7 +797,7 @@ class NesticoPeCardWithText extends StatelessWidget {
                     style: TextStyle(
                       color: textColor,
                       fontSize: AppFontSizes.body,
-                      fontWeight: AppFontWeights.extraBold,
+                      fontWeight: AppFontWeights.bold,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

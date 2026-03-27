@@ -1,4 +1,4 @@
-import 'package:housing_flutter_app/modules/add_property/model/photo_model.dart';
+import 'package:nesticope_app/modules/add_property/model/photo_model.dart';
 
 import '../controller/create_property_controller.dart';
 
@@ -144,7 +144,7 @@ class CommercialPropertyModel {
 
   Map<String, dynamic> toJson() {
     return {
-      "buildingName": buildingName,
+      "nearbyLocations": buildingName,
       "localityName": localityName,
       "propertyName": propertyName,
       "possessionStatus": possessionStatus,

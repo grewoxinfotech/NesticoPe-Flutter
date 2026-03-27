@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
-import 'package:housing_flutter_app/modules/seller/view/widget/seller_property_card.dart';
+import 'package:nesticope_app/modules/property/controllers/property_controller.dart';
+import 'package:nesticope_app/modules/seller/view/widget/seller_property_card.dart';
 
 class SellerPropertyList extends StatelessWidget {
   SellerPropertyList({super.key});

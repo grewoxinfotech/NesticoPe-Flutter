@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:housing_flutter_app/app/constants/api_constants.dart';
-import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
+import 'package:nesticope_app/app/constants/api_constants.dart';
+import 'package:nesticope_app/app/widgets/snack_bar/custom_snackbar.dart';
+import 'package:nesticope_app/data/network/auth/model/user_model.dart';
 
 import '../model/contractor_profile_model/contractor_profile_model.dart';
 
@@ -87,5 +88,30 @@ class TopContractorsService {
       debugPrint("Exception in fetchContractorById: $e");
     }
     return null;
+  }
+
+  Future<User> fetchUserModelById(String userId) async {
+    try {
+      final uri = Uri.parse('${ApiConstants.user}/$userId');
+      print("uri: $uri");
+      final response = await http.get(uri, headers: await headers());
+
+      print("response: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        print("USER DATA: $data");
+
+        return User.fromJson(data['data']);
+      } else {
+        print("Failed to load user model: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception("Failed to load user model");
+      }
+    } catch (e) {
+      print("Exception in fetchUserModelById: $e");
+      rethrow;
+    }
   }
 }

@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/modules/contractor/controller/contractot_employee_controller.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/modules/contractor/controller/contractot_employee_controller.dart';
+import 'package:nesticope_app/modules/contractor/view/employee/employee_task_data_screen.dart';
 import '../../../../data/network/contractor/model/employee/contractor_employee_model.dart';
 import '../../../../utils/shimmer/contractor/employee/contractor_employee_list_screen_shimmer.dart';
 import '../../../../widgets/New folder/inputs/text_field.dart';
 import '../../../../widgets/messages/snack_bar.dart';
 // import '../../../data/network/contractor/model/employee/contractor_employee_model.dart';
+import 'employee_task_data_screen.dart';
 
 class ContractorEmployeeScreen extends StatelessWidget {
   const ContractorEmployeeScreen({super.key});
@@ -314,6 +316,31 @@ class ContractorEmployeeScreen extends StatelessWidget {
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorRes.primary,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Get.to(() => EmployeeTaskDataScreen(employeeId: employee.id));
+                    },
+                    icon: const Icon(Icons.assignment_outlined,
+                        color: ColorRes.white, size: 14),
+                    label: const Text(
+                      "View Tasks",
+                      style: TextStyle(
+                        color: ColorRes.white,
+                        fontSize: AppFontSizes.small,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorRes.success,
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(

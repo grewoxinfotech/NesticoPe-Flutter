@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/modules/property_price_trend/controller/price_trend_controller.dart';
-import 'package:housing_flutter_app/modules/property_price_trend/view/property_price_trend.dart';
-import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/modules/property_price_trend/controller/price_trend_controller.dart';
+import 'package:nesticope_app/modules/property_price_trend/view/property_price_trend.dart';
+import 'package:nesticope_app/modules/search_property/view/search_screen.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 

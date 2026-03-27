@@ -1,12 +1,12 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/manager/property/property_pricemanager.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
-import 'package:housing_flutter_app/modules/reseller/view/lead/add_lead_screen.dart';
-import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/manager/property/property_pricemanager.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/modules/add_property/controller/create_property_controller.dart';
+import 'package:nesticope_app/modules/reseller/view/lead/add_lead_screen.dart';
+import 'package:nesticope_app/modules/seller/module/lead_screen/model/lead_model.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/manager/data_masker.dart';

@@ -2,14 +2,14 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/modules/contractor/controller/contractor_lead_controller.dart';
-import 'package:housing_flutter_app/modules/contractor/controller/contractor_project_controller.dart';
-import 'package:housing_flutter_app/modules/contractor/controller/contractot_employee_controller.dart';
-import 'package:housing_flutter_app/modules/contractor/view/project/widget/contactor_project_milestone_screen.dart';
-import 'package:housing_flutter_app/modules/contractor/view/project/widget/contractor_project_milestone_payment_screen.dart';
-import 'package:housing_flutter_app/modules/contractor/view/project/widget/contractor_project_photos_screen.dart';
-import 'package:housing_flutter_app/utils/logger/app_logger.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/modules/contractor/controller/contractor_lead_controller.dart';
+import 'package:nesticope_app/modules/contractor/controller/contractor_project_controller.dart';
+import 'package:nesticope_app/modules/contractor/controller/contractot_employee_controller.dart';
+import 'package:nesticope_app/modules/contractor/view/project/widget/contactor_project_milestone_screen.dart';
+import 'package:nesticope_app/modules/contractor/view/project/widget/contractor_project_milestone_payment_screen.dart';
+import 'package:nesticope_app/modules/contractor/view/project/widget/contractor_project_photos_screen.dart';
+import 'package:nesticope_app/utils/logger/app_logger.dart';
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/constants/color_res.dart';
 import '../../../../../data/network/contractor/model/contractor_project_model/contracto_project_model.dart';
@@ -264,7 +264,11 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
                 const SizedBox(height: 20),
                 _buildSectionTitle(Icons.person, "Team Members"),
                 const SizedBox(height: 10),
-                _buildTeamMembers(project.meta.employees),
+                _buildTeamMembers(
+                  project.meta.employees,
+                  project.id,
+                  project.title,
+                ),
                 const SizedBox(height: 20),
                 _buildSectionTitle(Icons.image_outlined, "Project Photos"),
                 const SizedBox(height: 10),
@@ -597,7 +601,7 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTeamMembers(List<ContractorEmployee> project) {
+  Widget _buildTeamMembers(List<ContractorEmployee> project, String projectId, String projectName) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
@@ -615,7 +619,13 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
           ),
         ),
         onTap: () {
-          Get.to(() => ContractorProjectEmployee(employeeList: project));
+          Get.to(
+            () => ContractorProjectEmployee(
+              employeeList: project,
+              projectId: projectId,
+              projectName: projectName,
+            ),
+          );
         },
         trailing: Icon(Icons.arrow_forward_ios, size: 15),
       ),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
-import 'package:housing_flutter_app/widgets/bar/app_bar/common_bar.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/modules/auth/views/register_screen.dart';
+import 'package:nesticope_app/widgets/bar/app_bar/common_bar.dart';
 
 import '../../../data/network/auth/model/user_model.dart';
 

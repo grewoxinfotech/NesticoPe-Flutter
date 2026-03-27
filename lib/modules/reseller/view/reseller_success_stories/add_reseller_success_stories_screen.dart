@@ -3,12 +3,12 @@ import 'dart:developer';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+import 'package:nesticope_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
-import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
-import 'package:housing_flutter_app/modules/review/views/widget/rating_widget.dart';
-import 'package:housing_flutter_app/widgets/New%20folder/inputs/dropdown_field.dart';
-import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
+import 'package:nesticope_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
+import 'package:nesticope_app/modules/review/views/widget/rating_widget.dart';
+import 'package:nesticope_app/widgets/New%20folder/inputs/dropdown_field.dart';
+import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:month_year_picker/month_year_picker.dart';
 import '../../../../app/constants/app_font_sizes.dart';

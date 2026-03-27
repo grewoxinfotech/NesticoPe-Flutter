@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/size_manager.dart';
-import 'package:housing_flutter_app/widgets/display/card.dart';
+import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/widgets/display/card.dart';
 
 import '../../app/constants/app_font_sizes.dart';
 import '../../app/constants/color_res.dart';

@@ -6,21 +6,23 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/utils/svg_widget.dart';
-import 'package:housing_flutter_app/data/network/reseller/reseller_success_stories/reseller_success_stories_model.dart';
-import 'package:housing_flutter_app/modules/dashboard/views/widget/dashboard_layout.dart';
-import 'package:housing_flutter_app/modules/property_rating/view/widget/read_more_or_less.dart';
-import 'package:housing_flutter_app/modules/reseller/view/listing/project_listing_screen.dart';
-import 'package:housing_flutter_app/modules/reseller/view/profile/reseller_profile.dart';
-import 'package:housing_flutter_app/modules/reseller/view/reseller_success_stories/add_reseller_success_stories_screen.dart';
-import 'package:housing_flutter_app/modules/reseller/view/subscription_plan/reseller_subscription_plan.dart';
-import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
-import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
-import 'package:housing_flutter_app/modules/reseller/widget/graph/linear_graph.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/utils/svg_widget.dart';
+import 'package:nesticope_app/data/network/reseller/reseller_success_stories/reseller_success_stories_model.dart';
+import 'package:nesticope_app/modules/dashboard/views/widget/dashboard_layout.dart';
+import 'package:nesticope_app/modules/profile/controllers/buyer_profiledata.dart';
+import 'package:nesticope_app/modules/property_rating/view/widget/read_more_or_less.dart';
+import 'package:nesticope_app/modules/reseller/view/listing/project_listing_screen.dart';
+import 'package:nesticope_app/modules/reseller/view/profile/reseller_profile.dart';
+import 'package:nesticope_app/modules/reseller/view/reseller_success_stories/add_reseller_success_stories_screen.dart';
+import 'package:nesticope_app/modules/reseller/view/subscription_plan/reseller_subscription_plan.dart';
+import 'package:nesticope_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
+import 'package:nesticope_app/modules/seller/module/lead_screen/model/lead_model.dart';
+import 'package:nesticope_app/modules/reseller/widget/graph/linear_graph.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 import '../../../app/constants/size_manager.dart';
 import '../../../app/manager/property/property_pricemanager.dart';
@@ -4515,7 +4517,7 @@ Widget buildDailyGoals({
         const SizedBox(height: 20),
 
         // Progress Bar with Dots
-      /*  LayoutBuilder(
+        /*  LayoutBuilder(
           builder: (context, constraints) {
             final totalWidth = constraints.maxWidth;
 
@@ -4621,15 +4623,18 @@ Widget buildDailyGoals({
                         tween: Tween<double>(begin: 0, end: clampedProgress),
                         duration: const Duration(milliseconds: 800),
                         curve: Curves.easeInOut,
-                        builder: (context, value, _) => LinearProgressIndicator(
-                          value: value,
-                          borderRadius: BorderRadius.circular(15),
-                          backgroundColor: Colors.transparent,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            completedSteps > 0 ? primaryColor : Colors.transparent,
-                          ),
-                          minHeight: 20,
-                        ),
+                        builder:
+                            (context, value, _) => LinearProgressIndicator(
+                              value: value,
+                              borderRadius: BorderRadius.circular(15),
+                              backgroundColor: Colors.transparent,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                completedSteps > 0
+                                    ? primaryColor
+                                    : Colors.transparent,
+                              ),
+                              minHeight: 20,
+                            ),
                       ),
                       // ✨ Shimmer overlay
                       Positioned.fill(
@@ -4643,8 +4648,6 @@ Widget buildDailyGoals({
                     ],
                   ),
                 ),
-
-
 
                 // 🔵 Dots overlay
                 Positioned.fill(
@@ -4670,27 +4673,30 @@ Widget buildDailyGoals({
                             height: 10,
                             width: 10,
                             decoration: BoxDecoration(
-                              color: isActive
-                                  ? ColorRes.green.shade400
-                                  : ColorRes.white,
+                              color:
+                                  isActive
+                                      ? ColorRes.green.shade400
+                                      : ColorRes.white,
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: isActive
-                                    ? ColorRes.green.shade400
-                                    : ColorRes.green.shade300,
+                                color:
+                                    isActive
+                                        ? ColorRes.green.shade400
+                                        : ColorRes.green.shade300,
                                 width: 1,
                               ),
-                              boxShadow: isActive
-                                  ? [
-                                BoxShadow(
-                                  offset: const Offset(0, 2),
-                                  blurRadius: 8,
-                                  spreadRadius: 0,
-                                  color: ColorRes.green.shade400
-                                      .withOpacity(0.4),
-                                ),
-                              ]
-                                  : null,
+                              boxShadow:
+                                  isActive
+                                      ? [
+                                        BoxShadow(
+                                          offset: const Offset(0, 2),
+                                          blurRadius: 8,
+                                          spreadRadius: 0,
+                                          color: ColorRes.green.shade400
+                                              .withOpacity(0.4),
+                                        ),
+                                      ]
+                                      : null,
                             ),
                           ),
                         ),
@@ -4698,8 +4704,6 @@ Widget buildDailyGoals({
                     }),
                   ),
                 ),
-
-
               ],
             );
           },
@@ -6374,94 +6378,330 @@ class ResellerNavigationController extends GetxController {
   }
 }
 
-class MainNavigationScreen extends StatelessWidget {
+// class MainNavigationScreen extends StatelessWidget {
+//   const MainNavigationScreen({Key? key}) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final navigationController = Get.put(ResellerNavigationController());
+//     Get.lazyPut(() => DashboardController(), tag: "reseller");
+//     if (!Get.isRegistered<BuyerProfileDataController>()) {
+//       Get.put(BuyerProfileDataController());
+//     }
+//     final BuyerProfileDataController profile =
+//         Get.find<BuyerProfileDataController>();
+//     TextStyle style = TextStyle(
+//       fontSize: AppFontSizes.small,
+//       fontWeight: AppFontWeights.extraBold,
+//       color: Get.theme.colorScheme.primary,
+//     );
+//     double iconSize = 18;
+//     /*    Get.lazyPut(() => LeadController(), tag: "reseller");*/
+
+//     final screens = [
+//       ResellerDashboardScreen(),
+//       ProductListingScreen(),
+//       ProjectListingScreen(),
+//       // ResellerLeadScreen(isViewAll: true),
+//       ResellerSubscriptionPlanScreen(),
+//       ResellerProfileScreen(),
+//     ];
+
+//     return Scaffold(
+//       body: Obx(
+//         () => IndexedStack(
+//           index: navigationController.currentIndex.value,
+//           children: screens,
+//         ),
+//       ),
+//       bottomNavigationBar: Obx(
+//         () => SafeArea(
+//           child: Card(
+//             elevation: 5,
+//             shadowColor: Get.theme.colorScheme.surface,
+//             color: Get.theme.colorScheme.surface,
+//             margin: const EdgeInsets.only(
+//               left: AppMargin.small,
+//               bottom: AppMargin.small,
+//               right: AppMargin.small,
+//             ),
+//             shape: RoundedRectangleBorder(
+//               borderRadius: BorderRadius.circular(AppRadius.large),
+//             ),
+//             child: Container(
+//               height: kToolbarHeight,
+//               alignment: Alignment.center,
+//               child: SalomonBottomBar(
+//                 duration: const Duration(milliseconds: 400),
+//                 unselectedItemColor: Get.theme.colorScheme.onSurface
+//                     .withOpacity(0.7),
+//                 margin: const EdgeInsets.all(AppPadding.small),
+//                 itemShape: RoundedRectangleBorder(
+//                   borderRadius: BorderRadius.circular(AppRadius.large),
+//                 ),
+//                 itemPadding: const EdgeInsets.all(AppPadding.small),
+//                 currentIndex: navigationController.currentIndex.value,
+//                 onTap: navigationController.changeTabIndex,
+//                 items: [
+//                   SalomonBottomBarItem(
+//                     icon: Icon(Icons.dashboard_outlined, size: iconSize * 1.2),
+//                     title: Text("Dashboard", style: style),
+//                   ),
+//                   SalomonBottomBarItem(
+//                     icon: Icon(Icons.inventory, size: iconSize * 1.2),
+//                     title: Text("Property", style: style),
+//                   ),
+//                   SalomonBottomBarItem(
+//                     icon: Icon(Icons.apartment, size: iconSize * 1.2),
+//                     title: Text("Project", style: style),
+//                   ),
+//                   SalomonBottomBarItem(
+//                     icon: Icon(
+//                       Icons.credit_card_outlined,
+//                       size: iconSize * 1.2,
+//                     ),
+//                     title: Text("Plan", style: style),
+//                   ),
+//                   SalomonBottomBarItem(
+//                     icon: Obx(() {
+//                       final selected =
+//                           navigationController.currentIndex.value == 4;
+//                       final imageUrl =
+//                           profile.userProfile.value?.profilePic ?? '';
+//                       return Container(
+//                         width: 28,
+//                         height: 28,
+//                         decoration: BoxDecoration(
+//                           shape: BoxShape.circle,
+//                           border: Border.all(
+//                             color:
+//                                 selected
+//                                     ? Get.theme.colorScheme.primary
+//                                     : Get.theme.colorScheme.onSurface
+//                                         .withOpacity(0.4),
+//                             width: selected ? 1.5 : 1,
+//                           ),
+//                         ),
+//                         child: CircleAvatar(
+//                           radius: 14,
+//                           backgroundColor: Get.theme.colorScheme.primary,
+//                           child: ClipOval(
+//                             child: Icon(
+//                               Icons.person,
+//                               color: Colors.white,
+//                               size: 16,
+//                             ),
+//                           ),
+//                         ),
+//                       );
+//                     }),
+//                     title: Text("Profile", style: style),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final navigationController = Get.put(ResellerNavigationController());
+  State<MainNavigationScreen> createState() =>
+      _MainNavigationScreenState();
+}
+
+class _MainNavigationScreenState
+    extends State<MainNavigationScreen> {
+  final navigationController =
+      Get.put(ResellerNavigationController());
+
+  late final BuyerProfileDataController profile;
+  late final List<Widget> screens;
+
+  @override
+  void initState() {
+    super.initState();
+
+    /// ✅ Init controllers properly
     Get.lazyPut(() => DashboardController(), tag: "reseller");
-    /*    Get.lazyPut(() => LeadController(), tag: "reseller");*/
 
+    if (!Get.isRegistered<BuyerProfileDataController>()) {
+      profile = Get.put(BuyerProfileDataController());
+    } else {
+      profile = Get.find<BuyerProfileDataController>();
+    }
 
-    final screens = [
+    /// ✅ Screens list
+    screens = [
       ResellerDashboardScreen(),
       ProductListingScreen(),
       ProjectListingScreen(),
-      // ResellerLeadScreen(isViewAll: true),
-
-
       ResellerSubscriptionPlanScreen(),
-
+      ResellerProfileScreen(),
     ];
+  }
 
-    return Scaffold(
-      body: Obx(
-        () => IndexedStack(
-          index: navigationController.currentIndex.value,
-          children: screens,
-        ),
-      ),
-      bottomNavigationBar: Obx(
-        () => SafeArea(
-          child: BottomNavigationBar(
-            currentIndex: navigationController.currentIndex.value,
-            onTap: navigationController.changeTabIndex,
-            type: BottomNavigationBarType.fixed,
-            selectedItemColor: ColorRes.blueColor,
-            unselectedItemColor: ColorRes.leadGreyColor,
-            selectedLabelStyle: TextStyle(
-              fontSize: AppFontSizes.caption,
-              fontWeight: AppFontWeights.semiBold,
-            ),
-            unselectedLabelStyle: TextStyle(
-              fontSize: AppFontSizes.caption,
-              fontWeight: AppFontWeights.medium,
-            ),
-            backgroundColor: ColorRes.white,
-            elevation: 0,
-            items: const [
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.dashboard, size: 22),
-                ),
-                label: 'Dashboard',
-              ),
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.inventory, size: 22),
-                ),
-                label: 'Property',
-              ),
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      final index = navigationController.currentIndex.value;
 
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.apartment, size: 22),
-                ),
-                label: 'Project',
-              ),
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.card_giftcard_outlined, size: 22),
-                ),
-                label: 'Plan',
-              ),
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: EdgeInsets.only(bottom: 4),
-                  child: Icon(Icons.person, size: 22),
-                ),
-                label: 'Profile',
-              ),
-            ],
+      return PopScope(
+        canPop: index == 0,
+        onPopInvokedWithResult: (didPop, result) {
+          if (!didPop) {
+            navigationController.changeTabIndex(0);
+          }
+        },
+        child: Scaffold(
+          body: IndexedStack(
+            index: index,
+            children: screens,
+          ),
+
+          /// ✅ Bottom Navigation (consistent UI)
+          bottomNavigationBar: SafeArea(
+            child: Builder(
+              builder: (context) {
+                TextStyle style = TextStyle(
+                  fontSize: AppFontSizes.caption,
+                  fontWeight: AppFontWeights.semiBold,
+                  color: Get.theme.colorScheme.primary,
+                );
+
+                double iconSize = 18;
+
+                return Card(
+                  elevation: 6,
+                  shadowColor: Colors.black12,
+                  color: Get.theme.colorScheme.surface,
+                  margin: const EdgeInsets.only(
+                    left: AppMargin.small,
+                    right: AppMargin.small,
+                    bottom: AppMargin.small,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(AppRadius.large),
+                  ),
+                  child: Container(
+                    height: kToolbarHeight,
+                    alignment: Alignment.center,
+                    child: SalomonBottomBar(
+                      duration: const Duration(milliseconds: 200),
+                      margin:
+                          const EdgeInsets.all(AppPadding.small),
+                      itemPadding:
+                          const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 8,
+                      ),
+                      itemShape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(AppRadius.large),
+                      ),
+                      currentIndex: index,
+                      onTap:
+                          navigationController.changeTabIndex,
+                      unselectedItemColor:
+                          Get.theme.colorScheme.onSurface
+                              .withOpacity(0.6),
+
+                      items: [
+                        /// ✅ Dashboard
+                        SalomonBottomBarItem(
+                          icon: Icon(
+                            Icons.dashboard_outlined,
+                            size: iconSize * 1.2,
+                          ),
+                          title: Text("Dashboard", style: style),
+                        ),
+
+                        /// ✅ Property
+                        SalomonBottomBarItem(
+                          icon: Icon(
+                            Icons.home_outlined,
+                            
+                            size: iconSize * 1.2,
+                          ),
+                          title: Text("Property", style: style),
+                        ),
+
+                        /// ✅ Project
+                        SalomonBottomBarItem(
+                          icon: Icon(
+                            Icons.apartment,
+                            size: iconSize * 1.2,
+                          ),
+                          title: Text("Project", style: style),
+                        ),
+
+                        /// ✅ Plan
+                        SalomonBottomBarItem(
+                          icon: Icon(
+                            Icons.credit_card_outlined,
+                            size: iconSize * 1.2,
+                          ),
+                          title: Text("Plan", style: style),
+                        ),
+
+                        /// ✅ Profile Avatar
+                        SalomonBottomBarItem(
+                          icon: Obx(() {
+                            final selected =
+                                navigationController
+                                        .currentIndex.value ==
+                                    4;
+
+                            final imageUrl =
+                                profile.userProfile.value
+                                        ?.profilePic ??
+                                    "";
+
+                            return Container(
+                              height: 26,
+                              width: 26,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: selected
+                                      ? Get.theme.colorScheme
+                                          .primary
+                                      : Colors.grey.shade400,
+                                  width:
+                                      selected ? 1.5 : 1,
+                                ),
+                              ),
+                              child: CircleAvatar(
+                                radius: 14,
+                                backgroundColor:
+                                    Get.theme.colorScheme
+                                        .primary,
+                                child: const Icon(
+                                  Icons.person,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                              ),
+                            );
+                          }),
+                          title: Text("Profile", style: style),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }
 
@@ -6473,8 +6713,7 @@ Widget buildMetricCard(String title, String value, IconData icon, Color color) {
 
       final titleFontSize =
           isCompact ? AppFontSizes.extraSmall : AppFontSizes.small;
-      final valueFontSize =
-          isCompact ? AppFontSizes.medium : AppFontSizes.medium;
+      final valueFontSize = isCompact ? AppFontSizes.large : AppFontSizes.large;
       final iconSize = isCompact ? 16.0 : 18.0;
       final iconPadding = isCompact ? 6.0 : 8.0;
       final cardPadding = isCompact ? 10.0 : 10.0;
@@ -6482,9 +6721,9 @@ Widget buildMetricCard(String title, String value, IconData icon, Color color) {
       return Container(
         padding: EdgeInsets.all(cardPadding),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.02),
+          color: color.withOpacity(0.04),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(width: 1, color: color.withOpacity(0.3)),
+          border: Border.all(width: 1.2, color: color.withOpacity(0.3)),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -6500,21 +6739,22 @@ Widget buildMetricCard(String title, String value, IconData icon, Color color) {
                     title,
                     style: TextStyle(
                       fontSize: titleFontSize,
-                      color: ColorRes.leadGreyColor[600],
+                      color: ColorRes.leadGreyColor[700],
                       fontWeight: AppFontWeights.medium,
                       height: 1.2,
                     ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
                   ),
                 ),
                 const SizedBox(width: 8),
                 Container(
                   padding: EdgeInsets.all(iconPadding),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.08),
+                    color: color.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(width: 1, color: color.withOpacity(0.3)),
+                    border: Border.all(
+                      width: 1.5,
+                      color: color.withOpacity(0.3),
+                    ),
                   ),
                   child: Icon(icon, color: color, size: iconSize),
                 ),

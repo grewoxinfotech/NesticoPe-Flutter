@@ -1,9 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:nesticope_app/modules/auth/controllers/auth_controller.dart';
 
 import '../../../../../widgets/messages/snack_bar.dart';
 import '../../login_screen.dart';
@@ -184,7 +185,11 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                                   controller.isLoading.value
                                       ? null
                                       : () {
-                                        if (_selectedSellerType == null) {
+                                       if(UserHelper.isGuest){
+                                        Get.to(() => LoginScreen());
+
+                                       }else{
+                                         if (_selectedSellerType == null) {
                                           NesticoPeSnackBar.showAwesomeSnackbar(
                                             title: "Error",
                                             message:
@@ -196,6 +201,7 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                                             _selectedSellerType!.toLowerCase(),
                                           );
                                         }
+                                       }
                                       },
                               child:
                                   controller.isLoading.value

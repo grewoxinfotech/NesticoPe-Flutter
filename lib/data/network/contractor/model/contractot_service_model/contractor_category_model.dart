@@ -73,10 +73,10 @@ class ContractorServiceCategory {
   String createdBy;
   String? updatedBy;
   String name;
-  String description;
+List<String> description; // ✅ FIXED
   String? icon;
   bool isActive;
-  int displayOrder;
+
   DateTime createdAt;
   DateTime updatedAt;
 
@@ -88,7 +88,7 @@ class ContractorServiceCategory {
     required this.name,
     required this.description,
     required this.isActive,
-    required this.displayOrder,
+    
     required this.createdAt,
     required this.updatedAt,
   });
@@ -100,9 +100,9 @@ class ContractorServiceCategory {
       updatedBy: map['updated_by'],
       icon: map['icon']??'',
       name: map['name'] ?? '',
-      description: map['description'] ?? '',
+       description: List<String>.from(map['description'] ?? []),
       isActive: map['isActive'] ?? false,
-      displayOrder: map['displayOrder'] ?? 0,
+     
       createdAt: DateTime.parse(map['createdAt'] ?? DateTime.now().toIso8601String()),
       updatedAt: DateTime.parse(map['updatedAt'] ?? DateTime.now().toIso8601String()),
     );
@@ -117,7 +117,7 @@ class ContractorServiceCategory {
       'icon':icon,
       'description': description,
       'isActive': isActive,
-      'displayOrder': displayOrder,
+      
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
     };

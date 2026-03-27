@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/modules/filter_property/controller/city_insigths_controller.dart';
+import 'package:nesticope_app/modules/filter_property/controller/city_insigths_controller.dart';
 
 class ProjectFilterController extends GetxController {
   // Dropdowns

@@ -3,10 +3,10 @@
 // import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 // import 'package:flutter/cupertino.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
-// import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+// import 'package:nesticope_app/app/care/pagination/controller/pagination_controller.dart';
+// import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
 //
-// import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
+// import 'package:nesticope_app/data/database/secure_storage_service.dart';
 //
 // import '../../../../data/network/auth/model/user_model.dart';
 // import '../../../../data/network/contractor/model/contractot_service_model/contractor_service_model.dart';
@@ -264,10 +264,10 @@ import 'dart:developer';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/app/care/pagination/controller/pagination_controller.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
 
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
 
 import '../../../../data/network/auth/model/user_model.dart';
 import '../../../../data/network/contractor/model/contractot_service_model/contractor_service_model.dart';
@@ -323,6 +323,7 @@ class ContractorServiceController
 
   @override
   void onInit() {
+    print("Initializing ContractorServiceController for ID: $contractorId");
     super.onInit();
     loadInitial();
   }
@@ -333,6 +334,7 @@ class ContractorServiceController
   @override
   Future<PaginationResponse<ContractorServiceItem>> fetchItems(int page) async {
     try {
+      print("Fetching items for Contractor ID: $contractorId, page: $page");
       final response = await _service.fetchContractorService(
         page: page,
         filters: filters,

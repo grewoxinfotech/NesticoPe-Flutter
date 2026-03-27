@@ -1,9 +1,9 @@
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-// import 'package:housing_flutter_app/app/constants/color_res.dart';
-// import 'package:housing_flutter_app/widgets/New%20folder/inputs/dropdown_field.dart';
-// import 'package:housing_flutter_app/widgets/New%20folder/inputs/text_field.dart';
+// import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+// import 'package:nesticope_app/app/constants/color_res.dart';
+// import 'package:nesticope_app/widgets/New%20folder/inputs/dropdown_field.dart';
+// import 'package:nesticope_app/widgets/New%20folder/inputs/text_field.dart';
 //
 // class FeedBackAndReportScreen extends StatefulWidget {
 //   final String propertyId;
@@ -328,14 +328,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/widgets/New%20folder/inputs/dropdown_field.dart';
-import 'package:housing_flutter_app/widgets/New%20folder/inputs/text_field.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/widgets/New%20folder/inputs/dropdown_field.dart';
+import 'package:nesticope_app/widgets/New%20folder/inputs/text_field.dart';
+import 'package:intl/intl.dart';
 
 // Import controllers
 import '../../reseller/controller/report/report_controller.dart';
 import '../controller/feedback_controller.dart';
+import '../../saved_property/controllers/property_favorite_controller.dart';
 
 class FeedBackAndReportScreen extends StatefulWidget {
   final String propertyId;
@@ -454,6 +456,8 @@ class _FeedBackAndReportScreenState extends State<FeedBackAndReportScreen>
                     'Couldn\'t talk to seller yet',
                     'couldn\'t_talk',
                   ),
+                  const SizedBox(height: 16),
+                  _buildNegotiableSummaryCard(),
                 ],
               ),
             ),
@@ -514,6 +518,71 @@ class _FeedBackAndReportScreenState extends State<FeedBackAndReportScreen>
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// Negotiable Offer Summary (if present)
+  Widget _buildNegotiableSummaryCard() {
+    if (!Get.isRegistered<PropertyFavoriteController>()) {
+      return const SizedBox.shrink();
+    }
+    final fav = Get.find<PropertyFavoriteController>();
+    final inquiry = fav.inquiryResponse.firstWhereOrNull(
+      (e) => e.propertyId == widget.propertyId && e.meta?.negotiablePrice != null,
+    );
+    if (inquiry == null) return const SizedBox.shrink();
+    final price = inquiry.meta?.negotiablePrice;
+    final visitDate = inquiry.meta?.visitDate;
+    final visitTime = inquiry.meta?.visitTime;
+    final timePeriod = inquiry.meta?.timePeriod;
+    String visitLine = '';
+    if (visitDate != null && visitDate.isNotEmpty) {
+      visitLine = visitDate;
+      if (visitTime != null && visitTime.isNotEmpty) {
+        visitLine = '$visitLine ($visitTime)';
+      }
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFDCFCE7),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFF86EFAC)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '₹ ${NumberFormat.decimalPattern().format(price)} (YOUR OFFER)',
+            style: const TextStyle(
+              color: Colors.black87,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          if (visitLine.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Text(
+              'Visit: $visitLine',
+              style: const TextStyle(
+                color: Colors.black87,
+                fontSize: 12,
+              ),
+            ),
+          ],
+          if (timePeriod != null && timePeriod.isNotEmpty) ...[
+            const SizedBox(height: 2),
+            Text(
+              'Timeline: ${timePeriod.toLowerCase()}',
+              style: const TextStyle(
+                color: Colors.black87,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }

@@ -3,21 +3,21 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/constants/img_res.dart';
-import 'package:housing_flutter_app/app/constants/size_manager.dart';
-import 'package:housing_flutter_app/app/manager/data_masker.dart';
-import 'package:housing_flutter_app/app/manager/property/property_name_manager.dart';
-import 'package:housing_flutter_app/app/manager/property/property_pricemanager.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/img_res.dart';
+import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/app/manager/data_masker.dart';
+import 'package:nesticope_app/app/manager/property/property_name_manager.dart';
+import 'package:nesticope_app/app/manager/property/property_pricemanager.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
-import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
-import 'package:housing_flutter_app/modules/home/views/compare_screen/comapre_screen.dart';
-import 'package:housing_flutter_app/modules/property/views/property_detail_screen.dart';
-import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
-import 'package:housing_flutter_app/utils/common_widget/rera_widget.dart';
+import 'package:nesticope_app/data/network/property/models/property_model.dart';
+import 'package:nesticope_app/modules/home/views/compare_screen/comapre_screen.dart';
+import 'package:nesticope_app/modules/property/views/property_detail_screen.dart';
+import 'package:nesticope_app/modules/saved_property/controllers/property_favorite_controller.dart';
+import 'package:nesticope_app/utils/common_widget/rera_widget.dart';
 
 import '../../../../app/manager/property/proiperty_feature_manager.dart';
 import '../../../../app/manager/property_highlight_manager.dart';
@@ -70,8 +70,11 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
       child: Card(
         color: ColorRes.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadius.medium),
+
+          borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
+          
           // ignore: deprecated_member_use
+        
           side: BorderSide(color: ColorRes.leadGreyColor[300]!, width: 1),
         ),
         // elevation: 2,
@@ -179,7 +182,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                       // Compare button
                       GestureDetector(
                         onTap: () {
-                          compare.toggle(widget.property, max: 2);
+                          compare.toggle(widget.property, max: 5);
                         },
                         child: Obx(() {
                           final selected = compare.isSelected(

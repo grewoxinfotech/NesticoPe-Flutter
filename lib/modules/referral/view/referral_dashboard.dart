@@ -1,8 +1,8 @@
 // import 'package:clipboard/clipboard.dart';
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/app/constants/color_res.dart';
-// import 'package:housing_flutter_app/modules/reseller/view/property_reseller.dart';
+// import 'package:nesticope_app/app/constants/color_res.dart';
+// import 'package:nesticope_app/modules/reseller/view/property_reseller.dart';
 // import '../../../app/constants/app_font_sizes.dart';
 // import '../../../app/utils/helper_function/contact_helper.dart';
 // import '../controller/referral_controller.dart';
@@ -584,8 +584,8 @@
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/modules/reseller/view/property_reseller.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/modules/reseller/view/property_reseller.dart';
 import 'package:intl/intl.dart';
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/utils/helper_function/contact_helper.dart';

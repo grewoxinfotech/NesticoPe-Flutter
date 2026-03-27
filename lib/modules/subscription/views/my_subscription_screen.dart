@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/modules/subscription/views/widgets/cancel_subscription_dialog.dart';
-import 'package:housing_flutter_app/modules/support_ticket/controllers/support_ticket_controller.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/modules/subscription/views/widgets/cancel_subscription_dialog.dart';
+import 'package:nesticope_app/modules/support_ticket/controllers/support_ticket_controller.dart';
 
 import '../../../app/constants/color_res.dart';
 import '../../../app/utils/formater/formater.dart';
@@ -19,6 +19,7 @@ class MySubscriptionScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: ColorRes.white,
         title: Text(
           "My Subscriptions",
           style: TextStyle(fontWeight: AppFontWeights.semiBold),

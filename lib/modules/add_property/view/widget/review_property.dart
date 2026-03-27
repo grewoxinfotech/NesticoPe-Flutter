@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
-import 'package:housing_flutter_app/modules/add_property/model/review_property_model.dart';
+import 'package:nesticope_app/modules/add_property/controller/create_property_controller.dart';
+import 'package:nesticope_app/modules/add_property/model/review_property_model.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
@@ -346,8 +346,14 @@ class _ReviewCardItem extends StatelessWidget {
   }
 
   Widget _buildInfoText(String text) {
+    final sanitized = text.toLowerCase().contains('null')
+        ? text.replaceAll(RegExp('null', caseSensitive: false), '').trim()
+        : text;
+    if (sanitized.isEmpty) {
+      return const SizedBox.shrink();
+    }
     return Text(
-      text,
+      sanitized,
       style: TextStyle(
         fontSize: AppFontSizes.caption,
         color: ColorRes.leadGreyColor.shade600,

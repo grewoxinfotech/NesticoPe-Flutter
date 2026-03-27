@@ -1,9 +1,9 @@
 // import 'package:flutter/cupertino.dart';
 // import 'package:flutter/material.dart';
-// import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-// import 'package:housing_flutter_app/app/constants/color_res.dart';
-// import 'package:housing_flutter_app/app/constants/img_res.dart';
-// import 'package:housing_flutter_app/app/widgets/image/custom_image.dart';
+// import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+// import 'package:nesticope_app/app/constants/color_res.dart';
+// import 'package:nesticope_app/app/constants/img_res.dart';
+// import 'package:nesticope_app/app/widgets/image/custom_image.dart';
 //
 // import '../../../../app/constants/size_manager.dart';
 //
@@ -45,9 +45,10 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
-import 'package:housing_flutter_app/modules/property/views/property_detail_screen.dart';
-import 'package:housing_flutter_app/modules/property_rating/view/widget/read_more_or_less.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:nesticope_app/modules/property/views/property_detail_screen.dart';
+import 'package:nesticope_app/modules/property_rating/view/widget/read_more_or_less.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
@@ -175,12 +176,14 @@ class PropertyCardForCompare extends StatefulWidget {
   final Items item;
   final VoidCallback? onRemove;
   final bool isSubmitted;
+  final bool isActive;
 
   const PropertyCardForCompare({
     super.key,
     required this.item,
     this.onRemove,
     required this.isSubmitted,
+    this.isActive = false,
   });
 
   @override
@@ -222,298 +225,154 @@ class _PropertyCardForCompareState extends State<PropertyCardForCompare> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Get.to(() => PropertyDetailScreen(propertyId: widget.item.id ?? ''));
-      },
-      child: Material(
-        color: ColorRes.white,
-        borderRadius: BorderRadius.circular(12),
-        elevation: 1,
-        shadowColor: ColorRes.black.withOpacity(0.06),
-        child: Container(
-          height: 115,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: AppPadding.medium),
+      child: GestureDetector(
+        onTap: () {
+          Get.to(() => PropertyDetailScreen(propertyId: widget.item.id ?? ''));
+        },
+        child: Material(
+          color: ColorRes.white,
+          borderRadius: BorderRadius.circular(12),
 
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: ColorRes.leadGreyColor.shade200,
-              width: 1,
+          elevation: 1,
+          shadowColor: ColorRes.black.withOpacity(0.06),
+          child: Container(
+            height: 115,
+
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(widget.isActive ? 14 : 12),
+              boxShadow:
+                  widget.isActive
+                      ? [
+                        BoxShadow(
+                          color: ColorRes.primary.withOpacity(0.1),
+                          spreadRadius: 2,
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ]
+                      : [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.04),
+                          blurRadius: 2,
+
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+              border:
+                  widget.isActive
+                      ? Border.all(color: ColorRes.primary, width: 2)
+                      : null,
             ),
-          ),
-          child: Stack(
-            children: [
-              Row(
-                children: [
-                  // Image Section
-                  ClipRRect(
-                    borderRadius: BorderRadius.horizontal(
-                      left: Radius.circular(11),
+            child: Stack(
+              children: [
+                Row(
+                  children: [
+                    // Image Section
+                    ClipRRect(
+                      borderRadius: BorderRadius.horizontal(
+                        left: Radius.circular(11),
+                      ),
+                      child:
+                          (_firstImage(widget.item).isNotEmpty)
+                              ? CustomImage(
+                                type: CustomImageType.network,
+                                src: _firstImage(widget.item),
+                                width: 120,
+                                height: 121,
+                                fit: BoxFit.cover,
+                              )
+                              : Container(
+                                width: 120,
+                                height: 121,
+                                color: ColorRes.leadGreyColor.shade200,
+                                child: const Icon(
+                                  Icons.image,
+                                  color: ColorRes.grey,
+                                ),
+                              ),
                     ),
-                    child:
-                        (_firstImage(widget.item).isNotEmpty)
-                            ? CustomImage(
-                              type: CustomImageType.network,
-                              src: _firstImage(widget.item),
-                              width: 120,
-                              height: 121,
-                              fit: BoxFit.cover,
-                            )
-                            : Container(
-                              width: 120,
-                              height: 121,
-                              color: ColorRes.leadGreyColor.shade200,
-                              child: const Icon(
-                                Icons.image,
-                                color: ColorRes.grey,
+
+                    // Content Section
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // Title
+                            Text(
+                              _title(widget.item),
+                              style: TextStyle(
+                                fontSize: AppFontSizes.bodyMedium,
+                                fontWeight: AppFontWeights.semiBold,
+                                color: ColorRes.textColor,
+                                height: 1.2,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                  ),
 
-                  // Content Section
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // Title
-                          Text(
-                            _title(widget.item),
-                            style: TextStyle(
-                              fontSize: AppFontSizes.bodyMedium,
-                              fontWeight: AppFontWeights.semiBold,
-                              color: ColorRes.textColor,
-                              height: 1.2,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-
-                          // Address
-                          Text(
-                            widget.item.address ?? '-',
-                            style: TextStyle(
-                              fontSize: AppFontSizes.caption,
-                              color: ColorRes.leadGreyColor[600],
-                              height: 1.3,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-
-                          // Property Typ
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.bed_outlined,
-                                size: 13,
-                                color: const Color(0xFF2563EB),
+                            // Address
+                            Text(
+                              widget.item.address ?? '-',
+                              style: TextStyle(
+                                fontSize: AppFontSizes.caption,
+                                color: ColorRes.leadGreyColor[600],
+                                height: 1.3,
                               ),
-                              const SizedBox(width: 4),
-                              Text(
-                                (widget.item.propertyDetails?.bhk ?? 0)
-                                        .toString() +
-                                    ' BHK',
-                                style: TextStyle(
-                                  fontSize: AppFontSizes.caption,
-                                  fontWeight: AppFontWeights.medium,
-                                  color: ColorRes.blackShade54,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+
+                            // Property Typ
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.bed_outlined,
+                                  size: 13,
+                                  color: const Color(0xFF2563EB),
                                 ),
-                              ),
-                            ],
-                          ),
-
-                          // Price Row
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  _price(widget.item),
+                                const SizedBox(width: 4),
+                                Text(
+                                  (widget.item.propertyDetails?.bhk ?? 0)
+                                          .toString() +
+                                      ' BHK',
                                   style: TextStyle(
-                                    fontSize: AppFontSizes.medium,
-                                    fontWeight: AppFontWeights.bold,
-                                    color: ColorRes.textColor,
-                                    height: 1,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              SizedBox(width: 10),
-                              if (widget.item.propertyStatus?.toLowerCase() ==
-                                  "sold") ...[
-                                GestureDetector(
-                                  onTap: () {},
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 14,
-                                      vertical: 8,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: ColorRes.primary,
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                    child: Text(
-                                      'Property Sold',
-                                      style: TextStyle(
-                                        fontWeight: AppFontWeights.semiBold,
-                                        fontSize: AppFontSizes.small,
-                                        color: ColorRes.white,
-                                      ),
-                                    ),
+                                    fontSize: AppFontSizes.caption,
+                                    fontWeight: AppFontWeights.medium,
+                                    color: ColorRes.blackShade54,
                                   ),
                                 ),
-                              ] else ...[
-                                if (widget.isSubmitted) ...[
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 6,
+                              ],
+                            ),
+
+                            // Price Row
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    _price(widget.item),
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.medium,
+                                      fontWeight: AppFontWeights.bold,
+                                      color: ColorRes.textColor,
+                                      height: 1,
                                     ),
-                                    decoration: BoxDecoration(
-                                      color: ColorRes.success.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(
-                                        color: ColorRes.success,
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const Icon(
-                                          Icons.check_circle_outline,
-                                          color: ColorRes.success,
-                                          size: 16,
-                                        ),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          'Submitted',
-                                          style: TextStyle(
-                                            color: ColorRes.success,
-                                            fontSize: AppFontSizes.small,
-                                            fontWeight: AppFontWeights.semiBold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                ] else ...[
+                                ),
+                                SizedBox(width: 10),
+                                if (widget.item.propertyStatus?.toLowerCase() ==
+                                    "sold") ...[
                                   GestureDetector(
-                                    onTap:
-                                        (UserHelper.isGuest)
-                                            ? () async {
-                                              try {
-                                                if (Get.context == null) {
-                                                  NesticoPeSnackBar.showAwesomeSnackbar(
-                                                    title: 'Error',
-                                                    message:
-                                                        'UI not ready to show dialog.',
-                                                    contentType:
-                                                        ContentType.failure,
-                                                  );
-                                                  return;
-                                                }
-
-                                                addInquiryFromApp(
-                                                  '',
-                                                  '',
-                                                  '',
-                                                  widget.item.id ?? '',
-                                                  widget.item.listingType ?? '',
-                                                  'property' ?? '',
-
-                                                  controller,
-                                                );
-                                              } catch (e, s) {
-                                                debugPrint(
-                                                  '❌ Error in Get Offer button: $e',
-                                                );
-                                                debugPrint('$s');
-
-                                                NesticoPeSnackBar.showAwesomeSnackbar(
-                                                  title: 'Error',
-                                                  message:
-                                                      'Something went wrong. Please try again.',
-                                                  contentType:
-                                                      ContentType.failure,
-                                                );
-                                              }
-                                            }
-                                            : () async {
-                                              try {
-                                                final user =
-                                                    await SecureStorage.getUserData();
-
-                                                if (user == null) {
-                                                  NesticoPeSnackBar.showAwesomeSnackbar(
-                                                    title: 'Error',
-                                                    message:
-                                                        'No user data found. Please log in.',
-                                                    contentType:
-                                                        ContentType.failure,
-                                                  );
-                                                  return;
-                                                }
-
-                                                final fullName =
-                                                    user.user?.fullName ?? '';
-                                                final firstName =
-                                                    user.user?.firstName ?? '';
-                                                final username =
-                                                    user.user?.username ?? '';
-                                                final email =
-                                                    user.user?.email ?? '';
-                                                final phone =
-                                                    user.user?.phone ?? '';
-
-                                                final displayName =
-                                                    (firstName.isEmpty
-                                                            ? username
-                                                            : fullName)
-                                                        .trim();
-
-                                                if (Get.context == null) {
-                                                  NesticoPeSnackBar.showAwesomeSnackbar(
-                                                    title: 'Error',
-                                                    message:
-                                                        'UI not ready to show dialog.',
-                                                    contentType:
-                                                        ContentType.failure,
-                                                  );
-                                                  return;
-                                                }
-
-                                                addInquiryFromApp(
-                                                  displayName,
-                                                  email,
-                                                  phone,
-                                                  widget.item.id ?? '',
-                                                  widget.item.listingType ?? '',
-                                                  'property' ?? '',
-
-                                                  controller,
-                                                );
-                                              } catch (e, s) {
-                                                debugPrint(
-                                                  '❌ Error in Get Offer button: $e',
-                                                );
-                                                debugPrint('$s');
-
-                                                NesticoPeSnackBar.showAwesomeSnackbar(
-                                                  title: 'Error',
-                                                  message:
-                                                      'Something went wrong. Please try again.',
-                                                  contentType:
-                                                      ContentType.failure,
-                                                );
-                                              }
-                                            },
+                                    onTap: () {},
                                     child: Container(
                                       padding: EdgeInsets.symmetric(
                                         horizontal: 14,
@@ -524,7 +383,7 @@ class _PropertyCardForCompareState extends State<PropertyCardForCompare> {
                                         borderRadius: BorderRadius.circular(6),
                                       ),
                                       child: Text(
-                                        '${controller.hasSubmittedInquiry.value ? 'Submitted' : 'Get Offer'}',
+                                        'Property Sold',
                                         style: TextStyle(
                                           fontWeight: AppFontWeights.semiBold,
                                           fontSize: AppFontSizes.small,
@@ -533,31 +392,205 @@ class _PropertyCardForCompareState extends State<PropertyCardForCompare> {
                                       ),
                                     ),
                                   ),
+                                ] else ...[
+                                  if (widget.isSubmitted) ...[
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 6,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: ColorRes.success.withOpacity(
+                                          0.1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                          color: ColorRes.success,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Icon(
+                                            Icons.check_circle_outline,
+                                            color: ColorRes.success,
+                                            size: 16,
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Text(
+                                            'Submitted',
+                                            style: TextStyle(
+                                              color: ColorRes.success,
+                                              fontSize: AppFontSizes.small,
+                                              fontWeight:
+                                                  AppFontWeights.semiBold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ] else ...[
+                                    GestureDetector(
+                                      onTap:
+                                          (UserHelper.isGuest)
+                                              ? () async {
+                                                try {
+                                                  if (Get.context == null) {
+                                                    NesticoPeSnackBar.showAwesomeSnackbar(
+                                                      title: 'Error',
+                                                      message:
+                                                          'UI not ready to show dialog.',
+                                                      contentType:
+                                                          ContentType.failure,
+                                                    );
+                                                    return;
+                                                  }
+
+                                                  addInquiryFromApp(
+                                                    '',
+                                                    '',
+                                                    '',
+                                                    widget.item.id ?? '',
+                                                    widget.item.listingType ??
+                                                        '',
+                                                    'property' ?? '',
+
+                                                    controller,
+                                                  );
+                                                } catch (e, s) {
+                                                  debugPrint(
+                                                    '❌ Error in Get Offer button: $e',
+                                                  );
+                                                  debugPrint('$s');
+
+                                                  NesticoPeSnackBar.showAwesomeSnackbar(
+                                                    title: 'Error',
+                                                    message:
+                                                        'Something went wrong. Please try again.',
+                                                    contentType:
+                                                        ContentType.failure,
+                                                  );
+                                                }
+                                              }
+                                              : () async {
+                                                try {
+                                                  final user =
+                                                      await SecureStorage.getUserData();
+
+                                                  if (user == null) {
+                                                    NesticoPeSnackBar.showAwesomeSnackbar(
+                                                      title: 'Error',
+                                                      message:
+                                                          'No user data found. Please log in.',
+                                                      contentType:
+                                                          ContentType.failure,
+                                                    );
+                                                    return;
+                                                  }
+
+                                                  final fullName =
+                                                      user.user?.fullName ?? '';
+                                                  final firstName =
+                                                      user.user?.firstName ??
+                                                      '';
+                                                  final username =
+                                                      user.user?.username ?? '';
+                                                  final email =
+                                                      user.user?.email ?? '';
+                                                  final phone =
+                                                      user.user?.phone ?? '';
+
+                                                  final displayName =
+                                                      (firstName.isEmpty
+                                                              ? username
+                                                              : fullName)
+                                                          .trim();
+
+                                                  if (Get.context == null) {
+                                                    NesticoPeSnackBar.showAwesomeSnackbar(
+                                                      title: 'Error',
+                                                      message:
+                                                          'UI not ready to show dialog.',
+                                                      contentType:
+                                                          ContentType.failure,
+                                                    );
+                                                    return;
+                                                  }
+
+                                                  addInquiryFromApp(
+                                                    displayName,
+                                                    email,
+                                                    phone,
+                                                    widget.item.id ?? '',
+                                                    widget.item.listingType ??
+                                                        '',
+                                                    'property' ?? '',
+
+                                                    controller,
+                                                  );
+                                                } catch (e, s) {
+                                                  debugPrint(
+                                                    '❌ Error in Get Offer button: $e',
+                                                  );
+                                                  debugPrint('$s');
+
+                                                  NesticoPeSnackBar.showAwesomeSnackbar(
+                                                    title: 'Error',
+                                                    message:
+                                                        'Something went wrong. Please try again.',
+                                                    contentType:
+                                                        ContentType.failure,
+                                                  );
+                                                }
+                                              },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 14,
+                                          vertical: 8,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: ColorRes.primary,
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          '${controller.hasSubmittedInquiry.value ? 'Submitted' : 'Get Offer'}',
+                                          style: TextStyle(
+                                            fontWeight: AppFontWeights.semiBold,
+                                            fontSize: AppFontSizes.small,
+                                            color: ColorRes.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ],
                               ],
-                            ],
-                          ),
-                        ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                // Remove button
+                if (widget.onRemove != null)
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: GestureDetector(
+                      onTap: widget.onRemove,
+                      child: const Icon(
+                        Icons.cancel,
+                        color: ColorRes.error,
+                        size: 20,
                       ),
                     ),
                   ),
-                ],
-              ),
-              // Remove button
-              if (widget.onRemove != null)
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: GestureDetector(
-                    onTap: widget.onRemove,
-                    child: const Icon(
-                      Icons.cancel,
-                      color: ColorRes.error,
-                      size: 20,
-                    ),
-                  ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -848,6 +881,7 @@ class CompareScreen extends StatefulWidget {
 class _CompareScreenState extends State<CompareScreen> {
   final PropertyController controller = Get.find<PropertyController>();
   final PropertyContactedService _contactedService = PropertyContactedService();
+  String? _activePropertyId;
 
   @override
   void initState() {
@@ -905,7 +939,6 @@ class _CompareScreenState extends State<CompareScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorRes.leadGreyColor[50],
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -922,73 +955,78 @@ class _CompareScreenState extends State<CompareScreen> {
             fontWeight: AppFontWeights.bold,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert, color: ColorRes.black, size: 20),
-            onPressed: () {},
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: const Icon(Icons.more_vert, color: ColorRes.black, size: 20),
+        //     onPressed: () {},
+        //   ),
+        // ],
       ),
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: AppPadding.medium),
-          child: Obx(() {
-            final selected = CompareManager.to.selectedList;
+        child: Obx(() {
+          final selected = CompareManager.to.selectedList;
 
-            // If no properties selected
-            if (selected.isEmpty) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 40),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.compare_arrows,
-                        size: 64,
-                        color: ColorRes.leadGreyColor[400],
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'No properties selected',
-                        style: TextStyle(
-                          fontSize: AppFontSizes.medium,
-                          fontWeight: AppFontWeights.semiBold,
-                          color: ColorRes.leadGreyColor[700],
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Select properties from home to compare',
-                        style: TextStyle(
-                          fontSize: AppFontSizes.small,
-                          color: ColorRes.leadGreyColor[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }
-
-            // If only 1 property selected
-            if (selected.length == 1) {
-              final item = selected[0];
-              return SingleChildScrollView(
+          // If no properties selected
+          if (selected.isEmpty) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 40),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Obx(
-                      () => PropertyCardForCompare(
-                        item: item,
-                        isSubmitted: controller.isComparePropertyFirst.value,
-                        onRemove: () {
-                          CompareManager.to.remove(item.id ?? '');
-                        },
+                    Icon(
+                      Icons.compare_arrows,
+                      size: 64,
+                      color: ColorRes.leadGreyColor[400],
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No properties selected',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.medium,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.leadGreyColor[700],
                       ),
                     ),
-                    const SizedBox(height: 24),
-                    Center(
+                    const SizedBox(height: 8),
+                    Text(
+                      'Select properties from home to compare',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.small,
+                        color: ColorRes.leadGreyColor[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          // If only 1 property selected
+
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 16),
+
+                ...selected.map((item) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: PropertyCardForCompare(
+                      item: item,
+                      isActive: item.id == _activePropertyId,
+                      isSubmitted: controller.isComparePropertyFirst.value,
+                      onRemove: () {
+                        CompareManager.to.remove(item.id ?? '');
+                      },
+                    ),
+                  );
+                }).toList(),
+                if (selected.length < 5)
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    child: Center(
                       child: Column(
                         children: [
                           GestureDetector(
@@ -997,56 +1035,27 @@ class _CompareScreenState extends State<CompareScreen> {
                             },
                             child: Icon(
                               Icons.add_circle_outline,
-                              size: 25,
+                              size: 30,
                               color: ColorRes.primary,
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 8),
                           Text(
-                            'Select one more property to compare',
+                            'Add up to ${5 - selected.length} more propert${5 - selected.length > 1 ? 'ies' : 'y'} to compare',
                             style: TextStyle(
-                              fontSize: AppFontSizes.medium,
+                              fontSize: AppFontSizes.small,
                               fontWeight: AppFontWeights.medium,
-                              color: ColorRes.leadGreyColor[700],
+                              color: ColorRes.leadGreyColor[600],
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ],
-                ),
-              );
-            }
-
-            // If 2 or more properties selected, show comparison
-            final a = selected[0];
-            final b = selected[1];
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Obx(
-                    () => PropertyCardForCompare(
-                      item: a,
-                      isSubmitted: controller.isComparePropertyFirst.value,
-
-                      onRemove: () {
-                        CompareManager.to.remove(a.id ?? '');
-                      },
-                    ),
                   ),
-                  SizedBox(height: AppSpacing.small),
-                  Obx(
-                    () => PropertyCardForCompare(
-                      item: b,
-                      isSubmitted: controller.isComparePropertySecond.value,
-                      onRemove: () {
-                        CompareManager.to.remove(b.id ?? '');
-                      },
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
+                SizedBox(height: 16),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: AppPadding.medium),
+                  child: Text(
                     'Detailed Comparison',
                     style: TextStyle(
                       fontSize: AppFontSizes.medium,
@@ -1054,13 +1063,20 @@ class _CompareScreenState extends State<CompareScreen> {
                       color: ColorRes.black,
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  _ComparisonTable(a: a, b: b),
-                ],
-              ),
-            );
-          }),
-        ),
+                ),
+                const SizedBox(height: 12),
+                _ComparisonTable(
+                  items: selected,
+                  onActiveChange: (id) {
+                    setState(() {
+                      _activePropertyId = id;
+                    });
+                  },
+                ),
+              ],
+            ),
+          );
+        }),
       ),
     );
   }
@@ -1534,15 +1550,107 @@ class _ComparisonRow extends StatelessWidget {
   }
 }
 
-class _ComparisonTable extends StatelessWidget {
-  final Items a;
-  final Items b;
+class _ComparisonTable extends StatefulWidget {
+  final List<Items> items;
+  final ValueChanged<String>? onActiveChange;
+  const _ComparisonTable({super.key, required this.items, this.onActiveChange});
+  @override
+  State<_ComparisonTable> createState() => _ComparisonTableState();
+}
 
-  const _ComparisonTable({super.key, required this.a, required this.b});
+class _ComparisonTableState extends State<_ComparisonTable> {
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+  bool _didInitialNotify = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_didInitialNotify && widget.items.isNotEmpty) {
+        final first = widget.items[0];
+        if ((first.id ?? '').isNotEmpty) {
+          widget.onActiveChange?.call(first.id!);
+        }
+        _didInitialNotify = true;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          height: 540,
+          child: PageView.builder(
+            controller: _pageController,
+            itemCount: widget.items.length,
+
+            onPageChanged: (i) {
+              setState(() {
+                _currentPage = i;
+              });
+              final item = widget.items[i];
+              if ((item.id ?? '').isNotEmpty) {
+                widget.onActiveChange?.call(item.id!);
+              }
+            },
+
+            itemBuilder: (context, index) {
+              final item = widget.items[index];
+              return _PropertyDetailsCard(item: item);
+            },
+          ),
+        ),
+        const SizedBox(height: 12),
+        if (widget.items.length > 1)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              widget.items.length,
+              (index) => GestureDetector(
+                onTap: () {
+                  _pageController.animateToPage(
+                    index,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                },
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  width: _currentPage == index ? 24 : 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color:
+                        _currentPage == index
+                            ? ColorRes.primary
+                            : ColorRes.leadGreyColor[300],
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _PropertyDetailsCard extends StatelessWidget {
+  final Items item;
+  const _PropertyDetailsCard({required this.item});
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -1550,163 +1658,114 @@ class _ComparisonTable extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _header(),
-
-          // ---- Comparison Rows ----
-          if (!_shouldHide(a.propertyType, b.propertyType))
-            _ComparisonRow(
-              icon: Icons.home_outlined,
-              label: 'Property\nType',
-              valueA: a.propertyType ?? '-',
-              valueB: b.propertyType ?? '-',
-            ),
-
-          if (!_shouldHide(a.address, b.address))
-            _ComparisonRow(
-              icon: Icons.location_on_outlined,
-              label: 'Location',
-              valueA: a.address ?? '-',
-              isAddress: true,
-              valueB: b.address ?? '-',
-            ),
-
-          if (!_shouldHide(_area(a), _area(b)))
-            _ComparisonRow(
-              icon: Icons.square_foot,
-              label: 'Built-up Area',
-              valueA: _area(a),
-              valueB: _area(b),
-              highlightB: _highlightB(
-                a,
-                b,
-                (x) => x.propertyDetails?.propertyBuiltUpArea ?? 0,
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
+            decoration: BoxDecoration(
+              color: ColorRes.primary,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(11),
+                topRight: Radius.circular(11),
               ),
             ),
-
-          if (!_shouldHide(
-            (a.propertyDetails?.bhk ?? 0).toString(),
-            (b.propertyDetails?.bhk ?? 0).toString(),
-          ))
-            _ComparisonRow(
-              icon: Icons.bed_outlined,
-              label: 'Bedrooms',
-              valueA: (a.propertyDetails?.bhk ?? 0).toString(),
-              valueB: (b.propertyDetails?.bhk ?? 0).toString(),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    _title(item),
+                    style: const TextStyle(
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.bold,
+                      color: ColorRes.white,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
             ),
-
-          if (!_shouldHide(
-            (a.propertyDetails?.bathroom ?? 0).toString(),
-            (b.propertyDetails?.bathroom ?? 0).toString(),
-          ))
-            _ComparisonRow(
-              icon: Icons.bathtub_outlined,
-              label: 'Bathrooms',
-              valueA: (a.propertyDetails?.bathroom ?? 0).toString(),
-              valueB: (b.propertyDetails?.bathroom ?? 0).toString(),
-            ),
-
-          if (!_shouldHide(_floor(a), _floor(b)))
-            _ComparisonRow(
-              icon: Icons.layers_outlined,
-              label: 'Floor',
-              valueA: _floor(a),
-              valueB: _floor(b),
-            ),
-
-          if (!_shouldHide(_ppsf(a), _ppsf(b)))
-            _ComparisonRow(
-              icon: Icons.monetization_on_outlined,
-              label: 'Price/sq\nft',
-              valueA: _ppsf(a) ?? '-',
-              valueB: _ppsf(b) ?? '-',
-              highlightB: _highlightB(
-                a,
-                b,
-                (x) => x.propertyDetails?.financialInfo?.pricePerSqft ?? 0,
-              ),
-            ),
-
-          if (!_shouldHide(_amenities(a), _amenities(b)))
-            _ComparisonRow(
-              icon: Icons.checklist_rtl,
-              label: 'Amenities',
-              valueA: _amenities(a),
-              isAddress: true,
-              valueB: _amenities(b),
-              highlightB:
-                  (b.propertyDetails?.amenities?.length ?? 0) >
-                  (a.propertyDetails?.amenities?.length ?? 0),
-            ),
-
-          if (!_shouldHide(
-            PropertyPriceManager(
-              listingType: a.listingType ?? '',
-              financialInfo: a.propertyDetails?.financialInfo,
-            ).displayPrice,
-            PropertyPriceManager(
-              listingType: b.listingType ?? '',
-              financialInfo: b.propertyDetails?.financialInfo,
-            ).displayPrice,
-          ))
-            _ComparisonRow(
-              icon: Icons.price_change,
-              label: 'Price',
-              valueA:
+          ),
+          SizedBox(
+            height: 470,
+            child: ListView(
+              padding: EdgeInsets.symmetric(vertical: 10),
+              children: [
+                _basicRow('Property Type', item.propertyType ?? '-'),
+                Divider(color: ColorRes.leadGreyColor.shade300),
+                _basicRow('Location', item.address ?? '-'),
+                Divider(color: ColorRes.leadGreyColor.shade300),
+                _basicRow('Built-up Area', _area(item)),
+                Divider(color: ColorRes.leadGreyColor.shade300),
+                _basicRow(
+                  'Bedrooms',
+                  (item.propertyDetails?.bhk ?? 0).toString(),
+                ),
+                Divider(color: ColorRes.leadGreyColor.shade300),
+                _basicRow(
+                  'Bathrooms',
+                  (item.propertyDetails?.bathroom ?? 0).toString(),
+                ),
+                Divider(color: ColorRes.leadGreyColor.shade300),
+                _basicRow('Floor', _floor(item)),
+                Divider(color: ColorRes.leadGreyColor.shade300),
+                _basicRow('Price/sq ft', _ppsf(item) ?? '-'),
+                Divider(color: ColorRes.leadGreyColor.shade300),
+                _basicRow(
+                  'Price',
                   PropertyPriceManager(
-                    listingType: a.listingType ?? '',
-                    financialInfo: a.propertyDetails?.financialInfo,
+                    listingType: item.listingType ?? '',
+                    financialInfo: item.propertyDetails?.financialInfo,
                   ).displayPrice,
-              valueB:
-                  PropertyPriceManager(
-                    listingType: b.listingType ?? '',
-                    financialInfo: b.propertyDetails?.financialInfo,
-                  ).displayPrice,
-              isLast: true,
+                ),
+                Divider(color: ColorRes.leadGreyColor.shade300),
+                _basicRow(
+                  'Security Deposit',
+                  Formatter.formatPrice(
+                    item
+                            .propertyDetails
+                            ?.financialInfo
+                            ?.propertySecurityDeposit ??
+                        0,
+                  ),
+                ),
+                Divider(color: ColorRes.leadGreyColor.shade300),
+                _basicRow('Amenities', _amenities(item)),
+              ],
             ),
+          ),
         ],
       ),
     );
   }
 
-  // ---------- Header ----------
-  Widget _header() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: ColorRes.leadGreyColor[200]!)),
-      ),
+  Widget _basicRow(String title, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            'Features',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: AppFontSizes.small,
-              fontWeight: AppFontWeights.medium,
-            ),
-          ),
           Expanded(
+            flex: 2,
             child: Text(
-              _title(a),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+              title,
+
               style: TextStyle(
-                fontSize: AppFontSizes.small,
+                fontSize: AppFontSizes.caption,
                 fontWeight: AppFontWeights.medium,
+                color: ColorRes.leadGreyColor[700],
               ),
             ),
           ),
+          const SizedBox(width: 10),
           Expanded(
+            flex: 3,
             child: Text(
-              _title(b),
-              textAlign: TextAlign.center,
-              maxLines: 1,
+              value,
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: AppFontSizes.small,
-                fontWeight: AppFontWeights.medium,
+                fontWeight: AppFontWeights.semiBold,
+                color: ColorRes.textColor,
               ),
             ),
           ),

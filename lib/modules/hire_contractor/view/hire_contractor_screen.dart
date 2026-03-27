@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/modules/hire_contractor/view/widget/hire_contractor_profilelist.dart';
+import 'package:nesticope_app/modules/hire_contractor/view/widget/hire_contractor_profilelist.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../data/network/contractor/model/contractot_service_model/contractor_category_model.dart';
@@ -12,7 +12,8 @@ import '../controller/hire_contractor_new_controller.dart';
 import 'widget/category_service_explorer.dart';
 
 class HireContractorScreen extends StatelessWidget {
-  const HireContractorScreen({super.key});
+  final bool fromDashboard;
+  const HireContractorScreen({super.key, this.fromDashboard = false});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +29,15 @@ class HireContractorScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: ColorRes.background,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        leading: fromDashboard
+            ? null
+            : IconButton(
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: ColorRes.textPrimary,
+                ),
+                onPressed: () => Get.back(),
+              ),
         backgroundColor: ColorRes.white,
         elevation: 0,
         title: Text(
@@ -182,7 +191,7 @@ class HireContractorScreen extends StatelessWidget {
 
                 // Description
                 Text(
-                  category.description,
+                  category.description.join('\n'),
                   style: TextStyle(
                     fontSize: AppFontSizes.caption,
                     color: ColorRes.textSecondary,
@@ -300,26 +309,46 @@ class HireContractorScreen extends StatelessWidget {
           const SizedBox(height: 6),
 
           // Description
-          Text(
-            category.description,
-            maxLines: 5,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: AppFontSizes.extraSmall,
-              color: ColorRes.textSecondary,
-              height: 1.6,
-              
-              fontWeight: AppFontWeights.regular,
-            ),
-          ),
+            // Bullet points description
+            ...((category.description).where((line) => line.trim().isNotEmpty).map((line) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Icon(
+                        Icons.check_circle,
+                        size: 14,
+                        color: ColorRes.primary,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        line.trim().startsWith('•') ? line.trim().substring(1).trim() : line.trim(),
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: ColorRes.leadGreyColor.shade700,
+                          fontWeight: AppFontWeights.medium,
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList()),
 
           const SizedBox(height: 10),
 
           // Date
           Text(
-            _formatDate(category.createdAt),
+            'Created on ${_formatDate(category.createdAt)}',
             style: TextStyle(
               fontSize: AppFontSizes.caption,
+              fontWeight: AppFontWeights.medium,
               color: ColorRes.textDisabled,
             ),
           ),

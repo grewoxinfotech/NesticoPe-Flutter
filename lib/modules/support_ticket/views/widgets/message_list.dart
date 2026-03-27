@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/modules/support_ticket/views/support_ticket_chat_screen.dart';
+import 'package:nesticope_app/modules/support_ticket/views/support_ticket_chat_screen.dart';
 
 import '../../../../app/constants/color_res.dart';
 import '../../../../data/database/secure_storage_service.dart';
@@ -29,8 +29,12 @@ class MessageList extends StatelessWidget {
         if (index == message.length && isTyping) {
           return _buildTypingIndicator();
         }
-
-        final isUser = message[index].senderId == userId;
+        print("Chat User Helper for buyer : ${userId}");
+        bool isUser;
+       
+          isUser = message[index].senderId == userId;
+        
+        print("Chat User Helper for buyer : ${message.map((e) => e.toMap())}");
         return ChatMessageBubble(message: message[index], isUser: isUser);
       },
     );

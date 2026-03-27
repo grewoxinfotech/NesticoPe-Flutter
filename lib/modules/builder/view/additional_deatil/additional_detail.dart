@@ -286,7 +286,7 @@
 
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
+// import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 // import '../../../../app/constants/color_res.dart';
 // import '../../../../app/manager/icon_manager.dart';
 // import '../../../../app/utils/svg_widget.dart';
@@ -724,9 +724,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/modules/add_property/view/create_property.dart';
-import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/modules/add_property/view/create_property.dart';
+import 'package:nesticope_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../app/manager/icon_manager.dart';
 import '../../../../app/services/string_manager.dart';

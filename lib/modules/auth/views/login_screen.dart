@@ -1,11 +1,11 @@
 // import 'package:flutter/material.dart';
-// import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-// import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
-// import 'package:housing_flutter_app/modules/auth/views/forgot_password_screen.dart';
-// import 'package:housing_flutter_app/modules/auth/views/select_account_type_screen.dart';
-// import 'package:housing_flutter_app/modules/auth/views/otp_login_screen.dart';
+// import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+// import 'package:nesticope_app/modules/auth/controllers/auth_controller.dart';
+// import 'package:nesticope_app/modules/auth/views/forgot_password_screen.dart';
+// import 'package:nesticope_app/modules/auth/views/select_account_type_screen.dart';
+// import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/widgets/bar/app_bar/custom_appbar.dart';
+// import 'package:nesticope_app/widgets/bar/app_bar/custom_appbar.dart';
 //
 // import '../../../app/constants/color_res.dart';
 // import '../../../app/constants/font_res.dart';
@@ -258,14 +258,14 @@
 // }
 
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
-import 'package:housing_flutter_app/modules/auth/views/forgot_password_screen.dart';
-import 'package:housing_flutter_app/modules/auth/views/register_screen.dart';
-import 'package:housing_flutter_app/modules/auth/views/select_account_type_screen.dart';
-import 'package:housing_flutter_app/modules/auth/views/otp_login_screen.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/modules/auth/controllers/auth_controller.dart';
+import 'package:nesticope_app/modules/auth/views/forgot_password_screen.dart';
+import 'package:nesticope_app/modules/auth/views/register_screen.dart';
+import 'package:nesticope_app/modules/auth/views/select_account_type_screen.dart';
+import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/widgets/bar/app_bar/custom_appbar.dart';
+import 'package:nesticope_app/widgets/bar/app_bar/custom_appbar.dart';
 
 import '../../../app/constants/color_res.dart';
 import '../../../app/constants/font_res.dart';

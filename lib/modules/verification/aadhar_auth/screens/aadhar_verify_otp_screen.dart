@@ -2,8 +2,8 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 import '../controllers/aadhar_auth_controller.dart';
 
 class AadharVerifyOTPScreen extends StatelessWidget {

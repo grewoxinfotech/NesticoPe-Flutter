@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
-import 'package:housing_flutter_app/app/widgets/snackbar/snackbar.dart';
+import 'package:nesticope_app/app/widgets/snackbar/snackbar.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../../app/care/pagination/models/pagination_models.dart';
@@ -150,7 +150,11 @@ class CalenderService {
       );
 
       print("DELETE RESPONSE: ${response.body}");
-
+NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: json.decode(response.body)['message']??"Event deleted successfully",
+          contentType: ContentType.success,
+        );
       return response.statusCode == 200 || response.statusCode == 201;
 
     } catch (e) {

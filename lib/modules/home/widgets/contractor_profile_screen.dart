@@ -1,24 +1,30 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
-import 'package:housing_flutter_app/modules/contractor/view/widget/contractor_inquiry_screen.dart';
-import 'package:housing_flutter_app/modules/property_rating/view/widget/read_more_or_less.dart';
-import 'package:housing_flutter_app/utils/logger/app_logger.dart';
+import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/data/network/auth/model/user_model.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/modules/auth/views/login_screen.dart';
+import 'package:nesticope_app/modules/contractor/view/widget/contractor_inquiry_screen.dart';
+import 'package:nesticope_app/modules/property_rating/view/widget/read_more_or_less.dart';
+import 'package:nesticope_app/utils/logger/app_logger.dart';
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../data/network/contractor/model/contractor_profile_model/contractor_profile_model.dart';
 import '../../../data/network/contractor/model/contractot_service_model/contractor_service_model.dart';
+import '../../../data/network/contractor/service/contractor_profile_service.dart';
 import '../../../widgets/messages/snack_bar.dart';
 import '../controllers/contractor_profile_service_controller/contractor_profile_service_controller.dart';
 import 'contractor_add_inuiry_screen.dart';
+import 'package:nesticope_app/app/widgets/shimmer/shimmer_widget.dart';
 
 class ContractorProfileDetailsScreen extends StatefulWidget {
   final Contractor contractor;
-  final bool isPremium;
+   bool isPremium;
 
   ContractorProfileDetailsScreen({
     super.key,
@@ -37,9 +43,12 @@ class _ContractorProfileDetailsScreenState
   final RxBool isListSelectable = false.obs;
 
   final currentUserId = ''.obs;
+  String? _profilePic;
+  User? userData;
 
   Future<void> contactContractor() async {
-    final contractorServiceController = Get.find<ContractorServiceController>();
+    final contractorServiceController =
+        Get.find<ContractorServiceController>(tag: widget.contractor.userId);
 
     print("Selected Services: ${contractorServiceController.selectedItems}");
 
@@ -61,20 +70,36 @@ class _ContractorProfileDetailsScreenState
     final user = await SecureStorage.getUserData();
     AppLogger.structured("Check Current User Data", user?.user?.toJson());
     currentUserId.value = user?.user?.id ?? '';
+
+    final service = TopContractorsService();
+    final details = await service.fetchUserModelById(widget.contractor.userId);
+    if (!mounted) return;
+    setState(() {
+      userData = details;
+      _profilePic = details?.profilePic;
+      widget.isPremium=details.isPremium??false;
+    });
   }
 
   @override
   void initState() {
-    // TODO: implement initState
+    // TODO: implement  initStatecccc    
     super.initState();
     loadData();
   }
 
   @override
   Widget build(BuildContext context) {
+    log("Contractor ID: ${widget.contractor.userId}");
+   
+
     final contractorServiceController = Get.put(
       ContractorServiceController(contractorId: widget.contractor.userId),
+      tag: widget.contractor.userId,
     );
+      log("User Datafgjjugnhregre: ${contractorServiceController.userData.value?.toJson()}");
+  
+
 
     final displayName = getDisplayName(
       contractorFirstName:
@@ -105,8 +130,15 @@ class _ContractorProfileDetailsScreenState
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: ColorRes.leadGreyColor.shade300),
+                borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
+                // border: Border.all(color: ColorRes.leadGreyColor.shade300),
+                 boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 2,
+            offset: const Offset(2, 3),
+          ),
+        ],
                 color: ColorRes.white,
               ),
               child: Column(
@@ -144,7 +176,9 @@ class _ContractorProfileDetailsScreenState
                               // ),
                               buildProfileAvatar(
                                 displayName: displayName,
-                                profilePic: widget.contractor.imageUrl,
+                                profilePic: _profilePic?.isNotEmpty == true
+                                    ? _profilePic!
+                                    : widget.contractor.imageUrl,
                               ),
                               const SizedBox(width: 16),
 
@@ -232,7 +266,7 @@ class _ContractorProfileDetailsScreenState
                             if (widget
                                 .contractor
                                 .subscription
-                                .hasPremiumPlan) ...[
+                                .hasPremiumPlan || widget.isPremium) ...[
                               SizedBox(height: 6),
 
                               Container(
@@ -418,58 +452,49 @@ class _ContractorProfileDetailsScreenState
                   }),
 */
                   Obx(() {
-                    final bool isSelectable = isListSelectable.value;
                     final bool isGuest = UserHelper.isGuest;
                     final bool isOwnService =
                         currentUserId.value == widget.contractor.userId;
+                    final bool hasSelection =
+                        Get.find<ContractorServiceController>(
+                          tag: widget.contractor.userId,
+                        ).selectedItems.isNotEmpty;
+                    final bool enabled = !isGuest && !isOwnService && hasSelection;
 
                     return Column(
                       children: [
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed:
-                                isOwnService
-                                    ? null
-                                    : () {
-                                      if (isGuest) {
-                                        Get.to(() => LoginScreen());
-                                        return;
-                                      }
-
-                                      if (isSelectable) {
-                                        if (contractorServiceController
-                                            .selectedItems
-                                            .isEmpty) {
-                                          NesticoPeSnackBar.showAwesomeSnackbar(
-                                            title: 'No Service Selected',
-                                            message:
-                                                "Please select at least one service to continue",
-                                            contentType: ContentType.failure,
-                                          );
-                                          return;
-                                        }
-                                        contactContractor();
-                                      } else {
-                                        isListSelectable.value = true;
-                                      }
-                                    },
+                            onPressed: () {
+                              if (isGuest) {
+                                Get.to(() => LoginScreen());
+                                return;
+                              }
+                              if (enabled) {
+                                contactContractor();
+                              } else {
+                                NesticoPeSnackBar.showAwesomeSnackbar(
+                                  title: 'No Service Selected',
+                                  message:
+                                      "Please select at least one service to continue",
+                                  contentType: ContentType.failure,
+                                );
+                              }
+                            },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  isOwnService
-                                      ? ColorRes.leadGreyColor.shade300
-                                      : ColorRes.primary,
+                              backgroundColor: isGuest
+                                  ? ColorRes.primary
+                                  : enabled
+                                      ? ColorRes.primary
+                                      : ColorRes.leadGreyColor.shade300,
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
                             child: Text(
-                              isGuest
-                                  ? "Login to Contact"
-                                  : isSelectable
-                                  ? "Contact Now"
-                                  : "Select Services",
+                              isGuest ? "Login to Contact" : "Contact Now",
                               style: TextStyle(
                                 fontSize: AppFontSizes.bodySmall,
                                 fontWeight: AppFontWeights.semiBold,
@@ -477,8 +502,6 @@ class _ContractorProfileDetailsScreenState
                             ),
                           ),
                         ),
-
-                        /// 🔴 Show explanation if contractor viewing own service
                         if (isOwnService) ...[
                           const SizedBox(height: 8),
                           Container(
@@ -645,11 +668,10 @@ class _ContractorProfileDetailsScreenState
                 physics: NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   final data = contractorServiceController.items[index];
-                  return Obx(
-                    () => ServiceCard(
-                      service: data,
-                      isSelectable: isListSelectable.value,
-                    ),
+                  return ServiceCard(
+                    service: data,
+                    isSelectable: !UserHelper.isGuest,
+                    tag: widget.contractor.userId,
                   );
                 },
                 separatorBuilder: (context, index) => SizedBox(height: 16),
@@ -702,21 +724,28 @@ class _ContractorProfileDetailsScreenState
   }) {
     final hasImage = profilePic != null && profilePic.isNotEmpty;
 
+    if (hasImage) {
+      final size = radius * 2;
+      return ClipOval(
+        child: CachedNetworkImage(
+          imageUrl: profilePic!,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          placeholder: (context, url) => ShimmerShapes.circle(size: size),
+          errorWidget: (context, url, error) => CircleAvatar(
+            radius: radius,
+            backgroundColor: ColorRes.primary,
+            child: Icon(Icons.design_services_outlined, color: Colors.white, size: radius),
+          ),
+        ),
+      );
+    }
+
     return CircleAvatar(
       radius: radius,
-      backgroundColor: Colors.grey.shade300,
-      backgroundImage: hasImage ? NetworkImage(profilePic) : null,
-      child:
-          hasImage
-              ? null
-              : Text(
-                getAvatarLetter(displayName),
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
+      backgroundColor: ColorRes.primary,
+      child: Icon(Icons.design_services_outlined, color: Colors.white, size: radius),
     );
   }
 
@@ -727,7 +756,7 @@ class _ContractorProfileDetailsScreenState
         margin: const EdgeInsets.only(right: 10),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
           border: Border.all(color: ColorRes.leadGreyColor.shade300),
         ),
         child: Column(
@@ -759,11 +788,13 @@ class _ContractorProfileDetailsScreenState
 class ServiceCard extends StatefulWidget {
   final bool isSelectable;
   final ContractorServiceItem service;
+  final String tag;
 
   const ServiceCard({
     super.key,
     required this.service,
     required this.isSelectable,
+    required this.tag,
   });
 
   @override
@@ -771,11 +802,20 @@ class ServiceCard extends StatefulWidget {
 }
 
 class _ServiceCardState extends State<ServiceCard> {
+  final PageController _pageController = PageController(viewportFraction: 0.9);
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
   bool showAllMeta = false;
 
   @override
   Widget build(BuildContext context) {
-    final contractorController = Get.find<ContractorServiceController>();
+    final contractorController =
+        Get.find<ContractorServiceController>(tag: widget.tag);
     var meta = widget.service.meta;
     final metaMaps = [
       cleanMetaMap({
@@ -872,8 +912,9 @@ class _ServiceCardState extends State<ServiceCard> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
+        borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
+        border: widget.isSelectable
+            ? Border.all(
           color:
               widget.isSelectable &&
                       contractorController.selectedItems.contains(
@@ -888,7 +929,14 @@ class _ServiceCardState extends State<ServiceCard> {
                       )
                   ? 2
                   : 1,
-        ),
+        ):null,
+         boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 2,
+            offset: const Offset(2, 3),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -978,6 +1026,78 @@ class _ServiceCardState extends State<ServiceCard> {
               ],
             ),
           ),
+
+          if (widget.service.serviceImage != null &&
+              widget.service.serviceImage!.isNotEmpty)
+            Column(
+              children: [
+                SizedBox(
+                  height: 180,
+                  child: PageView.builder(
+                    controller: _pageController,
+                    itemCount: widget.service.serviceImage!.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
+                            border: Border.all(
+                              color: ColorRes.border,
+                              width: 1,
+                            ),
+                          ),
+                          child: ClipRRect(
+
+                            borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
+                            child: CachedNetworkImage(
+                              imageUrl: widget.service.serviceImage![index],
+                              height: 180,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            placeholder: (context, url) => ShimmerShapes.rounded(
+                              width: double.infinity,
+                              height: 180,
+                              
+                              borderRadius: AppRadius.mediumLarge,
+                            ),
+                              errorWidget:
+                                  (context, url, error) => Container(
+                                    height: 180,
+                                    width: double.infinity,
+
+                                    color: ColorRes.leadGreyColor.shade200,
+                                    child: const Icon(
+                                      Icons.error,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                if (widget.service.serviceImage!.length > 1) ...[
+                  const SizedBox(height: 8),
+                  Center(
+                    child: SmoothPageIndicator(
+                      controller: _pageController,
+                      count: widget.service.serviceImage!.length,
+                      effect: ScrollingDotsEffect(
+                        dotHeight: 8,
+                        dotWidth: 8,
+                        activeDotColor: ColorRes.primary,
+                        dotColor: ColorRes.disabled,
+                      ),
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 12),
+              ],
+            ),
+
           Divider(color: ColorRes.leadGreyColor.shade300, height: 1),
           // Middle section ----------
           Padding(

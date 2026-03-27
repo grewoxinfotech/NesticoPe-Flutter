@@ -4,8 +4,8 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:housing_flutter_app/app/constants/api_constants.dart';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/app/constants/api_constants.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
 
 import '../../../../widgets/messages/snack_bar.dart';
 import '../model/visit_model.dart';
@@ -56,3 +56,5 @@ class VisitService {
     }
   }
 }
+
+

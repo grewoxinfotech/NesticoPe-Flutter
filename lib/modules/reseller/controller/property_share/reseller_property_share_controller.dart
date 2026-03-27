@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/data/network/property_share/property_share_model.dart';
-import 'package:housing_flutter_app/data/network/property_share/property_share_service.dart';
-import 'package:housing_flutter_app/modules/reseller/view/property_share/reseller_property_share.dart';
-import 'package:housing_flutter_app/modules/reseller/view/property_share/reseller_property_share_link_screen.dart';
-import 'package:housing_flutter_app/widgets/New%20folder/inputs/dropdown_field.dart';
-import 'package:housing_flutter_app/widgets/New%20folder/inputs/text_field.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/data/network/property_share/property_share_model.dart';
+import 'package:nesticope_app/data/network/property_share/property_share_service.dart';
+import 'package:nesticope_app/modules/reseller/view/property_share/reseller_property_share.dart';
+import 'package:nesticope_app/modules/reseller/view/property_share/reseller_property_share_link_screen.dart';
+import 'package:nesticope_app/widgets/New%20folder/inputs/dropdown_field.dart';
+import 'package:nesticope_app/widgets/New%20folder/inputs/text_field.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../app/utils/helper_function/contact_helper.dart';

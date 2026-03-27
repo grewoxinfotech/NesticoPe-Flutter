@@ -2,12 +2,12 @@
 // import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 // import 'package:flutter/cupertino.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
+// import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 // import 'package:http/http.dart' as http;
 //
-// import 'package:housing_flutter_app/app/constants/api_constants.dart';
-// import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
-// import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+// import 'package:nesticope_app/app/constants/api_constants.dart';
+// import 'package:nesticope_app/app/widgets/snack_bar/custom_snackbar.dart';
+// import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
 //
 // import '../model/subscription_model.dart';
 // import '../model/user_subscription_model.dart';
@@ -221,12 +221,12 @@ import 'dart:convert';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
+import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:housing_flutter_app/app/constants/api_constants.dart';
-import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/app/constants/api_constants.dart';
+import 'package:nesticope_app/app/widgets/snack_bar/custom_snackbar.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
 
 import '../model/subscription_model.dart';
 import '../model/user_subscription_model.dart';
@@ -237,7 +237,7 @@ class RazorpayOrderResponse {
   final int amount;
   final String currency;
   final String? planName;
-  final int? planAmount;
+  final double? planAmount;
   final bool? autoRenew;
   final String? planId;
   final String? userId;
@@ -278,13 +278,19 @@ class RazorpayOrderResponse {
               : int.tryParse(razorpayOrder['amount'].toString()) ?? 0,
       currency: razorpayOrder['currency']?.toString() ?? 'INR',
       planName: planDetails?['name']?.toString(),
-      planAmount: planDetails?['amount'],
+      planAmount: () {
+        final v = planDetails?['amount'];
+        if (v == null) return null;
+        if (v is num) return v.toDouble();
+        return double.tryParse(v.toString());
+      }(),
       autoRenew: razorpayOrder['notes']['autoRenew'],
       planId: razorpayOrder['notes']['planId']?.toString(),
       userId: razorpayOrder['notes']['userId']?.toString(),
     );
   }
 }
+
 
 class SubscriptionPlanService {
   final String baseUrl = ApiConstants.subscriptionPlan;

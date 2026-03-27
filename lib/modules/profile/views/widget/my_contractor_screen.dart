@@ -345,6 +345,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:nesticope_app/modules/home/controllers/contractor_profile_controller/contractor_profile_controller.dart';
+import 'package:nesticope_app/modules/home/widgets/contractor_profile_screen.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
@@ -357,7 +359,10 @@ class MyContractorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(MyContractorController());
-
+    final controllerContractorProfile = Get.put(
+      TopContractorsController(withoutCity: true),
+      tag: 'contractors_all',
+    );
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -400,6 +405,7 @@ class MyContractorScreen extends StatelessWidget {
               return ContractorCardWidget(
                 project: project,
                 controller: controller,
+                contractorProfileController: controllerContractorProfile,
               );
             },
           ),
@@ -412,11 +418,13 @@ class MyContractorScreen extends StatelessWidget {
 class ContractorCardWidget extends StatefulWidget {
   final ContractorProjectItem project;
   final MyContractorController controller;
+  final TopContractorsController contractorProfileController;
 
   const ContractorCardWidget({
     super.key,
     required this.project,
     required this.controller,
+    required this.contractorProfileController,
   });
 
   @override
@@ -485,8 +493,8 @@ class _ContractorCardWidgetState extends State<ContractorCardWidget> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      meta?.serviceName ?? 'N/A',
-                      maxLines: 1,
+                      meta?.serviceName?.replaceAll("_", " ").capitalize ?? 'N/A',
+                      // maxLines: 2,
                       style: const TextStyle(
                         fontWeight: AppFontWeights.semiBold,
                         fontSize: AppFontSizes.body,
@@ -515,7 +523,12 @@ class _ContractorCardWidgetState extends State<ContractorCardWidget> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  (project.status ?? 'Pending').toUpperCase(),
+                  (project.status ?? 'Pending').capitalize?.replaceAll(
+                        "_",
+                        " ",
+                      ) ??
+                      'N/A',
+
                   style: TextStyle(
                     fontSize: AppFontSizes.caption,
                     fontWeight: AppFontWeights.semiBold,
@@ -533,7 +546,7 @@ class _ContractorCardWidgetState extends State<ContractorCardWidget> {
           _buildInfoRow(
             Icons.check_circle_outline,
             'Status:',
-            project.status?.capitalizeFirst ?? 'N/A',
+            project.status?.capitalizeFirst?.replaceAll("_", " ") ?? 'N/A',
             Colors.black,
           ),
 
@@ -568,7 +581,7 @@ class _ContractorCardWidgetState extends State<ContractorCardWidget> {
               ),
               const SizedBox(width: 8),
               const Text(
-                "Client:",
+                "Contractor:",
                 style: TextStyle(
                   fontSize: AppFontSizes.bodySmall,
                   fontWeight: AppFontWeights.medium,
@@ -576,13 +589,29 @@ class _ContractorCardWidgetState extends State<ContractorCardWidget> {
                 ),
               ),
               const SizedBox(width: 4),
-              Text(
-                project.client?.name ?? 'N/A',
-                style: const TextStyle(
-                  color: Colors.blue,
-                  fontSize: AppFontSizes.bodySmall,
-                  fontWeight: AppFontWeights.semiBold,
-                  decoration: TextDecoration.underline,
+              InkWell(
+                onTap: () {
+                  final client =
+                      widget.contractorProfileController.items
+                          .where(
+                            (element) => element.userId == project.createdBy,
+                          )
+                          .firstOrNull;
+                  log('Clinet appl long ${client?.toJson().toString() ?? ''}');
+                  if (client != null) {
+                    Get.to(
+                      () => ContractorProfileDetailsScreen(contractor: client),
+                    );
+                  }
+                },
+                child: Text(
+                  'view profile' ?? 'N/A',
+                  style: const TextStyle(
+                    color: Colors.blue,
+                    fontSize: AppFontSizes.bodySmall,
+                    fontWeight: AppFontWeights.semiBold,
+                    decoration: TextDecoration.underline,
+                  ),
                 ),
               ),
               const Spacer(),

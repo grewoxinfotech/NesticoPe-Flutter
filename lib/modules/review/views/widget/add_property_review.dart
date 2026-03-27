@@ -2,9 +2,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/data/network/review/model/review_model.dart';
-import 'package:housing_flutter_app/widgets/button/button.dart';
-import 'package:housing_flutter_app/widgets/New folder/inputs/text_field.dart';
+import 'package:nesticope_app/data/network/review/model/review_model.dart';
+import 'package:nesticope_app/widgets/button/button.dart';
+import 'package:nesticope_app/widgets/New folder/inputs/text_field.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';

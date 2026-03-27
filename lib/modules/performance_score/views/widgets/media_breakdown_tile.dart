@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/string_extensions.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
@@ -112,7 +113,8 @@ class BreakdownColumnChart extends StatelessWidget {
               style: TextStyle(
                 fontSize: AppFontSizes.body,
                 fontWeight: AppFontWeights.semiBold,
-                color: ColorRes.leadGreyColor[800],
+                color: ColorRes.textPrimary,
+
               ),
             ),
 
@@ -152,7 +154,10 @@ class BreakdownColumnChart extends StatelessWidget {
                             padding: const EdgeInsets.only(top: 8),
                             child: Text(
                               _short(label),
-                              style: const TextStyle(fontSize: 12),
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: AppFontWeights.medium,
+                              ),
                             ),
                           );
                         },
@@ -232,6 +237,6 @@ class BreakdownColumnChart extends StatelessWidget {
   String _short(String text) {
     // if (text.length <= 7) return text;
     // return text.substring(0, 7); // keeping clean on small screens
-    return text;
+    return text.capitalize??'';
   }
 }

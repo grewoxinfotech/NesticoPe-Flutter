@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/data/network/platform_service/platform_service_model.dart';
+import 'package:nesticope_app/data/network/platform_service/platform_service_model.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:housing_flutter_app/app/constants/api_constants.dart';
-import 'package:housing_flutter_app/app/widgets/snack_bar/custom_snackbar.dart';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/app/constants/api_constants.dart';
+import 'package:nesticope_app/app/widgets/snack_bar/custom_snackbar.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
 
 class PlatformServicesService {
   final String baseUrl = ApiConstants.platformService; // Adjust endpoint

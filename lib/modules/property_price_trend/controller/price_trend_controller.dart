@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/modules/property_price_trend/view/property_price_trend.dart';
+import 'package:nesticope_app/modules/property_price_trend/view/property_price_trend.dart';
 
 class PriceTrendController extends GetxController {
   var selectedIndex = 0.obs;

@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/img_res.dart';
+import 'package:nesticope_app/app/constants/img_res.dart';
 
 class SellerListingController extends GetxController {
   var properties = <Map<String, dynamic>>[].obs;

@@ -169,6 +169,25 @@ class ChatMessage {
       senderName: json['senderName'] ?? sender?['name'],
     );
   }
+   Map<String, dynamic> toMap() {
+    return {
+      "id": id,
+      "senderId": senderId,
+      "receiverId": receiverId,
+      "message": message,
+      "type": type,
+      "fileUrl": fileUrl,
+      "status": status,
+      "createdAt": createdAt.toIso8601String(),
+      "updatedAt": updatedAt.toIso8601String(),
+
+      // sender info (flat format)
+      "senderFirstName": senderFirstName,
+      "senderLastName": senderLastName,
+      "senderUsername": senderUsername,
+      "senderName": senderName,
+    };
+  }
 }
 
 class SendChatMessage {

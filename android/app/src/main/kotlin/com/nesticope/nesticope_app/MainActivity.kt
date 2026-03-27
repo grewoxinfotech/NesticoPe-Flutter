@@ -1,4 +1,4 @@
-package com.example.housing_flutter_app
+package com.nesticope.nesticope_app
 
 import io.flutter.embedding.android.FlutterActivity
 

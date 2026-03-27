@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
+import 'package:nesticope_app/data/network/builder/model/builder_model.dart';
 
-import 'package:housing_flutter_app/app/manager/compare_manager.dart';
+import 'package:nesticope_app/app/manager/compare_manager.dart';
 
 import '../../modules/home/controllers/contractor_profile_controller/contractor_compare_manager.dart';
 
@@ -18,7 +18,7 @@ class ProjectCompareManager extends GetxController {
   bool isSelected(String? id) => id != null && _selected.containsKey(id);
 
 
-  void toggle(ProjectItem item, {int max = 2}) {
+  void toggle(ProjectItem item, {int max = 5}) {
     final id = item.id;
     if (id.isEmpty) return;
     

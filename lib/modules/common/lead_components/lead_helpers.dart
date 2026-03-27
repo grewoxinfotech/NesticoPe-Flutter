@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/modules/seller/module/lead_screen/model/lead_model.dart';
 import 'package:intl/intl.dart';
 
 import '../../reseller/model/dashboard/dashboard_model.dart';

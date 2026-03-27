@@ -1,10 +1,10 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/manager/icon_manager.dart';
-import 'package:housing_flutter_app/modules/add_property/model/add_property_model.dart';
-import 'package:housing_flutter_app/modules/add_property/model/furnishing_model.dart';
-import 'package:housing_flutter_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
+import 'package:nesticope_app/app/manager/icon_manager.dart';
+import 'package:nesticope_app/modules/add_property/model/add_property_model.dart';
+import 'package:nesticope_app/modules/add_property/model/furnishing_model.dart';
+import 'package:nesticope_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../utils/logger/app_logger.dart';
@@ -252,6 +252,7 @@ class LoadEditPropertyPayload extends GetxController {
       loadCommercialAmenities(controller, property);
       loadCommercialInfo(controller, property);
     } else {
+      loadResidentialInfo(controller, property);
       loadAmenities(controller, property);
     }
     loadPgInfo(controller, property);
@@ -262,8 +263,8 @@ class LoadEditPropertyPayload extends GetxController {
     AddPropertyModel property,
   ) {
     controller.commercial_rent_building_Name.text =
-        (property.location != null && property.location!.isNotEmpty)
-            ? property.location!
+        (property.buildingName != null && property.buildingName!.isNotEmpty)
+            ? property.buildingName!
             : '';
     controller.localityController.text =
         (property.location != null && property.location!.isNotEmpty)
@@ -295,6 +296,23 @@ class LoadEditPropertyPayload extends GetxController {
     loadOfficeInfo(controller, property);
   }
 
+  void loadResidentialInfo(
+    CreatePropertyController controller,
+    AddPropertyModel property,
+  ) {
+    controller.commercial_rent_building_Name.text =
+        (property.buildingName != null && property.buildingName!.isNotEmpty)
+            ? property.buildingName!
+            : '';
+    controller.localityController.text =
+        (property.location != null && property.location!.isNotEmpty)
+            ? property.location!
+            : '';
+    controller.sell_rent_Address.text =
+        (property.address != null && property.address!.isNotEmpty)
+            ? property.address!
+            : '';
+  }
   void loadPropertyCondition(
     CreatePropertyController controller,
     AddPropertyModel property,

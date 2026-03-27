@@ -4,17 +4,17 @@ import 'dart:developer';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/app/widgets/image/custom_image.dart'
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/modules/property/controllers/property_controller.dart';
-import 'package:housing_flutter_app/modules/property/controllers/share_property_controller.dart';
-import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
-import 'package:housing_flutter_app/modules/reseller/controller/property_share/reseller_property_share_controller.dart';
-import 'package:housing_flutter_app/utils/shimmer/reseller/entity_screen/reseller_entity_list_screen_shimmer.dart';
-import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/modules/property/controllers/property_controller.dart';
+import 'package:nesticope_app/modules/property/controllers/share_property_controller.dart';
+import 'package:nesticope_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
+import 'package:nesticope_app/modules/reseller/controller/property_share/reseller_property_share_controller.dart';
+import 'package:nesticope_app/utils/shimmer/reseller/entity_screen/reseller_entity_list_screen_shimmer.dart';
+import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/manager/property/property_name_manager.dart';
 import '../../../../app/manager/property/property_pricemanager.dart';
@@ -915,7 +915,9 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
               onTap: () async {
                 if (!Get.isRegistered<PropertyController>())
                   Get.put(PropertyController());
-                final result = await Get.to(() => ResellerPropertyFilterScreen());
+                final result = await Get.to(
+                  () => ResellerPropertyFilterScreen(),
+                );
 
                 if (result != null) {
                   final newFilter = convertFiltersToString(result);
@@ -924,7 +926,6 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
 
                   if (userId != null && userId.isNotEmpty) {
                     newFilter["assignedTo"] = userId;
-
 
                     log("Applying filter → $newFilter");
 
@@ -983,9 +984,9 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                 );
               }
 
-              if (!controller.isLoading.value && controller.items.isEmpty) {
-                return const Center(child: Text("No Listing Yet."));
-              }
+              // if (!controller.isLoading.value && controller.items.isEmpty) {
+              //   return const Center(child: Text("No Listing Yet."));
+              // }
 
               return NotificationListener<ScrollEndNotification>(
                 onNotification: (scrollEnd) {
@@ -997,11 +998,14 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                 },
                 child: RefreshIndicator(
                   onRefresh: controller.refreshResellerProperties,
-                  child: ProductsGrid(
-                    isSelectionMode: isSelectionMode,
-                    selectedPropertyIds: selectedPropertyIds,
-                    propertyController: controller,
-                  ),
+                  child:
+                      (controller.isLoading.value && controller.items.isEmpty)
+                          ? const Center(child: Text("No Listing Yet."))
+                          : ProductsGrid(
+                            isSelectionMode: isSelectionMode,
+                            selectedPropertyIds: selectedPropertyIds,
+                            propertyController: controller,
+                          ),
                 ),
               );
             }),
@@ -1370,25 +1374,18 @@ class ProductsGrid extends StatelessWidget {
               Icon(
                 Icons.search_off,
                 size: 64,
-                color: ColorRes.leadGreyColor[400],
+                color: ColorRes.leadGreyColor[700],
               ),
               SizedBox(height: 16),
               Text(
                 'No properties found',
                 style: TextStyle(
-                  fontSize: AppFontSizes.large,
+                  fontSize: AppFontSizes.bodyMedium,
                   fontWeight: AppFontWeights.semiBold,
-                  color: ColorRes.leadGreyColor[600],
+                  color: ColorRes.leadGreyColor[800],
                 ),
               ),
               SizedBox(height: 8),
-              Text(
-                'Try adjusting your filters',
-                style: TextStyle(
-                  fontSize: AppFontSizes.medium,
-                  color: ColorRes.leadGreyColor[500],
-                ),
-              ),
             ],
           ),
         );

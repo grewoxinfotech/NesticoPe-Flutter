@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/utils/logger/app_logger.dart';
+import 'package:nesticope_app/utils/logger/app_logger.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
@@ -27,11 +27,13 @@ class ReviewService {
   ///==================== Fetch Reviews (Paginated) ====================
   Future<ReviewResponse?> fetchReviews({
     int page = 1,
+    String? limit,
     Map<String, dynamic>? filters,
   }) async {
     try {
       final queryParameters = {
         'page': page.toString(),
+        'limit': limit ?? 'all',
         if (filters != null) ...filters,
       };
 

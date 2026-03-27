@@ -2,12 +2,12 @@
 //
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/app/constants/color_res.dart';
-// import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-// import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
-// import 'package:housing_flutter_app/modules/builder/view/widget/builder_lead_over_view.dart';
-// import 'package:housing_flutter_app/modules/common/lead_components/lead_components.dart';
-// import 'package:housing_flutter_app/modules/common/lead_components/lead_filter_helper.dart';
+// import 'package:nesticope_app/app/constants/color_res.dart';
+// import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+// import 'package:nesticope_app/data/network/builder/model/builder_model.dart';
+// import 'package:nesticope_app/modules/builder/view/widget/builder_lead_over_view.dart';
+// import 'package:nesticope_app/modules/common/lead_components/lead_components.dart';
+// import 'package:nesticope_app/modules/common/lead_components/lead_filter_helper.dart';
 //
 // import '../../../data/network/property/models/property_model.dart';
 // import '../../../widgets/bottom_sheet/lead_filter_bottomsheet.dart';
@@ -293,13 +293,13 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
-import 'package:housing_flutter_app/modules/builder/view/widget/builder_lead_over_view.dart';
-import 'package:housing_flutter_app/modules/common/lead_components/lead_components.dart';
-import 'package:housing_flutter_app/modules/common/lead_components/lead_filter_helper.dart';
-import 'package:housing_flutter_app/utils/shimmer/common_screen/lead_screen/lead_list_screen_shimmer.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/data/network/builder/model/builder_model.dart';
+import 'package:nesticope_app/modules/builder/view/widget/builder_lead_over_view.dart';
+import 'package:nesticope_app/modules/common/lead_components/lead_components.dart';
+import 'package:nesticope_app/modules/common/lead_components/lead_filter_helper.dart';
+import 'package:nesticope_app/utils/shimmer/common_screen/lead_screen/lead_list_screen_shimmer.dart';
 
 import '../../../data/network/property/models/property_model.dart';
 import '../../../widgets/bottom_sheet/lead_filter_bottomsheet.dart';

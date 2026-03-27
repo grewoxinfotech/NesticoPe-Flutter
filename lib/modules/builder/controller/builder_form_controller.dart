@@ -560,15 +560,15 @@ import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
-import 'package:housing_flutter_app/data/network/builder/service/builder_service.dart';
-import 'package:housing_flutter_app/modules/builder/view/builder_dashboard.dart';
-import 'package:housing_flutter_app/utils/logger/app_logger.dart';
-import 'package:housing_flutter_app/widgets/location_permission/location_permission_method.dart';
-import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
+import 'package:nesticope_app/app/care/pagination/controller/pagination_controller.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/data/network/auth/model/user_model.dart';
+import 'package:nesticope_app/data/network/builder/service/builder_service.dart';
+import 'package:nesticope_app/modules/builder/view/builder_dashboard.dart';
+import 'package:nesticope_app/utils/logger/app_logger.dart';
+import 'package:nesticope_app/widgets/location_permission/location_permission_method.dart';
+import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:open_filex/open_filex.dart';
@@ -583,6 +583,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   final BuilderService _builderService = BuilderService();
   final currentStep = 0.obs;
   final RxString selectedCity = ''.obs;
+  final RxString builderStatus = ''.obs;
   ImagePicker picker = ImagePicker();
   RxList<ProjectItem> topProjects = <ProjectItem>[].obs;
   RxList<String> selectedListOfAmenities = <String>[].obs;
@@ -662,6 +663,9 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   late TextEditingController platformFees;
   final buildingNameControllers = <TextEditingController>[].obs;
   final bool isBuilderView;
+  RxString createdBy = ''.obs;
+  RxBool isCreatedByItem = false.obs;
+  RxBool youWantWithoutCity = false.obs;
   var selectedBuilding = ''.obs;
 
   ProjectWizardController({required this.isBuilderView});
@@ -701,17 +705,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     }
   }
 
-  /*  void saveBuildingNames() {
-    final map = <String, String>{};
-    for (int i = 0; i < buildingNameControllers.length; i++) {
-      final name = buildingNameControllers[i].text.trim();
-      map["buildingName#${i + 1}"] = name.isEmpty ? "Building ${i + 1}" : name;
-    }
-
-    project.update((p) {
-      p!.buildingNames = map;
-    });
-  }*/
   void saveBuildingNames() {
     final map = <String, String>{};
 
@@ -808,8 +801,21 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       log("dkvjcvifj $filters");
       var user = await SecureStorage.getUserData();
       var userId = user?.user?.id;
-      if (userId != null) {
-        filters = {'created_by': userId};
+
+      if (isCreatedByItem.value) {
+        final current = Map<String, String>.from(filters ?? {});
+        if (createdBy.isNotEmpty) {
+          current['created_by'] = createdBy.value;
+
+          if (!youWantWithoutCity.value) {
+            current['city'] = selectedCity.value ?? '';
+          } else {
+            current.remove('city');
+          }
+        } else if ((userId ?? '').isNotEmpty) {
+          current['created_by'] = userId!;
+        }
+        filters = current;
       }
       final response = await _builderService.fetchProjects(
         page: page,
@@ -824,6 +830,27 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     }
   }
 
+  void withoutCityFilter() {
+    youWantWithoutCity.value = true;
+    filters ??= {};
+    filters!.remove('city');
+    print("🔍 Top Applied: city removed");
+  }
+
+  void fetchCreatedBy({
+    required String created,
+    bool isItem = false,
+    bool withoutCity = false,
+  }) {
+    createdBy.value = created;
+    isCreatedByItem.value = isItem;
+    youWantWithoutCity.value = withoutCity;
+    if (withoutCity) {
+      withoutCityFilter();
+    }
+    loadInitial();
+  }
+
   void cityAssign(String city) {
     selectedCity.value = city;
     log("dhgfyfg ${selectedCity.value}");
@@ -835,7 +862,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     print('jfgig $key');
     if (key == 'propertyTypes') {
       // Add/replace property type while keeping city
-      final cityValue = filters!['city'];
+      final cityValue = youWantWithoutCity.value ? null : filters!['city'];
       filters = {
         if (cityValue != null) 'city': cityValue,
         'propertyTypes': val,
@@ -843,7 +870,11 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       print("🔍 Top Applied: propertyTypes=$val, city=${cityValue ?? '-'}");
     } else if (key == 'city') {
       // When changing city, REMOVE propertyType & listingType
-      filters = {'city': val};
+      if (youWantWithoutCity.value) {
+        filters!.remove('city');
+      } else {
+        filters = {'city': val};
+      }
 
       selectedCity.value = val;
       print("🏙️ City changed → Reset filters. city=$val");
@@ -851,7 +882,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       loadTopProject();
     } else if (key == 'listingType') {
       // Add/replace listingType while keeping city
-      final cityValue = filters!['city'];
+      final cityValue = youWantWithoutCity.value ? null : filters!['city'];
       filters = {
         if (cityValue != null) 'city': cityValue,
         'listingType': val.toUpperCase(),
@@ -894,8 +925,14 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   /// Apply filters and refresh (expects a plain Map)
   Future<void> applyFilters(Map<String, String> newFilters) async {
     try {
+      log("🔍 Applying filters builder status : $newFilters");
       isLoading.value = true;
-      filters = Map<String, String>.from(newFilters);
+      final incoming = Map<String, String>.from(newFilters);
+      if (youWantWithoutCity.value) {
+        incoming.remove('city');
+      }
+      filters ??= {};
+      filters!.addAll(incoming);
       currentPage.value = 1;
       items.clear();
       await refreshList();
@@ -946,7 +983,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
 
   Future<PaginationResponse<ProjectItem>> fetchTopItems(int page) async {
     try {
-      final response = await _builderService.fetchProjects(
+      final response = await _builderService.fetchTopProject(
         page: page,
         filters: filters,
       );

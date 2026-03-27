@@ -2,10 +2,10 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/data/network/contractor/model/contractor_lead_model/contractor_lead_followup_model.dart';
-import 'package:housing_flutter_app/data/network/contractor/model/contractor_lead_model/contractor_lead_model.dart';
-import 'package:housing_flutter_app/modules/contractor/controller/contractor_lead_followup_controller.dart';
-import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_visit_controller.dart';
+import 'package:nesticope_app/data/network/contractor/model/contractor_lead_model/contractor_lead_followup_model.dart';
+import 'package:nesticope_app/data/network/contractor/model/contractor_lead_model/contractor_lead_model.dart';
+import 'package:nesticope_app/modules/contractor/controller/contractor_lead_followup_controller.dart';
+import 'package:nesticope_app/modules/seller/module/lead_screen/controllers/lead_visit_controller.dart';
 
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/constants/color_res.dart';

@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/data/network/property/models/property_model.dart';
-import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/data/network/property/models/property_model.dart';
+import 'package:nesticope_app/modules/saved_property/controllers/property_favorite_controller.dart';
 import '../../../data/network/property/models/viewed_item_model.dart';
 import '../../../data/network/property/services/property_view_service.dart';
 import '../../property/controllers/property_controller.dart';
@@ -44,6 +44,9 @@ class PropertyViewController extends GetxController {
           data.data!.property.where((element) => element.details != null),
         );
         await favouriteController.loadViews(viewedProperties);
+
+        
+
       }
 
       properties.clear();

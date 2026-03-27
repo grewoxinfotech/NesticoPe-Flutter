@@ -4,11 +4,11 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
-import 'package:housing_flutter_app/data/network/getProfile/service/getProfile_service.dart';
-import 'package:housing_flutter_app/data/network/profile/reseller_profile/service/reseller_profile_service.dart';
-import 'package:housing_flutter_app/widgets/location_permission/location_permission_method.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/data/network/auth/model/user_model.dart';
+import 'package:nesticope_app/data/network/getProfile/service/getProfile_service.dart';
+import 'package:nesticope_app/data/network/profile/reseller_profile/service/reseller_profile_service.dart';
+import 'package:nesticope_app/widgets/location_permission/location_permission_method.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../app/constants/color_res.dart';
@@ -19,6 +19,7 @@ import '../../../data/network/user/service/user_service.dart';
 import '../../../widgets/messages/snack_bar.dart';
 import '../../reseller/model/user/user_model.dart';
 import '../model/seller_profile.dart';
+import 'package:nesticope_app/modules/profile/controllers/buyer_profiledata.dart';
 
 class SellerProfileController extends GetxController {
   final RxBool isLoading = false.obs;
@@ -175,6 +176,7 @@ class SellerProfileController extends GetxController {
   void _populateControllers() {
     // Contact Info fields
     nameController.text = profileData.value?.user?.firstName ?? "";
+    
     lastNameController.text = profileData.value?.user?.lastName ?? "";
     emailController.text = profileData.value?.user?.email ?? "";
     phoneController.text = profileData.value?.user?.phone ?? "";
@@ -554,6 +556,11 @@ class SellerProfileController extends GetxController {
             token: profileData.value?.token,
           );
           await SecureStorage.saveUserData(profileData.value!);
+          BuyerProfileDataController b = Get.isRegistered<BuyerProfileDataController>()
+              ? Get.find<BuyerProfileDataController>()
+              : Get.put(BuyerProfileDataController());
+          b.userProfile.value = profileData.value?.user;
+          b.userProfile.refresh();
         }
 
         await getUserProfileData();
@@ -653,6 +660,11 @@ class SellerProfileController extends GetxController {
           );
 
           await SecureStorage.saveUserData(profileData.value!);
+          BuyerProfileDataController b = Get.isRegistered<BuyerProfileDataController>()
+              ? Get.find<BuyerProfileDataController>()
+              : Get.put(BuyerProfileDataController());
+          b.userProfile.value = profileData.value?.user;
+          b.userProfile.refresh();
 
           await getUserProfileData();
         }

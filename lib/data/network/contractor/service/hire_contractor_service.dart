@@ -228,6 +228,7 @@ class HireContractorService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        log("Print Data for ${data}");
         return PaginationResponse.fromJson(
           data,
           (json) => ContractorServiceCategory.fromMap(json),

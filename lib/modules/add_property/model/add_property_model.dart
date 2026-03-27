@@ -74,7 +74,7 @@ class AddPropertyModel {
     if (reraId != null) data['reraId'] = reraId;
     if (propertyStatus != null) data['property_status'] = propertyStatus;
     if (builderName != null) data['builderName'] = builderName;
-    if (buildingName != null) data['buildingName'] = buildingName;
+    if (buildingName != null) data['nearbyLocations'] = buildingName;
     if (projectName != null) data['projectName'] = projectName;
     if (ownerPhone != null) data['ownerPhone'] = ownerPhone;
     if (ownerName != null) data['ownerName'] = ownerName;
@@ -189,10 +189,10 @@ class PropertyDetails {
       );
     if (plotInfo != null) data['plot_info'] = plotInfo;
     if (zoneType != null) data['zone_type'] = zoneType!.toLowerCase();
-    if (facilitiesInfo != null) data['facilities_info'] = facilitiesInfo;
+    if (facilitiesInfo != null) data['facilities_info'] = facilitiesInfo!.toJson();
     if (propertyCondition != null)
       data['property_condition'] = propertyCondition;
-    if (petFriendly != null) data['"pet_friendly"'] = petFriendly;
+    if (petFriendly != null) data['pet_friendly'] = petFriendly;
     if (lifInfo != null) data['lift_info'] = lifInfo;
     if (serventRoom != null) data['servant_room'] = serventRoom;
     if (transactionType != null) data['transaction_type'] = transactionType;

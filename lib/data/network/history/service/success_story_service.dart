@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
-import 'package:housing_flutter_app/app/constants/api_constants.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/app/constants/api_constants.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 
@@ -22,11 +22,15 @@ class SuccessStoryService {
     int page = 1,
     String? status,
     int? limit,
+    String? module,
   }) async {
     try {
       final query = {
         'page': page.toString(),
+
         if (status != null) 'status': status,
+        if (module != null) 'module': module,
+
         if (limit != null) 'limit': limit.toString(),
       };
 

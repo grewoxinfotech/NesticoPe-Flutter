@@ -2,13 +2,13 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
-import 'package:housing_flutter_app/modules/contractor/controller/contractor_lead_controller.dart';
-import 'package:housing_flutter_app/utils/shimmer/common_screen/visit_screen/visit_list_screen_shimmer.dart';
+import 'package:nesticope_app/data/network/auth/model/user_model.dart';
+import 'package:nesticope_app/modules/contractor/controller/contractor_lead_controller.dart';
+import 'package:nesticope_app/utils/shimmer/common_screen/visit_screen/visit_list_screen_shimmer.dart';
 import 'package:intl/intl.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_visit_controller.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/modules/seller/module/lead_screen/controllers/lead_visit_controller.dart';
 
 import '../../../../../data/network/lead/model/lead_visit_model.dart';
 import '../../../../seller/module/lead_screen/controllers/lead_property_inquiry_controller.dart';

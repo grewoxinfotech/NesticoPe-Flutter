@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/modules/contractor/controller/employee_task_controller.dart';
-import 'package:housing_flutter_app/modules/property_rating/view/widget/read_more_or_less.dart';
+import 'package:nesticope_app/modules/contractor/controller/employee_task_controller.dart';
+import 'package:nesticope_app/modules/property_rating/view/widget/read_more_or_less.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/constants/color_res.dart';
 import '../../../../../data/network/contractor/model/employee/employee_task_model.dart';
-import 'package:housing_flutter_app/widgets/New%20folder/inputs/text_field.dart';
-import 'package:housing_flutter_app/widgets/New%20folder/inputs/dropdown_field.dart';
+import 'package:nesticope_app/widgets/New%20folder/inputs/text_field.dart';
+import 'package:nesticope_app/widgets/New%20folder/inputs/dropdown_field.dart';
 
 class EmployeeTaskListScreen extends StatefulWidget {
   final String projectId;

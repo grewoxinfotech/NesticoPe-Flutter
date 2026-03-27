@@ -2,7 +2,7 @@
 //
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/modules/search_property/model/search_model.dart';
+// import 'package:nesticope_app/modules/search_property/model/search_model.dart';
 //
 // import '../../app/constants/app_font_sizes.dart';
 // import '../../app/constants/color_res.dart';
@@ -452,8 +452,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/modules/search_property/model/search_model.dart';
-import 'package:housing_flutter_app/widgets/New%20folder/inputs/text_field.dart'
+import 'package:nesticope_app/modules/search_property/model/search_model.dart';
+import 'package:nesticope_app/widgets/New%20folder/inputs/text_field.dart'
     hide tile;
 
 import '../../app/constants/app_font_sizes.dart';

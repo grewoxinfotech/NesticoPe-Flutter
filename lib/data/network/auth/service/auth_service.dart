@@ -5,16 +5,16 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
-import 'package:housing_flutter_app/data/network/user/service/notification_sync_service.dart';
-import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
-import 'package:housing_flutter_app/utils/logger/app_logger.dart';
+import 'package:nesticope_app/data/network/auth/model/user_model.dart';
+import 'package:nesticope_app/data/network/user/service/notification_sync_service.dart';
+import 'package:nesticope_app/modules/auth/views/login_screen.dart';
+import 'package:nesticope_app/utils/logger/app_logger.dart';
 import 'package:http/http.dart' as http;
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../app/constants/api_constants.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
 import 'package:get/get.dart';
 
 import '../../../../app/widgets/snackbar/snackbar.dart';
@@ -28,6 +28,65 @@ class AuthService {
 
   static Future<Map<String, String>> headers() async {
     return await ApiConstants.getHeaders();
+  }
+
+  Future<UserModel?> loginWithTrueCaller(Map<String, dynamic> data) async {
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConstants.truecallerLogin),
+        headers: {i: j},
+        body: jsonEncode(data),
+      );
+      debugPrint("Login With Truecaller Done ${response.statusCode}");
+      debugPrint("Response of api : ${response.body}");
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        debugPrint("✅ Login With Truecaller Done ${response.statusCode}");
+        debugPrint("Response : ${response.body}");
+        final data = jsonDecode(response.body);
+
+        final user = UserModel.fromJson(data['data']);
+     
+        final token = data['data']['token'] ?? user.token;
+        print("Token :sdfhghfgsdhufgsd $token    ");
+        print("User :fdjgd ${user.toJson()}");
+        await SecureStorage.saveUserData(user);
+        await SecureStorage.saveToken(token);
+        await SecureStorage.saveLoggedIn(true);
+        final success = data['success'] == true;
+        if (success) {
+
+          Fluttertoast.showToast(
+            msg: "🎉 Login With Truecaller Done Successfully!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+          );
+                    return user;
+        } else {
+          Fluttertoast.showToast(
+            msg: "⚠️ Failed to Login With Truecaller. Please try again.",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+          );
+        }
+      } else {
+        Fluttertoast.showToast(
+          msg: "⚠️ Failed to Login With Truecaller. Please try again.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
+      }
+
+    } catch (e) {
+      debugPrint("Error in Login With Truecaller : $e");
+      rethrow;
+    }
+    return null;
   }
 
   Future<bool> generateResellerCertificate(
@@ -60,13 +119,12 @@ class AuthService {
         );
         debugPrint("Response : ${response.body}");
 
-
         final data = jsonDecode(response.body);
         final url = data['data']['certificateUrl'];
 
-         await downloadOpenSharePdf(url);
+        await downloadOpenSharePdf(url);
 
-      /*  if (path != null) {
+        /*  if (path != null) {
           print("Certificate saved at: $path");
         }
 */
@@ -117,6 +175,7 @@ class AuthService {
       return false;
     }
   }
+
   Future<String?> downloadCertificate(String pdfUrl) async {
     try {
       final dio = Dio();
@@ -141,6 +200,7 @@ class AuthService {
       return null;
     }
   }
+
   Future<void> downloadOpenSharePdf(String pdfUrl) async {
     try {
       final dio = Dio();
@@ -162,15 +222,13 @@ class AuthService {
       await OpenFilex.open(filePath);
 
       // 📤 Share PDF
-      await Share.shareXFiles(
-        [XFile(filePath)],
-        text: "Here is your certificate",
-      );
+      await Share.shareXFiles([
+        XFile(filePath),
+      ], text: "Here is your certificate");
     } catch (e) {
       debugPrint("PDF flow failed: $e");
     }
   }
-
 
   // Login
   Future<UserModel> login(String email, String password) async {
@@ -203,7 +261,6 @@ class AuthService {
   }
 
   Future<Map<String, dynamic>> register({
-    required String username,
     required String password,
     required String email,
     required String userType,
@@ -220,7 +277,6 @@ class AuthService {
       Uri.parse(ApiConstants.registerEndpoint),
       headers: {i: j},
       body: jsonEncode({
-        'username': username,
         'password': password,
         'email': email,
         'userType': userType,
@@ -458,7 +514,6 @@ class AuthService {
     required String city,
     required String zipCode,
   }) async {
-
     final user = await SecureStorage.getUserData();
     final userId = user?.user?.id ?? '';
     print("djsfhdsfhdsdsjfjdsjfds ${city} ${zipCode}  ${userId}");
@@ -470,7 +525,6 @@ class AuthService {
 
     final data = jsonDecode(response.body);
     if (response.statusCode == 200 && data['success'] == true) {
-
       await generateResellerCertificate(data['data']['certificateData']);
       return true;
     } else {
@@ -533,6 +587,63 @@ class AuthService {
     Get.offAll(const LoginScreen());
   }
 
+  Future<bool> requestOtpLogin(String id) async {
+    final response = await http.post(
+      Uri.parse('${ApiConstants.auth}/otp-login'),
+      headers: {i: j},
+      body: jsonEncode({'id': id}),
+    );
+    final data = jsonDecode(response.body);
+    if (response.statusCode == 200 && data['success'] == true) {
+      final token = (data['data']?['token'] ?? '').toString();
+      if (token.isNotEmpty) {
+        await SecureStorage.saveLoginWithOtpToken(token);
+      }
+      return true;
+    }
+    return false;
+  }
+
+  Future<UserModel?> verifyLoginOtp(String otp) async {
+    final response = await http.post(
+      Uri.parse('${ApiConstants.auth}/verify-otp'),
+      headers: await ApiConstants.getUpdatedLoginWithOtpHeaders(),
+      body: jsonEncode({'otp': otp}),
+    );
+    final data = jsonDecode(response.body);
+    print("Signujdfhjsd dfjsd $data");
+    if (response.statusCode == 200 && data['success'] == true) {
+   
+        final user = UserModel.fromJson(data['data']);
+     
+        final token = data['data']['token'] ?? user.token;
+      if (token.isNotEmpty) {
+        await SecureStorage.saveToken(token);
+      }
+      await SecureStorage.saveUserData(user);
+      await SecureStorage.saveLoggedIn(true);
+      await SecureStorage.deleteLoginWithOtpToken();
+      return user;
+    }
+    return null;
+  }
+
+  Future<bool> resendLoginOtp() async {
+    final response = await http.post(
+      Uri.parse('${ApiConstants.auth}/resend-otp'),
+      headers: await ApiConstants.getUpdatedLoginWithOtpHeaders(),
+    );
+    final data = jsonDecode(response.body);
+    if (response.statusCode == 200 && data['success'] == true) {
+      final token = (data['data']?['token'] ?? '').toString();
+      if (token.isNotEmpty) {
+        await SecureStorage.saveLoginWithOtpToken(token);
+      }
+      return true;
+    }
+    return false;
+  }
+
   Future<bool> deleteAccount(String userId, String reason) async {
     final response = await http.post(
       Uri.parse(ApiConstants.deleteAccount),
@@ -542,11 +653,17 @@ class AuthService {
 
     final data = jsonDecode(response.body);
     print("[DEBUG]=> Delete Account ${response.body}");
-    if (response.statusCode == 200 && data['success'] == true) {
+    if (data['success'] == true) {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Success',
+        message: data['message'] ?? 'Account deleted successfully',
+        contentType: ContentType.success,
+      );
       return true;
     } else {
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
+
         message: data['message'] ?? 'Failed to delete account',
         contentType: ContentType.failure,
       );

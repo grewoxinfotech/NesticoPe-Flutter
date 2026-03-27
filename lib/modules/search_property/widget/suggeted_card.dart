@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/constants/size_manager.dart';
-import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/modules/search_property/view/search_screen.dart';
 
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 
 class SuggestionCardList extends StatelessWidget {
   final String address;

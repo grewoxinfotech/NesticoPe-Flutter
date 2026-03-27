@@ -3,18 +3,22 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
-import 'package:housing_flutter_app/data/network/auth/model/user_model.dart'
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:nesticope_app/data/network/auth/model/user_model.dart'
     show UserModel, UserRole, User;
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:housing_flutter_app/data/network/auth/service/auth_service.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
-import 'package:housing_flutter_app/modules/auth/views/ResetPasswordScreen.dart';
-import 'package:housing_flutter_app/modules/auth/views/seller_registration_complete.dart';
-import 'package:housing_flutter_app/modules/profile/views/profile_screen.dart';
-import 'package:housing_flutter_app/utils/logger/app_logger.dart';
-import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
+import 'package:nesticope_app/data/network/auth/service/auth_service.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/modules/add_property/controller/create_property_controller.dart';
+import 'package:nesticope_app/modules/auth/views/ResetPasswordScreen.dart';
+import 'package:nesticope_app/modules/auth/views/seller_registration_complete.dart';
+import 'package:nesticope_app/modules/builder/view/builder_main_screen.dart';
+import 'package:nesticope_app/modules/contractor/view/contractor_main.dart';
+import 'package:nesticope_app/modules/dashboard/views/seller_dashboard_screen.dart';
+import 'package:nesticope_app/modules/profile/views/profile_screen.dart';
+import 'package:nesticope_app/modules/reseller/view/property_reseller.dart';
+import 'package:nesticope_app/utils/logger/app_logger.dart';
+import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import '../../../data/network/user/service/notification_sync_service.dart';
 import '../../../services/notification_service.dart';
@@ -175,7 +179,19 @@ class AuthController extends GetxController {
       }
 
       // 5️⃣ Navigate (always LAST)
-      Get.offAll(() => const DashboardScreen());
+      if (UserHelper.userType == UserType.buyer) {
+        Get.offAll(() => const DashboardScreen());
+      } else if (UserHelper.userType == UserType.seller &&
+          UserHelper.sellerType == SellerType.owner) {
+        Get.offAll(() => const SellerDashboardScreen());
+      } else if (UserHelper.userType == UserType.reseller) {
+        Get.offAll(() => const MainNavigationScreen());
+      } else if (UserHelper.userType == UserType.contractor) {
+        Get.offAll(() => ContractorMainScreen());
+      } else if (UserHelper.userType == UserType.seller &&
+          UserHelper.sellerType == SellerType.builder) {
+        Get.offAll(() => const BuilderMainScreen());
+      }
     } catch (e) {
       errorMessage.value = e.toString();
 
@@ -193,7 +209,7 @@ class AuthController extends GetxController {
 
   Future<bool> register({
     required BuildContext context,
-    required String username,
+
     required String password,
     required String email,
     required String firstName,
@@ -209,7 +225,6 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
       final response = await authService.register(
-        username: username,
         password: password,
         email: email,
         userType: userType,
@@ -404,7 +419,7 @@ class AuthController extends GetxController {
   Future<void> sellerRegister({
     required BuildContext context,
     required Map<String, dynamic>? data,
-    required String username,
+
     required String phone,
     required String sellerType,
     String? referralCode,

@@ -3,11 +3,11 @@
 // // import 'dart:developer';
 // // import 'package:flutter/material.dart';
 // // import 'package:get/get.dart';
-// // import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-// // import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
-// // import 'package:housing_flutter_app/modules/dashboard/views/seller_dashboard_screen.dart';
-// // import 'package:housing_flutter_app/modules/reseller/view/property_reseller.dart';
-// // import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
+// // import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+// // import 'package:nesticope_app/modules/auth/views/login_screen.dart';
+// // import 'package:nesticope_app/modules/dashboard/views/seller_dashboard_screen.dart';
+// // import 'package:nesticope_app/modules/reseller/view/property_reseller.dart';
+// // import 'package:nesticope_app/modules/saved_property/controllers/property_favorite_controller.dart';
 // // import '../../../app/constants/color_res.dart';
 // // import '../../../app/utils/helper_function/user_helper/user_helper.dart';
 // // import '../../../data/database/secure_storage_service.dart';
@@ -436,10 +436,10 @@
 // // import 'dart:ui';
 // // import 'package:flutter/material.dart';
 // // import 'package:get/get.dart';
-// // import 'package:housing_flutter_app/app/constants/color_res.dart';
-// // import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
-// // import 'package:housing_flutter_app/modules/dashboard/views/seller_dashboard_screen.dart';
-// // import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
+// // import 'package:nesticope_app/app/constants/color_res.dart';
+// // import 'package:nesticope_app/modules/auth/views/login_screen.dart';
+// // import 'package:nesticope_app/modules/dashboard/views/seller_dashboard_screen.dart';
+// // import 'package:nesticope_app/modules/saved_property/controllers/property_favorite_controller.dart';
 // // import '../../../app/utils/helper_function/user_helper/user_helper.dart';
 // // import '../../../data/database/secure_storage_service.dart';
 // // import '../../../services/notification_service.dart';
@@ -689,11 +689,11 @@
 // import 'dart:ui';
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/app/constants/color_res.dart';
-// import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
-// import 'package:housing_flutter_app/modules/dashboard/views/seller_dashboard_screen.dart';
-// import 'package:housing_flutter_app/modules/reseller/view/property_reseller.dart';
-// import 'package:housing_flutter_app/modules/saved_property/controllers/property_favorite_controller.dart';
+// import 'package:nesticope_app/app/constants/color_res.dart';
+// import 'package:nesticope_app/modules/auth/views/login_screen.dart';
+// import 'package:nesticope_app/modules/dashboard/views/seller_dashboard_screen.dart';
+// import 'package:nesticope_app/modules/reseller/view/property_reseller.dart';
+// import 'package:nesticope_app/modules/saved_property/controllers/property_favorite_controller.dart';
 // import '../../../app/utils/helper_function/user_helper/user_helper.dart';
 // import '../../../data/database/secure_storage_service.dart';
 // import '../../../services/notification_service.dart';
@@ -904,6 +904,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
 import '../../../data/database/secure_storage_service.dart';
 import '../../../data/network/user/service/notification_sync_service.dart';
 import '../../../services/notification_service.dart';
@@ -1076,14 +1077,15 @@ class _SplashScreenState extends State<SplashScreen>
             filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
             child: Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Colors.black.withOpacity(0.45),
-                    Colors.black.withOpacity(0.25),
-                  ],
-                ),
+                // gradient: LinearGradient(
+                //   begin: Alignment.topLeft,
+                //   end: Alignment.bottomRight,
+                //   colors: [
+                //     Colors.black.withOpacity(0.45),
+                //     Colors.black.withOpacity(0.25),
+                //   ],
+                // ),
+                color:ColorRes.primary,
               ),
             ),
           ),
@@ -1111,8 +1113,8 @@ class _SplashScreenState extends State<SplashScreen>
                 child: Container(
                   child: Image.asset(
                     'assets/images/NesticoPe_logo.png',
-                    width: 160,
-                    height: 160,
+                    width: 230,
+                    height: 230,
                     fit: BoxFit.contain,
                   ),
                 ),

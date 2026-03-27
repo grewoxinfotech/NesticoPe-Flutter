@@ -4,18 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
 
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/modules/add_property/view/create_property.dart';
-import 'package:housing_flutter_app/modules/filter_property/controller/property_filter_controller.dart';
-import 'package:housing_flutter_app/modules/filter_property/view/widget/buy_componet/buy_component.dart';
-import 'package:housing_flutter_app/modules/filter_property/view/widget/buy_componet/buyer_filter.dart';
-import 'package:housing_flutter_app/modules/filter_property/view/widget/commercial_property_filter/commercial_property_filter.dart';
-import 'package:housing_flutter_app/modules/filter_property/view/widget/common_component/listed_by.dart';
-import 'package:housing_flutter_app/modules/filter_property/view/widget/common_component/sale_type.dart';
-import 'package:housing_flutter_app/modules/filter_property/view/widget/location_dropdown.dart';
-import 'package:housing_flutter_app/modules/filter_property/view/widget/pg_property/pg_co_living.dart';
-import 'package:housing_flutter_app/modules/filter_property/view/widget/rent_component/rented_filter.dart';
-import 'package:housing_flutter_app/modules/search_property/view/search_screen.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/modules/add_property/view/create_property.dart';
+import 'package:nesticope_app/modules/filter_property/controller/property_filter_controller.dart';
+import 'package:nesticope_app/modules/filter_property/view/widget/buy_componet/buy_component.dart';
+import 'package:nesticope_app/modules/filter_property/view/widget/buy_componet/buyer_filter.dart';
+import 'package:nesticope_app/modules/filter_property/view/widget/commercial_property_filter/commercial_property_filter.dart';
+import 'package:nesticope_app/modules/filter_property/view/widget/common_component/listed_by.dart';
+import 'package:nesticope_app/modules/filter_property/view/widget/common_component/sale_type.dart';
+import 'package:nesticope_app/modules/filter_property/view/widget/location_dropdown.dart';
+import 'package:nesticope_app/modules/filter_property/view/widget/pg_property/pg_co_living.dart';
+import 'package:nesticope_app/modules/filter_property/view/widget/rent_component/rented_filter.dart';
+import 'package:nesticope_app/modules/search_property/view/search_screen.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/manager/icon_manager.dart';
@@ -45,6 +45,7 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
   String saleType = "New Properties";
 
   @override
+  
   void initState() {
     super.initState();
     controllerForFilter = Get.put(PropertyFilterControllerForFilter());
@@ -625,7 +626,8 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
+                      await Future.delayed(Duration.zero);
                       final filters = controllerForFilter.getAllFilters();
                       final stringFilters = convertFiltersToString(filters);
                       log("Change the filter ${stringFilters}");

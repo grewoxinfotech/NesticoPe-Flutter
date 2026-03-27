@@ -740,7 +740,7 @@
 // import 'dart:io';
 //
 // import 'package:flutter/material.dart';
-// import 'package:housing_flutter_app/modules/builder/view/property_detail/widget/variant_media_preview.dart';
+// import 'package:nesticope_app/modules/builder/view/property_detail/widget/variant_media_preview.dart';
 // import 'package:provider/provider.dart';
 //
 // import '../../../../../data/network/builder/model/builder_model.dart';
@@ -1222,8 +1222,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:housing_flutter_app/modules/builder/view/property_detail/widget/variant_media_preview.dart';
-import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
+import 'package:nesticope_app/modules/builder/view/property_detail/widget/variant_media_preview.dart';
+import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../data/network/builder/model/builder_model.dart';

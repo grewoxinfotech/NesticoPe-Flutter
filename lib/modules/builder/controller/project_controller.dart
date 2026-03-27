@@ -1,7 +1,7 @@
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/widgets/snackbar/snackbar.dart';
+import 'package:nesticope_app/app/widgets/snackbar/snackbar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/utils/helper_function/user_helper/user_helper.dart';
@@ -117,6 +117,12 @@ class ProjectController extends GetxController {
     print("Inquiry Data Sent: $data ====$id");
 
     final success = await _propertyService.addInquiry(data, id);
+    return success;
+  }
+   Future<bool> addForNesticoPeInquiry(Map<String, dynamic> data) async {
+    print("Inquiry Data Sent: $data ====");
+
+    final success = await _propertyService.addInquiryForNesticoPeService(data);
     return success;
   }
 

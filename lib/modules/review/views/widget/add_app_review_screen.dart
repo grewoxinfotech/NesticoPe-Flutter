@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/utils/validation.dart';
-import 'package:housing_flutter_app/app/widgets/snackbar/snackbar.dart';
-import 'package:housing_flutter_app/modules/review/views/widget/rating_widget.dart';
-import 'package:housing_flutter_app/widgets/New%20folder/inputs/text_field.dart';
+import 'package:nesticope_app/app/utils/validation.dart';
+import 'package:nesticope_app/app/widgets/snackbar/snackbar.dart';
+import 'package:nesticope_app/modules/review/views/widget/rating_widget.dart';
+import 'package:nesticope_app/widgets/New%20folder/inputs/text_field.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';

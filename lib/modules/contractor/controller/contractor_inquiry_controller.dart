@@ -2,9 +2,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
-import 'package:housing_flutter_app/data/network/contractor/service/contractor_inquiry_service.dart';
-import 'package:housing_flutter_app/utils/logger/app_logger.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/data/network/contractor/service/contractor_inquiry_service.dart';
+import 'package:nesticope_app/utils/logger/app_logger.dart';
 
 import '../../../app/care/pagination/controller/pagination_controller.dart';
 import '../../../app/constants/app_font_sizes.dart';

@@ -2,11 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/modules/home/widgets/home_header.dart';
-import 'package:housing_flutter_app/modules/new_project/view/widget/hotspot_location.dart';
-import 'package:housing_flutter_app/modules/new_project/view/widget/top_developer.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/modules/home/widgets/home_header.dart';
+import 'package:nesticope_app/modules/new_project/view/widget/hotspot_location.dart';
+import 'package:nesticope_app/modules/new_project/view/widget/top_developer.dart';
 
 
 import '../../property/controllers/property_controller.dart';
@@ -96,7 +96,7 @@ class MumbaiProjectsScreen extends StatelessWidget {
                             color: ColorRes.white,
                             borderRadius: BorderRadius.circular(16),
                           ),
-                          child: buildPositionedTextField(context, () {}),
+                          child: buildPositionedTextField(context, () {},),
                         ),
                       ),
                       const SizedBox(height: 16),

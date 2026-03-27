@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/app/care/pagination/controller/pagination_controller.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
 import '../../../../app/constants/api_constants.dart';
 import '../../../data/network/top_seller_profile/model/top_seller_profile_model.dart';
 import '../../../data/network/top_seller_profile/service/top_seller_profile_service.dart';

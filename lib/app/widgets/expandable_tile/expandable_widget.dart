@@ -60,50 +60,141 @@ class _ExpandableTileState extends State<ExpandableTile>
     });
   }
 
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Column(
+  //     children: [
+  //       ListTile(
+  //         leading: Icon(widget.leadingIcon, color: ColorRes.primary),
+  //         title: Text(
+  //           widget.title,
+  //           style: TextStyle(
+  //             fontSize: AppFontSizes.medium,
+  //             fontWeight: AppFontWeights.semiBold,
+  //           ),
+  //         ),
+  //         subtitle:
+  //             widget.subtitle != null
+  //                 ? Text(
+  //                   widget.subtitle!,
+  //                   style: TextStyle(
+  //                     fontSize: AppFontSizes.small,
+  //                     color: ColorRes.leadGreyColor[600],
+  //                   ),
+  //                 )
+  //                 : null,
+  //         trailing: AnimatedRotation(
+  //           turns: _isExpanded ? 0.5 : 0,
+  //           duration: const Duration(milliseconds: 300),
+  //           child: Icon(
+  //             widget.trailingIcon,
+  //             color: ColorRes.leadGreyColor[700],
+  //           ),
+  //         ),
+  //         onTap: _toggleExpand,
+  //       ),
+  //       SizeTransition(
+  //         sizeFactor: _expandAnimation,
+  //         child: Wrap(
+  //           spacing: 8,
+  //           clipBehavior: Clip.none,
+  //           runSpacing: 8,
+  //           children: widget.children,
+  //         ),
+  //       ),
+
+  //       // const Divider(height: 1, thickness: 0.5),
+  //     ],
+  //   );
+  // }
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ListTile(
-          leading: Icon(widget.leadingIcon, color: ColorRes.primary),
-          title: Text(
-            widget.title,
-            style: TextStyle(
-              fontSize: AppFontSizes.medium,
-              fontWeight: AppFontWeights.semiBold,
-            ),
-          ),
-          subtitle:
-              widget.subtitle != null
-                  ? Text(
-                    widget.subtitle!,
-                    style: TextStyle(
-                      fontSize: AppFontSizes.small,
-                      color: ColorRes.leadGreyColor[600],
-                    ),
-                  )
-                  : null,
-          trailing: AnimatedRotation(
-            turns: _isExpanded ? 0.5 : 0,
-            duration: const Duration(milliseconds: 300),
-            child: Icon(
-              widget.trailingIcon,
-              color: ColorRes.leadGreyColor[700],
-            ),
-          ),
+        /// ================= MAIN TILE =================
+        GestureDetector(
           onTap: _toggleExpand,
-        ),
-        SizeTransition(
-          sizeFactor: _expandAnimation,
-          child: Wrap(
-            spacing: 8,
-            clipBehavior: Clip.none,
-            runSpacing: 8,
-            children: widget.children,
+          child: Container(
+
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(.04),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+
+            child: Row(
+              children: [
+                /// ✅ Icon Box
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: ColorRes.primary.withOpacity(.1),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Icon(
+                    widget.leadingIcon,
+                    color: ColorRes.primary,
+                    size: 22,
+                  ),
+                ),
+
+                const SizedBox(width: 14),
+
+                /// ✅ Title + Subtitle
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.title,
+                        style: TextStyle(
+                          fontSize: AppFontSizes.medium,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.black,
+                        ),
+                      ),
+
+                      if (widget.subtitle != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          widget.subtitle!,
+                          style: TextStyle(
+                            fontSize: AppFontSizes.caption,
+                            color: ColorRes.leadGreyColor[600],
+                            fontWeight: AppFontWeights.medium,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+
+                /// ✅ Expand Arrow Animation
+                AnimatedRotation(
+                  turns: _isExpanded ? 0.5 : 0,
+                  duration: const Duration(milliseconds: 300),
+                  child: Icon(
+                    widget.trailingIcon,
+                    color: _isExpanded ? ColorRes.primary : ColorRes.leadGreyColor[400],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
 
-        // const Divider(height: 1, thickness: 0.5),
+        /// ================= EXPANDABLE CONTENT =================
+        SizeTransition(
+          sizeFactor: _expandAnimation,
+          child: Wrap(spacing: 8, runSpacing: 8, children: widget.children),
+        ),
       ],
     );
   }

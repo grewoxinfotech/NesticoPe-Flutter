@@ -3,8 +3,8 @@
 // import 'package:file_picker/file_picker.dart';
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/app/utils/file_upload_section/pdf_screen.dart';
-// import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
+// import 'package:nesticope_app/app/utils/file_upload_section/pdf_screen.dart';
+// import 'package:nesticope_app/modules/add_property/controller/create_property_controller.dart';
 // import 'package:open_filex/open_filex.dart';
 //
 // class FileUploadSection extends StatelessWidget {

@@ -184,7 +184,7 @@ class OverAllContractorItem {
 
 class OverAllContractorSubscription {
   final bool hasPremiumPlan;
-  final int planAmount;
+  final double planAmount;
   final String planName;
 
   OverAllContractorSubscription({
@@ -196,7 +196,11 @@ class OverAllContractorSubscription {
   factory OverAllContractorSubscription.fromJson(Map<String, dynamic> json) {
     return OverAllContractorSubscription(
       hasPremiumPlan: json['hasPremiumPlan'] ?? false,
-      planAmount: json['planAmount'] ?? 0,
+      planAmount: (json['planAmount'] is int)
+          ? (json['planAmount'] as int).toDouble()
+          : (json['planAmount'] is String)
+              ? double.tryParse(json['planAmount']) ?? 0.0
+              : (json['planAmount'] ?? 0).toDouble(),
       planName: json['planName'] ?? '',
     );
   }

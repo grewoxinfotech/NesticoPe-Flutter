@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../../app/care/pagination/models/pagination_models.dart';

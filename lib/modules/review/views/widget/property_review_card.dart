@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/data/network/review/model/review_model.dart';
-import 'package:housing_flutter_app/modules/contractor/controller/contractor_lead_controller.dart';
-import 'package:housing_flutter_app/modules/review/controllers/review_controller.dart';
-import 'package:housing_flutter_app/modules/user/controllers/user_controller.dart';
+import 'package:nesticope_app/data/network/review/model/review_model.dart';
+import 'package:nesticope_app/modules/contractor/controller/contractor_lead_controller.dart';
+import 'package:nesticope_app/modules/review/controllers/review_controller.dart';
+import 'package:nesticope_app/modules/user/controllers/user_controller.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';

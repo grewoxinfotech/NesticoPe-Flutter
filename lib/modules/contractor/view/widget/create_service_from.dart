@@ -1,12 +1,14 @@
 /*
 
 import 'dart:developer';
+import 'dart:io';
 import 'dart:math' hide log;
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/modules/add_property/view/create_property.dart';
-import 'package:housing_flutter_app/modules/contractor/view/widget/cotractor_active_switch.dart';
+import 'package:nesticope_app/modules/add_property/view/create_property.dart';
+import 'package:nesticope_app/modules/contractor/view/widget/cotractor_active_switch.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 
@@ -1087,12 +1089,14 @@ log("fhndufhd ${options}");
 }
 */
 import 'dart:developer';
+import 'dart:io';
 import 'dart:math' hide log;
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/modules/add_property/view/create_property.dart';
-import 'package:housing_flutter_app/modules/contractor/view/widget/cotractor_active_switch.dart';
+import 'package:nesticope_app/modules/add_property/view/create_property.dart';
+import 'package:nesticope_app/modules/contractor/view/widget/cotractor_active_switch.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 
@@ -1493,6 +1497,134 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 8),
+
+                // ── SERVICE IMAGE ─────────────────────────────────────────────
+                buildSectionTitle("Service Images (Max 5) *"),
+                const SizedBox(height: 8),
+                Obx(() {
+                  final selectedPaths = controller.selectedImagePaths;
+                  final existingUrls = controller.existingImageUrls;
+                  final int totalCount = selectedPaths.length + existingUrls.length;
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (totalCount > 0)
+                        SizedBox(
+                          height: 120,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: totalCount,
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(width: 12),
+                            itemBuilder: (context, index) {
+                              // Show existing URLs first, then selected local paths
+                              final bool isExisting = index < existingUrls.length;
+                              final String content = isExisting
+                                  ? existingUrls[index]
+                                  : selectedPaths[index - existingUrls.length];
+
+                              return Stack(
+                                children: [
+                                  Container(
+                                    width: 120,
+                                    height: 120,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(color: ColorRes.border),
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: isExisting
+                                          ? CachedNetworkImage(
+                                              imageUrl: content,
+                                              fit: BoxFit.cover,
+                                              placeholder: (context, url) =>
+                                                  const Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              ),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      const Icon(Icons.error),
+                                            )
+                                          : Image.file(
+                                              File(content),
+                                              fit: BoxFit.cover,
+                                            ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 4,
+                                    right: 4,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        if (isExisting) {
+                                          controller.removeExistingImage(index);
+                                        } else {
+                                          controller.removeSelectedImage(
+                                              index - existingUrls.length);
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.all(4),
+                                        decoration: const BoxDecoration(
+                                          color: Colors.red,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Icon(
+                                          Icons.close,
+                                          color: Colors.white,
+                                          size: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                      if (totalCount < 5)
+                        Padding(
+                          padding: EdgeInsets.only(top: totalCount > 0 ? 12 : 0),
+                          child: GestureDetector(
+                            onTap: () => controller.pickImages(),
+                            child: Container(
+                              height: totalCount > 0 ? 60 : 120,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: ColorRes.leadGreyColor.shade200,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: ColorRes.border),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.add_photo_alternate_outlined,
+                                    size: totalCount > 0 ? 24 : 40,
+                                    color: ColorRes.textSecondary,
+                                  ),
+                                  if (totalCount == 0) ...[
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      "Tap to pick images",
+                                      style: TextStyle(
+                                        color: ColorRes.textSecondary,
+                                        fontSize: AppFontSizes.caption,
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                }),
+                const SizedBox(height: 16),
 
                 // ── CATEGORY ─────────────────────────────────────────────────
                 buildSectionTitle("Category"),

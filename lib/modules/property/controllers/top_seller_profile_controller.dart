@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/data/network/auth/model/user_model.dart';
+import 'package:nesticope_app/data/network/auth/model/user_model.dart';
 
 import '../../../data/network/property/services/top_seller_profile_service.dart';
 import '../../profile/model/seller_profile.dart';

@@ -1,7 +1,7 @@
 /*
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/widgets/bar/app_bar/common_bar.dart';
+import 'package:nesticope_app/widgets/bar/app_bar/common_bar.dart';
 
 import '../../../widgets/New folder/inputs/text_field.dart';
 import '../../../widgets/button/button.dart';
@@ -37,7 +37,7 @@ class ForgetPasswordScreen extends StatelessWidget {
                   // Text(
                   //
                   //   style: theme.textTheme.headlineMedium?.copyWith(
-                  //     fontFamily: FontRes.nuNunitoSans,
+                  //     fontFamily: FontRes.poppins,
                   //     fontWeight: AppFontWeights.extraBold,
                   //     color: Colors.black87,
                   //   ),

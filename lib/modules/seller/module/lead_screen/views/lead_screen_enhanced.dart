@@ -3,12 +3,12 @@
 // import 'package:dropdown_search/dropdown_search.dart';
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/app/constants/color_res.dart';
-// import 'package:housing_flutter_app/app/manager/property/property_pricemanager.dart';
-// import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-// import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
-// import 'package:housing_flutter_app/modules/reseller/view/lead/add_lead_screen.dart';
-// import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
+// import 'package:nesticope_app/app/constants/color_res.dart';
+// import 'package:nesticope_app/app/manager/property/property_pricemanager.dart';
+// import 'package:nesticope_app/app/utils/formater/formater.dart';
+// import 'package:nesticope_app/modules/add_property/controller/create_property_controller.dart';
+// import 'package:nesticope_app/modules/reseller/view/lead/add_lead_screen.dart';
+// import 'package:nesticope_app/modules/seller/module/lead_screen/model/lead_model.dart';
 //
 // import '../../../../../app/constants/app_font_sizes.dart';
 // import '../../../../../app/manager/data_masker.dart';
@@ -972,13 +972,13 @@ import 'dart:developer';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/manager/property/property_pricemanager.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/modules/add_property/controller/create_property_controller.dart';
-import 'package:housing_flutter_app/modules/reseller/view/lead/add_lead_screen.dart';
-import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
-import 'package:housing_flutter_app/utils/shimmer/common_screen/lead_screen/lead_list_screen_shimmer.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/manager/property/property_pricemanager.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/modules/add_property/controller/create_property_controller.dart';
+import 'package:nesticope_app/modules/reseller/view/lead/add_lead_screen.dart';
+import 'package:nesticope_app/modules/seller/module/lead_screen/model/lead_model.dart';
+import 'package:nesticope_app/utils/shimmer/common_screen/lead_screen/lead_list_screen_shimmer.dart';
 
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../app/manager/data_masker.dart';
@@ -1866,9 +1866,20 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
 
                                 if (!leadController.hasMore.value &&
                                     leads.isNotEmpty) {
-                                  return const Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 16),
-                                    child: Center(child: Text('No more leads')),
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        'No more leads to display',
+                                        style: TextStyle(
+                                          fontSize: AppFontSizes.small,
+                                          color: ColorRes.leadGreyColor[600],
+                                          fontWeight: AppFontWeights.medium,
+                                        ),
+                                      ),
+                                    ),
                                   );
                                 }
 
@@ -2043,7 +2054,7 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
                               isCompact
                                   ? AppFontSizes.medium
                                   : AppFontSizes.body,
-                          fontWeight: AppFontWeights.bold,
+                          fontWeight: AppFontWeights.semiBold,
                           color: ColorRes.textColor,
                         ),
                         maxLines: 1,
@@ -2058,10 +2069,11 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
                         style: TextStyle(
                           fontSize:
                               isCompact
-                                  ? AppFontSizes.extraSmall
+                                  ? AppFontSizes.caption
                                   : AppFontSizes.small,
+
                           color: ColorRes.leadGreyColor[700],
-                          fontWeight: AppFontWeights.regular,
+                          fontWeight: AppFontWeights.medium,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -2075,9 +2087,9 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
                             child: Text(
                               DataMasker.maskEmail(lead.email!),
                               style: TextStyle(
-                                fontSize: AppFontSizes.extraSmall,
+                                fontSize: AppFontSizes.caption,
                                 color: ColorRes.leadGreyColor[600],
-                                fontWeight: AppFontWeights.regular,
+                                fontWeight: AppFontWeights.medium,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -2097,7 +2109,7 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
                     style: TextStyle(
                       fontSize: AppFontSizes.extraSmall,
                       color: ColorRes.leadGreyColor[800],
-                      fontWeight: AppFontWeights.regular,
+                      fontWeight: AppFontWeights.medium,
                     ),
                   ),
                   SizedBox(height: 4),
@@ -2116,7 +2128,7 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
                     style: TextStyle(
                       fontSize: AppFontSizes.caption,
                       color: ColorRes.leadGreyColor[600],
-                      fontWeight: AppFontWeights.regular,
+                      fontWeight: AppFontWeights.medium,
                     ),
                   ),
                 ],
@@ -2124,7 +2136,8 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
             ],
           ),
           SizedBox(height: isCompact ? 8 : 12),
-          Divider(color: ColorRes.leadGreyColor, thickness: 0.5),
+          Divider(color: ColorRes.leadGreyColor.shade300, thickness: 0.5),
+
           SizedBox(height: isCompact ? 8 : 12),
           Row(
             children: [
@@ -2142,6 +2155,7 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
                             getLeadStatusFromString(lead.status!),
                           ).withOpacity(0.08),
                   borderRadius: BorderRadius.circular(8),
+
                   border: Border.all(
                     color:
                         (lead.isFake ?? false)
@@ -2160,14 +2174,14 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
                     fontSize:
                         isCompact
                             ? AppFontSizes.extraSmall
-                            : AppFontSizes.small,
+                            : AppFontSizes.caption,
                     color:
                         (lead.isFake ?? false)
                             ? ColorRes.error
                             : getStatusColor(
                               getLeadStatusFromString(lead.status!),
                             ),
-                    fontWeight: AppFontWeights.bold,
+                    fontWeight: AppFontWeights.semiBold,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -2197,9 +2211,9 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
                     fontSize:
                         isCompact
                             ? AppFontSizes.extraSmall
-                            : AppFontSizes.small,
+                            : AppFontSizes.caption,
                     color: getStageColor(getLeadStageFromString(lead.stage)),
-                    fontWeight: AppFontWeights.bold,
+                    fontWeight: AppFontWeights.semiBold,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -2229,11 +2243,11 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
                     fontSize:
                         isCompact
                             ? AppFontSizes.extraSmall
-                            : AppFontSizes.small,
+                            : AppFontSizes.caption,
                     color: getSourceColor(
                       getSourceFromString(lead.source ?? ''),
                     ),
-                    fontWeight: AppFontWeights.bold,
+                    fontWeight: AppFontWeights.semiBold,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),

@@ -2,21 +2,23 @@
 class EmployeeTaskItem {
   final String id;
   final String createdBy;
-  final String updatedBy;
+  final String? updatedBy;
   final String employeeId;
   final String projectId;
   final String taskTitle;
   final String taskDescription;
-  final String status; // e.g., in_progress, pending, completed
-  final String priority; // e.g., low, medium, high
+  final String status;
+  final String priority;
   final DateTime? dueDate;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final ProjectSummary? project;
+  final EmployeeSummary? employee;
 
   EmployeeTaskItem({
     required this.id,
     required this.createdBy,
-    required this.updatedBy,
+    this.updatedBy,
     required this.employeeId,
     required this.projectId,
     required this.taskTitle,
@@ -26,22 +28,30 @@ class EmployeeTaskItem {
     this.dueDate,
     this.createdAt,
     this.updatedAt,
+    this.project,
+    this.employee,
   });
 
   factory EmployeeTaskItem.fromJson(Map<String, dynamic> json) {
     return EmployeeTaskItem(
-      id: json['id'] ?? '',
-      createdBy: json['created_by'] ?? '',
-      updatedBy: json['updated_by'] ?? '',
-      employeeId: json['employeeId'] ?? '',
-      projectId: json['projectId'] ?? '',
-      taskTitle: json['taskTitle'] ?? '',
-      taskDescription: json['taskDescription'] ?? '',
-      status: json['status'] ?? 'pending',
-      priority: json['priority'] ?? 'low',
+      id: json['id']?.toString() ?? '',
+      createdBy: json['created_by']?.toString() ?? '',
+      updatedBy: json['updated_by']?.toString(),
+      employeeId: json['employeeId']?.toString() ?? '',
+      projectId: json['projectId']?.toString() ?? '',
+      taskTitle: json['taskTitle']?.toString() ?? '',
+      taskDescription: json['taskDescription']?.toString() ?? '',
+      status: json['status']?.toString() ?? 'pending',
+      priority: json['priority']?.toString() ?? 'low',
       dueDate: json['dueDate'] != null ? DateTime.tryParse(json['dueDate']) : null,
       createdAt: json['createdAt'] != null ? DateTime.tryParse(json['createdAt']) : null,
       updatedAt: json['updatedAt'] != null ? DateTime.tryParse(json['updatedAt']) : null,
+      project: json['project'] is Map<String, dynamic>
+          ? ProjectSummary.fromJson(json['project'] as Map<String, dynamic>)
+          : null,
+      employee: json['employee'] is Map<String, dynamic>
+          ? EmployeeSummary.fromJson(json['employee'] as Map<String, dynamic>)
+          : null,
     );
   }
 
@@ -59,6 +69,8 @@ class EmployeeTaskItem {
       'dueDate': dueDate?.toIso8601String(),
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
+      'project': project?.toMap(),
+      'employee': employee?.toMap(),
     };
   }
 }
@@ -94,5 +106,41 @@ class EmployeeTaskListResponse {
       hasMore: data['hasMore'] ?? false,
       fetchedAll: data['fetchedAll'] ?? false,
     );
+  }
+}
+
+class ProjectSummary {
+  final String id;
+  final String title;
+  ProjectSummary({required this.id, required this.title});
+  factory ProjectSummary.fromJson(Map<String, dynamic> json) {
+    return ProjectSummary(
+      id: json['id']?.toString() ?? '',
+      title: json['title']?.toString() ?? '',
+    );
+  }
+  Map<String, dynamic> toMap() {
+    return {'id': id, 'title': title};
+  }
+}
+
+class EmployeeSummary {
+  final String id;
+  final String name;
+  final String email;
+  EmployeeSummary({
+    required this.id,
+    required this.name,
+    required this.email,
+  });
+  factory EmployeeSummary.fromJson(Map<String, dynamic> json) {
+    return EmployeeSummary(
+      id: json['id']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      email: json['email']?.toString() ?? '',
+    );
+  }
+  Map<String, dynamic> toMap() {
+    return {'id': id, 'name': name, 'email': email};
   }
 }

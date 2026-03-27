@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
 import 'dart:convert';
 
 import 'city_insigths_controller.dart';
@@ -319,19 +319,19 @@ class PropertyFilterControllerForFilter extends GetxController {
     // Reset range values based on selected property type to prevent out-of-bounds errors
     switch (propertyType[index]) {
       case 'Residential':
-      // Reset buy range values if out of bounds
-       if(residentialSelectedSubCategory.value == 'Buy' ||
-           residentialSelectedSubCategory.value.isEmpty){
-         if (_rangeValues.value.start < min.value ||
-             _rangeValues.value.end > max.value) {
-           _rangeValues.value = RangeValues(min.value, max.value);
-         }
-       }else{
-         if (rentRangeValues.value.start < rentMin.value ||
-             rentRangeValues.value.end > rentMax.value) {
-           rentRangeValues.value = RangeValues(rentMin.value, rentMax.value);
-         }
-       }
+        // Reset buy range values if out of bounds
+        if (residentialSelectedSubCategory.value == 'Buy' ||
+            residentialSelectedSubCategory.value.isEmpty) {
+          if (_rangeValues.value.start < min.value ||
+              _rangeValues.value.end > max.value) {
+            _rangeValues.value = RangeValues(min.value, max.value);
+          }
+        } else {
+          if (rentRangeValues.value.start < rentMin.value ||
+              rentRangeValues.value.end > rentMax.value) {
+            rentRangeValues.value = RangeValues(rentMin.value, rentMax.value);
+          }
+        }
         // Reset rent range values if out of bounds
 
         // Reset residential sub category
@@ -633,7 +633,7 @@ class PropertyFilterControllerForFilter extends GetxController {
   }
 
   /// Get selected filters as readable chip labels with keys for clearing
-/*  List<Map<String, String>> getSelectedFilterChips() {
+  /*  List<Map<String, String>> getSelectedFilterChips() {
     final filters = getAllFilters();
     final List<Map<String, String>> chips = [];
 
@@ -748,7 +748,7 @@ class PropertyFilterControllerForFilter extends GetxController {
           });
           break;
         case "reraId":
-        // ✅ Only reaches here if true (handled above)
+          // ✅ Only reaches here if true (handled above)
           chips.add({'key': key, 'label': 'RERA: Yes'});
           break;
         case 'approval_status':
@@ -761,10 +761,7 @@ class PropertyFilterControllerForFilter extends GetxController {
           chips.add({'key': key, 'label': 'Has Videos: Yes'});
           break;
         case "transaction_type":
-          chips.add({
-            'key': key,
-            'label': 'Transaction: $value',
-          });
+          chips.add({'key': key, 'label': 'Transaction: $value'});
           break;
         case "amenities":
           if (value is Iterable && value.isNotEmpty) {
@@ -916,7 +913,7 @@ class PropertyFilterControllerForFilter extends GetxController {
     }
 
     // Compute priceRange based on context
-   /* Map<String, dynamic>? mapPriceRange() {
+    /* Map<String, dynamic>? mapPriceRange() {
       final tab = propertyType[selectedPropertyTypeIndex.value];
       if (tab == 'Residential') {
         final isRent = residentialSelectedSubCategory.value.toLowerCase() == 'rent';
@@ -963,26 +960,54 @@ class PropertyFilterControllerForFilter extends GetxController {
     Map<String, dynamic>? mapPriceRange() {
       final tab = propertyType[selectedPropertyTypeIndex.value];
 
+      log("tab $tab");
+      log("selectedPropertyTypeIndex.value ${selectedPropertyTypeIndex.value}");
+      log("residentialSelectedSubCategory.value ${residentialSelectedSubCategory.value}");
+      log("Project Any ${_rangeValues.value.start}  ${_rangeValues.value.end}");
+
+
       if (tab == 'Residential') {
         final isRent =
             residentialSelectedSubCategory.value.toLowerCase() == 'rent';
         if (isRent) {
-          // ✅ Skip if still at default values
+          // Prefer discrete selection if it differs from slider
+          if (rentMin.value != rentRangeValues.value.start ||
+              rentMax.value != rentRangeValues.value.end) {
+            return {'min': rentMin.value, 'max': rentMax.value};
+          }
+          // Fallback to slider with default skip
           if (rentRangeValues.value.start == rentMin.value &&
-              rentRangeValues.value.end == rentMax.value) {
-            return null;
-          }
-          return {
-            'min': rentRangeValues.value.start,
-            'max': rentRangeValues.value.end,
-          };
+              rentRangeValues.value.end == rentMax.value) return null;
+          return {'min': rentRangeValues.value.start, 'max': rentRangeValues.value.end};
         } else {
-          // ✅ Skip if both are 0 (default)
-          if (_rangeValues.value.start == 0.0 && _rangeValues.value.end == 0.0) {
-            return null;
+          // ✅ Prefer discrete budget picker values when provided
+          final double selectedMin = min.value;
+          final double selectedMax = max.value;
+          final bool hasDiscreteSelection = (selectedMin > 0 || selectedMax > 0);
+
+          if (hasDiscreteSelection) {
+            return {
+              'min': selectedMin,
+              'max': selectedMax,
+            };
           }
+
+          // Fallback to slider values when discrete not used
+          // ✅ Skip if both are 0 (default)
+          if (_rangeValues.value.start == 0.0 &&              _rangeValues.value.end == 0.0) {
+            return null;
+
+          }
+          // ✅ Skip if matches dynamic bounds (no narrowing)
           if (_rangeValues.value.start == min.value &&
               _rangeValues.value.end == max.value) return null;
+          // ✅ Skip if global defaults used but bounds not loaded yet (UI max 10Cr)
+          if (min.value == 0.0 &&
+              max.value == 0.0 &&
+              _rangeValues.value.start == 0.0 &&
+              _rangeValues.value.end >= 100000000.0) {
+            return null;
+          }
           return {
             'min': _rangeValues.value.start,
             'max': _rangeValues.value.end,
@@ -990,7 +1015,8 @@ class PropertyFilterControllerForFilter extends GetxController {
         }
       } else if (tab == 'Commercial') {
         if (commercialSelectedSubCategory.value.toLowerCase() == 'rent') {
-          if (commercialRentMin.value == 0.0 && commercialRentMax.value == 0.0) {
+          if (commercialRentMin.value == 0.0 &&
+              commercialRentMax.value == 0.0) {
             return null;
           }
           return {
@@ -1001,25 +1027,24 @@ class PropertyFilterControllerForFilter extends GetxController {
           if (commercialMin.value == 0.0 && commercialMax.value == 0.0) {
             return null;
           }
-          return {
-            'min': commercialMin.value,
-            'max': commercialMax.value,
-          };
+          return {'min': commercialMin.value, 'max': commercialMax.value};
         }
       } else if (tab == 'PG/Co-living') {
-        // ✅ Skip if still at default values
+        // Prefer discrete selection if it differs from slider
+        if (pgMin.value != pgRangeValues.value.start ||
+            pgMax.value != pgRangeValues.value.end) {
+          return {'min': pgMin.value, 'max': pgMax.value};
+        }
+        // Fallback to slider with default skip
         if (pgRangeValues.value.start == pgMin.value &&
             pgRangeValues.value.end == pgMax.value) return null;
-        return {
-          'min': pgRangeValues.value.start,
-          'max': pgRangeValues.value.end,
-        };
+        return {'min': pgRangeValues.value.start, 'max': pgRangeValues.value.end};
       }
       return null;
     }
 
     // Optionally set property_condition for commercial office
-   /* String? mapPropertyCondition() {
+    /* String? mapPropertyCondition() {
       if (propertyType[selectedPropertyTypeIndex.value] != 'Commercial') {
         return null;
       }
@@ -1163,11 +1188,15 @@ class PropertyFilterControllerForFilter extends GetxController {
         int index;
         switch (listingType) {
           case 'Sell':
-            index = propertyType.indexOf('Residential'); // ✅ map Sell → Residential
+            index = propertyType.indexOf(
+              'Residential',
+            ); // ✅ map Sell → Residential
             residentialSelectedSubCategory.value = 'Buy';
             break;
           case 'Rent':
-            index = propertyType.indexOf('Residential'); // ✅ map Rent → Residential
+            index = propertyType.indexOf(
+              'Residential',
+            ); // ✅ map Rent → Residential
             residentialSelectedSubCategory.value = 'Rent';
             break;
           case 'PG':
@@ -1224,10 +1253,10 @@ class PropertyFilterControllerForFilter extends GetxController {
           case 'villa':
             uiType = 'Villa';
             break;
-            case 'farmhouse':
+          case 'farmhouse':
             uiType = 'Farmhouse';
             break;
-            case 'agricultural_land':
+          case 'agricultural_land':
             uiType = 'Agricultural Land';
             break;
           // Commercial types
@@ -1243,7 +1272,7 @@ class PropertyFilterControllerForFilter extends GetxController {
           case 'warehouse':
             uiType = 'WareHouse';
             break;
-            case 'others':
+          case 'others':
             uiType = 'Others';
             break;
         }
@@ -1394,7 +1423,6 @@ class PropertyFilterControllerForFilter extends GetxController {
   }
 }
 
-// class PropertyFilterControllerForFilter extends GetxController {
 //   ///=====================================Property Type Selection=====================
 //   RxInt selectedPropertyTypeIndex = 0.obs;
 //   RxBool isRERAVerified = false.obs;

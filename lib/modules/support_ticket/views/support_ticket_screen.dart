@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/modules/support_ticket/views/add_support_ticket.dart';
-import 'package:housing_flutter_app/modules/support_ticket/views/support_ticket_chat_screen.dart';
-import 'package:housing_flutter_app/modules/support_ticket/views/widgets/support_ticket_card.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/modules/support_ticket/views/add_support_ticket.dart';
+import 'package:nesticope_app/modules/support_ticket/views/support_ticket_chat_screen.dart';
+import 'package:nesticope_app/modules/support_ticket/views/widgets/support_ticket_card.dart';
 import 'package:intl/intl.dart';
 
 import '../../../data/network/support_ticket/models/ticket_model/support_ticket_model.dart';

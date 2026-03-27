@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 

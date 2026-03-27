@@ -46,6 +46,7 @@ class ReusableBottomBar extends StatelessWidget {
             children: [
               Text(
                 mainPriceText,
+                maxLines: 2,
                 style: const TextStyle(
                   fontSize: AppFontSizes.large,
                   fontWeight: AppFontWeights.semiBold,

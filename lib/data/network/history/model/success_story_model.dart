@@ -87,6 +87,7 @@ class BuyerSideResellerSuccessStoryItem {
   final String? status;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final BuyerSideResellerInfo? reseller;
 
   BuyerSideResellerSuccessStoryItem({
     required this.id,
@@ -104,6 +105,7 @@ class BuyerSideResellerSuccessStoryItem {
     this.status,
     this.createdAt,
     this.updatedAt,
+    this.reseller,
   });
 
   factory BuyerSideResellerSuccessStoryItem.fromJson(Map<String, dynamic> json) {
@@ -114,6 +116,10 @@ class BuyerSideResellerSuccessStoryItem {
       } catch (_) {
         return null;
       }
+    }
+    String? sanitizeUrl(String? url) {
+      if (url == null) return null;
+      return url.replaceAll('`', '').trim();
     }
 
     return BuyerSideResellerSuccessStoryItem(
@@ -128,10 +134,13 @@ class BuyerSideResellerSuccessStoryItem {
       totalDeals: json['totalDeals'],
       totalValue: json['totalValue'],
       rating: json['rating'],
-      image: json['image'],
+      image: sanitizeUrl(json['image']),
       status: json['status'],
       createdAt: parseDate(json['createdAt']),
       updatedAt: parseDate(json['updatedAt']),
+      reseller: json['reseller'] != null
+          ? BuyerSideResellerInfo.fromJson(json['reseller'])
+          : null,
     );
   }
 
@@ -152,6 +161,32 @@ class BuyerSideResellerSuccessStoryItem {
       'status': status,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
+      'reseller': reseller?.toMap(),
+    };
+  }
+}
+
+class BuyerSideResellerInfo {
+  final String id;
+  final String username;
+  final String userType;
+  BuyerSideResellerInfo({
+    required this.id,
+    required this.username,
+    required this.userType,
+  });
+  factory BuyerSideResellerInfo.fromJson(Map<String, dynamic> json) {
+    return BuyerSideResellerInfo(
+      id: json['id'] ?? '',
+      username: json['username'] ?? '',
+      userType: json['userType'] ?? '',
+    );
+  }
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'username': username,
+      'userType': userType,
     };
   }
 }

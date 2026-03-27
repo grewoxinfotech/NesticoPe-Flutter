@@ -56,6 +56,28 @@ class PropertyPriceManager {
     return 0;
   }
 
+  /// 🔹 Returns maximum room rent for PG
+  double get maxPgRent {
+    if (isPG && pgInfo?.pgRoomInfo != null && pgInfo!.pgRoomInfo!.isNotEmpty) {
+      final rents =
+          pgInfo!.pgRoomInfo!.map((r) => r.rent ?? 0).where((r) => r > 0).toList();
+      if (rents.isNotEmpty) {
+        rents.sort();
+        return rents.last.toDouble();
+      }
+    }
+    return 0;
+  }
+
+  /// 🔹 Display only maximum price for PG (single value)
+  String get maxPgPriceDisplay {
+    if (!isPG) return displayPrice;
+    final maxR = maxPgRent;
+    if (maxR <= 0) return "Price not available";
+    final maxFormatted = Formatter.formatPrice(maxR);
+    return "$maxFormatted /month";
+  }
+
   /// 🔹 Main display logic (handles PG pricing with type-specific formatting)
   String get displayPrice {
     // For PG properties, show price range with room details
@@ -71,7 +93,7 @@ class PropertyPriceManager {
         final minRent = rents.first.toDouble();
         final maxRent = rents.last.toDouble();
         final minFormatted = Formatter.formatPrice(minRent);
-        final maxFormatted = Formatter.formatNumber(maxRent);
+        final maxFormatted = Formatter.formatPrice(maxRent);
 
         if (minRent == maxRent) {
           // All rooms have same price - simple display

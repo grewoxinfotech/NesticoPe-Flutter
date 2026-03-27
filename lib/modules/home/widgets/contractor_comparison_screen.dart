@@ -3,16 +3,18 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/data/network/contractor/model/contractor_profile_model/contractor_profile_model.dart';
-import 'package:housing_flutter_app/modules/home/controllers/contractor_profile_controller/contractor_compare_manager.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/data/network/contractor/model/contractor_profile_model/contractor_profile_model.dart';
+import 'package:nesticope_app/modules/home/controllers/contractor_profile_controller/contractor_compare_manager.dart';
 import 'package:intl/intl.dart';
 
 import '../../../data/network/contractor/model/contractor_compare_model/contractor_compare_model.dart';
 import '../../../data/network/contractor/service/contractor_compare_service.dart';
 import '../../../utils/logger/app_logger.dart';
+import '../../../data/network/contractor/service/contractor_profile_service.dart';
+
 
 class ContractorComparisonScreen extends StatefulWidget {
   const ContractorComparisonScreen({super.key});
@@ -31,6 +33,8 @@ class _ContractorComparisonScreenState
   final RxMap<String, ContractorDataResponse> _contractorData =
       <String, ContractorDataResponse>{}.obs;
   final RxString _error = ''.obs;
+  String _activeId = '';
+  
 
   @override
   void initState() {
@@ -301,16 +305,45 @@ class _ContractorCardForCompare extends StatelessWidget {
                       left: Radius.circular(11),
                     ),
                   ),
-                  child: const Center(
-                    child: CircleAvatar(
-                      radius: 35,
-                      backgroundColor: ColorRes.primary,
-                      child: Icon(
-                        Icons.engineering, // 👈 replace with any icon you like
-                        color: ColorRes.white,
-                        size: 35, // adjust as needed
-                      ),
-                    ),
+                  child: FutureBuilder(
+                    future: TopContractorsService()
+                        .fetchUserModelById(c.id),
+                    builder: (context, snapshot) {
+                      final url = snapshot.hasData
+                          ? (snapshot.data as dynamic).profilePic as String? ?? ''
+                          : '';
+                      return Center(
+                        child: ClipOval(
+                          child: url.isNotEmpty
+                              ? CachedNetworkImage(
+                                  imageUrl: url,
+                                  width: 70,
+                                  height: 70,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, u) =>
+                                      ShimmerShapes.circle(size: 70),
+                                  errorWidget: (context, u, e) => CircleAvatar(
+                                    radius: 35,
+                                    backgroundColor: ColorRes.primary,
+                                    child: const Icon(
+                                      Icons.design_services_outlined,
+                                      color: Colors.white,
+                                      size: 35,
+                                    ),
+                                  ),
+                                )
+                              : CircleAvatar(
+                                  radius: 35,
+                                  backgroundColor: ColorRes.primary,
+                                  child: const Icon(
+                                    Icons.design_services_outlined,
+                                    color: Colors.white,
+                                    size: 35,
+                                  ),
+                                ),
+                        ),
+                      );
+                    },
                   ),
                 ),
 
@@ -471,7 +504,18 @@ class _ContractorComparisonTableState
     extends State<_ContractorComparisonTable> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
+  bool _didInitialNotify = false;
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_didInitialNotify && widget.contractors.isNotEmpty) {
+        widget.onActiveChange?.call(widget.contractors[0].data.contractor.id);
+        _didInitialNotify = true;
+      }
+    });
+  }
   @override
   void dispose() {
     _pageController.dispose();
@@ -1271,14 +1315,22 @@ String formatMemberSince(String dateString) {
 }
 */
 
+import 'dart:developer';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/utils/formater/formater.dart';
-import 'package:housing_flutter_app/data/network/contractor/model/contractor_profile_model/contractor_profile_model.dart';
-import 'package:housing_flutter_app/modules/home/controllers/contractor_profile_controller/contractor_compare_manager.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/app/widgets/shimmer/shimmer_widget.dart';
+import 'package:nesticope_app/data/network/contractor/model/contractor_profile_model/contractor_profile_model.dart';
+import 'package:nesticope_app/data/network/contractor/service/contractor_profile_service.dart';
+import 'package:nesticope_app/modules/home/controllers/contractor_profile_controller/contractor_compare_manager.dart';
 import 'package:intl/intl.dart';
+import 'package:nesticope_app/modules/home/controllers/contractor_profile_controller/contractor_profile_controller.dart';
+import 'package:nesticope_app/modules/home/widgets/contractor_profile_screen.dart';
 
 import '../../../data/network/contractor/model/contractor_compare_model/contractor_compare_model.dart';
 import '../../../data/network/contractor/service/contractor_compare_service.dart';
@@ -1300,7 +1352,7 @@ class _ContractorComparisonScreenState
   final RxMap<String, ContractorDataResponse> _contractorData =
       <String, ContractorDataResponse>{}.obs;
   final RxString _error = ''.obs;
-
+String _activeId = '';
   @override
   void initState() {
     super.initState();
@@ -1348,7 +1400,7 @@ class _ContractorComparisonScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorRes.leadGreyColor[50],
+      // backgroundColor: ColorRes.leadGreyColor[50],
       appBar: AppBar(
         backgroundColor: ColorRes.white,
         elevation: 0,
@@ -1374,158 +1426,125 @@ class _ContractorComparisonScreenState
         // ],
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Obx(() {
-            if (_isLoading.value) {
-              return const Center(
-                child: CircularProgressIndicator(color: ColorRes.primary),
-              );
-            }
-
-            if (_error.value.isNotEmpty) {
-              return Center(
+        child: Obx(() {
+          if (_isLoading.value) {
+            return const Center(
+              child: CircularProgressIndicator(color: ColorRes.primary),
+            );
+          }
+        
+          if (_error.value.isNotEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 64,
+                    color: ColorRes.leadGreyColor[400],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    _error.value,
+                    style: const TextStyle(fontSize: AppFontSizes.medium),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: _loadContractorData,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorRes.primary,
+                    ),
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            );
+          }
+        
+          if (_contractorData.isEmpty) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 40),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      Icons.error_outline,
+                      Icons.compare_arrows,
                       size: 64,
                       color: ColorRes.leadGreyColor[400],
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      _error.value,
-                      style: const TextStyle(fontSize: AppFontSizes.medium),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: _loadContractorData,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: ColorRes.primary,
+                      'No contractors selected',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.medium,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.leadGreyColor[700],
                       ),
-                      child: const Text('Retry'),
                     ),
                   ],
                 ),
-              );
-            }
-
-            if (_contractorData.isEmpty) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 40),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.compare_arrows,
-                        size: 64,
-                        color: ColorRes.leadGreyColor[400],
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'No contractors selected',
-                        style: TextStyle(
-                          fontSize: AppFontSizes.medium,
-                          fontWeight: AppFontWeights.semiBold,
-                          color: ColorRes.leadGreyColor[700],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }
-
-            final contractors = _contractorData.values.toList();
-
-            if (contractors.length == 1) {
-              return SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _ContractorCardForCompare(
-                      contractor: contractors[0],
+              ),
+            );
+          }
+        
+          final contractors = _contractorData.values.toList();
+        
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                   SizedBox(height: 16),
+                ...contractors.map((c) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: _ContractorCardForCompare(
+                      contractor: c,
+                      isActive: c.data.contractor.id == _activeId,
                       onRemove: () {
-                        final userId =
-                            _contractorData.entries
-                                .firstWhere((e) => e.value == contractors[0])
-                                .key;
+                        final userId = _contractorData.entries
+                            .firstWhere((e) => e.value == c)
+                            .key;
                         _contractorData.remove(userId);
-                        final data = contractors[0];
-
-                        ContractorCompareManager.to.remove(
-                          data.data.contractor.id,
-                        );
+                        ContractorCompareManager.to
+                            .remove(c.data.contractor.id);
                       },
                     ),
-                    const SizedBox(height: 24),
-                    Center(
+                  );
+                }).toList(),
+                if (contractors.length < 5)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                    child: Center(
                       child: Column(
                         children: [
                           GestureDetector(
                             onTap: () => Get.back(),
                             child: const Icon(
                               Icons.add_circle_outline,
-                              size: 25,
+                              size: 30,
                               color: ColorRes.primary,
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 8),
                           Text(
-                            'Select one more contractor to compare',
+                            'Add up to ${5 - contractors.length} more contractor${5 - contractors.length > 1 ? 's' : ''} to compare',
                             style: TextStyle(
-                              fontSize: AppFontSizes.medium,
+                              fontSize: AppFontSizes.small,
                               fontWeight: AppFontWeights.medium,
-                              color: ColorRes.leadGreyColor[700],
+                              color: ColorRes.leadGreyColor[600],
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ],
-                ),
-              );
-            }
-
-            final a = contractors[0];
-            final b = contractors[1];
-
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _ContractorCardForCompare(
-                    contractor: a,
-                    onRemove: () {
-                      final userId =
-                          _contractorData.entries
-                              .firstWhere((e) => e.value == a)
-                              .key;
-                      _contractorData.remove(userId);
-
-                      final data = contractors[0];
-
-                      ContractorCompareManager.to.remove(a.data.contractor.id);
-                    },
                   ),
-                  const SizedBox(height: 12),
-                  _ContractorCardForCompare(
-                    contractor: b,
-                    onRemove: () {
-                      final userId =
-                          _contractorData.entries
-                              .firstWhere((e) => e.value == b)
-                              .key;
-                      _contractorData.remove(userId);
+                const SizedBox(height: 16),
+                 Padding(
+              padding: EdgeInsets.symmetric(horizontal: AppPadding.medium,),
 
-                      ContractorCompareManager.to.remove(b.data.contractor.id);
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
+                  child: Text(
                     'Detailed Comparison',
                     style: TextStyle(
                       fontSize: AppFontSizes.medium,
@@ -1533,14 +1552,21 @@ class _ContractorComparisonScreenState
                       color: ColorRes.black,
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  _ContractorComparisonTable(a: a, b: b),
-                  const SizedBox(height: 10),
-                ],
-              ),
-            );
-          }),
-        ),
+                ),
+                const SizedBox(height: 12),
+                _ContractorComparisonTable(
+                  contractors: contractors,
+                  onActiveChange: (id) {
+                    setState(() {
+                      _activeId = id;
+                    });
+                  },
+                ),
+                const SizedBox(height: 10),
+              ],
+            ),
+          );
+        }),
       ),
     );
   }
@@ -1549,198 +1575,269 @@ class _ContractorComparisonScreenState
 class _ContractorCardForCompare extends StatelessWidget {
   final ContractorDataResponse contractor;
   final VoidCallback? onRemove;
+  final bool isActive;
 
-  const _ContractorCardForCompare({required this.contractor, this.onRemove});
+  const _ContractorCardForCompare({
+    required this.contractor,
+    this.onRemove,
+    this.isActive = false,
+  });
 
   @override
   Widget build(BuildContext context) {
+    TopContractorsController topContractorsController =
+        Get.isRegistered<TopContractorsController>()
+            ? Get.find<TopContractorsController>()
+            : Get.put(TopContractorsController(), permanent: true);
     final c = contractor.data.contractor;
+    Contractor? contractorProfile;
     final p = contractor.data.profile;
 
-    return Material(
-      color: ColorRes.white,
-      borderRadius: BorderRadius.circular(12),
-      elevation: 1,
-      shadowColor: ColorRes.black.withOpacity(0.06),
-      child: Container(
-        height: 115,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: ColorRes.leadGreyColor.shade200, width: 1),
-        ),
-        child: Stack(
-          children: [
-            Row(
-              children: [
-                // Avatar Section
-                Container(
-                  width: 120,
-                  decoration: BoxDecoration(
-                    color: ColorRes.primary.withOpacity(0.1),
-                    borderRadius: const BorderRadius.horizontal(
-                      left: Radius.circular(11),
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: AppPadding.medium,),
+      child: Material(
+        color: ColorRes.white,
+        borderRadius: BorderRadius.circular(12),
+        elevation: 1,
+        shadowColor: ColorRes.black.withOpacity(0.06),
+        child: Container(
+          height: 115,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isActive ? ColorRes.primary : ColorRes.leadGreyColor.shade200,
+              width: isActive ? 2 : 1,
+            ),
+          ),
+          child: Stack(
+            children: [
+              Row(
+                children: [
+                  // Avatar Section
+                  // Container(
+                  //   width: 120,
+                  //   decoration: BoxDecoration(
+                  //     color: ColorRes.primary.withOpacity(0.1),
+                  //     borderRadius: const BorderRadius.horizontal(
+                  //       left: Radius.circular(11),
+                  //     ),
+                  //   ),
+                  //   child: const Center(
+                  //     child: CircleAvatar(
+                  //       radius: 35,
+                  //       backgroundColor: ColorRes.primary,
+                  //       child: Icon(
+                  //         Icons.engineering, // 👈 replace with any icon you like
+                  //         color: ColorRes.white,
+                  //         size: 35, // adjust as needed
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  Container(
+                    width: 120,
+                    decoration: BoxDecoration(
+                      color: ColorRes.primary.withOpacity(0.1),
+                      borderRadius: const BorderRadius.horizontal(
+                        left: Radius.circular(11),
+                      ),
                     ),
-                  ),
-                  child: const Center(
-                    child: CircleAvatar(
-                      radius: 35,
-                      backgroundColor: ColorRes.primary,
-                      child: Icon(
-                        Icons.engineering, // 👈 replace with any icon you like
-                        color: ColorRes.white,
-                        size: 35, // adjust as needed
+                    child: Center(
+                      child: ClipOval(
+                        child: (contractor.data.contractor.profilePic ?? '').isNotEmpty
+                            ? CachedNetworkImage(
+                                imageUrl: (contractor.data.contractor.profilePic ?? ''),
+                                width: 70,
+                                height: 70,
+                                fit: BoxFit.cover,
+                                placeholder: (_, __) => ShimmerShapes.circle(size: 70),
+                                errorWidget: (_, __, ___) => _fallbackAvatar(),
+                              )
+                            : _fallbackAvatar(),
                       ),
                     ),
                   ),
-                ),
-
-                // Content Section
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Username (only if available)
-                        if ((c.username).isNotEmpty)
-                          Text(
-                            c.username,
-                            style: const TextStyle(
-                              fontSize: AppFontSizes.bodyMedium,
-                              fontWeight: AppFontWeights.semiBold,
-                              color: ColorRes.textColor,
-                              height: 1.2,
+                  // Content Section
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Username (only if available)
+                          if ((c.username).isNotEmpty)
+                            Text(
+                              c.username,
+                              style: const TextStyle(
+                                fontSize: AppFontSizes.bodyMedium,
+                                fontWeight: AppFontWeights.semiBold,
+                                color: ColorRes.textColor,
+                                height: 1.2,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-
-                        // Location (only if any non-null)
-                        if ((c.city != null && c.city!.isNotEmpty) ||
-                            (c.state != null && c.state!.isNotEmpty))
-                          Text(
-                            '${c.city ?? ''}${c.city != null && c.state != null ? ', ' : ''}${c.state ?? ''}',
-                            style: TextStyle(
-                              fontSize: AppFontSizes.caption,
-                              color: ColorRes.leadGreyColor[600],
-                              height: 1.3,
+      
+                          // Location (only if any non-null)
+                          if ((c.city != null && c.city!.isNotEmpty) ||
+                              (c.state != null && c.state!.isNotEmpty))
+                            Text(
+                              '${c.city ?? ''}${c.city != null && c.state != null ? ', ' : ''}${c.state ?? ''}',
+                              style: TextStyle(
+                                fontSize: AppFontSizes.caption,
+                                color: ColorRes.leadGreyColor[600],
+                                height: 1.3,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-
-                        // Rating & Services (only if data exists)
-                        if (p.overallRating != null ||
-                            (p.totalServices != null && p.totalServices > 0))
-                          Row(
-                            children: [
-                              if (p.overallRating != null)
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.star,
-                                      color: ColorRes.homeYellow,
-                                      size: 14,
+      
+                          // Rating & Services (only if data exists)
+                          if (p.overallRating != null ||
+                              (p.totalServices != null && p.totalServices > 0))
+                            Row(
+                              children: [
+                                if (p.overallRating != null)
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.star,
+                                        color: ColorRes.homeYellow,
+                                        size: 14,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        '${p.overallRating}',
+                                        style: const TextStyle(
+                                          fontSize: AppFontSizes.small,
+                                          fontWeight: AppFontWeights.semiBold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                if (p.overallRating != null &&
+                                    (p.totalServices != null &&
+                                        p.totalServices > 0))
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
                                     ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      '${p.overallRating}',
-                                      style: const TextStyle(
-                                        fontSize: AppFontSizes.small,
-                                        fontWeight: AppFontWeights.semiBold,
+                                    child: Container(
+                                      width: 3,
+                                      height: 3,
+                                      decoration: const BoxDecoration(
+                                        color: ColorRes.grey,
+                                        shape: BoxShape.circle,
                                       ),
                                     ),
-                                  ],
-                                ),
-                              if (p.overallRating != null &&
-                                  (p.totalServices != null &&
-                                      p.totalServices > 0))
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
                                   ),
-                                  child: Container(
-                                    width: 3,
-                                    height: 3,
-                                    decoration: const BoxDecoration(
-                                      color: ColorRes.grey,
-                                      shape: BoxShape.circle,
+                                if (p.totalServices != null &&
+                                    p.totalServices > 0)
+                                  Text(
+                                    '${p.totalServices} Services',
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.small,
+                                      color: ColorRes.leadGreyColor[600],
                                     ),
                                   ),
-                                ),
-                              if (p.totalServices != null &&
-                                  p.totalServices > 0)
-                                Text(
-                                  '${p.totalServices} Services',
-                                  style: TextStyle(
-                                    fontSize: AppFontSizes.small,
-                                    color: ColorRes.leadGreyColor[600],
+                              ],
+                            ),
+      
+                          // View Profile Button
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              GestureDetector(
+                                onTap: () async {
+                                  contractorProfile =
+                                      await topContractorsController
+                                          .getContractorById(c.id);
+                                  contractorProfile?.username = c.username ?? '';
+      
+                                  log(
+                                    'contractorProfile with id ${c.id}: ${contractorProfile?.toJson()}',
+                                  );
+                                  if (contractorProfile != null) {
+                                    Get.to(
+                                      () => ContractorProfileDetailsScreen(
+                                        contractor:
+                                            contractorProfile ??
+                                            Contractor.fromJson({}),
+                                      ),
+                                    );
+                                  }
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 4,
                                   ),
-                                ),
-                            ],
-                          ),
-
-                        // View Profile Button
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            GestureDetector(
-                              onTap: () {},
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 14,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: ColorRes.primary,
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: const Text(
-                                  'View Profile',
-                                  style: TextStyle(
-                                    fontWeight: AppFontWeights.semiBold,
-                                    fontSize: AppFontSizes.small,
-                                    color: ColorRes.white,
+                                  decoration: BoxDecoration(
+                                    color: ColorRes.primary,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: const Text(
+                                    'View Profile',
+                                    style: TextStyle(
+                                      fontWeight: AppFontWeights.semiBold,
+                                      fontSize: AppFontSizes.small,
+                                      color: ColorRes.white,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+      
+              // Remove button
+              if (onRemove != null)
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: GestureDetector(
+                    onTap: onRemove,
+                    child: const Icon(
+                      Icons.cancel,
+                      color: ColorRes.error,
+                      size: 16,
                     ),
                   ),
                 ),
-              ],
-            ),
-
-            // Remove button
-            if (onRemove != null)
-              Positioned(
-                top: 8,
-                right: 8,
-                child: GestureDetector(
-                  onTap: onRemove,
-                  child: const Icon(
-                    Icons.cancel,
-                    color: ColorRes.error,
-                    size: 16,
-                  ),
-                ),
-              ),
-          ],
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _fallbackAvatar() {
+    return CircleAvatar(
+      radius: 35,
+      backgroundColor: ColorRes.primary,
+      child: const Icon(
+        Icons.design_services_outlined,
+        color: Colors.white,
+        size: 35,
       ),
     );
   }
 }
 
 class _ContractorComparisonTable extends StatefulWidget {
-  final ContractorDataResponse a;
-  final ContractorDataResponse b;
+  final List<ContractorDataResponse> contractors;
+  final ValueChanged<String>? onActiveChange;
 
-  const _ContractorComparisonTable({required this.a, required this.b});
+  const _ContractorComparisonTable({
+    required this.contractors,
+    this.onActiveChange,
+  });
 
   @override
   State<_ContractorComparisonTable> createState() =>
@@ -1751,7 +1848,17 @@ class _ContractorComparisonTableState
     extends State<_ContractorComparisonTable> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
-
+  
+  bool _didInitialNotify = false;
+void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_didInitialNotify && widget.contractors.isNotEmpty) {
+        widget.onActiveChange?.call(widget.contractors[0].data.contractor.id);
+        _didInitialNotify = true;
+      }
+    });
+  }
   @override
   void dispose() {
     _pageController.dispose();
@@ -1763,26 +1870,16 @@ class _ContractorComparisonTableState
     // Collect all unique services
     Map<String, Map<String, dynamic>> allServices = {};
 
-    for (var category in widget.a.data.servicesByCategory) {
-      for (var service in category.services) {
-        String key = '${category.categoryName}|${service.serviceName}';
-        if (!allServices.containsKey(key)) {
-          allServices[key] = {
-            'categoryName': category.categoryName,
-            'serviceName': service.serviceName,
-          };
-        }
-      }
-    }
-
-    for (var category in widget.b.data.servicesByCategory) {
-      for (var service in category.services) {
-        String key = '${category.categoryName}|${service.serviceName}';
-        if (!allServices.containsKey(key)) {
-          allServices[key] = {
-            'categoryName': category.categoryName,
-            'serviceName': service.serviceName,
-          };
+    for (var contractor in widget.contractors) {
+      for (var category in contractor.data.servicesByCategory) {
+        for (var service in category.services) {
+          String key = '${category.categoryName}|${service.serviceName}';
+          if (!allServices.containsKey(key)) {
+            allServices[key] = {
+              'categoryName': category.categoryName,
+              'serviceName': service.serviceName,
+            };
+          }
         }
       }
     }
@@ -1802,79 +1899,62 @@ class _ContractorComparisonTableState
       children: [
         SizedBox(
           height: 550,
-          child: PageView(
+          child: PageView.builder(
             controller: _pageController,
+            itemCount: widget.contractors.length,
             onPageChanged: (index) {
               setState(() {
                 _currentPage = index;
               });
+              final contractor = widget.contractors[index];
+              widget.onActiveChange?.call(contractor.data.contractor.id);
             },
-            children: [
-              // Contractor A Card
-              Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: _ContractorServicesCard(
-                  contractor: widget.a,
-                  activeServices: widget.a.data.totalActiveServices.toString(),
-
-                  totalServices: widget.a.data.totalServices.toString(),
-                  contractorType: widget.a.data.profile.contractorType,
-                  location: widget.a.data.contractor.city ?? '',
-                  title: widget.a.data.contractor.username,
-                  membershipSince: formatMemberSince(
-                    widget.a.data.contractor.memberSince.toIso8601String(),
-                  ),
+            itemBuilder: (context, index) {
+              final contractor = widget.contractors[index];
+              return _ContractorServicesCard(
+                contractor: contractor,
+                activeServices:
+                    contractor.data.totalActiveServices.toString(),
+                totalServices: contractor.data.totalServices.toString(),
+                contractorType: contractor.data.profile.contractorType,
+                location: contractor.data.contractor.city ?? '',
+                title: contractor.data.contractor.username,
+                membershipSince: formatMemberSince(
+                  contractor.data.contractor.memberSince.toIso8601String(),
                 ),
-              ),
-              // Contractor B Card
-              Padding(
-                padding: const EdgeInsets.only(left: 8),
-                child: _ContractorServicesCard(
-                  activeServices: widget.b.data.totalActiveServices.toString(),
-                  contractor: widget.b,
-
-                  totalServices: widget.b.data.totalServices.toString(),
-                  contractorType: widget.b.data.profile.contractorType,
-                  location: widget.b.data.contractor.city ?? '',
-
-                  membershipSince: formatMemberSince(
-                    widget.b.data.contractor.memberSince.toIso8601String(),
-                  ),
-                  title: widget.b.data.contractor.username,
-                ),
-              ),
-            ],
+              );
+            },
           ),
         ),
         const SizedBox(height: 12),
         // Page Indicator Dots
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(
-            2,
-            (index) => GestureDetector(
-              onTap: () {
-                _pageController.animateToPage(
-                  index,
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                );
-              },
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                width: _currentPage == index ? 24 : 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  color:
-                      _currentPage == index
-                          ? ColorRes.primary
-                          : ColorRes.leadGreyColor[300],
-                  borderRadius: BorderRadius.circular(4),
+        if (widget.contractors.length > 1)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              widget.contractors.length,
+              (index) => GestureDetector(
+                onTap: () {
+                  _pageController.animateToPage(
+                    index,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                },
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  width: _currentPage == index ? 24 : 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: _currentPage == index
+                        ? ColorRes.primary
+                        : ColorRes.leadGreyColor[300],
+                    borderRadius: BorderRadius.circular(4),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
       ],
     );
   }
@@ -1917,6 +1997,7 @@ class _ContractorServicesCard extends StatelessWidget {
     final ownCategories = contractor.data.servicesByCategory;
     return Container(
       width: MediaQuery.of(context).size.width - 32,
+           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),

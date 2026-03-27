@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
@@ -37,7 +37,7 @@ class DashboardHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  title.capitalize?.replaceAll("_", " ")??'N/A',
                   style: TextStyle(
                     fontSize: AppFontSizes.large,
                     fontWeight: AppFontWeights.bold,
@@ -49,7 +49,8 @@ class DashboardHeader extends StatelessWidget {
                   subtitle,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: ColorRes.white.withOpacity(0.9)),
+
+                  style: TextStyle(color: ColorRes.white.withOpacity(0.9),fontWeight: AppFontWeights.medium,),
                 ),
               ],
             ),

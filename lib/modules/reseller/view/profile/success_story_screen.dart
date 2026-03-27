@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 
 import '../../../../app/constants/color_res.dart';
 import '../../controller/dashborad_controller/dashboard_controller.dart';

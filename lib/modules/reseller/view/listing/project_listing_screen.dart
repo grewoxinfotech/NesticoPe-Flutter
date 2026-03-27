@@ -2,9 +2,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
-import 'package:housing_flutter_app/modules/reseller/view/listing/property_listing.dart';
-import 'package:housing_flutter_app/utils/shimmer/reseller/entity_screen/reseller_entity_list_screen_shimmer.dart';
+import 'package:nesticope_app/data/network/builder/model/builder_model.dart';
+import 'package:nesticope_app/modules/reseller/view/listing/property_listing.dart';
+import 'package:nesticope_app/utils/shimmer/reseller/entity_screen/reseller_entity_list_screen_shimmer.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
@@ -360,10 +360,10 @@ class _ProjectListingScreenState extends State<ProjectListingScreen> {
                   );
                 }
 
-                if (!projectController!.isLoading.value &&
-                    projectController!.items.isEmpty) {
-                  return const Center(child: Text("No Listing Yet."));
-                }
+                // if (!projectController!.isLoading.value &&
+                //     projectController!.items.isEmpty) {
+                //   return const Center(child: Text("No Listing Yet."));
+                // }
 
                 return NotificationListener<ScrollEndNotification>(
                   onNotification: (scrollEnd) {
@@ -375,7 +375,9 @@ class _ProjectListingScreenState extends State<ProjectListingScreen> {
                   },
                   child: RefreshIndicator(
                     onRefresh: projectController!.refreshResellerProjects,
-                    child: ProjectsGrid(
+                    child:(!projectController!.isLoading.value &&
+                    projectController!.items.isEmpty)? 
+                    const Center(child: Text("No Listing Yet.")):ProjectsGrid(
                       isSelectionMode: isSelectionMode,
                       selectedProjectIds: selectedProjectIds,
                       resellerProjectController: projectController!,

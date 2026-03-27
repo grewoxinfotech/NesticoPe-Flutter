@@ -1,11 +1,11 @@
 // import 'dart:developer';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
-// import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
-// import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-// import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
-// import 'package:housing_flutter_app/data/network/builder/service/builder_service.dart';
-// import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
+// import 'package:nesticope_app/app/care/pagination/controller/pagination_controller.dart';
+// import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
+// import 'package:nesticope_app/data/database/secure_storage_service.dart';
+// import 'package:nesticope_app/data/network/builder/model/builder_model.dart';
+// import 'package:nesticope_app/data/network/builder/service/builder_service.dart';
+// import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 // import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 //
 // class BuilderProjectListController extends PaginatedController<ProjectItem> {
@@ -171,12 +171,12 @@
 
 // import 'dart:developer';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
-// import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
-// import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-// import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
-// import 'package:housing_flutter_app/data/network/builder/service/builder_service.dart';
-// import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
+// import 'package:nesticope_app/app/care/pagination/controller/pagination_controller.dart';
+// import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
+// import 'package:nesticope_app/data/database/secure_storage_service.dart';
+// import 'package:nesticope_app/data/network/builder/model/builder_model.dart';
+// import 'package:nesticope_app/data/network/builder/service/builder_service.dart';
+// import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 // import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 //
 // class BuilderProjectListController extends PaginatedController<ProjectItem> {
@@ -314,12 +314,12 @@
 
 // import 'dart:developer';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
-// import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
-// import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-// import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
-// import 'package:housing_flutter_app/data/network/builder/service/builder_service.dart';
-// import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
+// import 'package:nesticope_app/app/care/pagination/controller/pagination_controller.dart';
+// import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
+// import 'package:nesticope_app/data/database/secure_storage_service.dart';
+// import 'package:nesticope_app/data/network/builder/model/builder_model.dart';
+// import 'package:nesticope_app/data/network/builder/service/builder_service.dart';
+// import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 // import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 //
 // class BuilderProjectListController extends PaginatedController<ProjectItem> {
@@ -477,12 +477,12 @@
 import 'dart:developer';
 
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/data/network/builder/model/builder_model.dart';
-import 'package:housing_flutter_app/data/network/builder/service/builder_service.dart';
-import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
+import 'package:nesticope_app/app/care/pagination/controller/pagination_controller.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/data/network/builder/model/builder_model.dart';
+import 'package:nesticope_app/data/network/builder/service/builder_service.dart';
+import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 
 /// ==============================
@@ -533,7 +533,7 @@ class BuilderProjectListController extends PaginatedController<ProjectItem> {
     try {
       loadingState.value = BuilderProjectLoadingState.initialLoading;
 
-      await _applyBuilderFilter();
+      await applyBuilderFilter();
       await loadInitial();
     } catch (e) {
       log("❌ Initial load error: $e");
@@ -544,13 +544,14 @@ class BuilderProjectListController extends PaginatedController<ProjectItem> {
   }
 
   /// Ensure builder-only projects
-  Future<void> _applyBuilderFilter() async {
-    final userData = await SecureStorage.getUserData();
-    final userId = userData?.user?.id;
+  Future<void> applyBuilderFilter() async {
 
-    if (userId != null) {
-      filters['created_by'] = userId;
-    }
+      final userData = await SecureStorage.getUserData();
+      final userId = userData?.user?.id;
+      if (userId != null) {
+        filters['created_by'] = userId;
+      }
+
   }
 
   /// ==============================

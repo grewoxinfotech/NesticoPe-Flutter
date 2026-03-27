@@ -4,11 +4,11 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/utils/dummy_data.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/utils/dummy_data.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
-import 'package:housing_flutter_app/data/network/property/models/property_model.dart'
+import 'package:nesticope_app/data/network/property/models/property_model.dart'
     hide
         PropertyDetails,
         PossessionInfo,
@@ -24,17 +24,17 @@ import 'package:housing_flutter_app/data/network/property/models/property_model.
         PgRules,
         PlotInfo,
         removeDots;
-import 'package:housing_flutter_app/data/network/property/services/property_service.dart';
-import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
+import 'package:nesticope_app/data/network/property/services/property_service.dart';
+import 'package:nesticope_app/modules/auth/controllers/auth_controller.dart';
 
-import 'package:housing_flutter_app/app/manager/icon_manager.dart';
-import 'package:housing_flutter_app/modules/add_property/model/furnishing_model.dart';
-import 'package:housing_flutter_app/modules/add_property/model/photo_model.dart';
-import 'package:housing_flutter_app/modules/add_property/model/review_property_model.dart';
-import 'package:housing_flutter_app/modules/add_property/model/room_detail_model.dart';
-import 'package:housing_flutter_app/modules/dashboard/views/dashboard_screen.dart';
-import 'package:housing_flutter_app/utils/logger/app_logger.dart';
-import 'package:housing_flutter_app/widgets/location_permission/location_permission_method.dart';
+import 'package:nesticope_app/app/manager/icon_manager.dart';
+import 'package:nesticope_app/modules/add_property/model/furnishing_model.dart';
+import 'package:nesticope_app/modules/add_property/model/photo_model.dart';
+import 'package:nesticope_app/modules/add_property/model/review_property_model.dart';
+import 'package:nesticope_app/modules/add_property/model/room_detail_model.dart';
+import 'package:nesticope_app/modules/dashboard/views/dashboard_screen.dart';
+import 'package:nesticope_app/utils/logger/app_logger.dart';
+import 'package:nesticope_app/widgets/location_permission/location_permission_method.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -851,6 +851,7 @@ class CreatePropertyController extends GetxController {
   }
 
   ///dgs_fFds5455451
+  ///
   void setDate(DateTime date) {
     selectedDate.value = date;
   }
@@ -1283,6 +1284,7 @@ class CreatePropertyController extends GetxController {
           lockPeriod: lockPeriodController.text,
           rooms: roomsCopy,
           images: imagesCopy,
+          
           bestSuitedList: List<String>.from(bestSuitedList),
           commonAreasList: List<String>.from(commonAreasList),
           mealAvailableList: List<String>.from(mealAvailableList),
@@ -2096,6 +2098,16 @@ class CreatePropertyController extends GetxController {
     try {
       final payload = await buildPropertyPayloadResidentialRent();
       AppLogger.structured("Payload of Residential Rent:", payload.toJson());
+      debugPrint(
+        "Payload of Residential Rent Image:${imageList.map((element) => File(element)).toList()}",
+      );
+
+      debugPrint(
+        "Payload of Residential Rent video :${videoList.map((element) => File(element)).toList()}",
+      );
+      debugPrint(
+        "Payload of Residential Rent document:${documentList.map((element) => File(element)).toList()}",
+      );
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2125,6 +2137,17 @@ class CreatePropertyController extends GetxController {
     try {
       final payload = await buildPropertyPayloadResidentialSell();
       AppLogger.structured("Payload : ", payload.toJson());
+
+      debugPrint(
+        "Payload of Residential Rent Image:${imageList.map((element) => File(element)).toList()}",
+      );
+
+      debugPrint(
+        "Payload of Residential Rent video :${videoList.map((element) => File(element)).toList()}",
+      );
+      debugPrint(
+        "Payload of Residential Rent document:${documentList.map((element) => File(element)).toList()}",
+      );
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -3061,10 +3084,15 @@ class CreatePropertyController extends GetxController {
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
               : null,
+
       listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
       propertyType:
           rent_propertyType.value.isNotEmpty
               ? rent_propertyType.value.toLowerCase().replaceAll(" ", "_")
+              : null,
+      buildingName:
+          commercial_rent_building_Name.text.trim().isNotEmpty
+              ? commercial_rent_building_Name.text.trim()
               : null,
       propertyDescription:
           sell_rent_propertyDescriptionController.text.trim().isNotEmpty
@@ -3089,7 +3117,9 @@ class CreatePropertyController extends GetxController {
                 : null,
         balcony: rent_Balcony.value,
         petFriendly:
-            rent_Pet_Friendly.value.toLowerCase() == 'yes' ? true : false,
+            rent_Pet_Friendly.value.isNotEmpty
+                ? (rent_Pet_Friendly.value.toLowerCase() == 'yes')
+                : null,
         propertyBuiltUpArea:
             areaController.text.trim().isNotEmpty
                 ? double.tryParse(areaController.text.trim())
@@ -3278,6 +3308,10 @@ class CreatePropertyController extends GetxController {
       type:
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
+              : null,
+      buildingName:
+          commercial_rent_building_Name.text.trim().isNotEmpty
+              ? commercial_rent_building_Name.text.trim()
               : null,
       listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
 
@@ -3577,6 +3611,10 @@ class CreatePropertyController extends GetxController {
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
               : null,
+      buildingName:
+          commercial_rent_building_Name.text.trim().isNotEmpty
+              ? commercial_rent_building_Name.text.trim()
+              : null,
       listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
 
       propertyType:
@@ -3870,6 +3908,10 @@ class CreatePropertyController extends GetxController {
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
               : null,
+      buildingName:
+          commercial_rent_building_Name.text.trim().isNotEmpty
+              ? commercial_rent_building_Name.text.trim()
+              : null,
       listingType:
           (lookingTo.value.isNotEmpty &&
                   lookingTo.value.toLowerCase() == "pg/co-living")
@@ -4082,6 +4124,10 @@ class CreatePropertyController extends GetxController {
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
               : null,
+      buildingName:
+          commercial_rent_building_Name.text.trim().isNotEmpty
+              ? commercial_rent_building_Name.text.trim()
+              : null,
       listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
       city:
           cityController.text.trim().isNotEmpty
@@ -4206,6 +4252,10 @@ class CreatePropertyController extends GetxController {
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
               : null,
+      buildingName:
+          commercial_rent_building_Name.text.trim().isNotEmpty
+              ? commercial_rent_building_Name.text.trim()
+              : null,
       propertyDescription:
           commercial_rent_description.text.trim().isNotEmpty
               ? commercial_rent_description.text.trim()
@@ -4310,10 +4360,7 @@ class CreatePropertyController extends GetxController {
           sell_rent_Address.text.trim().isNotEmpty
               ? sell_rent_Address.text.trim()
               : null,
-      buildingName:
-          commercial_rent_building_Name.text.trim().isNotEmpty
-              ? commercial_rent_building_Name.text.trim()
-              : null,
+   
       ownerEmail: user != null ? user.user?.email : "",
       ownerPhone: user != null ? user.user?.phone : "",
       ownerName:
@@ -4329,6 +4376,10 @@ class CreatePropertyController extends GetxController {
       type:
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
+              : null,
+      buildingName:
+          commercial_rent_building_Name.text.trim().isNotEmpty
+              ? commercial_rent_building_Name.text.trim()
               : null,
       listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
       city:
@@ -4463,10 +4514,7 @@ class CreatePropertyController extends GetxController {
                   : null,
         ),
       ),
-      buildingName:
-          commercial_rent_building_Name.text.trim().isNotEmpty
-              ? commercial_rent_building_Name.text.trim()
-              : null,
+    
 
       location:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
@@ -4493,6 +4541,10 @@ class CreatePropertyController extends GetxController {
       type:
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
+              : null,
+      buildingName:
+          commercial_rent_building_Name.text.trim().isNotEmpty
+              ? commercial_rent_building_Name.text.trim()
               : null,
       listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
       city:
@@ -4573,10 +4625,7 @@ class CreatePropertyController extends GetxController {
                   : null,
         ),
       ),
-      buildingName:
-          commercial_rent_building_Name.text.trim().isNotEmpty
-              ? commercial_rent_building_Name.text.trim()
-              : null,
+     
       location:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
               ? commercial_rent_Loaclity_Name.text.trim()
@@ -4601,6 +4650,10 @@ class CreatePropertyController extends GetxController {
       type:
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
+              : null,
+      buildingName:
+          commercial_rent_building_Name.text.trim().isNotEmpty
+              ? commercial_rent_building_Name.text.trim()
               : null,
       listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
       city:
@@ -4689,10 +4742,7 @@ class CreatePropertyController extends GetxController {
       //     commercial_rent_Loaclity_Name.text.trim().isNotEmpty
       //         ? commercial_rent_Loaclity_Name.text.trim()
       //         : null,
-      buildingName:
-          commercial_rent_building_Name.text.trim().isNotEmpty
-              ? commercial_rent_building_Name.text.trim()
-              : null,
+     
       location:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
               ? commercial_rent_Loaclity_Name.text.trim()
@@ -4717,6 +4767,10 @@ class CreatePropertyController extends GetxController {
       type:
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
+              : null,
+      buildingName:
+          commercial_rent_building_Name.text.trim().isNotEmpty
+              ? commercial_rent_building_Name.text.trim()
               : null,
       listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
       city:
@@ -4810,10 +4864,7 @@ class CreatePropertyController extends GetxController {
       //     commercial_rent_Loaclity_Name.text.trim().isNotEmpty
       //         ? commercial_rent_Loaclity_Name.text.trim()
       //         : null,
-      buildingName:
-          commercial_rent_building_Name.text.trim().isNotEmpty
-              ? commercial_rent_building_Name.text.trim()
-              : null,
+     
       location:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
               ? commercial_rent_Loaclity_Name.text.trim()
@@ -4838,6 +4889,10 @@ class CreatePropertyController extends GetxController {
       type:
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
+              : null,
+      buildingName:
+          commercial_rent_building_Name.text.trim().isNotEmpty
+              ? commercial_rent_building_Name.text.trim()
               : null,
       listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
       city:
@@ -4937,10 +4992,7 @@ class CreatePropertyController extends GetxController {
       //     commercial_rent_Loaclity_Name.text.trim().isNotEmpty
       //         ? commercial_rent_Loaclity_Name.text.trim()
       //         : null,
-      buildingName:
-          commercial_rent_building_Name.text.trim().isNotEmpty
-              ? commercial_rent_building_Name.text.trim()
-              : null,
+
       location:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
               ? commercial_rent_Loaclity_Name.text.trim()
@@ -4965,6 +5017,10 @@ class CreatePropertyController extends GetxController {
       type:
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
+              : null,
+      buildingName:
+          commercial_rent_building_Name.text.trim().isNotEmpty
+              ? commercial_rent_building_Name.text.trim()
               : null,
       listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
       city:
@@ -5073,10 +5129,7 @@ class CreatePropertyController extends GetxController {
       //     commercial_rent_Loaclity_Name.text.trim().isNotEmpty
       //         ? commercial_rent_Loaclity_Name.text.trim()
       //         : null,
-      buildingName:
-          commercial_rent_building_Name.text.trim().isNotEmpty
-              ? commercial_rent_building_Name.text.trim()
-              : null,
+
       location:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
               ? commercial_rent_Loaclity_Name.text.trim()
@@ -5101,6 +5154,10 @@ class CreatePropertyController extends GetxController {
       type:
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
+              : null,
+      buildingName:
+          commercial_rent_building_Name.text.trim().isNotEmpty
+              ? commercial_rent_building_Name.text.trim()
               : null,
       listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
       city:
@@ -5251,11 +5308,7 @@ class CreatePropertyController extends GetxController {
       // address:
       //     commercial_rent_Loaclity_Name.text.trim().isNotEmpty
       //         ? commercial_rent_Loaclity_Name.text.trim()
-      //         : null,
-      buildingName:
-          commercial_rent_building_Name.text.trim().isNotEmpty
-              ? commercial_rent_building_Name.text.trim()
-              : null,
+  
       location:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
               ? commercial_rent_Loaclity_Name.text.trim()
@@ -5280,6 +5333,10 @@ class CreatePropertyController extends GetxController {
       type:
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
+              : null,
+      buildingName:
+          commercial_rent_building_Name.text.trim().isNotEmpty
+              ? commercial_rent_building_Name.text.trim()
               : null,
       listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
       city:
@@ -5388,10 +5445,7 @@ class CreatePropertyController extends GetxController {
       //     commercial_rent_Loaclity_Name.text.trim().isNotEmpty
       //         ? commercial_rent_Loaclity_Name.text.trim()
       //         : null,
-      buildingName:
-          commercial_rent_building_Name.text.trim().isNotEmpty
-              ? commercial_rent_building_Name.text.trim()
-              : null,
+     
       location:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
               ? commercial_rent_Loaclity_Name.text.trim()
@@ -5416,6 +5470,10 @@ class CreatePropertyController extends GetxController {
       type:
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
+              : null,
+      buildingName:
+          commercial_rent_building_Name.text.trim().isNotEmpty
+              ? commercial_rent_building_Name.text.trim()
               : null,
       listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
       city:
@@ -5522,10 +5580,7 @@ class CreatePropertyController extends GetxController {
       //     commercial_rent_Loaclity_Name.text.trim().isNotEmpty
       //         ? commercial_rent_Loaclity_Name.text.trim()
       //         : null,
-      buildingName:
-          commercial_rent_building_Name.text.trim().isNotEmpty
-              ? commercial_rent_building_Name.text.trim()
-              : null,
+     
       location:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
               ? commercial_rent_Loaclity_Name.text.trim()
@@ -5550,6 +5605,10 @@ class CreatePropertyController extends GetxController {
       type:
           propertyType.value.isNotEmpty
               ? propertyType.value.toLowerCase()
+              : null,
+      buildingName:
+          commercial_rent_building_Name.text.trim().isNotEmpty
+              ? commercial_rent_building_Name.text.trim()
               : null,
       listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
       city:
@@ -5661,10 +5720,7 @@ class CreatePropertyController extends GetxController {
       //     commercial_rent_Loaclity_Name.text.trim().isNotEmpty
       //         ? commercial_rent_Loaclity_Name.text.trim()
       //         : null,
-      buildingName:
-          commercial_rent_building_Name.text.trim().isNotEmpty
-              ? commercial_rent_building_Name.text.trim()
-              : null,
+     
       location:
           commercial_rent_Loaclity_Name.text.trim().isNotEmpty
               ? commercial_rent_Loaclity_Name.text.trim()

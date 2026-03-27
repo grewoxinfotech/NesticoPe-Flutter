@@ -1,14 +1,15 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:housing_flutter_app/app/care/pagination/controller/pagination_controller.dart';
-import 'package:housing_flutter_app/app/care/pagination/models/pagination_models.dart';
-import 'package:housing_flutter_app/app/widgets/snackbar/snackbar.dart';
-import 'package:housing_flutter_app/data/database/secure_storage_service.dart';
-import 'package:housing_flutter_app/data/network/review/model/review_model.dart';
-import 'package:housing_flutter_app/modules/property/controllers/overall_rating_controller.dart';
+import 'package:nesticope_app/app/care/pagination/controller/pagination_controller.dart';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
+import 'package:nesticope_app/app/widgets/snackbar/snackbar.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/data/network/review/model/review_model.dart';
+import 'package:nesticope_app/modules/property/controllers/overall_rating_controller.dart';
 
 import '../../../data/network/review/service/review_service.dart';
 import '../../../widgets/messages/snack_bar.dart';
@@ -150,9 +151,11 @@ class ReviewController extends PaginatedController<ReviewItem> {
     try {
       final user = await SecureStorage.getUserData();
       final userId = user?.user?.id;
+      final entityId = user?.user?.userType;
+      log("entityId  jdfghds : $entityId");
       // Build review data
       final reviewData = ReviewItem(
-        entityType: "seller",
+        entityType: (entityId == "buyer") ? "user" : entityId,
         rating: rating,
         title: title,
         content: content,
@@ -377,16 +380,25 @@ class ReviewController extends PaginatedController<ReviewItem> {
     try {
       final user = await SecureStorage.getUserData();
       final userId = user?.user?.id;
-
+      final entityType = user?.user?.userType;
+      print("User Entity Type: $entityType");
+      
+      
       if (userId == null) {
         print("❌ No user ID found in secure storage");
+        return null;
+      }
+      if (entityType == null) {
+        print("❌ No entity type found in secure storage");
         return null;
       }
 
       final response = await _service.fetchReviews(
         page: 1,
-        filters: {'entity_type': 'seller', 'reviewer_id': userId},
+        filters: {'entity_type': (entityType == "buyer") ? "user" : entityType, 'created_by': userId},
+        
       );
+
 
       print("Fetched app reviews: ${response.items.length}");
 

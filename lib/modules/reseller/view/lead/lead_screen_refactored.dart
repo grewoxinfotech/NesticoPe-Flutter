@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/color_res.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/modules/common/lead_components/lead_components.dart';
-import 'package:housing_flutter_app/modules/common/lead_components/lead_filter_helper.dart';
-import 'package:housing_flutter_app/modules/reseller/view/lead/add_lead_screen.dart';
-import 'package:housing_flutter_app/modules/seller/module/lead_screen/model/lead_model.dart';
-import 'package:housing_flutter_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
-import 'package:housing_flutter_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
-import 'package:housing_flutter_app/modules/reseller/view/lead_overview/lead_detail.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/modules/common/lead_components/lead_components.dart';
+import 'package:nesticope_app/modules/common/lead_components/lead_filter_helper.dart';
+import 'package:nesticope_app/modules/reseller/view/lead/add_lead_screen.dart';
+import 'package:nesticope_app/modules/seller/module/lead_screen/model/lead_model.dart';
+import 'package:nesticope_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
+import 'package:nesticope_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
+import 'package:nesticope_app/modules/reseller/view/lead_overview/lead_detail.dart';
 
 /*class ResellerLeadScreen extends StatelessWidget {
   final bool isViewAll;

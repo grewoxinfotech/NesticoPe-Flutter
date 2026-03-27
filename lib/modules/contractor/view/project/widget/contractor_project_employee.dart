@@ -1,3 +1,5 @@
+import 'package:nesticope_app/modules/contractor/controller/employee_task_controller.dart';
+import 'package:nesticope_app/modules/contractor/view/project/widget/employee_task_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -10,7 +12,15 @@ import '../../../controller/contractot_employee_controller.dart';
 
 class ContractorProjectEmployee extends StatefulWidget {
   final List<ContractorEmployee> employeeList;
-  ContractorProjectEmployee({super.key, required this.employeeList});
+  final String projectId;
+  final String projectName;
+
+  ContractorProjectEmployee({
+    super.key,
+    required this.employeeList,
+    required this.projectId,
+    required this.projectName,
+  });
 
   @override
   State<ContractorProjectEmployee> createState() =>
@@ -80,11 +90,11 @@ class _ContractorProjectEmployeeState extends State<ContractorProjectEmployee> {
                     itemCount: controller.items.length,
                     itemBuilder: (context, index) {
                       final employee = controller.items[index];
-                      return GestureDetector(
-                        onTap: () {
-                          _showServiceDialog(context, employee);
-                        },
-                        child: _buildEmployeeCard(employee, controller),
+                      return _buildEmployeeCard(
+                        employee,
+                        controller,
+                        widget.projectId,
+                        widget.projectName,
                       );
                     },
                   ),
@@ -159,6 +169,8 @@ void _showServiceDialog(BuildContext context, ContractorEmployeeItem service) {
 Widget _buildEmployeeCard(
   ContractorEmployeeItem employee,
   ContractorEmployeeController controller,
+  String projectId,
+  String projectName,
 ) {
   return Container(
     margin: const EdgeInsets.only(bottom: 16),
@@ -279,7 +291,38 @@ Widget _buildEmployeeCard(
               ],
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
+          // View Task Button
+          SizedBox(
+            width: double.infinity,
+            child: TextButton(
+              onPressed: () {
+                final taskController = Get.put(EmployeeTaskController());
+                taskController.setProjectId(projectId);
+                Get.to(
+                  () => EmployeeTaskListScreen(
+                    projectId: projectId,
+                    projectName: projectName,
+                    employeeId: employee.id,
+                    employeeName: employee.name,
+                  ),
+                );
+              },
+              style: TextButton.styleFrom(
+                backgroundColor: ColorRes.primary.withOpacity(0.1),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text(
+                "View Task",
+                style: TextStyle(
+                  color: ColorRes.primary,
+                  fontWeight: AppFontWeights.medium,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     ),

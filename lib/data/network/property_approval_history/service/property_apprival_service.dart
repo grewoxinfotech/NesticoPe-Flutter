@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
-import 'package:housing_flutter_app/widgets/messages/snack_bar.dart';
-import 'package:housing_flutter_app/app/constants/api_constants.dart';
+import 'package:nesticope_app/widgets/messages/snack_bar.dart';
+import 'package:nesticope_app/app/constants/api_constants.dart';
 
 import '../model/property_approval_history.dart';
 

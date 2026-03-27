@@ -8,7 +8,7 @@
 //
 // class PlatformReviewController extends GetxController {
 //   final ReviewService _reviewService = ReviewService();
-//
+//`
 //   var isLoading = false.obs;
 //   var isLoadingMore = false.obs;
 //   var allReviews = <ReviewItem>[].obs;
@@ -176,7 +176,8 @@ import '../../../../data/network/platform_review/service/platform_review_service
 class PlatformReviewController extends GetxController {
   final ReviewService _reviewService = ReviewService();
 
-  PlatformReviewController({required this.type});
+
+  PlatformReviewController({required this.type,required this.filters});
   // Observables
   final List<String> type;
   var isLoading = false.obs;

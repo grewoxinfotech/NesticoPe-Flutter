@@ -1,10 +1,10 @@
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:housing_flutter_app/widgets/bar/app_bar/common_bar.dart';
-// import 'package:housing_flutter_app/widgets/button/button.dart';
-// import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
-// import 'package:housing_flutter_app/widgets/input/custom_text_field.dart';
-// import 'package:housing_flutter_app/modules/auth/views/login_screen.dart';
+// import 'package:nesticope_app/widgets/bar/app_bar/common_bar.dart';
+// import 'package:nesticope_app/widgets/button/button.dart';
+// import 'package:nesticope_app/modules/auth/controllers/auth_controller.dart';
+// import 'package:nesticope_app/widgets/input/custom_text_field.dart';
+// import 'package:nesticope_app/modules/auth/views/login_screen.dart';
 //
 // import '../../../widgets/New folder/inputs/text_field.dart';
 //
@@ -305,12 +305,12 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:housing_flutter_app/app/constants/app_font_sizes.dart';
-import 'package:housing_flutter_app/app/utils/validation.dart';
-import 'package:housing_flutter_app/modules/auth/views/widget/city_zip_code_selector.dart';
-import 'package:housing_flutter_app/widgets/bar/app_bar/common_bar.dart';
-import 'package:housing_flutter_app/widgets/button/button.dart';
-import 'package:housing_flutter_app/modules/auth/controllers/auth_controller.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/utils/validation.dart';
+import 'package:nesticope_app/modules/auth/views/widget/city_zip_code_selector.dart';
+import 'package:nesticope_app/widgets/bar/app_bar/common_bar.dart';
+import 'package:nesticope_app/widgets/button/button.dart';
+import 'package:nesticope_app/modules/auth/controllers/auth_controller.dart';
 
 import '../../../app/constants/color_res.dart';
 import '../../../app/widgets/snackbar/snackbar.dart';
@@ -336,7 +336,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String? _selectedSellerType;
   String? _contractorType;
   final _formKey = GlobalKey<FormState>();
-  final _usernameController = TextEditingController();
+  
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -364,7 +364,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   void dispose() {
-    _usernameController.dispose();
+   
     _firstNameController.dispose();
     _lastNameController.dispose();
     _emailController.dispose();
@@ -398,7 +398,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       try {
         final success = await authController.register(
           context: context,
-          username: _usernameController.text.trim(),
+          
           password: _passwordController.text.trim(),
           email: _emailController.text.trim(),
           firstName: _firstNameController.text.trim(),
@@ -446,21 +446,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       try {
         final data = {
-          "username": _usernameController.text.trim(),
+        
           "firstName": _firstNameController.text.trim(),
           "lastName": _lastNameController.text.trim(),
           "email": _emailController.text.trim(),
 
           "password": _passwordController.text.trim(),
           // "address": _addressController.text.trim(),
-          // "city": _cityController.text.trim(),
+          //  "city": _cityController.text.trim(),
           // "state": _stateController.text.trim(),
           // "zip_code": _zipCodeController.text.trim(),
         };
 
         final success = await authController.sellerRegister(
           context: context,
-          username: _usernameController.text.trim(),
+        
           phone: _phoneController.text.trim(),
           referralCode: _referralCodeController.text.trim(),
           sellerType: _selectedSellerType?.toLowerCase() ?? 'owner',
@@ -496,13 +496,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       try {
         final data = {
-          "username": _usernameController.text.trim(),
+        
           "email": _emailController.text.trim(),
           "phone": _phoneController.text.trim(),
           "city": _cityController.text.trim(),
           "password": _passwordController.text.trim(),
-          // "firstName": _firstNameController.text.trim(),
-          // "lastName": _lastNameController.text.trim(),
+          "firstName": _firstNameController.text.trim(),
+          "lastName": _lastNameController.text.trim(),
           // "address": _addressController.text.trim(),
           // "state": _stateController.text.trim(),
           "zip_code": _zipCodeController.text.trim(),
@@ -549,14 +549,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       try {
         final data = {
-          "username": _usernameController.text.trim(),
+      
           "email": _emailController.text.trim(),
           "phone": _phoneController.text.trim(),
           "contractorType": _contractorType ?? 'Labour',
           "city": _cityController.text.trim(),
           "password": _passwordController.text.trim(),
-          // "firstName": _firstNameController.text.trim(),
-          // "lastName": _lastNameController.text.trim(),
+          "firstName": _firstNameController.text.trim(),
+          "lastName": _lastNameController.text.trim(),
           // "address": _addressController.text.trim(),
           // "state": _stateController.text.trim(),
           // "zip_code": _zipCodeController.text.trim(),
@@ -677,7 +677,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 //   ),
                 //   const SizedBox(height: 10),
                 // ],
-                if (_selectedRole == UserRole.seller)
+                if (_selectedRole == UserRole.seller)...[
                   CommonRadioGroup<String>(
                     title: "Select Seller Type",
                     options: const ["Owner", "Builder"],
@@ -688,41 +688,42 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         _selectedSellerType = value;
                       });
                     },
-                  ),
+                  ),]else...[SizedBox.shrink()],
 
                 // if (_selectedRole == UserRole.buyer ||
                 //     _selectedRole == UserRole.contractor ||
                 //     _selectedRole == UserRole.reseller)...[
-                NesticoPeTextField(
-                  title: "Username",
-                  isRequired: true,
-                  controller: _usernameController,
-                  hintText: 'Enter Username',
+                // NesticoPeTextField(
+                //   title: "Username",
+                //   isRequired: true,
+                //   controller: _usernameController,
+                //   hintText: 'Enter Username',
 
-                  style: TextStyle(
-                    fontSize: AppFontSizes.medium,
-                    fontWeight: AppFontWeights.semiBold,
-                    color: ColorRes.textPrimary,
-                  ),
-                  prefixIcon: Icons.person_outline,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter username';
-                    }
-                    return null;
-                  },
-                ),
+                //   style: TextStyle(
+                //     fontSize: AppFontSizes.medium,
+                //     fontWeight: AppFontWeights.semiBold,
+                //     color: ColorRes.textPrimary,
+                //   ),
+                //   prefixIcon: Icons.person_outline,
+                //   autovalidateMode: AutovalidateMode.onUserInteraction,
+                //   validator: (value) {
+                //     if (value == null || value.isEmpty) {
+                //       return 'Please enter username';
+                //     }
+                //     return null;
+                //   },
+                // ),
 
                 const SizedBox(height: 10),
 
                 // ],
-                if (_selectedRole == UserRole.seller) ...[
+                // if (_selectedRole == UserRole.seller) ...[
                   Row(
                     children: [
                       Expanded(
                         child: NesticoPeTextField(
                           title: "First Name",
+                          isRequired: true,
                           style: TextStyle(
                             fontSize: AppFontSizes.medium,
                             fontWeight: AppFontWeights.semiBold,
@@ -744,6 +745,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       Expanded(
                         child: NesticoPeTextField(
                           title: "Last Name",
+                          isRequired: true,
                           style: TextStyle(
                             fontSize: AppFontSizes.medium,
                             fontWeight: AppFontWeights.semiBold,
@@ -765,7 +767,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ],
                   ),
                   const SizedBox(height: 10),
-                ],
+                // ],
 
                 NesticoPeTextField(
 
