@@ -893,8 +893,7 @@ class _StatsCarouselState extends State<_StatsCarousel> {
                 children: [
                   SizedBox(
                     height: 28,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
+                      // fit: BoxFit.scaleDown,
                       child: Text(
                         s.value,
                         maxLines: 1,
@@ -906,7 +905,7 @@ class _StatsCarouselState extends State<_StatsCarousel> {
                         ),
                       ),
                     ),
-                  ),
+                  
                   const SizedBox(height: 4),
                   Text(
                     s.label.toUpperCase(),
@@ -919,79 +918,7 @@ class _StatsCarouselState extends State<_StatsCarousel> {
                 ],
               ),
             ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class _StatsRow extends StatelessWidget {
-  final List<StatItemData> stats;
-  const _StatsRow({required this.stats});
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: List.generate(stats.length.clamp(0, 3), (i) {
-        final s = stats[i];
-        return Expanded(
-          child: Padding(
-            padding: EdgeInsets.only(right: i < stats.length - 1 ? 10 : 0),
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(18),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-                border: Border.all(color: ColorRes.leadGreyColor.shade200),
-              ),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 24,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF2563EB),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          s.value,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontWeight: AppFontWeights.bold,
-                            fontSize: AppFontSizes.body,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    s.label.toUpperCase(),
-                    style: TextStyle(
-                      fontSize: AppFontSizes.caption,
-                      fontWeight: AppFontWeights.medium,
-                      color: ColorRes.leadGreyColor.shade700,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+        
         );
       }),
     );
@@ -1668,8 +1595,11 @@ class _SuccessStoryCard extends StatelessWidget {
 
 class _ReviewsSection extends StatefulWidget {
   final String entityType; // seller | reseller | contractor
+
   final String newEntityType;
   const _ReviewsSection({super.key, required this.entityType,required this.newEntityType});
+
+
   @override
   State<_ReviewsSection> createState() => _ReviewsSectionState();
 }
