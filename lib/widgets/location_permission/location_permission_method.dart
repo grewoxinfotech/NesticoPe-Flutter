@@ -45,34 +45,50 @@ import 'package:geocoding/geocoding.dart';
 // }
 
 Future<String?> getCurrentCity() async {
-  // 1️⃣ Check if location services are enabled
-  final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  var serviceEnabled = await Geolocator.isLocationServiceEnabled();
   if (!serviceEnabled) {
-    return null;
+    await Geolocator.openLocationSettings();
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) return null;
   }
 
-  // 2️⃣ Check permission
   LocationPermission permission = await Geolocator.checkPermission();
 
   if (permission == LocationPermission.denied) {
     permission = await Geolocator.requestPermission();
   }
-
-  if (permission == LocationPermission.denied ||
-      permission == LocationPermission.deniedForever) {
-    return null;
+  if (permission == LocationPermission.deniedForever ||
+      permission == LocationPermission.denied) {
+    await openAppSettings();
+    permission = await Geolocator.checkPermission();
+    if (permission != LocationPermission.always &&
+        permission != LocationPermission.whileInUse) {
+      return null;
+    }
   }
 
-  // 3️⃣ Get position
   final position = await Geolocator.getCurrentPosition(
-    desiredAccuracy: LocationAccuracy.high,
+    desiredAccuracy: LocationAccuracy.low,
   );
 
-  // 4️⃣ Reverse geocoding
   final placemarks = await placemarkFromCoordinates(
     position.latitude,
     position.longitude,
   );
+
+  print(
+    "Market App Current City: $placemarks    ${placemarks.first.locality ?? ""}   ${position.latitude}   ${position.longitude}",
+  );
+  print("Market App Current City: ${placemarks.first.locality ?? ""}");
+  print(
+    "Market App Current City: ${position.latitude}   ${position.longitude}",
+  );
+  print("Market App Current City: ${position.accuracy}");
+  print("Market App Current City: ${position.speed}");
+  print(
+    "Market App Current City: ${placemarks.map((e) => e.toJson()).toList()}",
+  );
+  print("Market App Current City: ${position.toJson()}");
 
   if (placemarks.isNotEmpty) {
     return placemarks.first.locality;
@@ -117,7 +133,7 @@ Future<bool> requestGalleryPermission() async {
     return false;
   }
 
-  final status = await permission.status;
+  var status = await permission.status;
 
   if (status.isGranted || status.isLimited) {
     return true;
@@ -131,6 +147,10 @@ Future<bool> requestGalleryPermission() async {
 
   if (result.isPermanentlyDenied) {
     await openAppSettings();
+    status = await permission.status;
+    if (status.isGranted || status.isLimited) {
+      return true;
+    }
   }
 
   return false;
@@ -160,13 +180,14 @@ Future<bool> requestGalleryPermission() async {
 Future<bool> requestStoragePermission() async {
   if (!Platform.isAndroid) return true;
 
-  final status = await Permission.storage.status;
+  final permission = Permission.storage;
+  var status = await permission.status;
 
   if (status.isGranted) {
     return true;
   }
 
-  final result = await Permission.storage.request();
+  final result = await permission.request();
 
   if (result.isGranted) {
     return true;
@@ -174,6 +195,10 @@ Future<bool> requestStoragePermission() async {
 
   if (result.isPermanentlyDenied) {
     await openAppSettings();
+    status = await permission.status;
+    if (status.isGranted) {
+      return true;
+    }
   }
 
   return false;
@@ -201,13 +226,14 @@ Future<bool> requestStoragePermission() async {
 // }
 
 Future<bool> requestCameraPermission() async {
-  final status = await Permission.camera.status;
+  final permission = Permission.camera;
+  var status = await permission.status;
 
   if (status.isGranted) {
     return true;
   }
 
-  final result = await Permission.camera.request();
+  final result = await permission.request();
 
   if (result.isGranted) {
     return true;
@@ -215,6 +241,10 @@ Future<bool> requestCameraPermission() async {
 
   if (result.isPermanentlyDenied) {
     await openAppSettings();
+    status = await permission.status;
+    if (status.isGranted) {
+      return true;
+    }
   }
 
   return false;

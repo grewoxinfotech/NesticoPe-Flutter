@@ -68,6 +68,7 @@ import '../property_share/reseller_property_share.dart';
 //     super.initState();
 //   }
 //
+
 //   Future<void> fetchResellerAssignProperty() async {
 //     try {
 //       final user = await SecureStorage.getUserData();
@@ -606,31 +607,31 @@ import '../property_share/reseller_property_share.dart';
 //     );
 //   }
 //
-//   /*PopupMenuItem<SortOption> _buildSortMenuItem(
-//     IconData icon,
-//     String text,
-//     SortOption value,
-//     Color color,
-//   ) {
-//     return PopupMenuItem(
-//       value: value,
-//       child: Row(
-//         children: [
-//           Container(
-//             padding: EdgeInsets.all(8),
-//             decoration: BoxDecoration(
-//               color: color.withOpacity(0.08),
-//               border: Border.all(width: 1, color: color.withOpacity(0.3)),
-//               borderRadius: BorderRadius.circular(8),
-//             ),
-//             child: Icon(icon, size: 15, color: color),
-//           ),
-//           SizedBox(width: 12),
-//           Text(text, style: TextStyle(fontSize: AppFontSizes.caption)),
-//         ],
-//       ),
-//     );
-//   }*/
+  // /*PopupMenuItem<SortOption> _buildSortMenuItem(
+  //   IconData icon,
+  //   String text,
+  //   SortOption value,
+  //   Color color,
+  // ) {
+  //   return PopupMenuItem(
+  //     value: value,
+  //     child: Row(
+  //       children: [
+  //         Container(
+  //           padding: EdgeInsets.all(8),
+  //           decoration: BoxDecoration(
+  //             color: color.withOpacity(0.08),
+  //             border: Border.all(width: 1, color: color.withOpacity(0.3)),
+  //             borderRadius: BorderRadius.circular(8),
+  //           ),
+  //           child: Icon(icon, size: 15, color: color),
+  //         ),
+  //         SizedBox(width: 12),
+  //         Text(text, style: TextStyle(fontSize: AppFontSizes.caption)),
+  //       ],
+  //     ),
+  //   );
+  // }*/
 // }
 
 // Update FilterPanel (no changes needed, keeping for completeness)
@@ -818,6 +819,7 @@ import '../property_share/reseller_property_share.dart';
 //     );
 //   }
 // }
+const String reseller = "ReSeller";
 
 class ProductListingScreen extends StatefulWidget {
   ProductListingScreen({Key? key}) : super(key: key);
@@ -848,7 +850,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _loadData();
 
-      // await fetchResellerAssignProperty();
+      await fetchResellerAssignProperty();
     });
   }
 
@@ -863,25 +865,79 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
     isControllerReady.value = true; // Notify that controller is ready
   }
 
-  /// ✅ Assigned reseller properties
-  // Future<void> fetchResellerAssignProperty() async {
-  //   try {
-  //     final user = await SecureStorage.getUserData();
-  //     final userId = user?.user?.id;
-  //
-  //     if (userId != null && userId.isNotEmpty) {
-  //       final filter = {"assignedTo": userId};
-  //
-  //       log("Applying reseller assigned filter → $filter");
-  //
-  //       await propertyController.applyFilters(filter);
-  //     } else {
-  //       print("⚠️ User ID is null or empty");
-  //     }
-  //   } catch (e) {
-  //     print("❌ Error fetching reseller properties: $e");
-  //   }
-  // }
+  // ✅ Assigned reseller properties
+  Future<void> fetchResellerAssignProperty() async {
+    try {
+      final user = await SecureStorage.getUserData();
+      final userId = user?.user?.id;
+
+      if (userId != null && userId.isNotEmpty) {
+        final filter = {"assignedTo": userId};
+
+        log("Applying reseller assigned filter → $filter");
+
+        await propertyController?.applyFilters(filter);
+      } else {
+        print("⚠️ User ID is null or empty");
+      }
+    } catch (e) {
+      print("❌ Error fetching reseller properties: $e");
+    }
+  }
+
+  void toggleSelectionMode() {
+    isSelectionMode.value = !isSelectionMode.value;
+    if (!isSelectionMode.value) {
+      selectedPropertyIds.clear();
+    }
+  }
+
+  void togglePropertySelection(String propertyId) {
+    if (selectedPropertyIds.contains(propertyId)) {
+      selectedPropertyIds.remove(propertyId);
+    } else {
+      selectedPropertyIds.add(propertyId);
+    }
+
+    // Exit selection mode if no items selected
+    if (selectedPropertyIds.isEmpty) {
+      isSelectionMode.value = false;
+    }
+  }
+
+  Future<void> shareSelectedProperties() async {
+    if (selectedPropertyIds.isEmpty) {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Error",
+        message: "Please select at least one property to share.",
+        contentType: ContentType.failure,
+      );
+      return;
+    }
+
+    final user = await SecureStorage.getUserData();
+    final resellerId = user?.user?.id ?? '';
+
+    if (resellerId.isEmpty) {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Error",
+        message: "Missing reseller information.",
+        contentType: ContentType.failure,
+      );
+      return;
+    }
+    print("Selected Property IDs: $selectedPropertyIds");
+    await Get.to(
+      () => ReSellerPropertyShare(
+        propertyId: selectedPropertyIds,
+        isMultiShare: true,
+      ),
+    );
+
+    // Exit selection mode and clear selections
+    isSelectionMode.value = false;
+    selectedPropertyIds.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -890,59 +946,101 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
 
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AppBar(
-          backgroundColor: ColorRes.white,
-          elevation: 0,
-          automaticallyImplyLeading: false,
-          title: Text(
-            'Property Listing',
-            style: TextStyle(
-              color: ColorRes.textColor,
-              fontWeight: AppFontWeights.bold,
-              fontSize: getResponsiveFontSize(
-                context,
-                AppFontSizes.large,
-                AppFontSizes.body,
+        child: Obx(
+          () => AppBar(
+            backgroundColor: ColorRes.white,
+            elevation: 0,
+            automaticallyImplyLeading: false,
+            title: Text(
+              isSelectionMode.value
+                  ? '${selectedPropertyIds.length} Selected'
+                  : 'Property Listing',
+              style: TextStyle(
+                color: ColorRes.textColor,
+                fontWeight: AppFontWeights.bold,
+                fontSize: getResponsiveFontSize(
+                  context,
+                  AppFontSizes.large,
+                  AppFontSizes.body,
+                ),
               ),
             ),
-          ),
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(1),
-            child: Container(color: ColorRes.leadGreyColor[200], height: 1),
-          ),
-          actions: [
-            GestureDetector(
-              onTap: () async {
-                if (!Get.isRegistered<PropertyController>())
-                  Get.put(PropertyController());
-                final result = await Get.to(
-                  () => ResellerPropertyFilterScreen(),
-                );
-
-                if (result != null) {
-                  final newFilter = convertFiltersToString(result);
-                  final user = await SecureStorage.getUserData();
-                  final userId = user?.user?.id;
-
-                  if (userId != null && userId.isNotEmpty) {
-                    newFilter["assignedTo"] = userId;
-
-                    log("Applying filter → $newFilter");
-
-                    selectedFilters
-                      ..clear()
-                      ..addAll(newFilter);
-
-                    await propertyController?.applyFilters(
-                      Map<String, String>.from(selectedFilters),
-                    );
-                  }
-                }
-              },
-              child: const Icon(Icons.filter_list),
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(1),
+              child: Container(color: ColorRes.leadGreyColor[200], height: 1),
             ),
-            const SizedBox(width: 8),
-          ],
+            actions: [
+              if (isSelectionMode.value) ...[
+                TextButton(
+                  onPressed: () {
+                    if (selectedPropertyIds.length ==
+                        propertyController?.items.length) {
+                      selectedPropertyIds.clear();
+                    } else {
+                      selectedPropertyIds
+                        ..clear()
+                        ..addAll(
+                          propertyController?.items
+                                  .where((p) => p.id != null)
+                                  .map((p) => p.id!) ??
+                              [],
+                        );
+                    }
+                  },
+                  child: Text(
+                    selectedPropertyIds.length ==
+                            propertyController?.items.length
+                        ? 'Deselect All'
+                        : 'Select All',
+                    style: TextStyle(
+                      color: ColorRes.primary,
+                      fontSize: AppFontSizes.small,
+                      fontWeight: AppFontWeights.semiBold,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+              ] else ...[
+                GestureDetector(
+                  onTap: () async {
+                    if (!Get.isRegistered<PropertyController>())
+                      Get.put(PropertyController());
+                    final result = await Get.to(
+                      () => ResellerPropertyFilterScreen(),
+                    );
+
+                    if (result != null) {
+                      final newFilter = convertFiltersToString(result);
+                      final user = await SecureStorage.getUserData();
+                      final userId = user?.user?.id;
+
+                      if (userId != null && userId.isNotEmpty) {
+                        newFilter["assignedTo"] = userId;
+
+                        log("Applying filter → $newFilter");
+
+                        selectedFilters
+                          ..clear()
+                          ..addAll(newFilter);
+
+                        await propertyController?.applyFilters(
+                          Map<String, String>.from(selectedFilters),
+                        );
+                      }
+                    }
+                  },
+                  child: const Icon(Icons.filter_list),
+                ),
+                const SizedBox(width: 8),
+                IconButton(
+                  onPressed: toggleSelectionMode,
+                  icon: const Icon(Icons.share_outlined),
+                  color: ColorRes.primary,
+                  iconSize: 22,
+                ),
+              ],
+            ],
+          ),
         ),
       ),
 
@@ -1010,6 +1108,48 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
               );
             }),
           ),
+        ],
+      ),
+                 floatingActionButton: Obx(
+        () =>
+            isSelectionMode.value && selectedPropertyIds.isNotEmpty
+                ? FloatingActionButton.extended(
+                  onPressed: shareSelectedProperties,
+                  backgroundColor: ColorRes.primary,
+                  icon: Icon(Icons.share, color: ColorRes.white),
+                  label: Text(
+                    'Share (${selectedPropertyIds.length})',
+                    style: TextStyle(
+                      color: ColorRes.white,
+                      fontWeight: AppFontWeights.semiBold,
+                    ),
+                  ),
+                )
+                : SizedBox.shrink(),
+      ),
+    );
+  }
+  PopupMenuItem<SortOption> _buildSortMenuItem(
+    IconData icon,
+    String text,
+    SortOption value,
+    Color color,
+  ) {
+    return PopupMenuItem(
+      value: value,
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.08),
+              border: Border.all(width: 1, color: color.withOpacity(0.3)),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, size: 15, color: color),
+          ),
+          SizedBox(width: 12),
+          Text(text, style: TextStyle(fontSize: AppFontSizes.caption)),
         ],
       ),
     );
@@ -1395,14 +1535,25 @@ class ProductsGrid extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         child: ListView.separated(
           itemCount: displayProducts.length,
-          separatorBuilder: (_, __) => SizedBox(height: 12),
+          separatorBuilder: (_, __) => const SizedBox(height: 12),
           itemBuilder: (context, index) {
+            final property = displayProducts[index];
             return Obx(
               () => ProductCard(
-                product: displayProducts[index],
-                isSelected: selectedPropertyIds.contains(
-                  displayProducts[index].id ?? '',
-                ),
+                product: property,
+                isSelectionMode: isSelectionMode.value,
+                isSelected: selectedPropertyIds.contains(property.id ?? ''),
+                onTap: () {
+                  if (isSelectionMode.value) {
+                    _togglePropertySelection(property.id ?? '');
+                  }
+                },
+                onLongPress: () {
+                  if (!isSelectionMode.value) {
+                    isSelectionMode.value = true;
+                    _togglePropertySelection(property.id ?? '');
+                  }
+                },
               ),
             );
           },
@@ -1410,16 +1561,36 @@ class ProductsGrid extends StatelessWidget {
       );
     });
   }
+
+  void _togglePropertySelection(String propertyId) {
+    if (selectedPropertyIds.contains(propertyId)) {
+      selectedPropertyIds.remove(propertyId);
+    } else {
+      selectedPropertyIds.add(propertyId);
+    }
+
+    if (selectedPropertyIds.isEmpty) {
+      isSelectionMode.value = false;
+    }
+  }
 }
 
 // Updated ProductCard with selection support
 class ProductCard extends StatelessWidget {
   final Items product;
-
   final bool isSelected;
+  final bool isSelectionMode;
+  final VoidCallback? onLongPress;
+  final VoidCallback? onTap;
 
-  const ProductCard({Key? key, required this.product, required this.isSelected})
-    : super(key: key);
+  const ProductCard({
+    Key? key,
+    required this.product,
+    required this.isSelected,
+    this.isSelectionMode = false,
+    this.onLongPress,
+    this.onTap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1435,6 +1606,7 @@ class ProductCard extends StatelessWidget {
 
     return Material(
       color: ColorRes.white,
+      
       borderRadius: BorderRadius.circular(14),
       elevation: isSelected ? 3 : 1,
       shadowColor:
@@ -1443,9 +1615,15 @@ class ProductCard extends StatelessWidget {
               : ColorRes.black.withOpacity(0.06),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () {
-          Get.to(() => LeadDetailScreen(property: product, isReseller: true));
-        },
+        onTap:
+            isSelectionMode
+                ? onTap
+                : () {
+                  Get.to(
+                    () => LeadDetailScreen(property: product, isReseller: true),
+                  );
+                },
+        onLongPress: onLongPress,
         child: Container(
           height: 120,
           decoration: BoxDecoration(
@@ -1460,58 +1638,6 @@ class ProductCard extends StatelessWidget {
           ),
           child: Row(
             children: [
-              // Image Section with Selection Overlay
-              /* Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.horizontal(
-                      left: Radius.circular(11),
-                    ),
-                    child: CustomImage(
-                      type: CustomImageType.network,
-                      src:
-                          (product.propertyMedia?.images?.isNotEmpty ?? false)
-                              ? product.propertyMedia!.images!.first
-                              : 'https://via.placeholder.com/150', // fallback placeholder
-                      width: 110,
-                      height: 121,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  // Selection Checkbox Overlay
-                  */
-              /*  if (isSelectionMode.value)
-                      Positioned(
-                        top: 8,
-                        left: 8,
-                        child: Container(
-                          width: 24,
-                          height: 24,
-                          decoration: BoxDecoration(
-                            color:
-                                isSelected ? ColorRes.primary : ColorRes.white,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color:
-                                  isSelected
-                                      ? ColorRes.primary
-                                      : ColorRes.leadGreyColor[400]!,
-                              width: 2,
-                            ),
-                          ),
-                          child:
-                              isSelected
-                                  ? Icon(
-                                    Icons.check,
-                                    size: 16,
-                                    color: ColorRes.white,
-                                  )
-                                  : null,
-                        ),
-                      ),*/
-              /*
-                ],
-              ),*/
               Stack(
                 children: [
                   // Property Image
@@ -1532,6 +1658,27 @@ class ProductCard extends StatelessWidget {
                     ),
                   ),
 
+                  // Selection Checkbox Overlay
+                  if (isSelected)
+                    Positioned(
+                      top: 8,
+                      left: 8,
+                      child: Container(
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          color: ColorRes.primary,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: ColorRes.white, width: 2),
+                        ),
+                        child: const Icon(
+                          Icons.check,
+                          size: 16,
+                          color: ColorRes.white,
+                        ),
+                      ),
+                    ),
+
                   // 🟥 SOLD Label Overlay
                   if (product.propertyStatus?.toLowerCase() == 'sold')
                     Positioned.fill(
@@ -1545,7 +1692,6 @@ class ProductCard extends StatelessWidget {
                         alignment: Alignment.center,
                         child: Transform.rotate(
                           angle: 24.6,
-
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 2,
@@ -1578,14 +1724,6 @@ class ProductCard extends StatelessWidget {
                         ),
                       ),
                     ),
-
-                  // (Optional) Checkbox overlay if needed later
-                  /* if (isSelectionMode.value)
-      Positioned(
-        top: 8,
-        left: 8,
-        child: ...
-      ), */
                 ],
               ),
 
@@ -1616,34 +1754,32 @@ class ProductCard extends StatelessWidget {
                           ),
                           Spacer(),
                           // Only show share icon in normal mode
-                          /* if (!isSelectionMode.value)*/
-                          GestureDetector(
-                            onTap: () async {
-                              await controller.getPropertyLinkByIdInReseller(
-                                product.id ?? '',
-                              );
-                              /*  final user =
-                                      await SecureStorage.getUserData();
-                                  final resellerId = user?.user?.id ?? '';
-                                  final propertyId = product.id ?? '';
+                          if (!isSelectionMode)
+                            GestureDetector(
+                              onTap: () async {
+                                // await controller.getPropertyLinkByIdInReseller(
+                                //   product.id ?? '',
+                                // );
+                                final user = await SecureStorage.getUserData();
+                                final resellerId = user?.user?.id ?? '';
+                                final propertyId = product.id ?? '';
 
-                                  if (resellerId.isEmpty ||
-                                      propertyId.isEmpty) {
-                                    Get.snackbar(
-                                      "Error",
-                                      "Missing reseller or property information.",
+                                if (resellerId.isEmpty || propertyId.isEmpty) {
+                                  Get.snackbar(
+                                    "Error",
+                                    "Missing reseller or property information.",
+                                  );
+                                  return;
+                                }
+
+                                await propertyShareController
+                                    .handleShareButtonTap(
+                                      propertyId: propertyId,
+                                      resellerId: resellerId,
                                     );
-                                    return;
-                                  }
-
-                                  await propertyShareController
-                                      .handleShareButtonTap(
-                                        propertyId: propertyId,
-                                        resellerId: resellerId,
-                                      );*/
-                            },
-                            child: const Icon(Icons.share, size: 16),
-                          ),
+                              },
+                              child: const Icon(Icons.share, size: 16),
+                            ),
                         ],
                       ),
 
@@ -1691,25 +1827,25 @@ class ProductCard extends StatelessWidget {
                             ),
                           ),
                           SizedBox(width: 8),
-                          /* if (!isSelectionMode.value)*/
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: ColorRes.primary,
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              'Visit',
-                              style: TextStyle(
-                                fontWeight: AppFontWeights.semiBold,
-                                fontSize: AppFontSizes.small,
-                                color: ColorRes.white,
+                          if (!isSelectionMode)
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: ColorRes.primary,
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                'Visit',
+                                style: TextStyle(
+                                  fontWeight: AppFontWeights.semiBold,
+                                  fontSize: AppFontSizes.small,
+                                  color: ColorRes.white,
+                                ),
                               ),
                             ),
-                          ),
                         ],
                       ),
                     ],

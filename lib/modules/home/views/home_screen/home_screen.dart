@@ -11,6 +11,7 @@ import 'package:nesticope_app/app/widgets/image/custom_image.dart'
 import 'package:nesticope_app/app/widgets/texts/headline_text.dart';
 import 'package:nesticope_app/data/database/secure_storage_service.dart';
 import 'package:nesticope_app/data/network/contractor/model/contractot_service_model/contractor_service_category_model.dart';
+import 'package:nesticope_app/data/network/property/models/property_model.dart';
 import 'package:nesticope_app/data/network/trending_area/model/trending_area_model.dart';
 import 'package:nesticope_app/modules/builder/controller/builder_form_controller.dart';
 import 'package:nesticope_app/modules/builder/view/all_project_list_screen.dart';
@@ -22,6 +23,7 @@ import 'package:nesticope_app/modules/home/controllers/top_builder_all_controlle
 import 'package:nesticope_app/modules/home/controllers/top_builder_controller.dart';
 import 'package:nesticope_app/modules/home/widgets/contractor_profile_card.dart';
 import 'package:nesticope_app/modules/home/widgets/home_header.dart';
+import 'package:nesticope_app/modules/home/widgets/scroll_listiner_provider.dart';
 import 'package:nesticope_app/modules/news/controllers/news_controller.dart';
 import 'package:nesticope_app/modules/platform_service/controllers/platform_service_controller.dart';
 import 'package:nesticope_app/modules/propert_detail/view/property_details.dart';
@@ -34,6 +36,7 @@ import 'package:nesticope_app/modules/seller/view/widget/seller_list.dart';
 import 'package:nesticope_app/utils/global.dart';
 import 'package:nesticope_app/widgets/New%20folder/inputs/text_field.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:nesticope_app/app/utils/helper_function/contact_helper.dart';
@@ -183,6 +186,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   late final TopCategoryController topCategoryController;
   final searchHistoryController = Get.put(SearchHistoryController());
+  bool _pinned = true;
+  bool _snap = false;
+  bool _floating = false;
+  final ScrollController _scrollController = ScrollController();
+  bool _showPinnedSearch = false;
+
+  // final PinnedSearchNotifier _pinnedSearchNotifier = PinnedSearchNotifier();
+  // Threshold to show pinned search (expandedHeight - collapsedHeight)
+  static const double _headerCollapseOffset = 110.0;
 
   int selectedIndex = -1;
 
@@ -201,7 +213,64 @@ class _HomeScreenState extends State<HomeScreen> {
     _initializeControllers();
     _setupCityChangeListener();
     _getCity();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    _attachScroll(); // ✅ THIS
+
+    // _scrollController.addListener(() {
+    //   _pinnedSearchNotifier.update(
+    //     _scrollController.offset >= _headerCollapseOffset,
+    //   );
+    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final initial = await SecureStorage.getHomeCategory();
+      final selectedCategory = initial ?? 'Buy';
+      final norm = selectedCategory.toLowerCase();
+      setState(() {
+        _homePropertyTypeFilter = null;
+        _homeListingTypeFilter = null;
+        if (norm.startsWith('buy')) {
+          _homeListingTypeFilter = 'buy';
+        } else if (norm.startsWith('rent')) {
+          _homeListingTypeFilter = 'rent';
+        } else if (norm.startsWith('pg')) {
+          _homeListingTypeFilter = 'pg';
+        } 
+        else if (norm.startsWith('commercial')) {
+          _homePropertyTypeFilter = 'commercial';
+        } else if (norm.startsWith('plots')) {
+          _homePropertyTypeFilter = 'plot';
+        }
+      });
+      try {
+        // Map UI selection to API listingType values
+        String? listingType;
+        final Map<String, String> f = {};
+        if (norm.startsWith('buy'))
+          listingType = 'Sell';
+        else if (norm.startsWith('rent'))
+          listingType = 'Rent';
+        else if (norm.startsWith('pg'))
+          listingType = 'PG';
+
+        if (listingType != null) {
+          propertyController.applyFilter('listingType', listingType);
+          // propertyController.loadTopProperties();
+
+          propertyController.loadTopProperties();
+        } 
+        // else {
+        //   propertyController.clearFilter('listingType');
+        // }
+
+        if (norm.startsWith('commercial')) {
+          // projectController.applyFilter('projectType', 'commercial');
+          propertyController.applyFilter('type', 'commercial');
+          // propertyController.loadTopProperties();
+
+          propertyController.loadTopProperties();
+    
+        }
+      } catch (_) {}
+
       if (selectedIndex == -1 && widget.propertyTypes.isNotEmpty) {
         _onPropertyTypeSelected(0, widget.propertyTypes[0]);
       }
@@ -219,6 +288,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
       selectedCity = city;
     }
+  }
+
+  bool lastPinned = false;
+
+  void _attachScroll() {
+    _scrollController.addListener(() {
+      final pinned = _scrollController.offset >= _headerCollapseOffset;
+
+      if (pinned != lastPinned) {
+        lastPinned = pinned;
+        context.read<PinnedSearchNotifier>().update(pinned);
+      }
+    });
   }
 
   void _initializeControllers() {
@@ -255,7 +337,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void _setupCityChangeListener() {
     ever(propertyController.selectedCity, (city) {
       if (!mounted) return;
-
       setState(() {
         //    selectedCity = city; // ✅ sync local copy
         // selectedIndex = -1;
@@ -268,6 +349,7 @@ class _HomeScreenState extends State<HomeScreen> {
       });
 
       debugPrint("🔄 City synced to HomeScreen: $city");
+      
 
       //=================================For ===================================
 
@@ -296,19 +378,255 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: ColorRes.bgColor,
+      backgroundColor: ColorRes.white,
       body: SafeArea(
         child: Stack(
           children: [
-            SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(height: 12),
-                  _buildHeader(),
-                  _buildContent(),
-                  _buildFindPropertyButton(),
-                ],
-              ),
+            CustomScrollView(
+              controller: _scrollController,
+              slivers: [
+                // SliverAppBar(
+                //   pinned: true,
+                //   snap: false,
+                //   floating: false,
+                //   expandedHeight: 110.0,
+
+                //   titleSpacing: 0,
+                //   backgroundColor:
+                //       _showPinnedSearch ? ColorRes.primary : Colors.transparent,
+                //   surfaceTintColor:
+                //       _showPinnedSearch ? ColorRes.primary : Colors.transparent,
+                //   shadowColor: Colors.black26,
+                //   elevation: 2,
+                //   forceElevated: true,
+                //   clipBehavior: Clip.none,
+                //   shape: RoundedRectangleBorder(
+                //     borderRadius: BorderRadius.vertical(
+                //       bottom: Radius.circular(20),
+                //     ),
+                //   ),
+                //   automaticallyImplyLeading: false,
+                //   flexibleSpace: FlexibleSpaceBar(
+                //     collapseMode: CollapseMode.pin,
+                //     background:
+                //         _showPinnedSearch
+                //             ? null
+                //             : ColoredBox(
+                //               color: Colors.transparent,
+                //               child: _showPinnedSearch ? null : _buildHeader(),
+                //             ),
+                //   ),
+                //   bottom:
+                //       _showPinnedSearch
+                //           ? PreferredSize(
+                //             preferredSize: const Size.fromHeight(30),
+                //             child: Container(
+                //               height: 70,
+
+                //               decoration: BoxDecoration(
+                //                 color: ColorRes.primary,
+                //                 borderRadius: BorderRadius.only(
+                //                   bottomLeft: Radius.circular(24),
+                //                   bottomRight: Radius.circular(24),
+                //                 ),
+                //               ),
+                //               padding: const EdgeInsets.only(
+                //                 left: 12,
+                //                 right: 12,
+                //                 top: 8,
+                //                 bottom:
+                //                     10, // ✅ more bottom padding = more blue visible
+                //               ),
+                //               child: SizedBox(
+                //                 height: 48,
+                //                 child: Obx(
+                //                   () => buildPositionedTextField(
+                //                     propertyController,
+                //                     context,
+                //                     () async {
+                //                       final filter = await Get.to(
+                //                         () => CommonSearchField(
+                //                           isNavigate: true,
+
+                //                           onTap: (city) {
+                //                             final filters = {
+                //                               "city": city.split(",").first,
+                //                             };
+                //                             propertyController.fetchTradingArea(
+                //                               filters['city'] ?? '',
+                //                             );
+                //                             Get.back(result: filters);
+                //                           },
+                //                         ),
+                //                       );
+                //                       if (filter != null &&
+                //                           filter is Map &&
+                //                           filter['city'] != null) {
+                //                         final String city = filter['city'];
+
+                //                         // Apply city filter to home (Yes case)
+                //                         await SecureStorage.saveSelectedCity(
+                //                           city,
+                //                         );
+                //                         propertyController.fetchTradingArea(
+                //                           city,
+                //                         );
+                //                         topBuilderController.applyFilter(
+                //                           'city',
+                //                           city,
+                //                         );
+
+                //                         propertyController.applyFilter(
+                //                           'city',
+                //                           city,
+                //                         );
+                //                         projectController.applyFilter(
+                //                           'city',
+                //                           city,
+                //                         );
+                //                         // Reload top properties for the new city
+                //                         await propertyController
+                //                             .loadTopProperties();
+                //                         await projectController
+                //                             .loadTopProject();
+                //                         await topBuilderController
+                //                             .loadInitial();
+
+                //                         // Navigate to PropertyDetail in both cases (Yes and No)
+                //                       }
+                //                     },
+                //                   ),
+                //                 ),
+                //               ),
+                //             ),
+                //           )
+                //           : null,
+                Selector<PinnedSearchNotifier, bool>(
+                  selector: (_, notifier) => notifier.show,
+                  builder: (context, show, _) {
+                    return SliverAppBar(
+                      pinned: true,
+                      snap: false,
+                      floating: false,
+                      expandedHeight: 110.0,
+
+                      titleSpacing: 0,
+                      backgroundColor:
+                          show ? ColorRes.primary : Colors.transparent,
+                      surfaceTintColor:
+                          show ? ColorRes.primary : Colors.transparent,
+                      shadowColor: Colors.black26,
+                      elevation: 2,
+                      forceElevated: true,
+                      clipBehavior: Clip.none,
+                      automaticallyImplyLeading: false,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          bottom: Radius.circular(20),
+                        ),
+                      ),
+                      flexibleSpace: FlexibleSpaceBar(
+                        collapseMode: CollapseMode.pin,
+                        // ✅ _buildHeader() only called when show == false
+                        background:
+                            show
+                                ? null
+                                : ColoredBox(
+                                  color: Colors.transparent,
+                                  child: _buildHeader(),
+                                ),
+                      ),
+                      bottom:
+                          show
+                              ? PreferredSize(
+                                preferredSize: const Size.fromHeight(30),
+                                child: Container(
+                                  height: 70,
+                                  decoration: BoxDecoration(
+                                    color: ColorRes.primary,
+                                    borderRadius: const BorderRadius.only(
+                                      bottomLeft: Radius.circular(24),
+                                      bottomRight: Radius.circular(24),
+                                    ),
+                                  ),
+                                  padding: const EdgeInsets.only(
+                                    left: 12,
+                                    right: 12,
+                                    top: 8,
+                                    bottom: 10,
+                                  ),
+                                  child: SizedBox(
+                                    height: 48,
+                                    child: Obx(
+                                      () => buildPositionedTextField(
+                                        propertyController,
+                                        context,
+                                        () async {
+                                          final filter = await Get.to(
+                                            () => CommonSearchField(
+                                              isNavigate: true,
+                                              onTap: (city) {
+                                                final filters = {
+                                                  "city": city.split(",").first,
+                                                };
+                                                propertyController
+                                                    .fetchTradingArea(
+                                                      filters['city'] ?? '',
+                                                    );
+                                                Get.back(result: filters);
+                                              },
+                                            ),
+                                          );
+                                          if (filter != null &&
+                                              filter is Map &&
+                                              filter['city'] != null) {
+                                            final String city = filter['city'];
+                                            await SecureStorage.saveSelectedCity(
+                                              city,
+                                            );
+                                            propertyController.fetchTradingArea(
+                                              city,
+                                            );
+                                            topBuilderController.applyFilter(
+                                              'city',
+                                              city,
+                                            );
+                                            propertyController.applyFilter(
+                                              'city',
+                                              city,
+                                            );
+                                            projectController.applyFilter(
+                                              'city',
+                                              city,
+                                            );
+                                            await propertyController
+                                                .loadTopProperties();
+                                            await projectController
+                                                .loadTopProject();
+                                            await topBuilderController
+                                                .loadInitial();
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                              : null,
+                    );
+                  },
+                ),
+
+                SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      // const SizedBox(height: 12),
+                      _buildContent(),
+                      _buildFindPropertyButton(),
+                    ],
+                  ),
+                ),
+              ],
             ),
             const UnifiedComparisonFloatingButton(bottom: 16),
           ],
@@ -368,7 +686,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // ✅ Get filtered data based on home-specific filters only
-  List<dynamic> _getFilteredProperties(List<dynamic> baseList) {
+  List<dynamic> _getFilteredProperties(RxList<Items> baseList) {
     if (_homePropertyTypeFilter == null && _homeListingTypeFilter == null) {
       return baseList;
     }
@@ -408,7 +726,7 @@ class _HomeScreenState extends State<HomeScreen> {
         onCityChanged: (city) {
           selectedCity = city;
         },
-        onCategoryChanged: (category) {
+        onCategoryChanged: (category, {bool fromUser = false}) {
           final norm = category.toLowerCase();
           setState(() {
             _homePropertyTypeFilter = null;
@@ -421,36 +739,51 @@ class _HomeScreenState extends State<HomeScreen> {
               _homeListingTypeFilter = 'pg';
             } else if (norm.startsWith('commercial')) {
               _homePropertyTypeFilter = 'commercial';
-            } else if (norm.startsWith('plots')) {
-              _homePropertyTypeFilter = 'plot';
+            // } else if (norm.startsWith('plots')) {
+            //   _homePropertyTypeFilter = 'plot';
+            // }
             }
           });
           try {
             // Map UI selection to API listingType values
             String? listingType;
-             final Map<String, String> f = {};
-            if (norm.startsWith('buy')) listingType = 'Sell';
-            else if (norm.startsWith('rent')) listingType = 'Rent';
-            else if (norm.startsWith('pg')) listingType = 'PG';
+            final Map<String, String> f = {};
+            if (norm.startsWith('buy'))
+              listingType = 'Sell';
+            else if (norm.startsWith('rent'))
+              listingType = 'Rent';
+            else if (norm.startsWith('pg'))
+              listingType = 'PG';
 
             if (listingType != null) {
               propertyController.applyFilter('listingType', listingType);
-              propertyController.loadTopProperties();
-            } else {
-              propertyController.clearFilter('listingType');
+              // propertyController.loadTopProperties();
+              if (fromUser) {
+                propertyController.loadTopProperties();
+              }
+            // } else {
+            //   propertyController.clearFilter('listingType');
+            // }
             }
 
             if (norm.startsWith('commercial')) {
               // projectController.applyFilter('projectType', 'commercial');
               propertyController.applyFilter('type', 'commercial');
+              // propertyController.loadTopProperties();
+              if (fromUser) {
                 propertyController.loadTopProperties();
-            } else if (norm.startsWith('plots')) {
-              propertyController.applyFilter('propertyType', 'plot');
-                propertyController.loadTopProperties();
-              // projectController.applyFilter('projectType', '');
-            } else {
-              propertyController.clearFilter('propertyType');
-              // projectController.applyFilter('projectType', '');
+              }
+            // } else if (norm.startsWith('plots')) {
+            //   propertyController.applyFilter('propertyType', 'plot');
+            //   // propertyController.loadTopProperties();
+            //   if (fromUser) {
+            //     propertyController.loadTopProperties();
+            //   }
+            //   // projectController.applyFilter('projectType', '');
+            // } else {
+            //   propertyController.clearFilter('propertyType');
+            //   // projectController.applyFilter('projectType', '');
+            // }
             }
           } catch (_) {}
         },
@@ -462,16 +795,22 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 10),
+        // SizedBox(height: 10),
         _buildPropertyTypeSelector(),
         const SizedBox(height: 15),
+
+        // Divider(
+
+        //   thickness: 0.5,
+        //   color: ColorRes.divider,
+        // ),
         _buildNewlyAddedProperties(),
 
         _buildRecommendedProperties(),
         _buildCitySection(),
         _buildExploreProjects(),
 
-        const SizedBox(height: 15),
+        // const SizedBox(height: 15),
         _buildFurnishingTypeSection(),
         // const SizedBox(height: 5),
         _buildTopProperties(),
@@ -489,7 +828,7 @@ class _HomeScreenState extends State<HomeScreen> {
         // _buildWhyChooseUs(),
         // _buildReviewsAndTestimonials(),
         // _buildHomeProcessSteps(),
-        const SizedBox(height: 12),
+        // const SizedBox(height: 12),
       ],
     );
   }
@@ -516,322 +855,339 @@ class _HomeScreenState extends State<HomeScreen> {
         return const SizedBox.shrink();
       }
 
-      return Column(
-        children: [
-          const TitleWithViewAll(
-            title: "Our Partners' Achievements",
-            showViewAll: false,
-          ),
-          const SizedBox(height: 8),
-          SizedBox(
-            height: 180,
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              separatorBuilder: (context, index) => const SizedBox(width: 12),
-              scrollDirection: Axis.horizontal,
-              itemCount: searchHistoryController.items.length,
-              itemBuilder: (context, index) {
-                final data = searchHistoryController.items[index];
+      return Container(
+        padding: EdgeInsets.symmetric(vertical: 12),
+        // margin: EdgeInsets.symmetric(vertical: 20),
+        color: Color.fromARGB(255, 253, 247, 240),
+        child: Column(
+          children: [
+            TitleWithViewAll(
+              title: "Our Partners' Achievements",
+              showViewAll: false,
+              showIcon: true,
+              icon: Icons.star_border,
+              iconColor: ColorRes.orangeColor,
+              iconBgColor: ColorRes.orangeColor.withOpacity(0.3),
+              subTitle: "Our Partners' Success Stories",
 
-                return GestureDetector(
-                  onTap: () {
-                    Get.to(
-                      () => ResellerSuccessDetailScreen(successStory: data),
-                    );
-                    /*  Get.defaultDialog(
-                      title: "",
-                      contentPadding: const EdgeInsets.all(16),
-                      backgroundColor: Colors.white,
-                      radius: 16,
-                      content: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxHeight:
-                              MediaQuery.of(context).size.height *
-                              0.75, // max 75% of screen height
-                        ),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Optional: Image at top
-                              if (data.image != null)
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: Image.network(
-                                    data.image!,
-                                    height: 150,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              if (data.image != null)
-                                const SizedBox(height: 16),
+              // subTitleColor: ColorRes.,
+              // subTitleFontSize: AppFontSizes.bodyMedium,
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: 180,
+              child: ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                separatorBuilder: (context, index) => const SizedBox(width: 12),
+                scrollDirection: Axis.horizontal,
+                itemCount: searchHistoryController.items.length,
+                itemBuilder: (context, index) {
+                  final data = searchHistoryController.items[index];
 
-                              // Title
-                              Text(
-                                data.title ?? "No Title",
-                                style: TextStyle(
-                                  fontSize: AppFontSizes.body,
-                                  fontWeight: AppFontWeights.semiBold,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-
-                              // Achievement with background
-                              if (data.achievement != null)
-                                Container(
-                                  width: double.infinity,
-                                  padding: const EdgeInsets.all(12),
-                                  margin: const EdgeInsets.only(bottom: 12),
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue.shade50,
-                                    // Light background color
+                  return GestureDetector(
+                    onTap: () {
+                      Get.to(
+                        () => ResellerSuccessDetailScreen(successStory: data),
+                      );
+                      /*  Get.defaultDialog(
+                        title: "",
+                        contentPadding: const EdgeInsets.all(16),
+                        backgroundColor: Colors.white,
+                        radius: 16,
+                        content: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxHeight:
+                                MediaQuery.of(context).size.height *
+                                0.75, // max 75% of screen height
+                          ),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Optional: Image at top
+                                if (data.image != null)
+                                  ClipRRect(
                                     borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    data.achievement!,
-                                    style: TextStyle(
-                                      fontSize: AppFontSizes.bodySmall,
-                                      fontWeight: AppFontWeights.medium,
-                                      color: Colors.blue.shade900,
+                                    child: Image.network(
+                                      data.image!,
+                                      height: 150,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
-                                ),
-
-                              // Description with background
-                              if (data.description != null)
-                                Container(
-                                  width: double.infinity,
-                                  padding: const EdgeInsets.all(12),
-                                  margin: const EdgeInsets.only(bottom: 12),
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade100,
-                                    // Light grey background
-                                    borderRadius: BorderRadius.circular(12),
+                                if (data.image != null)
+                                  const SizedBox(height: 16),
+        
+                                // Title
+                                Text(
+                                  data.title ?? "No Title",
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.body,
+                                    fontWeight: AppFontWeights.semiBold,
+                                    color: Colors.black87,
                                   ),
-                                  child: Text(
-                                    data.description!,
+                                ),
+                                const SizedBox(height: 12),
+        
+                                // Achievement with background
+                                if (data.achievement != null)
+                                  Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.all(12),
+                                    margin: const EdgeInsets.only(bottom: 12),
+                                    decoration: BoxDecoration(
+                                      color: Colors.blue.shade50,
+                                      // Light background color
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      data.achievement!,
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.bodySmall,
+                                        fontWeight: AppFontWeights.medium,
+                                        color: Colors.blue.shade900,
+                                      ),
+                                    ),
+                                  ),
+        
+                                // Description with background
+                                if (data.description != null)
+                                  Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.all(12),
+                                    margin: const EdgeInsets.only(bottom: 12),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.shade100,
+                                      // Light grey background
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      data.description!,
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.bodySmall,
+                                        fontWeight: AppFontWeights.medium,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                  ),
+        
+                                // Additional info
+                                if (data.createdAt != null)
+                                  Text(
+                                    "Created at: ${Formatter.formatDate(data.createdAt!.toIso8601String())}",
                                     style: TextStyle(
-                                      fontSize: AppFontSizes.bodySmall,
+                                      fontSize: 12,
+                                      color: ColorRes.leadGreyColor.shade600,
                                       fontWeight: AppFontWeights.medium,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        actions: [
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () => Get.back(),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: ColorRes.primary,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                elevation: 2,
+                              ),
+                              child: const Text(
+                                "Close",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );*/
+                    },
+                    child: Container(
+                      width: 240,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 2,
+                            offset: const Offset(2, 3),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // 🖼 Small image + title row
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.network(
+                                  data.image ?? '',
+                                  height: 38,
+                                  width: 38,
+                                  fit: BoxFit.cover,
+                                  errorBuilder:
+                                      (_, __, ___) => Container(
+                                        height: 38,
+                                        width: 38,
+                                        color: Colors.grey[300],
+                                        child: const Icon(
+                                          Icons.person,
+                                          size: 20,
+                                        ),
+                                      ),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  data.title ?? '',
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.black87,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+
+                          // 📄 Description
+                          Text(
+                            '${data.description}' ?? '',
+                            style: const TextStyle(
+                              fontSize: 10,
+                              color: Colors.black54,
+                            ),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 8),
+
+                          // 🏷 Achievement tag
+                          /*         Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.blue.shade50,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              '${data.achievement}' ?? 'Achievement',
+                              style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.blueAccent,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),*/
+                          Spacer(),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "${data.totalDeals ?? 0}",
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
                                       color: Colors.black87,
                                     ),
                                   ),
-                                ),
-
-                              // Additional info
-                              if (data.createdAt != null)
-                                Text(
-                                  "Created at: ${Formatter.formatDate(data.createdAt!.toIso8601String())}",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: ColorRes.leadGreyColor.shade600,
-                                    fontWeight: AppFontWeights.medium,
+                                  Text(
+                                    "TOTAL DEALS",
+                                    style: TextStyle(
+                                      fontSize: 9,
+                                      color: ColorRes.leadGreyColor.shade600,
+                                      fontWeight: AppFontWeights.medium,
+                                    ),
                                   ),
-                                ),
+                                ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    "${Formatter.formatPrice(num.tryParse(data.totalValue ?? '0') ?? 0)}",
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  Text(
+                                    "TOTAL VALUE",
+                                    style: TextStyle(
+                                      fontSize: 9,
+                                      color: ColorRes.leadGreyColor.shade600,
+                                      fontWeight: AppFontWeights.medium,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
-                        ),
-                      ),
-                      actions: [
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: () => Get.back(),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: ColorRes.primary,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
+                          const SizedBox(height: 8),
+
+                          // ⭐ Rating
+                          Row(
+                            children: [
+                              ...List.generate(
+                                5,
+                                (star) => Icon(
+                                  Icons.star,
+                                  size: 14,
+                                  color:
+                                      star < (data.rating ?? 0)
+                                          ? Colors.blueAccent
+                                          : Colors.grey.shade300,
+                                ),
                               ),
-                              elevation: 2,
-                            ),
-                            child: const Text(
-                              "Close",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    );*/
-                  },
-                  child: Container(
-                    width: 240,
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.04),
-                          blurRadius: 2,
-                          offset: const Offset(2, 3),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // 🖼 Small image + title row
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                data.image ?? '',
-                                height: 38,
-                                width: 38,
-                                fit: BoxFit.cover,
-                                errorBuilder:
-                                    (_, __, ___) => Container(
-                                      height: 38,
-                                      width: 38,
-                                      color: Colors.grey[300],
-                                      child: const Icon(Icons.person, size: 20),
-                                    ),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Text(
-                                data.title ?? '',
+                              const Spacer(),
+                              Text(
+                                data.updatedAt != null
+                                    ? "Updated: ${DateFormat('yyyy-MM-dd').format(data.updatedAt!)}"
+                                    : '',
                                 style: const TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.black87,
+                                  fontSize: 10,
+                                  color: Colors.black45,
                                 ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-
-                        // 📄 Description
-                        Text(
-                          '${data.description}' ?? '',
-                          style: const TextStyle(
-                            fontSize: 10,
-                            color: Colors.black54,
+                            ],
                           ),
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 8),
-
-                        // 🏷 Achievement tag
-                        /*         Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 3,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.blue.shade50,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            '${data.achievement}' ?? 'Achievement',
-                            style: const TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.blueAccent,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),*/
-                        Spacer(),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "${data.totalDeals ?? 0}",
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                                Text(
-                                  "TOTAL DEALS",
-                                  style: TextStyle(
-                                    fontSize: 9,
-                                    color: ColorRes.leadGreyColor.shade600,
-                                    fontWeight: AppFontWeights.medium,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  "${Formatter.formatPrice(num.tryParse(data.totalValue ?? '0') ?? 0)}",
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                                Text(
-                                  "TOTAL VALUE",
-                                  style: TextStyle(
-                                    fontSize: 9,
-                                    color: ColorRes.leadGreyColor.shade600,
-                                    fontWeight: AppFontWeights.medium,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-
-                        // ⭐ Rating
-                        Row(
-                          children: [
-                            ...List.generate(
-                              5,
-                              (star) => Icon(
-                                Icons.star,
-                                size: 14,
-                                color:
-                                    star < (data.rating ?? 0)
-                                        ? Colors.blueAccent
-                                        : Colors.grey.shade300,
-                              ),
-                            ),
-                            const Spacer(),
-                            Text(
-                              data.updatedAt != null
-                                  ? "Updated: ${DateFormat('yyyy-MM-dd').format(data.updatedAt!)}"
-                                  : '',
-                              style: const TextStyle(
-                                fontSize: 10,
-                                color: Colors.black45,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+            SizedBox(height: 12),
+          ],
+        ),
       );
     });
   }
@@ -923,28 +1279,27 @@ class _HomeScreenState extends State<HomeScreen> {
   // ✅ Updated to apply filters locally only
   void _onPropertyTypeSelected(int index, Map<String, String> type) {
     final filterValue = type['title']!.toLowerCase().replaceAll(" ", "_");
-    final filterKey = (filterValue == "pg") ? "listingType" : "propertyTypes";
-
+    // final filterKey = (filterValue == "pg") ? "listingType" : "propertyTypes";
+    final filterKey = "propertyType";
     // ✅ Only apply filters to home screen state, not to shared controller
     setState(() {
       selectedIndex = index;
 
-      if (filterKey == "listingType") {
+      // if (filterKey == "listingType") {
+      //   _homeListingTypeFilter = filterValue;
 
-        _homeListingTypeFilter = filterValue;
-        _homePropertyTypeFilter = null;
-      } else {
-        _homePropertyTypeFilter = filterValue;
-        _homeListingTypeFilter = null;
-      }
+      //   _homePropertyTypeFilter = null;
+      // } else {
+      //   _homePropertyTypeFilter = filterValue;
+      //   _homeListingTypeFilter = null;
+      // }
     });
 
-    // ✅ Apply filter to project controller (if needed for projects section)
-    log(
-      "Selected: hjfdskjkj ZJdjSid zskjDhasjd : ${filterValue} (Home filter only) $filterKey",
-    );
-
-    // projectController.applyFilter(filterKey, filterValue);
+    // ✅ Pass normalized selection as subProperty in API query (distinct from header logic)
+    try {
+      propertyController.subPropertyType.value = filterValue;
+      propertyController.applyFilter('propertyType', filterValue);
+    } catch (_) {}
 
     debugPrint("Selected: ${type['title']} (Home filter only)");
   }
@@ -1049,29 +1404,37 @@ class _HomeScreenState extends State<HomeScreen> {
         return const SizedBox.shrink();
       }
 
-      return Column(
-        children: [
-          TitleWithViewAll(
-            title: "Newly added properties",
-            showViewAll: true,
-            onViewAll: () {
-              if (selectedCity == null) {
-                Get.to(() => PropertyDetail());
-              } else {
-                Get.to(
-                  () => PropertyDetail(
-                    filters: [
-                      {'city': selectedCity!},
-                    ],
-                  ),
-                );
-              }
-            },
-          ),
-          const SizedBox(height: 12),
+      return Container(
+        // margin: const EdgeInsets.only(top: 24),
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        color: const Color.fromARGB(255, 77, 77, 77).withOpacity(0.05),
+        // height: 64,
+        child: Column(
+          children: [
+            const SizedBox(height: 12),
+            TitleWithViewAll(
+              title: "Newly added properties",
+              showViewAll: true,
+              onViewAll: () {
+                if (selectedCity == null) {
+                  Get.to(() => PropertyDetail());
+                } else {
+                  Get.to(
+                    () => PropertyDetail(
+                      filters: [
+                        {'city': selectedCity!},
+                      ],
+                    ),
+                  );
+                }
+              },
+            ),
+            const SizedBox(height: 12),
 
-          _buildHorizontalPropertyList(activeProperties),
-        ],
+            _buildHorizontalPropertyList(activeProperties),
+            const SizedBox(height: 12),
+          ],
+        ),
       );
     });
   }
@@ -1095,16 +1458,21 @@ class _HomeScreenState extends State<HomeScreen> {
         return const SizedBox.shrink();
       }
 
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 12),
-          const TitleWithViewAll(title: "Recommended Properties"),
-          const SizedBox(height: 12),
-          _buildHorizontalPropertyList(
-            propertyController.recommendedProperties,
-          ),
-        ],
+      return Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        color: const Color.fromARGB(255, 77, 77, 77).withOpacity(0.05),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 12),
+            const TitleWithViewAll(title: "Recommended Properties"),
+            const SizedBox(height: 12),
+            _buildHorizontalPropertyList(
+              propertyController.recommendedProperties,
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
       );
     });
   }
@@ -1128,6 +1496,7 @@ class _HomeScreenState extends State<HomeScreen> {
             scrollDirection: Axis.horizontal,
             itemCount: properties.length,
 
+            // padding: const EdgeInsets.,
             separatorBuilder: (_, __) => const SizedBox(width: 12),
             itemBuilder: (context, index) {
               final data = properties[index];
@@ -1165,13 +1534,24 @@ class _HomeScreenState extends State<HomeScreen> {
         return const SizedBox.shrink();
       }
 
-      return Column(
-        children: [
-          const SizedBox(height: 15),
-          TitleWithViewAll(title: "Top Cities to Explore", showViewAll: false),
-          const SizedBox(height: 12),
-          const CityFilterList(),
-        ],
+      return Container(
+        // margin: const EdgeInsets.only(top: 24),
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        color: ColorRes.primary.withOpacity(0.1),
+
+        // height: 64,
+        child: Column(
+          children: [
+            const SizedBox(height: 15),
+            TitleWithViewAll(
+              title: "Top Cities to Explore",
+              showViewAll: false,
+            ),
+            const SizedBox(height: 12),
+            const CityFilterList(),
+            const SizedBox(height: 24),
+          ],
+        ),
       );
     });
   }
@@ -1186,7 +1566,9 @@ class _HomeScreenState extends State<HomeScreen> {
             TitleWithViewAll(
               title:
                   "Builder Projects in ${projectController.selectedCity ?? ''}",
+
               showViewAll: false,
+              subTitle: 'Discover new projects in your city!',
             ),
             const SizedBox(height: 12),
             const ProjectListShimmer(),
@@ -1207,38 +1589,49 @@ class _HomeScreenState extends State<HomeScreen> {
         return const SizedBox.shrink();
       }
 
-      return Column(
-        children: [
-          const SizedBox(height: 12),
+      return Container(
+        // margin: const EdgeInsets.only(top: 24),
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        color: ColorRes.homeYellow.withOpacity(0.05),
 
-          TitleWithViewAll(
-            title:
-                "Builder Projects in ${projectController.selectedCity ?? ''}",
-            showViewAll: true,
-            onViewAll: () {
-              if (projectController.selectedCity == null) {
-                Get.to(() => AllProjectListScreen());
-              } else {
-                Get.to(
-                  () => AllProjectListScreen(
-                    // filters: [
-                    //   {'city': selectedCity!},
-                    // ],
-                  ),
-                );
-              }
-            },
-          ),
-          const SizedBox(height: 12),
-          _buildProjectList(activeProjects),
-        ],
+        // height: 64,
+        child: Column(
+          children: [
+            const SizedBox(height: 12),
+
+            TitleWithViewAll(
+              title:
+                  "Builder Projects in ${projectController.selectedCity ?? ''}",
+              showViewAll: true,
+              isSubTitle: true,
+              subTitle: 'Discover new projects in your city',
+              onViewAll: () {
+                if (projectController.selectedCity == null) {
+                  Get.to(() => AllProjectListScreen());
+                } else {
+                  Get.to(
+                    () => AllProjectListScreen(
+                      // filters: [
+                      //   {'city': selectedCity!},
+                      // ],
+                    ),
+                  );
+                }
+              },
+            ),
+            const SizedBox(height: 12),
+            _buildProjectList(activeProjects),
+            const SizedBox(height: 15),
+          ],
+        ),
       );
     });
   }
 
   Widget _buildProjectList(List<ProjectItem> projects) {
     return SizedBox(
-      height: 260,
+      height: 290,
+
       width: double.infinity,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
@@ -1252,7 +1645,8 @@ class _HomeScreenState extends State<HomeScreen> {
             child: BuilderProjectCard(
               forHome: true,
               project: data,
-              width: 250,
+              width: MediaQuery.of(context).size.width * 0.85,
+
               height: 150,
               developersName: data.projectContactInfo?.name ?? 'Unknown',
               imageUrl:
@@ -1273,23 +1667,29 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildFurnishingTypeSection() {
-    return Column(
-      children: [
-        const TitleWithViewAll(title: "Explore by furnishing type"),
-        const SizedBox(height: 10),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: Row(
-              children: List.generate(
-                HomeScreen.furnishedType.length,
-                (index) => _buildFurnishingTypeCard(index),
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      color: ColorRes.primary.withOpacity(0.06),
+      child: Column(
+        children: [
+          SizedBox(height: 15),
+          const TitleWithViewAll(title: "Explore by furnishing type"),
+          const SizedBox(height: 10),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: Row(
+                children: List.generate(
+                  HomeScreen.furnishedType.length,
+                  (index) => _buildFurnishingTypeCard(index),
+                ),
               ),
             ),
           ),
-        ),
-      ],
+          const SizedBox(height: 15),
+        ],
+      ),
     );
   }
 
@@ -1426,36 +1826,44 @@ class _HomeScreenState extends State<HomeScreen> {
         return const SizedBox.shrink();
       }
 
-      return Column(
-        children: [
-          const SizedBox(height: 12),
-          TitleWithViewAll(
-            title: "Top Properties in ${propertyController.selectedCity.value}",
-            showViewAll: true,
-            onViewAll: () => Get.to(() => PropertyDetail()),
-          ),
-          const SizedBox(height: 12),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: SizedBox(
-              height: 310,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: activeTopProperties.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 12),
-                itemBuilder: (context, index) {
-                  final data = activeTopProperties[index];
-                  return MediaQuery(
-                    data: MediaQuery.of(
-                      context,
-                    ).copyWith(textScaler: const TextScaler.linear(1.0)),
-                    child: TopPropertyCard(property: data),
-                  );
-                },
+      return Container(
+        padding: EdgeInsets.symmetric(vertical: 12),
+        // margin: EdgeInsets.symmetric(vertical: 20),
+        color: Color.fromARGB(255, 252, 245, 237),
+
+        child: Column(
+          children: [
+            const SizedBox(height: 12),
+            TitleWithViewAll(
+              title:
+                  "Top Properties in ${propertyController.selectedCity.value}",
+              showViewAll: true,
+              onViewAll: () => Get.to(() => PropertyDetail()),
+            ),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: SizedBox(
+                height: 310,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: activeTopProperties.length,
+                  separatorBuilder: (_, __) => const SizedBox(width: 12),
+                  itemBuilder: (context, index) {
+                    final data = activeTopProperties[index];
+                    return MediaQuery(
+                      data: MediaQuery.of(
+                        context,
+                      ).copyWith(textScaler: const TextScaler.linear(1.0)),
+                      child: TopPropertyCard(property: data),
+                    );
+                  },
+                ),
               ),
             ),
-          ),
-        ],
+            SizedBox(height: 12),
+          ],
+        ),
       );
     });
   }
@@ -1486,26 +1894,32 @@ class _HomeScreenState extends State<HomeScreen> {
         return const SizedBox.shrink();
       }
 
-      return Column(
-        children: [
-          const SizedBox(height: 12),
-          TitleWithViewAll(
-            title: "Top Project in ${projectController.selectedCity.value}",
-            showViewAll: true,
-            onViewAll:
-                () => Get.to(
-                  () => AllProjectListScreen(
-                    isFromSeeAll: true,
-                    isbuilder: false,
-                    filters: [
-                      {'city': projectController.selectedCity.value},
-                    ],
+      return Container(
+        padding: EdgeInsets.symmetric(vertical: 12),
+        // margin: EdgeInsets.symmetric(vertical: 20),
+        color: Color.fromARGB(255, 251, 253, 240),
+
+        child: Column(
+          children: [
+            const SizedBox(height: 12),
+            TitleWithViewAll(
+              title: "Top Project in ${projectController.selectedCity.value}",
+              showViewAll: true,
+              onViewAll:
+                  () => Get.to(
+                    () => AllProjectListScreen(
+                      isFromSeeAll: true,
+                      isbuilder: false,
+                      filters: [
+                        {'city': projectController.selectedCity.value},
+                      ],
+                    ),
                   ),
-                ),
-          ),
-          const SizedBox(height: 12),
-          _buildProjectList(activeTopProjects),
-        ],
+            ),
+            const SizedBox(height: 12),
+            _buildProjectList(activeTopProjects),
+          ],
+        ),
       );
     });
   }
@@ -1545,31 +1959,43 @@ class _HomeScreenState extends State<HomeScreen> {
     return Obx(() {
       if (topBuilderController.isLoading.value &&
           topBuilderController.items.isEmpty) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 12),
-            TitleWithViewAll(
-              title: "Top Developer in ${projectController.selectedCity.value}",
-              showViewAll: false,
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              height: 310,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: 3,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                separatorBuilder: (context, index) => const SizedBox(width: 12),
-                itemBuilder: (context, index) {
-                  return const SizedBox(
-                    width: 250,
-                    child: BuilderCardShimmer(),
-                  );
-                },
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          color: Color(0xffFAF9F8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 12),
+              TitleWithViewAll(
+                title:
+                    "Top Developer in ${projectController.selectedCity.value}",
+                showViewAll: false,
+                subTitle: 'Connect with top developers',
+                isSubTitle: true,
+                icon: Icons.person_outline_outlined,
+                iconColor: ColorRes.homeYellow,
+                iconBgColor: ColorRes.homeYellow.withOpacity(0.1),
+                showIcon: true,
               ),
-            ),
-          ],
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 310,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 3,
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  separatorBuilder:
+                      (context, index) => const SizedBox(width: 12),
+                  itemBuilder: (context, index) {
+                    return const SizedBox(
+                      width: 250,
+                      child: BuilderCardShimmer(),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         );
       }
 
@@ -1579,56 +2005,70 @@ class _HomeScreenState extends State<HomeScreen> {
 
       final builders = topBuilderController.items.take(3).toList();
 
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 12),
-          TitleWithViewAll(
-            title: "Top Developer in ${projectController.selectedCity.value}",
-            showViewAll: true,
-            onViewAll: () => Get.to(() => AllBuildersScreen()),
-          ),
-          const SizedBox(height: 12),
+      return Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        color: Color(0xffFAF9F8),
 
-          SizedBox(
-            height: 310,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              itemCount: builders.length,
-              separatorBuilder: (context, index) => const SizedBox(width: 12),
-              itemBuilder: (context, index) {
-                final builder = builders[index];
-                return SizedBox(
-                  width: 250,
-                  child: BuilderCard(builder: builder),
-                );
-              },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 12),
+            TitleWithViewAll(
+              title: "Top Developer in ${projectController.selectedCity.value}",
+              showViewAll: true,
+              subTitle: 'Connect with top developers',
+              isSubTitle: true,
+              icon: Icons.person_outline_outlined,
+              iconColor: ColorRes.builderGridLightYellow,
+              iconBgColor: ColorRes.builderGridLightYellow.withOpacity(0.1),
+              showIcon: true,
+              onViewAll: () => Get.to(() => AllBuildersScreen()),
             ),
-          ),
-          
-        ],
+            const SizedBox(height: 12),
+
+            SizedBox(
+              height: 310,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                itemCount: builders.length,
+                separatorBuilder: (context, index) => const SizedBox(width: 12),
+                itemBuilder: (context, index) {
+                  final builder = builders[index];
+                  return SizedBox(
+                    width: 250,
+                    child: BuilderCard(builder: builder),
+                  );
+                },
+              ),
+            ),
+            SizedBox(height: 12),
+          ],
+        ),
       );
     });
   }
 
   Widget _buildTopContractors() {
     return Obx(() {
-
       if (contractorServiceController.isLoading.value &&
           contractorServiceController.items.isEmpty) {
-        return Column(
-          children: [
-            const SizedBox(height: 12),
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          color: Color(0xffF0F3FF),
+          child: Column(
+            children: [
+              const SizedBox(height: 12),
 
-            TitleWithViewAll(
-              title: "Top Rated Contractors",
-              showViewAll: true,
-              onViewAll: () => Get.to(() => const AllContractorsListScreen()),
-            ),
-            const SizedBox(height: 6),
-            const ContractorCardShimmer(),
-          ],
+              TitleWithViewAll(
+                title: "Top Rated Contractors",
+                showViewAll: true,
+                onViewAll: () => Get.to(() => const AllContractorsListScreen()),
+              ),
+              const SizedBox(height: 6),
+              const ContractorCardShimmer(),
+            ],
+          ),
         );
       }
 
@@ -1636,32 +2076,43 @@ class _HomeScreenState extends State<HomeScreen> {
         return const SizedBox.shrink();
       }
 
-      return Column(
-        children: [
-          const SizedBox(height: 12),
-          TitleWithViewAll(
-            title: "Top Rated Contractors",
-            showViewAll: true,
-            onViewAll: () => Get.to(() => const AllContractorsListScreen()),
-          ),
-          const SizedBox(height: 6),
-          SizedBox(
-            height: 338,
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              separatorBuilder: (context, index) => const SizedBox(width: 12),
-              scrollDirection: Axis.horizontal,
-              itemCount: contractorServiceController.items.length,
-              itemBuilder: (context, index) {
-                final data = contractorServiceController.items[index];
-                return SizedBox(
-                  width: 300,
-                  child: ContractorCard(contractor: data),
-                );
-              },
+      return Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        color: Color(0xffF0F3FF),
+        child: Column(
+          children: [
+            const SizedBox(height: 12),
+            TitleWithViewAll(
+              title: "Top Rated Contractors",
+              subTitle: 'Connect with top contractors',
+              isSubTitle: true,
+              icon: Icons.home_repair_service_outlined,
+              iconColor: ColorRes.lightPurpleColor,
+              iconBgColor: ColorRes.lightPurpleColor.withOpacity(0.1),
+              showIcon: true,
+              showViewAll: true,
+              onViewAll: () => Get.to(() => const AllContractorsListScreen()),
             ),
-          ),
-        ],
+            const SizedBox(height: 6),
+            SizedBox(
+              height: 338,
+              child: ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                separatorBuilder: (context, index) => const SizedBox(width: 12),
+                scrollDirection: Axis.horizontal,
+                itemCount: contractorServiceController.items.length,
+                itemBuilder: (context, index) {
+                  final data = contractorServiceController.items[index];
+                  return SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.85,
+                    child: ContractorCard(contractor: data),
+                  );
+                },
+              ),
+            ),
+            SizedBox(height: 12),
+          ],
+        ),
       );
     });
   }
@@ -1672,40 +2123,57 @@ class _HomeScreenState extends State<HomeScreen> {
           topCategoryController.categories.isEmpty) {
         return Column(
           children: [
-            const SizedBox(height: 15),
+            SizedBox(height: 15),
 
-            const TitleWithViewAll(
+            TitleWithViewAll(
               title: "NesticoPe Verified Services",
               showViewAll: true,
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
 
-            const TopCategoriesShimmer(),
+            TopCategoriesShimmer(),
           ],
         );
       }
 
       if (topCategoryController.categories.isEmpty) {
-        return const SizedBox.shrink();
+        return SizedBox.shrink();
       }
 
-      return Column(
-        children: [
-          const SizedBox(height: 15),
+      return Container(
+        padding: EdgeInsets.symmetric(vertical: 12),
 
-          TitleWithViewAll(
-            title: "NesticoPe Verified Services",
-            showViewAll: true,
-            onViewAll:
-                () => Get.to(
-                  () => AllCategoriesSection(
-                    categories: topCategoryController.categories ?? [],
+        // margin:  EdgeInsets.symmetric(vertical: 20),
+        decoration: BoxDecoration(
+          color: ColorRes.success.withOpacity(0.05),
+
+          // borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          children: [
+            SizedBox(height: 15),
+
+            TitleWithViewAll(
+              title: "NesticoPe Verified Services",
+              showViewAll: true,
+              icon: Icons.verified_user_outlined,
+              iconColor: ColorRes.success,
+              iconBgColor: ColorRes.success.withOpacity(0.1),
+              showIcon: true,
+              subTitle: 'View all verified services',
+              isSubTitle: true,
+              onViewAll:
+                  () => Get.to(
+                    () => AllCategoriesSection(
+                      categories: topCategoryController.categories ?? [],
+                    ),
                   ),
-                ),
-          ),
+            ),
 
-          TopCategoriesSection(categories: topCategoryController.categories),
-        ],
+            TopCategoriesSection(categories: topCategoryController.categories),
+            SizedBox(height: 12),
+          ],
+        ),
       );
     });
   }
@@ -1802,259 +2270,266 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       }
 
-      return SizedBox(
-        height: 280,
-        child: ListView.separated(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          scrollDirection: Axis.horizontal,
-          itemCount: categories.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 12),
-          itemBuilder: (context, index) {
-            final TopCategoryItem item = categories[index];
-            final String title =
-                (item.name ?? '').toString().replaceAll('_', ' ').capitalize ??
-                'Service';
-            final List<String> features =
-                (item.description)
-                    .map((e) => e.trim())
-                    .where((e) => e.isNotEmpty)
-                    .take(4)
-                    .toList();
-            final chipText = getChipText(item.name ?? '');
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: SizedBox(
+          height: 280,
+          child: ListView.separated(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
 
-            return SizedBox(
-              width: MediaQuery.of(context).size.width * 0.85,
-              child: NesticoPeCard(
-                width: double.infinity,
-                color: ColorRes.primary.withOpacity(0.08),
-                borderRadius: BorderRadius.circular(AppRadius.large),
-                boxShadow: [
-                  
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+            scrollDirection: Axis.horizontal,
+            itemCount: categories.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            itemBuilder: (context, index) {
+              final TopCategoryItem item = categories[index];
+              final String title =
+                  (item.name ?? '')
+                      .toString()
+                      .replaceAll('_', ' ')
+                      .capitalize ??
+                  'Service';
+              final List<String> features =
+                  (item.description)
+                      .map((e) => e.trim())
+                      .where((e) => e.isNotEmpty)
+                      .take(4)
+                      .toList();
+              final chipText = getChipText(item.name ?? '');
 
-                child: Stack(
-                  children: [
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 8),
-                        child: Opacity(
-                          opacity: 0.15,
-                          child: Icon(
-                            iconFor(item),
-                            size: 120,
-                            color: ColorRes.primary,
+              return SizedBox(
+                width: MediaQuery.of(context).size.width * 0.85,
+                child: NesticoPeCard(
+                  width: double.infinity,
+                  color: ColorRes.primary.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(AppRadius.large),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.04),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+
+                  child: Stack(
+                    children: [
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8),
+                          child: Opacity(
+                            opacity: 0.15,
+                            child: Icon(
+                              iconFor(item),
+                              size: 120,
+                              color: ColorRes.primary,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Align(
-                            alignment: Alignment.topRight,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 6,
-                              ),
-                              decoration: BoxDecoration(
-                                color: ColorRes.primary,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                chipText,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: AppFontSizes.caption,
-                                  fontWeight: AppFontWeights.bold,
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: ColorRes.primary,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  chipText,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: AppFontSizes.caption,
+                                    fontWeight: AppFontWeights.bold,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            title,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: AppFontSizes.large,
-                              fontWeight: AppFontWeights.semiBold,
-                              color: ColorRes.textPrimary,
+                            const SizedBox(height: 10),
+                            Text(
+                              title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: AppFontSizes.large,
+                                fontWeight: AppFontWeights.semiBold,
+                                color: ColorRes.textPrimary,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 6),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children:
-                                features
-                                    .map(
-                                      (f) => Padding(
-                                        padding: const EdgeInsets.only(
-                                          bottom: 8,
-                                        ),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const Icon(
-                                              Icons.check_circle,
-                                              size: 15,
-                                              color: ColorRes.primary,
-                                            ),
-                                            const SizedBox(width: 8),
-                                            Expanded(
-                                              child: Text(
-                                                f,
-                                                style: TextStyle(
-                                                  fontSize:
-                                                      AppFontSizes.caption,
-                                                  fontWeight:
-                                                      AppFontWeights.medium,
-                                                  color:
-                                                      ColorRes
-                                                          .leadGreyColor
-                                                          .shade700,
+                            const SizedBox(height: 6),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children:
+                                  features
+                                      .map(
+                                        (f) => Padding(
+                                          padding: const EdgeInsets.only(
+                                            bottom: 8,
+                                          ),
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const Icon(
+                                                Icons.check_circle,
+                                                size: 15,
+                                                color: ColorRes.primary,
+                                              ),
+                                              const SizedBox(width: 8),
+                                              Expanded(
+                                                child: Text(
+                                                  f,
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        AppFontSizes.caption,
+                                                    fontWeight:
+                                                        AppFontWeights.medium,
+                                                    color:
+                                                        ColorRes
+                                                            .leadGreyColor
+                                                            .shade700,
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    )
-                                    .toList(),
-                          ),
-                          const SizedBox(height: 14),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: NesticoPeButton(
-                                  title: 'Book Now',
-                                  onTap: () {
-                                    try {
-                                      final ctrl = Get.put(
-                                        HireContractorFilterProfileController(),
-                                      );
-                                      final String categoryId =
-                                          (item.id ?? '').toString();
-                                      final String categoryName =
-                                          (item.name ?? 'Service').toString();
-                                      ctrl.selectedCategoryId.value =
-                                          categoryId;
-                                      ctrl.selectedCategoryName.value =
-                                          categoryName;
-                                      ctrl.selectedServiceNames.clear();
-                                      ctrl.selectedWorkItems.clear();
-                                      ctrl.workItemOptions.clear();
-                                      ctrl.applyFilters(<String, String>{});
-                                      Get.to(
-                                        () => const HireContractorProfileList(),
-                                      );
-                                    } catch (_) {
-                                      Get.to(
-                                        () => AllCategoriesSection(
-                                          categories:
-                                              topCategoryController.categories ??
-                                              const [],
-                                        ),
-                                      );
-                                    }
-                                  },
+                                      )
+                                      .toList(),
+                            ),
+                            const SizedBox(height: 14),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: NesticoPeButton(
+                                    title: 'Book Now',
+                                    onTap: () {
+                                      try {
+                                        final ctrl = Get.put(
+                                          HireContractorFilterProfileController(),
+                                        );
+                                        final String categoryId =
+                                            (item.id ?? '').toString();
+                                        final String categoryName =
+                                            (item.name ?? 'Service').toString();
+                                        ctrl.selectedCategoryId.value =
+                                            categoryId;
+                                        ctrl.selectedCategoryName.value =
+                                            categoryName;
+                                        ctrl.selectedServiceNames.clear();
+                                        ctrl.selectedWorkItems.clear();
+                                        ctrl.workItemOptions.clear();
+                                        ctrl.applyFilters(<String, String>{});
+                                        Get.to(
+                                          () =>
+                                              const HireContractorProfileList(),
+                                        );
+                                      } catch (_) {
+                                        Get.to(
+                                          () => AllCategoriesSection(
+                                            categories:
+                                                topCategoryController
+                                                    .categories ??
+                                                const [],
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    height: 40,
+                                    titleTextStyle: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: AppFontSizes.medium,
+                                      fontWeight: AppFontWeights.semiBold,
+                                    ),
+                                    backgroundColor: ColorRes.primary,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Container(
+                                  width: 44,
                                   height: 40,
-                                  titleTextStyle: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: AppFontSizes.medium,
-                                    fontWeight: AppFontWeights.semiBold,
+                                  decoration: BoxDecoration(
+                                    color: ColorRes.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: ColorRes.primary,
+                                      width: 1,
+                                    ),
                                   ),
-                                  backgroundColor: ColorRes.primary,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Container(
-                                width: 44,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  color: ColorRes.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
+                                  child: IconButton(
+                                    onPressed: () async {
+                                      final cc =
+                                          Get.isRegistered<ContactController>()
+                                              ? Get.find<ContactController>()
+                                              : Get.put(ContactController());
+                                      if (cc.primaryPhone.value.isEmpty) {
+                                        await cc.loadContacts(reset: true);
+                                      }
+                                      final number = cc.primaryPhone.value;
+                                      if (number.isNotEmpty) {
+                                        await ContactHelper.openDialer(number);
+                                      }
+                                    },
+                                    icon: const Icon(Icons.call, size: 20),
                                     color: ColorRes.primary,
-                                    width: 1,
+                                    tooltip: 'Call',
                                   ),
                                 ),
-                                child: IconButton(
-                                  onPressed: () async {
-                                    final cc =
-                                        Get.isRegistered<ContactController>()
-                                            ? Get.find<ContactController>()
-                                            : Get.put(ContactController());
-                                    if (cc.primaryPhone.value.isEmpty) {
-                                      await cc.loadContacts(reset: true);
-                                    }
-                                    final number = cc.primaryPhone.value;
-                                    if (number.isNotEmpty) {
-                                      
-                                      await ContactHelper.openDialer(number);
-                                    }
-                                  },
-                                  icon: const Icon(Icons.call, size: 20),
-                                  color: ColorRes.primary,
-                                  tooltip: 'Call',
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Container(
-                                width: 44,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  color: ColorRes.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                    color: ColorRes.primary,
-                                    width: 1,
+                                const SizedBox(width: 10),
+                                Container(
+                                  width: 44,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: ColorRes.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: ColorRes.primary,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: IconButton(
+                                    onPressed: () async {
+                                      final cc =
+                                          Get.isRegistered<ContactController>()
+                                              ? Get.find<ContactController>()
+                                              : Get.put(ContactController());
+                                      if (cc.primaryPhone.value.isEmpty) {
+                                        await cc.loadContacts(reset: true);
+                                      }
+                                      final number = cc.primaryPhone.value;
+                                      if (number.isNotEmpty) {
+                                        await ContactHelper.openWhatsApp(
+                                          number,
+                                        );
+                                      }
+                                    },
+                                    icon: Image.asset(
+                                      'assets/images/whatsapp.png',
+                                      width: 20,
+                                      height: 20,
+                                    ),
+                                    tooltip: 'WhatsApp',
                                   ),
                                 ),
-                                child: IconButton(
-                                  onPressed: () async {
-                                    final cc =
-                                        Get.isRegistered<ContactController>()
-                                            ? Get.find<ContactController>()
-                                            : Get.put(ContactController());
-                                    if (cc.primaryPhone.value.isEmpty) {
-                                      await cc.loadContacts(reset: true);
-                                    }
-                                    final number = cc.primaryPhone.value;
-                                    if (number.isNotEmpty) {
-                                      await ContactHelper.openWhatsApp(number);
-                                    }
-                                  },
-                                  icon: Image.asset(
-                                    'assets/images/whatsapp.png',
-                                    width: 20,
-                                    height: 20,
-                                  ),
-                                  tooltip: 'WhatsApp',
-
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       );
     });
@@ -2069,7 +2544,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 10),
             const TitleWithViewAll(
               title: "Why Choose NesticoPe",
-              
+
               isSubTitle: true,
               subTitle: "Simple, Secure & Transparent Property Services.",
 
@@ -2085,23 +2560,32 @@ class _HomeScreenState extends State<HomeScreen> {
         return const SizedBox.shrink();
       }
 
-      return Column(
-        children: [
-          const SizedBox(height: 10),
+      return Container(
+        padding: EdgeInsets.symmetric(vertical: 12),
 
-          const TitleWithViewAll(
-            title: "Why Choose NesticoPe",
-            isSubTitle: true,
-            subTitle: "Simple, Secure & Transparent Property Services.",
+        // margin: EdgeInsets.symmetric(vertical: 20),
+        color: Color(0xffFAF9F8),
 
-            showViewAll: false,
-          ),
+        child: Column(
+          children: [
+            const SizedBox(height: 10),
 
-          const SizedBox(height: 5),
-          PlatformServiceHorizontalList(
-            services: platformServicesController.items,
-          ),
-        ],
+            const TitleWithViewAll(
+              title: "Why Choose NesticoPe",
+              isSubTitle: true,
+              subTitle: "Simple, Secure & Transparent Property Services.",
+
+              showViewAll: false,
+            ),
+
+            const SizedBox(height: 5),
+            PlatformServiceHorizontalList(
+              services: platformServicesController.items,
+              cardWidth: MediaQuery.of(context).size.width * 0.85,
+            ),
+            const SizedBox(height: 12),
+          ],
+        ),
       );
     });
   }
@@ -2127,22 +2611,29 @@ class _HomeScreenState extends State<HomeScreen> {
         return const SizedBox.shrink();
       }
 
-      return Column(
-        children: [
-          const SizedBox(height: 5),
-          TitleWithViewAll(
-            title: "Latest News & Articles",
-            showViewAll: true,
-            onViewAll: () {
-              Get.to(
-                () => AllNewsArticleScreen(articles: newsController.items),
-              );
-            },
-          ),
-          const SizedBox(height: 10),
-          NewsAndArticles(articles: newsController.items),
-          const SizedBox(height: 18),
-        ],
+      return Container(
+        padding: EdgeInsets.symmetric(vertical: 12),
+
+        // margin: EdgeInsets.symmetric(vertical: 20),
+        color: Color.fromARGB(255, 252, 245, 237),
+
+        child: Column(
+          children: [
+            const SizedBox(height: 5),
+            TitleWithViewAll(
+              title: "Latest News & Articles",
+              showViewAll: true,
+              onViewAll: () {
+                Get.to(
+                  () => AllNewsArticleScreen(articles: newsController.items),
+                );
+              },
+            ),
+            const SizedBox(height: 10),
+            NewsAndArticles(articles: newsController.items),
+            const SizedBox(height: 12),
+          ],
+        ),
       );
     });
   }
@@ -2387,45 +2878,48 @@ class _HomeScreenState extends State<HomeScreen> {
   //   );
   // }
   Widget _buildFindPropertyButton() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap:
-            () => showFindPropertyDialog(
-              propertyController,
-              googleMapController,
-              context,
-            ),
-        child: Container(
-          width: double.infinity,
-          height: 42,
-          padding: const EdgeInsets.symmetric(horizontal: 14),
-          decoration: BoxDecoration(
-            color: ColorRes.primary,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: ColorRes.primary.withOpacity(0.25),
-                blurRadius: 6,
-                offset: const Offset(0, 3),
+    return Container(
+      color: Color.fromARGB(255, 253, 247, 240),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap:
+              () => showFindPropertyDialog(
+                propertyController,
+                googleMapController,
+                context,
               ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Icon(Icons.search, color: Colors.white, size: 20),
-              SizedBox(width: 8),
-              Text(
-                "Find Your Property",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
+          child: Container(
+            width: double.infinity,
+            height: 42,
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            decoration: BoxDecoration(
+              color: ColorRes.primary,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: ColorRes.primary.withOpacity(0.25),
+                  blurRadius: 6,
+                  offset: const Offset(0, 3),
                 ),
-              ),
-            ],
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                Icon(Icons.search, color: Colors.white, size: 20),
+                SizedBox(width: 8),
+                Text(
+                  "Find Your Property",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -2435,6 +2929,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     // ✅ Clear cached data on dispose
+    // _pinnedSearchNotifier.dispose();
+    _scrollController.dispose();
     _cachedNewlyAddedProperties.clear();
     _cachedTopProperties.clear();
     super.dispose();
@@ -3185,7 +3681,7 @@ class NewsAndArticles extends StatelessWidget {
               Get.to(() => NewsDetailScreen(newsItem: article));
             },
             child: Container(
-              width: 270,
+              width: MediaQuery.of(context).size.width * 0.85,
               decoration: BoxDecoration(
                 color: ColorRes.white,
                 borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
@@ -5035,6 +5531,7 @@ class BuilderListShimmer extends StatelessWidget {
     );
   }
 }
+
 class ContractorCardShimmer extends StatelessWidget {
   const ContractorCardShimmer({super.key});
 
@@ -5167,7 +5664,6 @@ class ContractorCardShimmer extends StatelessWidget {
       ),
     );
   }
-  
 
   Widget _statBox() {
     return Column(

@@ -297,7 +297,15 @@ class _PropertyReviewCardState extends State<PropertyReviewCard> {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 0.8),
+        // border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 0.8),
+        boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 2,
+             
+              offset: const Offset(0, 3),
+            ),
+          ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,

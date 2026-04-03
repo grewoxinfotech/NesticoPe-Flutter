@@ -572,7 +572,7 @@ class OnboardingController extends GetxController {
   }) async {
     String phone = '';
     bool isPhoneValid = false;
-    final List<String> otpDigits = List.filled(6, '');
+    final List<String> otpDigits = List.filled(4, '');
     bool stepOtp = false;
     bool proceed = false;
     int resendSecondsLeft = 0;
@@ -794,7 +794,7 @@ class OnboardingController extends GetxController {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       stepOtp
-                          ? "Enter the 6-digit OTP sent to +91 $phone"
+                          ? "Enter the 4-digit OTP sent to +91 $phone"
                           : "Enter your mobile number to continue",
 
                       style: TextStyle(
@@ -1063,7 +1063,7 @@ class OnboardingController extends GetxController {
                     /// OTP Boxes
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: List.generate(6, (index) {
+                      children: List.generate(4, (index) {
                         return Container(
                           width: 45,
                           height: 55,
@@ -1076,13 +1076,16 @@ class OnboardingController extends GetxController {
                             textAlign: TextAlign.center,
                             keyboardType: TextInputType.number,
                             maxLength: 1,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
                             decoration: const InputDecoration(
                               counterText: "",
                               border: InputBorder.none,
                             ),
                             onChanged: (v) {
                               otpDigits[index] = v;
-                              if (v.isNotEmpty && index < 5) {
+                              if (v.isNotEmpty && index < 3) {
                                 FocusScope.of(context).nextFocus();
                               }
                             },
@@ -1108,10 +1111,10 @@ class OnboardingController extends GetxController {
                                 ? null
                                 : () async {
                                   final otp = otpDigits.join();
-                                  if (otp.length != 6) {
+                                  if (otp.length != 4) {
                                     NesticoPeSnackBar.showAwesomeSnackbar(
                                       title: 'OTP Required',
-                                      message: 'Please enter the 6-digit OTP',
+                                      message: 'Please enter the 4-digit OTP',
                                       contentType: ContentType.warning,
                                     );
                                     return;
@@ -1201,11 +1204,17 @@ class OnboardingController extends GetxController {
                         children: [
                           Text(
                             "Didn't receive code? ",
-                            style: TextStyle(color: Colors.grey.shade600,fontWeight: FontWeight.w500),
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                           Text(
                             "Resend OTP in ${resendSecondsLeft}s",
-                            style: TextStyle(color: Colors.grey.shade600,fontWeight: FontWeight.w500),
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ],
                       ),
@@ -1285,6 +1294,204 @@ class OnboardingController extends GetxController {
   }
 }
 
+// class OnboardingScreen extends StatelessWidget {
+//   const OnboardingScreen({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final OnboardingController controller = Get.put(OnboardingController());
+
+//     return Scaffold(
+//       // backgroundColor: Colors.white,
+
+//       body: Container(
+//         decoration: BoxDecoration(
+//               color: ColorRes.primary, // dark navy background
+//           image: DecorationImage(
+//             image: AssetImage('assets/images/moder_villa.png'),
+//             fit: BoxFit.cover,
+
+//             repeat: ImageRepeat.repeat,
+//             // opacity: 0.08,
+//             opacity: 0.4
+//           ),
+//         ),
+//         child: Center(
+//           child: Padding(
+//             padding: const EdgeInsets.all(20.0),
+//             child: SingleChildScrollView(
+//               scrollDirection: Axis.vertical,
+
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+
+//                 children: [
+//                   Text(
+//                     'What are you\nlooking for?',
+//                     style: TextStyle(
+//                       fontSize: 32,
+//                       fontWeight: FontWeight.bold,
+//                       color: ColorRes.white,
+//                       height: 1.2,
+//                     ),
+//                   ),
+//                   SizedBox(height: 8),
+//                   Text(
+//                     'Choose an option to customize your\nexperience.',
+//                     style: TextStyle(
+//                       fontSize: 14,
+//                       fontWeight: FontWeight.w500,
+//                       color: Colors.grey[200],
+//                       height: 1.5,
+//                     ),
+//                   ),
+//                   SizedBox(height: 32),
+//                   _buildOptionTile(
+//                     controller: controller,
+//                     icon: Icons.home,
+//                     iconColor: ColorRes.primary,
+//                     iconBgColor: ColorRes.primary.withOpacity(0.05),
+//                     title: 'Buy Home',
+//                     subtitle: 'Find your forever property',
+//                   ),
+//                   SizedBox(height: 16),
+//                   _buildOptionTile(
+//                     controller: controller,
+//                     icon: Icons.key,
+//                     iconColor: ColorRes.primary,
+//                     iconBgColor: ColorRes.primary.withOpacity(0.05),
+//                     title: 'Rent Home',
+//                     subtitle: 'Explore monthly rentals',
+//                   ),
+//                   SizedBox(height: 16),
+//                   _buildOptionTile(
+//                     controller: controller,
+//                     icon: Icons.sell,
+//                     iconColor: ColorRes.primary,
+//                     iconBgColor: ColorRes.primary.withOpacity(0.05),
+//                     title: 'Seller Registration',
+//                     subtitle: 'List and sell your property',
+//                   ),
+//                   SizedBox(height: 16),
+//                   _buildOptionTile(
+//                     controller: controller,
+//                     icon: Icons.store,
+//                     iconColor: ColorRes.primary,
+//                     iconBgColor: ColorRes.primary.withOpacity(0.05),
+//                     title: 'Partner Registration',
+//                     subtitle: 'Join our partners program',
+//                   ),
+//                   SizedBox(height: 16),
+//                   _buildOptionTile(
+//                     controller: controller,
+
+//                     icon: Icons.construction,
+//                     iconColor: ColorRes.primary,
+//                     iconBgColor: ColorRes.primary.withOpacity(0.05),
+//                     title: 'Contractor Registration',
+//                     subtitle: 'Provide renovation services',
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+
+//   Widget _buildOptionTile({
+//     required OnboardingController controller,
+//     required IconData icon,
+//     required Color iconColor,
+//     required Color iconBgColor,
+//     required String title,
+//     required String subtitle,
+//   }) {
+//     return Obx(
+//       () => IgnorePointer(
+//         ignoring: controller.isProcessing.value,
+//         // ✅ Disable during processing
+//         child: Opacity(
+//           opacity: controller.isProcessing.value ? 0.6 : 1.0,
+//           child: InkWell(
+//             onTap: () => controller.selectOption(title),
+//             borderRadius: BorderRadius.circular(12),
+//             child: Container(
+//               padding: EdgeInsets.all(16),
+//               decoration: BoxDecoration(
+//                 color:
+//                     controller.selectedOption.value == title
+//                         ? Colors.blue[50]
+//                         : Colors.grey[50],
+//                 borderRadius: BorderRadius.circular(12),
+//                 border: Border.all(
+//                   color:
+//                       controller.selectedOption.value == title
+//                           ? ColorRes.primary
+//                           : Colors.transparent,
+//                   width: 2,
+//                 ),
+//               ),
+//               child: Row(
+//                 children: [
+//                   Container(
+//                     padding: EdgeInsets.all(12),
+//                     decoration: BoxDecoration(
+//                       color: iconBgColor,
+//                       borderRadius: BorderRadius.circular(10),
+//                     ),
+//                     child: Icon(icon, color: iconColor, size: 24),
+//                   ),
+//                   SizedBox(width: 16),
+//                   Expanded(
+//                     child: Column(
+//                       crossAxisAlignment: CrossAxisAlignment.start,
+//                       children: [
+//                         Text(
+//                           title,
+//                           style: TextStyle(
+//                             fontSize: 16,
+//                             fontWeight: FontWeight.w600,
+//                             color: Colors.black,
+//                           ),
+//                         ),
+//                         SizedBox(height: 4),
+//                         Text(
+//                           subtitle,
+//                           style: TextStyle(
+//                             fontSize: 13,
+//                             color: Colors.grey[600],
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                   if (controller.isProcessing.value &&
+//                       controller.selectedOption.value == title)
+//                     SizedBox(
+//                       width: 16,
+//                       height: 16,
+//                       child: CircularProgressIndicator(
+//                         strokeWidth: 2,
+//                         color: ColorRes.primary,
+//                       ),
+//                     )
+//                   else
+//                     Icon(
+//                       Icons.arrow_forward_ios,
+//                       size: 16,
+//                       color: Colors.grey[400],
+//                     ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
 
@@ -1293,88 +1500,124 @@ class OnboardingScreen extends StatelessWidget {
     final OnboardingController controller = Get.put(OnboardingController());
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        automaticallyImplyLeading:
-            false, // ✅ Remove back button on first launch
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'What are you\nlooking for?',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  height: 1.2,
-                ),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Choose an option to customize your\nexperience.',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                  height: 1.5,
-                ),
-              ),
-              SizedBox(height: 32),
-              _buildOptionTile(
-                controller: controller,
-                icon: Icons.home,
-                iconColor: ColorRes.primary,
-                iconBgColor: ColorRes.primary.withOpacity(0.05),
-                title: 'Buy Home',
-                subtitle: 'Find your forever property',
-              ),
-              SizedBox(height: 16),
-              _buildOptionTile(
-                controller: controller,
-                icon: Icons.key,
-                iconColor: ColorRes.primary,
-                iconBgColor: ColorRes.primary.withOpacity(0.05),
-                title: 'Rent Home',
-                subtitle: 'Explore monthly rentals',
-              ),
-              SizedBox(height: 16),
-              _buildOptionTile(
-                controller: controller,
-                icon: Icons.sell,
-                iconColor: ColorRes.primary,
-                iconBgColor: ColorRes.primary.withOpacity(0.05),
-                title: 'Seller Registration',
-                subtitle: 'List and sell your property',
-              ),
-              SizedBox(height: 16),
-              _buildOptionTile(
-                controller: controller,
-                icon: Icons.store,
-                iconColor: ColorRes.primary,
-                iconBgColor: ColorRes.primary.withOpacity(0.05),
-                title: 'Partner Registration',
-                subtitle: 'Join our partners program',
-              ),
-              SizedBox(height: 16),
-              _buildOptionTile(
-                controller: controller,
-
-                icon: Icons.construction,
-                iconColor: ColorRes.primary,
-                iconBgColor: ColorRes.primary.withOpacity(0.05),
-                title: 'Contractor Registration',
-                subtitle: 'Provide renovation services',
-              ),
-            ],
+      body: Stack(
+        children: [
+          // Background: dark navy base
+          Container(
+            decoration: const BoxDecoration(
+              color: Color(0xFF0D1B3E), // deep navy
+            ),
           ),
-        ),
+
+          // Top house image with gradient fade
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 260,
+            child: ShaderMask(
+              shaderCallback:
+                  (rect) => LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.white.withOpacity(0.6), Colors.transparent],
+                    stops: const [0.4, 1.0],
+                  ).createShader(rect),
+              blendMode: BlendMode.dstIn,
+              child: Image.asset(
+                'assets/images/moder_villa.png',
+                fit: BoxFit.cover,
+                width: double.infinity,
+              ),
+            ),
+          ),
+
+          // Subtle dot pattern overlay
+          Positioned.fill(child: CustomPaint(painter: DotPatternPainter())),
+
+          // Main content
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 100), // space for the image
+                  // Heading
+                  const Text(
+                    'What are you\nlooking for?',
+                    style: TextStyle(
+                      fontSize: 34,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                      height: 1.15,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Choose an option to customize your experience and find your place in the world.',
+                    style: TextStyle(
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white.withOpacity(0.70),
+                      height: 1.55,
+                    ),
+
+                  ),
+                  const SizedBox(height: 28),
+
+                  // Option Cards
+                  _buildOptionTile(
+                    controller: controller,
+                    icon: Icons.home_rounded,
+                    title: 'Buy Home',
+                    subtitle:
+                        'Find premium residential and luxury homes made for first-time owners.',
+                    actionLabel: 'Explore Listings',
+                  ),
+                  const SizedBox(height: 14),
+                  _buildOptionTile(
+                    controller: controller,
+                    icon: Icons.vpn_key_rounded,
+                    title: 'Rent Home',
+                    subtitle:
+                        'Experience high-end living with our exclusive collection of luxury home opportunities.',
+                    actionLabel: 'View Rentals',
+                  ),
+                  const SizedBox(height: 14),
+                  _buildOptionTile(
+                    controller: controller,
+                    icon: Icons.sell_rounded,
+                    title: 'Seller Registration',
+                    subtitle:
+                        'List your property with professional marketing and enhanced tools.',
+                    actionLabel: 'Start Selling',
+                  ),
+                  const SizedBox(height: 14),
+                  _buildOptionTile(
+                    controller: controller,
+                    icon: Icons.store_rounded,
+                    title: 'Partner Registration',
+                    subtitle:
+                        'Join our network of top agents and brokers and unlock new avenues.',
+                    actionLabel: 'Become a Partner',
+                  ),
+                  const SizedBox(height: 14),
+                  _buildOptionTile(
+                    controller: controller,
+                    icon: Icons.construction_rounded,
+                    title: 'Contractor Registration',
+                    subtitle:
+                        'Offer your renovation and construction services to thousands of clients.',
+                    actionLabel: 'Join as Contractor',
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -1382,86 +1625,111 @@ class OnboardingScreen extends StatelessWidget {
   Widget _buildOptionTile({
     required OnboardingController controller,
     required IconData icon,
-    required Color iconColor,
-    required Color iconBgColor,
     required String title,
     required String subtitle,
+    required String actionLabel,
   }) {
     return Obx(
       () => IgnorePointer(
         ignoring: controller.isProcessing.value,
-        // ✅ Disable during processing
         child: Opacity(
           opacity: controller.isProcessing.value ? 0.6 : 1.0,
-          child: InkWell(
+          child: GestureDetector(
             onTap: () => controller.selectOption(title),
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              padding: EdgeInsets.all(16),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color:
-                    controller.selectedOption.value == title
-                        ? Colors.blue[50]
-                        : Colors.grey[50],
-                borderRadius: BorderRadius.circular(12),
+                color: Colors.white.withOpacity(0.9),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.10),
+                    blurRadius: 16,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
                 border: Border.all(
                   color:
                       controller.selectedOption.value == title
-                          ? ColorRes.primary
+                          ? const Color(0xFF2563EB)
                           : Colors.transparent,
                   width: 2,
                 ),
               ),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Icon bubble
                   Container(
-                    padding: EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(11),
                     decoration: BoxDecoration(
-                      color: iconBgColor,
-                      borderRadius: BorderRadius.circular(10),
+                      color: const Color(0xFFEFF6FF),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(icon, color: iconColor, size: 24),
+                    child: Icon(icon, color: ColorRes.primary, size: 22),
                   ),
-                  SizedBox(width: 16),
+                  const SizedBox(width: 14),
+
+                  // Text + link
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           title,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF0F172A),
+                            letterSpacing: -0.2,
                           ),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 5),
                         Text(
                           subtitle,
                           style: TextStyle(
-                            fontSize: 13,
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w500,
                             color: Colors.grey[600],
+                            height: 1.5,
                           ),
                         ),
+                        const SizedBox(height: 10),
+
+                        // Action link
+                        if (controller.isProcessing.value &&
+                            controller.selectedOption.value == title)
+                          const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Color(0xFF2563EB),
+                            ),
+                          )
+                        else
+                          Row(
+                            children: [
+                              Text(
+                                actionLabel,
+                                style: const TextStyle(
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w600,
+                                  color: ColorRes.primary,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              const Icon(
+                                Icons.arrow_forward,
+                                size: 13,
+                                color: ColorRes.primary,
+                              ),
+                            ],
+                          ),
                       ],
                     ),
                   ),
-                  if (controller.isProcessing.value &&
-                      controller.selectedOption.value == title)
-                    SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: ColorRes.primary,
-                      ),
-                    )
-                  else
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      size: 16,
-                      color: Colors.grey[400],
-                    ),
                 ],
               ),
             ),
@@ -1470,4 +1738,27 @@ class OnboardingScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Subtle dot pattern painter for the background
+class DotPatternPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint =
+        Paint()
+          ..color = Colors.white.withOpacity(0.06)
+          ..style = PaintingStyle.fill;
+
+    const spacing = 28.0;
+    const radius = 1.5;
+
+    for (double x = 0; x < size.width; x += spacing) {
+      for (double y = 0; y < size.height; y += spacing) {
+        canvas.drawCircle(Offset(x, y), radius, paint);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(DotPatternPainter oldDelegate) => false;
 }

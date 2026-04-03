@@ -319,8 +319,10 @@ class CustomImage extends StatelessWidget {
 
       case CustomImageType.network:
         if (src == null || src!.trim().isEmpty) {
+          print("src is empty ${src}");
           return fallback();
         }
+        print("src is not empty ${src}");
         return CachedNetworkImage(
           imageUrl: src ?? "",
           fit: fit,
@@ -330,8 +332,10 @@ class CustomImage extends StatelessWidget {
           memCacheHeight: cacheH,
           placeholder:
               networkPlaceholder ?? (context, url) => _shimmerPlaceholder(),
-          errorWidget:
-              networkError ?? (context, url, error) => fallback(),
+    errorWidget: networkError ?? (context, url, error) {
+  debugPrint("❌ Image failed: $url | Error: $error");
+  return fallback();
+},
         );
 
       case CustomImageType.file:

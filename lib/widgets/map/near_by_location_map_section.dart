@@ -90,10 +90,18 @@ class _NearbyLocationMapSectionState extends State<NearbyLocationMapSection> {
           decoration: BoxDecoration(
             color: ColorRes.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: ColorRes.leadGreyColor.shade300,
-              width: 1,
+            // border: Border.all(
+            //   color: ColorRes.leadGreyColor.shade300,
+            //   width: 1,
+            // ),
+            boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 2,
+             
+              offset: const Offset(0, 3),
             ),
+          ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -257,7 +265,7 @@ class _NearbyLocationMapSectionState extends State<NearbyLocationMapSection> {
 
                 return Column(
                   children: [
-                    Divider(height: 1, color: ColorRes.grey.withOpacity(0.3)),
+                    Divider(height: 1, color: ColorRes.grey.withOpacity(0.1)),
                     const SizedBox(height: 8),
                     ListView.separated(
                       shrinkWrap: true,
@@ -293,7 +301,7 @@ class _NearbyLocationMapSectionState extends State<NearbyLocationMapSection> {
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Icon(
-                                    Icons.location_on,
+                                    Icons.location_on_outlined,
                                     color: ColorRes.primary,
                                     size: 20,
                                   ),
@@ -385,7 +393,7 @@ class _NearbyLocationMapSectionState extends State<NearbyLocationMapSection> {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
             color:
-                isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade100,
+                isSelected ? ColorRes.primary : ColorRes.white,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color:

@@ -259,9 +259,16 @@ class _SupportTicketChatScreenState extends State<SupportTicketChatScreen> {
   @override
   void initState() {
     super.initState();
+  
+    setState(() {
+      _bootstrap();
+    });
+  }
+
+  Future<void> _bootstrap() async {
+    await loadUserId();
 
     roomId = widget.ticketId ?? '';
-
     _socketController.roomId.value = roomId;
 
     if (roomId.isNotEmpty) {
@@ -269,20 +276,22 @@ class _SupportTicketChatScreenState extends State<SupportTicketChatScreen> {
     }
 
     ever(_socketController.messages, (_) => _scrollToBottom());
-
-    loadUserId();
   }
 
   Future<void> loadUserId() async {
     final user = await SecureStorage.getUserData();
+
     final id = user?.user?.id ?? "";
-    // Fallback to 'guest' when not logged in to avoid infinite loader
+    setState(() {
     final effectiveId = id.isNotEmpty ? id : 'guest';
 
-    log('User ID: $effectiveId');
+    log('User ID:hjghughygh $effectiveId');
 
     currentUser.value = effectiveId;
-    _socketController.currentUserId.value = effectiveId;
+    _socketController.currentUserId.value = effectiveId;  
+    });
+    // Fallback to 'guest' when not logged in to avoid infinite loader
+    
   }
 
   Future<void> _sendMessage() async {
@@ -291,6 +300,11 @@ class _SupportTicketChatScreenState extends State<SupportTicketChatScreen> {
 
     if (!hasText && !hasFile) return;
 
+    if (currentUser.value.isEmpty) {
+      await loadUserId();
+      if (currentUser.value.isEmpty) return;
+    }
+
     if (roomId.isEmpty && widget.createOnFirstSend) {
       final svc = TicketService();
       final payload = TicketCreateRequest(
@@ -298,6 +312,7 @@ class _SupportTicketChatScreenState extends State<SupportTicketChatScreen> {
         description: _messageController.text.trim(),
         category: 'other',
         ticketType: 'custom',
+        
         priority: 'medium',
       );
       final created = await svc.createTicketSimple(payload);
@@ -332,6 +347,7 @@ class _SupportTicketChatScreenState extends State<SupportTicketChatScreen> {
 
       final payload = SendChatMessageAndFile(
         ticketId: roomId,
+        
         message: hasText ? _messageController.text.trim() : "",
         fileBuffer: fileBytes,
         fileName: file.name,

@@ -29,12 +29,14 @@ class PropertyController extends PaginatedController<Items> {
 
   final RxString selectedCity = "".obs;
   RxList<Items> topProperties = <Items>[].obs;
+  final RxBool _showPinnedSearch = false.obs;
   final PropertyContactedService _contactedService = PropertyContactedService();
   RxList<Items> recommendedProperties = <Items>[].obs;
   final RxBool hasSubmittedInquiry = false.obs;
   final RxBool isAcceptableTermsAndCondition = false.obs;
 
   RxInt propertyLimit = 0.obs;
+  RxString subPropertyType = "".obs;
 
   // Reactive fields
   Rxn<PropertyMedia> propertyMedia = Rxn<PropertyMedia>();
@@ -56,10 +58,20 @@ class PropertyController extends PaginatedController<Items> {
   // Optional filters
   Map<String, String>? filters = {};
 
+
   RxBool isComparePropertyFirst = false.obs;
   RxBool isComparePropertySecond = false.obs;
 
   // var favoriteIds = <String>{}.obs;
+
+  void attachScrollListener(ScrollController controller, {double threshold = 110.0}) {
+    controller.addListener(() {
+      final shouldShow = controller.offset >= threshold;
+      showPinnedSearch = shouldShow;
+
+      print("Scroll offset: ${showPinnedSearch}");
+    });
+  }
 
   @override
   void onInit() {
@@ -68,6 +80,13 @@ class PropertyController extends PaginatedController<Items> {
 
     fetchTradingArea(selectedCity.value);
   }
+
+
+  bool get showPinnedSearch => _showPinnedSearch.value;
+
+
+  set showPinnedSearch(bool value) => _showPinnedSearch.value = value;
+  
 
   Rxn<TrendingAreasResponse> trendingAreaList = Rxn<TrendingAreasResponse>();
 
@@ -350,6 +369,7 @@ class PropertyController extends PaginatedController<Items> {
       filters = current;
         filters!['approval_status'] = 'approved';
         filters!['isVerified'] = true.toString();
+      
       final response = await _service.fetchProperties(
         page: page,
         filters: filters,
@@ -389,6 +409,7 @@ class PropertyController extends PaginatedController<Items> {
       else{
         filters!['approval_status'] = 'approved';
         filters!['isVerified'] = true.toString();
+       
         final response = await _service.fetchProperties(
           page: page,
           filters: filters,

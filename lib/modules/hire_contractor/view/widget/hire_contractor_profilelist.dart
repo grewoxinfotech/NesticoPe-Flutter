@@ -925,7 +925,8 @@ class _HireContractorCardState extends State<HireContractorCard> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
-                                '\$${widget.data.contractorVisitCharge}/visit',
+                                '${Formatter.formatPrice(widget.data.contractorVisitCharge??0)}/visit',
+                                
                                 style: TextStyle(
                                   fontSize: AppFontSizes.small,
                                   fontWeight: FontWeight.w600,

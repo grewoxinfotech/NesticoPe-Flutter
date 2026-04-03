@@ -96,7 +96,7 @@ class MumbaiProjectsScreen extends StatelessWidget {
                             color: ColorRes.white,
                             borderRadius: BorderRadius.circular(16),
                           ),
-                          child: buildPositionedTextField(context, () {},),
+                          child: buildPositionedTextField(controller,context, () {},),
                         ),
                       ),
                       const SizedBox(height: 16),

@@ -3088,6 +3088,7 @@ import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/app/constants/img_res.dart';
 import 'package:nesticope_app/app/manager/property/property_name_manager.dart';
@@ -3388,7 +3389,11 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
         children: [
           Text(
             'Compare price trends and forecast future returns',
-            style: TextStyle(fontSize: 12, color: ColorRes.leadGreyColor),
+            style: TextStyle(
+              fontSize: 11,
+              color: ColorRes.leadGreyColor.shade600,
+              fontWeight: FontWeight.w500,
+            ),
           ),
           const SizedBox(height: 24),
 
@@ -3398,7 +3403,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
               Expanded(
                 child: _comparisonTypeButton(
                   label: 'with Locality',
-                  icon: Icons.location_on,
+                  icon: Icons.location_on_outlined,
                   isSelected: _comparisonType == 'locality',
                   onTap: () => setState(() => _comparisonType = 'locality'),
                 ),
@@ -3407,7 +3412,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
               Expanded(
                 child: _comparisonTypeButton(
                   label: 'with Properties',
-                  icon: Icons.home,
+                  icon: Icons.home_outlined,
                   isSelected: _comparisonType == 'property',
                   onTap: () => setState(() => _comparisonType = 'property'),
                 ),
@@ -3496,11 +3501,25 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
               widget.currentProperty.location ?? '',
             ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 12),
 
           // Chart
           Container(
             height: 280,
+            padding:  EdgeInsets.only( right: 20, top: 16, bottom: 12),
+           decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+
+              blurRadius: 2,
+             
+              offset: const Offset(0, 3),
+            ),
+          ],
+           ),
             child: LineChart(
               LineChartData(
                 minX: minX, // Use global min Year
@@ -3556,15 +3575,23 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
             : null;
 
     return Container(
-      margin: const EdgeInsets.only(top: 24),
+      // margin: const EdgeInsets.only(top: 24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: ColorRes.leadGreyColor.withOpacity(0.3)),
+        // border: Border.all(color: ColorRes.leadGreyColor.withOpacity(0.3)),
+        boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 2,
+             
+              offset: const Offset(0, 3),
+            ),
+          ],
       ),
       child: Column(
         children: [
-          SizedBox(height: 10),
+          SizedBox(height: 20),
           Row(
             children: [
               _headerItem('', flex: 1),
@@ -3574,7 +3601,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
             ],
           ),
           SizedBox(height: 10),
-          Divider(color: ColorRes.leadGreyColor.withOpacity(0.3)),
+          Divider(color: ColorRes.leadGreyColor.withOpacity(0.1)),
           _buildSummaryRow(
             indicatorColor: ColorRes.primary,
             currentPrice: mySummary.current,
@@ -3582,7 +3609,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
             growth5yr: widget.currentProperty.fiveYearGrowth,
           ),
           if (localitySummary != null) ...[
-            Divider(color: ColorRes.leadGreyColor.withOpacity(0.3)),
+            Divider(color: ColorRes.leadGreyColor.withOpacity(0.1)),
             _buildSummaryRow(
               indicatorColor: _comparisonColors[0],
               currentPrice: localitySummary.current,
@@ -3591,7 +3618,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
             ),
           ],
           if (propertyTypeSummary != null) ...[
-            Divider(color: ColorRes.leadGreyColor.withOpacity(0.3)),
+            Divider(color: ColorRes.leadGreyColor.withOpacity(0.1)),
             _buildSummaryRow(
               indicatorColor: _comparisonColors[0],
               currentPrice: propertyTypeSummary.current,
@@ -3606,7 +3633,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
               final summary = _summaryFromChart(prop.chartData);
               return Column(
                 children: [
-                  Divider(color: ColorRes.leadGreyColor.withOpacity(0.3)),
+                  Divider(color: ColorRes.leadGreyColor.withOpacity(0.1)),
                   _buildSummaryRow(
                     indicatorColor:
                         _comparisonColors[(index + 1) %
@@ -3671,9 +3698,10 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
       child: Text(
         label,
         style: TextStyle(
-          color: ColorRes.leadGreyColor.shade800,
-          fontSize: 11,
-          fontWeight: FontWeight.w500,
+          // color: ColorRes.leadGreyColor.shade800,
+          color: ColorRes.textPrimary,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
@@ -3720,10 +3748,10 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? ColorRes.primary : Colors.grey[100],
-          borderRadius: BorderRadius.circular(12),
+          color: isSelected ? ColorRes.primary : Colors.white,
+          borderRadius: BorderRadius.circular(8),
           boxShadow:
               isSelected
                   ? [
@@ -3733,7 +3761,14 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
                       offset: const Offset(0, 2),
                     ),
                   ]
-                  : null,
+                  : [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.04),
+                      blurRadius: 2,
+
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -3749,7 +3784,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
                 label,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 13,
+                  fontSize: 11,
                   fontWeight: FontWeight.w600,
                   color: isSelected ? Colors.white : Colors.grey[700],
                 ),
@@ -3768,15 +3803,34 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
     required Color color,
   }) {
     return Container(
+      height: 80,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.05),
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        // border: Border.all(color: color.withOpacity(0.3)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 2,
+
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // const SizedBox(height: 4),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 12,
+              color: ColorRes.leadGreyColor.shade600,
+              fontWeight: AppFontWeights.medium,
+            ),
+          ),
+          Spacer(),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -3791,8 +3845,6 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
               if (icon != null) ...[Icon(icon, color: color, size: 24)],
             ],
           ),
-          const SizedBox(height: 4),
-          Text(title, style: TextStyle(fontSize: 12, color: Colors.grey[700])),
         ],
       ),
     );
@@ -4103,11 +4155,12 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
           child: Text(
             label,
             maxLines: 1,
+            
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontSize: 12.5,
               fontWeight: isPrimary ? FontWeight.w600 : FontWeight.w500,
-              color: Theme.of(Get.context!).textTheme.bodyMedium!.color,
+              color: ColorRes.textPrimary,
             ),
           ),
         ),

@@ -11,7 +11,10 @@ class MessageList extends StatelessWidget {
   final String userId;
   final List<ChatMessage> message;
   final bool isTyping;
-  const MessageList({
+  const 
+  
+  
+  MessageList({
     super.key,
     required this.scrollController,
     required this.message,
@@ -32,7 +35,7 @@ class MessageList extends StatelessWidget {
         print("Chat User Helper for buyer : ${userId}");
         bool isUser;
        
-          isUser = message[index].senderId == userId;
+          isUser = message[index].senderId == userId || message[index].senderId == 'guest';
         
         print("Chat User Helper for buyer : ${message.map((e) => e.toMap())}");
         return ChatMessageBubble(message: message[index], isUser: isUser);

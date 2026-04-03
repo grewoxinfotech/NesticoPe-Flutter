@@ -537,7 +537,7 @@ class BlurredHeader extends StatelessWidget {
               child: Row(
                 children: [
                   Expanded(
-                    child: buildPositionedTextField(context, () {
+                    child: buildPositionedTextField(PropertyController(),context, () {
                       Get.to(() => const CommonSearchField());
                     }),
 

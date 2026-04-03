@@ -108,14 +108,16 @@ class TicketService {
       final uri = Uri.parse(baseUrl);
       final response = await http.post(
         uri,
-        headers: {
-          ...(await headers()),
-          'Content-Type': 'application/json',
-        },
+        headers: await headers(),
         body: jsonEncode(ticket.toJson()),
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
+        print("📤 Create Ticket payload: ${ticket.toJson()}");
+        
+        print("✅ Ticket created successfully ${response.statusCode}");
         final data = jsonDecode(response.body);
+        print("📥 Ticket response   ssssc: $data");
+
         final item = data['data'];
         if (item != null) {
           return TicketItem.fromJson(item);

@@ -57,7 +57,8 @@ class PropertyService {
 
       // logger.d("📦 Response Body → ${response.body}");
 
-      AppLogger.structured("New ly add proeprtyu response: ", response.body);
+      print("New ly add proeprtyu response: ${response.body}");
+      // logger.d("New ly add proeprtyu response: response.body");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);

@@ -2,18 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
 class BuyerHireContractorListScreenShimmer extends StatelessWidget {
-  const BuyerHireContractorListScreenShimmer({super.key});
+  final bool embedded;
+  final EdgeInsetsGeometry? padding;
+  const BuyerHireContractorListScreenShimmer({
+    super.key,
+    this.embedded = false,
+    this.padding,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: const EdgeInsets.all(16),
-      itemCount: 6,
-      separatorBuilder: (_, __) => const SizedBox(height: 16),
-      itemBuilder: (context, index) {
-        return _contractorCard();
-      },
-    );
+    if (embedded) {
+      return Padding(
+        padding: padding ?? EdgeInsets.zero,
+        child: Column(
+          children: List.generate(
+            6,
+            (index) => Padding(
+              padding: EdgeInsets.only(bottom: index == 5 ? 0 : 16),
+              child: _contractorCard(),
+            ),
+          ),
+        ),
+      );
+    } else {
+      return ListView.separated(
+        padding: padding ?? const EdgeInsets.all(16),
+        itemCount: 6,
+        separatorBuilder: (_, __) => const SizedBox(height: 16),
+        itemBuilder: (context, index) {
+          return _contractorCard();
+        },
+      );
+    }
   }
 
   Widget _contractorCard() {

@@ -227,6 +227,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../data/network/platform_service/platform_service_model.dart';
+import 'package:nesticope_app/app/utils/helper_function/contact_helper.dart';
+import 'package:nesticope_app/modules/home/controllers/contact_controller.dart';
 
 class PlatformServiceHorizontalList extends StatefulWidget {
   final List<PlatformServiceItem> services;
@@ -406,6 +408,165 @@ class _PlatformServiceHorizontalListState
                         (_) => setState(() => _contactPressed[index] = false),
                     onTap: () async {
                       try {
+                        final id = service.id ?? '';
+                        if (id.isNotEmpty) {
+                          final already =
+                              await SecureStorage.hasPlatformServiceInquiry(id);
+                          if (already) {
+                            final cc =
+                                Get.isRegistered<ContactController>()
+                                    ? Get.find<ContactController>()
+                                    : Get.put(ContactController());
+                            if (cc.primaryPhone.value.isEmpty) {
+                              await cc.loadContacts(reset: true);
+                            }
+                            final number = cc.primaryPhone.value;
+                            Get.dialog(
+                              Dialog(
+                                backgroundColor: ColorRes.white,
+                                shape: RoundedRectangleBorder(
+                          
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: const [
+                                          Icon(Icons.check_circle,
+                                              color: ColorRes.primary),
+                                          SizedBox(width: 8),
+                                          Text(
+                                            'Thank You!',
+                                            style: TextStyle(
+                                              fontSize: AppFontSizes.large,
+                                              fontWeight:
+                                                  AppFontWeights.semiBold,
+                                              color: ColorRes.textPrimary,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
+                                       Text(
+                                        'Your inquiry has been submitted successfully. Our support team will contact you shortly to discuss your needs.',
+                                        style: TextStyle(
+                                          fontSize: AppFontSizes.small,
+                                          color: ColorRes.leadGreyColor[700],
+                                          fontWeight: AppFontWeights.medium,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 16),
+                                      if (number.isNotEmpty)
+                                        Row(
+                                          children: [
+                                            const Icon(Icons.call,
+                                                size: 18,
+                                                color: ColorRes.primary),
+                                            const SizedBox(width: 8),
+                                            Text(number,
+                                                style: TextStyle(
+                                                  fontSize: AppFontSizes.small,
+                                                  color: ColorRes.leadGreyColor[700],
+                                                  fontWeight: AppFontWeights.medium,
+                                                )),
+                                          ],
+                                        ),
+                                      const SizedBox(height: 16),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: ElevatedButton.icon(
+                                              onPressed: number.isNotEmpty
+                                                  ? () async {
+                                                      await ContactHelper
+                                                          .openDialer(number);
+                                                    }
+                                                  : null,
+                                              icon: const Icon(Icons.call),
+                                              label: Text(
+                                                'Call',
+                                                style: TextStyle(
+                                                  fontSize: AppFontSizes.small,
+                                                  color: Colors.white,
+                                                  fontWeight: AppFontWeights.medium,
+                                                ),
+                                              ),
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    ColorRes.primary,
+                                                foregroundColor: Colors.white,
+                                                padding: const EdgeInsets
+                                                    .symmetric(
+                                                  vertical: 12,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            child: OutlinedButton.icon(
+                                              onPressed: number.isNotEmpty
+                                                  ? () async {
+                                                      await ContactHelper
+                                                          .openWhatsApp(
+                                                        number,
+                                                        message:
+                                                            'Hi, I already submitted an inquiry. I want to chat about ${service.title ?? 'service'}.',
+                                                      );
+                                                    }
+                                                  : null,
+                                              icon: Image.asset(
+                                                'assets/images/whatsapp.png',
+                                                width: 18,
+                                                height: 18,
+                                              ),
+                                              label: Text(
+                                                'Chat with Us',
+                                                style: TextStyle(
+                                                  fontSize: AppFontSizes.small,
+                                                  color: ColorRes.primary,
+                                                  fontWeight: AppFontWeights.medium,
+                                                ),
+                                              ),
+                                              style:
+                                                  OutlinedButton.styleFrom(
+                                                side: BorderSide(
+                                                  color: ColorRes.primary,
+                                                ),
+                                                foregroundColor:
+                                                    ColorRes.primary,
+                                                padding: const EdgeInsets
+                                                    .symmetric(
+                                                  vertical: 12,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Align(
+                                        alignment: Alignment.centerRight,
+                                        child: TextButton(
+                                          onPressed: () => Get.back(),
+                                          child: const Text('Close'),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              barrierDismissible: true,
+                            );
+                            return;
+                          }
+                        }
+
                         final user = await SecureStorage.getUserData();
 
                         // if (user == null) {
@@ -416,6 +577,7 @@ class _PlatformServiceHorizontalListState
                         //   );
                         //   return;
                         // }
+
 
                         final fullName = user?.user?.fullName ?? '';
                         final firstName = user?.user?.firstName ?? '';
@@ -443,6 +605,18 @@ class _PlatformServiceHorizontalListState
                           'sell',
                           "home",
                         );
+
+                        try {
+                          final id2 = service.id ?? '';
+                          if (id2.isNotEmpty) {
+                            await SecureStorage.addPlatformServiceInquiry({
+                              'serviceId': id2,
+                              'email': email,
+                              'phone': phone,
+                              'success': true,
+                            });
+                          }
+                        } catch (_) {}
                       } catch (e, s) {
                         debugPrint('❌ Error in Get Offer button: $e');
                         debugPrint('$s');

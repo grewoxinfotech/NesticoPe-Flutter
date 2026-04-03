@@ -32,30 +32,24 @@ class ApiConfig {
       final uri = Uri.parse(ApiConstants.thirdPartySettings)
           .replace(queryParameters: {'page': '1', 'limit': '10'});
       final res = await http.get(uri, headers: await ApiConstants.getHeaders());
+      print("Third party settings response =$res");
       if (res.statusCode == 200) {
         final jsonBody = json.decode(res.body) as Map<String, dynamic>;
         final data = jsonBody['data'] as Map<String, dynamic>? ?? {};
         final items = data['items'] as List<dynamic>? ?? [];
         for (final item in items) {
+          print("Item =$item");
           final m = item as Map<String, dynamic>;
           final type = (m['type'] ?? '').toString().toLowerCase();
           final name = (m['name'] ?? '').toString().toLowerCase();
           if (type == 'maps' || name.contains('google maps')) {
             final key = m['apiKey']?.toString();
+
             if (key != null && key.isNotEmpty) {
+
+              print("Map api key =$key");
+
               mapkey = key;
-            }
-          }
-          if (name.contains('truecaller')) {
-            // Backend returns client id in `token` for Truecaller item
-            final token = m['token']?.toString();
-            final apiKey = m['apiKey']?.toString();
-            // Prefer token field for Truecaller; fallback to apiKey if provided
-            final clientId = (token != null && token.isNotEmpty)
-                ? token
-                : (apiKey ?? '');
-            if (clientId.isNotEmpty) {
-              truecallerClientId = clientId;
             }
           }
         }
@@ -63,6 +57,32 @@ class ApiConfig {
     } catch (e) {
       // Silent fallback, keep existing key if any
     }
+  }
+
+  static Future<void> fetchTruecallerSettings() async {
+    try {
+      final uri = Uri.parse(ApiConstants.thirdPartySettings)
+          .replace(queryParameters: {'page': '1', 'limit': '10'});
+      final res = await http.get(uri, headers: await ApiConstants.getHeaders());
+      if (res.statusCode == 200) {
+        final jsonBody = json.decode(res.body) as Map<String, dynamic>;
+        final data = jsonBody['data'] as Map<String, dynamic>? ?? {};
+        final items = data['items'] as List<dynamic>? ?? [];
+        for (final item in items) {
+          final m = item as Map<String, dynamic>;
+          final name = (m['name'] ?? '').toString().toLowerCase();
+          if (name.contains('truecaller')) {
+            final token = m['token']?.toString();
+            final apiKey = m['apiKey']?.toString();
+            final clientId =
+                (token != null && token.isNotEmpty) ? token : (apiKey ?? '');
+            if (clientId.isNotEmpty) {
+              truecallerClientId = clientId;
+            }
+          }
+        }
+      }
+    } catch (_) {}
   }
 
   /// Ensure map key is present before making Google requests
@@ -75,7 +95,7 @@ class ApiConfig {
   /// Ensure Truecaller client id is loaded (from ThirdPartySettings)
   static Future<void> ensureTruecallerClientId() async {
     if (truecallerClientId.isEmpty) {
-      await fetchThirdPartySettings();
+      await fetchTruecallerSettings();
     }
   }
 }

@@ -2194,7 +2194,7 @@ class _PremiumProjectCarouselState extends State<_PremiumProjectCarousel> {
             return const SizedBox.shrink();
           }
           return SizedBox(
-            height: 260,
+               height: 290,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: items.length.clamp(0, 10),
@@ -2208,7 +2208,7 @@ class _PremiumProjectCarouselState extends State<_PremiumProjectCarousel> {
                   child: BuilderProjectCard(
                     forHome: true,
                     project: data,
-                    width: 250,
+                   width: MediaQuery.of(context).size.width * 0.85,
                     height: 150,
                     developersName: data.projectContactInfo?.name ?? 'Unknown',
                     imageUrl:

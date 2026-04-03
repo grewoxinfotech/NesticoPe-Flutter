@@ -43,7 +43,9 @@ class PropertyCard extends StatefulWidget {
 class _PropertyCardState extends State<PropertyCard> {
   final controller = Get.find<PropertyController>();
   final PropertyFavoriteController favoriteController =
-      Get.find<PropertyFavoriteController>();
+      Get.isRegistered<PropertyFavoriteController>()
+          ? Get.find<PropertyFavoriteController>()
+          : Get.put(PropertyFavoriteController(), permanent: true);
 
   final CompareManager compare = Get.put(CompareManager(), permanent: true);
   bool isFavorite = false;
@@ -56,6 +58,8 @@ class _PropertyCardState extends State<PropertyCard> {
 
   @override
   Widget build(BuildContext context) {
+    print("property of data card in buyer side: ${widget.property.propertyMedia?.images?.first ?? ""}");
+    
     final priceManager = PropertyPriceManager(
       listingType: widget.property.listingType ?? "",
       financialInfo:
@@ -69,7 +73,7 @@ class _PropertyCardState extends State<PropertyCard> {
             () => PropertyDetailScreen(propertyId: widget.property.id),
           ),
       child: Container(
-        width: 260,
+      width: MediaQuery.of(context).size.width * 0.85,
         // margin: const EdgeInsets.only(right: 12, bottom: 12),
         decoration: BoxDecoration(
           color: ColorRes.white,

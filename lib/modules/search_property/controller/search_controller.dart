@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:math' show cos, sqrt, asin;
 import 'package:get/get.dart';
+import 'package:nesticope_app/confige/helper/api_helper.dart';
 import 'package:nesticope_app/confige/search_api/search_api.dart';
 import 'package:nesticope_app/data/network/property/services/property_service.dart';
 import 'package:nesticope_app/modules/search_property/model/search_model.dart';
@@ -459,6 +460,7 @@ class GoogleMapSearchController extends GetxController {
   /// Fetch all categories at once
   Future<void> fetchAllCategoriesData(String address) async {
     try {
+      await ApiConfig.ensureMapKey();
       isLoading.value = true;
       allCategoriesData.clear();
 

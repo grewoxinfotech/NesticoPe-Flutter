@@ -25,6 +25,7 @@
         "firebase_crashlytics",
         "fl_chart",
         "flutter",
+        "flutter_animate",
         "flutter_image_compress",
         "flutter_rating_bar",
         "flutter_secure_storage",
@@ -604,6 +605,15 @@
       ]
     },
     {
+      "name": "provider",
+      "version": "6.1.5+1",
+      "dependencies": [
+        "collection",
+        "flutter",
+        "nested"
+      ]
+    },
+    {
       "name": "font_awesome_flutter",
       "version": "10.12.0",
       "dependencies": [
@@ -808,6 +818,14 @@
       ]
     },
     {
+      "name": "flutter_animate",
+      "version": "4.5.2",
+      "dependencies": [
+        "flutter",
+        "flutter_shaders"
+      ]
+    },
+    {
       "name": "alphabet_list_view",
       "version": "1.2.0",
       "dependencies": [
@@ -835,15 +853,6 @@
         "http_parser",
         "meta",
         "web"
-      ]
-    },
-    {
-      "name": "provider",
-      "version": "6.1.5+1",
-      "dependencies": [
-        "collection",
-        "flutter",
-        "nested"
       ]
     },
     {
@@ -1879,6 +1888,13 @@
       ]
     },
     {
+      "name": "nested",
+      "version": "1.0.0",
+      "dependencies": [
+        "flutter"
+      ]
+    },
+    {
       "name": "flutter_localizations",
       "version": "0.0.0",
       "dependencies": [
@@ -2213,6 +2229,14 @@
       ]
     },
     {
+      "name": "flutter_shaders",
+      "version": "0.1.3",
+      "dependencies": [
+        "flutter",
+        "vector_math"
+      ]
+    },
+    {
       "name": "flutter_sticky_header",
       "version": "0.8.0",
       "dependencies": [
@@ -2261,13 +2285,6 @@
         "cross_file",
         "flutter",
         "plugin_platform_interface"
-      ]
-    },
-    {
-      "name": "nested",
-      "version": "1.0.0",
-      "dependencies": [
-        "flutter"
       ]
     },
     {

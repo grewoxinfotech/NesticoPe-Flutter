@@ -11,10 +11,11 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons:
-  provider:
+  
   http:
   flutter_image_compress:
   alphabet_list_view: ^1.1.6 
+  flutter_animate:
   flutter_secure_storage:
   month_year_picker:
   logger: ^1.2.0
@@ -37,6 +38,7 @@ dependencies:
   awesome_snackbar_content:
   salomon_bottom_bar:
   font_awesome_flutter:
+  provider:
   flutter_svg:
   geolocator:
   geocoding:

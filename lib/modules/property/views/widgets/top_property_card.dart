@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/app/constants/img_res.dart';
 import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/app/manager/property/property_name_manager.dart';
 import 'package:nesticope_app/app/utils/formater/formater.dart';
 import 'package:nesticope_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
@@ -34,12 +35,20 @@ class TopPropertyCard extends StatefulWidget {
 class _TopPropertyCardState extends State<TopPropertyCard> {
   final controller = Get.find<PropertyController>();
   final PropertyFavoriteController favoriteController =
-      Get.find<PropertyFavoriteController>();
+      Get.isRegistered<PropertyFavoriteController>()
+          ? Get.find<PropertyFavoriteController>()
+          : Get.put(PropertyFavoriteController(), permanent: true);
 
   final CompareManager compare = Get.put(CompareManager(), permanent: true);
   bool isFavorite = false;
   @override
   Widget build(BuildContext context) {
+    final priceManager = PropertyPriceManager(
+      listingType: widget.property.listingType ?? "",
+      financialInfo:
+          widget.property.propertyDetails?.financialInfo ?? FinancialInfo(),
+      pgInfo: widget.property.propertyDetails?.pgInfo, // Added for PG support
+    );
     return GestureDetector(
       onTap: () {
         Get.to(() => PropertyDetailScreen(propertyId: widget.property.id));
@@ -47,11 +56,19 @@ class _TopPropertyCardState extends State<TopPropertyCard> {
         // You might need to convert AreaTopProperty to Items or create a dedicated detail screen
       },
       child: Container(
-        width: 260,
+      width: MediaQuery.of(context).size.width * 0.85,
         decoration: BoxDecoration(
           color: ColorRes.white,
           borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
-          border: Border.all(color: ColorRes.grey.withOpacity(0.3), width: 0.8),
+         // border: Border.all(color: ColorRes.grey.withOpacity(0.3), width: 0.8),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 2,
+             
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,6 +102,18 @@ class _TopPropertyCardState extends State<TopPropertyCard> {
                     left: 12,
                     child: _buildTag(
                       widget.property.listingType ?? 'Not Specified',
+                    ),
+                  ),
+                  Positioned(
+                    bottom: widget.isRecentlyViewed ? 40 : 12,
+                    left: 12,
+                    child: Text(
+                      priceManager.displayPrice,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 18,
+                      ),
                     ),
                   ),
 
@@ -170,43 +199,61 @@ class _TopPropertyCardState extends State<TopPropertyCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Title
-                  if (widget.property.type?.toLowerCase() == "residential") ...[
-                    Builder(builder: (context) {
-                      final isPg =
-                          (widget.property.listingType ?? '').toLowerCase() == 'pg';
-                      final bhk = widget.property.propertyDetails?.bhk ?? 0;
-                      final typeText = widget.property.propertyType?.capitalize ?? "";
-                      final titleText = (!isPg && bhk > 0)
-                          ? "$bhk BHK $typeText"
-                          : typeText;
-                      return Text(
-                        titleText,
-                        style: TextStyle(
-                          fontWeight: AppFontWeights.semiBold,
-                          fontSize: AppFontSizes.body,
-                          color: ColorRes.blackShade87,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      );
-                    }),
-                  ],
-                  if (widget.property.type?.toLowerCase() == "commercial")
-                    Text(
-                      widget.property.propertyType?.capitalize ?? "",
-                      style: TextStyle(
-                        fontWeight: AppFontWeights.semiBold,
-                        fontSize: AppFontSizes.body,
-                        color: ColorRes.blackShade87,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                  // if (widget.property.type?.toLowerCase() == "residential") ...[
+                  //   Builder(builder: (context) {
+                  //     final isPg =
+                  //         (widget.property.listingType ?? '').toLowerCase() == 'pg';
+                  //     final bhk = widget.property.propertyDetails?.bhk ?? 0;
+                  //     final typeText = widget.property.propertyType?.capitalize ?? "";
+                  //     final titleText = (!isPg && bhk > 0)
+                  //         ? "$bhk BHK $typeText"
+                  //         : typeText;
+                  //     return Text(
+                  //       titleText,
+                  //       style: TextStyle(
+                  //         fontWeight: AppFontWeights.semiBold,
+                  //         fontSize: AppFontSizes.body,
+                  //         color: ColorRes.blackShade87,
+                  //       ),
+                  //       maxLines: 1,
+                  //       overflow: TextOverflow.ellipsis,
+                  //     );
+                  //   }),
+                  // ],
+                  // if (widget.property.type?.toLowerCase() == "commercial")
+                  //   Text(
+                  //     widget.property.propertyType?.capitalize ?? "",
+                  //     style: TextStyle(
+                  //       fontWeight: AppFontWeights.semiBold,
+                  //       fontSize: AppFontSizes.body,
+                  //       color: ColorRes.blackShade87,
+                  //     ),
+                  //     maxLines: 1,
+                  //     overflow: TextOverflow.ellipsis,
+                  //   ),
+                   Text(
+                    PropertyNameManager(widget.property).displayName,
+                    style: TextStyle(
+                      fontWeight: AppFontWeights.semiBold,
+
+                      fontSize: AppFontSizes.body,
+                      color: ColorRes.blackShade87,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+
                   const SizedBox(height: 4),
 
                   // Location
                   Row(
                     children: [
+                       const Icon(
+                        Icons.location_on_outlined,
+                        size: 14,
+                        color: ColorRes.grey,
+                      ),
+                      const SizedBox(width: 4),
                       Expanded(
                         child: Text(
                           widget.property.address ?? '',
@@ -232,58 +279,74 @@ class _TopPropertyCardState extends State<TopPropertyCard> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Builder(builder: (context) {
-                        final priceManager = PropertyPriceManager(
-                          listingType: widget.property.listingType ?? "",
-                          financialInfo: widget
-                                  .property.propertyDetails?.financialInfo ??
-                              FinancialInfo(),
-                          pgInfo: widget.property.propertyDetails?.pgInfo,
-                        );
-                        final lt =
-                            (widget.property.listingType ?? '').toLowerCase();
-                        String priceText;
-                        if (lt == 'pg') {
-                          priceText = priceManager.maxPgPriceDisplay;
-                        } else if (lt == 'rent') {
-                          priceText = priceManager.displayPrice;
-                        } else {
-                          priceText = Formatter.formatPrice(widget
-                                  .property
-                                  .propertyDetails
-                                  ?.financialInfo
-                                  ?.price ??
-                              0);
-                        }
-                        return Flexible(
-                          child: Text(
-                            priceText,
-                            style: TextStyle(
-                              fontWeight: AppFontWeights.semiBold,
-                              fontSize: AppFontSizes.body,
-                              color: ColorRes.textColor,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        );
-                      }),
+                      // Builder(builder: (context) {
+                      //   final priceManager = PropertyPriceManager(
+                      //     listingType: widget.property.listingType ?? "",
+                      //     financialInfo: widget
+                      //             .property.propertyDetails?.financialInfo ??
+                      //         FinancialInfo(),
+                      //     pgInfo: widget.property.propertyDetails?.pgInfo,
+                      //   );
+                      //   final lt =
+                      //       (widget.property.listingType ?? '').toLowerCase();
+                      //   String priceText;
+                      //   if (lt == 'pg') {
+                      //     priceText = priceManager.maxPgPriceDisplay;
+                      //   } else if (lt == 'rent') {
+                      //     priceText = priceManager.displayPrice;
+                      //   } else {
+                      //     priceText = Formatter.formatPrice(widget
+                      //             .property
+                      //             .propertyDetails
+                      //             ?.financialInfo
+                      //             ?.price ??
+                      //         0);
+                      //   }
+                      //   return Flexible(
+                      //     child: Text(
+                      //       priceText,
+                      //       style: TextStyle(
+                      //         fontWeight: AppFontWeights.semiBold,
+                      //         fontSize: AppFontSizes.body,
+                      //         color: ColorRes.textColor,
+                      //       ),
+                      //       maxLines: 1,
+                      //       overflow: TextOverflow.ellipsis,
+                      //     ),
+                      //   );
+                      // }),
 
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: ColorRes.primary,
-                        ),
-                        child: const Text(
-                          'Contact Now',
-                          style: TextStyle(
-                            fontSize: AppFontSizes.small,
-                            fontWeight: AppFontWeights.semiBold,
-                            color: ColorRes.white,
+                      Expanded(
+                        child: Container(
+                          height: 40,
+                          
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: ColorRes.primary,
+                          ),
+                          alignment: Alignment.center,
+                          child:  Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.call_outlined,
+                                color: ColorRes.white,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Contact Now',
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.small,
+                                  fontWeight: AppFontWeights.semiBold,
+                                  color: ColorRes.white,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),

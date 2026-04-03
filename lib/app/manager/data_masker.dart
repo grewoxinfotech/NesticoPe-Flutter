@@ -60,7 +60,7 @@ class DataMasker {
 
 
   static String maskName(String? fullName) {
-    if (fullName == null || fullName.trim().isEmpty) return "";
+    if (fullName == null || fullName.trim().isEmpty) return "Owner";
     final parts = fullName.trim().split(RegExp(r'\s+'));
     final maskedParts =
         parts.map((name) {

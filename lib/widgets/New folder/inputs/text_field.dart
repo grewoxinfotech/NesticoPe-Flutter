@@ -135,6 +135,7 @@ class NesticoPeTextField extends StatelessWidget {
             fontWeight: AppFontWeights.medium,
           ),
           decoration: InputDecoration(
+            counterText: "", // <--- Hide the character counter
             contentPadding: const EdgeInsets.all(AppPadding.small),
             filled: true,
             fillColor:

@@ -376,6 +376,7 @@ class GoogleMapApi {
 
   Future<List<Map<String, dynamic>>> getNearbyLandmarks(String address) async {
     try {
+      await ApiConfig.ensureMapKey();
       // 1️⃣ Step: Convert address → coordinates using Geocoding API
       final geoUri = Uri.parse(
         'https://maps.googleapis.com/maps/api/geocode/json?address=$address&key=${ApiConfig.mapkey}',
@@ -455,13 +456,14 @@ class GoogleMapApi {
     int radius = 2000,
   }) async {
     try {
+      await ApiConfig.ensureMapKey();
       // Step 1: Geocode the address to get lat/lng
       final geoUri = Uri.parse(
         'https://maps.googleapis.com/maps/api/geocode/json?address=$address&key=${ApiConfig.mapkey}',
       );
 
       final geoResponse = await http.get(geoUri);
-
+      print("Geo response Near by location =$geoUri");
       if (geoResponse.statusCode != 200) {
         throw Exception('Failed to get coordinates for address');
       }

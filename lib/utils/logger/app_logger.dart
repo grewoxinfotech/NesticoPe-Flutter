@@ -49,38 +49,24 @@
 // }
 
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 
 class AppLogger {
   AppLogger(String title, dynamic data) {
     structured(title, data);
   }
 
-  /// 🔹 Main structured logger
   static void structured(String title, dynamic data) {
-    // if (!kDebugMode) return; // ❌ Disable in release
-
     try {
       final prettyJson = _toPrettyJson(data);
 
-      final buffer = StringBuffer();
-      buffer.writeln("\n╔══════════════════════════════════════");
-      buffer.writeln("📌 $title");
-      buffer.writeln("══════════════════════════════════════");
-
-      _writeChunks(buffer, prettyJson);
-
-      buffer.writeln("══════════════════════════════════════");
-      buffer.writeln("╚══════════════════════════════════════\n");
-
-      debugPrint(buffer.toString());
+      final header = "\n===== $title START =====\n";
+      final footer = "\n===== $title END =====\n";
+      _printInChunks(header + prettyJson + footer);
     } catch (e, stack) {
-      debugPrint("❌ Logger Error: $e");
-      debugPrint("$stack");
+      _printInChunks("Logger Error: $e\n$stack");
     }
   }
 
-  /// 🔹 Convert to pretty JSON safely
   static String _toPrettyJson(dynamic data) {
     try {
       if (data == null) return "null";
@@ -96,13 +82,11 @@ class AppLogger {
     }
   }
 
-  /// 🔹 Chunk writer (safe for large logs)
-  static void _writeChunks(StringBuffer buffer, String text) {
+  static void _printInChunks(String text) {
     const int chunkSize = 800;
-
     for (int i = 0; i < text.length; i += chunkSize) {
       final end = (i + chunkSize < text.length) ? i + chunkSize : text.length;
-      buffer.writeln(text.substring(i, end));
+      print(text.substring(i, end));
     }
   }
 }

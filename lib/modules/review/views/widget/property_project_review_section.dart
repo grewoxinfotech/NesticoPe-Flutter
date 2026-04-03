@@ -81,105 +81,118 @@ class ReviewSection extends StatelessWidget {
                 value: 0,
               );
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Divider(
-                indent: 18,
-                endIndent: 18,
-                color: ColorRes.leadGreyColor.shade300,
-              ),
-              const SizedBox(height: 12),
+          return Container(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            
+          color: ColorRes.leadGreyColor.shade100,
 
-              TitleWithViewAll(
-                title: "Reviews & Ratings",
-                showViewAll: true,
-                onViewAll: () {
-                  Get.to(() => AllReviewScreen(reviewController: reviewCtrl));
-                },
-              ),
-
-              const SizedBox(height: 12),
-
-              // ⭐ Overall Rating (reusable)
-              overallWidgetBuilder(
-                totalReviews,
-                overallRating,
-                detailedRatings,
-              ),
-
-              const SizedBox(height: 12),
-
-              // 📋 Review List (reusable)
-              if (reviewCtrl.items.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: reviewCardBuilder(
-                    context,
-                    reviewCtrl.items.first, // 👈 show only the first review
-                  ),
-                )
-              // ) SizedBox(
-              //   height: 580,
-              //   child: ListView.separated(
-              //     scrollDirection: Axis.horizontal,
-              //     padding: const EdgeInsets.symmetric(horizontal: 16),
-              //     itemCount: reviewCtrl.items.length,
-              //     separatorBuilder: (_, __) => const SizedBox(width: 16),
-              //     itemBuilder: (context, index) {
-              //       return reviewCardBuilder(
-              //         context,
-              //         reviewCtrl.items[index],
-              //       );
-              //     },
-              //   ),
-              // )
-              else if (!reviewCtrl.isLoading.value && totalReviews == 0)
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Text(
-                    "No reviews yet",
-                    style: TextStyle(color: Colors.grey),
-                  ),
+             
+          
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Divider(
+                //   indent: 18,
+                //   endIndent: 18,
+                //   color: ColorRes.leadGreyColor.shade300,
+                // ),
+                const SizedBox(height: 12),
+            
+                TitleWithViewAll(
+                  title: "Reviews & Ratings",
+                  showViewAll: true,
+                  icon: Icons.star_rate,
+                  iconColor: ColorRes.primary,
+                  iconBgColor: ColorRes.white,
+                  showIcon: true,
+                  onViewAll: () {
+                    Get.to(() => AllReviewScreen(reviewController: reviewCtrl));
+                  },
                 ),
-            ],
-          );
-        }),
-
-        // ➕ Add Review Button
-        Obx(() {
-          if (!canAddReview.value) return const SizedBox.shrink();
-
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: NesticoPeButton(
-              width: double.infinity,
-              boxShadow: [],
-              title: "Add Review",
-              onTap: () async {
-                if (UserHelper.isGuest) {
-                  Get.to(() => LoginScreen());
-                  return;
-                }
-
-                final result = await Get.to(
-                  () => AddReviewScreen(
-                    entityType: entityType,
-                    entityId: entityId,
+            
+                const SizedBox(height: 12),
+            
+                // ⭐ Overall Rating (reusable)
+                overallWidgetBuilder(
+                  totalReviews,
+                  overallRating,
+                  detailedRatings,
+                ),
+            
+                const SizedBox(height: 12),
+            
+                // 📋 Review List (reusable)
+                if (reviewCtrl.items.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: reviewCardBuilder(
+                      context,
+                      reviewCtrl.items.first, // 👈 show only the first review
+                    ),
+                  )
+                // ) SizedBox(
+                //   height: 580,
+                //   child: ListView.separated(
+                //     scrollDirection: Axis.horizontal,
+                //     padding: const EdgeInsets.symmetric(horizontal: 16),
+                //     itemCount: reviewCtrl.items.length,
+                //     separatorBuilder: (_, __) => const SizedBox(width: 16),
+                //     itemBuilder: (context, index) {
+                //       return reviewCardBuilder(
+                //         context,
+                //         reviewCtrl.items[index],
+                //       );
+                //     },
+                //   ),
+                // )
+                else if (!reviewCtrl.isLoading.value && totalReviews == 0)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Text(
+                      "No reviews yet",
+                      style: TextStyle(color: Colors.grey),
+                    ),
                   ),
-                );
-
-                if (result == true) {
-                  canAddReview.value = false;
-                  reviewController.refreshList();
-                  overallController.fetchOverallRating(entityId);
-                }
-              },
+                  const SizedBox(height: 12),
+              ],
             ),
           );
         }),
 
-        const SizedBox(height: 12),
+        // ➕ Add Review Button
+        // Obx(() {
+        //   if (!canAddReview.value) return const SizedBox.shrink();
+
+        //   return Padding(
+        //     padding: const EdgeInsets.symmetric(horizontal: 16),
+        //     child: NesticoPeButton(
+        //       width: double.infinity,
+        //       boxShadow: [],
+        //       title: "Add Review",
+        //       onTap: () async {
+        //         if (UserHelper.isGuest) {
+        //           Get.to(() => LoginScreen());
+        //           return;
+        //         }
+
+        //         final result = await Get.to(
+        //           () => AddReviewScreen(
+        //             entityType: entityType,
+        //             entityId: entityId,
+        //           ),
+        //         );
+
+        //         if (result == true) {
+        //           canAddReview.value = false;
+        //           reviewController.refreshList();
+        //           overallController.fetchOverallRating(entityId);
+        //         }
+        //       },
+        //     ),
+        //   );
+        // }),
+
+        // const SizedBox(height: 12),
       ],
     );
   }

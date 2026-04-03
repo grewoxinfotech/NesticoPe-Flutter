@@ -182,12 +182,19 @@ class OverallRatingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      shape: RoundedRectangleBorder(
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: BoxDecoration(
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: ColorRes.leadGreyColor.shade300,width: 1)
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 2,
+
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -201,7 +208,7 @@ class OverallRatingWidget extends StatelessWidget {
                 // Rating value
                 Text(
                   overallRating.toStringAsFixed(1),
-                  style:  TextStyle(
+                  style: TextStyle(
                     fontSize: AppFontSizes.displayMediumSmall,
                     fontWeight: AppFontWeights.semiBold,
                     color: ColorRes.textPrimary,
@@ -267,8 +274,6 @@ class OverallRatingWidget extends StatelessWidget {
                 ),
               ),
             ),
-
-
           ],
         ),
       ),

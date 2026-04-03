@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/app/utils/svg_widget.dart';
+import 'package:nesticope_app/app/widgets/image/custom_image.dart';
 import 'package:nesticope_app/data/network/reseller/reseller_success_stories/reseller_success_stories_model.dart';
 import 'package:nesticope_app/modules/dashboard/views/widget/dashboard_layout.dart';
 import 'package:nesticope_app/modules/profile/controllers/buyer_profiledata.dart';
@@ -1476,55 +1477,11 @@ class SuccessStoryCard extends StatelessWidget {
                   // Main Image
                   AspectRatio(
                     aspectRatio: 16 / 9,
-                    child:
-                        story.image != null && story.image!.isNotEmpty
-                            ? Image.network(
-                              story.image!,
-                              fit: BoxFit.cover,
-
-                              // 🌀 Add loading indicator
-                              loadingBuilder: (
-                                context,
-                                child,
-                                loadingProgress,
-                              ) {
-                                if (loadingProgress == null) return child;
-                                return Container(
-                                  color: ColorRes.leadGreyColor.shade200,
-                                  child: Center(
-                                    child: CircularProgressIndicator(
-                                      color: ColorRes.primary,
-                                      value:
-                                          loadingProgress.expectedTotalBytes !=
-                                                  null
-                                              ? loadingProgress
-                                                      .cumulativeBytesLoaded /
-                                                  (loadingProgress
-                                                          .expectedTotalBytes ??
-                                                      1)
-                                              : null,
-                                    ),
-                                  ),
-                                );
-                              },
-                              errorBuilder:
-                                  (context, error, stackTrace) => Container(
-                                    color: ColorRes.leadGreyColor.shade700,
-                                    child: Icon(
-                                      Icons.broken_image,
-                                      color: ColorRes.white.withOpacity(0.7),
-                                      size: 40,
-                                    ),
-                                  ),
-                            )
-                            : Container(
-                              color: ColorRes.leadGreyColor.shade700,
-                              child: Icon(
-                                Icons.image,
-                                color: ColorRes.white.withOpacity(0.7),
-                                size: 40,
-                              ),
-                            ),
+                    child: CustomImage(
+                      type: CustomImageType.network,
+                      src: story.image,
+                      fit: BoxFit.cover,
+                    ),
                   ),
 
                   // Published/Draft Badge
@@ -2146,20 +2103,18 @@ Widget buildTopPropertyForGoodCommission(
                         // Property Image
                         Stack(
                           children: [
-                            Container(
-                              height: 80,
-                              width: 80,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: NetworkImage(
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: CustomImage(
+                                type: CustomImageType.network,
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.cover,
+                                src:
                                     (property?.image != null &&
                                             property!.image.isNotEmpty)
                                         ? property.image
                                         : 'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg',
-                                  ),
-                                ),
                               ),
                             ),
                           ],
@@ -3608,28 +3563,14 @@ Widget buildLeaderCard({
         Row(
           children: [
             // Profile Image
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: ColorRes.leadGreyColor.withOpacity(0.2),
-                image:
-                    (image.isNotEmpty)
-                        ? DecorationImage(
-                          image: NetworkImage(image),
-                          fit: BoxFit.cover,
-                        )
-                        : DecorationImage(
-                          image: NetworkImage(
-                            'https://randomuser.me/api/portraits/men/1.jpg',
-                          ),
-                        ),
+            ClipOval(
+              child: CustomImage(
+                type: CustomImageType.network,
+                width: 40,
+                height: 40,
+                fit: BoxFit.cover,
+                src: (image.isNotEmpty) ? image : null,
               ),
-              // child:
-              //     (image.isEmpty)
-              //         ? const Icon(Icons.person, color: Colors.white, size: 24)
-              //         : null,
             ),
             const SizedBox(width: 10),
 
@@ -3769,26 +3710,14 @@ Widget buildLeaderCard({
             Stack(
               clipBehavior: Clip.none,
               children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: color.withOpacity(0.3),
-                    image: (image != null && image.isNotEmpty)
-                        ? DecorationImage(
-                      image: NetworkImage(image),
-                      fit: BoxFit.cover,
-                    )
-                        : null, // 👈 no image if null or empty
+                ClipOval(
+                  child: CustomImage(
+                    type: CustomImageType.network,
+                    width: 40,
+                    height: 40,
+                    fit: BoxFit.cover,
+                    src: (image != null && image.isNotEmpty) ? image : null,
                   ),
-                  child: (image == null || image.isEmpty)
-                      ? const Icon(
-                    Icons.person,
-                    color: Colors.white,
-                    size: 24,
-                  )
-                      : null, // 👈 show fallback icon
                 ),
                 if (rank <= 3 && medalIcon != null)
                   Positioned(

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/widgets/image/custom_image.dart';
 import 'package:nesticope_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
 import 'package:nesticope_app/modules/reseller/view/reseller_success_stories/add_reseller_success_stories_screen.dart';
 import 'package:intl/intl.dart';
@@ -577,56 +578,11 @@ class _ContractorSuccessStoryCardState
                   // Main Image
                   AspectRatio(
                     aspectRatio: 16 / 9,
-                    child:
-                        widget.story.image != null &&
-                                widget.story.image!.isNotEmpty
-                            ? Image.network(
-                              widget.story.image!,
-                              fit: BoxFit.cover,
-
-                              // 🌀 Add loading indicator
-                              loadingBuilder: (
-                                context,
-                                child,
-                                loadingProgress,
-                              ) {
-                                if (loadingProgress == null) return child;
-                                return Container(
-                                  color: ColorRes.leadGreyColor.shade200,
-                                  child: Center(
-                                    child: CircularProgressIndicator(
-                                      color: ColorRes.primary,
-                                      value:
-                                          loadingProgress.expectedTotalBytes !=
-                                                  null
-                                              ? loadingProgress
-                                                      .cumulativeBytesLoaded /
-                                                  (loadingProgress
-                                                          .expectedTotalBytes ??
-                                                      1)
-                                              : null,
-                                    ),
-                                  ),
-                                );
-                              },
-                              errorBuilder:
-                                  (context, error, stackTrace) => Container(
-                                    color: ColorRes.leadGreyColor.shade700,
-                                    child: Icon(
-                                      Icons.broken_image,
-                                      color: ColorRes.white.withOpacity(0.7),
-                                      size: 40,
-                                    ),
-                                  ),
-                            )
-                            : Container(
-                              color: ColorRes.leadGreyColor.shade700,
-                              child: Icon(
-                                Icons.image,
-                                color: ColorRes.white.withOpacity(0.7),
-                                size: 40,
-                              ),
-                            ),
+                    child: CustomImage(
+                      type: CustomImageType.network,
+                      src: widget.story.image,
+                      fit: BoxFit.cover,
+                    ),
                   ),
 
                   // Published/Draft Badge

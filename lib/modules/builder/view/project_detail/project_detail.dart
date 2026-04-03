@@ -14,6 +14,7 @@ import 'package:nesticope_app/app/widgets/image/custom_image.dart'
 import 'package:nesticope_app/modules/builder/view/project_detail/widgets/model_render_screen.dart';
 import 'package:nesticope_app/modules/property/controllers/overall_rating_controller.dart';
 import 'package:nesticope_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
+import 'package:nesticope_app/modules/review/views/widget/add_property_review.dart';
 import 'package:nesticope_app/modules/saved_property/controllers/property_favorite_controller.dart';
 import 'package:nesticope_app/utils/logger/app_logger.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
@@ -56,6 +57,8 @@ import '../../controller/builder_form_controller.dart';
 import '../../controller/builder_listed_project_controller.dart';
 import '../../controller/project_controller.dart';
 import 'package:get/get.dart';
+import '../../../home/controllers/contact_controller.dart';
+import '../../../../app/utils/helper_function/contact_helper.dart';
 
 import '../builder_leads.dart';
 
@@ -257,171 +260,186 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                       _buildProjectDetails(project.value!),
                       _buildMediaGallery(project.value!),
                       _buildConfigurations(controller, project.value!),
-                      SizedBox(height: 8),
+                      // SizedBox(height: 8),
                       _buildMapSection(controller, project.value!),
                       _buildAmenities(project.value!),
-                      SizedBox(height: 8),
+                      // SizedBox(height: 8),
+                      _buildContactSection(controller, project.value!),
                       _buildReviewSection(
                         canAddReview: canAddReview,
                         overallRatingController: _overallRatingController,
                         project: project.value!,
                         reviewController: reviewController,
                       ),
-                      const SizedBox(height: 8),
 
                       Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 12,
-                        ),
-                        decoration: BoxDecoration(
-                          color: ColorRes.white,
-                          // borderRadius: BorderRadius.circular(12),
-                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        color: ColorRes.leadGreyColor.shade200,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Limited Time Offer!',
-                              style: TextStyle(
-                                fontSize: AppFontSizes.medium,
-                                fontWeight: AppFontWeights.semiBold,
-
-                                color: ColorRes.textPrimary,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            // Offer Text
-                            const Text(
-                              'Limited-time! Get an exclusive offer on this property.',
-                              style: TextStyle(
-                                fontSize: AppFontSizes.small,
-                                fontWeight: AppFontWeights.medium,
-                                color: ColorRes.textPrimary,
-                                height: 1.3,
-                              ),
+                            TitleWithViewAll(
+                              title: 'Limited Time Offer!',
+                              subTitle:
+                                  "Limited-time! Get an exclusive offer on this property.",
+                              isSubTitle: true,
                             ),
 
                             const SizedBox(height: 12),
 
                             // Conditional Area
-                            Obx(() {
-                              if (controller.hasSubmittedInquiry.value) {
-                                return SizedBox(
-                                  height: 36,
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      NesticoPeSnackBar.showAwesomeSnackbar(
-                                        title: 'Already Inquired',
-                                        message:
-                                            'You have already submitted inquiry',
-                                        contentType: ContentType.warning,
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 12),
+                              child: Column(
+                                children: [
+                                  Obx(() {
+                                    if (controller.hasSubmittedInquiry.value) {
+                                      return SizedBox(
+                                        height: 48,
+                                        width: double.infinity,
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            NesticoPeSnackBar.showAwesomeSnackbar(
+                                              title: 'Already Inquired',
+                                              message:
+                                                  'You have already submitted inquiry',
+                                              contentType: ContentType.warning,
+                                            );
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: ColorRes.error,
+                                            foregroundColor: ColorRes.white,
+                                            elevation: 0,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 14,
+                                            ),
+                                          ),
+                                          child: const Text(
+                                            'Already Inquired',
+                                            style: TextStyle(
+                                              fontSize: AppFontSizes.medium,
+                                              fontWeight:
+                                                  AppFontWeights.semiBold,
+                                            ),
+                                          ),
+                                        ),
                                       );
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: ColorRes.error,
-                                      foregroundColor: ColorRes.white,
-                                      elevation: 0,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 14,
-                                      ),
-                                    ),
-                                    child: const Text(
-                                      'Already Inquired',
-                                      style: TextStyle(
-                                        fontSize: AppFontSizes.medium,
-                                        fontWeight: AppFontWeights.semiBold,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                return NesticoPeButton(
-                                  title: 'Get Offer',
-                                  backgroundColor: ColorRes.error,
-                                  height: 36,
-                                  onTap: () async {
-                                    try {
-                                      if (UserHelper.isGuest) {
-                                        Get.to(() => LoginScreen());
-                                        return;
-                                      }
-                                      final user = await SecureStorage.getUserData();
-                                      if (user == null) {
-                                        NesticoPeSnackBar.showAwesomeSnackbar(
-                                          title: 'Error',
-                                          message: 'No user data found. Please log in.',
-                                          contentType: ContentType.failure,
-                                        );
-                                        return;
-                                      }
-                                      final fullName = user.user?.fullName ?? '';
-                                      final firstName = user.user?.firstName ?? '';
-                                      final username = user.user?.username ?? '';
-                                      final email = user.user?.email ?? '';
-                                      final phone = user.user?.phone ?? '';
-                                      final displayName =
-                                          (firstName.isEmpty ? username : fullName).trim();
-                                      final inquiry = {
-                                        "name": displayName,
-                                        "phone": phone,
-                                        "email": email,
-                                        "agreeToContact": true,
-                                        "meta": {
-                                          "inquiryType": "sell",
-                                          "type": "project",
+                                    } else {
+                                      return NesticoPeButton(
+                                        title: 'Get Offer',
+                                        backgroundColor: ColorRes.error,
+                                        height: 36,
+                                        onTap: () async {
+                                          try {
+                                            if (UserHelper.isGuest) {
+                                              Get.to(() => LoginScreen());
+                                              return;
+                                            }
+                                            final user =
+                                                await SecureStorage.getUserData();
+                                            if (user == null) {
+                                              NesticoPeSnackBar.showAwesomeSnackbar(
+                                                title: 'Error',
+                                                message:
+                                                    'No user data found. Please log in.',
+                                                contentType:
+                                                    ContentType.failure,
+                                              );
+                                              return;
+                                            }
+                                            final fullName =
+                                                user.user?.fullName ?? '';
+                                            final firstName =
+                                                user.user?.firstName ?? '';
+                                            final username =
+                                                user.user?.username ?? '';
+                                            final email =
+                                                user.user?.email ?? '';
+                                            final phone =
+                                                user.user?.phone ?? '';
+                                            final displayName =
+                                                (firstName.isEmpty
+                                                        ? username
+                                                        : fullName)
+                                                    .trim();
+                                            final inquiry = {
+                                              "name": displayName,
+                                              "phone": phone,
+                                              "email": email,
+                                              "agreeToContact": true,
+                                              "meta": {
+                                                "inquiryType": "sell",
+                                                "type": "project",
+                                              },
+                                            };
+                                            final success = await controller
+                                                .addInquiry(
+                                                  inquiry,
+                                                  project?.value?.id ?? '',
+                                                );
+                                            if (success) {
+                                              controller
+                                                  .hasSubmittedInquiry
+                                                  .value = true;
+                                              NesticoPeSnackBar.showAwesomeSnackbar(
+                                                title: 'Success',
+                                                message:
+                                                    'Inquiry Added Successfully',
+                                                contentType:
+                                                    ContentType.success,
+                                              );
+                                              await controller
+                                                  .getAllInQuireData(
+                                                    project?.value?.id ?? '',
+                                                  );
+                                              await controller
+                                                  .getHasInQuireData(
+                                                    project?.value?.id ?? '',
+                                                  );
+                                            } else {
+                                              NesticoPeSnackBar.showAwesomeSnackbar(
+                                                title: 'Error',
+                                                message:
+                                                    'Failed to Submit Inquiry',
+                                                contentType:
+                                                    ContentType.failure,
+                                              );
+                                            }
+                                          } catch (e, s) {
+                                            debugPrint(
+                                              '❌ Error in Get Offer button: $e',
+                                            );
+                                            debugPrint('$s');
+                                            NesticoPeSnackBar.showAwesomeSnackbar(
+                                              title: 'Error',
+                                              message:
+                                                  'Something went wrong. Please try again.',
+                                              contentType: ContentType.failure,
+                                            );
+                                          }
                                         },
-                                      };
-                                      final success = await controller.addInquiry(
-                                        inquiry,
-                                        project?.value?.id ?? '',
-                                      );
-                                      if (success) {
-                                        controller.hasSubmittedInquiry.value = true;
-                                        NesticoPeSnackBar.showAwesomeSnackbar(
-                                          title: 'Success',
-                                          message: 'Inquiry Added Successfully',
-                                          contentType: ContentType.success,
-                                        );
-                                        await controller.getAllInQuireData(
-                                          project?.value?.id ?? '',
-                                        );
-                                        await controller.getHasInQuireData(
-                                          project?.value?.id ?? '',
-                                        );
-                                      } else {
-                                        NesticoPeSnackBar.showAwesomeSnackbar(
-                                          title: 'Error',
-                                          message: 'Failed to Submit Inquiry',
-                                          contentType: ContentType.failure,
-                                        );
-                                      }
-                                    } catch (e, s) {
-                                      debugPrint('❌ Error in Get Offer button: $e');
-                                      debugPrint('$s');
-                                      NesticoPeSnackBar.showAwesomeSnackbar(
-                                        title: 'Error',
-                                        message: 'Something went wrong. Please try again.',
-                                        contentType: ContentType.failure,
                                       );
                                     }
-                                  },
-                                );
-                              }
-                            }),
+                                  }),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 12),
                           ],
                         ),
                       ),
-                      const SizedBox(height: 8),
 
                       if (project?.value?.brochures.isNotEmpty ?? false) ...[
                         _buildDocuments(controller, project.value!),
                       ],
-                      // _buildContactSection(controller, project!),
+                      const SizedBox(height: 8),
+                      _buildSupportContactSection(),
+
                       if (widget.isBuilder) ...[
                         if (project?.value?.scoreBreakdown != null) ...[
                           PerformanceScoreWidget(
@@ -1173,27 +1191,39 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    project.city,
+                    '${project.city} ,${project.state}',
                     style: const TextStyle(
                       color: ColorRes.white,
                       fontSize: AppFontSizes.small,
+                      fontWeight: AppFontWeights.semiBold,
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    'RERA ID: ${project.reraId}',
-                    style: const TextStyle(
-                      color: ColorRes.white,
-                      fontSize: AppFontSizes.small,
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Color(0xffBFFD89),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      'RERA ID: ${project.reraId}',
+                      style: const TextStyle(
+                        color: Color(0xff477914),
+                        fontSize: AppFontSizes.caption,
+                        fontWeight: AppFontWeights.bold,
+                      ),
                     ),
                   ),
-                  Text(
-                    'Last Updated : ${Formatter.formatDate(project.updatedAt)}',
-                    style: const TextStyle(
-                      color: ColorRes.white,
-                      fontSize: AppFontSizes.small,
-                    ),
-                  ),
+                  // Text(
+                  //   'Last Updated : ${Formatter.formatDate(project.updatedAt)}',
+                  //   style: const TextStyle(
+                  //     color: ColorRes.white,
+                  //     fontSize: AppFontSizes.small,
+                  //   ),
+                  // ),
                 ],
               ),
             ),
@@ -1220,96 +1250,107 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
     return Container(
       margin: EdgeInsets.only(top: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(vertical: 12),
       color: ColorRes.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Gallery',
-            style: TextStyle(
-              fontSize: AppFontSizes.medium,
-              fontWeight: AppFontWeights.semiBold,
-              color: ColorRes.textPrimary,
-            ),
+          // const Text(
+          //   'Gallery',
+          //   style: TextStyle(
+          //     fontSize: AppFontSizes.medium,
+          //     fontWeight: AppFontWeights.semiBold,
+          //     color: ColorRes.textPrimary,
+          //   ),
+          // ),
+          TitleWithViewAll(
+            title: 'Gallery',
+            icon: Icons.photo_library,
+            iconBgColor: ColorRes.white,
+            iconColor: ColorRes.success,
+
+            showIcon: true,
           ),
           const SizedBox(height: 12),
 
           /// ✅ Single Horizontal List for both Images & Videos
-          SizedBox(
-            height: 120,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: allMedia.length,
-              itemBuilder: (context, index) {
-                final media = allMedia[index];
-                final isVideo = media['type'] == 'video';
-                final url = media['url'] ?? '';
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: SizedBox(
+              height: 120,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: allMedia.length,
+                itemBuilder: (context, index) {
+                  final media = allMedia[index];
+                  final isVideo = media['type'] == 'video';
+                  final url = media['url'] ?? '';
 
-                return GestureDetector(
-                  onTap: () {
-                    // Navigate to preview screen (image or video)
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => MediaPreviewScreen(url: url),
+                  return GestureDetector(
+                    onTap: () {
+                      // Navigate to preview screen (image or video)
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => MediaPreviewScreen(url: url),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: 160,
+                      margin: const EdgeInsets.only(right: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.black12,
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                    );
-                  },
-                  child: Container(
-                    width: 160,
-                    margin: const EdgeInsets.only(right: 12),
-                    decoration: BoxDecoration(
-                      color: Colors.black12,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          isVideo
-                              ? buildVideoThumbnail(
-                                url,
-                                height: 120,
-                                width: 160,
-                              )
-                              : Image.network(
-                                url,
-                                fit: BoxFit.cover,
-                                height: 120,
-                                width: 160,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    color: Colors.grey[300],
-                                    child: const Icon(
-                                      Icons.broken_image,
-                                      color: Colors.grey,
-                                    ),
-                                  );
-                                },
-                              ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            isVideo
+                                ? buildVideoThumbnail(
+                                  url,
+                                  height: 120,
+                                  width: 160,
+                                )
+                                : Image.network(
+                                  url,
+                                  fit: BoxFit.cover,
+                                  height: 120,
+                                  width: 160,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      color: Colors.grey[300],
+                                      child: const Icon(
+                                        Icons.broken_image,
+                                        color: Colors.grey,
+                                      ),
+                                    );
+                                  },
+                                ),
 
-                          /// ✅ Play icon overlay for videos
-                          if (isVideo)
-                            Container(
-                              decoration: const BoxDecoration(
-                                color: Colors.black45,
-                                shape: BoxShape.circle,
+                            /// ✅ Play icon overlay for videos
+                            if (isVideo)
+                              Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.black45,
+                                  shape: BoxShape.circle,
+                                ),
+                                padding: const EdgeInsets.all(8),
+                                child: const Icon(
+                                  Icons.play_arrow,
+                                  color: Colors.white,
+                                  size: 32,
+                                ),
                               ),
-                              padding: const EdgeInsets.all(8),
-                              child: const Icon(
-                                Icons.play_arrow,
-                                color: Colors.white,
-                                size: 32,
-                              ),
-                            ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
         ],
@@ -1451,62 +1492,77 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   Widget _buildProjectDetails(ProjectItem project) {
     return Container(
       margin: const EdgeInsets.only(top: 8),
-      padding: const EdgeInsets.all(16),
-      color: ColorRes.white,
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      // padding: const EdgeInsets.all(16),
+      color: Color(0xffF1F4F6),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Project Details',
-            style: TextStyle(
-              fontSize: AppFontSizes.medium,
-              fontWeight: AppFontWeights.semiBold,
-              color: ColorRes.textPrimary,
+          TitleWithViewAll(
+            title: 'Project Details',
+            icon: Icons.apartment,
+            iconBgColor: ColorRes.white,
+            iconColor: ColorRes.primary,
+
+            showIcon: true,
+          ),
+          // const Text(
+          //   'Project Details',
+          //   style: TextStyle(
+          //     fontSize: AppFontSizes.medium,
+          //     fontWeight: AppFontWeights.semiBold,
+          //     color: ColorRes.textPrimary,
+          //   ),
+          // ),
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _buildDetailCard(
+                    icon: Icons.landscape,
+                    label: 'Total Area',
+                    value: '${project.projectArea}',
+                    color: ColorRes.primary,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildDetailCard(
+                    icon: Icons.apartment,
+                    label: 'Total Units',
+                    value: '${project.projectSize?.totalUnits ?? 0}',
+                    color: ColorRes.success,
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _buildDetailCard(
-                  icon: Icons.landscape,
-                  label: 'Total Area',
-                  value: '${project.projectArea}',
-                  color: ColorRes.primary,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildDetailCard(
-                  icon: Icons.apartment,
-                  label: 'Total Units',
-                  value: '${project.projectSize?.totalUnits ?? 0}',
-                  color: ColorRes.success,
-                ),
-              ),
-            ],
-          ),
           const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: _buildDetailCard(
-                  icon: Icons.business,
-                  label: 'Buildings',
-                  value: '${project.projectSize?.totalBuildings ?? 0}',
-                  color: ColorRes.warning,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _buildDetailCard(
+                    icon: Icons.business,
+                    label: 'Buildings',
+                    value: '${project.projectSize?.totalBuildings ?? 0}',
+                    color: ColorRes.warning,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildDetailCard(
-                  icon: Icons.calendar_today,
-                  label: 'Possession',
-                  value: _formatDate(project.possessionDate),
-                  color: ColorRes.error,
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildDetailCard(
+                    icon: Icons.calendar_today,
+                    label: 'Possession',
+                    value: _formatDate(project.possessionDate),
+                    color: ColorRes.error,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
@@ -1522,19 +1578,33 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.05),
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.10),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: color, size: 20),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: color, size: 15),
+          ),
           const SizedBox(height: 8),
           Text(
             label,
             style: TextStyle(
-              fontSize: AppFontSizes.small,
+              fontSize: AppFontSizes.caption,
+              fontWeight: AppFontWeights.medium,
               color: ColorRes.textSecondary,
             ),
           ),
@@ -1542,8 +1612,8 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
           Text(
             value,
             style: TextStyle(
-              fontSize: AppFontSizes.bodyMedium,
-              fontWeight: AppFontWeights.semiBold,
+              fontSize: AppFontSizes.body,
+              fontWeight: AppFontWeights.bold,
               color: color,
             ),
             textAlign: TextAlign.center,
@@ -1562,21 +1632,31 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     controller.initializeExpandedStates(project.configuration.length);
 
     return Container(
-      color: ColorRes.white,
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      color: Color.fromARGB(255, 234, 241, 237),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: const Text(
-              'Configurations',
-              style: TextStyle(
-                fontSize: AppFontSizes.medium,
-                fontWeight: AppFontWeights.semiBold,
-                color: ColorRes.textPrimary,
-              ),
-            ),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          //   child: const Text(
+          //     'Configurations',
+          //     style: TextStyle(
+          //       fontSize: AppFontSizes.medium,
+          //       fontWeight: AppFontWeights.semiBold,
+          //       color: ColorRes.textPrimary,
+          //     ),
+          //   ),
+          // ),
+          TitleWithViewAll(
+            title: 'Configurations',
+            icon: Icons.settings,
+            iconBgColor: ColorRes.white,
+            iconColor: ColorRes.builderGridPurple,
+
+            showIcon: true,
           ),
+          const SizedBox(height: 12),
           Obx(() {
             // Show only first 2 items initially, or all if expanded
             final displayCount =
@@ -1652,77 +1732,85 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     int configIndex,
     ProjectController controller,
   ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // BHK Header
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: ColorRes.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(AppRadius.medium),
-              border: Border.all(
-                color: ColorRes.primary.withOpacity(0.3),
-                width: 1,
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${config.bhk} BHK Apartments',
-                        style: const TextStyle(
-                          fontSize: AppFontSizes.bodyMedium,
-                          fontWeight: AppFontWeights.semiBold,
-                          color: ColorRes.textPrimary,
-                        ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // BHK Header
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: ColorRes.primary.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(AppRadius.medium),
+            // border: Border.all(
+            //   color: ColorRes.primary.withOpacity(0.3),
+            //   width: 1,
+            // ),
+            // boxShadow: [
+            //     BoxShadow(
+            //       color: Colors.black.withOpacity(0.10),
+            //       blurRadius: 16,
+            //       offset: const Offset(0, 4),
+            //     ),
+            //   ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${config.bhk} BHK Apartments',
+                      style: const TextStyle(
+                        fontSize: AppFontSizes.bodyMedium,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.textPrimary,
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${config.variants.length} Variant${config.variants.length > 1 ? 's' : ''} Available',
-                        style: const TextStyle(
-                          fontSize: AppFontSizes.extraSmall,
-                          color: ColorRes.primary,
-                          fontWeight: AppFontWeights.medium,
-                        ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${config.variants.length} Variant${config.variants.length > 1 ? 's' : ''} Available',
+                      style: const TextStyle(
+                        fontSize: AppFontSizes.extraSmall,
+                        color: ColorRes.primary,
+                        fontWeight: AppFontWeights.medium,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
+            ],
+          ),
+        ),
+
+        if (config.variants.length > 0) ...[
+          const SizedBox(height: 12),
+
+          // Horizontal Variants List
+          SizedBox(
+            height: 300,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              shrinkWrap: true,
+
+              itemCount: config.variants.length,
+              itemBuilder: (context, variantIndex) {
+                final variant = config.variants[variantIndex];
+                return Container(
+                  width: 280,
+                  margin: EdgeInsets.only(
+                    right: variantIndex < config.variants.length - 1 ? 12 : 0,
+                  ),
+                  child: _buildVariantCard(variant, variantIndex, controller),
+                );
+              },
             ),
           ),
-
-          if (config.variants.length > 0) ...[
-            const SizedBox(height: 12),
-
-            // Horizontal Variants List
-            SizedBox(
-              height: 320,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: config.variants.length,
-                itemBuilder: (context, variantIndex) {
-                  final variant = config.variants[variantIndex];
-                  return Container(
-                    width: 280,
-                    margin: EdgeInsets.only(
-                      right: variantIndex < config.variants.length - 1 ? 12 : 0,
-                    ),
-                    child: _buildVariantCard(variant, variantIndex, controller),
-                  );
-                },
-              ),
-            ),
-          ],
         ],
-      ),
+      ],
     );
   }
 
@@ -1731,11 +1819,22 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     int variantIndex,
     ProjectController controller,
   ) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
+    return Container(
+      // // elevation: 2,
+      // shape: RoundedRectangleBorder(
+      //   borderRadius: BorderRadius.circular(AppRadius.medium),
+      //   side: BorderSide(color: ColorRes.leadGreyColor[300]!, width: 1),
+      // ),
+      decoration: BoxDecoration(
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(AppRadius.medium),
-        side: BorderSide(color: ColorRes.leadGreyColor[300]!, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.10),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1922,6 +2021,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
           label,
           style: const TextStyle(
             fontSize: AppFontSizes.caption,
+            fontWeight: AppFontWeights.medium,
             color: ColorRes.textSecondary,
           ),
         ),
@@ -1999,7 +2099,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         (!_showAllAmenities && totalAmenities > 6) ? 6 : totalAmenities;
 
     return Container(
-      margin: const EdgeInsets.only(top: 8),
+      // margin: const EdgeInsets.only(top: 8),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       color: ColorRes.white,
       child: Column(
@@ -2261,63 +2361,225 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     if (contact == null) return const SizedBox.shrink();
 
     return Container(
+      // margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      color: ColorRes.homeYellowDark.withOpacity(0.08),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: TitleWithViewAll(
+                  title: 'Owner Details',
+                  icon: Icons.person_outlined,
+                  iconBgColor: ColorRes.white,
+                  iconColor: ColorRes.deepPurpleColor,
+                  showIcon: true,
+                ),
+              ),
+              SizedBox(width: 12),
+              GestureDetector(
+                onTap: () async {
+                  if (!canAddReview.value) return;
+                  final result = await Get.to(
+                    () => AddReviewScreen(
+                      entityType: "project",
+                      entityId: project.id ?? '',
+                    ),
+                  );
+                  if (result == true) {
+                    canAddReview.value = false;
+                    reviewController.refreshList();
+                    _overallRatingController.fetchOverallRating(
+                      project.id ?? '',
+                    );
+                  }
+                },
+                child: Obx(() {
+                  final enabled = canAddReview.value;
+                  final label = enabled ? "Add Review" : "Reviewed";
+                  final color =
+                      enabled ? ColorRes.deepPurpleColor : ColorRes.green;
+                  return Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: color),
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          label,
+                          style: TextStyle(
+                            color: color,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+              ),
+              SizedBox(width: 12),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 16),
+              decoration: BoxDecoration(
+                color: ColorRes.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 2,
+
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  const CircleAvatar(
+                    radius: 25,
+                    backgroundColor: ColorRes.primary,
+                    child: Icon(Icons.person, color: ColorRes.white, size: 25),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          DataMasker.maskName(contact.name) ?? '-',
+                          style: TextStyle(
+                            fontSize: AppFontSizes.medium,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.textPrimary,
+                          ),
+                        ),
+                        // const SizedBox(height: 4),
+                        Text(
+                          DataMasker.maskEmail(contact.email) ?? '-',
+                          style: TextStyle(
+                            fontSize: AppFontSizes.small,
+                            color: ColorRes.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // IconButton(
+                  //   onPressed: () => controller.contactSales('phone'),
+                  //   icon: const Icon(Icons.phone, color: ColorRes.white),
+                  //   style: IconButton.styleFrom(backgroundColor: ColorRes.primary),
+                  // ),
+                  // const SizedBox(width: 8),
+                  // IconButton(
+                  //   onPressed: () => controller.contactSales('email'),
+                  //   icon: const Icon(Icons.email, color: ColorRes.white),
+                  //   style: IconButton.styleFrom(backgroundColor: ColorRes.primary),
+                  // ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSupportContactSection() {
+    final cc =
+        Get.isRegistered<ContactController>()
+            ? Get.find<ContactController>()
+            : Get.put(ContactController());
+    return Container(
       margin: const EdgeInsets.only(top: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      color: ColorRes.white,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: ColorRes.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: ColorRes.leadGreyColor.shade300),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Contact Team',
+            'Contact Support Team',
             style: TextStyle(
               fontSize: AppFontSizes.medium,
               fontWeight: AppFontWeights.semiBold,
               color: ColorRes.textPrimary,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           Row(
             children: [
-              const CircleAvatar(
-                radius: 25,
-                backgroundColor: ColorRes.primary,
-                child: Icon(Icons.person, color: ColorRes.white, size: 25),
-              ),
-              const SizedBox(width: 16),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      DataMasker.maskName(contact.name) ?? '-',
-                      style: TextStyle(
-                        fontSize: AppFontSizes.medium,
-                        fontWeight: AppFontWeights.semiBold,
-                        color: ColorRes.textPrimary,
-                      ),
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    if (cc.primaryPhone.value.isEmpty) {
+                      await cc.loadContacts(reset: true);
+                    }
+                    final number = cc.primaryPhone.value;
+                    if (number.isNotEmpty) {
+                      await ContactHelper.openDialer(number);
+                    }
+                  },
+                  icon: const Icon(Icons.call, size: 18),
+                  label: const Text('Call'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorRes.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    // const SizedBox(height: 4),
-                    Text(
-                      DataMasker.maskEmail(contact.email) ?? '-',
-                      style: TextStyle(
-                        fontSize: AppFontSizes.small,
-                        color: ColorRes.textSecondary,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-              // IconButton(
-              //   onPressed: () => controller.contactSales('phone'),
-              //   icon: const Icon(Icons.phone, color: ColorRes.white),
-              //   style: IconButton.styleFrom(backgroundColor: ColorRes.primary),
-              // ),
-              // const SizedBox(width: 8),
-              // IconButton(
-              //   onPressed: () => controller.contactSales('email'),
-              //   icon: const Icon(Icons.email, color: ColorRes.white),
-              //   style: IconButton.styleFrom(backgroundColor: ColorRes.primary),
-              // ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () async {
+                    if (cc.primaryPhone.value.isEmpty) {
+                      await cc.loadContacts(reset: true);
+                    }
+                    final number = cc.primaryPhone.value;
+                    if (number.isNotEmpty) {
+                      await ContactHelper.openWhatsApp(
+                        number,
+                        message:
+                            'Hi, I need assistance regarding this project.',
+                      );
+                    }
+                  },
+                  icon: Image.asset(
+                    'assets/images/whatsapp.png',
+                    width: 18,
+                    height: 18,
+                  ),
+                  label: const Text('Chat with Us'),
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: ColorRes.primary),
+                    foregroundColor: ColorRes.primary,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ],
@@ -2355,12 +2617,21 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     ProjectItem projectItem,
   ) {
     return Container(
-      color: ColorRes.white,
+      color: ColorRes.leadGreyColor.shade50,
+      padding: const EdgeInsets.symmetric(vertical: 12),
+
       child: Column(
         children: [
           if (projectItem.location?.isNotEmpty ?? false) ...[
             const SizedBox(height: 12),
-            const TitleWithViewAll(title: 'Location'),
+            TitleWithViewAll(
+              title: 'Location',
+              icon: Icons.location_on,
+              // color: ColorRes.textPrimary,
+              showIcon: true,
+              iconBgColor: Colors.white,
+              iconColor: ColorRes.primary,
+            ),
             const SizedBox(height: 8),
             AddressAndMapDetails(
               address: projectItem.address,
@@ -2393,11 +2664,11 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Divider(
-                  indent: 18,
-                  endIndent: 18,
-                  color: ColorRes.leadGreyColor.shade300,
-                ),
+                // Divider(
+                //   indent: 18,
+                //   endIndent: 18,
+                //   color: ColorRes.leadGreyColor.shade300,
+                // ),
                 const SizedBox(height: 12),
 
                 // Embedded Map Preview Section
@@ -2423,7 +2694,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   }) {
     return Container(
       color: ColorRes.white,
-      padding: EdgeInsets.only(top: 12),
+      // padding: EdgeInsets.only(top: 12),
       child: ReviewSection(
         canAddReview: canAddReview,
         overallController: overallRatingController,

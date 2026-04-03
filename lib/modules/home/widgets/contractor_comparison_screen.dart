@@ -2036,7 +2036,7 @@ class _ContractorServicesCard extends StatelessWidget {
 
           // Services List in Slider
           SizedBox(
-            height: 500,
+            height: 484,
             child: ListView(
               padding: const EdgeInsets.all(0),
               children: [
@@ -2058,6 +2058,7 @@ class _ContractorServicesCard extends StatelessWidget {
                 ...ownCategories.expand((category) {
                   final services = category.services;
                   final isLastCategory = category == ownCategories.last;
+                  
                   return [
                     // Category Header
                     Container(

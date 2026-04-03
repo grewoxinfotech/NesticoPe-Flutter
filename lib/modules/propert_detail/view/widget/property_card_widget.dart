@@ -63,6 +63,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
     // print('Building PropertyCardWidget for ${widget.role}');
     return GestureDetector(
       onTap: () {
+        log('[PropertyCardWidget] onTap called ${widget.property}');
         Get.to(
           () => PropertyDetailScreen(propertyId: widget.property.id ?? ''),
         );

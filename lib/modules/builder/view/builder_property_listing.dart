@@ -13,6 +13,7 @@ import 'package:nesticope_app/modules/builder/view/project_detail/project_detail
 import 'package:nesticope_app/utils/logger/app_logger.dart';
 import 'package:nesticope_app/utils/shimmer/seller/builder/project_screen/project_list_screen_shimmer.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../app/constants/size_manager.dart';
 import '../../../app/manager/property/property_pricemanager.dart';
@@ -425,12 +426,18 @@ class BuilderProjectCard extends StatelessWidget {
             ? Get.find<ProjectWizardController>()
             : Get.find<ProjectWizardController>(tag: "builder");
 
-    // final propertyController = Get.put(PropertyController());
     final PropertyFavoriteController favoriteController =
-        Get.find<PropertyFavoriteController>();
-    final compare = Get.put(ProjectCompareManager());
+        Get.isRegistered<PropertyFavoriteController>()
+            ? Get.find<PropertyFavoriteController>()
+            : Get.put(PropertyFavoriteController(), permanent: true);
+    final ProjectCompareManager compare =
+        Get.isRegistered<ProjectCompareManager>()
+            ? Get.find<ProjectCompareManager>()
+            : Get.put(ProjectCompareManager(), permanent: true);
     final configText = _getConfigurationText();
     bool isFavorite = false;
+    final double cardWidth =
+        width.isFinite ? width : MediaQuery.of(context).size.width;
 
     return Container(
       width: width,
@@ -458,58 +465,71 @@ class BuilderProjectCard extends StatelessWidget {
             Stack(
               children: [
                 if (imageUrl != null && imageUrl!.trim().isNotEmpty) ...[
-                  Image.network(
-                    (imageUrl != null && imageUrl!.trim().isNotEmpty)
-                        ? imageUrl!
-                        : 'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg',
-                    height: 140,
-                    width: width,
+                  CachedNetworkImage(
+                    imageUrl:
+                        (imageUrl != null && imageUrl!.trim().isNotEmpty)
+                            ? imageUrl!
+                            : 'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg',
+                    height: 170,
+                    width: cardWidth,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Image.asset(
-                        imageOfNotAvailable,
-                        height: 140,
-                        width: width,
-                        fit: BoxFit.cover,
-                      );
-                    },
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-
-                      // ✅ Add shimmer effect while loading
-                      return Shimmer.fromColors(
-                        baseColor: Colors.grey.shade300,
-                        highlightColor: Colors.grey.shade100,
-                        child: Container(
-                          height: 140,
-                          width: width,
-                          color: Colors.white,
+                    memCacheHeight: 170,
+                    memCacheWidth: cardWidth.toInt(),
+                    placeholder:
+                        (context, url) => Shimmer.fromColors(
+                          baseColor: Colors.grey.shade300,
+                          highlightColor: Colors.grey.shade100,
+                          child: Container(
+                            height: 170,
+                            width: cardWidth,
+                            color: Colors.white,
+                          ),
                         ),
-                      );
-                    },
+                    errorWidget:
+                        (context, url, error) => Image.asset(
+                          imageOfNotAvailable,
+                          height: 170,
+                          width: cardWidth,
+                          fit: BoxFit.cover,
+                        ),
                   ),
                 ] else ...[
                   Image.asset(
                     imageOfNotAvailable,
-                    height: 140,
-                    width: width,
+                    height: 170,
+                    width: cardWidth,
                     fit: BoxFit.cover,
                   ),
                 ],
 
-                Positioned.fill(
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
                   child: Container(
+                    height: 70,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          Colors.black.withOpacity(0.4),
                           Colors.transparent,
-                          Colors.transparent,
+                          Colors.black.withOpacity(0.3),
                         ],
-                        stops: const [0.0, 0.3, 1.0],
                       ),
+                    ),
+                  ),
+                ),
+
+                Positioned(
+                  bottom: 8,
+                  left: 12,
+                  child: Text(
+                    price,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 18,
                     ),
                   ),
                 ),
@@ -555,14 +575,14 @@ class BuilderProjectCard extends StatelessWidget {
                             return CircleAvatar(
                               backgroundColor:
                                   selected ? ColorRes.primary : ColorRes.white,
-                              radius: 16,
+                              radius: 18,
                               child: Icon(
                                 Icons.compare_arrows,
                                 color:
                                     selected
                                         ? ColorRes.white
                                         : ColorRes.primary,
-                                size: 18,
+                                size: 20,
                               ),
                             );
                           }),
@@ -579,7 +599,7 @@ class BuilderProjectCard extends StatelessWidget {
                             );
                             return CircleAvatar(
                               backgroundColor: ColorRes.white,
-                              radius: 16,
+                              radius: 18,
                               child: Icon(
                                 isFavorite
                                     ? Icons.favorite
@@ -588,7 +608,7 @@ class BuilderProjectCard extends StatelessWidget {
                                     isFavorite
                                         ? ColorRes.error
                                         : ColorRes.leadGreyColor,
-                                size: 18,
+                                size: 20,
                               ),
                             );
                           }),
@@ -756,6 +776,12 @@ class BuilderProjectCard extends StatelessWidget {
                       // Location
                       Row(
                         children: [
+                          const Icon(
+                            Icons.location_on_outlined,
+                            size: 14,
+                            color: ColorRes.grey,
+                          ),
+                          const SizedBox(width: 4),
                           Expanded(
                             child: Text(
                               location,
@@ -772,12 +798,12 @@ class BuilderProjectCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      SizedBox(height: 6),
-                      Divider(
-                        height: 1,
-                        color: ColorRes.leadGreyColor.shade300,
-                      ),
-                    
+                      // SizedBox(height: 6),
+                      // Divider(
+                      //   height: 1,
+                      //   color: ColorRes.leadGreyColor.shade300,
+                      // ),
+
                       // Developer Info Card
                       if (!forHome) ...[
                         const SizedBox(height: 10),
@@ -994,50 +1020,90 @@ class BuilderProjectCard extends StatelessWidget {
                       ],
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  // const SizedBox(height: 4),
                   // Bottom Section
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   children: [
+                  //     Expanded(
+                  //       child: Column(
+                  //         crossAxisAlignment: CrossAxisAlignment.start,
+                  //         children: [
+                  //           Text(
+                  //             'Starting from',
+                  //             style: TextStyle(
+                  //               fontSize: AppFontSizes.extraSmall,
+                  //               color: ColorRes.grey,
+                  //               fontWeight: FontWeight.w500,
+                  //             ),
+                  //           ),
+                  //           const SizedBox(height: 5),
+                  //           Text(
+                  //             price,
+                  //             style: TextStyle(
+                  //               fontSize: AppFontSizes.body,
+                  //               fontWeight: AppFontWeights.bold,
+                  //               color: ColorRes.primary,
+
+                  //               height: 1.1,
+                  //             ),
+                  //             maxLines: 1,
+                  //             overflow: TextOverflow.ellipsis,
+                  //           ),
+                  //           const SizedBox(height: 4),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //     Container(
+                  //       padding: const EdgeInsets.all(9),
+                  //       decoration: BoxDecoration(
+                  //         color: ColorRes.primary,
+                  //         borderRadius: BorderRadius.circular(8),
+                  //       ),
+                  //       child: Icon(
+                  //         Icons.arrow_forward,
+                  //         size: 15,
+                  //         color: Colors.white,
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Starting from',
-                              style: TextStyle(
-                                fontSize: AppFontSizes.extraSmall,
-                                color: ColorRes.grey,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              price,
-                              style: TextStyle(
-                                fontSize: AppFontSizes.body,
-                                fontWeight: AppFontWeights.bold,
-                                color: ColorRes.primary,
+                        child: Container(
+                          height: 40,
 
-                                height: 1.1,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: ColorRes.primary,
+                          ),
+                          alignment: Alignment.center,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.call_outlined,
+                                color: ColorRes.white,
+                                size: 20,
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 4),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(9),
-                        decoration: BoxDecoration(
-                          color: ColorRes.primary,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Icon(
-                          Icons.arrow_forward,
-                          size: 15,
-                          color: Colors.white,
+                              const SizedBox(width: 4),
+                              Text(
+                                'Contact Now',
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.small,
+                                  fontWeight: AppFontWeights.semiBold,
+                                  color: ColorRes.white,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],

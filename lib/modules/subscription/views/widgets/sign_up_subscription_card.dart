@@ -4,18 +4,23 @@ import 'package:flutter/material.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/data/database/secure_storage_service.dart';
 import 'package:nesticope_app/data/network/auth/model/user_model.dart';
+import 'package:get/get.dart';
+import 'package:nesticope_app/modules/home/controllers/contact_controller.dart';
+import 'package:nesticope_app/app/utils/helper_function/contact_helper.dart';
 
 class SignUpSubscriptionScreen extends StatefulWidget {
   final String title;
   final bool
   compact; // when true, render inline CTA card; otherwise show modal form
   final void Function(String name, String email, String phone) onSubmit;
+  final bool showThankYou;
 
   const SignUpSubscriptionScreen({
     super.key,
     required this.title,
     required this.onSubmit,
     this.compact = false,
+    this.showThankYou = false,
   });
 
   @override
@@ -29,11 +34,20 @@ class _SignUpSubscriptionScreenState extends State<SignUpSubscriptionScreen> {
   final phoneController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   bool _hasUserData = false;
+  late final ContactController _contactController;
 
   @override
   void initState() {
     super.initState();
     _prefillFromSecureStorage();
+    _contactController = Get.isRegistered<ContactController>()
+        ? Get.find<ContactController>()
+        : Get.put(ContactController());
+    if (_contactController.primaryPhone.value.isEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _contactController.loadContacts(reset: true);
+      });
+    }
   }
 
   Future<void> _prefillFromSecureStorage() async {
@@ -154,6 +168,127 @@ class _SignUpSubscriptionScreenState extends State<SignUpSubscriptionScreen> {
       );
     }
 
+    if (widget.showThankYou) {
+      return Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 520),
+          child: Container(
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(20, 22, 20, 20),
+            decoration: BoxDecoration(
+              color: ColorRes.white,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: ColorRes.leadGreyColor.shade300,
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.06),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Icon(Icons.check_circle_rounded, color: Colors.green, size: 56),
+                const SizedBox(height: 10),
+                const Text(
+                  'Thank You!',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 20,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Thank you for your interest. Our support team will contact you shortly to help you start your journey.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.black54,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Container(height: 1, width: double.infinity, color: ColorRes.leadGreyColor.shade200),
+                const SizedBox(height: 14),
+                Obx(() {
+                  final phone = _contactController.primaryPhone.value;
+                  return Column(
+                    children: [
+                      if (phone.isNotEmpty) ...[
+                        InkWell(
+                          onTap: () async {
+                            await ContactHelper.openDialer(phone);
+                          },
+                          borderRadius: BorderRadius.circular(8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.phone, color: ColorRes.primary),
+                              const SizedBox(width: 8),
+                              Text(
+                                phone,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: () async {
+                              await ContactHelper.openWhatsApp(phone);
+                            },
+                            icon: const Icon(Icons.chat_bubble_outline_rounded),
+                            label: const Text(
+                              'Chat with Us',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: ColorRes.primary.withOpacity(0.08),
+                              foregroundColor: ColorRes.primary,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 18,
+                                vertical: 14,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 0,
+                            ),
+                          ),
+                        ),
+                      ] else ...[
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Fetching contact details...',
+                          style: TextStyle(color: Colors.black45, fontSize: 12),
+                        ),
+                      ]
+                    ],
+                  );
+                }),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 520),
@@ -197,6 +332,7 @@ class _SignUpSubscriptionScreenState extends State<SignUpSubscriptionScreen> {
                   Center(
                     child: Text(
                       'Fill your details to view pricing and features',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         color: ColorRes.leadGreyColor.shade700,
                         fontSize: 13,

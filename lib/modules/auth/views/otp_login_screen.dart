@@ -1,8 +1,315 @@
+// import 'dart:async';
+// import 'package:flutter/material.dart';
+// import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+// import 'package:nesticope_app/app/constants/color_res.dart';
+// import 'package:nesticope_app/widgets/New%20folder/inputs/text_field.dart';
+// import 'package:nesticope_app/widgets/button/button.dart';
+// import 'package:nesticope_app/data/network/auth/service/auth_service.dart';
+// import 'package:nesticope_app/data/database/secure_storage_service.dart';
+// import 'package:nesticope_app/widgets/messages/snack_bar.dart';
+
+// class OtpLoginScreen extends StatefulWidget {
+//   const OtpLoginScreen({Key? key}) : super(key: key);
+
+//   @override
+//   _OtpLoginScreenState createState() => _OtpLoginScreenState();
+// }
+
+// class _OtpLoginScreenState extends State<OtpLoginScreen> {
+//   final _phoneFormKey = GlobalKey<FormState>();
+//   final _otpFormKey = GlobalKey<FormState>();
+//   final _phoneController = TextEditingController();
+//   final _otpController = TextEditingController();
+
+//   bool _otpSent = false;
+//   bool _sending = false;
+//   bool _verifying = false;
+//   bool _resending = false;
+//   int _resendSecondsLeft = 0;
+//   Timer? _timer;
+
+//   @override
+//   void dispose() {
+//     _timer?.cancel();
+//     _phoneController.dispose();
+//     _otpController.dispose();
+//     super.dispose();
+//   }
+
+//   void _startTimer() {
+//     _timer?.cancel();
+//     _resendSecondsLeft = 120;
+//     setState(() {});
+//     _timer = Timer.periodic(const Duration(seconds: 1), (t) {
+//       if (!mounted) {
+//         t.cancel();
+//         return;
+//       }
+//       if (_resendSecondsLeft <= 1) {
+//         t.cancel();
+//         setState(() => _resendSecondsLeft = 0);
+//       } else {
+//         setState(() => _resendSecondsLeft -= 1);
+//       }
+//     });
+//   }
+
+//   Future<void> _requestOtp() async {
+//     if (!_phoneFormKey.currentState!.validate()) return;
+//     final id = _phoneController.text.trim();
+//     setState(() => _sending = true);
+//     final ok = await AuthService().requestOtpLogin(id);
+//     setState(() => _sending = false);
+//     if (ok) {
+//       NesticoPeSnackBar.showAwesomeSnackbar(
+//         title: 'OTP Sent',
+//         message: 'Please enter the OTP within 2 minutes',
+//         contentType: ContentType.success,
+//       );
+//       setState(() {
+//         _otpSent = true;
+//         _startTimer();
+//       });
+//     } else {
+//       NesticoPeSnackBar.showAwesomeSnackbar(
+//         title: 'Error',
+//         message: 'Failed to send OTP',
+//         contentType: ContentType.failure,
+//       );
+//     }
+//   }
+
+//   Future<void> _verifyOtp() async {
+//     if (!_otpFormKey.currentState!.validate()) return;
+//     final otp = _otpController.text.trim();
+//     setState(() => _verifying = true);
+//     final user = await AuthService().verifyLoginOtp(otp);
+//     setState(() => _verifying = false);
+//     if (user != null) {
+//       await SecureStorage.saveLoggedIn(true);
+//       NesticoPeSnackBar.showAwesomeSnackbar(
+//         title: 'Login Successful',
+//         message: 'You have logged in successfully',
+//         contentType: ContentType.success,
+//       );
+//       if (mounted) Navigator.of(context).pop(true);
+//     } else {
+//       NesticoPeSnackBar.showAwesomeSnackbar(
+//         title: 'Verification Failed',
+//         message: 'Invalid or expired OTP',
+//         contentType: ContentType.failure,
+//       );
+//     }
+//   }
+
+//   Future<void> _resendOtp() async {
+//     if (_resendSecondsLeft > 0 || _resending) return;
+//     setState(() => _resending = true);
+//     final ok = await AuthService().resendLoginOtp();
+//     setState(() => _resending = false);
+//     if (ok) {
+//       NesticoPeSnackBar.showAwesomeSnackbar(
+//         title: 'OTP Resent',
+//         message: 'A new OTP was sent. Please check',
+//         contentType: ContentType.success,
+//       );
+//       _startTimer();
+//     } else {
+//       NesticoPeSnackBar.showAwesomeSnackbar(
+//         title: 'Error',
+//         message: 'Failed to resend OTP',
+//         contentType: ContentType.failure,
+//       );
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final theme = Theme.of(context);
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text(_otpSent ? 'Verify OTP' : 'Login with OTP'),
+//         centerTitle: true,
+//         elevation: 0,
+//       ),
+//       body: SafeArea(
+//         child: SingleChildScrollView(
+//           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+//           child: _otpSent ? _buildOtp(theme) : _buildPhone(theme),
+//         ),
+//       ),
+//     );
+//   }
+
+//   Widget _buildPhone(ThemeData theme) {
+//     return Form(
+//       key: _phoneFormKey,
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.stretch,
+//         children: [
+//           const SizedBox(height: 8),
+//           Text(
+//             'Welcome Back.',
+//             style: TextStyle(
+//               fontSize: 24,
+//               fontWeight: FontWeight.w800,
+//               color: ColorRes.textPrimary,
+//             ),
+//           ),
+//           const SizedBox(height: 6),
+//           Text(
+//             'Enter your mobile number to securely access your portfolio.',
+//             style: TextStyle(
+//               fontSize: AppFontSizes.bodySmall,
+//               color: ColorRes.leadGreyColor.shade700,
+//             ),
+//           ),
+//           const SizedBox(height: 20),
+//           Theme(
+//             data: theme.copyWith(
+//               colorScheme: theme.colorScheme.copyWith(
+//                 surface: const Color(0xFFE0E3E5),
+//               ),
+//             ),
+//             child: NesticoPeTextField(
+//               title: 'Mobile Number',
+//               controller: _phoneController,
+//               hintText: '0000000000',
+//               keyboardType: TextInputType.phone,
+//               prefixIcon: Icons.phone_outlined,
+//               validator: (v) {
+//                 final s = (v ?? '').trim();
+//                 if (s.isEmpty) return 'Please enter your phone number';
+//                 if (s.length != 10) return 'Enter 10-digit mobile number';
+//                 return null;
+//               },
+//               autovalidateMode: AutovalidateMode.onUserInteraction,
+//             ),
+//           ),
+//           const SizedBox(height: 18),
+//           NesticoPeButton(
+//             title: _sending ? 'Sending...' : 'Send OTP',
+//             onTap: _sending ? null : _requestOtp,
+//             height: 50,
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   Widget _buildOtp(ThemeData theme) {
+//     final masked = _phoneController.text.isNotEmpty
+//         ? '+91 ${_phoneController.text.replaceRange(2, 8, '••••••')}'
+//         : '';
+//     return Form(
+//       key: _otpFormKey,
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.stretch,
+//         children: [
+//           const SizedBox(height: 8),
+//           Text(
+//             'Verify OTP',
+//             style: TextStyle(
+//               fontSize: 24,
+//               fontWeight: FontWeight.w800,
+//               color: ColorRes.textPrimary,
+//             ),
+//             textAlign: TextAlign.left,
+//           ),
+//           const SizedBox(height: 6),
+//           Text(
+//             'Enter the OTP sent to your mobile number\n$masked',
+//             style: TextStyle(
+//               fontSize: AppFontSizes.bodySmall,
+//               color: ColorRes.leadGreyColor.shade700,
+//             ),
+//           ),
+//           const SizedBox(height: 20),
+//           Theme(
+//             data: theme.copyWith(
+//               colorScheme: theme.colorScheme.copyWith(
+//                 surface: const Color(0xFFE0E3E5),
+//               ),
+//             ),
+//             child: NesticoPeTextField(
+//               title: 'OTP',
+//               controller: _otpController,
+//               hintText: 'Enter 6-digit OTP',
+//               keyboardType: TextInputType.number,
+//               prefixIcon: Icons.lock_outline,
+//               validator: (v) {
+//                 final s = (v ?? '').trim();
+//                 if (s.isEmpty) return 'Please enter OTP';
+//                 if (s.length != 6) return 'Enter 6-digit OTP';
+//                 return null;
+//               },
+//               autovalidateMode: AutovalidateMode.onUserInteraction,
+//             ),
+//           ),
+//           const SizedBox(height: 12),
+//           if (_resendSecondsLeft > 0)
+//             Row(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               children: [
+//                 const Icon(Icons.timer_outlined, size: 16, color: Colors.grey),
+//                 const SizedBox(width: 6),
+//                 Text(
+//                   '00:${_resendSecondsLeft.toString().padLeft(2, '0')}',
+//                   style: TextStyle(color: Colors.grey.shade600),
+//                 ),
+//               ],
+//             ),
+//           const SizedBox(height: 12),
+//           Row(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: [
+//               Text(
+//                 "Didn't receive the code? ",
+//                 style: TextStyle(color: Colors.grey.shade600),
+//               ),
+//               GestureDetector(
+//                 onTap: _resendSecondsLeft == 0 && !_resending ? _resendOtp : null,
+//                 child: Text(
+//                   _resending ? 'Resending...' : 'Resend OTP',
+//                   style: TextStyle(
+//                     color: ColorRes.primary,
+//                     fontWeight: FontWeight.w700,
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//           const SizedBox(height: 18),
+//           NesticoPeButton(
+//             title: _verifying ? 'Verifying...' : 'Verify & Continue',
+//             onTap: _verifying ? null : _verifyOtp,
+//             height: 50,
+//           ),
+//           const SizedBox(height: 10),
+//           TextButton(
+//             onPressed: () => setState(() {
+//               _otpSent = false;
+//               _otpController.clear();
+//               _timer?.cancel();
+//               _resendSecondsLeft = 0;
+//             }),
+//             child: const Text('Change Phone Number'),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:flutter/services.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/data/network/auth/service/auth_service.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 import 'package:nesticope_app/widgets/New%20folder/inputs/text_field.dart';
-import 'package:nesticope_app/widgets/input/custom_text_field.dart';
+import 'package:nesticope_app/widgets/button/button.dart';
 
 class OtpLoginScreen extends StatefulWidget {
   const OtpLoginScreen({Key? key}) : super(key: key);
@@ -13,272 +320,755 @@ class OtpLoginScreen extends StatefulWidget {
 
 class _OtpLoginScreenState extends State<OtpLoginScreen> {
   final _phoneFormKey = GlobalKey<FormState>();
-  final _otpFormKey = GlobalKey<FormState>();
   final _phoneController = TextEditingController();
-  final _otpController = TextEditingController();
-  final bool _isLoading = false;
+
+  // 6 separate OTP box controllers + focus nodes
+  final List<TextEditingController> _otpControllers = List.generate(
+    6,
+    (_) => TextEditingController(),
+  );
+  final List<FocusNode> _otpFocusNodes = List.generate(6, (_) => FocusNode());
+
   bool _otpSent = false;
+  bool _sending = false;
+  bool _verifying = false;
+  bool _resending = false;
+  int _resendSecondsLeft = 0;
+  Timer? _timer;
+
+  static const Color _primaryBlue = Color(0xFF1e3a8a);
+  static const Color _accentBlue = Color(0xFF2563eb);
 
   @override
   void dispose() {
+    _timer?.cancel();
     _phoneController.dispose();
-    _otpController.dispose();
+    for (final c in _otpControllers) c.dispose();
+    for (final f in _otpFocusNodes) f.dispose();
     super.dispose();
   }
 
+  void _startTimer() {
+    _timer?.cancel();
+    _resendSecondsLeft = 120;
+    setState(() {});
+    _timer = Timer.periodic(const Duration(seconds: 1), (t) {
+      if (!mounted) {
+        t.cancel();
+        return;
+      }
+      if (_resendSecondsLeft <= 1) {
+        t.cancel();
+        setState(() => _resendSecondsLeft = 0);
+      } else {
+        setState(() => _resendSecondsLeft -= 1);
+      }
+    });
+  }
+
+  String get _otpValue => _otpControllers.map((c) => c.text).join();
+
   Future<void> _requestOtp() async {
-    print('request OTP clicked');
-    // if (_phoneFormKey.currentState!.validate()) {
-    //   setState(() {
-    //     _isLoading = true;
-    //   });
-    //
-    //   try {
-    //     final authController = Provider.of<AuthController>(context, listen: false);
-    //     final success = await authController.requestOtp(context,_phoneController.text.trim());
-    //
-    //     if (success) {
-    //       setState(() {
-    //         _otpSent = true;
-    //       });
-    //     } else {
-    //       _showErrorDialog(authController.errorMessage ?? 'Failed to send OTP');
-    //     }
-    //   } catch (e) {
-    //     _showErrorDialog('An unexpected error occurred: ${e.toString()}');
-    //   } finally {
-    //     if (mounted) {
-    //       setState(() {
-    //         _isLoading = false;
-    //       });
-    //     }
-    //   }
-    // }
-  }
-
-  // Future<void> _verifyOtp() async {
-  //   if (_otpFormKey.currentState!.validate()) {
-  //     setState(() {
-  //       _isLoading = true;
-  //     });
-  //
-  //     try {
-  //       final authController = Provider.of<AuthController>(context, listen: false);
-  //       final success = await authController.verifyOtp(context,_otpController.text.trim());
-  //
-  //       if (success) {
-  //         Navigator.of(context).pushReplacement(
-  //           MaterialPageRoute(builder: (context) => HomeScreen())
-  //         );
-  //       } else {
-  //         _showErrorDialog(authController.errorMessage ?? 'Invalid OTP');
-  //       }
-  //     } catch (e) {
-  //       _showErrorDialog('An unexpected error occurred: ${e.toString()}');
-  //     } finally {
-  //       if (mounted) {
-  //         setState(() {
-  //           _isLoading = false;
-  //         });
-  //       }
-  //     }
-  //   }
-  // }
-
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Error'),
-            content: Text(message),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
-              ),
-            ],
-          ),
+    if (!_phoneFormKey.currentState!.validate()) return;
+    setState(() => _sending = true);
+    
+    final ok = await AuthService().requestOtpLogin(
+      _phoneController.text.trim(),
     );
+    setState(() => _sending = false);
+    if (ok) {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'OTP Sent',
+        message: 'Please enter the OTP within 2 minutes',
+        contentType: ContentType.success,
+      );
+      setState(() {
+        _otpSent = true;
+      });
+      _startTimer();
+    } else {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to send OTP',
+        contentType: ContentType.failure,
+      );
+    }
   }
 
+  Future<void> _verifyOtp() async {
+    final otp = _otpValue;
+    if (otp.length != 6) {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Invalid OTP',
+        message: 'Please enter all 6 digits',
+        contentType: ContentType.failure,
+      );
+      return;
+    }
+    setState(() => _verifying = true);
+    final user = await AuthService().verifyLoginOtp(otp);
+    setState(() => _verifying = false);
+    if (user != null) {
+      await SecureStorage.saveLoggedIn(true);
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Login Successful',
+        message: 'You have logged in successfully',
+        contentType: ContentType.success,
+      );
+      if (mounted) Navigator.of(context).pop(true);
+    } else {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Verification Failed',
+        message: 'Invalid or expired OTP',
+        contentType: ContentType.failure,
+      );
+    }
+  }
+
+  Future<void> _resendOtp() async {
+    if (_resendSecondsLeft > 0 || _resending) return;
+    setState(() => _resending = true);
+    final ok = await AuthService().resendLoginOtp();
+    setState(() => _resending = false);
+    if (ok) {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'OTP Resent',
+        message: 'A new OTP was sent. Please check',
+        contentType: ContentType.success,
+      );
+      _startTimer();
+    } else {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Failed to resend OTP',
+        contentType: ContentType.failure,
+      );
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
+      // backgroundColor: Colors.white,
+      // Custom app bar to match screenshot
       appBar: AppBar(
-        title: Text(_otpSent ? 'Verify OTP' : 'Login with OTP'),
-        centerTitle: true,
+        backgroundColor: Colors.white,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: ColorRes.primary),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        // centerTitle: true,
+        title: const Text(
+          'NesticoPe',
+          style: TextStyle(
+            // fontSize: 17,
+            fontWeight: FontWeight.w700,
+            color: ColorRes.primary,
+          ),
+        ),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child:
-              _otpSent
-                  ? _buildOtpVerificationForm(theme)
-                  : _buildPhoneForm(theme),
+      body: Container(
+        decoration: const BoxDecoration(
+          color: ColorRes.white, // dark navy background
+          image: DecorationImage(
+            image: AssetImage('assets/images/apartment1.png'),
+            fit: BoxFit.cover,
+            repeat: ImageRepeat.repeat,
+            opacity: 0.08,
+          ),
+        ),
+        child: SafeArea(
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 350),
+            transitionBuilder:
+                (child, anim) => FadeTransition(opacity: anim, child: child),
+            child:
+                _otpSent
+                    ? _buildOtpScreen(key: const ValueKey('otp'))
+                    : _buildPhoneScreen(key: const ValueKey('phone')),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildPhoneForm(ThemeData theme) {
-    return Form(
-      key: _phoneFormKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Illustration
-          Container(
-            height: 200,
-            alignment: Alignment.center,
-            child: Icon(
-              Icons.phone_android,
-              size: 100,
-              color: theme.colorScheme.primary,
+  // ── SCREEN 1: Phone Entry ─────────────────────────────────────────────────
+  Widget _buildPhoneScreen({Key? key}) {
+    return Padding(
+     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      child: Center(
+        child: Form(
+          key: _phoneFormKey,
+          child: SingleChildScrollView(
+            child: Column(
+              // mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // House image
+                
+                   Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                // mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 72,
+                    height: 72,
+                    decoration: BoxDecoration(
+                      color: ColorRes.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Icon(
+                      Icons.account_circle_outlined,
+                      size: 40,
+                      color: ColorRes.primary,
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 20),
+                  
+                  // Welcome heading
+                  const Text(
+                    'Welcome Back.',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w800,
+                      color: ColorRes.textPrimary,
+                      letterSpacing: -0.3,
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 6),
+                  
+                  Text(
+                    'Enter your mobile number to securely access\nyour curated estate portfolio.',
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.w500,
+                      height: 1.5,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+                  
+              const SizedBox(height: 24),
+                // MOBILE NUMBER label
+                // Text(
+                //   'MOBILE NUMBER',
+                //   style: TextStyle(
+                //     fontSize: 11,
+                //     fontWeight: FontWeight.w700,
+                //     color: Colors.grey.shade600,
+                //     letterSpacing: 0.9,
+                //   ),
+                // ),
+                // const SizedBox(height: 8),
+                Theme(
+                  data: Theme.of(context).copyWith(
+                    colorScheme: Theme.of(
+                      context,
+                    ).colorScheme.copyWith(surface: const Color(0xFFE0E3E5)),
+                  ),
+                  child: NesticoPeTextField(
+                    title: 'Mobile Number',
+                    controller: _phoneController,
+                    hintText: 'Enter your mobile number',
+                    keyboardType: TextInputType.phone,
+                    prefixIcon: Icons.phone_outlined,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    formatter: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(10),
+                    ],
+                    validator: (v) {
+                      final s = (v ?? '').trim();
+                      if (s.isEmpty) return 'Please enter your phone number';
+                      if (s.length < 10) return 'Enter a valid phone number';
+                      return null;
+                    },
+                  ),
+                ),
+                  
+                const SizedBox(height: 24),
+                  
+                // Send OTP button
+                NesticoPeButton(
+                  title: _sending ? 'Sending OTP…' : 'Send OTP',
+                  onTap: _sending ? null : _requestOtp,
+                  height: 48,
+                ),
+                  
+                const SizedBox(height: 16),
+                  
+                // Back to email login (pill button)
+                _altButton(
+                  icon: Icons.login_rounded,
+                  label: 'BACK TO EMAIL LOGIN',
+                  onTap: () => Navigator.of(context).pop(),
+                ),
+                  
+                const SizedBox(height: 28),
+                  
+                // Security badge
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.verified_user_rounded,
+                            size: 14,
+                            color: ColorRes.primary,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'SECURED BY ARCHITECTURAL GRADE ENCRYPTION',
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.grey.shade600,
+                              letterSpacing: 0.6,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey.shade500,
+                          ),
+                          children: [
+                            const TextSpan(
+                              text: 'By continuing, you agree to our ',
+                            ),
+                            TextSpan(
+                              text: 'Terms of Service',
+                              style: const TextStyle(
+                                color: ColorRes.primary,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const TextSpan(text: ' and '),
+                            TextSpan(
+                              text: 'Privacy Policy',
+                              style: const TextStyle(
+                                color: _accentBlue,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const TextSpan(text: '.'),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                  
+                const SizedBox(height: 16),
+              ],
             ),
           ),
-          const SizedBox(height: 24),
-
-          // Title
-          Text(
-            'Enter your phone number',
-            style: theme.textTheme.headlineSmall?.copyWith(
-              // fontWeight: FontWeight.bold,
-              fontWeight: AppFontWeights.extraBold,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-
-          // Subtitle
-          Text(
-            'We will send you a verification code',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: ColorRes.leadGreyColor.shade600,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 32),
-
-          // Phone Field
-          NesticoPeTextField(
-            controller: _phoneController,
-            hintText: 'Phone Number',
-            keyboardType: TextInputType.phone,
-            prefixIcon: Icons.phone_outlined,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter your phone number';
-              }
-              // Add phone number validation if needed
-              return null;
-            },
-          ),
-          const SizedBox(height: 24),
-
-          // Submit Button
-          // CustomButton(
-          //   text: 'Send OTP',
-          //   onPressed: _isLoading ? null : _requestOtp,
-          //   isLoading: _isLoading,
-          // ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildOtpVerificationForm(ThemeData theme) {
-    return Form(
-      key: _otpFormKey,
+  Widget _altButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 48,
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.72),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: Colors.white.withOpacity(0.85), width: 1.2),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 18, color: Colors.grey.shade600),
+            const SizedBox(width: 10),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.grey.shade700,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ── SCREEN 2: OTP Verification ────────────────────────────────────────────
+  Widget _buildOtpScreen({Key? key}) {
+    final masked =
+        _phoneController.text.isNotEmpty
+            ? '+(91)••• ••• ••${_phoneController.text.substring(_phoneController.text.length >= 2 ? _phoneController.text.length - 2 : 0)}'
+            : '+(91)••• ••• ••92';
+
+    final minutes = (_resendSecondsLeft ~/ 60).toString().padLeft(2, '0');
+    final seconds = (_resendSecondsLeft % 60).toString().padLeft(2, '0');
+
+    return SingleChildScrollView(
+      key: key,
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Illustration
-          Container(
-            height: 200,
-            alignment: Alignment.center,
-            child: Icon(Icons.sms, size: 100, color: theme.colorScheme.primary),
+          const SizedBox(height: 24),
+
+          // Shield icon circle
+          Center(
+            child: Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                color: ColorRes.white,
+                // borderRadius: BorderRadius.circular(20),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.verified_user_rounded,
+                size: 36,
+                color: ColorRes.primary,
+              ),
+            ),
           ),
+
           const SizedBox(height: 24),
 
           // Title
-          Text(
-            'Verify OTP',
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: AppFontWeights.extraBold,
-              // fontWeight: FontWeight.bold,
+          const Center(
+            child: Text(
+              'Verify OTP',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w800,
+                color: ColorRes.textPrimary,
+                letterSpacing: -0.3,
+              ),
             ),
-            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 8),
 
-          // Subtitle
-          Text(
-            'Enter the verification code sent to ${_phoneController.text}',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: ColorRes.leadGreyColor.shade600,
+          const SizedBox(height: 10),
+
+          // Subtitle with masked number
+          Center(
+            child: Text(
+              'Enter the OTP sent to your mobile number\n$masked',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey.shade600,
+                height: 1.6,
+              ),
             ),
-            textAlign: TextAlign.center,
           ),
+
           const SizedBox(height: 32),
 
-          // OTP Field
-          NesticoPeTextField(
-            controller: _otpController,
-            hintText: 'Enter OTP',
-            keyboardType: TextInputType.number,
-            prefixIcon: Icons.lock_outline,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter the OTP';
-              }
-              return null;
+          // 6 OTP boxes
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(4, (i) => _otpBox(i)),
+          ),
+
+          const SizedBox(height: 24),
+
+          // Timer
+          if (_resendSecondsLeft > 0)
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.access_time_rounded,
+                    size: 15,
+                    color: Colors.grey.shade500,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    '$minutes:$seconds',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+          const SizedBox(height: 10),
+
+          // Resend row
+          Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "DIDN'T RECEIVE THE CODE?  ",
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.grey.shade700,
+                    letterSpacing: 0.5,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                GestureDetector(
+                  onTap:
+                      _resendSecondsLeft == 0 && !_resending
+                          ? _resendOtp
+                          : null,
+                  child: Text(
+                    _resending ? 'Resending…' : 'Resend OTP',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color:
+                          _resendSecondsLeft == 0 && !_resending
+                              ? ColorRes.primary
+                              : Colors.grey.shade500,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 32),
+
+          // Verify & Continue button
+          NesticoPeButton(
+            title: _verifying ? 'Verifying…' : 'Verify & Continue',
+            onTap: _verifying ? null : _verifyOtp,
+            height: 48,
+          ),
+
+          const SizedBox(height: 20),
+
+          // Secure Verification card
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: const BoxDecoration(
+                    color: ColorRes.primary,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.verified_user_rounded,
+                    size: 16,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Secure Verification',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: ColorRes.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        'Your privacy and security are our top priorities.',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.grey.shade600,
+                          height: 1.4,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Change phone number
+          // Center(
+          //   child: TextButton(
+          //     onPressed:
+          //         () => setState(() {
+          //           _otpSent = false;
+          //           for (final c in _otpControllers) c.clear();
+          //           _timer?.cancel();
+          //           _resendSecondsLeft = 0;
+          //         }),
+          //     child: Text(
+          //       'Change Phone Number',
+          //       style: TextStyle(color: Colors.grey.shade600, fontSize: 13,
+          //         letterSpacing: 0.3,
+          //         fontWeight: FontWeight.w600,
+          //       ),
+          //     ),
+          //   ),
+          // ),
+          SizedBox(height: 10),
+          _altButton(
+            icon: Icons.phone,
+            label: 'Change Phone Number',
+            onTap: () {
+              setState(() {
+                    _otpSent = false;
+                    for (final c in _otpControllers) c.clear();
+                    _timer?.cancel();
+                    _resendSecondsLeft = 0;
+                  });
             },
           ),
-          const SizedBox(height: 8),
 
-          // Resend OTP
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              TextButton(
-                onPressed: _isLoading ? null : _requestOtp,
-                child: Text(
-                  'Resend OTP',
-                  style: TextStyle(
-                    color: theme.colorScheme.primary,
-                    fontWeight: AppFontWeights.medium,
-                    // fontWeight: AppFontWeights.medium,
-                  ),
+
+          const SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+  
+
+  // ── Single OTP digit box ──────────────────────────────────────────────────
+  Widget _otpBox(int index) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 8.0),
+      child: SizedBox(
+        width: 46,
+        child: Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(
+              context,
+            ).colorScheme.copyWith(surface: const Color(0xFFE0E3E5)),
+          ),
+          child: NesticoPeTextField(
+            controller: _otpControllers[index],
+            focusNode: _otpFocusNodes[index],
+            keyboardType: TextInputType.number,
+            maxLength: 1,
+            formatter: [FilteringTextInputFormatter.digitsOnly],
+            hintText: '',
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            onChanged: (val) {
+              if (val.isNotEmpty && index < 5) {
+                FocusScope.of(context).requestFocus(_otpFocusNodes[index + 1]);
+              } else if (val.isEmpty && index > 0) {
+                FocusScope.of(context).requestFocus(_otpFocusNodes[index - 1]);
+              }
+              setState(() {});
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ── Primary gradient button ───────────────────────────────────────────────
+  Widget _primaryButton({
+    required String label,
+    required bool isLoading,
+    VoidCallback? onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        height: 54,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors:
+                isLoading
+                    ? [const Color(0xFF5a7abf), const Color(0xFF5a7abf)]
+                    : [const Color(0xFF1e3a8a), const Color(0xFF2563eb)],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF1e3a8a).withOpacity(0.32),
+              blurRadius: 16,
+              offset: const Offset(0, 7),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.3,
+              ),
+            ),
+            if (!isLoading) ...[
+              const SizedBox(width: 10),
+              const Icon(
+                Icons.arrow_forward_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
+            ],
+            if (isLoading) ...[
+              const SizedBox(width: 12),
+              const SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
                 ),
               ),
             ],
-          ),
-          const SizedBox(height: 16),
-
-          // Verify Button
-          // CustomButton(
-          //   text: 'Verify & Login',
-          //   onPressed: _isLoading ? null : _verifyOtp,
-          //   isLoading: _isLoading,
-          // ),
-
-          // Change Number
-          TextButton(
-            onPressed: () {
-              setState(() {
-                _otpSent = false;
-              });
-            },
-            child: Text(
-              'Change Phone Number',
-              style: TextStyle(color: theme.colorScheme.primary),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

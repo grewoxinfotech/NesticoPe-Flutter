@@ -40,7 +40,8 @@ class HomeHeader extends StatefulWidget {
   final String backgroundImage;
   final String image;
   final Function(String city) onCityChanged;
-  final Function(String category) onCategoryChanged;
+  // Change callback signature
+final Function(String category, {bool fromUser}) onCategoryChanged;
 
   const HomeHeader({
     super.key,
@@ -66,6 +67,7 @@ class _HomeHeaderState extends State<HomeHeader> {
 
   int selectedIndex = 0;
   String? selectedCategory;
+  bool _userInteracted = false;
 
   @override
   void initState() {
@@ -73,7 +75,7 @@ class _HomeHeaderState extends State<HomeHeader> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final initial = await SecureStorage.getHomeCategory();
       selectedCategory = initial ?? 'Buy';
-      widget.onCategoryChanged(selectedCategory!);
+      // widget.onCategoryChanged(selectedCategory!);
       setState(() {});
     });
   }
@@ -92,6 +94,9 @@ class _HomeHeaderState extends State<HomeHeader> {
         // Top Row: City + Post Property
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
+          // color: Colors.white,
+          // height: 64,
+
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -316,7 +321,7 @@ class _HomeHeaderState extends State<HomeHeader> {
           child: Row(
             children: [
               Expanded(
-                child: buildPositionedTextField(context, () async {
+                child: buildPositionedTextField(propertyController,context, () async {
                   final filter = await Get.to(
                     () => CommonSearchField(
                       isNavigate: true,
@@ -393,8 +398,9 @@ class _HomeHeaderState extends State<HomeHeader> {
                   onSelected: (val) async {
                     setState(() {
                       selectedCategory = val;
+                       _userInteracted = true; // ✅ mark actual user tap
                     });
-                    widget.onCategoryChanged(val);
+                   widget.onCategoryChanged(val, fromUser: true);
                     await SecureStorage.saveHomeCategory(val);
                   },
                   itemBuilder:
@@ -403,14 +409,14 @@ class _HomeHeaderState extends State<HomeHeader> {
                         _buildMenuItem('Rent/Lease'),
                         _buildMenuItem('Commercial'),
                         _buildMenuItem('PG/Co-living'),
-                        _buildMenuItem('Plots'),
+                        // _buildMenuItem('Plots'),
                       ],
                   padding: EdgeInsets.zero,
                   child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
                   color: ColorRes.primary.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: ColorRes.primary.withOpacity(0.3),
                   ),
@@ -423,21 +429,21 @@ class _HomeHeaderState extends State<HomeHeader> {
                       color: ColorRes.primary,
                       size: 20,
                     ),
-                    const SizedBox(width: 6),
-                    Text(
-                      selectedCategory ?? 'Buy',
-                      style: const TextStyle(
-                        fontSize: AppFontSizes.small,
-                        fontWeight: AppFontWeights.semiBold,
-                        color: ColorRes.primary,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    const Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      size: 18,
-                      color: ColorRes.primary,
-                    ),
+                    // const SizedBox(width: 6),
+                    // Text(
+                    //   selectedCategory ?? 'Buy',
+                    //   style: const TextStyle(
+                    //     fontSize: AppFontSizes.small,
+                    //     fontWeight: AppFontWeights.semiBold,
+                    //     color: ColorRes.primary,
+                    //   ),
+                    // ),
+                    // const SizedBox(width: 4),
+                    // const Icon(
+                    //   Icons.keyboard_arrow_down_rounded,
+                    //   size: 18,
+                    //   color: ColorRes.primary,
+                    // ),
                   ],
                 ),
               ),
@@ -490,7 +496,9 @@ class _HomeHeaderState extends State<HomeHeader> {
     return "Post Property"; // default fallback
   }
 
-  Widget buildPositionedTextField(BuildContext context, VoidCallback? onTap) {
+  
+}
+Widget buildPositionedTextField(PropertyController propertyController, BuildContext context, VoidCallback? onTap) {
     return GestureDetector(
       onTap: onTap,
       child: TextField(
@@ -543,49 +551,48 @@ class _HomeHeaderState extends State<HomeHeader> {
       ),
     );
   }
-}
 
-Widget buildPositionedTextField(BuildContext context, VoidCallback? onTap) {
-  return GestureDetector(
-    onTap: onTap,
-    child: TextField(
-      enabled: false, // same as your CustomTextField
-      controller: TextEditingController(),
-      decoration: InputDecoration(
-        hintText: 'Change your Location ...',
-        hintStyle: const TextStyle(fontSize: AppFontSizes.medium),
-        filled: true,
-        fillColor: ColorRes.white,
-        prefixIcon: const Icon(Icons.search, color: ColorRes.primary, size: 22),
+// Widget buildPositionedTextField(BuildContext context, VoidCallback? onTap) {
+//   return GestureDetector(
+//     onTap: onTap,
+//     child: TextField(
+//       enabled: false, // same as your CustomTextField
+//       controller: TextEditingController(),
+//       decoration: InputDecoration(
+//         hintText: 'Change your Location ...',
+//         hintStyle: const TextStyle(fontSize: AppFontSizes.medium),
+//         filled: true,
+//         fillColor: ColorRes.white,
+//         prefixIcon: const Icon(Icons.search, color: ColorRes.primary, size: 22),
 
-        contentPadding: const EdgeInsets.symmetric(
-          vertical: 14,
-          horizontal: 12,
-        ),
-        disabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: ColorRes.grey.withOpacity(0.2)),
-          borderRadius: BorderRadius.circular(16),
-          // borderSide: BorderSide(
-          //   color: ColorRes.grey,
-          //   width: 1,
-          // ), // remove border like your custom field
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: ColorRes.grey.withOpacity(0.2)),
-          borderRadius: BorderRadius.circular(16),
-          // borderSide: BorderSide(
-          //   color: ColorRes.grey,
-          //   width: 1,
-          // ), // remove border like your custom field
-        ),
-        border: OutlineInputBorder(
-          borderSide: BorderSide(color: ColorRes.grey.withOpacity(0.2)),
-          borderRadius: BorderRadius.circular(16),
-        ),
-      ),
-    ),
-  );
-}
+//         contentPadding: const EdgeInsets.symmetric(
+//           vertical: 14,
+//           horizontal: 12,
+//         ),
+//         disabledBorder: OutlineInputBorder(
+//           borderSide: BorderSide(color: ColorRes.grey.withOpacity(0.2)),
+//           borderRadius: BorderRadius.circular(16),
+//           // borderSide: BorderSide(
+//           //   color: ColorRes.grey,
+//           //   width: 1,
+//           // ), // remove border like your custom field
+//         ),
+//         enabledBorder: OutlineInputBorder(
+//           borderSide: BorderSide(color: ColorRes.grey.withOpacity(0.2)),
+//           borderRadius: BorderRadius.circular(16),
+//           // borderSide: BorderSide(
+//           //   color: ColorRes.grey,
+//           //   width: 1,
+//           // ), // remove border like your custom field
+//         ),
+//         border: OutlineInputBorder(
+//           borderSide: BorderSide(color: ColorRes.grey.withOpacity(0.2)),
+//           borderRadius: BorderRadius.circular(16),
+//         ),
+//       ),
+//     ),
+//   );
+// }
 
 SellerType mapUserRoleToSellerType(UserRole role) {
   switch (role) {

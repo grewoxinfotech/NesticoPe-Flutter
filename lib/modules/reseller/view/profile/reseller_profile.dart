@@ -6,6 +6,7 @@ import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/app/utils/formater/formater.dart';
 import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:nesticope_app/app/widgets/expandable_tile/expandable_widget.dart';
+import 'package:nesticope_app/app/widgets/image/custom_image.dart';
 import 'package:nesticope_app/data/database/secure_storage_service.dart';
 import 'package:nesticope_app/data/network/auth/model/user_model.dart';
 import 'package:nesticope_app/modules/auth/controllers/auth_controller.dart';
@@ -1356,52 +1357,53 @@ class _ResellerProfileScreenState extends State<ResellerProfileScreen> {
                   return _avatarShell(child: const CircularProgressIndicator());
                 }
 
-                ImageProvider? imageProvider;
-                String? imageUrl;
-                bool isNetwork = false;
-
+                Widget imageWidget;
                 if (selectedImage != null) {
                   if (selectedImage is File) {
-                    imageProvider = FileImage(selectedImage);
+                    imageWidget = Image.file(
+                      selectedImage,
+                      fit: BoxFit.cover,
+                      width: 90,
+                      height: 90,
+                    );
                   } else if (selectedImage.toString().startsWith('http')) {
-                    imageUrl = selectedImage.toString();
-                    imageProvider = NetworkImage(imageUrl);
-                    isNetwork = true;
+                    imageWidget = CustomImage(
+                      type: CustomImageType.network,
+                      src: selectedImage.toString(),
+                      fit: BoxFit.cover,
+                      width: 90,
+                      height: 90,
+                    );
+                  } else {
+                    imageWidget = Icon(
+                      Icons.person,
+                      size: 40,
+                      color: ColorRes.primary.withOpacity(0.8),
+                    );
                   }
                 } else if (profilePic != null && profilePic.isNotEmpty) {
                   if (profilePic.startsWith('http')) {
-                    imageUrl = profilePic;
-                    imageProvider = NetworkImage(profilePic);
-                    isNetwork = true;
+                    imageWidget = CustomImage(
+                      type: CustomImageType.network,
+                      src: profilePic,
+                      fit: BoxFit.cover,
+                      width: 90,
+                      height: 90,
+                    );
                   } else if (File(profilePic).existsSync()) {
-                    imageProvider = FileImage(File(profilePic));
+                    imageWidget = Image.file(
+                      File(profilePic),
+                      fit: BoxFit.cover,
+                      width: 90,
+                      height: 90,
+                    );
+                  } else {
+                    imageWidget = Icon(
+                      Icons.person,
+                      size: 40,
+                      color: ColorRes.primary.withOpacity(0.8),
+                    );
                   }
-                }
-
-                Widget imageWidget;
-                if (imageProvider != null) {
-                  imageWidget =
-                      isNetwork
-                          ? Image.network(
-                            imageUrl!,
-                            fit: BoxFit.cover,
-                            width: 90,
-                            height: 90,
-                            loadingBuilder:
-                                (ctx, child, prog) =>
-                                    prog == null
-                                        ? child
-                                        : const CircularProgressIndicator(),
-                            errorBuilder:
-                                (_, __, ___) =>
-                                    const Icon(Icons.person, size: 40),
-                          )
-                          : Image(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
-                            width: 90,
-                            height: 90,
-                          );
                 } else {
                   imageWidget = Icon(
                     Icons.person,

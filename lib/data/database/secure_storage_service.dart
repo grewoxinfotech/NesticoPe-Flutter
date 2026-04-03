@@ -28,6 +28,59 @@ class SecureStorage {
   static const String _keyLoginWithOtpToken = 'loginWithOtpToken';
   static const String _keySupportTicketId = 'supportTicketId';
   static const String _keyHomeCategory = 'homeCategory';
+  static const String _keyPlatformServiceInquiry = 'platformServiceInquiry';
+
+  static Future<void> savePlatformServiceInquiryData(String value) async {
+    await _storage.write(key: _keyPlatformServiceInquiry, value: value);
+  }
+
+  static Future<String?> getPlatformServiceInquiryData() async {
+    return _storage.read(key: _keyPlatformServiceInquiry);
+  }
+
+  static Future<bool> hasPlatformServiceInquiry(String serviceId) async {
+    try {
+      final data = await getPlatformServiceInquiryData();
+      if (data == null || data.isEmpty) return false;
+      final decoded = jsonDecode(data);
+      if (decoded is List) {
+        return decoded.any((item) => item['serviceId'] == serviceId);
+      } else if (decoded is Map) {
+        return decoded['serviceId'] == serviceId;
+      }
+      return false;
+    } catch (e) {
+      print('❌ Error reading platform service inquiry data: $e');
+      return false;
+    }
+  }
+
+  static Future<void> addPlatformServiceInquiry(
+    Map<String, dynamic> newInquiry,
+  ) async {
+    try {
+      final data = await getPlatformServiceInquiryData();
+      List<dynamic> inquiryList = [];
+      if (data != null && data.isNotEmpty) {
+        final decoded = jsonDecode(data);
+        if (decoded is List) {
+          inquiryList = decoded;
+        } else if (decoded is Map) {
+          inquiryList = [decoded];
+        }
+      }
+      final exists = inquiryList.any(
+        (item) => item['serviceId'] == newInquiry['serviceId'],
+      );
+      if (!exists) {
+        inquiryList.add(newInquiry);
+        await savePlatformServiceInquiryData(jsonEncode(inquiryList));
+        print('✅ New platform service inquiry saved');
+      }
+    } catch (e) {
+      print('❌ Error saving platform service inquiry: $e');
+    }
+  }
 
   static Future<void> savePropertyInquiryData(String value) async {
     await _storage.write(key: _keyIsGuestUserPropertyInquiry, value: value);

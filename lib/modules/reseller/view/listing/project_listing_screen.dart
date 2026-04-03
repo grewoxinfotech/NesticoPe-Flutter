@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nesticope_app/app/widgets/image/custom_image.dart';
 import 'package:nesticope_app/data/network/builder/model/builder_model.dart';
 import 'package:nesticope_app/modules/reseller/view/listing/property_listing.dart';
 import 'package:nesticope_app/utils/shimmer/reseller/entity_screen/reseller_entity_list_screen_shimmer.dart';
@@ -670,12 +671,12 @@ class ProjectCard extends StatelessWidget {
     final imageUrl =
         (images != null && images.isNotEmpty) ? images.first : null;
 
-    return Image.network(
-      imageUrl ?? 'https://via.placeholder.com/150',
+    return CustomImage(
+      type: CustomImageType.network,
+      src: imageUrl,
       width: 110,
       height: 121,
       fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) => _placeholder(),
     );
   }
 

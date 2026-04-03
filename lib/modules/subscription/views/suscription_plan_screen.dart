@@ -90,8 +90,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
   bool get _isBuyerOrGuest => UserHelper.isBuyer || UserHelper.isGuest;
 
   /// Gate is active when the user is buyer/guest AND hasn't unlocked AND hasn't submitted inquiry
-  bool get _showBlurGate =>
-      _isBuyerOrGuest && !_unlocked.value && !widget.isInquirySubmitted;
+  bool get _showBlurGate => _isBuyerOrGuest && !_unlocked.value;
 
   /// Show the inline compact CTA banner after unlocking (buyer/guest only)
   bool get _showCompactCta => _isBuyerOrGuest && _unlocked.value;
@@ -197,7 +196,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                   if (!widget.isNotFromBuyerSide) ...[
                     Obx(() {
                       final unlocked = _unlocked.value;
-                      if (!unlocked && !widget.isInquirySubmitted) {
+              if (!unlocked) {
                         return const SizedBox.shrink();
                       }
                       return Column(
@@ -227,10 +226,10 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
           ),
 
           // ─── Blur overlay (gate) ──────────────────────────────────────────
-          if (!widget.isNotFromBuyerSide) ...[
+          if (!widget.isNotFromBuyerSide && widget.role != 'contractor') ...[
             Obx(() {
               final unlocked = _unlocked.value;
-              final showGate = !unlocked && !widget.isInquirySubmitted;
+              final showGate = !unlocked;
               if (!showGate) return const SizedBox.shrink();
               return Positioned.fill(
                 child: ClipRect(
@@ -244,15 +243,16 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
           ],
 
           // ─── Full sign-up form overlay (gate) ────────────────────────────
-          if (!widget.isNotFromBuyerSide) ...[
+          if (!widget.isNotFromBuyerSide && widget.role != 'contractor') ...[
             Obx(() {
               final unlocked = _unlocked.value;
-              final showGate = !unlocked && !widget.isInquirySubmitted;
+              final showGate = !unlocked;
               if (!showGate) return const SizedBox.shrink();
               return Center(
                 child: SignUpSubscriptionScreen(
                   title: _mapRoleToTitle(widget.role),
                   compact: false,
+                  showThankYou: widget.isInquirySubmitted,
                   onSubmit: (name, email, phone) async {
                     final planId =
                         controller.items.isNotEmpty
@@ -276,7 +276,11 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                     );
                     if (isSuccess) {
                       _saveInquiryToStorage(name, email, phone);
-                      _unlocked.value = true;
+                      if (mounted) {
+                        setState(() {
+                          widget.isInquirySubmitted = true;
+                        });
+                      }
                     }
                   },
                 ),
@@ -285,7 +289,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
           ],
 
           // ─── Seller/builder/reseller/contractor sign-up overlay ───────────
-          if (!widget.isNotFromBuyerSide) ...[
+          if (!widget.isNotFromBuyerSide && widget.role != 'contractor') ...[
             if (widget.isShowCurrentPlan &&
                 (UserHelper.isSellerOwner ||
                     UserHelper.isSellerBuilder ||
@@ -299,7 +303,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                         ) !=
                         null;
 
-                if (hasActive || widget.isInquirySubmitted) {
+                if (hasActive) {
                   return const SizedBox.shrink();
                 }
 
@@ -319,6 +323,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                       child: SignUpSubscriptionScreen(
                         title: _mapRoleToTitle(widget.role),
                         compact: false,
+                        showThankYou: widget.isInquirySubmitted,
                         onSubmit: (name, email, phone) async {
                           final planId =
                               controller.items.isNotEmpty

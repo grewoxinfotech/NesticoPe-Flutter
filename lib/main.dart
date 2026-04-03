@@ -12,6 +12,8 @@ import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/modules/auth/controllers/auth_controller.dart';
 import 'package:nesticope_app/modules/auth/views/splash_screen.dart';
 import 'package:nesticope_app/app/services/network_status_service.dart';
+import 'package:provider/provider.dart';
+import 'package:nesticope_app/modules/home/widgets/scroll_listiner_provider.dart';
 import 'package:nesticope_app/modules/dashboard/views/dashboard_screen.dart';
 import 'package:nesticope_app/app/manager/compare_manager.dart';
 import 'package:nesticope_app/app/manager/project_compare_manager.dart';
@@ -20,6 +22,7 @@ import 'package:nesticope_app/modules/no_internet/no_internet_screen.dart';
 import 'package:nesticope_app/services/notification_service.dart';
 import 'app/theme/themes.dart' as AppTheme;
 import 'app/utils/helper_function/user_helper/user_helper.dart';
+import 'confige/helper/api_helper.dart';
 
 void main() async {
 
@@ -68,7 +71,11 @@ void main() async {
     await UserHelper.initUserType();
     debugPrint('✅ UserHelper initialized');
 
-    // 6. Initialize permanent controllers
+    // 6. Load third-party settings (Google Maps API key, etc.)
+    await ApiConfig.fetchThirdPartySettings();
+    debugPrint('✅ Third-party settings loaded');
+
+    // 7. Initialize permanent controllers
     Get.put(CompareManager(), permanent: true);
     Get.put(ContractorCompareManager(), permanent: true);
     Get.put(ProjectCompareManager(), permanent: true);
@@ -86,30 +93,29 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'NesticoPe',
-      theme: AppTheme.lightTheme,
-      initialBinding: CustomBinding(),
-      home: const SplashScreen(),
-
-      // Define named routes
-      getPages: [
-        GetPage(name: '/splash', page: () => const SplashScreen()),
-        GetPage(name: '/no-internet', page: () => const NoInternetScreen()),
-        GetPage(name: '/dashboard', page: () => const DashboardScreen()),
-      ],
-
-      // Lock font scaling and handle text scaling
-      builder: (context, child) {
-        final mediaQuery = MediaQuery.of(context);
-        return MediaQuery(
-          data: mediaQuery.copyWith(
-            textScaler: const TextScaler.linear(1.0), // Lock font scaling
-          ),
-          child: child!,
-        );
-      },
+    return ChangeNotifierProvider(
+      create: (_) => PinnedSearchNotifier(),
+      child: GetMaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'NesticoPe',
+        theme: AppTheme.lightTheme,
+        initialBinding: CustomBinding(),
+        home: const SplashScreen(),
+        getPages: [
+          GetPage(name: '/splash', page: () => const SplashScreen()),
+          GetPage(name: '/no-internet', page: () => const NoInternetScreen()),
+          GetPage(name: '/dashboard', page: () => const DashboardScreen()),
+        ],
+        builder: (context, child) {
+          final mediaQuery = MediaQuery.of(context);
+          return MediaQuery(
+            data: mediaQuery.copyWith(
+              textScaler: const TextScaler.linear(1.0),
+            ),
+            child: child!,
+          );
+        },
+      ),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/app/widgets/image/custom_image.dart';
 import 'package:nesticope_app/data/network/property_share/property_share_model.dart';
 import 'package:nesticope_app/widgets/button/button.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -431,19 +432,12 @@ class _ReSellerPropertyShareState extends State<ReSellerPropertyShare> {
             // Property image
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                item.image,
+              child: CustomImage(
+                type: CustomImageType.network,
+                src: item.image,
                 width: 100,
                 height: 100,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: 100,
-                    height: 100,
-                    color: Colors.grey[300],
-                    child: Icon(Icons.home, size: 40, color: Colors.grey[500]),
-                  );
-                },
               ),
             ),
             const SizedBox(width: 16),

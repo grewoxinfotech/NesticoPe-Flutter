@@ -45,7 +45,7 @@ class AuthService {
         final data = jsonDecode(response.body);
 
         final user = UserModel.fromJson(data['data']);
-     
+
         final token = data['data']['token'] ?? user.token;
         print("Token :sdfhghfgsdhufgsd $token    ");
         print("User :fdjgd ${user.toJson()}");
@@ -54,34 +54,32 @@ class AuthService {
         await SecureStorage.saveLoggedIn(true);
         final success = data['success'] == true;
         if (success) {
-
-          Fluttertoast.showToast(
-            msg: "🎉 Login With Truecaller Done Successfully!",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.green,
-            textColor: Colors.white,
-          );
-                    return user;
+          // Fluttertoast.showToast(
+          //   msg: "🎉 Login With Truecaller Done Successfully!",
+          //   toastLength: Toast.LENGTH_SHORT,
+          //   gravity: ToastGravity.BOTTOM,
+          //   backgroundColor: Colors.green,
+          //   textColor: Colors.white,
+          // );
+          return user;
         } else {
-          Fluttertoast.showToast(
-            msg: "⚠️ Failed to Login With Truecaller. Please try again.",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-          );
+          // Fluttertoast.showToast(
+          //   msg: "⚠️ Failed to Login With Truecaller. Please try again.",
+          //   toastLength: Toast.LENGTH_SHORT,
+          //   gravity: ToastGravity.BOTTOM,
+          //   backgroundColor: Colors.red,
+          //   textColor: Colors.white,
+          // );
         }
       } else {
-        Fluttertoast.showToast(
-          msg: "⚠️ Failed to Login With Truecaller. Please try again.",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-        );
+        // Fluttertoast.showToast(
+        //   msg: "⚠️ Failed to Login With Truecaller. Please try again.",
+        //   toastLength: Toast.LENGTH_SHORT,
+        //   gravity: ToastGravity.BOTTOM,
+        //   backgroundColor: Colors.red,
+        //   textColor: Colors.white,
+        // );
       }
-
     } catch (e) {
       debugPrint("Error in Login With Truecaller : $e");
       rethrow;
@@ -588,12 +586,16 @@ class AuthService {
   }
 
   Future<bool> requestOtpLogin(String id) async {
+    print("Request OTP Login $id");
     final response = await http.post(
       Uri.parse('${ApiConstants.auth}/otp-login'),
       headers: {i: j},
       body: jsonEncode({'id': id}),
     );
     final data = jsonDecode(response.body);
+    print("OTP [DEBUG]=> ${response.body}");
+    print("OTP [DEBUG]=> ${data}");
+    
     if (response.statusCode == 200 && data['success'] == true) {
       final token = (data['data']?['token'] ?? '').toString();
       if (token.isNotEmpty) {
@@ -613,10 +615,9 @@ class AuthService {
     final data = jsonDecode(response.body);
     print("Signujdfhjsd dfjsd $data");
     if (response.statusCode == 200 && data['success'] == true) {
-   
-        final user = UserModel.fromJson(data['data']);
-     
-        final token = data['data']['token'] ?? user.token;
+      final user = UserModel.fromJson(data['data']);
+
+      final token = data['data']['token'] ?? user.token;
       if (token.isNotEmpty) {
         await SecureStorage.saveToken(token);
       }

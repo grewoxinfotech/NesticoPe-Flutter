@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/app/widgets/texts/headline_text.dart';
+import 'package:nesticope_app/modules/home/controllers/contractor_profile_controller/contractor_profile_controller.dart';
+import 'package:nesticope_app/modules/home/widgets/contractor_profile_card.dart';
+import 'package:nesticope_app/modules/contractor/view/all_contractors_list_screen.dart';
+import 'package:nesticope_app/app/widgets/image/custom_image.dart';
 import 'package:nesticope_app/modules/hire_contractor/view/widget/hire_contractor_profilelist.dart';
+import 'package:nesticope_app/utils/shimmer/buyer/hire_contractor/buyer_hire_contractor_list_screen_shimmer.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../data/network/contractor/model/contractot_service_model/contractor_category_model.dart';
@@ -10,6 +17,7 @@ import '../controller/hire_contractor_filter_controller.dart';
 import '../controller/hire_contractor_list_of_profile_controller.dart';
 import '../controller/hire_contractor_new_controller.dart';
 import 'widget/category_service_explorer.dart';
+import 'package:nesticope_app/modules/home/widgets/unified_comparison_floating_button.dart';
 
 class HireContractorScreen extends StatelessWidget {
   final bool fromDashboard;
@@ -25,19 +33,21 @@ class HireContractorScreen extends StatelessWidget {
     final controllerFilterData = Get.put(
       HireContractorFilterProfileController(),
     );
+    final contractorsController = Get.put(
+      TopContractorsController(withoutCity: true),
+      tag: 'contractors_home',
+    );
 
     return Scaffold(
       backgroundColor: ColorRes.background,
       appBar: AppBar(
-        leading: fromDashboard
-            ? null
-            : IconButton(
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: ColorRes.textPrimary,
+        leading:
+            fromDashboard
+                ? null
+                : IconButton(
+                  icon: Icon(Icons.arrow_back, color: ColorRes.textPrimary),
+                  onPressed: () => Get.back(),
                 ),
-                onPressed: () => Get.back(),
-              ),
         backgroundColor: ColorRes.white,
         elevation: 0,
         title: Text(
@@ -49,79 +59,185 @@ class HireContractorScreen extends StatelessWidget {
         ),
         centerTitle: false,
       ),
-      body: Obx(() {
-        if (controller.isLoading.value && controller.items.isEmpty) {
-          return BuyerHireContractorCategoryListScreenShimmer();
-        }
+      body: Stack(
+        children: [
+          Obx(() {
+            if (controller.isLoading.value && controller.items.isEmpty) {
+              return BuyerHireContractorCategoryListScreenShimmer();
+            }
 
-        if (controller.items.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.category_outlined,
-                  size: 64,
-                  color: ColorRes.textDisabled,
+            if (controller.items.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.category_outlined,
+                      size: 64,
+                      color: ColorRes.textDisabled,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No categories available',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.medium,
+                        color: ColorRes.textSecondary,
+                        fontWeight: AppFontWeights.medium,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  'No categories available',
-                  style: TextStyle(
-                    fontSize: AppFontSizes.medium,
-                    color: ColorRes.textSecondary,
-                    fontWeight: AppFontWeights.medium,
+              );
+            }
+
+            return SafeArea(
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  await controller.refreshService();
+                  await contractorsController.refreshList();
+                },
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Builder(
+                    builder: (context) {
+                      String norm(String s) => s
+                          .trim()
+                          .toLowerCase()
+                          .replaceAll('&', 'and')
+                          .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+                      final order = <String, int>{
+                        'home_construction': 1,
+                        'building_material_supply': 2,
+                        'material_supply': 2,
+                        'home_services': 3,
+                        'interior_design': 4,
+                        'packers_and_movers': 5,
+                        'packers_movers': 5,
+                        'legal_services': 6,
+                      };
+                      final sorted = [...controller.items]..sort((a, b) {
+                        final ai = order[norm(a.name)] ?? 999;
+                        final bi = order[norm(b.name)] ?? 999;
+                        return ai.compareTo(bi);
+                      });
+                      return Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            color: Color.fromARGB(255, 235, 244, 252),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // const SizedBox(height: 12),
+                                  TitleWithViewAll(
+                                    title: "NesticoPe Verified Services",
+                                    showViewAll: false,
+                                    subTitle: 'View all verified services',
+                                    isSubTitle: true,
+                                    showIcon: true,
+                                    iconBgColor: ColorRes.primary.withOpacity(
+                                      0.1,
+                                    ),
+
+                                    icon: Icons.verified_user,
+                                    iconColor: ColorRes.primary,
+
+                                    // size: 24,
+                                    // margin: const EdgeInsets.only(right: 8),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  GridView.builder(
+                                    shrinkWrap: true,
+                                    padding: EdgeInsets.zero,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    gridDelegate:
+                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 3,
+                                          crossAxisSpacing: 6,
+                                          // mainAxisSpacing: 8,
+                                          // childAspectRatio: 1,
+                                          mainAxisSpacing: 12,
+                                          childAspectRatio: 0.75,
+                                        ),
+                                    itemCount: sorted.length,
+                                    itemBuilder: (context, index) {
+                                      final category = sorted[index];
+                                      return _buildCategoryImageTile(
+                                        context,
+                                        category,
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(height: 8),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 12),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0,
+                            ),
+                            child: TitleWithViewAll(
+                              title: "Top Rated Contractors",
+                              subTitle: 'Connect with top contractors',
+                              isSubTitle: true,
+                              icon: Icons.home_repair_service_outlined,
+                              iconColor: ColorRes.lightPurpleColor,
+                              iconBgColor: ColorRes.lightPurpleColor
+                                  .withOpacity(0.1),
+
+                              // size: 24,
+                              // margin: const EdgeInsets.only(right: 8),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Obx(() {
+                            if (contractorsController.isLoading.value &&
+                                contractorsController.items.isEmpty) {
+                              return const BuyerHireContractorListScreenShimmer(
+                                embedded: true,
+                              );
+                            }
+                            if (contractorsController.items.isEmpty) {
+                              return const SizedBox.shrink();
+                            }
+                            final count =
+                                contractorsController.items.length > 6
+                                    ? 6
+                                    : contractorsController.items.length;
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                              ),
+                              child: ListView.separated(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: count,
+                                separatorBuilder:
+                                    (_, __) => const SizedBox(height: 8),
+                                itemBuilder: (context, index) {
+                                  final data =
+                                      contractorsController.items[index];
+                                  return ContractorCard(contractor: data);
+                                },
+                              ),
+                            );
+                          }),
+                        ],
+                      );
+                    },
                   ),
                 ),
-              ],
-            ),
-          );
-        }
-
-        return RefreshIndicator(
-          onRefresh: () => controller.refreshService(),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Builder(builder: (context) {
-              String norm(String s) => s
-                  .trim()
-                  .toLowerCase()
-                  .replaceAll('&', 'and')
-                  .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
-              final order = <String, int>{
-                'home_construction': 1,
-                'building_material_supply': 2,
-                'material_supply': 2,
-                'home_services': 3,
-                'interior_design': 4,
-                'packers_and_movers': 5,
-                'packers_movers': 5,
-                'legal_services': 6,
-              };
-              final sorted = [...controller.items]..sort((a, b) {
-                  final ai = order[norm(a.name)] ?? 999;
-                  final bi = order[norm(b.name)] ?? 999;
-                  return ai.compareTo(bi);
-                });
-              return GridView.builder(
-                physics: const AlwaysScrollableScrollPhysics(),
-                shrinkWrap: true,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: 1,
-                ),
-                itemCount: sorted.length,
-                itemBuilder: (context, index) {
-                  final category = sorted[index];
-                  return _buildCategoryImageTile(context, category);
-                },
-              );
-            }),
-          ),
-        );
-      }),
+              ),
+            );
+          }),
+          const UnifiedComparisonFloatingButton(bottom: 16),
+        ],
+      ),
     );
   }
 
@@ -239,14 +355,16 @@ class HireContractorScreen extends StatelessWidget {
         color: ColorRes.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isHomeConstruction ? ColorRes.primary : ColorRes.leadGreyColor.shade300,
-          width:isHomeConstruction?2.5: 1,
+          color:
+              isHomeConstruction
+                  ? ColorRes.primary
+                  : ColorRes.leadGreyColor.shade300,
+          width: isHomeConstruction ? 2.5 : 1,
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-         
           // Title and status row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -255,7 +373,10 @@ class HireContractorScreen extends StatelessWidget {
                 SizedBox(
                   height: 50,
                   width: 50,
-                  child: Image.network(category.icon ?? '', fit: BoxFit.contain),
+                  child: Image.network(
+                    category.icon ?? '',
+                    fit: BoxFit.contain,
+                  ),
                 )
               else
                 Container(
@@ -265,13 +386,17 @@ class HireContractorScreen extends StatelessWidget {
                     color: ColorRes.leadGreyColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.category, color: ColorRes.textSecondary, size: 24),
+                  child: const Icon(
+                    Icons.category,
+                    color: ColorRes.textSecondary,
+                    size: 24,
+                  ),
                 ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   category.name,
-                 
+
                   style: TextStyle(
                     fontSize: AppFontSizes.medium,
                     fontWeight: AppFontWeights.semiBold,
@@ -279,16 +404,21 @@ class HireContractorScreen extends StatelessWidget {
                   ),
                 ),
               ),
-               if (isHomeConstruction)
+              if (isHomeConstruction)
                 Align(
                   alignment: Alignment.topRight,
                   child: Container(
                     margin: const EdgeInsets.only(left: 8),
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: ColorRes.primary.withOpacity(0.12),
                       borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: ColorRes.primary.withOpacity(0.35)),
+                      border: Border.all(
+                        color: ColorRes.primary.withOpacity(0.35),
+                      ),
                     ),
                     child: Text(
                       'MOST POPULAR',
@@ -301,45 +431,48 @@ class HireContractorScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-              
-             
             ],
           ),
 
           const SizedBox(height: 6),
 
           // Description
-            // Bullet points description
-            ...((category.description).where((line) => line.trim().isNotEmpty).map((line) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: Icon(
-                        Icons.check_circle,
-                        size: 14,
-                        color: ColorRes.primary,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        line.trim().startsWith('•') ? line.trim().substring(1).trim() : line.trim(),
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: ColorRes.leadGreyColor.shade700,
-                          fontWeight: AppFontWeights.medium,
-                          height: 1.4,
+          // Bullet points description
+          ...((category.description)
+              .where((line) => line.trim().isNotEmpty)
+              .map((line) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Icon(
+                          Icons.check_circle,
+                          size: 14,
+                          color: ColorRes.primary,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList()),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          line.trim().startsWith('•')
+                              ? line.trim().substring(1).trim()
+                              : line.trim(),
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: ColorRes.leadGreyColor.shade700,
+                            fontWeight: AppFontWeights.medium,
+                            height: 1.4,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              })
+              .toList()),
 
           const SizedBox(height: 10),
 
@@ -357,56 +490,78 @@ class HireContractorScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryImageTile(BuildContext context, ContractorServiceCategory category) {
+  Widget _buildCategoryImageTile(
+    BuildContext context,
+    ContractorServiceCategory category,
+  ) {
     final img = _categoryImageFor(category.name);
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
         onTap: () {
-          Get.to(() => CategoryServiceExplorer(
-                categoryId: category.id,
-                categoryName: category.name,
-              ));
+          Get.to(
+            () => CategoryServiceExplorer(
+              categoryId: category.id,
+              categoryName: category.name,
+            ),
+          );
         },
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(14),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Image.asset(
-                img,
-                fit: BoxFit.cover,
+        child: Stack(
+          children: [
+            /// ✅ IMAGE (no blend, no color)
+            // Image.asset(
+            //   img,
+            //   fit: BoxFit.cover,
+            //   width: double.infinity,
+            //   height: double.infinity,
+            // ),
+            Positioned.fill(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
+                child: CustomImage(
+                  type: CustomImageType.asset,
+                  src: img,
+                  fit: BoxFit.cover,
+
+                  // height: 170,
+                  // width: double.infinity,
+                ),
               ),
-              Container(
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                // height: 70,
                 decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.black.withOpacity(0.0),
-                      Colors.black.withOpacity(0.45),
-                    ],
+                    colors: [Colors.transparent, Colors.black.withOpacity(0.4)],
                   ),
                 ),
               ),
-              Positioned(
-                left: 10,
-                right: 10,
-                bottom: 10,
-                child: Text(
-                  category.name,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: AppFontWeights.semiBold,
-                    fontSize: AppFontSizes.body,
-                  ),
+            ),
+
+            /// ✅ TEXT
+            Positioned(
+              left: 10,
+              right: 10,
+              bottom: 10,
+              child: Text(
+                category.name,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: AppFontWeights.semiBold,
+                  fontSize: AppFontSizes.small,
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
