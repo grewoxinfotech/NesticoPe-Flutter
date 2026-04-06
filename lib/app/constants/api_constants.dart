@@ -3,18 +3,18 @@ import 'package:nesticope_app/data/database/secure_storage_service.dart';
 /// Class containing API related constants
 
 class ApiConstants {
-
   // Manual override options (comment/uncomment as needed):
 
   // static const String baseURL = "http://housing.grewox.com/api/v1"; // Live
 
   // static const String url = "http://192.168.1.11:19725";
 
-  // static const String url = "https://nesticopeapi.grewoxinfotech.com";
+  static const String url = "https://nesticopeapi.grewoxinfotech.com";
 
-  static const String url = "https://api.nesticope.com";
+  // static const String url = "https://api.nesticope.com";
+
   // static const String url = "https://commentary-flush-reprints-prison.trycloudflare.com";
-
+  static const String frontendBaseUrl = "https://nesticope.com";
   // static const String url =
   //     "https://bow-dir-facility-adjusted.trycloudflare.com";
   static const String baseURL = "$url/api/v1"; // Real Device (WiFi)
@@ -47,8 +47,6 @@ class ApiConstants {
   static String get convertToContractor => "$auth/convert-buyer-to-contractor";
   static String get truecallerLogin => "$auth/login-truecaller";
 
-
-
   static String get aadharInitiateVerification =>
       "$auth/initiate-aadhaar-verification";
 
@@ -70,7 +68,6 @@ class ApiConstants {
   static String get generateReferCode => "$baseURL/referral/generate-code";
 
   static String get getMyCertificate => "$baseURL/certificate/my-certificate";
-  
 
   static String get getUserProfile => "$baseURL/user/profile";
 
@@ -103,7 +100,7 @@ class ApiConstants {
       "$baseURL/property/personalized-recommendations";
 
   static String get builderProject => "$baseURL/builderproject";
-  static String get topBuilderProfile=> "$baseURL/user/builders/top";
+  static String get topBuilderProfile => "$baseURL/user/builders/top";
   static String get propertyReport => "$baseURL/propertyReport";
 
   static String get resellerSuccessStory => "$baseURL/resellerSuccessStory";
@@ -125,6 +122,7 @@ class ApiConstants {
   static String get user => "$baseURL/user";
 
   static String get topProperties => "$baseURL/property/top/properties";
+  static String get banner => "$baseURL/banner";
 
   static String get topProject => "$baseURL/builderproject/top/projects";
 
@@ -257,7 +255,8 @@ class ApiConstants {
     print("header_token Updated token for otp verification: $token");
     return {contentType: applicationJson, authorization: "Bearer $token"};
   }
-    static Future<Map<String, String>> getUpdatedLoginWithOtpHeaders() async {
+
+  static Future<Map<String, String>> getUpdatedLoginWithOtpHeaders() async {
     final token = await SecureStorage.getLoginWithOtpToken();
     print("header_token Updated token for otp verification: $token");
     return {contentType: applicationJson, authorization: "Bearer $token"};

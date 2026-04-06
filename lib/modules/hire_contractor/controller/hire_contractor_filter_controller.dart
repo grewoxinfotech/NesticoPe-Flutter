@@ -281,7 +281,7 @@ class HireContractorFilterProfileController
         'label':
             'End to End New Home Construction Contractors (Turnkey Home Construction)',
         'value': 'end_to_end_new_home_construction_contractors',
-        'bestSelling': false,
+       'bestSelling': true,
         "trending": false,
         'items': [
           'Budget Home Construction',

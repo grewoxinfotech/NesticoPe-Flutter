@@ -505,35 +505,35 @@ class _BuilderCardState extends State<BuilderCard> {
 
     return GestureDetector(
       onTap: () async {
-        // final userId = widget.builder.id ?? '';
-        // final createdBy = widget.builder.id ?? '';
-        // log('BuilderCard: ${widget.builder.toMap()},');
-        // final tag = 'top_dev_profile_$userId';
-        // final projectController =
-        //     Get.isRegistered<ProjectWizardController>(tag: tag)
-        //         ? Get.find<ProjectWizardController>(tag: tag)
-        //         : Get.put(
-        //           ProjectWizardController(isBuilderView: false),
-        //           tag: tag,
-        //         );
-        // final profileController =
-        //     Get.isRegistered<TopBuilderController>(tag: tag)
-        //         ? Get.find<TopBuilderController>(tag: tag)
-        //         : Get.put(TopBuilderController(), tag: tag);
+        final userId = widget.builder.id ?? '';
+        final createdBy = widget.builder.id ?? '';
+        log('BuilderCard: ${widget.builder.toMap()},');
+        final tag = 'top_dev_profile_$userId';
+        final projectController =
+            Get.isRegistered<ProjectWizardController>(tag: tag)
+                ? Get.find<ProjectWizardController>(tag: tag)
+                : Get.put(
+                  ProjectWizardController(isBuilderView: false),
+                  tag: tag,
+                );
+        final profileController =
+            Get.isRegistered<TopBuilderController>(tag: tag)
+                ? Get.find<TopBuilderController>(tag: tag)
+                : Get.put(TopBuilderController(), tag: tag);
 
-        // projectController.fetchCreatedBy(
-        //   created: createdBy,
-        //   isItem: true,
-        //   withoutCity: true,
-        // );
-        // projectController.withoutCityFilter();
-        // await profileController.loadSellerProfile(userId);
-        // if (userId.isNotEmpty && createdBy.isNotEmpty) {
-        //   Get.to(
-        //     () =>
-        //         TopDeveloperProfileScreen(userId: userId, createdBy: createdBy),
-        //   );
-        // }
+        projectController.fetchCreatedBy(
+          created: createdBy,
+          isItem: true,
+          withoutCity: true,
+        );
+        projectController.withoutCityFilter();
+        await profileController.loadSellerProfile(userId);
+        if (userId.isNotEmpty && createdBy.isNotEmpty) {
+          Get.to(
+            () =>
+                TopDeveloperProfileScreen(userId: userId, createdBy: createdBy),
+          );
+        }
       },
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -549,11 +549,12 @@ class _BuilderCardState extends State<BuilderCard> {
           ],
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// Profile Image with verification badge
-            Stack(
-              clipBehavior: Clip.none,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+
               children: [
                 ClipOval(
                   child:
@@ -561,13 +562,13 @@ class _BuilderCardState extends State<BuilderCard> {
                           ? CustomImage(
                             type: CustomImageType.network,
                             src: widget.builder.profilePic!,
-                            width: 80,
-                            height: 80,
+                            width: 50,
+                            height: 50,
                             fit: BoxFit.cover,
                           )
                           : Container(
-                            width: 80,
-                            height: 80,
+                            width: 50,
+                            height: 50,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
                               color: Colors.teal.shade200,
@@ -585,161 +586,173 @@ class _BuilderCardState extends State<BuilderCard> {
                             ),
                           ),
                 ),
+                const SizedBox(width: 12),
                 // Verification badge
-                Positioned(
-                  bottom: 0,
-                  right: -4,
-                  child: Container(
-                    width: 24,
-                    height: 24,
-                    decoration: BoxDecoration(
-                      color: ColorRes.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.verified,
-                      color: Colors.white,
-                      size: 16,
-                    ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      /// Name
+                      Text(
+                        name.capitalize ?? 'No Default Name',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: AppFontSizes.medium,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.textColor,
+                        ),
+                      ),
+
+                      const SizedBox(height: 4),
+
+                      /// Location
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Icon(
+                            Icons.location_on_outlined,
+                            size: 14,
+                            color: ColorRes.leadGreyColor.shade700,
+                          ),
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              cityState,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.caption,
+                                color: ColorRes.leadGreyColor.shade700,
+                                fontWeight: AppFontWeights.medium,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        '${Formatter.formatNumber(experience)} years experience',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.caption,
+                          color: ColorRes.leadGreyColor.shade700,
+                          fontWeight: AppFontWeights.medium,
+                        ),
+                      ),
+
+                      const SizedBox(height: 14),
+                    ],
                   ),
                 ),
               ],
             ),
-
-            const SizedBox(height: 12),
-
-            /// Name
-            Text(
-              name.capitalize ?? 'No Default Name',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: Colors.black87,
-              ),
-            ),
-
-            const SizedBox(height: 4),
-
-            /// Location
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.location_on_outlined,
-                  size: 14,
-                  color: ColorRes.leadGreyColor.shade700,
-                ),
-                const SizedBox(width: 4),
-                Flexible(
-                  child: Text(
-                    cityState,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: ColorRes.leadGreyColor.shade700,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 14),
 
             /// Divider
-            Divider(color: Colors.grey.shade200, height: 1),
+            // Divider(color: Colors.grey.shade200, height: 1),
+         
+         
 
-            const SizedBox(height: 14),
-
-            /// Projects | Experience
+            /// Projects | Experience (contractor-style badges)
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                /// Projects
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "PROJECTS",
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: ColorRes.leadGreyColor.shade600,
-                        letterSpacing: 0.5,
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: ColorRes.primary.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: ColorRes.primary.withOpacity(0.2),
+                        width: 1,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Row(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Icon(
-                          Icons.apartment,
-                          size: 18,
-                       color: ColorRes.primary,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          "${Formatter.formatNumber(totalProjects)}",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: AppFontWeights.semiBold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-
-                /// Vertical Divider
-                Container(height: 36, width: 1, color: Colors.grey.shade300),
-
-                /// Experience
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "EXPERIENCE",
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: ColorRes.leadGreyColor.shade600,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                         Icon(
-                          Icons.work_outline_outlined,
-                          size: 18,
+                          Icons.apartment_rounded,
+                          size: 16,
                           color: ColorRes.primary,
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: 6),
+
                         Text(
-                          '${experience.toString()} Yrs',
+                          'Total Projects',
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: AppFontSizes.small,
                             fontWeight: AppFontWeights.semiBold,
-                            color: Colors.black87,
+                            color: ColorRes.primary,
                           ),
                         ),
+                        const SizedBox(width: 6),
+                        Text(
+                          '(${Formatter.formatNumber(totalProjects)})',
+                          style: const TextStyle(
+                          fontSize: 12,
+                  color: ColorRes.primary,
+                  fontWeight: AppFontWeights.semiBold,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
                       ],
                     ),
-                  ],
+                  ),
                 ),
+
+                // const SizedBox(width: 10),
               ],
             ),
 
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(
+                  child: _statBox(
+                    title: 'ONGOING',
+                    value: Formatter.formatNumber(
+                      (widget.builder.projectStats?.ongoing ??
+                          widget.builder.ongoingCount ??
+                          0),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _statBox(
+                    title: 'COMPLETED',
+                    value: Formatter.formatNumber(
+                      (widget.builder.projectStats?.completed ??
+                          widget.builder.completedCount ??
+                          0),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _statBox(
+                    title: 'UPCOMING',
+                    value: Formatter.formatNumber(
+                      (widget.builder.projectStats?.upcoming ??
+                          widget.builder.upcomingCount ??
+                          0),
+                    ),
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
 
             /// View Profile Button
             SizedBox(
               width: double.infinity,
+
               child: ElevatedButton(
                 onPressed: () async {
                   // final userId = widget.builder.id ?? '';
@@ -812,9 +825,9 @@ class _BuilderCardState extends State<BuilderCard> {
                   ),
                   elevation: 0,
                 ),
-                child:  Text(
+                child: Text(
                   'View Profile',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700,),
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
                 ),
               ),
             ),
@@ -841,6 +854,40 @@ class _BuilderCardState extends State<BuilderCard> {
     if (c.isEmpty && s.isEmpty) return '—';
     if (c.isNotEmpty && s.isNotEmpty) return "$c, $s";
     return c.isNotEmpty ? c : s;
+  }
+
+  Widget _statBox({required String title, required String value}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF2F4F8),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: AppFontWeights.semiBold,
+              color: ColorRes.primary,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: AppFontSizes.extraSmall,
+              fontWeight: AppFontWeights.medium,
+              color: Colors.grey.shade600,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

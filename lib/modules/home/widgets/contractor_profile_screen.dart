@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
 import 'package:nesticope_app/data/network/auth/model/user_model.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
@@ -24,7 +25,7 @@ import 'package:nesticope_app/app/widgets/shimmer/shimmer_widget.dart';
 
 class ContractorProfileDetailsScreen extends StatefulWidget {
   final Contractor contractor;
-   bool isPremium;
+  bool isPremium;
 
   ContractorProfileDetailsScreen({
     super.key,
@@ -47,8 +48,9 @@ class _ContractorProfileDetailsScreenState
   User? userData;
 
   Future<void> contactContractor() async {
-    final contractorServiceController =
-        Get.find<ContractorServiceController>(tag: widget.contractor.userId);
+    final contractorServiceController = Get.find<ContractorServiceController>(
+      tag: widget.contractor.userId,
+    );
 
     print("Selected Services: ${contractorServiceController.selectedItems}");
 
@@ -77,13 +79,13 @@ class _ContractorProfileDetailsScreenState
     setState(() {
       userData = details;
       _profilePic = details?.profilePic;
-      widget.isPremium=details.isPremium??false;
+      widget.isPremium = details.isPremium ?? false;
     });
   }
 
   @override
   void initState() {
-    // TODO: implement  initStatecccc    
+    // TODO: implement  initStatecccc
     super.initState();
     loadData();
   }
@@ -91,15 +93,14 @@ class _ContractorProfileDetailsScreenState
   @override
   Widget build(BuildContext context) {
     log("Contractor ID: ${widget.contractor.userId}");
-   
 
     final contractorServiceController = Get.put(
       ContractorServiceController(contractorId: widget.contractor.userId),
       tag: widget.contractor.userId,
     );
-      log("User Datafgjjugnhregre: ${contractorServiceController.userData.value?.toJson()}");
-  
-
+    log(
+      "User Datafgjjugnhregre: ${contractorServiceController.userData.value?.toJson()}",
+    );
 
     final displayName = getDisplayName(
       contractorFirstName:
@@ -132,16 +133,17 @@ class _ContractorProfileDetailsScreenState
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
                 // border: Border.all(color: ColorRes.leadGreyColor.shade300),
-                 boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 2,
-            offset: const Offset(2, 3),
-          ),
-        ],
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 2,
+                    offset: const Offset(2, 3),
+                  ),
+                ],
                 color: ColorRes.white,
               ),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   // ---------------- PROFILE HEADER ----------------
                   Container(
@@ -176,9 +178,11 @@ class _ContractorProfileDetailsScreenState
                               // ),
                               buildProfileAvatar(
                                 displayName: displayName,
-                                profilePic: _profilePic?.isNotEmpty == true
-                                    ? _profilePic!
-                                    : widget.contractor.imageUrl,
+                                radius: 30,
+                                profilePic:
+                                    _profilePic?.isNotEmpty == true
+                                        ? _profilePic!
+                                        : widget.contractor.imageUrl,
                               ),
                               const SizedBox(width: 16),
 
@@ -188,112 +192,151 @@ class _ContractorProfileDetailsScreenState
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     // Name (only if available)
-                                    if (displayName.isNotEmpty)
-                                      Text(
-                                        displayName,
-                                        style: TextStyle(
-                                          fontSize: AppFontSizes.body,
-                                          fontWeight: AppFontWeights.semiBold,
-                                          color: ColorRes.primary,
-                                        ),
-                                      ),
-
-                                    // Rating (only if valid)
-                                    if (double.tryParse(
-                                          widget.contractor.overallRating
-                                              .toString(),
-                                        ) !=
-                                        null)
-                                      Padding(
-                                        padding: const EdgeInsets.only(top: 4),
-                                        child: Row(
-                                          children: [
-                                            const Icon(
-                                              Icons.star,
-                                              color: ColorRes.warning,
-                                              size: 18,
-                                            ),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              "${widget.contractor.overallRating} (${widget.contractor.totalReviews})",
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        if (displayName.isNotEmpty)
+                                          Expanded(
+                                            child: Text(
+                                              displayName,
                                               style: TextStyle(
-                                                fontSize:
-                                                    AppFontSizes.bodySmall,
+                                                fontSize: AppFontSizes.body,
                                                 fontWeight:
-                                                    AppFontWeights.medium,
-                                                color: Colors.grey,
+                                                    AppFontWeights.semiBold,
+                                                color: ColorRes.primary,
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                      ),
+                                          ),
+                                        // Spacer(),
+                                        SizedBox(width: 12),
+                                        if (double.tryParse(
+                                              widget.contractor.overallRating
+                                                  .toString(),
+                                            ) !=
+                                            null)
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              top: 4,
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                const Icon(
+                                                  Icons.star_rounded,
+                                                  color: Colors.amber,
+                                                  size: 14,
+                                                ),
+                                                // const SizedBox(width: 4),
+                                                const SizedBox(width: 4),
+                                                Text(
+                                                  "${widget.contractor.overallRating}",
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        AppFontSizes.small,
+                                                    fontWeight:
+                                                        AppFontWeights.bold,
+                                                    color: ColorRes.primary,
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 4),
+                                                Text(
+                                                  "(${Formatter.formatNumber(widget.contractor.totalReviews)} review${widget.contractor.totalReviews == 1 ? '' : 's'})",
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        AppFontSizes.caption,
+                                                    color:
+                                                        ColorRes
+                                                            .leadGreyColor
+                                                            .shade700,
+                                                    fontWeight:
+                                                        AppFontWeights.medium,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+
+                                        // Rating (only if valid)
+                                      ],
+                                    ),
+                                    SizedBox(height: 6),
+                                    Row(
+                                      children: [
+                                        if (widget.contractor.contractorType !=
+                                                null &&
+                                            widget
+                                                .contractor
+                                                .contractorType!
+                                                .isNotEmpty) ...[
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8,
+                                              vertical: 4,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: ColorRes.primary
+                                                  .withOpacity(0.05),
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              border: Border.all(
+                                                color: ColorRes.primary
+                                                    .withOpacity(0.3),
+                                              ),
+                                            ),
+                                            child: Text(
+                                              widget.contractor.contractorType!,
+                                              style: TextStyle(
+                                                fontSize: AppFontSizes.caption,
+                                                fontWeight:
+                                                    AppFontWeights.medium,
+                                                color: ColorRes.primary,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+
+                                        if (widget
+                                                .contractor
+                                                .subscription
+                                                .hasPremiumPlan ||
+                                            widget.isPremium) ...[
+                                          SizedBox(width: 6),
+
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8,
+                                              vertical: 4,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: ColorRes.orangeColor
+                                                  .withOpacity(0.05),
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              border: Border.all(
+                                                color: ColorRes.orangeColor
+                                                    .withOpacity(0.3),
+                                              ),
+                                            ),
+                                            child: Text(
+                                              'Premium',
+                                              style: TextStyle(
+                                                fontSize: AppFontSizes.caption,
+                                                fontWeight:
+                                                    AppFontWeights.medium,
+                                                color: ColorRes.orangeColor,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ],
+                                    ),
                                   ],
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                        Column(
-                          children: [
-                            if (widget.contractor.contractorType != null &&
-                                widget
-                                    .contractor
-                                    .contractorType!
-                                    .isNotEmpty) ...[
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: ColorRes.primary.withOpacity(0.05),
-                                  borderRadius: BorderRadius.circular(6),
-                                  border: Border.all(
-                                    color: ColorRes.primary.withOpacity(0.3),
-                                  ),
-                                ),
-                                child: Text(
-                                  widget.contractor.contractorType!,
-                                  style: TextStyle(
-                                    fontSize: AppFontSizes.caption,
-                                    fontWeight: AppFontWeights.medium,
-                                    color: ColorRes.primary,
-                                  ),
-                                ),
-                              ),
-                            ],
-
-                            if (widget
-                                .contractor
-                                .subscription
-                                .hasPremiumPlan || widget.isPremium) ...[
-                              SizedBox(height: 6),
-
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: ColorRes.orangeColor.withOpacity(0.05),
-                                  borderRadius: BorderRadius.circular(6),
-                                  border: Border.all(
-                                    color: ColorRes.orangeColor.withOpacity(
-                                      0.3,
-                                    ),
-                                  ),
-                                ),
-                                child: Text(
-                                  'Premium',
-                                  style: TextStyle(
-                                    fontSize: AppFontSizes.caption,
-                                    fontWeight: AppFontWeights.medium,
-                                    color: ColorRes.orangeColor,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ],
                         ),
                       ],
                     ),
@@ -459,7 +502,8 @@ class _ContractorProfileDetailsScreenState
                         Get.find<ContractorServiceController>(
                           tag: widget.contractor.userId,
                         ).selectedItems.isNotEmpty;
-                    final bool enabled = !isGuest && !isOwnService && hasSelection;
+                    final bool enabled =
+                        !isGuest && !isOwnService && hasSelection;
 
                     return Column(
                       children: [
@@ -483,9 +527,10 @@ class _ContractorProfileDetailsScreenState
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: isGuest
-                                  ? ColorRes.primary
-                                  : enabled
+                              backgroundColor:
+                                  isGuest
+                                      ? ColorRes.primary
+                                      : enabled
                                       ? ColorRes.primary
                                       : ColorRes.leadGreyColor.shade300,
                               padding: const EdgeInsets.symmetric(vertical: 14),
@@ -733,11 +778,16 @@ class _ContractorProfileDetailsScreenState
           height: size,
           fit: BoxFit.cover,
           placeholder: (context, url) => ShimmerShapes.circle(size: size),
-          errorWidget: (context, url, error) => CircleAvatar(
-            radius: radius,
-            backgroundColor: ColorRes.primary,
-            child: Icon(Icons.design_services_outlined, color: Colors.white, size: radius),
-          ),
+          errorWidget:
+              (context, url, error) => CircleAvatar(
+                radius: radius,
+                backgroundColor: ColorRes.primary,
+                child: Icon(
+                  Icons.design_services_outlined,
+                  color: Colors.white,
+                  size: radius,
+                ),
+              ),
         ),
       );
     }
@@ -745,7 +795,11 @@ class _ContractorProfileDetailsScreenState
     return CircleAvatar(
       radius: radius,
       backgroundColor: ColorRes.primary,
-      child: Icon(Icons.design_services_outlined, color: Colors.white, size: radius),
+      child: Icon(
+        Icons.design_services_outlined,
+        color: Colors.white,
+        size: radius,
+      ),
     );
   }
 
@@ -814,8 +868,9 @@ class _ServiceCardState extends State<ServiceCard> {
 
   @override
   Widget build(BuildContext context) {
-    final contractorController =
-        Get.find<ContractorServiceController>(tag: widget.tag);
+    final contractorController = Get.find<ContractorServiceController>(
+      tag: widget.tag,
+    );
     var meta = widget.service.meta;
     final metaMaps = [
       cleanMetaMap({
@@ -913,24 +968,26 @@ class _ServiceCardState extends State<ServiceCard> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
-        border: widget.isSelectable
-            ? Border.all(
-          color:
-              widget.isSelectable &&
-                      contractorController.selectedItems.contains(
-                        widget.service,
-                      )
-                  ? ColorRes.primary
-                  : ColorRes.leadGreyColor.shade300,
-          width:
-              widget.isSelectable &&
-                      contractorController.selectedItems.contains(
-                        widget.service,
-                      )
-                  ? 2
-                  : 1,
-        ):null,
-         boxShadow: [
+        border:
+            widget.isSelectable
+                ? Border.all(
+                  color:
+                      widget.isSelectable &&
+                              contractorController.selectedItems.contains(
+                                widget.service,
+                              )
+                          ? ColorRes.primary
+                          : ColorRes.leadGreyColor.shade300,
+                  width:
+                      widget.isSelectable &&
+                              contractorController.selectedItems.contains(
+                                widget.service,
+                              )
+                          ? 2
+                          : 1,
+                )
+                : null,
+        boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
             blurRadius: 2,
@@ -1041,26 +1098,30 @@ class _ServiceCardState extends State<ServiceCard> {
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
+                            borderRadius: BorderRadius.circular(
+                              AppRadius.mediumLarge,
+                            ),
                             border: Border.all(
                               color: ColorRes.border,
                               width: 1,
                             ),
                           ),
                           child: ClipRRect(
-
-                            borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
+                            borderRadius: BorderRadius.circular(
+                              AppRadius.mediumLarge,
+                            ),
                             child: CachedNetworkImage(
                               imageUrl: widget.service.serviceImage![index],
                               height: 180,
                               width: double.infinity,
                               fit: BoxFit.cover,
-                            placeholder: (context, url) => ShimmerShapes.rounded(
-                              width: double.infinity,
-                              height: 180,
-                              
-                              borderRadius: AppRadius.mediumLarge,
-                            ),
+                              placeholder:
+                                  (context, url) => ShimmerShapes.rounded(
+                                    width: double.infinity,
+                                    height: 180,
+
+                                    borderRadius: AppRadius.mediumLarge,
+                                  ),
                               errorWidget:
                                   (context, url, error) => Container(
                                     height: 180,

@@ -260,30 +260,8 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
                                           () => MySubscriptionScreen(),
                                         ),
                                   ),
-                                  const SizedBox(height: 24),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: NesticoPeButton(
-                                      width: double.infinity,
-                                      borderRadius: BorderRadius.circular(10),
-                                      titleTextStyle: TextStyle(
-                                        fontSize: AppFontSizes.medium,
-                                        color: ColorRes.white,
-                                        fontWeight: AppFontWeights.semiBold,
-                                      ),
-                                      height: 45,
-                                      onTap: () {
-                                        final controller =
-                                            Get.isRegistered<AuthController>()
-                                                ? Get.find<AuthController>()
-                                                : Get.put(AuthController());
-                                        controller.logout();
-                                      },
-                                      title: 'Logout',
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  _buildDeleteAccountButton(),
+                                  // const SizedBox(height: 24),
+                                  SizedBox.shrink(),
                                 ],
                                 if (!profileController.isEditing.value) ...[
                                   const SizedBox(height: 16),
@@ -315,6 +293,39 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
           }),
         ],
       ),
+      bottomNavigationBar:Obx(() => (!profileController.isEditing.value)? SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: double.infinity,
+                child: NesticoPeButton(
+                  width: double.infinity,
+                  borderRadius: BorderRadius.circular(10),
+                  titleTextStyle: TextStyle(
+                    fontSize: AppFontSizes.medium,
+                    color: ColorRes.white,
+                    fontWeight: AppFontWeights.semiBold,
+
+                  ),
+                  height: 45,
+                  onTap: () {
+                    final controller = Get.isRegistered<AuthController>()
+                        ? Get.find<AuthController>()
+                        : Get.put(AuthController());
+                    controller.logout();
+                  },
+                  title: 'Logout',
+                ),
+              ),
+              const SizedBox(height: 12),
+              _buildDeleteAccountButton(),
+            ],
+          ),
+        ),
+      ):SizedBox.shrink(),)
     );
   }
 

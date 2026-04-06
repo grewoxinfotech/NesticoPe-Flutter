@@ -661,41 +661,24 @@ class ProfileScreen extends StatelessWidget {
 
                       // 🎯 Role-Based Action Buttons Section
                       _buildRoleBasedActions(),
-                      // const SizedBox(height: 10),
-                      SettingsMenuTile(
-                        icon: Icons.help_outlined,
-                        title: "Help & Support",
-                        subTitle: "Get help and support",
-                        onTap: () async {
-                          final uri = Uri.parse(
-                            'https://nesticope.grewoxinfotech.com/contact',
-                          );
-                          await launchUrl(
-                            uri,
-                            mode: LaunchMode.externalApplication,
-                          );
-                        },
-                      ),
 
+                      // const SizedBox(height: 10),
+                      // SettingsMenuTile(
+                      //   icon: Icons.help_outlined,
+                      //   title: "Help & Support",
+                      //   subTitle: "Get help and support",
+                      //   onTap: () async {
+                      //     final uri = Uri.parse(
+                      //       'https://nesticope.grewoxinfotech.com/contact',
+                      //     );
+                      //     await launchUrl(
+                      //       uri,
+                      //       mode: LaunchMode.externalApplication,
+                      //     );
+                      //   },
+                      // ),
                       SizedBox(height: 24),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Get.to(() => LoginScreen());
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: ColorRes.primary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          child: Text(
-                            'Login',
-                            style: TextStyle(letterSpacing: 0.5),
-                          ),
-                        ),
-                      ),
+                      SizedBox.shrink(),
                       SizedBox(height: 12),
                       Center(
                         child: SizedBox(
@@ -845,20 +828,20 @@ class ProfileScreen extends StatelessWidget {
                       ],
 
                       // const SizedBox(height: 10),
-                      SettingsMenuTile(
-                        icon: Icons.help_outlined,
-                        title: "Help & Support",
-                        subTitle: "Get help and support",
-                        onTap: () async {
-                          final uri = Uri.parse(
-                            'https://nesticope.grewoxinfotech.com/contact',
-                          );
-                          await launchUrl(
-                            uri,
-                            mode: LaunchMode.externalApplication,
-                          );
-                        },
-                      ),
+                      // SettingsMenuTile(
+                      //   icon: Icons.help_outlined,
+                      //   title: "Help & Support",
+                      //   subTitle: "Get help and support",
+                      //   onTap: () async {
+                      //     final uri = Uri.parse(
+                      //       'https://nesticope.grewoxinfotech.com/contact',
+                      //     );
+                      //     await launchUrl(
+                      //       uri,
+                      //       mode: LaunchMode.externalApplication,
+                      //     );
+                      //   },
+                      // ),
 
                       // SettingsMenuTile(
                       //   icon: Icons.diamond_outlined,
@@ -902,7 +885,6 @@ class ProfileScreen extends StatelessWidget {
                       // ),
                       // const SizedBox(height: 20),
                       // _buildHelpCenter(),
-                      const SizedBox(height: 20),
 
                       // SizedBox(
                       //   width: double.infinity,
@@ -915,30 +897,82 @@ class ProfileScreen extends StatelessWidget {
                       //     child: Text('Logout', style: TextStyle(fontSize: 14)),
                       //   ),
                       // ),
-                      SizedBox(
-                        width: double.infinity,
-                        child: NesticoPeButton(
-                          width: double.infinity,
-                          borderRadius: BorderRadius.circular(10),
-                          titleTextStyle: TextStyle(
-                            fontSize: AppFontSizes.medium,
-                            color: ColorRes.white,
-                            fontWeight: AppFontWeights.semiBold,
-                          ),
-
-                          height: 45,
-                          onTap: () {
-                            Get.lazyPut(() => AuthController());
-                            final controller = Get.find<AuthController>();
-                            controller.logout();
-                          },
-                          title: 'Logout',
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      if (!UserHelper.isGuest) _buildDeleteAccountButton(),
+                      SizedBox.shrink(),
                     ],
                   ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        
+        child: Container(
+          decoration: BoxDecoration(
+            color: ColorRes.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            boxShadow: [
+              BoxShadow(
+                color: ColorRes.black.withOpacity(0.1),
+                spreadRadius: 2,
+                blurRadius: 8,
+                offset: Offset(0, 2),
+              ),
+            ],
+            border: Border(
+              top: BorderSide(
+                color: ColorRes.leadGreyColor.shade100,
+                width: 1,
+              ),
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child:
+                UserHelper.isGuest
+                    ? SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Get.to(() => LoginScreen());
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ColorRes.primary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        child: Text(
+                          'Login',
+                          style: TextStyle(letterSpacing: 0.5),
+                        ),
+                      ),
+                    )
+                    : Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          child: NesticoPeButton(
+                            width: double.infinity,
+                            borderRadius: BorderRadius.circular(10),
+                            titleTextStyle: TextStyle(
+                              fontSize: AppFontSizes.medium,
+                              color: ColorRes.white,
+                              fontWeight: AppFontWeights.semiBold,
+                            ),
+                            height: 45,
+                            onTap: () {
+                              Get.lazyPut(() => AuthController());
+                              final controller = Get.find<AuthController>();
+                              controller.logout();
+                            },
+                            title: 'Logout',
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        _buildDeleteAccountButton(),
+                      ],
+                    ),
+          ),
         ),
       ),
     );
@@ -1140,7 +1174,7 @@ class ProfileScreen extends StatelessWidget {
           const SizedBox(height: 10),
           SettingsMenuTile(
             icon: Icons.person_add_outlined,
-            
+
             title: "Convert to Builder",
             subTitle: "Become the builder",
 

@@ -8,6 +8,7 @@
 // import 'package:nesticope_app/app/services/truecaller_service.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 import 'package:nesticope_app/app/services/truecaller_service.dart';
+import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
 import 'package:nesticope_app/services/notification_service.dart' as notif;
 import 'package:nesticope_app/data/network/user/service/notification_sync_service.dart';
 import 'package:nesticope_app/modules/auth/controllers/auth_controller.dart';
@@ -272,6 +273,7 @@ import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/data/network/auth/model/user_model.dart';
 import 'package:nesticope_app/modules/auth/views/register_screen.dart';
+import 'package:nesticope_app/modules/auth/views/login_screen.dart';
 import 'package:nesticope_app/data/network/auth/service/auth_service.dart';
 import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:nesticope_app/widgets/messages/snack_bar.dart';
@@ -588,7 +590,9 @@ class OnboardingController extends GetxController {
       _resendTimer?.cancel();
       resendSecondsLeft = 120;
       if (!isSheetOpen) return;
-      setState(() {});
+      setState(() {
+        
+      });
       _resendTimer = Timer.periodic(const Duration(seconds: 1), (t) {
         if (!isSheetOpen) {
           t.cancel();
@@ -805,11 +809,13 @@ class OnboardingController extends GetxController {
                     ),
                   ),
 
+
                   const SizedBox(height: 20),
 
                   /// STEP 1: PHONE INPUT
                   ///
                   if (!stepOtp) ...[
+
                     // TextField(
                     //   keyboardType: TextInputType.phone,
                     //   style: TextStyle(
@@ -847,6 +853,7 @@ class OnboardingController extends GetxController {
                     //   ),
                     //   onChanged: (v) => phone = v,
                     // ),
+
                     Form(
                       key: formKey,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -1057,16 +1064,57 @@ class OnboardingController extends GetxController {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(
+                            color: Colors.grey.shade300,
+                            width: 1,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.grey.shade300),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: () async {
+                          // Get.to(() => const LoginScreen());
+                          Get.to(() => const OtpLoginScreen(isPartner: true,));
+
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.person_outlined,
+                                color: ColorRes.primary),
+                            const SizedBox(width: 8),
+                            Text(
+                              "Login for Partner",
+                              style: TextStyle(
+                                color: ColorRes.textPrimary,
+                                fontSize: AppFontSizes.bodySmall,
+                                fontWeight: AppFontWeights.medium,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ]
                   /// STEP 2: OTP UI
                   else ...[
                     /// OTP Boxes
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(4, (index) {
                         return Container(
                           width: 45,
                           height: 55,
+                          margin: const EdgeInsets.symmetric(horizontal: 8),
+                          // padding: const EdgeInsets.symmetric(horizontal: 12),
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             border: Border.all(color: Colors.grey.shade300),

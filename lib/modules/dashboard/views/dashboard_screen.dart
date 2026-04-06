@@ -160,8 +160,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       HomeScreen(),
       PropertyDetail(isFromSeeAll: true),
       UserActivityScreen(),
-      InsightsScreen(),
+
       HireContractorScreen(fromDashboard: true),
+      InsightsScreen(),
     ];
   }
 

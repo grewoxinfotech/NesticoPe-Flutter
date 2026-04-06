@@ -22,6 +22,7 @@ class CategoryServiceExplorer extends StatefulWidget {
 
 class _CategoryServiceExplorerState extends State<CategoryServiceExplorer> {
   final Set<int> expanded = {};
+  final Set<int> showAll = {};
 
   String _keyForMap(String name) {
     return name
@@ -59,11 +60,30 @@ class _CategoryServiceExplorerState extends State<CategoryServiceExplorer> {
 
     final key = _keyForMap(widget.categoryName);
     print('Category Key : $key');
-    final groups = controller.getServiceNamesForCategory(key);
+    final groups = [...controller.getServiceNamesForCategory(key)]..sort((a, b) {
+      final aTrend = (a['trending'] as bool?) ?? false;
+      final aBest = (a['bestSelling'] as bool?) ?? false;
+      final bTrend = (b['trending'] as bool?) ?? false;
+      final bBest = (b['bestSelling'] as bool?) ?? false;
+
+      final aScore = (aTrend || aBest) ? 0 : 1;
+      final bScore = (bTrend || bBest) ? 0 : 1;
+
+      return aScore.compareTo(bScore);
+    });
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ColorRes.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            
+            Get.back();
+            controller.selectedServiceNames.clear();
+            controller.selectedWorkItems.clear();
+          },
+        ),
         title: Text(
           widget.categoryName,
           style: const TextStyle(fontWeight: AppFontWeights.semiBold),
@@ -107,62 +127,82 @@ class _CategoryServiceExplorerState extends State<CategoryServiceExplorer> {
                     final isTrending = (g['trending'] as bool?) ?? false;
                     final isBestSelling = (g['bestSelling'] as bool?) ?? false;
                     final isExpanded = expanded.contains(index);
-                    final visibleCount =
-                        isExpanded
+                    final visibleCount = isExpanded
+                        ? (showAll.contains(index)
                             ? items.length
-                            : (items.length > 5 ? 5 : items.length);
-                    return Material(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(
-                        AppRadius.mediumLarge,
-                      ),
-                      child: Container(
+                            : (items.length > 5 ? 5 : items.length))
+                        : 0;
+                    return Obx(() {
+                      final selectedCountInCard =
+                          items
+                              .where(
+                                (item) =>
+                                    controller.selectedWorkItems.contains(item),
+                              )
+                              .length;
 
-                        decoration: BoxDecoration(
-                          color: ColorRes.white,
-                          border:
-                              isTrending || isBestSelling
-                                  ? Border.all(
-                                    color:
-                                        (isTrending)
-                                            ? Color(0xFF7C4DFF)
-                                            : (isBestSelling)
-                                            ? ColorRes.green
-                                            : ColorRes.grey.withOpacity(0.2),
-                                    width:
-                                        (isTrending || isBestSelling) ? 2.5 : 1,
-                                  )
-                                  : null,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.04),
-                              blurRadius: 2,
-                              offset: const Offset(2, 3),
-                            ),
-                          ],
-                          borderRadius: BorderRadius.circular(
-                            AppRadius.mediumLarge,
-                          ),
+                      return Material(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(
+                          AppRadius.mediumLarge,
                         ),
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    label,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: AppFontSizes.medium,
-                                      fontWeight: AppFontWeights.bold,
-                                      color: ColorRes.textColor,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: ColorRes.white,
+                            border:
+                                isTrending || isBestSelling
+                                    ? Border.all(
+                                      color:
+                                          (isTrending)
+                                              ? Color(0xFF7C4DFF)
+                                              : (isBestSelling)
+                                              ? ColorRes.green
+                                              : ColorRes.grey.withOpacity(0.2),
+                                      width:
+                                          (isTrending || isBestSelling)
+                                              ? 2.5
+                                              : 1,
+                                    )
+                                    : null,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.04),
+                                blurRadius: 2,
+                                offset: const Offset(2, 3),
+                              ),
+                            ],
+                            borderRadius: BorderRadius.circular(
+                              AppRadius.mediumLarge,
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  if (isExpanded) {
+                                    expanded.remove(index);
+                                  } else {
+                                    expanded.add(index);
+                                  }
+                                });
+                              },
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      label,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: AppFontSizes.medium,
+                                        fontWeight: AppFontWeights.bold,
+                                        color: ColorRes.textColor,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                if (isTrending || isBestSelling)
                                   Row(
                                     children: [
                                       if (isTrending)
@@ -174,202 +214,219 @@ class _CategoryServiceExplorerState extends State<CategoryServiceExplorer> {
                                         const SizedBox(width: 6),
                                       if (isBestSelling)
                                         _badge('Best Selling', ColorRes.green),
+                                      const SizedBox(width: 6),
+                                      Icon(
+                                        isExpanded ? Icons.expand_less : Icons.expand_more,
+                                        color: ColorRes.primary,
+                                        size: 20,
+                                      ),
                                     ],
                                   ),
-                              ],
+                                ],
+                              ),
                             ),
-                            SizedBox(height: 20),
+                              SizedBox(height: 20),
 
                             if (items.isEmpty)
-                              Center(
-                                child: InkWell(
-                                  onTap: () {
-                                    controller.selectedCategoryId.value =
-                                        widget.categoryId;
-                                    controller.selectedCategoryName.value =
-                                        widget.categoryName;
-                                    controller.selectedServiceNames.clear();
-                                    controller.selectedWorkItems.clear();
-                                    controller.workItemOptions.clear();
-
-                                    controller.onServiceNameSelected(
-                                      value,
-                                      label: label,
-                                    );
-
-                                    controller.applyFilters({
-                                      'serviceNames': label,
-                                    });
-
-                                    Get.to(
-                                      () => const HireContractorProfileList(),
-                                    );
-                                  },
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 10,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: ColorRes.primary,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: const [
-                                        Text(
-                                          'View Contractors',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: AppFontSizes.caption,
-                                            fontWeight: AppFontWeights.semiBold,
-                                          ),
+                              const SizedBox.shrink()
+                              else
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ...List.generate(visibleCount, (i) {
+                                      final item = items[i];
+                                      final isSelected = controller
+                                          .selectedWorkItems
+                                          .contains(item);
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                          bottom: 6,
                                         ),
-                                        SizedBox(width: 8),
-                                        Icon(
-                                          Icons.check_circle,
-                                          size: 14,
-                                          color: Colors.white,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              )
-                            else
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ...List.generate(visibleCount, (i) {
-                                    final item = items[i];
-                                    return Padding(
-                                      padding: const EdgeInsets.only(bottom: 6),
-                                      child: InkWell(
-                                        onTap: () {
-                                          controller.selectedCategoryId.value =
-                                              widget.categoryId;
-                                          controller
-                                              .selectedCategoryName
-                                              .value = widget.categoryName;
-                                          controller.selectedServiceNames
-                                              .clear();
-                                          controller.selectedWorkItems.clear();
-                                          controller.workItemOptions.clear();
-                                          controller.onServiceNameSelected(
-                                            value,
-                                            label: label,
-                                          );
-                                          controller.selectedWorkItems.add(
-                                            item,
-                                          );
-                                          controller.applyFilters({
-                                            'serviceNames': label,
-                                            'works': item,
-                                          });
-                                          Get.to(
-                                            () =>
-                                                const HireContractorProfileList(),
-                                          );
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 10,
-                                            vertical: 12,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: ColorRes.grey.withOpacity(
-                                              0.06,
+                                        child: InkWell(
+                                          onTap: () {
+                                            controller.selectedCategoryId
+                                                .value = widget.categoryId;
+                                            controller.selectedCategoryName
+                                                .value = widget.categoryName;
+
+                                            if (isSelected) {
+                                              controller.selectedWorkItems
+                                                  .remove(item);
+                                            } else {
+                                              controller.onServiceNameSelected(
+                                                value,
+                                                label: label,
+                                              );
+                                              controller.selectedWorkItems.add(
+                                                item,
+                                              );
+                                            }
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 10,
+                                              vertical: 12,
                                             ),
-                                            border: Border.all(
+                                            decoration: BoxDecoration(
                                               color:
-                                                  ColorRes
-                                                      .leadGreyColor
-                                                      .shade300,
-                                              width: 1,
+                                                  isSelected
+                                                      ? ColorRes.primary
+                                                          .withOpacity(0.05)
+                                                      : ColorRes.grey
+                                                          .withOpacity(0.06),
+                                              border: Border.all(
+                                                color:
+                                                    isSelected
+                                                        ? ColorRes.primary
+                                                        : ColorRes.leadGreyColor
+                                                            .shade300,
+                                                width: 1,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
                                             ),
-                                            borderRadius: BorderRadius.circular(
-                                              10,
+                                            child: Row(
+                                              children: [
+                                                Icon(
+                                                  isSelected
+                                                      ? Icons.check_box
+                                                      : Icons
+                                                          .check_box_outline_blank,
+                                                  size: 18,
+                                                  color:
+                                                      isSelected
+                                                          ? ColorRes.primary
+                                                          : ColorRes
+                                                              .leadGreyColor
+                                                              .shade700,
+                                                ),
+                                                const SizedBox(width: 8),
+                                                Expanded(
+                                                  child: Text(
+                                                    item,
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          AppFontSizes.caption,
+                                                      fontWeight:
+                                                          isSelected
+                                                              ? AppFontWeights
+                                                                  .bold
+                                                              : AppFontWeights
+                                                                  .medium,
+                                                      color:
+                                                          isSelected
+                                                              ? ColorRes.primary
+                                                              : ColorRes
+                                                                  .textColor,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                                    if (isExpanded && items.length > 5)
+                                      InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            if (showAll.contains(index)) {
+                                              showAll.remove(index);
+                                            } else {
+                                              showAll.add(index);
+                                            }
+                                          });
+                                        },
+                                        borderRadius: BorderRadius.circular(6),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 4,
+                                            horizontal: 2,
                                           ),
                                           child: Row(
+                                            mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Icon(
-                                                Icons.check_circle,
-                                                size: 14,
-                                                color:
-                                                    ColorRes
-                                                        .leadGreyColor
-                                                        .shade700,
+                                                showAll.contains(index)
+                                                    ? Icons.expand_less
+                                                    : Icons.expand_more,
+                                                color: ColorRes.primary,
+                                                size: 18,
                                               ),
-                                              const SizedBox(width: 8),
-                                              Expanded(
-                                                child: Text(
-                                                  item,
-
-                                                  style: const TextStyle(
-                                                    fontSize:
-                                                        AppFontSizes.caption,
-                                                    fontWeight:
-                                                        AppFontWeights.medium,
-                                                  ),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                showAll.contains(index)
+                                                    ? 'Show Less'
+                                                    : 'Show ${items.length - 5} More',
+                                                style: const TextStyle(
+                                                  color: ColorRes.primary,
+                                                  fontWeight:
+                                                      AppFontWeights.semiBold,
+                                                  fontSize: AppFontSizes.small,
                                                 ),
                                               ),
                                             ],
                                           ),
                                         ),
                                       ),
-                                    );
-                                  }),
-                                  if (items.length > 5)
-                                    InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          if (isExpanded) {
-                                            expanded.remove(index);
-                                          } else {
-                                            expanded.add(index);
-                                          }
-                                        });
-                                      },
-                                      borderRadius: BorderRadius.circular(6),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 4,
-                                          horizontal: 2,
-                                        ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Icon(
-                                              isExpanded
-                                                  ? Icons.expand_less
-                                                  : Icons.expand_more,
-                                              color: ColorRes.primary,
-                                              size: 18,
+                                    if (selectedCountInCard > 0)
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 12),
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            final filters = <String, String>{};
+                                            if (controller
+                                                .selectedServiceNames
+                                                .isNotEmpty) {
+                                              filters['serviceNames'] =
+                                                  controller
+                                                      .selectedServiceNames
+                                                      .map((e) => e.trim())
+                                                      .join(', ');
+                                            }
+                                            if (controller
+                                                .selectedWorkItems
+                                                .isNotEmpty) {
+                                              filters['works'] = controller
+                                                  .selectedWorkItems
+                                                  .map((e) => e.trim())
+                                                  .join(', ');
+                                            }
+                                            controller.applyFilters(filters);
+                                            Get.to(
+                                              () =>
+                                                  const HireContractorProfileList(),
+                                            );
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: ColorRes.primary,
+                                            minimumSize: const Size(
+                                              double.infinity,
+                                              40,
                                             ),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              isExpanded
-                                                  ? 'Show Less'
-                                                  : 'Show ${items.length - 5} More',
-                                              style: const TextStyle(
-                                                color: ColorRes.primary,
-                                                fontWeight:
-                                                    AppFontWeights.semiBold,
-                                                fontSize: AppFontSizes.small,
-                                              ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                             ),
-                                          ],
+                                          ),
+                                          child: Text(
+                                            'View Contractors ($selectedCountInCard)',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: AppFontSizes.caption,
+                                              fontWeight: AppFontWeights.bold,
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                ],
-                              ),
-                          ],
+                                  ],
+                                ),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
+                      );
+                    });
                   },
                 ),
       ),

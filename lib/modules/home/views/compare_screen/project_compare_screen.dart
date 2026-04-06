@@ -109,12 +109,20 @@ class _ProjectCompareScreenState extends State<ProjectCompareScreen> {
             fontWeight: AppFontWeights.bold,
           ),
         ),
-        // actions: [
-        //   IconButton(
-        //     icon: const Icon(Icons.more_vert, color: ColorRes.black, size: 20),
-        //     onPressed: () {},
-        //   ),
-        // ],
+        actions: [
+         if (ProjectCompareManager.to.selectedList.length < 5)
+                TextButton(
+              onPressed: () => Get.back(),
+              child: Text(
+                '+ Add',
+                style: TextStyle(
+                  // fontSize: AppFontSizes.small,
+                  fontWeight: AppFontWeights.medium,
+                  color: ColorRes.primary,
+                ),
+              ),
+            ),
+        ],
       ),
       body: SafeArea(
         child: Obx(() {
@@ -222,35 +230,7 @@ class _ProjectCompareScreenState extends State<ProjectCompareScreen> {
                     ),
                   );
                 }).toList(),
-                if (selected.length < 5)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                    child: Center(
-                      child: Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Get.back();
-                            },
-                            child: const Icon(
-                              Icons.add_circle_outline,
-                              size: 30,
-                              color: ColorRes.primary,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Add up to ${5 - selected.length} more projects to compare',
-                            style: TextStyle(
-                              fontSize: AppFontSizes.small,
-                              fontWeight: AppFontWeights.medium,
-                              color: ColorRes.leadGreyColor[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                
                 const SizedBox(height: 16),
                 Padding(
               padding: EdgeInsets.symmetric(horizontal: AppPadding.medium,),
@@ -331,7 +311,7 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
           elevation: 1,
           shadowColor: ColorRes.black.withOpacity(0.06),
           child: Container(
-            height: 115,
+            height: 100,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               boxShadow: widget.isActive
@@ -414,8 +394,9 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
                             Text(
                               widget.item.address,
                               style: TextStyle(
-                                fontSize: AppFontSizes.caption,
-                                color: ColorRes.leadGreyColor[600],
+                                fontSize: AppFontSizes.extraSmall,
+                                fontWeight: AppFontWeights.medium,
+                                color: ColorRes.leadGreyColor[700],
                                 height: 1.3,
                               ),
                               maxLines: 1,
@@ -423,29 +404,29 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
                             ),
                             // SizedBox(height: 10,),
                             // Status Badge
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 3,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: _getStatusColor(widget.item.status),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: Text(
-                                    widget.item.status.toUpperCase(),
-                                    style: const TextStyle(
-                                      fontSize: AppFontSizes.mini,
-                                      fontWeight: AppFontWeights.medium,
-                                      color: ColorRes.white,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                            // Row(
+                            //   mainAxisSize: MainAxisSize.min,
+                            //   children: [
+                            //     Container(
+                            //       padding: const EdgeInsets.symmetric(
+                            //         horizontal: 8,
+                            //         vertical: 3,
+                            //       ),
+                            //       decoration: BoxDecoration(
+                            //         color: _getStatusColor(widget.item.status),
+                            //         borderRadius: BorderRadius.circular(4),
+                            //       ),
+                            //       child: Text(
+                            //         widget.item.status.toUpperCase(),
+                            //         style: const TextStyle(
+                            //           fontSize: AppFontSizes.mini,
+                            //           fontWeight: AppFontWeights.medium,
+                            //           color: ColorRes.white,
+                            //         ),
+                            //       ),
+                            //     ),
+                            //   ],
+                            // ),
         
                             // Price Row
                             Row(

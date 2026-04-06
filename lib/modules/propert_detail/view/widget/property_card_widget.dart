@@ -71,11 +71,9 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
       child: Card(
         color: ColorRes.white,
         shape: RoundedRectangleBorder(
-
           borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
-          
+
           // ignore: deprecated_member_use
-        
           side: BorderSide(color: ColorRes.leadGreyColor[300]!, width: 1),
         ),
         // elevation: 2,
@@ -153,25 +151,25 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                 ),
 
                 // TODO: fetch by role
-                if((widget.property.reraId?.isNotEmpty??false) && (widget.property.reraId!=null))
-                  ...[
-                    Positioned(
-                      left: 14,
-                      bottom: 14,
-                      child: ReraComponent(
-                        text: "rera",
-                        backgroundColor: ColorRes.black.withOpacity(0.7),
-                        textColor: ColorRes.background,
-                        fontSize: AppFontSizes.extraSmall,
+                if ((widget.property.reraId?.isNotEmpty ?? false) &&
+                    (widget.property.reraId != null)) ...[
+                  Positioned(
+                    left: 14,
+                    bottom: 14,
+                    child: ReraComponent(
+                      text: "rera",
+                      backgroundColor: ColorRes.black.withOpacity(0.7),
+                      textColor: ColorRes.background,
+                      fontSize: AppFontSizes.extraSmall,
 
-                        borderRadius: AppRadius.small,
-                        fontWeight: AppFontWeights.bold,
-                        showIcon: true,
-                        iconColor: ColorRes.success,
-                        iconSize: 14,
-                      ),
+                      borderRadius: AppRadius.small,
+                      fontWeight: AppFontWeights.bold,
+                      showIcon: true,
+                      iconColor: ColorRes.success,
+                      iconSize: 14,
                     ),
-                  ],
+                  ),
+                ],
 
                 // Compare & Favorite buttons
                 Positioned(
@@ -189,21 +187,35 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                           final selected = compare.isSelected(
                             widget.property.id,
                           );
-                          return CircleAvatar(
-                            radius: 14,
-                            backgroundColor:
-                                selected ? ColorRes.primary : ColorRes.white,
+                          return Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: ColorRes.black.withOpacity(0.15),
+                                  spreadRadius: 1,
+                                  blurRadius: 5,
+                                ),
+                              ],
+                            ),
+                            child: CircleAvatar(
+                              radius: 17,
+                              backgroundColor:
+                                  selected ? ColorRes.primary : ColorRes.white,
 
-                            child: Icon(
-                              Icons.compare_arrows,
-                              color:
-                                  selected ? ColorRes.white : ColorRes.primary,
-                              size: 17,
+                              child: Icon(
+                                Icons.compare_arrows,
+                                color:
+                                    selected
+                                        ? ColorRes.white
+                                        : ColorRes.primary,
+                                size: 17,
+                              ),
                             ),
                           );
                         }),
                       ),
-                      const SizedBox(width: 6),
+                      const SizedBox(width: 12),
                       // Favorite button
                       GestureDetector(
                         onTap: () {
@@ -211,23 +223,35 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                             widget.property.id ?? '',
                           );
                         },
-                        child: CircleAvatar(
-                          radius: 14,
-                          backgroundColor: ColorRes.white,
-                          child: Obx(() {
-                            final isFavorite = favoriteController.favorites
-                                .contains(widget.property.id);
-                            return Icon(
-                              isFavorite
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                              color:
-                                  isFavorite
-                                      ? ColorRes.error
-                                      : ColorRes.leadGreyColor,
-                              size: 17,
-                            );
-                          }),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: ColorRes.black.withOpacity(0.15),
+                                spreadRadius: 1,
+                                blurRadius: 5,
+                              ),
+                            ],
+                          ),
+                          child: CircleAvatar(
+                            radius: 17,
+                            backgroundColor: ColorRes.white,
+                            child: Obx(() {
+                              final isFavorite = favoriteController.favorites
+                                  .contains(widget.property.id);
+                              return Icon(
+                                isFavorite
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color:
+                                    isFavorite
+                                        ? ColorRes.error
+                                        : ColorRes.primary,
+                                size: 17,
+                              );
+                            }),
+                          ),
                         ),
                       ),
                     ],

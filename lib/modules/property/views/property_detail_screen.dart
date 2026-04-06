@@ -3276,6 +3276,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nesticope_app/app/constants/api_constants.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/app/constants/img_res.dart';
@@ -3530,6 +3531,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
         Expanded(
           child: OutlinedButton.icon(
             onPressed: () async {
+              final id = property.id ?? '';
               if (cc.primaryPhone.value.isEmpty) {
                 await cc.loadContacts(reset: true);
               }
@@ -3537,8 +3539,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
               if (number.isNotEmpty) {
                 await ContactHelper.openWhatsApp(
                   number,
-                  message:
-                      'Hi, I want to know more about this property (${property.propertyType ?? ''}).',
+                  message:'Hi, I want to know more about this property ${ApiConstants.frontendBaseUrl}/properties/${id}',
                 );
               }
             },
@@ -4588,107 +4589,107 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       },
                     ),
 
-                    if (currentProperty.ownerName?.isNotEmpty ?? false) ...[
-                      // Divider(
-                      //   indent: 18,
-                      //   endIndent: 18,
-                      //   color: ColorRes.leadGreyColor.shade300,
-                      // ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        color: ColorRes.homeYellowDark.withOpacity(0.08),
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 12),
+                    // if (currentProperty.ownerName?.isNotEmpty ?? false) ...[
+                    //   // Divider(
+                    //   //   indent: 18,
+                    //   //   endIndent: 18,
+                    //   //   color: ColorRes.leadGreyColor.shade300,
+                    //   // ),
+                    //   Container(
+                    //     padding: const EdgeInsets.symmetric(vertical: 12),
+                    //     color: ColorRes.homeYellowDark.withOpacity(0.08),
+                    //     child: Column(
+                    //       children: [
+                    //         const SizedBox(height: 12),
 
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: TitleWithViewAll(
-                                    title: 'Owner Details',
-                                    icon: Icons.person_outlined,
-                                    iconBgColor: ColorRes.white,
-                                    iconColor: ColorRes.deepPurpleColor,
-                                    showIcon: true,
-                                  ),
-                                ),
-                                SizedBox(width: 12),
-                                GestureDetector(
-                                  onTap: () async {
-                                    if (!canAddReview.value) return;
-                                    final result = await Get.to(
-                                      () => AddReviewScreen(
-                                        entityType: "property",
-                                        entityId: currentProperty.id ?? '',
-                                      ),
-                                    );
-                                    if (result == true) {
-                                      canAddReview.value = false;
-                                      reviewController.refreshList();
-                                      _overallRatingController
-                                          .fetchOverallRating(
-                                            currentProperty.id ?? '',
-                                          );
-                                    }
-                                  },
-                                  child: Obx(() {
-                                    final enabled = canAddReview.value;
-                                    final label =
-                                        enabled ? "Add Review" : "Reviewed";
-                                    final color =
-                                        enabled
-                                            ? ColorRes.deepPurpleColor
-                                            : ColorRes.green;
-                                    return Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 8,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(20),
-                                        border: Border.all(color: color),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            label,
-                                            style: TextStyle(
-                                              color: color,
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 11,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }),
-                                ),
-                                SizedBox(width: 12),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Builder(
-                              builder: (context) {
-                                log(
-                                  '[PropertyDetail] 👤 Building OwnerInformation - START',
-                                );
-                                final widget = OwnerInformation(
-                                  property: currentProperty,
-                                  controller: controller,
-                                );
-                                log(
-                                  '[PropertyDetail] 👤 Building OwnerInformation - END',
-                                );
-                                return widget;
-                              },
-                            ),
-                            const SizedBox(height: 12),
-                          ],
-                        ),
-                      ),
-                    ],
-                    Builder(
+                    //         Row(
+                    //           children: [
+                    //             Expanded(
+                    //               child: TitleWithViewAll(
+                    //                 title: 'Owner Details',
+                    //                 icon: Icons.person_outlined,
+                    //                 iconBgColor: ColorRes.white,
+                    //                 iconColor: ColorRes.deepPurpleColor,
+                    //                 showIcon: true,
+                    //               ),
+                    //             ),
+                    //             SizedBox(width: 12),
+                    //             GestureDetector(
+                    //               onTap: () async {
+                    //                 if (!canAddReview.value) return;
+                    //                 final result = await Get.to(
+                    //                   () => AddReviewScreen(
+                    //                     entityType: "property",
+                    //                     entityId: currentProperty.id ?? '',
+                    //                   ),
+                    //                 );
+                    //                 if (result == true) {
+                    //                   canAddReview.value = false;
+                    //                   reviewController.refreshList();
+                    //                   _overallRatingController
+                    //                       .fetchOverallRating(
+                    //                         currentProperty.id ?? '',
+                    //                       );
+                    //                 }
+                    //               },
+                    //               child: Obx(() {
+                    //                 final enabled = canAddReview.value;
+                    //                 final label =
+                    //                     enabled ? "Add Review" : "Reviewed";
+                    //                 final color =
+                    //                     enabled
+                    //                         ? ColorRes.deepPurpleColor
+                    //                         : ColorRes.green;
+                    //                 return Container(
+                    //                   padding: const EdgeInsets.symmetric(
+                    //                     horizontal: 12,
+                    //                     vertical: 8,
+                    //                   ),
+                    //                   decoration: BoxDecoration(
+                    //                     color: Colors.white,
+                    //                     borderRadius: BorderRadius.circular(20),
+                    //                     border: Border.all(color: color),
+                    //                   ),
+                    //                   child: Row(
+                    //                     children: [
+                    //                       Text(
+                    //                         label,
+                    //                         style: TextStyle(
+                    //                           color: color,
+                    //                           fontWeight: FontWeight.w600,
+                    //                           fontSize: 11,
+                    //                         ),
+                    //                       ),
+                    //                     ],
+                    //                   ),
+                    //                 );
+                    //               }),
+                    //             ),
+                    //             SizedBox(width: 12),
+                    //           ],
+                    //         ),
+                    //         const SizedBox(height: 8),
+                    //         Builder(
+                    //           builder: (context) {
+                    //             log(
+                    //               '[PropertyDetail] 👤 Building OwnerInformation - START',
+                    //             );
+                    //             final widget = OwnerInformation(
+                    //               property: currentProperty,
+                    //               controller: controller,
+                    //             );
+                    //             log(
+                    //               '[PropertyDetail] 👤 Building OwnerInformation - END',
+                    //             );
+                    //             return widget;
+                    //           },
+                    //         ),
+                    //         const SizedBox(height: 12),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ],
+                     Builder(
                       builder: (context) {
                         log(
                           '[PropertyDetail] ⭐ Building ReviewSection - START',
@@ -4714,7 +4715,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                         return widget;
                       },
                     ),
-
                     if (property?.propertyStatus?.toLowerCase() != "sold") ...[
                       // Divider(
                       //   indent: 18,
@@ -4734,6 +4734,10 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                               subTitle:
                                   "Limited-time! Get an exclusive offer on this property.",
                               isSubTitle: true,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              child: OfferCountdown(duration: Duration(minutes: 2)),
                             ),
                             SizedBox(height: 8),
 
@@ -6122,7 +6126,7 @@ class CircularIcon extends StatelessWidget {
           borderRadius: BorderRadius.circular(50),
           color: backgroundColor ?? ColorRes.leadGreyColor.shade300, // fallback
         ),
-        child: Icon(icon, color: iconColor ?? ColorRes.black, size: iconSize),
+        child: Icon(icon, color: iconColor ?? ColorRes.primary, size: iconSize),
       ),
     );
   }
@@ -6423,93 +6427,211 @@ class _AmenitiesSectionState extends State<AmenitiesSection> {
   @override
   Widget build(BuildContext context) {
     final items = widget.amenities;
-    final showCount = _expanded ? items.length : items.length.clamp(0, 3);
-    final visible = items.take(showCount).toList(growable: false);
-    final remaining = items.length > showCount ? (items.length - showCount) : 0;
-
-    List<Container> chips =
-        visible.map<Container>((item) {
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: ColorRes.primary.withOpacity(0.1),
-              border: Border.all(color: ColorRes.primary, width: 1),
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  IconManager.getAmenitiesIcon(item.replaceAll("-", "_")),
-                  size: 16,
-                  color: txtColor,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  capitalizeEachWord(item) ?? ' -',
-                  style: const TextStyle(
-                    fontSize: AppFontSizes.small,
-                    fontWeight: AppFontWeights.medium,
-                    color: ColorRes.textColor,
-                  ),
-                ),
-              ],
-            ),
-          );
-        }).toList();
-
-    if (!_expanded && remaining > 0) {
-      chips.add(
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: ColorRes.primary.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(24),
-            onTap: () => setState(() => _expanded = true),
-            child: Text(
-              '+$remaining more',
-              style: const TextStyle(
-                fontSize: AppFontSizes.small,
-                fontWeight: AppFontWeights.semiBold,
-                color: ColorRes.primary,
-              ),
-            ),
-          ),
-        ),
-      );
-    } else if (_expanded && items.length > 3) {
-      chips.add(
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: ColorRes.leadGreyColor.shade100,
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(24),
-            onTap: () => setState(() => _expanded = false),
-            child: const Text(
-              'Show less',
-              style: TextStyle(
-                fontSize: AppFontSizes.small,
-                fontWeight: AppFontWeights.semiBold,
-                color: ColorRes.textColor,
-              ),
-            ),
-          ),
-        ),
-      );
-    }
+    final total = items.length;
+    final visibleCount = _expanded ? total : (total >= 6 ? 6 : total);
+    final amenityColors = [
+      ColorRes.blueColor,
+      ColorRes.error,
+      ColorRes.leadIndigoColor,
+      ColorRes.orangeColor,
+      ColorRes.leadTealColor,
+      ColorRes.primary,
+      ColorRes.purpleColor,
+      ColorRes.green,
+    ];
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
-      child: Wrap(spacing: 12, runSpacing: 12, children: chips),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          GridView.builder(
+            shrinkWrap: true,
+            padding: EdgeInsets.zero,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              childAspectRatio: 0.99,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+            ),
+            itemCount: visibleCount,
+            itemBuilder: (context, index) {
+              final raw = items[index];
+              final amenity = raw.toLowerCase().replaceAll(" ", "_").replaceAll("-", "_");
+              final color = amenityColors[index % amenityColors.length];
+              final iconData = IconManager.getAmenitiesIcon(amenity);
+
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: color.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(iconData, color: color, size: 24),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    capitalizeEachWord(amenity),
+                    style: const TextStyle(
+                      fontSize: AppFontSizes.extraSmall,
+
+                      fontWeight: AppFontWeights.medium,
+                      color: ColorRes.textPrimary,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              );
+            },
+          ),
+          if (total > 6)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _expanded = !_expanded;
+                  });
+                },
+                child: Center(
+                  child: Text(
+                    _expanded ? 'Show Less' : 'Show More',
+                    style: const TextStyle(
+                      fontSize: AppFontSizes.small,
+                      fontWeight: AppFontWeights.medium,
+                      color: ColorRes.primary,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
+
+class OfferCountdown extends StatefulWidget {
+  final Duration duration;
+  final VoidCallback? onComplete;
+  const OfferCountdown({super.key, required this.duration, this.onComplete});
+  @override
+  State<OfferCountdown> createState() => _OfferCountdownState();
+}
+
+class _OfferCountdownState extends State<OfferCountdown>
+    with TickerProviderStateMixin {
+  late final AnimationController _pulseController;
+  late final AnimationController _countdownController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    )..repeat(reverse: true);
+    _countdownController = AnimationController(
+      vsync: this,
+      duration: widget.duration,
+    )..forward();
+    _countdownController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        widget.onComplete?.call();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    _countdownController.dispose();
+    super.dispose();
+  }
+
+  String get _timeLeft {
+    final elapsed = _countdownController.lastElapsedDuration ?? Duration.zero;
+    final left = widget.duration - elapsed;
+    final secs = left.inSeconds.clamp(0, widget.duration.inSeconds);
+    final m = (secs ~/ 60).toString().padLeft(2, '0');
+    final s = (secs % 60).toString().padLeft(2, '0');
+    return '$m:$s';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        ScaleTransition(
+          scale: Tween<double>(begin: 0.9, end: 1.15)
+              .animate(CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut)),
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: ColorRes.error.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(Icons.local_fire_department, color: ColorRes.error, size: 24),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: ColorRes.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+            ),
+            child: Row(
+              children: [
+                const Expanded(
+                  child: Text(
+                    'Offer ends in',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.small,
+                      fontWeight: AppFontWeights.medium,
+                      color: ColorRes.textPrimary,
+                    ),
+                  ),
+                ),
+                AnimatedBuilder(
+                  animation: _countdownController,
+                  builder: (context, _) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: ColorRes.error.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: ColorRes.error.withOpacity(0.3)),
+                      ),
+                      child: Text(
+                        _timeLeft,
+                        style: const TextStyle(
+                          fontSize: AppFontSizes.bodySmall,
+                          fontWeight: AppFontWeights.bold,
+                          color: ColorRes.error,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 
 class NearbyPropertyDetails extends StatelessWidget {
   final List<NearbyLocations> nearbyLocations;

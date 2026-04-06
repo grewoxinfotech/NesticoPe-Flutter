@@ -34,13 +34,14 @@ class RecommendedProperty extends StatelessWidget {
                           const TitleWithViewAll(title: 'Recommended Properties'),
                           const SizedBox(height: 12),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 8),
                   child: SizedBox(
-                    height: 302,
+                    height: 320,
                     child: Obx(() {
                       final items = controller.recommendedProperties;
                       return ListView.separated(
                         scrollDirection: Axis.horizontal,
+                        padding: EdgeInsets.zero,
                         itemCount: items.length, // ✅ Always up-to-date
                         separatorBuilder: (_, __) => const SizedBox(width: 12),
                         itemBuilder: (context, index) {
@@ -54,6 +55,7 @@ class RecommendedProperty extends StatelessWidget {
                     }),
                   ),
                 ),
+                const SizedBox(height: 12),
               ],
             ),
           );

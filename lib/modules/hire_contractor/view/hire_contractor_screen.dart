@@ -51,7 +51,7 @@ class HireContractorScreen extends StatelessWidget {
         backgroundColor: ColorRes.white,
         elevation: 0,
         title: Text(
-          'Hire Contractor',
+          'NesticoPe Verified Services',
           style: TextStyle(
             color: ColorRes.textPrimary,
             fontWeight: AppFontWeights.semiBold,
@@ -177,24 +177,7 @@ class HireContractorScreen extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: 12),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                            ),
-                            child: TitleWithViewAll(
-                              title: "Top Rated Contractors",
-                              subTitle: 'Connect with top contractors',
-                              isSubTitle: true,
-                              icon: Icons.home_repair_service_outlined,
-                              iconColor: ColorRes.lightPurpleColor,
-                              iconBgColor: ColorRes.lightPurpleColor
-                                  .withOpacity(0.1),
 
-                              // size: 24,
-                              // margin: const EdgeInsets.only(right: 8),
-                            ),
-                          ),
-                          const SizedBox(height: 8),
                           Obx(() {
                             if (contractorsController.isLoading.value &&
                                 contractorsController.items.isEmpty) {
@@ -209,22 +192,49 @@ class HireContractorScreen extends StatelessWidget {
                                 contractorsController.items.length > 6
                                     ? 6
                                     : contractorsController.items.length;
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0,
-                              ),
-                              child: ListView.separated(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: count,
-                                separatorBuilder:
-                                    (_, __) => const SizedBox(height: 8),
-                                itemBuilder: (context, index) {
-                                  final data =
-                                      contractorsController.items[index];
-                                  return ContractorCard(contractor: data);
-                                },
-                              ),
+                            return Column(
+                              children: [
+                                TitleWithViewAll(
+                                  title: "Top Rated Contractors",
+                                  subTitle: 'Connect with top contractors',
+                                  isSubTitle: true,
+                                  icon: Icons.home_repair_service_outlined,
+                                  iconColor: ColorRes.lightPurpleColor,
+                                  showIcon: true,
+                                  
+                                  iconBgColor: ColorRes.lightPurpleColor
+                                      .withOpacity(0.1),
+                                showViewAll: true,
+              onViewAll: () => Get.to(() => const AllContractorsListScreen()),
+                                  // size: 24,
+                                  // margin: const EdgeInsets.only(right: 8),
+                                ),
+                                const SizedBox(height: 8),
+                                // Padding(
+                                //   padding: const EdgeInsets.symmetric(
+                                //     horizontal: 16.0,
+                                //   ),
+                                //   child: ListView.separated(
+                                //     shrinkWrap: true,
+                                //     physics:
+                                //         const NeverScrollableScrollPhysics(),
+                                //     itemCount: count,
+                                //     separatorBuilder:
+                                //         (_, __) => const SizedBox(height: 8),
+                                //     itemBuilder: (context, index) {
+                                //       final data =
+                                //           contractorsController.items[index];
+                                //       return ContractorCard(contractor: data);
+                                //     },
+                                //   ),
+                                // ),
+                                _HorizontalContractorList(
+                                  items: contractorsController.items.sublist(
+                                    0,
+                                    count,
+                                  ),
+                                ),
+                              ],
                             );
                           }),
                         ],
@@ -495,6 +505,13 @@ class HireContractorScreen extends StatelessWidget {
     ContractorServiceCategory category,
   ) {
     final img = _categoryImageFor(category.name);
+    String norm(String s) => s
+        .trim()
+        .toLowerCase()
+        .replaceAll('&', 'and')
+        .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+    final key = norm(category.name);
+    final isHomeConstruction = key == 'home_construction';
 
     return Material(
       color: Colors.transparent,
@@ -530,22 +547,55 @@ class HireContractorScreen extends StatelessWidget {
                 ),
               ),
             ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
+            Positioned.fill(
               child: Container(
-                // height: 70,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
+                  boxShadow:
+                      isHomeConstruction
+                          ? [
+                            BoxShadow(
+                              color: ColorRes.primary.withOpacity(0.2),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ]
+                          : null,
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [Colors.transparent, Colors.black.withOpacity(0.4)],
                   ),
+                  border:
+                      isHomeConstruction
+                          ? Border.all(color: ColorRes.primary, width: 2.5)
+                          : null,
                 ),
               ),
             ),
+            if (isHomeConstruction)
+              Positioned(
+                top: 8,
+                right: 8,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: ColorRes.primary,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: const Text(
+                    'Most Popular',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: AppFontSizes.caption,
+                      fontWeight: AppFontWeights.bold,
+                    ),
+                  ),
+                ),
+              ),
 
             /// ✅ TEXT
             Positioned(
@@ -611,5 +661,88 @@ class HireContractorScreen extends StatelessWidget {
       'Dec',
     ];
     return '${date.day.toString().padLeft(2, '0')} ${months[date.month - 1]} ${date.year}';
+  }
+}
+
+class _HorizontalContractorList extends StatefulWidget {
+  final List items;
+
+  const _HorizontalContractorList({required this.items});
+
+  @override
+  State<_HorizontalContractorList> createState() =>
+      _HorizontalContractorListState();
+}
+
+class _HorizontalContractorListState extends State<_HorizontalContractorList> {
+  final PageController _pageController = PageController(
+    viewportFraction: 0.88, // shows a peek of the next card
+    
+  );
+  
+  int _currentPage = 0;
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final count = widget.items.length;
+
+    return Column(
+      children: [
+        SizedBox(
+          height: 350,
+          // adjust to match your ContractorCard height
+          child: PageView.builder(
+
+            controller: _pageController,
+            itemCount: count,
+            
+            onPageChanged: (index) {
+              setState(() => _currentPage = index);
+            },
+            itemBuilder: (context, index) {
+              return Padding(
+                padding:  EdgeInsets.only(
+                  left:  6,
+                  right: 6,
+                ),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.85,
+                  child: ContractorCard(contractor: widget.items[index]),
+                ),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 10),
+        // Dot indicators
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(count, (index) {
+            final isActive = index == _currentPage;
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeInOut,
+              margin: const EdgeInsets.symmetric(horizontal: 3),
+              width: isActive ? 20 : 6,
+              height: 6,
+              decoration: BoxDecoration(
+                color:
+                    isActive
+                        ? ColorRes.primary
+                        : ColorRes.primary.withOpacity(0.25),
+                borderRadius: BorderRadius.circular(3),
+              ),
+            );
+          }),
+        ),
+        const SizedBox(height: 8),
+      ],
+    );
   }
 }

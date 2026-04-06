@@ -402,6 +402,13 @@ class _CategoryCard extends StatelessWidget {
     Get.put(HireContractorListOfProfileController());
     Get.put(HireContractorFilterProfileController());
     final assetPath = _assetFor(item.name);
+    final key = item.name
+        .trim()
+        .toLowerCase()
+        .replaceAll('&', 'and')
+        .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+    final isHomeConstruction = key == 'home_construction';
+
     return GestureDetector(
       onTap: () {
         Get.to(
@@ -433,9 +440,40 @@ class _CategoryCard extends StatelessWidget {
                 end: Alignment.bottomCenter,
                 colors: [Colors.transparent, Colors.black.withOpacity(0.4)],
               ),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
+              boxShadow: isHomeConstruction
+                  ? [
+                BoxShadow(
+                  color: ColorRes.primary.withOpacity(0.2),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ] : null,
+              border: isHomeConstruction
+                  ? Border.all(color: ColorRes.primary, width: 2.5)
+                  : null,
             ),
           ),
+          if (isHomeConstruction)
+            Positioned(
+              top: 8,
+              right: 8,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: ColorRes.primary,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: const Text(
+                  'Most Popular',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: AppFontSizes.caption,
+                    fontWeight: AppFontWeights.bold,
+                  ),
+                ),
+              ),
+            ),
           Positioned(
             left: 10,
             right: 10,

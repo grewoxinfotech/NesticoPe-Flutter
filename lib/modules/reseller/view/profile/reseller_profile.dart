@@ -175,7 +175,7 @@ class _ResellerProfileScreenState extends State<ResellerProfileScreen> {
                                   Get.to(() => SuccessStoryScreen());
                                 },
                               ),
-                               const SizedBox(height: 10),
+                              const SizedBox(height: 10),
                               _buildActionButton(
                                 icon: Icons.event_available,
                                 iconColor: const Color(0xFF6366F1),
@@ -196,30 +196,26 @@ class _ResellerProfileScreenState extends State<ResellerProfileScreen> {
                                 onTap:
                                     () => Get.to(() => ReferralProgramScreen()),
                               ),
-                               const SizedBox(height: 10),
-                                  _buildActionButton(
-                                    icon: Icons.workspace_premium,
-                                    iconColor: const Color(0xFF6366F1),
-                                    iconBg: const Color(0xFFEEF2FF),
-                                    label: "My Subscription",
-                                    subtitle: "Track your Subscription",
-                                    onTap:
-                                        () => Get.to(
-                                          () => MySubscriptionScreen(),
-                                        ),
-                                  ),
-                                    const SizedBox(height: 10),
-                                  _buildActionButton(
-                                    icon: Icons.video_call_outlined,
-                                    iconColor: const Color(0xFF6366F1),
-                                    iconBg: const Color(0xFFEEF2FF),
-                                    label: "Request Meeting",
-                                    subtitle: "Request a meeting with us",
-                                    onTap:
-                                        () => Get.to(
-                                          () => ResellerMeetingScreen(),
-                                        ),
-                                  ),
+                              const SizedBox(height: 10),
+                              _buildActionButton(
+                                icon: Icons.workspace_premium,
+                                iconColor: const Color(0xFF6366F1),
+                                iconBg: const Color(0xFFEEF2FF),
+                                label: "My Subscription",
+                                subtitle: "Track your Subscription",
+                                onTap:
+                                    () => Get.to(() => MySubscriptionScreen()),
+                              ),
+                              const SizedBox(height: 10),
+                              _buildActionButton(
+                                icon: Icons.video_call_outlined,
+                                iconColor: const Color(0xFF6366F1),
+                                iconBg: const Color(0xFFEEF2FF),
+                                label: "Request Meeting",
+                                subtitle: "Request a meeting with us",
+                                onTap:
+                                    () => Get.to(() => ResellerMeetingScreen()),
+                              ),
                               const SizedBox(height: 10),
                               _buildActionButton(
                                 icon: Icons.notifications_outlined,
@@ -322,30 +318,8 @@ class _ResellerProfileScreenState extends State<ResellerProfileScreen> {
                                   );
                                 },
                               ),
-                              const SizedBox(height: 24),
-                              SizedBox(
-                                width: double.infinity,
-                                child: NesticoPeButton(
-                                  width: double.infinity,
-                                  borderRadius: BorderRadius.circular(10),
-                                  titleTextStyle: TextStyle(
-                                    fontSize: AppFontSizes.medium,
-                                    color: ColorRes.white,
-                                    fontWeight: AppFontWeights.semiBold,
-                                  ),
-                                  height: 45,
-                                  onTap: () {
-                                    final controller =
-                                        Get.isRegistered<AuthController>()
-                                            ? Get.find<AuthController>()
-                                            : Get.put(AuthController());
-                                    controller.logout();
-                                  },
-                                  title: 'Logout',
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              _buildDeleteAccountButton(),
+                              // const SizedBox(height: 24),
+                              SizedBox.shrink(),
                             ],
                           ],
                         ),
@@ -371,6 +345,44 @@ class _ResellerProfileScreenState extends State<ResellerProfileScreen> {
                 : const SizedBox.shrink();
           }),
         ],
+      ),
+      bottomNavigationBar: Obx(
+        () =>
+            (!profileController.isEditing.value)
+                ? SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          child: NesticoPeButton(
+                            width: double.infinity,
+                            borderRadius: BorderRadius.circular(10),
+                            titleTextStyle: TextStyle(
+                              fontSize: AppFontSizes.medium,
+                              color: ColorRes.white,
+                              fontWeight: AppFontWeights.semiBold,
+                            ),
+                            height: 45,
+                            onTap: () {
+                              final controller =
+                                  Get.isRegistered<AuthController>()
+                                      ? Get.find<AuthController>()
+                                      : Get.put(AuthController());
+                              controller.logout();
+                            },
+                            title: 'Logout',
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        _buildDeleteAccountButton(),
+                      ],
+                    ),
+                  ),
+                )
+                : SizedBox.shrink(),
       ),
     );
   }

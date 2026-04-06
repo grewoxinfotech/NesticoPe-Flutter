@@ -585,24 +585,46 @@ class AuthService {
     Get.offAll(const LoginScreen());
   }
 
-  Future<bool> requestOtpLogin(String id) async {
-    print("Request OTP Login $id");
+  Future<bool> requestOtpLogin(String id, {String? module}) async {
+    print("Request OTP Login $id ${module != null ? '(module: $module)' : ''}");
     final response = await http.post(
       Uri.parse('${ApiConstants.auth}/otp-login'),
       headers: {i: j},
-      body: jsonEncode({'id': id}),
+      body: jsonEncode({
+        'id': id,
+        if (module != null) 'module': module,
+      }),
     );
     final data = jsonDecode(response.body);
+    print("Request OTP Login Check payload $id ${response.statusCode} ${data} ");
     print("OTP [DEBUG]=> ${response.body}");
     print("OTP [DEBUG]=> ${data}");
     
     if (response.statusCode == 200 && data['success'] == true) {
       final token = (data['data']?['token'] ?? '').toString();
+     
       if (token.isNotEmpty) {
         await SecureStorage.saveLoginWithOtpToken(token);
       }
       return true;
+
     }
+    if (response.statusCode == 400) {
+
+        var message=data['message'];
+        
+      if(message.contains('3')){
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Generate Otp Failed',
+          message: 'Maximum OTP requests reached 3 times in 24 hours. Please try again later.',
+          
+          contentType: ContentType.failure,
+        );
+
+        throw Exception(data["message"] ?? "OTP login failed");
+      }
+    }
+    
     return false;
   }
 
@@ -613,6 +635,10 @@ class AuthService {
       body: jsonEncode({'otp': otp}),
     );
     final data = jsonDecode(response.body);
+    
+    print("Verify OTP [DEBUG]=> ${response.body}==============${response.statusCode}");
+    print("Verify OTP [DEBUG]=> ${data}");
+
     print("Signujdfhjsd dfjsd $data");
     if (response.statusCode == 200 && data['success'] == true) {
       final user = UserModel.fromJson(data['data']);

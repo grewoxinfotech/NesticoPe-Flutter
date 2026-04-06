@@ -66,13 +66,20 @@ class HireContractorProfileList extends StatelessWidget {
         ),
         centerTitle: false,
         actions: [
-          IconButton(
-            onPressed:
-                () async => onFilterButtonClick(
-                  selectedFilters: selectedFilters,
-                  controllerFilter: controllerFilter,
-                ),
-            icon: Icon(Icons.filter_list),
+          TextButton.icon(
+            onPressed: () async => onFilterButtonClick(
+              selectedFilters: selectedFilters,
+              controllerFilter: controllerFilter,
+            ),
+            icon: const Icon(Icons.filter_list, color: ColorRes.primary),
+            label: const Text(
+              'Filter',
+              style: TextStyle(
+                color: ColorRes.primary,
+                fontSize: AppFontSizes.small,
+                fontWeight: AppFontWeights.semiBold,
+              ),
+            ),
           ),
         ],
       ),
@@ -147,42 +154,64 @@ class HireContractorProfileList extends StatelessWidget {
                 child: Column(
                   children: [
                     Obx(() {
-                      final displayFilters = Map<String, String>.from(selectedFilters.value);
-                      if (controllerFilter.selectedCategoryName.value.isNotEmpty) {
-                        displayFilters['category'] = controllerFilter.selectedCategoryName.value;
+                      final displayFilters = Map<String, String>.from(
+                        selectedFilters.value,
+                      );
+                      if (controllerFilter
+                          .selectedCategoryName
+                          .value
+                          .isNotEmpty) {
+                        displayFilters['category'] =
+                            controllerFilter.selectedCategoryName.value;
                       }
                       if (controllerFilter.selectedCity.value.isNotEmpty) {
-                        displayFilters['city'] = controllerFilter.selectedCity.value;
+                        displayFilters['city'] =
+                            controllerFilter.selectedCity.value;
                       }
                       if (controllerFilter.selectedContractorRating.value > 0) {
                         displayFilters['contractorMinRating'] =
-                            controllerFilter.selectedContractorRating.value.toInt().toString();
+                            controllerFilter.selectedContractorRating.value
+                                .toInt()
+                                .toString();
                       }
                       if (controllerFilter.selectedServiceRating.value > 0) {
                         displayFilters['serviceMinRating'] =
-                            controllerFilter.selectedServiceRating.value.toInt().toString();
+                            controllerFilter.selectedServiceRating.value
+                                .toInt()
+                                .toString();
                       }
-                      if (controllerFilter.selectedExperience.value.isNotEmpty) {
-                        displayFilters['experience'] = controllerFilter.selectedExperience.value;
+                      if (controllerFilter
+                          .selectedExperience
+                          .value
+                          .isNotEmpty) {
+                        displayFilters['experience'] =
+                            controllerFilter.selectedExperience.value;
                       }
-                      if (controllerFilter.selectedAccountType.value.isNotEmpty) {
-                        displayFilters['premiumAccount'] = controllerFilter.selectedAccountType.value;
+                      if (controllerFilter
+                          .selectedAccountType
+                          .value
+                          .isNotEmpty) {
+                        displayFilters['premiumAccount'] =
+                            controllerFilter.selectedAccountType.value;
                       }
                       if (controllerFilter.selectedServiceNames.isNotEmpty) {
-                        displayFilters['serviceNames'] =
-                            controllerFilter.selectedServiceNames.join(', ');
+                        displayFilters['serviceNames'] = controllerFilter
+                            .selectedServiceNames
+                            .join(', ');
                       }
                       if (controllerFilter.selectedWorkItems.isNotEmpty) {
-                        displayFilters['works'] =
-                            controllerFilter.selectedWorkItems.join(', ');
+                        displayFilters['works'] = controllerFilter
+                            .selectedWorkItems
+                            .join(', ');
                       }
                       return FilterChipsBar(
                         filters: displayFilters,
                         onClearAll: () {
                           selectedFilters.clear();
-                           controllerFilter.selectedCategoryId.value = '';
+                          controllerFilter.selectedCategoryId.value = '';
                           controllerFilter.selectedCategoryName.value = '';
-                          controllerFilter.resetFilters(); // keep category selection
+                          controllerFilter
+                              .resetFilters(); // keep category selection
                           controllerFilter.applyFilters(<String, String>{});
                         },
                         onRemoveFilter: (key) {
@@ -289,7 +318,7 @@ class HireContractorProfileList extends StatelessWidget {
     );
   }
 
- /* Future<void> onFilterButtonClick({
+  /* Future<void> onFilterButtonClick({
     required RxMap<String, String> selectedFilters,
     required HireContractorFilterProfileController controllerFilter,
   }) async {
@@ -313,7 +342,7 @@ class HireContractorProfileList extends StatelessWidget {
     required HireContractorFilterProfileController controllerFilter,
   }) async {
     final result = await Get.to<Map<String, String>>(
-          () => const HireContractorFilterScreen(),
+      () => const HireContractorFilterScreen(),
       transition: Transition.rightToLeft, // optional slide animation
     );
 
@@ -830,13 +859,13 @@ class _HireContractorCardState extends State<HireContractorCard> {
           color: ColorRes.white,
           borderRadius: BorderRadius.circular(16),
           // border: Border.all(color: ColorRes.leadGreyColor.shade300),
-           boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 2,
-            offset: const Offset(2, 3),
-          ),
-        ],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 2,
+              offset: const Offset(2, 3),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -845,23 +874,6 @@ class _HireContractorCardState extends State<HireContractorCard> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /*  CircleAvatar(
-                  radius: 28,
-                  backgroundColor: ColorRes.primary.withOpacity(0.1),
-                  backgroundImage: widget.data.profilePic != null && widget.data.profilePic!.isNotEmpty
-                      ? NetworkImage(widget.data.profilePic!)
-                      : null,
-                  child: (widget.data.profilePic?.isEmpty ?? true)
-                      ? Text(
-                    _getInitials(widget.data.username ?? 'U'),
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: ColorRes.primary,
-                    ),
-                  )
-                      : null,
-                ),*/
                 Container(
                   width: 80,
                   height: 80,
@@ -914,38 +926,78 @@ class _HireContractorCardState extends State<HireContractorCard> {
                             ),
                           ),
                           SizedBox(width: 8),
-                          if (widget.data.contractorVisitCharge != null)
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: ColorRes.green.withOpacity(0.15),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                '${Formatter.formatPrice(widget.data.contractorVisitCharge??0)}/visit',
-                                
-                                style: TextStyle(
-                                  fontSize: AppFontSizes.small,
-                                  fontWeight: FontWeight.w600,
-                                  color: ColorRes.green,
-                                ),
-                              ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
                             ),
+                            decoration: BoxDecoration(
+                              color: ColorRes.homeAmber.withOpacity(0.08),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // Stars
+                                Icon(Icons.star, size: 16, color: Colors.amber),
+                                const SizedBox(width: 4),
+                                // Rating text
+                                Text(
+                                  '${double.tryParse(widget.data.overallRating)?.toStringAsFixed(1) ?? '0.0'} '
+                                  '(${Formatter.formatNumber(widget.data.totalReviews) ?? 0} reviews)',
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.caption,
+                                    fontWeight: AppFontWeights.medium,
+                                    color: ColorRes.textColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 4),
 
                       /// Location + Experience
-                      Text(
-                        '${widget.data.city ?? ''}, ${widget.data.state ?? ''}',
-                        style: TextStyle(
-                          fontSize: AppFontSizes.caption,
-                          fontWeight: AppFontWeights.medium,
-                          color: ColorRes.textSecondary,
-                        ),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.location_on_outlined,
+                            size: 14,
+                            color: ColorRes.leadGreyColor.shade600,
+                          ),
+                          SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              '${widget.data.city ?? ''}, ${widget.data.state ?? ''}',
+                              style: TextStyle(
+                                fontSize: AppFontSizes.caption,
+                                fontWeight: AppFontWeights.medium,
+                                color: ColorRes.textSecondary,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: ColorRes.green.withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              '${Formatter.formatPrice(widget.data.contractorVisitCharge ?? 0)}/visit',
+
+                              style: TextStyle(
+                                fontSize: AppFontSizes.caption,
+                                fontWeight: FontWeight.w600,
+                                color: ColorRes.green,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 6),
                       Wrap(
@@ -966,18 +1018,6 @@ class _HireContractorCardState extends State<HireContractorCard> {
                             _buildBadge(
                               label:
                                   widget.data.contractorType?.toUpperCase() ??
-                                  '',
-                              backgroundColor: ColorRes.primary.withOpacity(
-                                0.12,
-                              ),
-                              textColor: ColorRes.primary,
-                            ),
-                          ],
-                          if (widget.data.totalExperience != null &&
-                              widget.data.totalExperience! > 0) ...[
-                            _buildBadge(
-                              label:
-                                  '${widget.data.totalExperience.toString()} Year Experience' ??
                                   '',
                               backgroundColor: ColorRes.primary.withOpacity(
                                 0.12,
@@ -1010,7 +1050,7 @@ class _HireContractorCardState extends State<HireContractorCard> {
                       ),
                   if (widget.data.servicesInCategory.length > 2)
                     _buildServiceChip(
-                          serviceName:
+                      serviceName:
                           '+${widget.data.servicesInCategory.length - 2} more services',
                       isMore: true,
                     ),
@@ -1020,41 +1060,45 @@ class _HireContractorCardState extends State<HireContractorCard> {
 
             /// RATING + CONTACT BUTTON
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: ColorRes.homeAmber.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: ColorRes.leadGreyColor.shade300,
-                      width: 1,
+                // Spacer(),
+                ElevatedButton(
+                  onPressed: () {
+                    contractorProfile?.username = widget.data.username ?? '';
+                    contractorProfile?.firstName = widget.data.firstName ?? '';
+                    contractorProfile?.lastName = widget.data.lastName ?? '';
+                    contractorProfile?.totalExperience =
+                        widget.data.totalExperience ?? 0;
+                    if (contractorProfile != null) {
+                      Get.to(
+                        () => ContractorProfileDetailsScreen(
+                          contractor:
+                              contractorProfile ?? Contractor.fromJson({}),
+                          isPremium:
+                              widget.data.subscription?.hasPremiumPlan ?? false,
+                        ),
+                      );
+                    }
+                  },
+                  // icon: const Icon(Icons.phone, size: 16),
+                  child: const Text('View Profile'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorRes.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    textStyle: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Stars
-                      Icon(Icons.star, size: 16, color: Colors.amber),
-                      const SizedBox(width: 4),
-                      // Rating text
-                      Text(
-                        '${double.tryParse(widget.data.overallRating)?.toStringAsFixed(1) ?? '0.0'} '
-                        '(${Formatter.formatNumber(widget.data.totalReviews) ?? 0} reviews)',
-                        style: TextStyle(
-                          fontSize: AppFontSizes.caption,
-                          fontWeight: AppFontWeights.medium,
-                          color: ColorRes.textColor,
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
-                Spacer(),
+                // Spacer(),
                 GestureDetector(
                   onTap: () {
                     _fetchUserByID();
@@ -1087,7 +1131,7 @@ class _HireContractorCardState extends State<HireContractorCard> {
                     );
                   }),
                 ),
-                SizedBox(width: 8),
+                // SizedBox(width: 8),
                 ElevatedButton(
                   onPressed: () {
                     contractorProfile?.username = widget.data.username ?? '';
@@ -1174,7 +1218,7 @@ class _HireContractorCardState extends State<HireContractorCard> {
           children: [
             Expanded(
               child: Text(
-                serviceName.capitalize?.replaceAll("_", " ")??'',
+                serviceName.capitalize?.replaceAll("_", " ") ?? '',
                 style: TextStyle(
                   fontSize: AppFontSizes.caption,
                   fontWeight: AppFontWeights.medium,
@@ -1182,7 +1226,7 @@ class _HireContractorCardState extends State<HireContractorCard> {
                 ),
               ),
             ),
-            
+
             if (!isMore) ...[
               const SizedBox(width: 8),
               Container(
@@ -1570,7 +1614,7 @@ class _AllContractorCardState extends State<AllContractorCard> {
 
     return GestureDetector(
       onTap: () async {
-          log('userId jdjkcdj dkjcsdkj : ${user.userId}');
+        log('userId jdjkcdj dkjcsdkj : ${user.userId}');
         log("Tapped Contractor Profile Data: ${contractorProfile?.toJson()}");
 
         contractorProfile?.username = widget.data.username ?? '';
@@ -1600,13 +1644,13 @@ class _AllContractorCardState extends State<AllContractorCard> {
           color: ColorRes.surface,
           borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
           // border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
-           boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 2,
-            offset: const Offset(2, 3),
-          ),
-        ],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 2,
+              offset: const Offset(2, 3),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

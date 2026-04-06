@@ -94,6 +94,7 @@ class ContactHelper {
   }
 
   static Future<void> openPublicWhatsApp({
+    
     String? phoneNumber,
     String message = "",
     bool shareToStatus = false,

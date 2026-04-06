@@ -219,7 +219,6 @@ import '../controllers/contractor_profile_controller/contractor_compare_manager.
 //   }
 // }
 class ContractorCard extends StatelessWidget {
-
   final Contractor contractor;
 
   const ContractorCard({super.key, required this.contractor});
@@ -236,389 +235,402 @@ class ContractorCard extends StatelessWidget {
     );
     final rating = double.tryParse(contractor.overallRating) ?? 0;
     final stats = contractor.projectStats;
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: ColorRes.surface,
-        borderRadius: BorderRadius.circular(12),
-        // border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 2,
-    
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// ===================== TOP ROW =====================
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CircleAvatar(
-                radius: 26,
-                backgroundColor: Colors.grey.shade100,
-                backgroundImage:
-                    contractor.imageUrl.isNotEmpty
-                        ? NetworkImage(contractor.imageUrl)
-                        : null,
-                onBackgroundImageError:
-                    contractor.imageUrl.isNotEmpty
-                        ? (_, __) {}
-                        : null, // Only set this when imageUrl is not empty
-                child:
-                    contractor.imageUrl.isEmpty
-                        ? const Icon(
-                          Icons.engineering,
-                          color: Colors.orange,
-                          size: 28,
-                        )
-                        : null,
-              ),
-    
-              const SizedBox(width: 12),
-    
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        // Contractor name
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              (contractor.firstName.isEmpty ||
-                                      contractor.lastName.isEmpty)
-                                  ? contractor.username
-                                  : "${contractor.firstName} ${contractor.lastName}",
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: AppFontSizes.medium,
-                                fontWeight: AppFontWeights.semiBold,
-                                color: ColorRes.textColor,
-                              ),
-                            ),
-    
-                            SizedBox(height: 6),
-                            Text(
-                              "${Formatter.formatNumber(contractor.totalExperience)} years experience",
-                              style: const TextStyle(
-                                fontSize: AppFontSizes.small,
-                                fontWeight: AppFontWeights.medium,
-                                color: ColorRes.textSecondary,
-                              ),
-                            ),
-                            SizedBox(height: 6),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
+    return GestureDetector(
+      onTap: () {
+        Get.to(() => ContractorProfileDetailsScreen(contractor: contractor));
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: ColorRes.surface,
+          borderRadius: BorderRadius.circular(12),
+          // border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 2,
+
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// ===================== TOP ROW =====================
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CircleAvatar(
+                  radius: 26,
+                  backgroundColor: Colors.grey.shade100,
+                  backgroundImage:
+                      contractor.imageUrl.isNotEmpty
+                          ? NetworkImage(contractor.imageUrl)
+                          : null,
+                  onBackgroundImageError:
+                      contractor.imageUrl.isNotEmpty
+                          ? (_, __) {}
+                          : null, // Only set this when imageUrl is not empty
+                  child:
+                      contractor.imageUrl.isEmpty
+                          ? const Icon(
+                            Icons.engineering,
+                            color: Colors.orange,
+                            size: 28,
+                          )
+                          : null,
+                ),
+
+                const SizedBox(width: 12),
+
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          // Contractor name
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Icon(
-                                  Icons.star,
-                                  color: Colors.amber,
-                                  size: 14,
+                                Row(
+                                  children: [
+                                    Text(
+                                      (contractor.firstName.isEmpty ||
+                                              contractor.lastName.isEmpty)
+                                          ? contractor.username
+                                          : "${contractor.firstName} ${contractor.lastName}",
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: AppFontSizes.medium,
+                                        fontWeight: AppFontWeights.semiBold,
+                                        color: ColorRes.textColor,
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(
+                                          Icons.star_rounded,
+                                          color: Colors.amber,
+                                          size: 14,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          rating.toStringAsFixed(1),
+                                          style: const TextStyle(
+                                            fontSize: AppFontSizes.small,
+                                            fontWeight: AppFontWeights.bold,
+                                            color: ColorRes.primary,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          "(${Formatter.formatNumber(contractor.totalReviews)} review${contractor.totalReviews == 1 ? '' : 's'})",
+                                          style: TextStyle(
+                                            fontSize: AppFontSizes.caption,
+                                            color:
+                                                ColorRes
+                                                    .leadGreyColor
+                                                    .shade700,
+                                            fontWeight: AppFontWeights.medium,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(width: 4),
+
+                                SizedBox(height: 6),
                                 Text(
-                                  rating.toStringAsFixed(1),
+                                  "${Formatter.formatNumber(contractor.totalExperience)} years experience",
                                   style: const TextStyle(
                                     fontSize: AppFontSizes.small,
                                     fontWeight: AppFontWeights.medium,
                                     color: ColorRes.textSecondary,
                                   ),
                                 ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  "(${contractor.totalReviews} review${contractor.totalReviews == 1 ? '' : 's'})",
-                                  style: const TextStyle(
-                                    fontSize: AppFontSizes.caption,
-                                    color: ColorRes.textSecondary,
-                                  ),
-                                ),
+
+                                SizedBox(height: 6),
                               ],
                             ),
-                          ],
-                        ),
-    
-                        Spacer(),
-    
-                        // Compare icon button
-                        GestureDetector(
-                          onTap: () {
-                            compare.toggle(contractor, max: 5);
-                          },
-                          child: Obx(() {
-                            final selected = compare.isSelected(
-                              contractor.userId,
-                            );
-                            return Container(
-                              height: 32,
-                              width: 32,
+                          ),
+                        ],
+                      ),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          if (contractor.subscription.hasPremiumPlan) ...[
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
-                                color:
-                                    selected
-                                        ? ColorRes.primary
-                                        : ColorRes.surface,
+                                color: ColorRes.builderGridLightYellow
+                                    .withOpacity(0.05),
                                 borderRadius: BorderRadius.circular(8),
+
                                 border: Border.all(
+                                  color: ColorRes.builderGridLightYellow
+                                      .withOpacity(0.5),
+
+                                  width: 1.2,
+                                ),
+                              ),
+                              child: const Text(
+                                'PREMIUM',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: AppFontWeights.semiBold,
+                                  color: ColorRes.builderGridLightYellow,
+                                  letterSpacing: 1.2,
+                                ),
+                              ),
+                            ),
+                          ] else ...[
+                            SizedBox(height: 12),
+                          ],
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(width: 8),
+                              if ((contractor.contractorType?.isNotEmpty ??
+                                      false) &&
+                                  contractor.contractorType != null) ...[
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: ColorRes.primary.withOpacity(0.05),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: ColorRes.primary.withOpacity(0.5),
+                                      width: 1.2,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    contractor.contractorType?.toUpperCase() ??
+                                        '',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: AppFontWeights.semiBold,
+                                      color: ColorRes.primary,
+                                      letterSpacing: 1.2,
+                                    ),
+                                  ),
+                                ),
+                              ] else ...[
+                                SizedBox(height: 12),
+                              ],
+                            ],
+                          ),
+                          Spacer(),
+                          GestureDetector(
+                            onTap: () {
+                              compare.toggle(contractor, max: 5);
+                            },
+                            child: Obx(() {
+                              final selected = compare.isSelected(
+                                contractor.userId,
+                              );
+                              return Container(
+                                height: 32,
+                                width: 32,
+                                decoration: BoxDecoration(
                                   color:
                                       selected
                                           ? ColorRes.primary
-                                          : ColorRes.border,
-                                  width: 1.2,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.05),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
+                                          : ColorRes.surface,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color:
+                                        selected
+                                            ? ColorRes.primary
+                                            : ColorRes.border,
+                                    width: 1.2,
                                   ),
-                                ],
-                              ),
-                              child: Icon(
-                                Icons.compare_arrows,
-                                color:
-                                    selected
-                                        ? ColorRes.white
-                                        : ColorRes.primary,
-                                size: 18,
-                              ),
-                            );
-                          }),
-                        ),
-                      ],
-                    ),
-    
-                    const SizedBox(height: 4),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        if (contractor.subscription.hasPremiumPlan) ...[
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: ColorRes.builderGridLightYellow
-                                  .withOpacity(0.05),
-                              borderRadius: BorderRadius.circular(8),
-    
-                              border: Border.all(
-                                color: ColorRes.builderGridLightYellow
-                                    .withOpacity(0.5),
-    
-    
-                                width: 1.2,
-                                
-                              ),
-                            ),
-                            child: const Text(
-                              'PREMIUM',
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: AppFontWeights.semiBold,
-                                color: ColorRes.builderGridLightYellow,
-                                letterSpacing: 1.2,
-                              ),
-                            ),
+                                ),
+                                child: Icon(
+                                  Icons.compare_arrows_rounded,
+                                  color:
+                                      selected
+                                          ? ColorRes.white
+                                          : ColorRes.primary,
+                                  size: 18,
+                                ),
+                              );
+                            }),
                           ),
-                        ] else ...[
-                          SizedBox(height: 12),
                         ],
-                        SizedBox(width: 8),
-                        if ((contractor.contractorType?.isNotEmpty ??
-                                false) &&
-                            contractor.contractorType != null) ...[
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: ColorRes.primary.withOpacity(0.05),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: ColorRes.primary.withOpacity(0.5),
-                                width: 1.2,
-                              ),
-                            ),
-                            child: Text(
-                              contractor.contractorType?.toUpperCase() ?? '',
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: AppFontWeights.semiBold,
-                                color: ColorRes.primary,
-                                letterSpacing: 1.2,
-                              ),
-                            ),
-                          ),
-                        ] else ...[
-                          SizedBox(height: 12),
-                        ],
-                      ],
-                    ),
-    
-                    // Experience
-                  ],
-                ),
-              ),
-            ],
-          ),
-    
-          const SizedBox(height: 10),
-          AutoServiceText(
-            services: contractor.services.map((e) => e.serviceName).toList(),
-          ),
-    
-          /// ===================== RATING ROW =====================
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //   children: [
-          //     Row(
-          //       crossAxisAlignment: CrossAxisAlignment.center,
-          //       children: [
-          //         Row(
-          //           children: List.generate(5, (index) {
-          //             final rating =
-          //                 double.tryParse(contractor.overallRating) ?? 0;
-          //             if (index < rating.floor()) {
-          //               return const Icon(
-          //                 Icons.star,
-          //                 color: Colors.amber,
-          //                 size: 16,
-          //               );
-          //             } else if (index < rating) {
-          //               return const Icon(
-          //                 Icons.star_half,
-          //                 color: Colors.amber,
-          //                 size: 16,
-          //               );
-          //             } else {
-          //               return Icon(
-          //                 Icons.star_border,
-          //                 color: Colors.amber.shade400,
-          //                 size: 16,
-          //               );
-          //             }
-          //           }),
-          //         ),
-          //         const SizedBox(width: 6),
-    
-          //         Text(
-          //           (double.tryParse(
-          //                 contractor.overallRating,
-          //               )?.toStringAsFixed(1)) ??
-          //               '0.0',
-          //           style: const TextStyle(
-          //             fontWeight: AppFontWeights.semiBold,
-          //             fontSize: AppFontSizes.bodySmall,
-          //             color: ColorRes.textColor,
-          //           ),
-          //         ),
-          //         const SizedBox(width: 4),
-          //         Text(
-          //           "(${contractor.totalReviews} review${contractor.totalReviews == 1 ? '' : 's'})",
-          //           style: const TextStyle(
-          //             fontSize: AppFontSizes.caption,
-          //             color: ColorRes.textSecondary,
-          //           ),
-          //         ),
-          //       ],
-          //     ),
-          //     // if (contractor.contractorType != null &&
-          //     //     contractor.contractorType!.isNotEmpty) ...[
-          //     //   Container(
-          //     //     padding: const EdgeInsets.symmetric(
-          //     //       horizontal: 8,
-          //     //       vertical: 4,
-          //     //     ),
-          //     //     decoration: BoxDecoration(
-          //     //       color: ColorRes.primary.withOpacity(0.05),
-          //     //       borderRadius: BorderRadius.circular(6),
-          //     //       border: Border.all(
-          //     //         color: ColorRes.primary.withOpacity(0.3),
-          //     //       ),
-          //     //     ),
-          //     //     child: Text(
-          //     //       contractor.contractorType!,
-          //     //       style: TextStyle(
-          //     //         fontSize: AppFontSizes.caption,
-          //     //         fontWeight: AppFontWeights.medium,
-          //     //         color: ColorRes.primary,
-          //     //       ),
-          //     //     ),
-          //     //   ),
-          //     // ],
-          //   ],
-          // ),
-          // const SizedBox(height: 6),
-          // Divider(color: ColorRes.border, thickness: 1),
-          const SizedBox(height: 12),
-    
-          /// ===================== PROJECT STATUS BADGES =====================
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Expanded(
-                child: _buildStatContainer(
-                  title: 'SERVICES',
-                  value: Formatter.formatNumber(contractor.totalServices),
-                ),
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                child: _buildStatContainer(
-                  title: 'ACTIVE',
-                  value: Formatter.formatNumber(contractor.activeServices),
-                ),
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                child: _buildStatContainer(
-                  title: 'DONE',
-                  value: Formatter.formatNumber(
-                    contractor.projectStats.completedProjects,
+                      ),
+
+                      // Experience
+                    ],
                   ),
                 ),
-              ),
-            ],
-          ),
-    
-          const SizedBox(height: 12),
-    
-          /// ===================== HIRE NOW BUTTON =====================
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                // TODO: handle hire now
-                Get.to(() => ContractorProfileDetailsScreen(contractor: contractor));
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ColorRes.primary,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+              ],
+            ),
+
+            const SizedBox(height: 10),
+            AutoServiceText(
+              services: contractor.services.map((e) => e.serviceName).toList(),
+            ),
+
+            /// ===================== RATING ROW =====================
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     Row(
+            //       crossAxisAlignment: CrossAxisAlignment.center,
+            //       children: [
+            //         Row(
+            //           children: List.generate(5, (index) {
+            //             final rating =
+            //                 double.tryParse(contractor.overallRating) ?? 0;
+            //             if (index < rating.floor()) {
+            //               return const Icon(
+            //                 Icons.star,
+            //                 color: Colors.amber,
+            //                 size: 16,
+            //               );
+            //             } else if (index < rating) {
+            //               return const Icon(
+            //                 Icons.star_half,
+            //                 color: Colors.amber,
+            //                 size: 16,
+            //               );
+            //             } else {
+            //               return Icon(
+            //                 Icons.star_border,
+            //                 color: Colors.amber.shade400,
+            //                 size: 16,
+            //               );
+            //             }
+            //           }),
+            //         ),
+            //         const SizedBox(width: 6),
+
+            //         Text(
+            //           (double.tryParse(
+            //                 contractor.overallRating,
+            //               )?.toStringAsFixed(1)) ??
+            //               '0.0',
+            //           style: const TextStyle(
+            //             fontWeight: AppFontWeights.semiBold,
+            //             fontSize: AppFontSizes.bodySmall,
+            //             color: ColorRes.textColor,
+            //           ),
+            //         ),
+            //         const SizedBox(width: 4),
+            //         Text(
+            //           "(${contractor.totalReviews} review${contractor.totalReviews == 1 ? '' : 's'})",
+            //           style: const TextStyle(
+            //             fontSize: AppFontSizes.caption,
+            //             color: ColorRes.textSecondary,
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //     // if (contractor.contractorType != null &&
+            //     //     contractor.contractorType!.isNotEmpty) ...[
+            //     //   Container(
+            //     //     padding: const EdgeInsets.symmetric(
+            //     //       horizontal: 8,
+            //     //       vertical: 4,
+            //     //     ),
+            //     //     decoration: BoxDecoration(
+            //     //       color: ColorRes.primary.withOpacity(0.05),
+            //     //       borderRadius: BorderRadius.circular(6),
+            //     //       border: Border.all(
+            //     //         color: ColorRes.primary.withOpacity(0.3),
+            //     //       ),
+            //     //     ),
+            //     //     child: Text(
+            //     //       contractor.contractorType!,
+            //     //       style: TextStyle(
+            //     //         fontSize: AppFontSizes.caption,
+            //     //         fontWeight: AppFontWeights.medium,
+            //     //         color: ColorRes.primary,
+            //     //       ),
+            //     //     ),
+            //     //   ),
+            //     // ],
+            //   ],
+            // ),
+            // const SizedBox(height: 6),
+            // Divider(color: ColorRes.border, thickness: 1),
+            const SizedBox(height: 12),
+
+            /// ===================== PROJECT STATUS BADGES =====================
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(
+                  child: _buildStatContainer(
+                    title: 'SERVICES',
+                    value: Formatter.formatNumber(contractor.totalServices),
+                  ),
                 ),
-                elevation: 0,
-              ),
-              child: const Text(
-                'Hire Now',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                SizedBox(width: 10),
+                Expanded(
+                  child: _buildStatContainer(
+                    title: 'ACTIVE',
+                    value: Formatter.formatNumber(contractor.activeServices),
+                  ),
+                ),
+                SizedBox(width: 10),
+                Expanded(
+                  child: _buildStatContainer(
+                    title: 'DONE',
+                    value: Formatter.formatNumber(
+                      contractor.projectStats.completedProjects,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 12),
+
+            /// ===================== HIRE NOW BUTTON =====================
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  // TODO: handle hire now
+                  Get.to(
+                    () =>
+                        ContractorProfileDetailsScreen(contractor: contractor),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ColorRes.primary,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  elevation: 0,
+                ),
+                child: const Text(
+                  'View Profile',
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                ),
               ),
             ),
-          ),
-          //
-        ],
+            //
+          ],
+        ),
       ),
     );
 

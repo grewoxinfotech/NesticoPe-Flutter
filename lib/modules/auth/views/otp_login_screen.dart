@@ -304,15 +304,27 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:nesticope_app/data/network/auth/service/auth_service.dart';
 import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/data/network/in_app_messaging/service/in_app_messaging_service.dart';
+import 'package:nesticope_app/data/network/user/service/notification_sync_service.dart';
+import 'package:nesticope_app/modules/auth/controllers/auth_controller.dart';
+import 'package:nesticope_app/modules/builder/view/builder_main_screen.dart';
+import 'package:nesticope_app/modules/contractor/view/contractor_main.dart';
+import 'package:nesticope_app/modules/dashboard/views/dashboard_screen.dart';
+import 'package:nesticope_app/modules/dashboard/views/seller_dashboard_screen.dart';
+import 'package:nesticope_app/modules/reseller/view/property_reseller.dart';
 import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 import 'package:nesticope_app/widgets/New%20folder/inputs/text_field.dart';
 import 'package:nesticope_app/widgets/button/button.dart';
+import 'package:nesticope_app/services/notification_service.dart' as notif;
 
 class OtpLoginScreen extends StatefulWidget {
-  const OtpLoginScreen({Key? key}) : super(key: key);
+  final bool isPartner;
+  const OtpLoginScreen({Key? key, this.isPartner = false}) : super(key: key);
 
   @override
   _OtpLoginScreenState createState() => _OtpLoginScreenState();
@@ -321,13 +333,16 @@ class OtpLoginScreen extends StatefulWidget {
 class _OtpLoginScreenState extends State<OtpLoginScreen> {
   final _phoneFormKey = GlobalKey<FormState>();
   final _phoneController = TextEditingController();
+  AuthController authController=(Get.isRegistered<AuthController>()) ?
+   Get.find<AuthController>() :
+   Get.put(AuthController());
 
-  // 6 separate OTP box controllers + focus nodes
+  // 4 separate OTP box controllers + focus nodes
   final List<TextEditingController> _otpControllers = List.generate(
-    6,
+    4,
     (_) => TextEditingController(),
   );
-  final List<FocusNode> _otpFocusNodes = List.generate(6, (_) => FocusNode());
+  final List<FocusNode> _otpFocusNodes = List.generate(4, (_) => FocusNode());
 
   bool _otpSent = false;
   bool _sending = false;
@@ -371,10 +386,11 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
   Future<void> _requestOtp() async {
     if (!_phoneFormKey.currentState!.validate()) return;
     setState(() => _sending = true);
-    
     final ok = await AuthService().requestOtpLogin(
       _phoneController.text.trim(),
+      module: widget.isPartner ? 'panel' : null,
     );
+    
     setState(() => _sending = false);
     if (ok) {
       NesticoPeSnackBar.showAwesomeSnackbar(
@@ -397,25 +413,85 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
 
   Future<void> _verifyOtp() async {
     final otp = _otpValue;
-    if (otp.length != 6) {
+    if (otp.length != 4) {
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Invalid OTP',
-        message: 'Please enter all 6 digits',
+        message: 'Please enter all 4 digits',
         contentType: ContentType.failure,
       );
       return;
     }
     setState(() => _verifying = true);
     final user = await AuthService().verifyLoginOtp(otp);
+
     setState(() => _verifying = false);
     if (user != null) {
       await SecureStorage.saveLoggedIn(true);
+      //  final user = await authService.login(email, password);
+
+
+      print('Login With Otp ${user.user?.toJson()}');
+
+      // 2️⃣ Save auth data
+      await SecureStorage.saveToken(user.token!);
+      await SecureStorage.saveUserData(user);
+      await SecureStorage.saveLoggedIn(true);
+      await SecureStorage.saveTermAndConditionValue(false.toString());
+
+      // 3️⃣ Set user role/type
+      await UserHelper.setUserType(
+        user.user?.userType,  
+        sellerType: user.user?.sellerType,
+        isAadharVerified: user.user?.isAadharVerified,
+      );
+
+      authController.currentUser.value = user;
+      authController.authState.value = AuthState.authenticated;
+
+      // 4️⃣ 🔔 NOTIFICATION SYNC
+      final userId = user.user?.id?.toString();
+      print('userId: $userId');
+      print('role: ${UserHelper.userType?.name}');
+
+      final role = UserHelper.userType?.name ?? 'buyer';
+
+      if (userId != null && userId.isNotEmpty) {
+        await notif.NotificationService.instance.attachLoggedInUser(
+          userId: userId,
+          role: role,
+          syncToBackend: (playerId) async {
+            // ✅ THIS IS THE SYNC POINT
+            await NotificationSyncService.instance.syncToBackend(
+              deviceToken: playerId,
+              metadata: {'user_id': userId, 'role': role},
+            );
+          },
+        );
+      }
+
+      // 5️⃣ Navigate (always LAST)
+      if (UserHelper.userType == UserType.buyer) {
+        Get.offAll(() => const DashboardScreen());
+      } else if (UserHelper.userType == UserType.seller &&
+          UserHelper.sellerType == SellerType.owner) {
+        Get.offAll(() => const SellerDashboardScreen());
+      } else if (UserHelper.userType == UserType.reseller) {
+        Get.offAll(() => const MainNavigationScreen());
+      } else if (UserHelper.userType == UserType.contractor) {
+        Get.offAll(() => ContractorMainScreen());
+      } else if (UserHelper.userType == UserType.seller &&
+          UserHelper.sellerType == SellerType.builder) {
+        Get.offAll(() => const BuilderMainScreen());
+      } 
+      else {
+        Get.offAll(() => const DashboardScreen());
+      }
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Login Successful',
         message: 'You have logged in successfully',
         contentType: ContentType.success,
       );
-      if (mounted) Navigator.of(context).pop(true);
+      // if (mounted) Navigator.of(context).pop(true);
     } else {
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Verification Failed',
@@ -919,6 +995,7 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
                         style: TextStyle(
                           fontSize: 11,
                           color: Colors.grey.shade600,
+
                           height: 1.4,
                           fontWeight: FontWeight.w500,
                         ),

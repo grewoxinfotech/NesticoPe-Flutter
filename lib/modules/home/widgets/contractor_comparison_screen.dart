@@ -1352,7 +1352,7 @@ class _ContractorComparisonScreenState
   final RxMap<String, ContractorDataResponse> _contractorData =
       <String, ContractorDataResponse>{}.obs;
   final RxString _error = ''.obs;
-String _activeId = '';
+  String _activeId = '';
   @override
   void initState() {
     super.initState();
@@ -1415,6 +1415,20 @@ String _activeId = '';
             fontWeight: AppFontWeights.bold,
           ),
         ),
+        actions: [
+          if (_compareManager.selectedList.length < 5)
+            TextButton(
+              onPressed: () => Get.back(),
+              child: Text(
+                '+ Add',
+                style: TextStyle(
+                  // fontSize: AppFontSizes.small,
+                  fontWeight: AppFontWeights.medium,
+                  color: ColorRes.primary,
+                ),
+              ),
+            ),
+        ],
         // actions: [
         //   IconButton(
         //     icon: const Icon(Icons.clear_all, color: ColorRes.black, size: 20),
@@ -1432,7 +1446,7 @@ String _activeId = '';
               child: CircularProgressIndicator(color: ColorRes.primary),
             );
           }
-        
+
           if (_error.value.isNotEmpty) {
             return Center(
               child: Column(
@@ -1461,7 +1475,7 @@ String _activeId = '';
               ),
             );
           }
-        
+
           if (_contractorData.isEmpty) {
             return Center(
               child: Padding(
@@ -1488,14 +1502,14 @@ String _activeId = '';
               ),
             );
           }
-        
+
           final contractors = _contractorData.values.toList();
-        
+
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                   SizedBox(height: 16),
+                SizedBox(height: 16),
                 ...contractors.map((c) {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -1503,46 +1517,22 @@ String _activeId = '';
                       contractor: c,
                       isActive: c.data.contractor.id == _activeId,
                       onRemove: () {
-                        final userId = _contractorData.entries
-                            .firstWhere((e) => e.value == c)
-                            .key;
+                        final userId =
+                            _contractorData.entries
+                                .firstWhere((e) => e.value == c)
+                                .key;
                         _contractorData.remove(userId);
-                        ContractorCompareManager.to
-                            .remove(c.data.contractor.id);
+                        ContractorCompareManager.to.remove(
+                          c.data.contractor.id,
+                        );
                       },
                     ),
                   );
                 }).toList(),
-                if (contractors.length < 5)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                    child: Center(
-                      child: Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () => Get.back(),
-                            child: const Icon(
-                              Icons.add_circle_outline,
-                              size: 30,
-                              color: ColorRes.primary,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Add up to ${5 - contractors.length} more contractor${5 - contractors.length > 1 ? 's' : ''} to compare',
-                            style: TextStyle(
-                              fontSize: AppFontSizes.small,
-                              fontWeight: AppFontWeights.medium,
-                              color: ColorRes.leadGreyColor[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+
                 const SizedBox(height: 16),
-                 Padding(
-              padding: EdgeInsets.symmetric(horizontal: AppPadding.medium,),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: AppPadding.medium),
 
                   child: Text(
                     'Detailed Comparison',
@@ -1594,18 +1584,19 @@ class _ContractorCardForCompare extends StatelessWidget {
     final p = contractor.data.profile;
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: AppPadding.medium,),
+      padding: EdgeInsets.symmetric(horizontal: AppPadding.medium),
       child: Material(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
         elevation: 1,
         shadowColor: ColorRes.black.withOpacity(0.06),
         child: Container(
-          height: 115,
+          height: 100,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isActive ? ColorRes.primary : ColorRes.leadGreyColor.shade200,
+              color:
+                  isActive ? ColorRes.primary : ColorRes.leadGreyColor.shade200,
               width: isActive ? 2 : 1,
             ),
           ),
@@ -1635,25 +1626,31 @@ class _ContractorCardForCompare extends StatelessWidget {
                   //   ),
                   // ),
                   Container(
-                    width: 120,
+                    width: 100,
                     decoration: BoxDecoration(
-                      color: ColorRes.primary.withOpacity(0.1),
+                      color: ColorRes.primary.withOpacity(0.05),
                       borderRadius: const BorderRadius.horizontal(
                         left: Radius.circular(11),
                       ),
                     ),
                     child: Center(
                       child: ClipOval(
-                        child: (contractor.data.contractor.profilePic ?? '').isNotEmpty
-                            ? CachedNetworkImage(
-                                imageUrl: (contractor.data.contractor.profilePic ?? ''),
-                                width: 70,
-                                height: 70,
-                                fit: BoxFit.cover,
-                                placeholder: (_, __) => ShimmerShapes.circle(size: 70),
-                                errorWidget: (_, __, ___) => _fallbackAvatar(),
-                              )
-                            : _fallbackAvatar(),
+                        child:
+                            (contractor.data.contractor.profilePic ?? '')
+                                    .isNotEmpty
+                                ? CachedNetworkImage(
+                                  imageUrl:
+                                      (contractor.data.contractor.profilePic ??
+                                          ''),
+                                  width: 60,
+                                  height: 60,
+                                  fit: BoxFit.cover,
+                                  placeholder:
+                                      (_, __) => ShimmerShapes.circle(size: 60),
+                                  errorWidget:
+                                      (_, __, ___) => _fallbackAvatar(),
+                                )
+                                : _fallbackAvatar(),
                       ),
                     ),
                   ),
@@ -1666,33 +1663,89 @@ class _ContractorCardForCompare extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           // Username (only if available)
+                          // SizedBox(height: 12),
                           if ((c.username).isNotEmpty)
-                            Text(
-                              c.username,
-                              style: const TextStyle(
-                                fontSize: AppFontSizes.bodyMedium,
-                                fontWeight: AppFontWeights.semiBold,
-                                color: ColorRes.textColor,
-                                height: 1.2,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    c.username,
+                                    style: const TextStyle(
+                                      fontSize: AppFontSizes.bodyMedium,
+                                      fontWeight: AppFontWeights.semiBold,
+                                      color: ColorRes.textColor,
+                                      height: 1.2,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                SizedBox(width: 12),
+                                GestureDetector(
+                                  onTap: () async {
+                                    contractorProfile =
+                                        await topContractorsController
+                                            .getContractorById(c.id);
+                                    contractorProfile?.username =
+                                        c.username ?? '';
+                                    if (contractorProfile != null) {
+                                      Get.to(
+                                        () => ContractorProfileDetailsScreen(
+                                          contractor:
+                                              contractorProfile ??
+                                              Contractor.fromJson({}),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: ColorRes.primary,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: const Text(
+                                      'View Profile',
+                                      style: TextStyle(
+                                        fontWeight: AppFontWeights.semiBold,
+                                        fontSize: AppFontSizes.extraSmall,
+                                        color: ColorRes.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 12),
+                              ],
                             ),
-      
+
                           // Location (only if any non-null)
                           if ((c.city != null && c.city!.isNotEmpty) ||
                               (c.state != null && c.state!.isNotEmpty))
-                            Text(
-                              '${c.city ?? ''}${c.city != null && c.state != null ? ', ' : ''}${c.state ?? ''}',
-                              style: TextStyle(
-                                fontSize: AppFontSizes.caption,
-                                color: ColorRes.leadGreyColor[600],
-                                height: 1.3,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.location_on_outlined,
+                                  color: ColorRes.leadGreyColor[700],
+                                  size: 14,
+                                ),
+                                SizedBox(width: 4),
+                                Text(
+                                  '${c.city ?? ''}${c.city != null && c.state != null ? ', ' : ''}${c.state ?? ''}',
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.caption,
+                                    color: ColorRes.leadGreyColor[700],
+                                    fontWeight: AppFontWeights.medium,
+                                    height: 1.3,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
                             ),
-      
+                          SizedBox(height: 8),
                           // Rating & Services (only if data exists)
                           if (p.overallRating != null ||
                               (p.totalServices != null && p.totalServices > 0))
@@ -1712,6 +1765,7 @@ class _ContractorCardForCompare extends StatelessWidget {
                                         style: const TextStyle(
                                           fontSize: AppFontSizes.small,
                                           fontWeight: AppFontWeights.semiBold,
+                                          color: ColorRes.orangeColor,
                                         ),
                                       ),
                                     ],
@@ -1737,65 +1791,22 @@ class _ContractorCardForCompare extends StatelessWidget {
                                   Text(
                                     '${p.totalServices} Services',
                                     style: TextStyle(
-                                      fontSize: AppFontSizes.small,
-                                      color: ColorRes.leadGreyColor[600],
+                                      fontSize: AppFontSizes.caption,
+                                      color: ColorRes.leadGreyColor[700],
+                                      fontWeight: AppFontWeights.medium,
                                     ),
                                   ),
                               ],
                             ),
-      
-                          // View Profile Button
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              GestureDetector(
-                                onTap: () async {
-                                  contractorProfile =
-                                      await topContractorsController
-                                          .getContractorById(c.id);
-                                  contractorProfile?.username = c.username ?? '';
-      
-                                  log(
-                                    'contractorProfile with id ${c.id}: ${contractorProfile?.toJson()}',
-                                  );
-                                  if (contractorProfile != null) {
-                                    Get.to(
-                                      () => ContractorProfileDetailsScreen(
-                                        contractor:
-                                            contractorProfile ??
-                                            Contractor.fromJson({}),
-                                      ),
-                                    );
-                                  }
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 14,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: ColorRes.primary,
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: const Text(
-                                    'View Profile',
-                                    style: TextStyle(
-                                      fontWeight: AppFontWeights.semiBold,
-                                      fontSize: AppFontSizes.small,
-                                      color: ColorRes.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+
+                          const SizedBox(height: 4),
                         ],
                       ),
                     ),
                   ),
                 ],
               ),
-      
+
               // Remove button
               if (onRemove != null)
                 Positioned(
@@ -1803,10 +1814,16 @@ class _ContractorCardForCompare extends StatelessWidget {
                   right: 8,
                   child: GestureDetector(
                     onTap: onRemove,
-                    child: const Icon(
-                      Icons.cancel,
-                      color: ColorRes.error,
-                      size: 16,
+                    child: Container(
+                      width: 16,
+                      height: 16,
+                      decoration: const BoxDecoration(
+                        color: ColorRes.error,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Center(
+                        child: Icon(Icons.close, color: Colors.white, size: 12),
+                      ),
                     ),
                   ),
                 ),
@@ -1819,12 +1836,12 @@ class _ContractorCardForCompare extends StatelessWidget {
 
   Widget _fallbackAvatar() {
     return CircleAvatar(
-      radius: 35,
+      radius: 30,
       backgroundColor: ColorRes.primary,
       child: const Icon(
         Icons.design_services_outlined,
         color: Colors.white,
-        size: 35,
+        size: 20,
       ),
     );
   }
@@ -1848,9 +1865,9 @@ class _ContractorComparisonTableState
     extends State<_ContractorComparisonTable> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  
+
   bool _didInitialNotify = false;
-void initState() {
+  void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_didInitialNotify && widget.contractors.isNotEmpty) {
@@ -1859,6 +1876,7 @@ void initState() {
       }
     });
   }
+
   @override
   void dispose() {
     _pageController.dispose();
@@ -1913,8 +1931,7 @@ void initState() {
               final contractor = widget.contractors[index];
               return _ContractorServicesCard(
                 contractor: contractor,
-                activeServices:
-                    contractor.data.totalActiveServices.toString(),
+                activeServices: contractor.data.totalActiveServices.toString(),
                 totalServices: contractor.data.totalServices.toString(),
                 contractorType: contractor.data.profile.contractorType,
                 location: contractor.data.contractor.city ?? '',
@@ -1946,9 +1963,10 @@ void initState() {
                   width: _currentPage == index ? 24 : 8,
                   height: 8,
                   decoration: BoxDecoration(
-                    color: _currentPage == index
-                        ? ColorRes.primary
-                        : ColorRes.leadGreyColor[300],
+                    color:
+                        _currentPage == index
+                            ? ColorRes.primary
+                            : ColorRes.leadGreyColor[300],
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -1997,7 +2015,7 @@ class _ContractorServicesCard extends StatelessWidget {
     final ownCategories = contractor.data.servicesByCategory;
     return Container(
       width: MediaQuery.of(context).size.width - 32,
-           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
@@ -2058,7 +2076,7 @@ class _ContractorServicesCard extends StatelessWidget {
                 ...ownCategories.expand((category) {
                   final services = category.services;
                   final isLastCategory = category == ownCategories.last;
-                  
+
                   return [
                     // Category Header
                     Container(

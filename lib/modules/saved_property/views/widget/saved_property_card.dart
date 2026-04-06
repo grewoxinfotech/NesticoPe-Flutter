@@ -1273,8 +1273,8 @@ class HorizontalPropertyCard extends StatelessWidget {
                                     : Icons.favorite_border,
                                 color: isFavorite
                                     ? ColorRes.error
-                                    : ColorRes.textSecondary,
-                                size: 18,
+                                    : ColorRes.primary,
+                                size: 20,
                               ),
                             ),
                           ],

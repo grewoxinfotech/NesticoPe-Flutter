@@ -42,7 +42,7 @@ class PropertyCard extends StatefulWidget {
 
 class _PropertyCardState extends State<PropertyCard> {
   final controller = Get.find<PropertyController>();
-  final PropertyFavoriteController favoriteController =
+  final PropertyFavoriteController favoriteController = 
       Get.isRegistered<PropertyFavoriteController>()
           ? Get.find<PropertyFavoriteController>()
           : Get.put(PropertyFavoriteController(), permanent: true);
@@ -112,6 +112,7 @@ class _PropertyCardState extends State<PropertyCard> {
 
                     fit: BoxFit.cover,
                     height: 170,
+
                     width: double.infinity,
                   ),
                   Positioned(
@@ -169,7 +170,7 @@ class _PropertyCardState extends State<PropertyCard> {
                               backgroundColor:
                                   selected ? ColorRes.primary : ColorRes.white,
 
-                              radius: 18,
+                              radius: 20,
                               child: Icon(
                                 Icons.compare_arrows,
                                 color:
@@ -191,7 +192,7 @@ class _PropertyCardState extends State<PropertyCard> {
                           },
                           child: CircleAvatar(
                             backgroundColor: ColorRes.white,
-                            radius: 18,
+                            radius: 20,
                             child: Obx(() {
                               isFavorite = favoriteController.favorites
                                   .contains(widget.property.id);
@@ -202,7 +203,8 @@ class _PropertyCardState extends State<PropertyCard> {
                                 color:
                                     isFavorite
                                         ? ColorRes.error
-                                        : ColorRes.leadGreyColor,
+                                        : ColorRes.primary,
+                                        
                                 size: 20,
                               );
                             }),

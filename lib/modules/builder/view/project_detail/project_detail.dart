@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:nesticope_app/app/constants/api_constants.dart';
 import 'package:nesticope_app/app/manager/compare_manager.dart';
 import 'package:nesticope_app/app/manager/data_masker.dart';
 import 'package:nesticope_app/app/manager/icon_manager.dart';
@@ -264,7 +265,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                       _buildMapSection(controller, project.value!),
                       _buildAmenities(project.value!),
                       // SizedBox(height: 8),
-                      _buildContactSection(controller, project.value!),
+                      // _buildContactSection(controller, project.value!),
                       _buildReviewSection(
                         canAddReview: canAddReview,
                         overallRatingController: _overallRatingController,
@@ -284,6 +285,12 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                               subTitle:
                                   "Limited-time! Get an exclusive offer on this property.",
                               isSubTitle: true,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 12),
+                              child: OfferCountdown(
+                                duration: Duration(minutes: 2),
+                              ),
                             ),
 
                             const SizedBox(height: 12),
@@ -1116,7 +1123,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
             color: ColorRes.white,
             shape: BoxShape.circle,
           ),
-          child: const Icon(Icons.arrow_back, color: ColorRes.black),
+          child: const Icon(Icons.arrow_back, color: ColorRes.primary),
         ),
       ),
       actions: [
@@ -2236,7 +2243,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         Text(
           capitalizeEachWord(amenity),
           style: const TextStyle(
-            fontSize: AppFontSizes.mini,
+            fontSize: AppFontSizes.extraSmall,
             fontWeight: AppFontWeights.medium,
             color: ColorRes.textPrimary,
           ),
@@ -2506,13 +2513,9 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     return Container(
       margin: const EdgeInsets.only(top: 8),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: ColorRes.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: ColorRes.leadGreyColor.shade300),
-      ),
+      decoration: BoxDecoration(color: ColorRes.white),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Text(
             'Contact Support Team',
@@ -2560,7 +2563,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                       await ContactHelper.openWhatsApp(
                         number,
                         message:
-                            'Hi, I need assistance regarding this project.',
+                            'Hi, I need assistance regarding this project ${ApiConstants.frontendBaseUrl}/project/${project.value?.id ?? ''}',
                       );
                     }
                   },
@@ -2750,4 +2753,171 @@ Widget buildVideoThumbnail(String videoUrl, {double? width, double? height}) {
       );
     },
   );
+}
+
+class OfferCountdown extends StatefulWidget {
+  final Duration duration;
+  final VoidCallback? onComplete;
+  const OfferCountdown({super.key, required this.duration, this.onComplete});
+  @override
+  State<OfferCountdown> createState() => _OfferCountdownState();
+}
+
+class _OfferCountdownState extends State<OfferCountdown>
+    with TickerProviderStateMixin {
+  late final AnimationController _pulseController;
+  late final AnimationController _countdownController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    )..repeat(reverse: true);
+    _countdownController = AnimationController(
+      vsync: this,
+      duration: widget.duration,
+    )..forward();
+    _countdownController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        widget.onComplete?.call();
+        _countdownController.reset();
+        _countdownController.forward();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    _countdownController.dispose();
+    super.dispose();
+  }
+
+  String get _timeLeft {
+    final elapsed = _countdownController.lastElapsedDuration ?? Duration.zero;
+    final left = widget.duration - elapsed;
+    final secs = left.inSeconds.clamp(0, widget.duration.inSeconds);
+    final m = (secs ~/ 60).toString().padLeft(2, '0');
+    final s = (secs % 60).toString().padLeft(2, '0');
+    return '$m:$s';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        // 🔥 Animated Fire Icon
+        ScaleTransition(
+          scale: Tween<double>(begin: 0.9, end: 1.15).animate(
+            CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: ColorRes.error.withOpacity(0.15),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.local_fire_department,
+              color: ColorRes.error,
+              size: 22,
+            ),
+          ),
+        ),
+
+        const SizedBox(width: 10),
+
+        // ⏱ Timer Box
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFFFF4D6D), Color(0xFFFF6B81)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.red.withOpacity(0.25),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: AnimatedBuilder(
+              animation: _countdownController,
+              builder: (context, _) {
+                final elapsed =
+                    _countdownController.lastElapsedDuration ?? Duration.zero;
+                final left = widget.duration - elapsed;
+                final totalSecs = left.inSeconds.clamp(
+                  0,
+                  widget.duration.inSeconds,
+                );
+
+                final hrs = (totalSecs ~/ 3600).toString().padLeft(2, '0');
+                final mins = ((totalSecs % 3600) ~/ 60).toString().padLeft(
+                  2,
+                  '0',
+                );
+                final secs = (totalSecs % 60).toString().padLeft(2, '0');
+
+                Widget timeUnit(String value, String label) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        value,
+                        style: const TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        label,
+                        style: const TextStyle(
+                          fontSize: 10,
+                          letterSpacing: 1,
+                          color: Colors.white70,
+                        ),
+                      ),
+                    ],
+                  );
+                }
+
+                Widget colon() => const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: Text(
+                    ':',
+                    style: TextStyle(
+                      fontSize: 22,
+                      color: Colors.white70,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                );
+
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    timeUnit(hrs, 'HRS'),
+                    colon(),
+                    timeUnit(mins, 'MIN'),
+                    colon(),
+                    timeUnit(secs, 'SEC'),
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }

@@ -206,6 +206,56 @@ extension ReviewItemCopy on ReviewItem {
   }
 }
 
+extension ReviewItemPayload on ReviewItem {
+  Map<String, dynamic> toCreatePayload() {
+    final map = <String, dynamic>{};
+    if (id != null) map['id'] = id;
+    if (createdBy != null) map['created_by'] = createdBy;
+    if (updatedBy != null) map['updated_by'] = updatedBy;
+    if (entityType != null) map['entity_type'] = entityType;
+    if (entityId != null) map['entity_id'] = entityId;
+    if (reviewerId != null) map['reviewer_id'] = reviewerId;
+    if (rating != null) map['rating'] = rating;
+    if (title != null) map['title'] = title;
+    if (content != null) map['content'] = content;
+
+    if (detailedRatings != null) {
+      final dr = detailedRatings!;
+      final drMap = <String, dynamic>{};
+      if (dr.location > 0) drMap['location'] = dr.location;
+      if (dr.cleanliness > 0) drMap['cleanliness'] = dr.cleanliness;
+      if (dr.nightlifeRating > 0) drMap['nightlife'] = dr.nightlifeRating;
+      if (dr.value > 0) drMap['value'] = dr.value;
+      if (dr.amenities > 0) drMap['amenities'] = dr.amenities;
+      if (drMap.isNotEmpty) {
+        map['detailed_ratings'] = drMap;
+      }
+    }
+
+    if (photos != null && photos!.isNotEmpty) map['photos'] = photos;
+    if (videos != null && videos!.isNotEmpty) map['videos'] = videos;
+    if (pros != null) map['pros'] = pros!.toJson();
+    if (cons != null) map['cons'] = cons!.toJson();
+
+    if (isVerified != null) map['is_verified'] = isVerified;
+    if (verificationType != null) map['verification_type'] = verificationType;
+    if (status != null) map['status'] = status;
+    if (moderatedBy != null) map['moderated_by'] = moderatedBy;
+    if (moderationNotes != null) map['moderation_notes'] = moderationNotes;
+    if (rejectionReason != null) map['rejection_reason'] = rejectionReason;
+    if (response != null) map['response'] = response;
+    if (responseBy != null) map['response_by'] = responseBy;
+    if (responseDate != null) map['response_date'] = responseDate;
+    if (helpfulCount != null) map['helpful_count'] = helpfulCount;
+    if (reportCount != null) map['report_count'] = reportCount;
+    if (createdAt != null) map['createdAt'] = createdAt?.toIso8601String();
+    if (updatedAt != null) map['updatedAt'] = updatedAt?.toIso8601String();
+    if (reviewer != null) map['reviewer'] = reviewer?.toJson();
+    if (entityUser != null) map['entityUser'] = entityUser?.toJson();
+    return map;
+  }
+}
+
 class Reviewer {
   final String? id;
   final String? username;

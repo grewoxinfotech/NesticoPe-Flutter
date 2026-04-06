@@ -34,6 +34,7 @@ import '../../contractor/view/contractor_main.dart';
 import '../../in_app_message/controller/in_app_message_controller.dart';
 import '../../property/controllers/property_controller.dart';
 import '../../profile/controllers/buyer_profiledata.dart';
+import '../../hire_contractor/view/hire_contractor_screen.dart';
 
 class HomeHeader extends StatefulWidget {
   final List<String> propertyTypes;
@@ -41,7 +42,7 @@ class HomeHeader extends StatefulWidget {
   final String image;
   final Function(String city) onCityChanged;
   // Change callback signature
-final Function(String category, {bool fromUser}) onCategoryChanged;
+  final Function(String category, {bool fromUser}) onCategoryChanged;
 
   const HomeHeader({
     super.key,
@@ -59,10 +60,10 @@ final Function(String category, {bool fromUser}) onCategoryChanged;
 }
 
 class _HomeHeaderState extends State<HomeHeader> {
-  final propertyController = Get.find<PropertyController>();
-  final projectController = Get.find<ProjectWizardController>();
-  final topBuilderController = Get.find<TopBuilderController>();
-  final searchHistoryController = Get.find<SearchHistoryController>();
+  late final PropertyController propertyController;
+  late final ProjectWizardController projectController;
+  late final TopBuilderController topBuilderController;
+  late final SearchHistoryController searchHistoryController;
   final NotificationController controller = Get.put(NotificationController());
 
   int selectedIndex = 0;
@@ -72,19 +73,31 @@ class _HomeHeaderState extends State<HomeHeader> {
   @override
   void initState() {
     super.initState();
+    propertyController = Get.isRegistered<PropertyController>()
+        ? Get.find<PropertyController>()
+        : Get.put(PropertyController());
+    projectController = Get.isRegistered<ProjectWizardController>()
+        ? Get.find<ProjectWizardController>()
+        : Get.put(ProjectWizardController(isBuilderView: false));
+    topBuilderController = Get.isRegistered<TopBuilderController>()
+        ? Get.find<TopBuilderController>()
+        : Get.put(TopBuilderController());
+    searchHistoryController = Get.isRegistered<SearchHistoryController>()
+        ? Get.find<SearchHistoryController>()
+        : Get.put(SearchHistoryController());
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final initial = await SecureStorage.getHomeCategory();
       selectedCategory = initial ?? 'Buy';
       // widget.onCategoryChanged(selectedCategory!);
+      if (!Get.isRegistered<BuyerProfileDataController>()) {
+        Get.put(BuyerProfileDataController());
+      }
       setState(() {});
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!Get.isRegistered<BuyerProfileDataController>()) {
-      Get.put(BuyerProfileDataController());
-    }
     final BuyerProfileDataController profileController =
         Get.find<BuyerProfileDataController>();
     return Column(
@@ -92,9 +105,12 @@ class _HomeHeaderState extends State<HomeHeader> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Top Row: City + Post Property
+        SizedBox(height: 14),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
+
           // color: Colors.white,
+          
           // height: 64,
 
           child: Row(
@@ -237,30 +253,66 @@ class _HomeHeaderState extends State<HomeHeader> {
                     }
                   },
 
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8,
-                      horizontal: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color: ColorRes.primary,
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: ColorRes.primary.withOpacity(0.25),
-                          blurRadius: 8,
-                          offset: const Offset(0, 3),
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8,
+                          horizontal: 12,
                         ),
-                      ],
-                    ),
-                    child: Text(
-                      getButtonText(),
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12,
+                        decoration: BoxDecoration(
+                          color: ColorRes.primary,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: ColorRes.primary.withOpacity(0.25),
+                              blurRadius: 8,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          getButtonText(),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 11,
+                          ),
+                        ),
                       ),
-                    ),
+                      Positioned(
+                        right: -10,
+                        top: -12,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: ColorRes.error,
+                            borderRadius: BorderRadius.circular(4),
+                            boxShadow: [
+                              BoxShadow(
+                                color: ColorRes.error.withOpacity(0.25),
+
+                                blurRadius: 6,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            'FREE',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: AppFontSizes.mini,
+                              fontWeight: AppFontWeights.bold,
+                              letterSpacing: 0.6,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -317,44 +369,48 @@ class _HomeHeaderState extends State<HomeHeader> {
 
         ///MARK: Change here
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           child: Row(
             children: [
               Expanded(
-                child: buildPositionedTextField(propertyController,context, () async {
-                  final filter = await Get.to(
-                    () => CommonSearchField(
-                      isNavigate: true,
+                child: buildPositionedTextField(
+                  propertyController,
+                  context,
+                  () async {
+                    final filter = await Get.to(
+                      () => CommonSearchField(
+                        isNavigate: true,
 
-                      onTap: (city) {
-                        final filters = {"city": city.split(",").first};
-                        propertyController.fetchTradingArea(
-                          filters['city'] ?? '',
-                        );
-                        Get.back(result: filters);
-                      },
-                    ),
-                  );
-                  if (filter != null &&
-                      filter is Map &&
-                      filter['city'] != null) {
-                    final String city = filter['city'];
+                        onTap: (city) {
+                          final filters = {"city": city.split(",").first};
+                          propertyController.fetchTradingArea(
+                            filters['city'] ?? '',
+                          );
+                          Get.back(result: filters);
+                        },
+                      ),
+                    );
+                    if (filter != null &&
+                        filter is Map &&
+                        filter['city'] != null) {
+                      final String city = filter['city'];
 
-                    // Apply city filter to home (Yes case)
-                    await SecureStorage.saveSelectedCity(city);
-                    propertyController.fetchTradingArea(city);
-                    topBuilderController.applyFilter('city', city);
+                      // Apply city filter to home (Yes case)
+                      await SecureStorage.saveSelectedCity(city);
+                      propertyController.fetchTradingArea(city);
+                      topBuilderController.applyFilter('city', city);
 
-                    propertyController.applyFilter('city', city);
-                    projectController.applyFilter('city', city);
-                    // Reload top properties for the new city
-                    await propertyController.loadTopProperties();
-                    await projectController.loadTopProject();
-                    await topBuilderController.loadInitial();
+                      propertyController.applyFilter('city', city);
+                      projectController.applyFilter('city', city);
+                      // Reload top properties for the new city
+                      await propertyController.loadTopProperties();
+                      await projectController.loadTopProject();
+                      await topBuilderController.loadInitial();
 
-                    // Navigate to PropertyDetail in both cases (Yes and No)
-                  }
-                }),
+                      // Navigate to PropertyDetail in both cases (Yes and No)
+                    }
+                  },
+                ),
               ),
               const SizedBox(width: 6),
               // Container(
@@ -396,11 +452,15 @@ class _HomeHeaderState extends State<HomeHeader> {
                 height: 48,
                 child: PopupMenuButton<String>(
                   onSelected: (val) async {
+                    if (val == 'Service') {
+                      Get.to(() => const HireContractorScreen());
+                      return;
+                    }
                     setState(() {
                       selectedCategory = val;
-                       _userInteracted = true; // ✅ mark actual user tap
+                      _userInteracted = true;
                     });
-                   widget.onCategoryChanged(val, fromUser: true);
+                    widget.onCategoryChanged(val, fromUser: true);
                     await SecureStorage.saveHomeCategory(val);
                   },
                   itemBuilder:
@@ -409,44 +469,48 @@ class _HomeHeaderState extends State<HomeHeader> {
                         _buildMenuItem('Rent/Lease'),
                         _buildMenuItem('Commercial'),
                         _buildMenuItem('PG/Co-living'),
+                        _buildMenuItem('Service'),
                         // _buildMenuItem('Plots'),
                       ],
                   padding: EdgeInsets.zero,
                   child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: ColorRes.primary.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: ColorRes.primary.withOpacity(0.3),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.tune_rounded,
-                      color: ColorRes.primary,
-                      size: 20,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
                     ),
-                    // const SizedBox(width: 6),
-                    // Text(
-                    //   selectedCategory ?? 'Buy',
-                    //   style: const TextStyle(
-                    //     fontSize: AppFontSizes.small,
-                    //     fontWeight: AppFontWeights.semiBold,
-                    //     color: ColorRes.primary,
-                    //   ),
-                    // ),
-                    // const SizedBox(width: 4),
-                    // const Icon(
-                    //   Icons.keyboard_arrow_down_rounded,
-                    //   size: 18,
-                    //   color: ColorRes.primary,
-                    // ),
-                  ],
-                ),
-              ),
+                    decoration: BoxDecoration(
+                      color: ColorRes.primary.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: ColorRes.primary.withOpacity(0.3),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.tune_rounded,
+                          color: ColorRes.primary,
+                          size: 20,
+                        ),
+                        // const SizedBox(width: 6),
+                        // Text(
+                        //   selectedCategory ?? 'Buy',
+                        //   style: const TextStyle(
+                        //     fontSize: AppFontSizes.small,
+                        //     fontWeight: AppFontWeights.semiBold,
+                        //     color: ColorRes.primary,
+                        //   ),
+                        // ),
+                        // const SizedBox(width: 4),
+                        // const Icon(
+                        //   Icons.keyboard_arrow_down_rounded,
+                        //   size: 18,
+                        //   color: ColorRes.primary,
+                        // ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -495,62 +559,61 @@ class _HomeHeaderState extends State<HomeHeader> {
     }
     return "Post Property"; // default fallback
   }
-
-  
 }
-Widget buildPositionedTextField(PropertyController propertyController, BuildContext context, VoidCallback? onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: TextField(
-        enabled: false, // same as your CustomTextField
 
-        controller: TextEditingController(
-          text: propertyController.selectedCity.value,
-        ),
-        style: const TextStyle(
-          fontSize: AppFontSizes.medium,
-          fontWeight: AppFontWeights.medium,
-          color: ColorRes.textColor,
-        ),
-        decoration: InputDecoration(
-          hintText: 'Change your Location ...',
-          hintStyle: const TextStyle(fontSize: AppFontSizes.medium),
-          filled: true,
-          fillColor: ColorRes.white,
-          prefixIcon: const Icon(
-            Icons.search,
-            color: ColorRes.primary,
-            size: 22,
-          ),
+Widget buildPositionedTextField(
+  PropertyController propertyController,
+  BuildContext context,
+  VoidCallback? onTap,
+) {
+  return GestureDetector(
+    onTap: onTap,
+    child: TextField(
+      enabled: false, // same as your CustomTextField
 
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 14,
-            horizontal: 12,
-          ),
-          disabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: ColorRes.grey.withOpacity(0.2)),
-            borderRadius: BorderRadius.circular(16),
-            // borderSide: BorderSide(
-            //   color: ColorRes.grey,
-            //   width: 1,
-            // ), // remove border like your custom field
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: ColorRes.grey.withOpacity(0.2)),
-            borderRadius: BorderRadius.circular(16),
-            // borderSide: BorderSide(
-            //   color: ColorRes.grey,
-            //   width: 1,
-            // ), // remove border like your custom field
-          ),
-          border: OutlineInputBorder(
-            borderSide: BorderSide(color: ColorRes.grey.withOpacity(0.2)),
-            borderRadius: BorderRadius.circular(16),
-          ),
+      controller: TextEditingController(
+        text: propertyController.selectedCity.value,
+      ),
+      style: const TextStyle(
+        fontSize: AppFontSizes.medium,
+        fontWeight: AppFontWeights.medium,
+        color: ColorRes.textColor,
+      ),
+      decoration: InputDecoration(
+        hintText: 'Change your Location ...',
+        hintStyle: const TextStyle(fontSize: AppFontSizes.medium),
+        filled: true,
+        fillColor: ColorRes.white,
+        prefixIcon: const Icon(Icons.search, color: ColorRes.primary, size: 22),
+
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 14,
+          horizontal: 12,
+        ),
+        disabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: ColorRes.grey.withOpacity(0.2)),
+          borderRadius: BorderRadius.circular(16),
+          // borderSide: BorderSide(
+          //   color: ColorRes.grey,
+          //   width: 1,
+          // ), // remove border like your custom field
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: ColorRes.grey.withOpacity(0.2)),
+          borderRadius: BorderRadius.circular(16),
+          // borderSide: BorderSide(
+          //   color: ColorRes.grey,
+          //   width: 1,
+          // ), // remove border like your custom field
+        ),
+        border: OutlineInputBorder(
+          borderSide: BorderSide(color: ColorRes.grey.withOpacity(0.2)),
+          borderRadius: BorderRadius.circular(16),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
 // Widget buildPositionedTextField(BuildContext context, VoidCallback? onTap) {
 //   return GestureDetector(

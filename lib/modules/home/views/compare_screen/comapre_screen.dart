@@ -319,9 +319,11 @@ class _PropertyCardForCompareState extends State<PropertyCardForCompare> {
                             Text(
                               widget.item.address ?? '-',
                               style: TextStyle(
-                                fontSize: AppFontSizes.caption,
+                                fontSize: AppFontSizes.extraSmall,
                                 color: ColorRes.leadGreyColor[600],
                                 height: 1.3,
+                                // fontSize: AppFontSizes.caption,
+                                fontWeight: AppFontWeights.medium,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -333,7 +335,7 @@ class _PropertyCardForCompareState extends State<PropertyCardForCompare> {
                               children: [
                                 Icon(
                                   Icons.bed_outlined,
-                                  size: 13,
+                                  size: 12,
                                   color: const Color(0xFF2563EB),
                                 ),
                                 const SizedBox(width: 4),
@@ -342,7 +344,7 @@ class _PropertyCardForCompareState extends State<PropertyCardForCompare> {
                                           .toString() +
                                       ' BHK',
                                   style: TextStyle(
-                                    fontSize: AppFontSizes.caption,
+                                    fontSize: AppFontSizes.extraSmall,
                                     fontWeight: AppFontWeights.medium,
                                     color: ColorRes.blackShade54,
                                   ),
@@ -955,12 +957,23 @@ class _CompareScreenState extends State<CompareScreen> {
             fontWeight: AppFontWeights.bold,
           ),
         ),
-        // actions: [
-        //   IconButton(
-        //     icon: const Icon(Icons.more_vert, color: ColorRes.black, size: 20),
-        //     onPressed: () {},
-        //   ),
-        // ],
+        actions: [
+         if (CompareManager.to.selectedList.length < 5)
+                  TextButton(
+              onPressed: () {
+
+                Get.to(PropertyDetail());
+              },
+              child: Text(
+                '+ Add',
+                style: TextStyle(
+                  // fontSize: AppFontSizes.small,
+                  fontWeight: AppFontWeights.medium,
+                  color: ColorRes.primary,
+                ),
+              ),
+            ),
+        ],
       ),
       body: SafeArea(
         child: Obx(() {
@@ -1023,35 +1036,7 @@ class _CompareScreenState extends State<CompareScreen> {
                     ),
                   );
                 }).toList(),
-                if (selected.length < 5)
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                    child: Center(
-                      child: Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Get.to(PropertyDetail());
-                            },
-                            child: Icon(
-                              Icons.add_circle_outline,
-                              size: 30,
-                              color: ColorRes.primary,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Add up to ${5 - selected.length} more propert${5 - selected.length > 1 ? 'ies' : 'y'} to compare',
-                            style: TextStyle(
-                              fontSize: AppFontSizes.small,
-                              fontWeight: AppFontWeights.medium,
-                              color: ColorRes.leadGreyColor[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                
                 SizedBox(height: 16),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: AppPadding.medium),

@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:developer';
+import 'dart:math' as Math;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
@@ -18,6 +20,7 @@ import 'package:nesticope_app/modules/builder/view/all_project_list_screen.dart'
 import 'package:nesticope_app/modules/contractor/controller/top_contractor_service_category_controller.dart';
 import 'package:nesticope_app/modules/contractor/view/all_contractors_list_screen.dart';
 import 'package:nesticope_app/modules/hire_contractor/controller/hire_contractor_filter_controller.dart';
+import 'package:nesticope_app/modules/hire_contractor/view/widget/category_service_explorer.dart';
 import 'package:nesticope_app/modules/hire_contractor/view/widget/hire_contractor_profilelist.dart';
 import 'package:nesticope_app/modules/home/controllers/top_builder_all_controller.dart';
 import 'package:nesticope_app/modules/home/controllers/top_builder_controller.dart';
@@ -67,6 +70,8 @@ import '../../../../data/network/news/news_model.dart';
 import '../../../../data/network/platform_review/model/platform_review_model.dart';
 import '../../../builder/view/builder_property_listing.dart';
 import 'package:nesticope_app/data/network/top_seller_profile/model/top_builder_profile_model.dart';
+import '../../controllers/banner_home_controller.dart';
+import 'package:nesticope_app/data/network/banner/model/banner_model.dart';
 import '../../views/all_builders_screen.dart';
 import '../../../builder/view/project_detail/project_detail.dart';
 import '../../../filter_property/controller/property_filter_controller.dart';
@@ -186,11 +191,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   late final TopCategoryController topCategoryController;
   final searchHistoryController = Get.put(SearchHistoryController());
-  bool _pinned = true;
-  bool _snap = false;
-  bool _floating = false;
+  // bool _pinned = true;
+  // bool _snap = false;
+  // bool _floating = false;
   final ScrollController _scrollController = ScrollController();
-  bool _showPinnedSearch = false;
+  // bool _showPinnedSearch = false;
 
   // final PinnedSearchNotifier _pinnedSearchNotifier = PinnedSearchNotifier();
   // Threshold to show pinned search (expandedHeight - collapsedHeight)
@@ -206,6 +211,12 @@ class _HomeScreenState extends State<HomeScreen> {
   List<dynamic> _cachedNewlyAddedProperties = [];
   List<dynamic> _cachedTopProperties = [];
   String? selectedCity;
+  late final BannerHomeController bannerController;
+  final PageController _bannerPageController = PageController(
+    viewportFraction: 0.95,
+  );
+  Timer? _bannerTimer;
+  int _bannerCount = 0;
 
   @override
   void initState() {
@@ -233,8 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
           _homeListingTypeFilter = 'rent';
         } else if (norm.startsWith('pg')) {
           _homeListingTypeFilter = 'pg';
-        } 
-        else if (norm.startsWith('commercial')) {
+        } else if (norm.startsWith('commercial')) {
           _homePropertyTypeFilter = 'commercial';
         } else if (norm.startsWith('plots')) {
           _homePropertyTypeFilter = 'plot';
@@ -256,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
           // propertyController.loadTopProperties();
 
           propertyController.loadTopProperties();
-        } 
+        }
         // else {
         //   propertyController.clearFilter('listingType');
         // }
@@ -267,7 +277,6 @@ class _HomeScreenState extends State<HomeScreen> {
           // propertyController.loadTopProperties();
 
           propertyController.loadTopProperties();
-    
         }
       } catch (_) {}
 
@@ -299,6 +308,13 @@ class _HomeScreenState extends State<HomeScreen> {
       if (pinned != lastPinned) {
         lastPinned = pinned;
         context.read<PinnedSearchNotifier>().update(pinned);
+      }
+      if (_scrollController.position.isScrollingNotifier.value) {
+        Future.microtask(() {
+          if (Get.isOverlaysOpen) {
+            Get.back(); // 👈 closes PopupMenu safely
+          }
+        });
       }
     });
   }
@@ -332,6 +348,14 @@ class _HomeScreenState extends State<HomeScreen> {
     compareManager = Get.put(CompareManager(), permanent: true);
     topCategoryController = Get.put(TopCategoryController());
     contactController = Get.put(ContactController());
+    bannerController = Get.put(BannerHomeController());
+    ever<List<BannerItem>>(bannerController.items, (list) {
+      _bannerCount = list.length;
+      if (_bannerCount > 0) {
+        _startBannerAutoScroll();
+      }
+      if (mounted) setState(() {});
+    });
   }
 
   void _setupCityChangeListener() {
@@ -349,7 +373,6 @@ class _HomeScreenState extends State<HomeScreen> {
       });
 
       debugPrint("🔄 City synced to HomeScreen: $city");
-      
 
       //=================================For ===================================
 
@@ -508,7 +531,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       pinned: true,
                       snap: false,
                       floating: false,
-                      expandedHeight: 110.0,
+                      expandedHeight: 120.0,
 
                       titleSpacing: 0,
                       backgroundColor:
@@ -739,9 +762,9 @@ class _HomeScreenState extends State<HomeScreen> {
               _homeListingTypeFilter = 'pg';
             } else if (norm.startsWith('commercial')) {
               _homePropertyTypeFilter = 'commercial';
-            // } else if (norm.startsWith('plots')) {
-            //   _homePropertyTypeFilter = 'plot';
-            // }
+              // } else if (norm.startsWith('plots')) {
+              //   _homePropertyTypeFilter = 'plot';
+              // }
             }
           });
           try {
@@ -761,9 +784,9 @@ class _HomeScreenState extends State<HomeScreen> {
               if (fromUser) {
                 propertyController.loadTopProperties();
               }
-            // } else {
-            //   propertyController.clearFilter('listingType');
-            // }
+              // } else {
+              //   propertyController.clearFilter('listingType');
+              // }
             }
 
             if (norm.startsWith('commercial')) {
@@ -773,17 +796,17 @@ class _HomeScreenState extends State<HomeScreen> {
               if (fromUser) {
                 propertyController.loadTopProperties();
               }
-            // } else if (norm.startsWith('plots')) {
-            //   propertyController.applyFilter('propertyType', 'plot');
-            //   // propertyController.loadTopProperties();
-            //   if (fromUser) {
-            //     propertyController.loadTopProperties();
-            //   }
-            //   // projectController.applyFilter('projectType', '');
-            // } else {
-            //   propertyController.clearFilter('propertyType');
-            //   // projectController.applyFilter('projectType', '');
-            // }
+              // } else if (norm.startsWith('plots')) {
+              //   propertyController.applyFilter('propertyType', 'plot');
+              //   // propertyController.loadTopProperties();
+              //   if (fromUser) {
+              //     propertyController.loadTopProperties();
+              //   }
+              //   // projectController.applyFilter('projectType', '');
+              // } else {
+              //   propertyController.clearFilter('propertyType');
+              //   // projectController.applyFilter('projectType', '');
+              // }
             }
           } catch (_) {}
         },
@@ -797,6 +820,8 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         // SizedBox(height: 10),
         _buildPropertyTypeSelector(),
+        const SizedBox(height: 12),
+        _buildHomeBannerCarousel(),
         const SizedBox(height: 15),
 
         // Divider(
@@ -821,7 +846,9 @@ class _HomeScreenState extends State<HomeScreen> {
         _buildTopCategories(),
         _buildLimitedOfferCard(),
 
-        _buildPlatformServices(),
+        // _buildPlatformServices(),
+        PromotionBanners(),
+        const SizedBox(height: 12),
         _buildNewsAndArticles(),
         _resellerSuccessStories(),
         // const SizedBox(height: 15),
@@ -831,6 +858,21 @@ class _HomeScreenState extends State<HomeScreen> {
         // const SizedBox(height: 12),
       ],
     );
+  }
+
+  void _startBannerAutoScroll() {
+    _bannerTimer?.cancel();
+    if (_bannerCount == 0) return;
+    _bannerTimer = Timer.periodic(const Duration(seconds: 4), (_) {
+      if (!mounted) return;
+      final next = (_bannerPageController.page ?? 0).round() + 1;
+      final page = next % _bannerCount;
+      _bannerPageController.animateToPage(
+        page,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+      );
+    });
   }
 
   Widget _resellerSuccessStories() {
@@ -1432,7 +1474,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 12),
 
             _buildHorizontalPropertyList(activeProperties),
-            const SizedBox(height: 12),
+            // const SizedBox(height: 12),
           ],
         ),
       );
@@ -1459,7 +1501,7 @@ class _HomeScreenState extends State<HomeScreen> {
       }
 
       return Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        // padding: const EdgeInsets.symmetric(vertical: 12),
         color: const Color.fromARGB(255, 77, 77, 77).withOpacity(0.05),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1475,6 +1517,46 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );
     });
+  }
+
+  Widget _buildHomeBannerCarousel() {
+    if (bannerController.items.isEmpty) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const TitleWithViewAll(title: "Highlights", showViewAll: false),
+        const SizedBox(height: 8),
+        SizedBox(
+          height: 140,
+          child: PageView.builder(
+            controller: _bannerPageController,
+            itemCount: bannerController.items.length,
+            itemBuilder: (context, index) {
+              final item = bannerController.items[index];
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: GestureDetector(
+                  onTap: () async {
+                    final u = Uri.tryParse(item.url);
+                    if (u != null) {
+                      await launchUrl(u, mode: LaunchMode.externalApplication);
+                    }
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: CustomImage(
+                      type: CustomImageType.network,
+                      src: item.image,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildHorizontalPropertyList(List<dynamic> properties) {
@@ -2027,7 +2109,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 12),
 
             SizedBox(
-              height: 310,
+              height: 300,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -2036,7 +2118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemBuilder: (context, index) {
                   final builder = builders[index];
                   return SizedBox(
-                    width: 250,
+                    width: 300,
                     child: BuilderCard(builder: builder),
                   );
                 },
@@ -2128,6 +2210,12 @@ class _HomeScreenState extends State<HomeScreen> {
             TitleWithViewAll(
               title: "NesticoPe Verified Services",
               showViewAll: true,
+              icon: Icons.verified_user_outlined,
+              iconColor: ColorRes.success,
+              iconBgColor: ColorRes.success.withOpacity(0.1),
+              showIcon: true,
+              subTitle: 'View all verified services',
+              isSubTitle: true,
             ),
             SizedBox(height: 8),
 
@@ -2186,13 +2274,31 @@ class _HomeScreenState extends State<HomeScreen> {
           .replaceAll('&', 'and')
           .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
       final isLoading = topCategoryController.isLoading.value;
-      final categories = topCategoryController.categories ?? const [];
-      if (isLoading && categories.isEmpty) {
+      final rawCategories = topCategoryController.categories ?? const [];
+      if (isLoading && rawCategories.isEmpty) {
         return const SizedBox.shrink();
       }
-      if (categories.isEmpty) {
+      if (rawCategories.isEmpty) {
         return const SizedBox.shrink();
       }
+
+      // Sort categories to show Home Construction first
+      final categories = [...rawCategories]..sort((a, b) {
+        final aKey = (a.name ?? '')
+            .trim()
+            .toLowerCase()
+            .replaceAll('&', 'and')
+            .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+        final bKey = (b.name ?? '')
+            .trim()
+            .toLowerCase()
+            .replaceAll('&', 'and')
+            .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+
+        if (aKey == 'home_construction') return -1;
+        if (bKey == 'home_construction') return 1;
+        return 0;
+      });
 
       IconData iconFor(TopCategoryItem c) {
         final n = norm(c.name ?? '');
@@ -2295,236 +2401,292 @@ class _HomeScreenState extends State<HomeScreen> {
                       .take(4)
                       .toList();
               final chipText = getChipText(item.name ?? '');
+              final key = (item.name ?? '')
+                  .trim()
+                  .toLowerCase()
+                  .replaceAll('&', 'and')
+                  .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+              final isHomeConstruction = key == 'home_construction';
 
               return SizedBox(
                 width: MediaQuery.of(context).size.width * 0.85,
-                child: NesticoPeCard(
-                  width: double.infinity,
-                  color: ColorRes.primary.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(AppRadius.large),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+                child: GestureDetector(
+                  onTap: () {
+                    Get.to(
+                      () => CategoryServiceExplorer(
+                        categoryId: item.id,
+                        categoryName: item.name,
+                      ),
+                    );
+                  },
+                  child: NesticoPeCard(
+                    width: double.infinity,
+                    color: ColorRes.primary.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(AppRadius.large),
+                    border:
+                        isHomeConstruction
+                            ? Border.all(color: ColorRes.primary, width: 2)
+                            : null,
+                    boxShadow: [
+                      BoxShadow(
+                        color:
+                            isHomeConstruction
+                                ? ColorRes.primary.withOpacity(0.15)
+                                : Colors.black.withOpacity(0.04),
+                        blurRadius: isHomeConstruction ? 12 : 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
 
-                  child: Stack(
-                    children: [
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8),
-                          child: Opacity(
-                            opacity: 0.15,
-                            child: Icon(
-                              iconFor(item),
-                              size: 120,
-                              color: ColorRes.primary,
+                    child: Stack(
+                      children: [
+                        if (isHomeConstruction)
+                          Positioned(
+                            top: 0,
+                            left: 0,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
+                              decoration: const BoxDecoration(
+                                color: ColorRes.primary,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(18),
+                                  bottomRight: Radius.circular(18),
+                                ),
+                              ),
+                              child: const Text(
+                                'Most Popular',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: AppFontSizes.small,
+                                  fontWeight: AppFontWeights.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: Opacity(
+                              opacity: 0.15,
+                              child: Icon(
+                                iconFor(item),
+                                size: 120,
+                                color: ColorRes.primary,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Align(
-                              alignment: Alignment.topRight,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: ColorRes.primary,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  chipText,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: AppFontSizes.caption,
-                                    fontWeight: AppFontWeights.bold,
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Align(
+                                alignment: Alignment.topRight,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: ColorRes.primary,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    chipText,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: AppFontSizes.caption,
+                                      fontWeight: AppFontWeights.bold,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              title,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: AppFontSizes.large,
-                                fontWeight: AppFontWeights.semiBold,
-                                color: ColorRes.textPrimary,
+                              const SizedBox(height: 10),
+                              Text(
+                                title,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: AppFontSizes.large,
+                                  fontWeight: AppFontWeights.semiBold,
+                                  color: ColorRes.textPrimary,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 6),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children:
-                                  features
-                                      .map(
-                                        (f) => Padding(
-                                          padding: const EdgeInsets.only(
-                                            bottom: 8,
-                                          ),
-                                          child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              const Icon(
-                                                Icons.check_circle,
-                                                size: 15,
-                                                color: ColorRes.primary,
-                                              ),
-                                              const SizedBox(width: 8),
-                                              Expanded(
-                                                child: Text(
-                                                  f,
-                                                  style: TextStyle(
-                                                    fontSize:
-                                                        AppFontSizes.caption,
-                                                    fontWeight:
-                                                        AppFontWeights.medium,
-                                                    color:
-                                                        ColorRes
-                                                            .leadGreyColor
-                                                            .shade700,
+                              const SizedBox(height: 6),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children:
+                                    features
+                                        .map(
+                                          (f) => Padding(
+                                            padding: const EdgeInsets.only(
+                                              bottom: 8,
+                                            ),
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                const Icon(
+                                                  Icons.check_circle,
+                                                  size: 15,
+                                                  color: ColorRes.primary,
+                                                ),
+                                                const SizedBox(width: 8),
+                                                Expanded(
+                                                  child: Text(
+                                                    f,
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          AppFontSizes.caption,
+                                                      fontWeight:
+                                                          AppFontWeights.medium,
+                                                      color:
+                                                          ColorRes
+                                                              .leadGreyColor
+                                                              .shade700,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      )
-                                      .toList(),
-                            ),
-                            const SizedBox(height: 14),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: NesticoPeButton(
-                                    title: 'Book Now',
-                                    onTap: () {
-                                      try {
-                                        final ctrl = Get.put(
-                                          HireContractorFilterProfileController(),
-                                        );
-                                        final String categoryId =
-                                            (item.id ?? '').toString();
-                                        final String categoryName =
-                                            (item.name ?? 'Service').toString();
-                                        ctrl.selectedCategoryId.value =
-                                            categoryId;
-                                        ctrl.selectedCategoryName.value =
-                                            categoryName;
-                                        ctrl.selectedServiceNames.clear();
-                                        ctrl.selectedWorkItems.clear();
-                                        ctrl.workItemOptions.clear();
-                                        ctrl.applyFilters(<String, String>{});
-                                        Get.to(
-                                          () =>
-                                              const HireContractorProfileList(),
-                                        );
-                                      } catch (_) {
-                                        Get.to(
-                                          () => AllCategoriesSection(
-                                            categories:
-                                                topCategoryController
-                                                    .categories ??
-                                                const [],
-                                          ),
-                                        );
-                                      }
-                                    },
+                                        )
+                                        .toList(),
+                              ),
+                              const SizedBox(height: 14),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: NesticoPeButton(
+                                      title: 'Book Now',
+                                      onTap: () {
+                                        try {
+                                          final ctrl = Get.put(
+                                            HireContractorFilterProfileController(),
+                                          );
+                                          final String categoryId =
+                                              (item.id ?? '').toString();
+                                          final String categoryName =
+                                              (item.name ?? 'Service')
+                                                  .toString();
+                                          ctrl.selectedCategoryId.value =
+                                              categoryId;
+                                          ctrl.selectedCategoryName.value =
+                                              categoryName;
+                                          ctrl.selectedServiceNames.clear();
+                                          ctrl.selectedWorkItems.clear();
+                                          ctrl.workItemOptions.clear();
+                                          ctrl.applyFilters(<String, String>{});
+                                          Get.to(
+                                            () =>
+                                                const HireContractorProfileList(),
+                                          );
+                                        } catch (_) {
+                                          Get.to(
+                                            () => AllCategoriesSection(
+                                              categories:
+                                                  topCategoryController
+                                                      .categories ??
+                                                  const [],
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      height: 40,
+                                      titleTextStyle: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: AppFontSizes.medium,
+                                        fontWeight: AppFontWeights.semiBold,
+                                      ),
+                                      backgroundColor: ColorRes.primary,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Container(
+                                    width: 44,
                                     height: 40,
-                                    titleTextStyle: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: AppFontSizes.medium,
-                                      fontWeight: AppFontWeights.semiBold,
+                                    decoration: BoxDecoration(
+                                      color: ColorRes.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        color: ColorRes.primary,
+                                        width: 1,
+                                      ),
                                     ),
-                                    backgroundColor: ColorRes.primary,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Container(
-                                  width: 44,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: ColorRes.white,
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
+                                    child: IconButton(
+                                      onPressed: () async {
+                                        final cc =
+                                            Get.isRegistered<
+                                                  ContactController
+                                                >()
+                                                ? Get.find<ContactController>()
+                                                : Get.put(ContactController());
+                                        if (cc.primaryPhone.value.isEmpty) {
+                                          await cc.loadContacts(reset: true);
+                                        }
+                                        final number = cc.primaryPhone.value;
+                                        if (number.isNotEmpty) {
+                                          await ContactHelper.openDialer(
+                                            number,
+                                          );
+                                        }
+                                      },
+                                      icon: const Icon(Icons.call, size: 20),
                                       color: ColorRes.primary,
-                                      width: 1,
+                                      tooltip: 'Call',
                                     ),
                                   ),
-                                  child: IconButton(
-                                    onPressed: () async {
-                                      final cc =
-                                          Get.isRegistered<ContactController>()
-                                              ? Get.find<ContactController>()
-                                              : Get.put(ContactController());
-                                      if (cc.primaryPhone.value.isEmpty) {
-                                        await cc.loadContacts(reset: true);
-                                      }
-                                      final number = cc.primaryPhone.value;
-                                      if (number.isNotEmpty) {
-                                        await ContactHelper.openDialer(number);
-                                      }
-                                    },
-                                    icon: const Icon(Icons.call, size: 20),
-                                    color: ColorRes.primary,
-                                    tooltip: 'Call',
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Container(
-                                  width: 44,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: ColorRes.white,
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                      color: ColorRes.primary,
-                                      width: 1,
+                                  const SizedBox(width: 10),
+                                  Container(
+                                    width: 44,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      color: ColorRes.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        color: ColorRes.primary,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: IconButton(
+                                      onPressed: () async {
+                                        final cc =
+                                            Get.isRegistered<
+                                                  ContactController
+                                                >()
+                                                ? Get.find<ContactController>()
+                                                : Get.put(ContactController());
+                                        if (cc.primaryPhone.value.isEmpty) {
+                                          await cc.loadContacts(reset: true);
+                                        }
+                                        final number = cc.primaryPhone.value;
+                                        if (number.isNotEmpty) {
+                                          await ContactHelper.openWhatsApp(
+                                            number,
+                                          );
+                                        }
+                                      },
+                                      icon: Image.asset(
+                                        'assets/images/whatsapp.png',
+                                        width: 20,
+                                        height: 20,
+                                      ),
+                                      tooltip: 'WhatsApp',
                                     ),
                                   ),
-                                  child: IconButton(
-                                    onPressed: () async {
-                                      final cc =
-                                          Get.isRegistered<ContactController>()
-                                              ? Get.find<ContactController>()
-                                              : Get.put(ContactController());
-                                      if (cc.primaryPhone.value.isEmpty) {
-                                        await cc.loadContacts(reset: true);
-                                      }
-                                      final number = cc.primaryPhone.value;
-                                      if (number.isNotEmpty) {
-                                        await ContactHelper.openWhatsApp(
-                                          number,
-                                        );
-                                      }
-                                    },
-                                    icon: Image.asset(
-                                      'assets/images/whatsapp.png',
-                                      width: 20,
-                                      height: 20,
-                                    ),
-                                    tooltip: 'WhatsApp',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -2930,6 +3092,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     // ✅ Clear cached data on dispose
     // _pinnedSearchNotifier.dispose();
+    _bannerTimer?.cancel();
+    _bannerPageController.dispose();
     _scrollController.dispose();
     _cachedNewlyAddedProperties.clear();
     _cachedTopProperties.clear();
@@ -5993,6 +6157,681 @@ class TrendingInsightsShimmer extends StatelessWidget {
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+class PromotionBanners extends StatelessWidget {
+  const PromotionBanners({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 12),
+      child: Column(
+        // padding: const EdgeInsets.all(16),
+        children: const [
+          ShareBanner(),
+          SizedBox(height: 16),
+          RateBanner(),
+          SizedBox(height: 16),
+          SocialBanner(),
+        ],
+      ),
+    );
+  }
+}
+
+class ShareBanner extends StatelessWidget {
+  const ShareBanner({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BannerContainer(
+      painter: SharePainter(),
+      gradient: const LinearGradient(
+        colors: [Color(0xFFFF7A5C), Color(0xFFFF5E7E), Color(0xFFFF4D6D)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _BannerContent(
+              title: "Share with Others",
+              subtitle:
+                  "Invite your friends and earn exciting rewards on every successful referral.",
+              buttonText: "Share Now",
+              onTap: () {
+                // Get.toNamed(Routes.share);
+              },
+            ),
+          ),
+          const SizedBox(width: 10),
+          Image.asset(
+            'assets/images/share_image.png',
+
+            height: 90,
+            fit: BoxFit.contain,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class RateBanner extends StatelessWidget {
+  const RateBanner({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BannerContainer(
+      painter: RatePainter(),
+      gradient: const LinearGradient(
+        colors: [Color(0xFFFFD54F), Color(0xFFFFB300)],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _BannerContent(
+              title: "Love the App?",
+              subtitle:
+                  "Rate us on the store and help us improve your experience.",
+              buttonText: "Rate Now",
+              darkText: true,
+              onTap: () {
+                // Get.toNamed(Routes.rate);
+              },
+            ),
+          ),
+          const SizedBox(width: 10),
+          Image.asset(
+            'assets/images/review_image.png',
+            height: 90,
+            fit: BoxFit.contain,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// class SharePainter extends CustomPainter {
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     final paint =
+//         Paint()
+//           ..color = Colors.white.withOpacity(0.08)
+//           ..style = PaintingStyle.fill;
+
+//     // 🔶 Big blob (right side)
+//     final path = Path();
+//     path.moveTo(size.width * 0.6, 0);
+//     path.quadraticBezierTo(
+//       size.width,
+//       size.height * 0.2,
+//       size.width * 0.9,
+//       size.height * 0.5,
+//     );
+//     path.quadraticBezierTo(
+//       size.width * 0.8,
+//       size.height,
+//       size.width * 0.5,
+//       size.height * 0.7,
+//     );
+//     path.quadraticBezierTo(
+//       size.width * 0.3,
+//       size.height * 0.4,
+//       size.width * 0.6,
+//       0,
+//     );
+//     path.close();
+
+//     canvas.drawPath(path, paint);
+
+//     // ✨ Sparkles
+//     final sparkle = Paint()..color = Colors.white.withOpacity(0.2);
+
+//     canvas.drawCircle(Offset(size.width * 0.8, size.height * 0.2), 4, sparkle);
+//     canvas.drawCircle(Offset(size.width * 0.7, size.height * 0.35), 3, sparkle);
+//     canvas.drawCircle(Offset(size.width * 0.9, size.height * 0.4), 5, sparkle);
+//   }
+
+//   @override
+//   bool shouldRepaint(CustomPainter oldDelegate) => false;
+// }
+class SharePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    /// 🎨 1. Background Gradient
+    final rect = Offset.zero & size;
+    final gradient = LinearGradient(
+      colors: [Color(0xFFFF7A5C), Color(0xFFFF5E7E), Color(0xFFFF4D6D)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    );
+
+    final bgPaint = Paint()..shader = gradient.createShader(rect);
+    final rRect = RRect.fromRectAndRadius(
+      rect,
+      Radius.circular(24), // adjust as per your UI
+    );
+
+    canvas.drawRRect(rRect, bgPaint);
+
+    /// 🌟 2. Soft Glow (Top Center)
+    final glowPaint =
+        Paint()
+          ..shader = RadialGradient(
+            colors: [Colors.white.withOpacity(0.15), Colors.transparent],
+          ).createShader(
+            Rect.fromCircle(
+              center: Offset(size.width * 0.5, size.height * 0.2),
+              radius: 120,
+            ),
+          );
+
+    canvas.drawCircle(
+      Offset(size.width * 0.5, size.height * 0.2),
+      120,
+      glowPaint,
+    );
+
+    /// 🔶 3. Organic Blob (Right Side)
+    final blobPaint =
+        Paint()
+          ..color = Colors.white.withOpacity(0.06)
+          ..style = PaintingStyle.fill;
+
+    final path = Path();
+    path.moveTo(size.width * 0.7, 0);
+
+    path.cubicTo(
+      size.width * 1.1,
+      size.height * 0.2,
+      size.width * 0.9,
+      size.height * 0.6,
+      size.width * 0.8,
+      size.height,
+    );
+
+    path.cubicTo(
+      size.width * 0.4,
+      size.height * 0.9,
+      size.width * 0.5,
+      size.height * 0.3,
+      size.width * 0.7,
+      0,
+    );
+
+    path.close();
+    canvas.drawPath(path, blobPaint);
+
+    /// ✨ 4. Star Sparkle Function
+    void drawStar(Offset center, double size) {
+      final starPath = Path();
+      for (int i = 0; i < 5; i++) {
+        double angle = (i * 72) * 3.1416 / 180;
+        double x = center.dx + size * Math.cos(angle);
+        double y = center.dy + size * Math.sin(angle);
+
+        if (i == 0) {
+          starPath.moveTo(x, y);
+        } else {
+          starPath.lineTo(x, y);
+        }
+      }
+      starPath.close();
+
+      canvas.drawPath(starPath, Paint()..color = Colors.white.withOpacity(0.4));
+    }
+
+    /// ✨ 5. Sparkles (positions like image)
+    drawStar(Offset(size.width * 0.2, size.height * 0.2), 6);
+    drawStar(Offset(size.width * 0.8, size.height * 0.25), 5);
+    drawStar(Offset(size.width * 0.7, size.height * 0.5), 4);
+    drawStar(Offset(size.width * 0.3, size.height * 0.6), 5);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+// class RatePainter extends CustomPainter {
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     final wavePaint =
+//         Paint()
+//           ..color = Colors.red.withOpacity(0.06)
+//           ..style = PaintingStyle.fill;
+
+//     // 🌊 Bottom wave
+//     final path = Path();
+//     path.moveTo(0, size.height * 0.7);
+//     path.quadraticBezierTo(
+//       size.width * 0.3,
+//       size.height,
+//       size.width * 0.6,
+//       size.height * 0.75,
+//     );
+//     path.quadraticBezierTo(
+//       size.width * 0.9,
+//       size.height * 0.5,
+//       size.width,
+//       size.height * 0.8,
+//     );
+//     path.lineTo(size.width, size.height);
+//     path.lineTo(0, size.height);
+//     path.close();
+
+//     canvas.drawPath(path, wavePaint);
+
+//     // ⭐ Soft highlight circle
+//     final circlePaint = Paint()..color = Colors.red.withOpacity(0.1);
+
+//     canvas.drawCircle(
+//       Offset(size.width * 0.85, size.height * 0.25),
+//       30,
+//       circlePaint,
+//     );
+//   }
+
+//   @override
+//   bool shouldRepaint(CustomPainter oldDelegate) => false;
+// }
+class RatePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+
+    /// 🎨 1. Background Gradient (Yellow → Orange)
+    final gradient = LinearGradient(
+      colors: [Color(0xFFFFD54F), Color(0xFFFFB300), Color(0xFFFFA000)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    );
+
+    final bgPaint = Paint()..shader = gradient.createShader(rect);
+    canvas.drawRect(rect, bgPaint);
+
+    /// 🌊 2. Soft Wave (More natural)
+    final wavePaint =
+        Paint()
+          ..color = Colors.white.withOpacity(0.08)
+          ..style = PaintingStyle.fill;
+
+    final path = Path();
+    path.moveTo(0, size.height * 0.65);
+
+    path.cubicTo(
+      size.width * 0.2,
+      size.height * 0.85,
+      size.width * 0.5,
+      size.height * 0.5,
+      size.width,
+      size.height * 0.75,
+    );
+
+    path.lineTo(size.width, size.height);
+    path.lineTo(0, size.height);
+    path.close();
+
+    canvas.drawPath(path, wavePaint);
+
+    /// 🌟 3. Glow Circle (Top Right)
+    final glowPaint =
+        Paint()
+          ..shader = RadialGradient(
+            colors: [Colors.white.withOpacity(0.2), Colors.transparent],
+          ).createShader(
+            Rect.fromCircle(
+              center: Offset(size.width * 0.8, size.height * 0.2),
+              radius: 80,
+            ),
+          );
+
+    canvas.drawCircle(
+      Offset(size.width * 0.8, size.height * 0.2),
+      80,
+      glowPaint,
+    );
+
+    /// ✨ 4. Sparkles (Stars, not circles)
+    void drawStar(Offset c, double r) {
+      final path = Path();
+      for (int i = 0; i < 5; i++) {
+        final angle = (i * 72) * 3.1416 / 180;
+        final x = c.dx + r * Math.cos(angle);
+        final y = c.dy + r * Math.sin(angle);
+        i == 0 ? path.moveTo(x, y) : path.lineTo(x, y);
+      }
+      path.close();
+
+      canvas.drawPath(path, Paint()..color = Colors.white.withOpacity(0.4));
+    }
+
+    drawStar(Offset(size.width * 0.2, size.height * 0.2), 6);
+    drawStar(Offset(size.width * 0.35, size.height * 0.35), 5);
+    drawStar(Offset(size.width * 0.7, size.height * 0.3), 6);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+// class SocialPainter extends CustomPainter {
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     final paint =
+//         Paint()
+//           ..color = Colors.white.withOpacity(0.07)
+//           ..style = PaintingStyle.fill;
+
+//     // 🔵 Diagonal overlay
+//     final path = Path();
+//     path.moveTo(size.width * 0.3, 0);
+//     path.lineTo(size.width, 0);
+//     path.lineTo(size.width, size.height);
+//     path.quadraticBezierTo(
+//       size.width * 0.6,
+//       size.height * 0.7,
+//       size.width * 0.3,
+//       size.height * 0.4,
+//     );
+//     path.close();
+
+//     canvas.drawPath(path, paint);
+
+//     // 🔘 Floating circles
+//     final circlePaint = Paint()..color = Colors.white.withOpacity(0.12);
+
+//     canvas.drawCircle(
+//       Offset(size.width * 0.75, size.height * 0.3),
+//       14,
+//       circlePaint,
+//     );
+//     canvas.drawCircle(
+//       Offset(size.width * 0.85, size.height * 0.5),
+//       10,
+//       circlePaint,
+//     );
+//     canvas.drawCircle(
+//       Offset(size.width * 0.65, size.height * 0.6),
+//       8,
+//       circlePaint,
+//     );
+//   }
+
+//   @override
+//   bool shouldRepaint(CustomPainter oldDelegate) => false;
+// }
+class SocialPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+
+    /// 🎨 1. Gradient Background (Blue → Purple)
+    final gradient = LinearGradient(
+      colors: [Color(0xFF3F51B5), Color(0xFF5C6BC0), Color(0xFF7E57C2)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    );
+
+    canvas.drawRect(rect, Paint()..shader = gradient.createShader(rect));
+
+    /// 🌊 2. Soft overlay waves
+    final overlayPaint =
+        Paint()
+          ..color = Colors.white.withOpacity(0.05)
+          ..style = PaintingStyle.fill;
+
+    final path = Path();
+    path.moveTo(0, size.height * 0.8);
+
+    path.cubicTo(
+      size.width * 0.3,
+      size.height * 0.6,
+      size.width * 0.7,
+      size.height * 1.0,
+      size.width,
+      size.height * 0.7,
+    );
+
+    path.lineTo(size.width, size.height);
+    path.lineTo(0, size.height);
+    path.close();
+
+    canvas.drawPath(path, overlayPaint);
+
+    /// 🌟 3. Glow (center-left)
+    final glow =
+        Paint()
+          ..shader = RadialGradient(
+            colors: [Colors.white.withOpacity(0.12), Colors.transparent],
+          ).createShader(
+            Rect.fromCircle(
+              center: Offset(size.width * 0.3, size.height * 0.3),
+              radius: 120,
+            ),
+          );
+
+    canvas.drawCircle(Offset(size.width * 0.3, size.height * 0.3), 120, glow);
+
+    /// ✨ 4. Star Sparkles
+    void drawStar(Offset c, double r) {
+      final path = Path();
+      for (int i = 0; i < 5; i++) {
+        final angle = (i * 72) * 3.1416 / 180;
+        final x = c.dx + r * Math.cos(angle);
+        final y = c.dy + r * Math.sin(angle);
+        i == 0 ? path.moveTo(x, y) : path.lineTo(x, y);
+      }
+      path.close();
+
+      canvas.drawPath(path, Paint()..color = Colors.white.withOpacity(0.35));
+    }
+
+    drawStar(Offset(size.width * 0.2, size.height * 0.2), 6);
+    drawStar(Offset(size.width * 0.6, size.height * 0.25), 5);
+    drawStar(Offset(size.width * 0.8, size.height * 0.5), 4);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+class _BannerContent extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final String buttonText;
+  final bool darkText;
+  final VoidCallback? onTap;
+
+  const _BannerContent({
+    required this.title,
+    required this.subtitle,
+    required this.buttonText,
+    required this.onTap,
+    this.darkText = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final textColor = darkText ? Colors.black87 : Colors.white;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: 16,
+
+            fontWeight: FontWeight.bold,
+            color: textColor,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          subtitle,
+          maxLines: 2,
+          style: TextStyle(fontSize: 12, color: textColor.withOpacity(0.8)),
+        ),
+        const Spacer(),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+
+            // padding: EdgeInsets.symmetric(horizontal: 20),
+            
+            backgroundColor: darkText ? Colors.black : Colors.white,
+            foregroundColor: darkText ? Colors.white : Colors.black,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+          ),
+          onPressed: onTap,
+          child: Text(buttonText, style: TextStyle(fontSize: 12),),
+        ),
+      ],
+    );
+  }
+}
+
+class BannerContainer extends StatelessWidget {
+  final Widget child;
+  final Gradient gradient;
+  final CustomPainter painter;
+
+  const BannerContainer({
+    super.key,
+    required this.child,
+    required this.gradient,
+    required this.painter,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        height: 160,
+        decoration: BoxDecoration(
+          gradient: gradient,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: CustomPaint(
+          painter: painter,
+          child: Padding(padding: const EdgeInsets.all(16), child: child),
+        ),
+      ),
+    );
+  }
+}
+// class _BannerContent extends StatelessWidget {
+//   final String title;
+//   final String subtitle;
+//   final String buttonText;
+//   final bool darkText;
+
+//   const _BannerContent({
+//     required this.title,
+//     required this.subtitle,
+//     required this.buttonText,
+//     this.darkText = false,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final textColor = darkText ? Colors.black87 : Colors.white;
+
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Text(
+//           title,
+//           style: TextStyle(
+//             fontSize: 18,
+//             fontWeight: FontWeight.bold,
+//             color: textColor,
+//           ),
+//         ),
+//         const SizedBox(height: 6),
+//         Text(
+//           subtitle,
+//           style: TextStyle(
+//             fontSize: 12,
+//             color: textColor.withOpacity(0.8),
+//           ),
+//         ),
+//         const Spacer(),
+//         ElevatedButton(
+//           style: ElevatedButton.styleFrom(
+//             backgroundColor: darkText ? Colors.black : Colors.white,
+//             foregroundColor: darkText ? Colors.white : Colors.black,
+//             shape: RoundedRectangleBorder(
+//               borderRadius: BorderRadius.circular(30),
+//             ),
+//           ),
+//           onPressed: () {},
+//           child: Text(buttonText),
+//         )
+//       ],
+//     );
+//   }
+// }
+
+class SocialBanner extends StatelessWidget {
+  const SocialBanner({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BannerContainer(
+      painter: SocialPainter(),
+      gradient: const LinearGradient(
+        colors: [Color(0xFF4A6CF7), Color(0xFF6A5AE0)],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _BannerContent(
+              title: "Stay Connected",
+              subtitle:
+                  "Follow us on social media for latest property updates and offers.",
+              buttonText: "Follow Us",
+              onTap: () async {
+                // Get.toNamed(Routes.follow);
+                final cc =
+                    Get.isRegistered<ContactController>()
+                        ? Get.find<ContactController>()
+                        : Get.put(ContactController());
+                if (cc.items.isEmpty) {
+                  await cc.loadContacts(reset: true);
+                }
+                final raw =
+                    cc.contact.value?.socialMedia?.instagram ??
+                    (cc.items.isNotEmpty
+                        ? cc.items.first.socialMedia?.instagram
+                        : null) ??
+                    '';
+                final urlStr = raw.replaceAll('`', '').trim();
+                final uri = Uri.tryParse(urlStr);
+                if (uri != null) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
+              },
+            ),
+          ),
+          const SizedBox(width: 10),
+          Image.asset(
+            'assets/images/connect_image.png',
+            height: 90,
+            fit: BoxFit.contain,
+          ),
+        ],
       ),
     );
   }

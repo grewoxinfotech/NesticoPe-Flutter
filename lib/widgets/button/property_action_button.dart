@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nesticope_app/app/constants/api_constants.dart';
 import 'package:nesticope_app/app/utils/helper_function/contact_helper.dart';
 
 import '../../app/constants/color_res.dart';
@@ -130,7 +131,7 @@ class EntityActionButtons extends StatelessWidget {
           return CircularIcon(
             icon: isFav ? Icons.favorite : Icons.favorite_border_rounded,
             backgroundColor: ColorRes.white,
-            iconColor: isFav ? ColorRes.redAccentColor : ColorRes.black,
+            iconColor: isFav ? ColorRes.redAccentColor : ColorRes.primary,
             onPressed: () => favoriteController.toggleFavorite(id),
           );
         }),
@@ -145,10 +146,14 @@ class EntityActionButtons extends StatelessWidget {
               onShare ??
               () async {
                 await propertyShareController.getPropertyLinkById(id);
-                final shareUrl =
-                    propertyShareController.shareProperty.value?.data?.shareUrl;
-                if (shareUrl != null && shareUrl.isNotEmpty) {
-                  ContactHelper.shareContent(link: shareUrl);
+                final propertyId =
+                    propertyShareController.shareProperty.value?.data?.propertyId;
+
+
+
+
+                if (propertyId != null && propertyId.isNotEmpty) {
+                  ContactHelper.shareContent(link: '${ApiConstants.frontendBaseUrl}/properties/$propertyId');
                 } else {
                   NesticoPeSnackBar.showAwesomeSnackbar(
                     title: "Error",

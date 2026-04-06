@@ -23,8 +23,9 @@ class NesticoPeNavigationBar extends StatelessWidget {
 
     return Obx(() {
       final index = controller.currentIndex.value;
-      final isServicesSelected = index == 4;
+      final isServicesSelected = index == 3;
       final primary = Get.theme.colorScheme.primary;
+      final goldColor = Colors.amber.shade600;
       final baseSize = iconSize * 1.2;
       final circleSize = isServicesSelected ? baseSize * 1.35 + 12 : baseSize + 10;
       final servicesIcon = Stack(
@@ -36,25 +37,23 @@ class NesticoPeNavigationBar extends StatelessWidget {
             height: circleSize,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              // gradient: LinearGradient(
-              //   colors: [
-              //     primary,
-              //     primary.withOpacity(isServicesSelected ? 0.85 : 0.25),
-              //   ],
-              // ),
+              color: isServicesSelected ? goldColor.withOpacity(0.4) : Colors.transparent,
               boxShadow: [
                 BoxShadow(
-                  color: primary.withOpacity(isServicesSelected ? 0.35 : 0.15),
+                  color: (isServicesSelected ? goldColor : primary).withOpacity(
+                    isServicesSelected ? 0.35 : 0.15,
+                  ),
                   blurRadius: isServicesSelected ? 14 : 8,
                   offset: const Offset(0, 4),
                 ),
               ],
             ),
+            alignment: Alignment.center,
             child: Center(
               child: Icon(
                 Icons.engineering_outlined,
                 size: isServicesSelected ? baseSize * 1.05 : baseSize,
-                color:  primary,
+                color: isServicesSelected ? Colors.black : primary,
               ),
             ),
           ),
@@ -65,10 +64,11 @@ class NesticoPeNavigationBar extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: Colors.amber.shade600,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(6),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.amber.shade700.withOpacity(0.3),
+                    color: (isServicesSelected ? Colors.black : goldColor)
+                        .withOpacity(0.3),
                     blurRadius: 6,
                     offset: const Offset(0, 2),
                   ),
@@ -130,13 +130,7 @@ class NesticoPeNavigationBar extends StatelessWidget {
                 ),
                 title: Text("Saved", style: style),
               ),
-              SalomonBottomBarItem(
-                icon: Icon(
-                  Icons.credit_card,
-                  size: iconSize * 1.2,
-                ),
-                title: Text("Plans", style: style),
-              ),
+             
               SalomonBottomBarItem(
                 icon: servicesIcon,
                 title: Text(
@@ -145,10 +139,17 @@ class NesticoPeNavigationBar extends StatelessWidget {
                     fontWeight: isServicesSelected
                         ? AppFontWeights.extraBold
                         : AppFontWeights.bold,
-                    color: isServicesSelected ? primary : style.color,
+                    color: isServicesSelected ? Colors.black : style.color,
                   ),
                 ),
-                selectedColor: primary,
+                selectedColor: goldColor,
+              ),
+               SalomonBottomBarItem(
+                icon: Icon(
+                  Icons.menu_outlined,
+                  size: iconSize * 1.2,
+                ),
+                title: Text("Plans", style: style),
               ),
             ],
           ),

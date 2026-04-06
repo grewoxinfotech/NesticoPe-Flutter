@@ -575,7 +575,7 @@ class BuilderProjectCard extends StatelessWidget {
                             return CircleAvatar(
                               backgroundColor:
                                   selected ? ColorRes.primary : ColorRes.white,
-                              radius: 18,
+                            radius: 20,
                               child: Icon(
                                 Icons.compare_arrows,
                                 color:
@@ -599,7 +599,7 @@ class BuilderProjectCard extends StatelessWidget {
                             );
                             return CircleAvatar(
                               backgroundColor: ColorRes.white,
-                              radius: 18,
+                              radius: 20,
                               child: Icon(
                                 isFavorite
                                     ? Icons.favorite
@@ -607,7 +607,7 @@ class BuilderProjectCard extends StatelessWidget {
                                 color:
                                     isFavorite
                                         ? ColorRes.error
-                                        : ColorRes.leadGreyColor,
+                                        : ColorRes.primary,
                                 size: 20,
                               ),
                             );

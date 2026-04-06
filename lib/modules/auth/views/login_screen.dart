@@ -838,7 +838,7 @@ class _LoginScreenState extends State<LoginScreen> {
                    _altButton(
                     icon: Icons.grid_view_rounded,
                     label: 'Login with Partner',
-                    onTap: () => Get.to(() => const OtpLoginScreen()),
+                    onTap: () => Get.to(() => const OtpLoginScreen(isPartner: true)),
                   ),
 
                   const SizedBox(height: 20),

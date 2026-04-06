@@ -550,7 +550,9 @@ class _CityFilterListState extends State<CityFilterList> {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<TrendingCityController>();
+    final controller = Get.isRegistered<TrendingCityController>()
+        ? Get.find<TrendingCityController>()
+        : Get.put(TrendingCityController());
     return SizedBox(
       height: 160, // Fixed height for horizontal list
       child: ListView.builder(
@@ -569,6 +571,7 @@ class _CityFilterListState extends State<CityFilterList> {
                   ],
                 ),
               );
+              
             },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
