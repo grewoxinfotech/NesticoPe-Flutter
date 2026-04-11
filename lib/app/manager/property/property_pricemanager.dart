@@ -75,6 +75,7 @@ class PropertyPriceManager {
     final maxR = maxPgRent;
     if (maxR <= 0) return "Price not available";
     final maxFormatted = Formatter.formatPrice(maxR);
+    
     return "$maxFormatted /month";
   }
 

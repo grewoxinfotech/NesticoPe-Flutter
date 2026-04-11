@@ -1154,9 +1154,11 @@ import 'package:nesticope_app/modules/builder/view/builder_main_screen.dart';
 import 'package:nesticope_app/modules/contractor/view/contractor_main.dart';
 import 'package:nesticope_app/modules/dashboard/views/seller_dashboard_screen.dart';
 import 'package:nesticope_app/modules/reseller/view/property_reseller.dart';
+import 'package:nesticope_app/modules/subscription/controller/subscription_controller.dart';
 // import 'package:nesticope_app/modules/auth/views/listing_intro_screen.dart';
 import 'package:nesticope_app/modules/subscription/views/owner_plans_intro_screen.dart';
 import 'package:nesticope_app/modules/subscription/views/builder_plans_intro_screen.dart';
+import 'package:nesticope_app/modules/subscription/views/widgets/sign_up_subscription_card.dart';
 import '../../../data/database/secure_storage_service.dart';
 // 👈 import UserHelper
 import '../../../app/constants/app_font_sizes.dart';
@@ -1169,8 +1171,22 @@ import '../../auth/views/role_convert/covert_to_reseller/convert_to_reseller.dar
 import '../../contractor/view/widget/convert_to_contractor.dart';
 import '../../subscription/views/suscription_plan_screen.dart';
 
-class InsightsScreen extends StatelessWidget {
+class InsightsScreen extends StatefulWidget {
   const InsightsScreen({Key? key}) : super(key: key);
+
+  @override
+  State<InsightsScreen> createState() => _InsightsScreenState();
+}
+
+late SubscriptionPlanController controller;
+bool isInquirySubmitted = false;
+
+class _InsightsScreenState extends State<InsightsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // controller = Get.find<SubscriptionPlanController>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -2072,6 +2088,21 @@ class InsightsScreen extends StatelessWidget {
                                 Get.to(() => SellerDashboardScreen());
                               }
                             }, // Manage Listings
+                            onBecomeType: () async {
+                              if (UserHelper.isGuest) {
+                                Navigator.of(context).pop();
+                                await Get.to(
+                                  () => RegisterScreen(role: UserRole.seller),
+                                );
+                              } else if (UserHelper.isBuyer) {
+                                // Get.to(() => ManageListingsScreen());
+                                Get.to(() => SellerConversionScreen());
+                              } else if (UserHelper.isSellerOwner) {
+                                // Get.to(() => ManageListingsScreen());
+                                Get.to(() => SellerDashboardScreen());
+                              }
+                            },
+
                             onUnlockPlans: () async {
                               // Get.to(
                               //   () => SubscriptionPlansScreen(
@@ -2101,6 +2132,8 @@ class InsightsScreen extends StatelessWidget {
                                 ),
                               );
                             }, // Unlock Owner Plans
+
+                
                             onFinalCta: () async {
                               if (UserHelper.isGuest) {
                                 Navigator.of(context).pop();
@@ -2119,7 +2152,7 @@ class InsightsScreen extends StatelessWidget {
                         );
                       },
                     ),
-                  
+
                     SizedBox(height: 16),
 
                     _buildGuestRoleTile(
@@ -2250,6 +2283,20 @@ class InsightsScreen extends StatelessWidget {
                                 // return;
                               }
                             }, // Post Property Free
+                            onBecomeType: () async {
+                              if (UserHelper.isGuest) {
+                                Navigator.of(context).pop();
+                                await Get.to(
+                                  () => RegisterScreen(role: UserRole.seller),
+                                );
+                              } else if (UserHelper.isBuyer) {
+                                // Get.to(() => ManageListingsScreen());
+                                Get.to(() => SellerConversionScreen());
+                              } else if (UserHelper.isSellerBuilder) {
+                                Get.to(() => BuilderMainScreen());
+                                // return;
+                              }
+                            },
                             onManageListings: () async {
                               if (UserHelper.isGuest) {
                                 Navigator.of(context).pop();
@@ -2451,6 +2498,19 @@ class InsightsScreen extends StatelessWidget {
                               }
                             }, // Post Property Free
                             onManageListings: () async {
+                              if (UserHelper.isGuest) {
+                                Navigator.of(context).pop();
+                                await Get.to(
+                                  () => RegisterScreen(role: UserRole.reseller),
+                                );
+                              } else if (UserHelper.isBuyer) {
+                                // Get.to(() => ManageListingsScreen());
+                                Get.to(() => ResellerConversionScreen());
+                              } else if (UserHelper.isReseller) {
+                                Get.to(() => MainNavigationScreen());
+                              }
+                            },
+                            onBecomeType: () async {
                               if (UserHelper.isGuest) {
                                 Navigator.of(context).pop();
                                 await Get.to(
@@ -2686,6 +2746,7 @@ class InsightsScreen extends StatelessWidget {
                                 );
                               } else if (UserHelper.isBuyer) {
                                 // Get.to(() => ManageListingsScreen());
+
                                 Get.to(
                                   () => ConvertToContractorConversionScreen(),
                                 );
@@ -2693,6 +2754,23 @@ class InsightsScreen extends StatelessWidget {
                                 Get.to(() => ContractorMainScreen());
                               }
                             }, // Post Property Free
+                            onBecomeType: () async {
+                              if (UserHelper.isGuest) {
+                                Navigator.of(context).pop();
+                                await Get.to(
+
+                                  () =>
+                                      RegisterScreen(role: UserRole.contractor),
+                                );
+                              } else if (UserHelper.isBuyer) {
+                                // Get.to(() => ManageListingsScreen());
+                                Get.to(
+                                  () => ConvertToContractorConversionScreen(),
+                                );
+                              } else if (UserHelper.isContractor) {
+                                Get.to(() => ContractorMainScreen());
+                              }
+                            },
                             onManageListings: () async {
                               if (UserHelper.isGuest) {
                                 Navigator.of(context).pop();
@@ -2729,8 +2807,7 @@ class InsightsScreen extends StatelessWidget {
                               final data =
                                   await SecureStorage.hasSubscriptionInquiryForUser(
                                     Roles.contractor.name,
-                                    userId:
-                                        (await SecureStorage.getClientId()) ??
+                                    userId:(await SecureStorage.getClientId()) ??
                                         '',
                                     role: Roles.contractor.name,
                                   );
@@ -2868,4 +2945,41 @@ class DotPatternForRolePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(DotPatternForRolePainter oldDelegate) => false;
+}
+
+String _mapRoleToTitle(String role) {
+  switch (role) {
+    case 'sellerOwner':
+      return 'Become a Seller';
+    case 'sellerBuilder':
+      return 'Become a Seller';
+    case 'reseller':
+      return 'Become a Partner';
+    case 'contractor':
+      return 'Become a Contractor';
+    default:
+      return '';
+  }
+}
+
+Future<void> _saveInquiryToStorage(
+  String name,
+  String email,
+  String role,
+  String phone,
+) async {
+  final user = await SecureStorage.getUserData();
+  final username =
+      user?.user?.username ?? (UserHelper.isGuest ? 'guest' : name);
+  final userId = user?.user?.id ?? '';
+  final payload = {
+    'userId': userId,
+    'username': username,
+    'role': role,
+    'name': name,
+    'email': email,
+    'phone': phone,
+    'timestamp': DateTime.now().toIso8601String(),
+  };
+  await SecureStorage.addSubscriptionInquiry(payload);
 }

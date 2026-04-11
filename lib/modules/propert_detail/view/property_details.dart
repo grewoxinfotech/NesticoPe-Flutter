@@ -475,49 +475,77 @@ class _PropertyDetailState extends State<PropertyDetail> {
   List<Items> _items = [];
 
   @override
-  void initState() {
-    super.initState();
+void initState() {
+  super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final Map<String, String> uiFilters = {};
+  print("🔵 initState called");
 
-      if (widget.filters != null && widget.filters!.isNotEmpty) {
-        for (final filter in widget.filters!) {
-          uiFilters.addAll(filter);
-        }
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    print("🟡 PostFrameCallback triggered");
+
+    final Map<String, String> uiFilters = {};
+
+    if (widget.filters != null && widget.filters!.isNotEmpty) {
+      print("🟢 Incoming widget.filters: ${widget.filters}");
+
+      for (final filter in widget.filters!) {
+        print("➡️ Adding filter: $filter");
+        uiFilters.addAll(filter);
       }
+    } else {
+      print("⚠️ No filters received from widget");
+    }
 
+    print("✅ Final uiFilters: $uiFilters");
+
+    setState(() {
+      selectedFilters = uiFilters;
+      
+    });
+
+    print("📌 selectedFilters set: $selectedFilters");
+
+    _applyFilters();
+  });
+
+  // Listen to controller loading
+  controller.isLoading.listen((loading) {
+    print("⏳ isLoading changed: $loading");
+
+    if (mounted) {
       setState(() {
-        selectedFilters = uiFilters;
+        _isLoading = loading;
       });
-      _applyFilters();
-    });
+    }
+  });
 
-    // Listen to controller changes
-    controller.isLoading.listen((loading) {
-      if (mounted) {
-        setState(() {
-          _isLoading = loading;
-        });
-      }
-    });
+  // Listen to items
+  controller.items.listen((items) {
+    print("📦 Items updated: ${items.length} items");
 
-    controller.items.listen((items) {
-      if (mounted) {
-        setState(() {
-          _items = items;
-        });
-      }
-    });
-  }
+    if (mounted) {
+      setState(() {
+        _items = items;
+      });
+    }
+  });
+}
 
-  void _applyFilters() {
-    controller.applyFilters({
-      ..._lockedFilters, // 🔒 always applied
-      ...selectedFilters, // user filters
-    });
-  }
+void _applyFilters() {
+  print("🚀 Applying Filters...");
 
+  print("🔒 Locked Filters: $_lockedFilters");
+  print("🎯 Selected Filters: $selectedFilters");
+
+  final finalFilters = {
+    ..._lockedFilters,
+    ...selectedFilters,
+  };
+
+  print("🧾 Final Filters Sent to Controller: $finalFilters");
+
+  controller.applyFilters(finalFilters);
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(

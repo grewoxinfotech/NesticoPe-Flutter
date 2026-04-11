@@ -302,7 +302,7 @@
 //             BoxShadow(
 //               color: Colors.black.withOpacity(0.04),
 //               blurRadius: 2,
-             
+
 //               offset: const Offset(0, 3),
 //             ),
 //           ],
@@ -651,8 +651,6 @@
 //   }
 // }
 
-
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/data/network/review/model/review_model.dart';
@@ -917,8 +915,15 @@ import '../../../reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 
 class PropertyReviewCard extends StatefulWidget {
   final ReviewItem reviewItem;
+  /// When true show the complete review (pros/cons, footer etc.).
+  /// When false show a compact summary (header, rating, truncated content).
+  final bool showFullDetails;
 
-  const PropertyReviewCard({super.key, required this.reviewItem});
+  const PropertyReviewCard({
+    super.key,
+    required this.reviewItem,
+    this.showFullDetails = true,
+  });
 
   @override
   State<PropertyReviewCard> createState() => _PropertyReviewCardState();
@@ -970,6 +975,7 @@ class _PropertyReviewCardState extends State<PropertyReviewCard> {
               ),
               const SizedBox(width: 12),
               Expanded(child: _buildReviewerInfo()),
+              const SizedBox(width: 12),
               Text(
                 _formatDate(widget.reviewItem.createdAt ?? DateTime.now()),
                 style: TextStyle(
@@ -1000,17 +1006,19 @@ class _PropertyReviewCardState extends State<PropertyReviewCard> {
           ),
 
           const SizedBox(height: 16),
-          if (widget.reviewItem.pros != null &&
-              ((widget.reviewItem.pros?.text?.isNotEmpty ?? false) ||
-                  (widget.reviewItem.pros?.tags?.isNotEmpty ?? false)))
-            ProsConsSection(review: widget.reviewItem, isPros: true),
-          const SizedBox(height: 10),
-          // ❌ Cons Section
-          if (widget.reviewItem.cons != null &&
-              ((widget.reviewItem.cons?.text?.isNotEmpty ?? false) ||
-                  (widget.reviewItem.cons?.tags?.isNotEmpty ?? false)))
-            ProsConsSection(review: widget.reviewItem, isPros: false),
-          const SizedBox(height: 12),
+          if (widget.showFullDetails) ...[
+            if (widget.reviewItem.pros != null &&
+                ((widget.reviewItem.pros?.text?.isNotEmpty ?? false) ||
+                    (widget.reviewItem.pros?.tags?.isNotEmpty ?? false)))
+              ProsConsSection(review: widget.reviewItem, isPros: true),
+            const SizedBox(height: 10),
+            // ❌ Cons Section
+            if (widget.reviewItem.cons != null &&
+                ((widget.reviewItem.cons?.text?.isNotEmpty ?? false) ||
+                    (widget.reviewItem.cons?.tags?.isNotEmpty ?? false)))
+              ProsConsSection(review: widget.reviewItem, isPros: false),
+            const SizedBox(height: 12),
+          ],
           // 👍 Helpful & Report Row
           // Row(
           //   children: [
@@ -1100,7 +1108,7 @@ class _PropertyReviewCardState extends State<PropertyReviewCard> {
             children: [
               Flexible(
                 child: Text(
-                  username,
+                  username.replaceAll("_", " ").capitalize??'',
                   style: TextStyle(
                     fontSize: AppFontSizes.body,
                     fontWeight: AppFontWeights.semiBold,

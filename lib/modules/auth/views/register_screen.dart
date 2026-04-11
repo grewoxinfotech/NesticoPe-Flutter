@@ -308,6 +308,7 @@ import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 import 'package:nesticope_app/app/utils/validation.dart';
 import 'package:nesticope_app/modules/auth/views/login_screen.dart';
+import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
 import 'package:nesticope_app/modules/auth/views/widget/city_zip_code_selector.dart';
 import 'package:nesticope_app/widgets/bar/app_bar/common_bar.dart';
 import 'package:nesticope_app/widgets/button/button.dart';
@@ -1075,7 +1076,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       style: TextStyle(color: ColorRes.leadGreyColor.shade700),
                     ),
                     TextButton(
-                      onPressed: () => Get.to(() => LoginScreen()),
+                      onPressed: () => Get.to(() => OtpLoginScreen()),
                       child: Text(
                         'Login here',
                         style: TextStyle(

@@ -200,18 +200,25 @@ class _PropertyCardForCompareState extends State<PropertyCardForCompare> {
     return '';
   }
 
-  String _title(Items i) {
-    if ((i.type ?? '').toLowerCase() == 'residential') {
-      final bhk = i.propertyDetails?.bhk ?? 0;
+String _title(Items i) {
+  if ((i.type ?? '').toLowerCase() == 'residential') {
+    final bhk = i.propertyDetails?.bhk ?? 0;
+
+    if (bhk > 0) {
       return '${bhk} BHK ${i.propertyType?.capitalizeFirst ?? ''}';
+    } else {
+      return i.propertyType?.capitalizeFirst ?? '';
     }
-    return i.propertyType?.capitalizeFirst ?? (i.title ?? '');
   }
+
+  return i.propertyType?.capitalizeFirst ?? (i.title ?? '');
+}
 
   String _price(Items i) {
     final pm = PropertyPriceManager(
       listingType: i.listingType ?? '',
       financialInfo: i.propertyDetails?.financialInfo,
+      pgInfo: i.propertyDetails?.pgInfo, // Added for PG support
     );
 
     return pm.displayPrice;
@@ -333,16 +340,17 @@ class _PropertyCardForCompareState extends State<PropertyCardForCompare> {
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
+                                if((widget.item.propertyDetails?.bhk ?? 0) > 0)
                                 Icon(
                                   Icons.bed_outlined,
                                   size: 12,
                                   color: const Color(0xFF2563EB),
                                 ),
                                 const SizedBox(width: 4),
-                                Text(
-                                  (widget.item.propertyDetails?.bhk ?? 0)
-                                          .toString() +
-                                      ' BHK',
+                             Text(
+  (widget.item.propertyDetails?.bhk ?? 0) > 0
+      ? '${widget.item.propertyDetails!.bhk} BHK'
+      : '',
                                   style: TextStyle(
                                     fontSize: AppFontSizes.extraSmall,
                                     fontWeight: AppFontWeights.medium,
@@ -1573,7 +1581,7 @@ class _ComparisonTableState extends State<_ComparisonTable> {
     return Column(
       children: [
         SizedBox(
-          height: 540,
+          height: 680,
           child: PageView.builder(
             controller: _pageController,
             itemCount: widget.items.length,
@@ -1669,53 +1677,51 @@ class _PropertyDetailsCard extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(
-            height: 470,
-            child: ListView(
-              padding: EdgeInsets.symmetric(vertical: 10),
-              children: [
-                _basicRow('Property Type', item.propertyType ?? '-'),
-                Divider(color: ColorRes.leadGreyColor.shade300),
-                _basicRow('Location', item.address ?? '-'),
-                Divider(color: ColorRes.leadGreyColor.shade300),
-                _basicRow('Built-up Area', _area(item)),
-                Divider(color: ColorRes.leadGreyColor.shade300),
-                _basicRow(
-                  'Bedrooms',
-                  (item.propertyDetails?.bhk ?? 0).toString(),
+          Column(
+                   spacing: 5,
+            children: [
+              _basicRow('Property Type', item.propertyType ?? '-'),
+              Divider(color: ColorRes.leadGreyColor.shade300),
+              _basicRow('Location', item.address ?? '-'),
+              Divider(color: ColorRes.leadGreyColor.shade300),
+              _basicRow('Built-up Area', _area(item)),
+              Divider(color: ColorRes.leadGreyColor.shade300),
+              _basicRow(
+                'Bedrooms',
+                (item.propertyDetails?.bhk ?? 0).toString(),
+              ),
+              Divider(color: ColorRes.leadGreyColor.shade300),
+              _basicRow(
+                'Bathrooms',
+                (item.propertyDetails?.bathroom ?? 0).toString(),
+              ),
+              Divider(color: ColorRes.leadGreyColor.shade300),
+              _basicRow('Floor', _floor(item)),
+              Divider(color: ColorRes.leadGreyColor.shade300),
+              _basicRow('Price/sq ft', _ppsf(item) ?? '-'),
+              Divider(color: ColorRes.leadGreyColor.shade300),
+              _basicRow(
+                'Price',
+                PropertyPriceManager(
+                  listingType: item.listingType ?? '',
+                  financialInfo: item.propertyDetails?.financialInfo,
+                  pgInfo: item.propertyDetails?.pgInfo, // Added for PG support
+                ).displayPrice,
+              ),
+              Divider(color: ColorRes.leadGreyColor.shade300),
+              _basicRow(
+                'Security Deposit',
+                Formatter.formatPrice(
+                  item
+                          .propertyDetails
+                          ?.financialInfo
+                          ?.propertySecurityDeposit ??
+                      0,
                 ),
-                Divider(color: ColorRes.leadGreyColor.shade300),
-                _basicRow(
-                  'Bathrooms',
-                  (item.propertyDetails?.bathroom ?? 0).toString(),
-                ),
-                Divider(color: ColorRes.leadGreyColor.shade300),
-                _basicRow('Floor', _floor(item)),
-                Divider(color: ColorRes.leadGreyColor.shade300),
-                _basicRow('Price/sq ft', _ppsf(item) ?? '-'),
-                Divider(color: ColorRes.leadGreyColor.shade300),
-                _basicRow(
-                  'Price',
-                  PropertyPriceManager(
-                    listingType: item.listingType ?? '',
-                    financialInfo: item.propertyDetails?.financialInfo,
-                  ).displayPrice,
-                ),
-                Divider(color: ColorRes.leadGreyColor.shade300),
-                _basicRow(
-                  'Security Deposit',
-                  Formatter.formatPrice(
-                    item
-                            .propertyDetails
-                            ?.financialInfo
-                            ?.propertySecurityDeposit ??
-                        0,
-                  ),
-                ),
-                Divider(color: ColorRes.leadGreyColor.shade300),
-                _basicRow('Amenities', _amenities(item)),
-              ],
-            ),
+              ),
+              Divider(color: ColorRes.leadGreyColor.shade300),
+              _basicRow('Amenities', _amenities(item)),
+            ],
           ),
         ],
       ),

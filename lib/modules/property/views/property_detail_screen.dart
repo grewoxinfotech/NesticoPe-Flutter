@@ -3271,6 +3271,7 @@
 
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -3292,6 +3293,7 @@ import 'package:nesticope_app/app/widgets/snack_bar/custom_snackbar.dart';
 import 'package:nesticope_app/app/widgets/video_player/custom_video_player.dart';
 import 'package:nesticope_app/data/database/secure_storage_service.dart';
 import 'package:nesticope_app/modules/auth/views/login_screen.dart';
+import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
 import 'package:nesticope_app/modules/property/controllers/property_controller.dart';
 import 'package:nesticope_app/modules/property/controllers/share_property_controller.dart';
 import 'package:nesticope_app/modules/property/views/recommended_property.dart';
@@ -3363,54 +3365,45 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   void initState() {
     super.initState();
 
-    log('[PropertyDetail] initState called');
-
     // Get property ID
     final propertyId = widget.propertyId ?? '';
-    log('[PropertyDetail] propertyId => $propertyId');
 
-    // Initialize controllers
-    log('[PropertyDetail] Initializing PropertyController');
     controller = Get.put(PropertyController(), tag: 'property_$propertyId');
     controller.checkTermsAndConditionApplyOrNot();
 
-    log('[PropertyDetail] Initializing GoogleMapSearchController');
     mapController = Get.put(
       GoogleMapSearchController(),
       tag: 'map_$propertyId',
     );
 
-    log('[PropertyDetail] Initializing OverallRatingController');
     _overallRatingController = Get.put(
       OverallRatingController(),
       tag: 'rating_$propertyId',
     );
 
-    log('[PropertyDetail] Initializing ReviewController');
     reviewController = Get.put(ReviewController(), tag: 'review_$propertyId');
 
-    log('[PropertyDetail] Finding PropertyFavoriteController');
     favoriteController = Get.find<PropertyFavoriteController>();
 
     // Load data after first frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      log('[PropertyDetail] Post frame callback → calling _loadData()');
       _loadData();
     });
   }
 
   Future<void> _loadData() async {
-    log('[PropertyDetail] _loadData started');
-
     try {
       if (!mounted) return;
 
       _isLoading.value = true;
-      log('[PropertyDetail] Loading state set to TRUE');
 
       final propertyId = widget.propertyId ?? '';
-      await controller.getAllInQuireData(propertyId);
-      await controller.getHasInQuireData(propertyId);
+      // await controller.getAllInQuireData(propertyId);
+      // await controller.getHasInQuireData(propertyId);
+      await Future.wait([
+        controller.getAllInQuireData(propertyId),
+        controller.getHasInQuireData(propertyId),
+      ]);
 
       final fetchedProperty = await controller.getPropertyById(
         widget.propertyId!,
@@ -3419,7 +3412,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
       if (!mounted) return;
 
       if (fetchedProperty == null) {
-        log('[PropertyDetail] Property NOT FOUND', level: 1000);
         _isLoading.value = false;
 
         if (mounted) {
@@ -3432,10 +3424,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
         }
         return;
       }
-
-      log(
-        '[PropertyDetail] Property fetched successfully → ID: ${fetchedProperty.id}',
-      );
 
       // --- FIX START: Register Controller BEFORE assigning _property.value ---
       Get.put(
@@ -3460,7 +3448,10 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
       // Fetch nearby landmarks
       if (currentProperty.address?.isNotEmpty ?? false) {
-        await mapController.fetchAllCategoriesData(currentProperty.address!);
+        // await mapController.fetchAllCategoriesData(currentProperty.address!);
+        await Future.wait([
+          mapController.fetchAllCategoriesData(currentProperty.address!),
+        ]);
       }
 
       // Check review permission
@@ -3477,22 +3468,14 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
       // Track view
       controller.addView(currentProperty.id ?? '');
-
+      await Future.wait([
+        _overallRatingController.fetchOverallRating(currentProperty.id ?? ''),
+      ]);
       // Fetch overall rating
-      _overallRatingController.fetchOverallRating(currentProperty.id ?? '');
     } catch (e, s) {
-      log(
-        '[PropertyDetail] ERROR in _loadData',
-        error: e,
-        stackTrace: s,
-        level: 1000,
-      );
     } finally {
       if (mounted) {
         _isLoading.value = false;
-        log(
-          '[PropertyDetail] Loading state set to FALSE - UI should update now',
-        );
       }
     }
   }
@@ -3539,7 +3522,8 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
               if (number.isNotEmpty) {
                 await ContactHelper.openWhatsApp(
                   number,
-                  message:'Hi, I want to know more about this property ${ApiConstants.frontendBaseUrl}/properties/${id}',
+                  message:
+                      'Hi, I want to know more about this property ${ApiConstants.frontendBaseUrl}/properties/${id}',
                 );
               }
             },
@@ -3623,10 +3607,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
       backgroundColor: ColorRes.white,
       extendBody: true,
       body: Obx(() {
-        log(
-          '[PropertyDetail] 🔄 Obx rebuild - isLoading: ${_isLoading.value}, property: ${_property.value?.propertyMedia?.toJson()}',
-        );
-
         // Show loading while fetching property
         if (_isLoading.value) {
           return const Center(child: CircularProgressIndicator());
@@ -3676,9 +3656,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                   children: [
                     Builder(
                       builder: (context) {
-                        log(
-                          '[PropertyDetail] 🖼️ Building MediaBanner ${currentProperty.propertyMedia?.toJson()}',
-                        );
                         return _buildMediaBanner(
                           currentProperty.propertyMedia ?? PropertyMedia(),
                           currentProperty.id ?? '',
@@ -3689,7 +3666,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
                     Builder(
                       builder: (context) {
-                        log('[PropertyDetail] 📝 Building TitleSection');
                         return _buildTitleSection(currentProperty);
                       },
                     ),
@@ -3894,9 +3870,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       const TitleWithViewAll(title: 'Amenities'),
                       Builder(
                         builder: (context) {
-                          log(
-                            '[PropertyDetail] 🏠 Building AmenitiesSection ${currentProperty.propertyDetails!.amenities}  ',
-                          );
                           return AmenitiesSection(
                             amenities:
                                 currentProperty.propertyDetails!.amenities ??
@@ -3916,7 +3889,8 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       SizedBox(height: 20),
                       Container(
                         padding: const EdgeInsets.symmetric(vertical: 12),
-                        color: ColorRes.leadGreyColor.shade100,
+                        color: ColorRes.leadGreyColor.shade50,
+
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -3932,7 +3906,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                             const SizedBox(height: 8),
                             Builder(
                               builder: (context) {
-                                log('[PropertyDetail] 📋 Building Details');
+                                print('[PropertyDetail] 📋 Building Details');
                                 return Details(property: currentProperty);
                               },
                             ),
@@ -4325,31 +4299,28 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                     //     SizedBox.shrink(),
                     //   ],
                     // ],
-                    // if (currentProperty
-                    //         .propertyDetails
-                    //         ?.furnishInfo
-                    //         ?.furnishDetails !=
-                    //     null) ...[
-                    //   const SizedBox(height: 12),
-                    //   const TitleWithViewAll(title: 'Furnishing'),
-                    //   Builder(
-                    //     builder: (context) {
-                    //       log(
-                    //         '[PropertyDetail] 🛋️ Building FurnishingDetails',
-                    //       );
-                    //       return FurnishingDetails(
-                    //         property: currentProperty,
-                    //         bgColor: ColorRes.propertyBg,
-                    //         txtColor: ColorRes.propertyText,
-                    //       );
-                    //     },
-                    //   ),
-                    //   Divider(
-                    //     indent: 18,
-                    //     endIndent: 18,
-                    //     color: ColorRes.leadGreyColor.shade300,
-                    //   ),
-                    // ],
+                    if (currentProperty
+                            .propertyDetails
+                            ?.furnishInfo
+                            ?.furnishDetails !=
+                        null) ...[
+                      const SizedBox(height: 12),
+                      const TitleWithViewAll(title: 'Furnishing'),
+                      Builder(
+                        builder: (context) {
+                          return FurnishingDetails(
+                            property: currentProperty,
+                            bgColor: ColorRes.propertyBg,
+                            txtColor: ColorRes.primary,
+                          );
+                        },
+                      ),
+                      // Divider(
+                      //   indent: 18,
+                      //   endIndent: 18,
+                      //   color: ColorRes.leadGreyColor.shade300,
+                      // ),
+                    ],
                     if (currentProperty.listingType?.toUpperCase() == "PG" &&
                         currentProperty.propertyDetails?.pgInfo?.pgRules !=
                             null) ...[
@@ -4377,7 +4348,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                             .isNotEmpty) ...[
                       Container(
                         padding: const EdgeInsets.symmetric(vertical: 12),
-                        color: ColorRes.leadGreyColor.shade100,
+                        color: ColorRes.leadGreyColor.shade50,
 
                         child: Column(
                           children: [
@@ -4389,7 +4360,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                               iconBgColor: ColorRes.white,
                               iconColor: ColorRes.primary,
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 15),
                             _buildRoomOptionsSection(
                               currentProperty
                                   .propertyDetails!
@@ -4410,7 +4381,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                     if (currentProperty.propertyDescription != null) ...[
                       Container(
                         padding: const EdgeInsets.symmetric(vertical: 12),
-                        color: ColorRes.homeYellowDark.withOpacity(0.08),
+                        color: ColorRes.homeYellowDark.withOpacity(0.06),
                         child: Column(
                           children: [
                             const SizedBox(height: 12),
@@ -4440,7 +4411,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                 description:
                                     currentProperty.propertyDescription ?? '',
                                 trimLines: 5,
-                                size: 11,
+                                size: 12,
 
                                 colorClickableText: ColorRes.primary,
                               ),
@@ -4525,15 +4496,11 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                             const SizedBox(height: 8),
                             Builder(
                               builder: (context) {
-                                log(
-                                  '[PropertyDetail] 🗺️ Building AddressAndMapDetails',
-                                );
                                 return AddressAndMapDetails(
                                   address: currentProperty.address ?? '',
                                 );
                               },
                             ),
-                            const SizedBox(height: 12),
                           ],
                         ),
                       ),
@@ -4541,7 +4508,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
                     Builder(
                       builder: (context) {
-                        log('[PropertyDetail] 🗺️ Building Map Section Obx');
                         return Obx(() {
                           if (mapController.isLoading.value) {
                             return const Center(
@@ -4563,7 +4529,9 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
                           return Container(
                             padding: const EdgeInsets.symmetric(vertical: 12),
-                            color: ColorRes.primary.withOpacity(0.05),
+                            color: ColorRes.leadGreyColor.shade50.withOpacity(
+                              0.5,
+                            ),
 
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -4689,11 +4657,8 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                     //     ),
                     //   ),
                     // ],
-                     Builder(
+                    Builder(
                       builder: (context) {
-                        log(
-                          '[PropertyDetail] ⭐ Building ReviewSection - START',
-                        );
                         final widget = ReviewSection(
                           canAddReview: canAddReview,
                           overallController: _overallRatingController,
@@ -4702,7 +4667,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                           entityId: currentProperty.id ?? '',
                           reviewCardBuilder:
                               (context, item) =>
-                                  PropertyReviewCard(reviewItem: item),
+                                  PropertyReviewCard(reviewItem: item,showFullDetails: false,),
                           overallWidgetBuilder: (total, rating, details) {
                             return OverallRatingWidget(
                               totalReviews: total,
@@ -4711,7 +4676,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                             );
                           },
                         );
-                        log('[PropertyDetail] ⭐ Building ReviewSection - END');
+
                         return widget;
                       },
                     ),
@@ -4724,27 +4689,50 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         color: ColorRes.leadGreyColor.shade200,
-
+                        alignment: Alignment.center,
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+
                           children: [
                             const SizedBox(height: 15),
-                            TitleWithViewAll(
-                              title: 'Limited Time Offer!',
-                              subTitle:
-                                  "Limited-time! Get an exclusive offer on this property.",
-                              isSubTitle: true,
+                        
+                            Text(
+                              ' Limited Time Offer!',
+                              maxLines: 1,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.body,
+                                fontWeight: AppFontWeights.semiBold,
+                                color: ColorRes.textPrimary,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
+
+                            Text(
+                              "Limited-time! Get an exclusive offer on this property.",
+                              maxLines: 1,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.small,
+                                fontWeight: AppFontWeights.medium,
+                                color: ColorRes.textColor.withOpacity(0.65),
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            SizedBox(height: 15),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
-                              child: OfferCountdown(duration: Duration(minutes: 2)),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
+                              child: OfferCountdown(
+                                propertyId: currentProperty.id ?? '',
+                              ),
                             ),
                             SizedBox(height: 8),
 
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 12),
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   // Offer Text
                                   const SizedBox(height: 12),
@@ -4801,7 +4789,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                         onTap: () async {
                                           try {
                                             if (UserHelper.isGuest) {
-                                              Get.to(() => LoginScreen());
+                                              Get.to(() => OtpLoginScreen());
                                               return;
                                             }
                                             final user =
@@ -4913,13 +4901,8 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                         // ),
                         Builder(
                           builder: (context) {
-                            log(
-                              '[PropertyDetail] 🏘️ Building RecommendedProperty - START',
-                            );
                             const widget = RecommendedProperty();
-                            log(
-                              '[PropertyDetail] 🏘️ Building RecommendedProperty - END',
-                            );
+
                             return widget;
                           },
                         ),
@@ -4930,7 +4913,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
               ),
               Builder(
                 builder: (context) {
-                  log('[PropertyDetail] 🔘 Building ComparisonFloatingButton');
                   return UnifiedComparisonFloatingButton(bottom: 16);
                 },
               ),
@@ -4940,10 +4922,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
       }),
 
       bottomNavigationBar: Obx(() {
-        log(
-          '[PropertyDetail] 🔄 BottomBar Obx rebuild - isLoading: ${_isLoading.value}',
-        );
-
         if (_isLoading.value) {
           return const SizedBox.shrink();
         }
@@ -4953,7 +4931,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
           return const SizedBox.shrink();
         }
 
-        log('[PropertyDetail] 📊 Creating BottomBar priceManager');
         final priceManager = PropertyPriceManager(
           financialInfo:
               currentProperty.propertyDetails?.financialInfo ?? FinancialInfo(),
@@ -4970,7 +4947,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
             priceBreakdown: priceManager.propertyPriceSummary,
             onPrimaryAction: () {
               if (UserHelper.isGuest) {
-                Get.to(() => LoginScreen());
+                Get.to(() => OtpLoginScreen());
               } else {
                 showModalBottomSheet(
                   context: context,
@@ -5131,12 +5108,8 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                     );
                                   }
                                 },
-                                onAllowSellerContactChanged: (value) {
-                                  print("Allow sellers changed: $value");
-                                },
-                                onHomeLoanInterestChanged: (value) {
-                                  print("Home loan interest changed: $value");
-                                },
+                                onAllowSellerContactChanged: (value) {},
+                                onHomeLoanInterestChanged: (value) {},
                               ),
                             ),
                           ),
@@ -5341,8 +5314,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                 },
                               };
 
-                              print('Submitting inquiry: ${inquiry}');
-
                               final success = await controller.addInquiry(
                                 inquiry,
                                 propertyID ?? '',
@@ -5447,7 +5418,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   ) {
     final PageController pageController = PageController();
     String _sanitize(String s) => s.replaceAll('`', '').trim();
-    log('[PropertyDetail] 🖼️ Banner Side ${media.toJson()}');
 
     List<String> images =
         (media.images ?? []).map(_sanitize).where((e) => e.isNotEmpty).toList();
@@ -5525,7 +5495,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                     final url = _sanitize(item["url"] ?? '');
                     const imageOfNotAvailable =
                         "assets/images/not_available_image.png";
-                    log('[PropertyDetail] 🖼️ mediaList $item');
+
                     if (item["type"] == "image") {
                       return CachedNetworkImage(
                         imageUrl: url,
@@ -5602,38 +5572,46 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                   return Positioned(
                     left: 16,
                     bottom: 16,
-                    child: Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+
                       children: [
-                        ReraComponent(
-                          text: "rera",
-                          backgroundColor: ColorRes.black.withOpacity(0.7),
-                          textColor: ColorRes.background,
-                          fontSize: AppFontSizes.small,
+                        Row(
+                          children: [
+                            ReraComponent(
+                              text: "rera",
+                              backgroundColor: ColorRes.black.withOpacity(0.7),
+                              textColor: ColorRes.background,
+                              fontSize: AppFontSizes.small,
 
-                          borderRadius: AppRadius.small,
-                          fontWeight: AppFontWeights.bold,
-                          showIcon: true,
-                          iconColor: ColorRes.success,
-                          iconSize: 14,
+                              borderRadius: AppRadius.small,
+                              fontWeight: AppFontWeights.bold,
+                              showIcon: true,
+                              iconColor: ColorRes.success,
+                              iconSize: 14,
+                            ),
+                            const SizedBox(width: 8),
+                            if (property
+                                    ?.scoreBreakdown
+                                    ?.components
+                                    .premium
+                                    .isPremium ??
+                                false)
+                              ReraComponent(
+                                text: "NesticoPe Assured",
+                                backgroundColor: ColorRes.black.withOpacity(
+                                  0.7,
+                                ),
+                                textColor: ColorRes.background,
+
+                                iconColor: ColorRes.primary,
+                                fontSize: AppFontSizes.small,
+                                borderRadius: AppRadius.small,
+                                fontWeight: AppFontWeights.bold,
+                                showIcon: true,
+                              ),
+                          ],
                         ),
-                        const SizedBox(width: 8),
-                        if (property
-                                ?.scoreBreakdown
-                                ?.components
-                                .premium
-                                .isPremium ??
-                            false)
-                          ReraComponent(
-                            text: "NesticoPe Assured",
-                            backgroundColor: ColorRes.black.withOpacity(0.7),
-                            textColor: ColorRes.background,
-
-                            iconColor: ColorRes.primary,
-                            fontSize: AppFontSizes.small,
-                            borderRadius: AppRadius.small,
-                            fontWeight: AppFontWeights.bold,
-                            showIcon: true,
-                          ),
                       ],
                     ),
                   );
@@ -5763,6 +5741,61 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
               ),
             ),
           ),
+          if (property?.reraId != null &&
+              property!.reraId!.isNotEmpty &&
+              property!.reraId != "null") ...[
+            SizedBox(height: 8),
+            Container(
+              width: MediaQuery.of(context).size.width - 32,
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 8,
+                    color: Colors.black.withOpacity(0.05),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.shield_moon_outlined,
+                    size: 20,
+                    color:
+                        // ? ColorRes.primary
+                        ColorRes.success,
+                  ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "RERA ID",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          "${property?.reraId ?? 'N/A'}",
+
+                          style: TextStyle(
+                            fontWeight: AppFontWeights.semiBold,
+                            fontSize: 14,
+                            color: ColorRes.textPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -6334,6 +6367,7 @@ class Details extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(height: 12),
           // 🔹 Details Grid
           Center(
             child: Wrap(
@@ -6347,27 +6381,48 @@ class Details extends StatelessWidget {
 
                     return SizedBox(
                       width: itemWidth,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Row(
                         children: [
-                          Text(
-                            title,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: AppFontSizes.caption,
-                              fontWeight: AppFontWeights.medium,
-                              color: ColorRes.leadGreyColor[700],
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: ColorRes.primary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(
+                              getpropertyIcon(title),
+                              size: 16,
+                              color: ColorRes.primary,
                             ),
                           ),
-                          const SizedBox(height: 6),
-                          Text(
-                            value,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            style: const TextStyle(
-                              fontSize: AppFontSizes.small,
-                              fontWeight: AppFontWeights.semiBold,
-                              color: ColorRes.blackShade87,
+
+                          const SizedBox(width: 8),
+
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  title,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.small,
+                                    fontWeight: AppFontWeights.medium,
+                                    color: ColorRes.leadGreyColor[700],
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  value,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                  style: const TextStyle(
+                                    fontSize: AppFontSizes.small,
+                                    fontWeight: AppFontWeights.semiBold,
+                                    color: ColorRes.blackShade87,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -6377,28 +6432,45 @@ class Details extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
-                  'Last Updated',
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: AppFontSizes.caption,
-                    fontWeight: AppFontWeights.medium,
-                    color: ColorRes.leadGreyColor[700],
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: ColorRes.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
                   ),
+                  child: Icon(Icons.update, size: 16, color: ColorRes.primary),
                 ),
-                const SizedBox(height: 6),
-                Text(
-                  Formatter.formatDate(property.updatedAt) ?? '-',
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  style: const TextStyle(
-                    fontSize: AppFontSizes.small,
-                    fontWeight: AppFontWeights.semiBold,
-                    color: ColorRes.blackShade87,
+
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Last Updated',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: AppFontSizes.caption,
+                          fontWeight: AppFontWeights.medium,
+                          color: ColorRes.leadGreyColor[700],
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        Formatter.formatDate(property.updatedAt) ?? '-',
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: const TextStyle(
+                          fontSize: AppFontSizes.small,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.blackShade87,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -6458,7 +6530,10 @@ class _AmenitiesSectionState extends State<AmenitiesSection> {
             itemCount: visibleCount,
             itemBuilder: (context, index) {
               final raw = items[index];
-              final amenity = raw.toLowerCase().replaceAll(" ", "_").replaceAll("-", "_");
+              final amenity = raw
+                  .toLowerCase()
+                  .replaceAll(" ", "_")
+                  .replaceAll("-", "_");
               final color = amenityColors[index % amenityColors.length];
               final iconData = IconManager.getAmenitiesIcon(amenity);
 
@@ -6467,7 +6542,10 @@ class _AmenitiesSectionState extends State<AmenitiesSection> {
                 children: [
                   const SizedBox(height: 16),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                     decoration: BoxDecoration(
                       color: color.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
@@ -6519,9 +6597,10 @@ class _AmenitiesSectionState extends State<AmenitiesSection> {
 }
 
 class OfferCountdown extends StatefulWidget {
-  final Duration duration;
-  final VoidCallback? onComplete;
-  const OfferCountdown({super.key, required this.duration, this.onComplete});
+  final Duration? duration;
+  final String? propertyId;
+  final VoidCallback? onFinished;
+  const OfferCountdown({super.key, this.duration, this.propertyId, this.onFinished});
   @override
   State<OfferCountdown> createState() => _OfferCountdownState();
 }
@@ -6530,21 +6609,50 @@ class _OfferCountdownState extends State<OfferCountdown>
     with TickerProviderStateMixin {
   late final AnimationController _pulseController;
   late final AnimationController _countdownController;
+  late final AnimationController _shimmerController;
 
   @override
   void initState() {
     super.initState();
+
     _pulseController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 1200),
     )..repeat(reverse: true);
+
+    _shimmerController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2000),
+    )..repeat();
+
+    Duration initialDuration;
+    int initialDays = 0;
+    if (widget.propertyId != null && widget.propertyId!.isNotEmpty) {
+      final seed = widget.propertyId!.hashCode;
+      initialDays = 5 + (seed.abs() % 11);
+      initialDuration = Duration(days: initialDays);
+    } else {
+      initialDuration = widget.duration ?? const Duration(days: 1);
+    }
+
     _countdownController = AnimationController(
       vsync: this,
-      duration: widget.duration,
+      duration: initialDuration,
     )..forward();
+
     _countdownController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        widget.onComplete?.call();
+        try { widget.onFinished?.call(); } catch (_) {}
+        if (widget.propertyId != null && widget.propertyId!.isNotEmpty) {
+          final rnd = Random();
+          final newDays = 5 + rnd.nextInt(11);
+          _countdownController.duration = Duration(days: newDays);
+          _countdownController.reset();
+          _countdownController.forward();
+        } else {
+          _countdownController.reset();
+          _countdownController.forward();
+        }
       }
     });
   }
@@ -6553,78 +6661,202 @@ class _OfferCountdownState extends State<OfferCountdown>
   void dispose() {
     _pulseController.dispose();
     _countdownController.dispose();
+    _shimmerController.dispose();
     super.dispose();
-  }
-
-  String get _timeLeft {
-    final elapsed = _countdownController.lastElapsedDuration ?? Duration.zero;
-    final left = widget.duration - elapsed;
-    final secs = left.inSeconds.clamp(0, widget.duration.inSeconds);
-    final m = (secs ~/ 60).toString().padLeft(2, '0');
-    final s = (secs % 60).toString().padLeft(2, '0');
-    return '$m:$s';
   }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        ScaleTransition(
-          scale: Tween<double>(begin: 0.9, end: 1.15)
-              .animate(CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut)),
-          child: Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: ColorRes.error.withOpacity(0.12),
-              borderRadius: BorderRadius.circular(12),
+    return AnimatedBuilder(
+      animation: _countdownController,
+      builder: (context, _) {
+        final elapsed = _countdownController.lastElapsedDuration ?? Duration.zero;
+        final duration = _countdownController.duration ?? Duration.zero;
+        final left = duration - elapsed;
+        final totalLeftSeconds = left.inSeconds.clamp(0, duration.inSeconds == 0 ? left.inSeconds : duration.inSeconds);
+        final daysLeft = (totalLeftSeconds + 86399) ~/ 86400;
+        final hoursLeft = (totalLeftSeconds % 86400) ~/ 3600;
+        final minsLeft = (totalLeftSeconds % 3600) ~/ 60;
+
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFFF5F7), Color(0xFFFFFBFC)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-            child: Icon(Icons.local_fire_department, color: ColorRes.error, size: 24),
+            border: Border.all(color: const Color(0xFFFFD6DE), width: 1.2),
+            boxShadow: [
+              BoxShadow(
+                color: ColorRes.error.withOpacity(0.08),
+                blurRadius: 20,
+                spreadRadius: 0,
+                offset: const Offset(0, 6),
+              ),
+            ],
           ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            decoration: BoxDecoration(
-              color: ColorRes.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
-            ),
-            child: Row(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Stack(
               children: [
-                const Expanded(
-                  child: Text(
-                    'Offer ends in',
-                    style: TextStyle(
-                      fontSize: AppFontSizes.small,
-                      fontWeight: AppFontWeights.medium,
-                      color: ColorRes.textPrimary,
-                    ),
-                  ),
-                ),
+                // Subtle shimmer overlay
                 AnimatedBuilder(
-                  animation: _countdownController,
+                  animation: _shimmerController,
                   builder: (context, _) {
-                    return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: ColorRes.error.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: ColorRes.error.withOpacity(0.3)),
-                      ),
-                      child: Text(
-                        _timeLeft,
-                        style: const TextStyle(
-                          fontSize: AppFontSizes.bodySmall,
-                          fontWeight: AppFontWeights.bold,
-                          color: ColorRes.error,
+                    return Positioned.fill(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment(
+                              -1.5 + _shimmerController.value * 3.5,
+                              -0.5,
+                            ),
+                            end: Alignment(
+                              -0.5 + _shimmerController.value * 3.5,
+                              0.5,
+                            ),
+                            colors: [
+                              Colors.transparent,
+                              Colors.white.withOpacity(0.35),
+                              Colors.transparent,
+                            ],
+                          ),
                         ),
                       ),
                     );
                   },
                 ),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                  child: Row(
+                    children: [
+                      // Flame icon with pulse
+                      ScaleTransition(
+                        scale: Tween<double>(begin: 0.92, end: 1.0).animate(
+                          CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+                        ),
+                        child: Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [ColorRes.error, Color(0xFFFF3D5E)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: [
+                              BoxShadow(
+                                color: ColorRes.error.withOpacity(0.30),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(Icons.local_fire_department_rounded, color: Colors.white, size: 24),
+                        ),
+                      ),
+
+                      const SizedBox(width: 14),
+
+                      // Label
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              'LIMITED OFFER',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 1.4,
+                                color: ColorRes.error,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'Offer expires soon',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(width: 10),
+
+                      // Time units
+                      Row(
+                        children: [
+                          _TimeUnit(value: daysLeft, label: 'DAYS'),
+                          _Divider(),
+                          _TimeUnit(value: hoursLeft, label: 'HRS'),
+                          _Divider(),
+                          _TimeUnit(value: minsLeft, label: 'MIN'),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _TimeUnit extends StatelessWidget {
+  final int value;
+  final String label;
+  const _TimeUnit({required this.value, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 38,
+          padding: const EdgeInsets.symmetric(vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: const Color(0xFFFFD6DE), width: 1),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            value.toString().padLeft(2, '0'),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+              color: Color(0xFF1A1A2E),
+              height: 1,
+            ),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 8,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.8,
+            color: Colors.grey[500],
           ),
         ),
       ],
@@ -6632,6 +6864,23 @@ class _OfferCountdownState extends State<OfferCountdown>
   }
 }
 
+class _Divider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 4),
+      child: Text(
+        ':',
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w800,
+          color: ColorRes.error,
+          height: 1.2,
+        ),
+      ),
+    );
+  }
+}
 
 class NearbyPropertyDetails extends StatelessWidget {
   final List<NearbyLocations> nearbyLocations;

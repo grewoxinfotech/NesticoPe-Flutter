@@ -1337,6 +1337,7 @@ Widget buildSection(
   bool isFromLoginSide = false,
 }) {
   final searchHistoryController = Get.find<SearchHistoryController>();
+  final propertyController = Get.find<PropertyController>();
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     mainAxisSize: MainAxisSize.min,
@@ -1366,6 +1367,9 @@ Widget buildSection(
               cardHeight: 65,
               onTap: () {
                 if (!isFromLoginSide) {
+                  // log("Applied Filters: ${city.city}");
+                  propertyController.fetchCreatedBy(withoutCity: false);
+                  
                   final filters = {"city": city.city};
 
                   print("Applied Filters: $filters");
@@ -1375,7 +1379,9 @@ Widget buildSection(
 
                   Get.back(result: filters);
                 } else {
+                  propertyController.fetchCreatedBy(withoutCity: false);
                   final selectedCity = city.city.trim();
+
                   Get.back(result: selectedCity);
                 }
               },
@@ -1389,6 +1395,7 @@ Widget buildSection(
 
 Widget buildSectionTrending(String title, List<TrendingCityData> data) {
   final searchHistoryController = Get.find<SearchHistoryController>();
+  final propertyController = Get.find<PropertyController>();
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     mainAxisSize: MainAxisSize.min,
@@ -1417,6 +1424,8 @@ Widget buildSectionTrending(String title, List<TrendingCityData> data) {
             return TrendingCityCard(
               city: city,
               onTap: () {
+
+                propertyController.fetchCreatedBy(withoutCity: false);
                 final filters = {"city": city.city};
 
                 print("Applied Filters: $filters");

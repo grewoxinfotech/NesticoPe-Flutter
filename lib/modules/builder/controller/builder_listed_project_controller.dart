@@ -420,7 +420,7 @@
 //       }
 //
 //       await _resetAndReload();
-//     } finally {
+//     } finally {mgmk kdiem 
 //       isFilterLoading.value = false;
 //     }
 //   }
@@ -516,13 +516,14 @@ class BuilderProjectListController extends PaginatedController<ProjectItem> {
   /// DO NOT override it here
 
   /// ==============================
-  /// Filters
+  /// Filtersjdncj vnjsdnjureSkidsjfidmmskiefdhnjsie
   /// ==============================
   final Map<String, String> filters = {};
 
   @override
   void onInit() {
     super.onInit();
+
     _initBuilderProjects();
   }
 
@@ -545,13 +546,12 @@ class BuilderProjectListController extends PaginatedController<ProjectItem> {
 
   /// Ensure builder-only projects
   Future<void> applyBuilderFilter() async {
-
-      final userData = await SecureStorage.getUserData();
-      final userId = userData?.user?.id;
-      if (userId != null) {
-        filters['created_by'] = userId;
-      }
-
+    final userData = await SecureStorage.getUserData();
+    print("User data for builder filter: ${userData?.user?.toJson()}");
+    final userId = userData?.user?.id;
+    if (userId != null) {
+      filters['created_by'] = userId;
+    }
   }
 
   /// ==============================
@@ -575,6 +575,7 @@ class BuilderProjectListController extends PaginatedController<ProjectItem> {
   /// ==============================
   Future<void> applyFilters(Map<String, String> newFilters) async {
     try {
+      print("Applying filters: $newFilters");
       loadingState.value = BuilderProjectLoadingState.filterLoading;
 
       final createdBy = filters['created_by'];

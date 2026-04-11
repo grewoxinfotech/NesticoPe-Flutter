@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
 import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 
 import '../../../../../app/constants/color_res.dart';
@@ -184,7 +185,7 @@ class ResellerConversionScreen extends StatelessWidget {
                                       ? null
                                       : () {
                                         if(UserHelper.isGuest){
-                                          Get.to(() => LoginScreen());
+                                          Get.to(() => OtpLoginScreen());
 
                                         }else{
                                         if (_cityController.text.isEmpty ||
@@ -283,7 +284,7 @@ class ResellerConversionScreen extends StatelessWidget {
                                   recognizer:
                                       TapGestureRecognizer()
                                         ..onTap = () {
-                                          Get.to(() => const LoginScreen());
+                                          Get.to(() => const OtpLoginScreen());
                                         },
                                 ),
                               ],

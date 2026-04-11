@@ -12,6 +12,7 @@ import 'package:nesticope_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
 import 'package:nesticope_app/app/widgets/texts/headline_text.dart';
 import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/data/network/contact/model/contact_model.dart';
 import 'package:nesticope_app/data/network/contractor/model/contractot_service_model/contractor_service_category_model.dart';
 import 'package:nesticope_app/data/network/property/models/property_model.dart';
 import 'package:nesticope_app/data/network/trending_area/model/trending_area_model.dart';
@@ -98,6 +99,7 @@ class HomeScreen extends StatefulWidget {
       {"title": "Retail Shop", "image": IMGRes.retail},
       {"title": "Showroom", "image": IMGRes.showroom},
       {"title": "Warehouse", "image": IMGRes.warehouse},
+      {"title": "Farmhouse", "image": IMGRes.furnished},
     ],
   });
 
@@ -184,13 +186,17 @@ class _HomeScreenState extends State<HomeScreen> {
   late final ProjectWizardController projectController;
   late final PlatformReviewController reviewController;
   late final TopSellerController topSellerController;
-  late final TopBuilderController topBuilderController;
+  late final TopBuilderAllController topBuilderController;
   late final CompareManager compareManager;
   late final HireContractorFilterProfileController ctrl;
   late final ContactController contactController;
 
   late final TopCategoryController topCategoryController;
   final searchHistoryController = Get.put(SearchHistoryController());
+  String listingTypeFilterValue = '';
+
+  String listingTypeFilterKey = '';
+  String propertyTypeFilter = '';
   // bool _pinned = true;
   // bool _snap = false;
   // bool _floating = false;
@@ -206,6 +212,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // ✅ Store home-specific filter state locally
   String? _homePropertyTypeFilter;
   String? _homeListingTypeFilter;
+  int _currentBannerIndex = 0;
 
   // ✅ Cache original data to avoid re-filtering from shared controller
   List<dynamic> _cachedNewlyAddedProperties = [];
@@ -254,15 +261,24 @@ class _HomeScreenState extends State<HomeScreen> {
         // Map UI selection to API listingType values
         String? listingType;
         final Map<String, String> f = {};
-        if (norm.startsWith('buy'))
+        if (norm.startsWith('buy')) {
           listingType = 'Sell';
-        else if (norm.startsWith('rent'))
+        } else if (norm.startsWith('rent')) {
           listingType = 'Rent';
-        else if (norm.startsWith('pg'))
+        } else if (norm.startsWith('pg')) {
           listingType = 'PG';
+        }
 
         if (listingType != null) {
-          propertyController.applyFilter('listingType', listingType);
+          listingTypeFilterValue = listingType;
+          listingTypeFilterKey = 'listingType';
+          propertyController.clearFilter('type');
+          propertyController.filters?['propertyType'] = propertyTypeFilter;
+          propertyController.applyFilter(
+            'listingType',
+            listingType,
+            homefilter: true,
+          );
           // propertyController.loadTopProperties();
 
           propertyController.loadTopProperties();
@@ -273,7 +289,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
         if (norm.startsWith('commercial')) {
           // projectController.applyFilter('projectType', 'commercial');
-          propertyController.applyFilter('type', 'commercial');
+          listingTypeFilterValue = 'commercial';
+          listingTypeFilterKey = 'type';
+          propertyController.clearFilter('listingType');
+          propertyController.filters?['propertyType'] = propertyTypeFilter;
+          propertyController.applyFilter(
+            'type',
+            'commercial',
+            homefilter: true,
+          );
           // propertyController.loadTopProperties();
 
           propertyController.loadTopProperties();
@@ -292,7 +316,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (city != null && propertyController.selectedCity.value.isEmpty) {
       propertyController.selectedCity.value = city;
-      topBuilderController.selectedCity.value = city;
+      // topBuilderController.selectedCity.value = city;
       projectController.selectedCity.value = city;
 
       selectedCity = city;
@@ -333,7 +357,9 @@ class _HomeScreenState extends State<HomeScreen> {
     recommendedPropertyController = Get.put(RecommendedPropertyController());
     propertyFilterController = Get.put(PropertyFilterControllerForFilter());
     platformServicesController = Get.put(PlatformServicesController());
-    contractorServiceController = Get.put(TopContractorsController());
+    contractorServiceController = Get.put(
+      TopContractorsController(withoutCity: true),
+    );
     projectController = Get.put(ProjectWizardController(isBuilderView: false));
     ctrl =
         Get.isRegistered<HireContractorFilterProfileController>()
@@ -344,7 +370,7 @@ class _HomeScreenState extends State<HomeScreen> {
       PlatformReviewController(type: ['site'], filters: {}),
     );
     topSellerController = Get.put(TopSellerController());
-    topBuilderController = Get.put(TopBuilderController());
+    topBuilderController = Get.put(TopBuilderAllController());
     compareManager = Get.put(CompareManager(), permanent: true);
     topCategoryController = Get.put(TopCategoryController());
     contactController = Get.put(ContactController());
@@ -388,12 +414,12 @@ class _HomeScreenState extends State<HomeScreen> {
       } catch (_) {}
       // 🔄 Refresh Top Rated Contractors for selected city
       try {
-        contractorServiceController.applyFilter('city', city ?? '');
+        // contractorServiceController.applyFilter('city', city ?? '');
       } catch (_) {}
       // 🔄 Refresh Top Builders for selected city
       try {
-        topBuilderController.selectedCity.value = city ?? '';
-        topBuilderController.refreshList();
+        // topBuilderController.selectedCity.value = city ?? '';
+        // topBuilderController.refreshList();
       } catch (_) {}
     });
   }
@@ -610,10 +636,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                             propertyController.fetchTradingArea(
                                               city,
                                             );
-                                            topBuilderController.applyFilter(
-                                              'city',
-                                              city,
-                                            );
+                                            // topBuilderController.applyFilter(
+                                            //   'city',
+                                            //   city,
+                                            // );
                                             propertyController.applyFilter(
                                               'city',
                                               city,
@@ -677,16 +703,16 @@ class _HomeScreenState extends State<HomeScreen> {
       propertyController.fetchTradingArea(
         propertyController.selectedCity.value,
       );
-      topBuilderController.selectedCity.value;
+      // topBuilderController.selectedCity.value;
       projectController.cityAssign(propertyController.selectedCity.value);
       // ✅ Load top categories for the initial city
       topCategoryController.fetchTopCategories();
       // ✅ Load top contractors for the initial city
       if ((propertyController.selectedCity.value).isNotEmpty) {
-        contractorServiceController.applyFilter(
-          'city',
-          propertyController.selectedCity.value,
-        );
+        // contractorServiceController.applyFilter(
+        //   'city',
+        //   propertyController.selectedCity.value,
+        // );
       }
 
       // ✅ Cache the unfiltered data when first loaded
@@ -749,6 +775,7 @@ class _HomeScreenState extends State<HomeScreen> {
         onCityChanged: (city) {
           selectedCity = city;
         },
+
         onCategoryChanged: (category, {bool fromUser = false}) {
           final norm = category.toLowerCase();
           setState(() {
@@ -771,15 +798,25 @@ class _HomeScreenState extends State<HomeScreen> {
             // Map UI selection to API listingType values
             String? listingType;
             final Map<String, String> f = {};
-            if (norm.startsWith('buy'))
+            if (norm.startsWith('buy')) {
               listingType = 'Sell';
-            else if (norm.startsWith('rent'))
+            } else if (norm.startsWith('rent')) {
               listingType = 'Rent';
-            else if (norm.startsWith('pg'))
+            } else if (norm.startsWith('pg')) {
               listingType = 'PG';
+            }
 
             if (listingType != null) {
-              propertyController.applyFilter('listingType', listingType);
+              propertyController.clearFilter('type');
+              listingTypeFilterValue = listingType;
+              listingTypeFilterKey = 'listingType';
+              propertyController.filters?['propertyType'] = propertyTypeFilter;
+              propertyController.applyFilter(
+                'listingType',
+                listingType,
+                homefilter: true,
+              );
+              log("Applied listingType filter: ${propertyController.filters}");
               // propertyController.loadTopProperties();
               if (fromUser) {
                 propertyController.loadTopProperties();
@@ -790,8 +827,15 @@ class _HomeScreenState extends State<HomeScreen> {
             }
 
             if (norm.startsWith('commercial')) {
-              // projectController.applyFilter('projectType', 'commercial');
-              propertyController.applyFilter('type', 'commercial');
+              propertyController.clearFilter('listingType');
+              listingTypeFilterValue = 'commercial';
+              listingTypeFilterKey = 'type';
+              propertyController.filters?['propertyType'] = propertyTypeFilter;
+              propertyController.applyFilter(
+                'type',
+                'commercial',
+                homefilter: true,
+              );
               // propertyController.loadTopProperties();
               if (fromUser) {
                 propertyController.loadTopProperties();
@@ -832,18 +876,20 @@ class _HomeScreenState extends State<HomeScreen> {
         _buildNewlyAddedProperties(),
 
         _buildRecommendedProperties(),
-        _buildCitySection(),
+
         _buildExploreProjects(),
 
         // const SizedBox(height: 15),
         _buildFurnishingTypeSection(),
+        _buildCitySection(),
         // const SizedBox(height: 5),
         _buildTopProperties(),
         _buildTopProjectsInCity(),
         // _buildRecommendedSellers(),
+        _buildTopCategories(),
         _buildRecommendedBuilders(),
         _buildTopContractors(),
-        _buildTopCategories(),
+
         _buildLimitedOfferCard(),
 
         // _buildPlatformServices(),
@@ -1340,7 +1386,15 @@ class _HomeScreenState extends State<HomeScreen> {
     // ✅ Pass normalized selection as subProperty in API query (distinct from header logic)
     try {
       propertyController.subPropertyType.value = filterValue;
-      propertyController.applyFilter('propertyType', filterValue);
+      propertyController.filters?[listingTypeFilterKey] =
+          listingTypeFilterValue;
+      propertyTypeFilter = filterValue;
+      propertyController.applyFilter(
+        'propertyType',
+        filterValue,
+        homefilter: true,
+      );
+      log("Applied listingType filter: ${propertyController.filters}");
     } catch (_) {}
 
     debugPrint("Selected: ${type['title']} (Home filter only)");
@@ -1413,10 +1467,6 @@ class _HomeScreenState extends State<HomeScreen> {
   // }
   Widget _buildNewlyAddedProperties() {
     return Obx(() {
-      log(
-        "Newly added properties: ${propertyController.items.map((e) => e.toJson()).toList()}",
-      );
-
       // 🔄 Loading state
       if (propertyController.isLoading.value &&
           propertyController.items.isEmpty) {
@@ -1458,6 +1508,10 @@ class _HomeScreenState extends State<HomeScreen> {
               title: "Newly added properties",
               showViewAll: true,
               onViewAll: () {
+                setState(() {
+                  // propertyController.fetchCreatedBy(withoutCity: false);
+                });
+
                 if (selectedCity == null) {
                   Get.to(() => PropertyDetail());
                 } else {
@@ -1519,35 +1573,197 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  // Widget _buildHomeBannerCarousel() {
+  //   if (bannerController.items.isEmpty) return const SizedBox.shrink();
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       const TitleWithViewAll(title: "Highlights", showViewAll: false),
+  //       const SizedBox(height: 8),
+  //       SizedBox(
+  //         height: 160,
+  //         child: PageView.builder(
+  //           controller: _bannerPageController,
+  //           itemCount: bannerController.items.length,
+  //           itemBuilder: (context, index) {
+  //             final item = bannerController.items[index];
+  //             return GestureDetector(
+  //               onTap: () async {
+  //                 await _openBannerUrl(item.url);
+  //               },
+
+  //               child: Padding(
+  //                 padding: const EdgeInsets.symmetric(horizontal: 8),
+  //                 child: ClipRRect(
+  //                   borderRadius: BorderRadius.circular(12),
+  //                   child: Stack(
+  //                     fit: StackFit.expand,
+  //                     children: [
+  //                       CustomImage(
+  //                         type: CustomImageType.network,
+  //                         src: item.image,
+  //                         fit: BoxFit.cover,
+  //                       ),
+  //                       Container(
+  //                         decoration: BoxDecoration(
+  //                           gradient: LinearGradient(
+  //                             begin: Alignment.topCenter,
+  //                             end: Alignment.bottomCenter,
+  //                             colors: [
+  //                               Colors.transparent,
+  //                               Colors.black.withOpacity(0.45),
+  //                             ],
+  //                           ),
+  //                         ),
+  //                       ),
+  //                       Positioned(
+  //                         left: 12,
+  //                         right: 12,
+  //                         bottom: 12,
+  //                         child: Row(
+  //                           children: [
+  //                             Expanded(
+  //                               child: Text(
+  //                                 item.title ?? '',
+  //                                 maxLines: 2,
+  //                                 overflow: TextOverflow.ellipsis,
+  //                                 style: const TextStyle(
+  //                                   color: Colors.white,
+  //                                   fontWeight: AppFontWeights.semiBold,
+  //                                   fontSize: AppFontSizes.bodySmall,
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                             const SizedBox(width: 10),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ),
+  //             );
+  //           },
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
   Widget _buildHomeBannerCarousel() {
     if (bannerController.items.isEmpty) return const SizedBox.shrink();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const TitleWithViewAll(title: "Highlights", showViewAll: false),
+        // const TitleWithViewAll(title: "Highlights", showViewAll: false),
         const SizedBox(height: 8),
+
+        /// 🔥 Banner Slider
         SizedBox(
-          height: 140,
+          height: 170,
           child: PageView.builder(
             controller: _bannerPageController,
             itemCount: bannerController.items.length,
+            onPageChanged: (index) {
+              setState(() => _currentBannerIndex = index);
+            },
             itemBuilder: (context, index) {
               final item = bannerController.items[index];
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: GestureDetector(
-                  onTap: () async {
-                    final u = Uri.tryParse(item.url);
-                    if (u != null) {
-                      await launchUrl(u, mode: LaunchMode.externalApplication);
-                    }
-                  },
+
+              return GestureDetector(
+                onTap: () async {
+                  await _openBannerUrl(item.url);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: CustomImage(
-                      type: CustomImageType.network,
-                      src: item.image,
-                      fit: BoxFit.cover,
+                    borderRadius: BorderRadius.circular(14),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        /// 🌆 Image
+                        CustomImage(
+                          type: CustomImageType.network,
+                          src: item.image,
+                          fit: BoxFit.cover,
+                        ),
+
+                        /// 🌑 Gradient Overlay
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.transparent,
+                                Colors.black.withOpacity(0.5),
+                                Colors.black.withOpacity(0.8),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        /// 🏷️ Ads Badge
+                        if (item.isAdvertisement)
+                          Positioned(
+                            top: 10,
+                            left: 10,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: ColorRes.homeYellow,
+                                // border: Border.all(color: ColorRes.white),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                "Ads",
+                                style: TextStyle(
+                                  color: ColorRes.textPrimary,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                        /// 📝 Title + Description
+                        Positioned(
+                          left: 12,
+                          right: 12,
+                          bottom: 12,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                item.title,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+
+                              /// 📄 Static Description
+                              Text(
+                                "Explore premium properties and best deals near you.",
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.7),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -1555,8 +1771,43 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
         ),
+
+        const SizedBox(height: 10),
+
+        /// 🔵 Indicator
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(
+            bannerController.items.length,
+            (index) => AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              margin: const EdgeInsets.symmetric(horizontal: 4),
+              width: _currentBannerIndex == index ? 16 : 6,
+              height: 6,
+              decoration: BoxDecoration(
+                color:
+                    _currentBannerIndex == index
+                        ? const Color(0xFF4A6CF7)
+                        : Colors.grey.shade400,
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          ),
+        ),
       ],
     );
+  }
+
+  Future<void> _openBannerUrl(String? s) async {
+    final t = (s ?? '').trim().replaceAll('`', '');
+    if (t.isEmpty) return;
+    final fixed =
+        (t.startsWith('http://') || t.startsWith('https://'))
+            ? t
+            : 'https://$t';
+    final u = Uri.tryParse(fixed);
+    if (u == null) return;
+    await launchUrl(u, mode: LaunchMode.externalApplication);
   }
 
   Widget _buildHorizontalPropertyList(List<dynamic> properties) {
@@ -1619,7 +1870,7 @@ class _HomeScreenState extends State<HomeScreen> {
       return Container(
         // margin: const EdgeInsets.only(top: 24),
         padding: const EdgeInsets.symmetric(vertical: 12),
-        color: ColorRes.primary.withOpacity(0.1),
+        color: ColorRes.leadGreyColor.withOpacity(0.1),
 
         // height: 64,
         child: Column(
@@ -1751,7 +2002,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildFurnishingTypeSection() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12),
-      color: ColorRes.primary.withOpacity(0.06),
+      color: ColorRes.primary.withOpacity(0.1),
       child: Column(
         children: [
           SizedBox(height: 15),
@@ -1770,10 +2021,15 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 15),
+
+
+          
         ],
       ),
     );
   }
+
+
 
   Widget _buildFurnishingTypeCard(int index) {
     final furnished = HomeScreen.furnishedType[index];
@@ -1920,7 +2176,14 @@ class _HomeScreenState extends State<HomeScreen> {
               title:
                   "Top Properties in ${propertyController.selectedCity.value}",
               showViewAll: true,
-              onViewAll: () => Get.to(() => PropertyDetail()),
+              onViewAll:
+                  () => Get.to(
+                    () => PropertyDetail(
+                      filters: [
+                        {'city': selectedCity!},
+                      ],
+                    ),
+                  ),
             ),
             const SizedBox(height: 12),
             Padding(
@@ -2049,8 +2312,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               const SizedBox(height: 12),
               TitleWithViewAll(
-                title:
-                    "Top Developer in ${projectController.selectedCity.value}",
+                title: "Top Developer",
                 showViewAll: false,
                 subTitle: 'Connect with top developers',
                 isSubTitle: true,
@@ -2096,7 +2358,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             const SizedBox(height: 12),
             TitleWithViewAll(
-              title: "Top Developer in ${projectController.selectedCity.value}",
+              title: "Top Developer",
               showViewAll: true,
               subTitle: 'Connect with top developers',
               isSubTitle: true,
@@ -2233,7 +2495,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
         // margin:  EdgeInsets.symmetric(vertical: 20),
         decoration: BoxDecoration(
-          color: ColorRes.success.withOpacity(0.05),
+          color: ColorRes.success.withOpacity(0.08),
 
           // borderRadius: BorderRadius.circular(16),
         ),
@@ -2243,7 +2505,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
             TitleWithViewAll(
               title: "NesticoPe Verified Services",
-              showViewAll: true,
+
               icon: Icons.verified_user_outlined,
               iconColor: ColorRes.success,
               iconBgColor: ColorRes.success.withOpacity(0.1),
@@ -2425,13 +2687,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     borderRadius: BorderRadius.circular(AppRadius.large),
                     border:
                         isHomeConstruction
-                            ? Border.all(color: ColorRes.primary, width: 2)
+                            ? Border.all(color: ColorRes.homeYellow, width: 2)
                             : null,
                     boxShadow: [
                       BoxShadow(
                         color:
                             isHomeConstruction
-                                ? ColorRes.primary.withOpacity(0.15)
+                                ? ColorRes.homeYellow.withOpacity(0.15)
                                 : Colors.black.withOpacity(0.04),
                         blurRadius: isHomeConstruction ? 12 : 8,
                         offset: const Offset(0, 4),
@@ -2450,7 +2712,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 vertical: 4,
                               ),
                               decoration: const BoxDecoration(
-                                color: ColorRes.primary,
+                                color: ColorRes.homeYellow,
                                 borderRadius: BorderRadius.only(
                                   topLeft: Radius.circular(18),
                                   bottomRight: Radius.circular(18),
@@ -2459,7 +2721,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: const Text(
                                 'Most Popular',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: ColorRes.textPrimary,
                                   fontSize: AppFontSizes.small,
                                   fontWeight: AppFontWeights.bold,
                                 ),
@@ -6686,7 +6948,6 @@ class _BannerContent extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
 
             // padding: EdgeInsets.symmetric(horizontal: 20),
-            
             backgroundColor: darkText ? Colors.black : Colors.white,
             foregroundColor: darkText ? Colors.white : Colors.black,
             shape: RoundedRectangleBorder(
@@ -6694,7 +6955,7 @@ class _BannerContent extends StatelessWidget {
             ),
           ),
           onPressed: onTap,
-          child: Text(buttonText, style: TextStyle(fontSize: 12),),
+          child: Text(buttonText, style: TextStyle(fontSize: 12)),
         ),
       ],
     );
@@ -6802,27 +7063,43 @@ class SocialBanner extends StatelessWidget {
               subtitle:
                   "Follow us on social media for latest property updates and offers.",
               buttonText: "Follow Us",
+              // onTap: () async {
+              // Get.toNamed(Routes.follow);
+              // final cc =
+              //     Get.isRegistered<ContactController>()
+              //         ? Get.find<ContactController>()
+              //         : Get.put(ContactController());
+              // if (cc.items.isEmpty) {
+              //   await cc.loadContacts(reset: true);
+              // }
+              // final raw =
+              //     cc.contact.value?.socialMedia?.instagram ??
+              //     (cc.items.isNotEmpty
+              //         ? cc.items.first.socialMedia?.instagram
+              //         : null) ??
+              //     '';
+              // final urlStr = raw.replaceAll('`', '').trim();
+              // final uri = Uri.tryParse(urlStr);
+              // if (uri != null) {
+              //   await launchUrl(uri, mode: LaunchMode.externalApplication);
+              // }
               onTap: () async {
-                // Get.toNamed(Routes.follow);
                 final cc =
                     Get.isRegistered<ContactController>()
                         ? Get.find<ContactController>()
                         : Get.put(ContactController());
+
                 if (cc.items.isEmpty) {
                   await cc.loadContacts(reset: true);
                 }
-                final raw =
-                    cc.contact.value?.socialMedia?.instagram ??
-                    (cc.items.isNotEmpty
-                        ? cc.items.first.socialMedia?.instagram
-                        : null) ??
-                    '';
-                final urlStr = raw.replaceAll('`', '').trim();
-                final uri = Uri.tryParse(urlStr);
-                if (uri != null) {
-                  await launchUrl(uri, mode: LaunchMode.externalApplication);
-                }
+
+                final social =
+                    cc.contact.value?.socialMedia ??
+                    (cc.items.isNotEmpty ? cc.items.first.socialMedia : null);
+
+                Get.dialog(SocialMediaDialog(social: social));
               },
+              // },
             ),
           ),
           const SizedBox(width: 10),
@@ -6832,6 +7109,108 @@ class SocialBanner extends StatelessWidget {
             fit: BoxFit.contain,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class SocialMediaDialog extends StatelessWidget {
+  final SocialMedia? social;
+
+  const SocialMediaDialog({super.key, this.social});
+
+  Future<void> _openUrl(String? raw) async {
+    if (raw == null || raw.isEmpty) return;
+
+    final urlStr = raw.replaceAll('`', '').trim();
+    final uri = Uri.tryParse(urlStr);
+
+    if (uri != null) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  Widget _socialItem(String asset, String? url) {
+    return GestureDetector(
+      onTap: () => _openUrl(url),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(blurRadius: 10, color: Colors.black.withOpacity(0.1)),
+              ],
+            ),
+            child: Image.asset(asset, height: 28, width: 28),
+          ),
+          const SizedBox(height: 6),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: ColorRes.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              "Connect With Us",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: ColorRes.black,
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _socialItem('assets/png/facebook.png', social?.facebook),
+                _socialItem('assets/png/linkedin.png', social?.linkedin),
+                _socialItem('assets/png/twitter.png', social?.twitter),
+                _socialItem(
+                  'assets/png/social.png',
+                  social?.instagram, // or generic link
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 20),
+
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => Get.back(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ColorRes.primary, // match your banner theme
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  elevation: 3,
+                ),
+                child: const Text(
+                  "Close",
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

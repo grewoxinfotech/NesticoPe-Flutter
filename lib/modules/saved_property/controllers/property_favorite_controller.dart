@@ -7,6 +7,7 @@ import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.
 import 'package:nesticope_app/data/database/secure_storage_service.dart';
 import 'package:nesticope_app/modules/auth/views/login_screen.dart';
 import 'package:lottie/lottie.dart';
+import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
 import '../../../data/network/auth/model/user_model.dart';
 import '../../../data/network/property/models/favorite_item_model.dart';
 import '../../../data/network/property/models/inquiry_model.dart';
@@ -325,7 +326,7 @@ class PropertyFavoriteController extends GetxController {
                     ),
                     onPressed: () {
                       Navigator.of(ctx).pop();
-                      Get.to(() => LoginScreen());
+                      Get.to(() => OtpLoginScreen());
                     },
                     child: Text('Login', style: TextStyle(letterSpacing: 0.5)),
                   ),

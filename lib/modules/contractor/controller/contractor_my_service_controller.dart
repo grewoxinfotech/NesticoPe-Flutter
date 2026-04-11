@@ -1735,9 +1735,8 @@ class ContractorMyServiceController
         ],
       },
       {
-        'label':
-            'End to End New Home Construction Contractors (Turnkey Home Construction)',
-        'value': 'end_to_end_new_home_construction_contractors',
+        'label': 'Turnkey Construction',
+        'value': 'turnkey_construction',
         'bestSelling': false,
         "trending": false,
         'items': [

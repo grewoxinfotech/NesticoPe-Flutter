@@ -1,13 +1,16 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 import 'package:nesticope_app/app/utils/formater/formater.dart';
 import 'package:nesticope_app/app/widgets/image/custom_image.dart';
+import 'package:nesticope_app/app/widgets/shimmer/shimmer_widget.dart';
 import 'package:nesticope_app/data/database/secure_storage_service.dart';
 import 'package:nesticope_app/data/network/builder/model/builder_model.dart';
+import 'package:nesticope_app/data/network/top_seller_profile/model/top_builder_profile_model.dart';
 import 'package:nesticope_app/modules/builder/view/project_detail/project_detail.dart';
 import 'package:nesticope_app/modules/home/controllers/top_builder_controller.dart';
 import 'package:nesticope_app/modules/builder/controller/builder_listed_project_controller.dart';
@@ -39,6 +42,7 @@ class _TopDeveloperProfileScreenState extends State<TopDeveloperProfileScreen> {
   late final ProjectWizardController projectController;
   bool _initialStatusApplied = false;
   final RxString selectedStatus = ''.obs;
+  final RxString selectedCity = ''.obs;
   final RxList<ProjectItem> allItemsCache = <ProjectItem>[].obs;
 
   @override
@@ -53,6 +57,15 @@ class _TopDeveloperProfileScreenState extends State<TopDeveloperProfileScreen> {
         Get.isRegistered<ProjectWizardController>(tag: _tag)
             ? Get.find<ProjectWizardController>(tag: _tag)
             : Get.put(ProjectWizardController(isBuilderView: false), tag: _tag);
+
+    // Load stored city (if any) to filter projects/developers shown
+    SecureStorage.getSelectedCity().then((city) {
+      if (city != null && city.isNotEmpty) {
+        selectedCity.value = city;
+      }
+    }).catchError((e) {
+      log('Error reading selected city: $e');
+    });
 
     ever<List<ProjectItem>>(projectController.items, (list) async {
       if (allItemsCache.isEmpty && list.isNotEmpty) {
@@ -156,7 +169,123 @@ class _TopDeveloperProfileScreenState extends State<TopDeveloperProfileScreen> {
                   padding: const EdgeInsets.all(16),
                   children: [
                     _buildHeader(isLoadingProfile),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 12),
+
+                    // --- Featured developer + horizontal list (exclude current profile) ---
+                    Obx(() {
+                      
+                      final cityFilter = selectedCity.value.trim().toLowerCase();
+
+                      final developers = profileController.items
+                          .where((d) {
+                            final notSelf = (d.id ?? '') != widget.userId;
+                            if (!notSelf) return false;
+
+                            if (cityFilter.isEmpty) return true;
+
+                            final devCity = (d.city ?? '').trim().toLowerCase();
+                            return devCity.isNotEmpty && devCity.contains(cityFilter);
+                          })
+                          .toList();
+
+                      if (developers.isEmpty) return const SizedBox.shrink();
+
+                      final featured = developers.first;
+                      final rest = developers.length > 1 ? developers.sublist(1) : <BuilderItem>[];
+
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 8),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 0.0),
+                            child: GestureDetector(
+                              onTap: () async {
+                                // load profile and navigate
+                                await profileController.loadSellerProfile(featured.id ?? '');
+                                Get.to(() => TopDeveloperProfileScreen(userId: featured.id ?? '', createdBy: featured.id ?? ''));
+                              },
+                              child: Container(
+                                height: 160,
+                                margin: const EdgeInsets.symmetric(horizontal: 0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  image: featured.profilePic != null && featured.profilePic!.isNotEmpty
+                                      ? DecorationImage(
+                                          image: CachedNetworkImageProvider(featured.profilePic!),
+                                          fit: BoxFit.cover,
+                                        )
+                                      : null,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.03),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [Colors.transparent, Colors.black.withOpacity(0.5)],
+                                    ),
+                                  ),
+                                  padding: const EdgeInsets.all(12),
+                                  alignment: Alignment.bottomLeft,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        featured.firstName ?? featured.username ?? 'Developer',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: AppFontSizes.body,
+                                          fontWeight: AppFontWeights.semiBold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        "${featured.totalExperience ?? 0}+ yrs • ${featured.city ?? 'N/A'}",
+                                        style: TextStyle(
+                                          color: Colors.white70,
+                                          fontSize: AppFontSizes.caption,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          if (rest.isNotEmpty)
+                            SizedBox(
+                              height: 120,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                padding: const EdgeInsets.symmetric(horizontal: 0),
+                                itemCount: rest.length,
+                                itemBuilder: (context, i) {
+                                  final d = rest[i];
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 12, left: 8),
+                                    child: _DeveloperMiniCard(builder: d),
+                                  );
+                                },
+                              ),
+                            ),
+                          const SizedBox(height: 12),
+                        ],
+                      );
+                    }),
+
+                    const SizedBox(height: 8),
 
                     _StatusTabs(
                       selectedStatus: selectedStatus.value,
@@ -714,6 +843,94 @@ class BuilderProjectListShimmer extends StatelessWidget {
       itemCount: 5,
       separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (_, __) => const BuilderProjectCardShimmer(),
+    );
+  }
+}
+
+class _DeveloperMiniCard extends StatelessWidget {
+  final BuilderItem builder;
+
+  const _DeveloperMiniCard({Key? key, required this.builder}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    // final rating = builder.userRating ?? 0.0;
+    return GestureDetector(
+      onTap: () async {
+        final tag = 'top_dev_profile_${builder.id}';
+        final controller = Get.isRegistered<TopBuilderController>(tag: tag)
+            ? Get.find<TopBuilderController>(tag: tag)
+            : Get.put(TopBuilderController(), tag: tag);
+        await controller.loadSellerProfile(builder.id ?? '');
+        Get.to(() => TopDeveloperProfileScreen(userId: builder.id ?? '', createdBy: builder.id ?? ''));
+      },
+      child: Container(
+        width: 260,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: ColorRes.leadGreyColor.shade100),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: CachedNetworkImage(
+                imageUrl: builder.profilePic ?? '',
+                width: 64,
+                height: 64,
+                fit: BoxFit.cover,
+                placeholder: (c, u) => ShimmerShapes.circle(size: 64),
+                errorWidget: (c, u, e) => Container(
+                  width: 64,
+                  height: 64,
+                  color: ColorRes.primary.withOpacity(0.1),
+                  alignment: Alignment.center,
+                  child: Text(
+                    (builder.firstName ?? builder.username ?? 'U')
+                        .trim()
+                        .split(' ')
+                        .map((e) => e.isNotEmpty ? e[0].toUpperCase() : '')
+                        .take(2)
+                        .join(),
+                    style: const TextStyle(fontWeight: FontWeight.w600, color: ColorRes.primary),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    builder.firstName ?? builder.username ?? 'Developer',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    "${Formatter.formatNumber(num.tryParse(builder.totalExperience.toString() ?? '')?? 0) ?? '0'}+ yrs • ${builder.city ?? 'N/A'}",
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

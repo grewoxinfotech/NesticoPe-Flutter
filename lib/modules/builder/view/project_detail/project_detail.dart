@@ -1,10 +1,12 @@
 import 'dart:developer';
 import 'dart:math' as math;
+import 'dart:math' hide log;
 import 'dart:typed_data';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:nesticope_app/app/constants/api_constants.dart';
+import 'package:nesticope_app/app/constants/img_res.dart';
 import 'package:nesticope_app/app/manager/compare_manager.dart';
 import 'package:nesticope_app/app/manager/data_masker.dart';
 import 'package:nesticope_app/app/manager/icon_manager.dart';
@@ -12,6 +14,8 @@ import 'package:nesticope_app/app/manager/project_compare_manager.dart';
 import 'package:nesticope_app/app/utils/formater/formater.dart';
 import 'package:nesticope_app/app/widgets/image/custom_image.dart'
     hide ColorRes, imageOfNotAvailable;
+import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
+import 'package:nesticope_app/modules/builder/view/builder_property_listing.dart';
 import 'package:nesticope_app/modules/builder/view/project_detail/widgets/model_render_screen.dart';
 import 'package:nesticope_app/modules/property/controllers/overall_rating_controller.dart';
 import 'package:nesticope_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
@@ -167,6 +171,22 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         return;
       }
       project.value = fetchedProject;
+      // Load other projects by the same builder (exclude current project in UI)
+      try {
+        final otherTag = 'other_projects_$projectId';
+        if (!Get.isRegistered<BuilderProjectListController>(tag: otherTag)) {
+          Get.put(BuilderProjectListController(), tag: otherTag);
+        }
+        final otherCtrl = Get.find<BuilderProjectListController>(tag: otherTag);
+        final builderId = project.value?.createdBy ?? '';
+        // if (builderId.isNotEmpty) {
+        //   await otherCtrl.applyFilters({'created_by': builderId});
+        // } else {
+        //   await otherCtrl.loadInitial();
+        // }
+      } catch (e) { 
+        log('❌ Error loading other projects: $e');
+      }
       AppLogger(
         "Check the score card come null from backend ",
         fetchedProject?.toJson(),
@@ -205,6 +225,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(ProjectController());
+    
     AppLogger.structured(
       '🔍 Building ProjectDetailsScreen for project ID:',
       project?.toJson(),
@@ -278,18 +299,39 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         color: ColorRes.leadGreyColor.shade200,
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            TitleWithViewAll(
-                              title: 'Limited Time Offer!',
-                              subTitle:
-                                  "Limited-time! Get an exclusive offer on this property.",
-                              isSubTitle: true,
+                              const SizedBox(height: 15),
+                        
+                            Text(
+                              ' Limited Time Offer!',
+                              maxLines: 1,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.body,
+                                fontWeight: AppFontWeights.semiBold,
+                                color: ColorRes.textPrimary,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
+
+                            Text(
+                              "Limited-time! Get an exclusive offer on this property.",
+                              maxLines: 1,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.small,
+                                fontWeight: AppFontWeights.medium,
+                                color: ColorRes.textColor.withOpacity(0.65),
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                                          SizedBox(height: 15),
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 12),
+                              padding: EdgeInsets.symmetric(horizontal: 12,
+                                  ),
                               child: OfferCountdown(
                                 duration: Duration(minutes: 2),
+                                propertyId: project.value?.id ?? '' ,
                               ),
                             ),
 
@@ -340,11 +382,13 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                       return NesticoPeButton(
                                         title: 'Get Offer',
                                         backgroundColor: ColorRes.error,
-                                        height: 36,
+                                        height: 48,
+                                        width: double.infinity,
+
                                         onTap: () async {
                                           try {
                                             if (UserHelper.isGuest) {
-                                              Get.to(() => LoginScreen());
+                                              Get.to(() => OtpLoginScreen());
                                               return;
                                             }
                                             final user =
@@ -446,6 +490,9 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                       ],
                       const SizedBox(height: 8),
                       _buildSupportContactSection(),
+
+                      // Other projects by the same builder (exclude current project)
+                      _buildOtherProjectsSection(project.value!),
 
                       if (widget.isBuilder) ...[
                         if (project?.value?.scoreBreakdown != null) ...[
@@ -603,7 +650,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
             priceBreakdown: {},
             onPrimaryAction: () {
               if (UserHelper.isGuest) {
-                Get.to(() => LoginScreen());
+                Get.to(() => OtpLoginScreen());
               } else {
                 showModalBottomSheet(
                   context: context,
@@ -832,6 +879,137 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         ],
       ),
     );
+  }
+
+  Widget _buildOtherProjectsSection(ProjectItem project) {
+    final otherTag = 'other_projects_${project.id}';
+    if (!Get.isRegistered<BuilderProjectListController>(tag: otherTag)) {
+      return const SizedBox.shrink();
+    }
+
+
+    final otherCtrl = Get.find<BuilderProjectListController>(tag: otherTag);
+    // Apply city filter once after build — prefer project's city, fallback to saved city
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      try {
+        if (otherCtrl.items.isNotEmpty) return; // already loaded
+
+     
+        String? cityToApply;
+
+     
+          final storedCity = await SecureStorage.getSelectedCity();
+          if (storedCity != null && storedCity.isNotEmpty) {
+            cityToApply = storedCity;
+          }
+      
+
+        if (cityToApply != null && cityToApply.isNotEmpty) {
+          await otherCtrl.applyFilters({'city': cityToApply});
+        } else {
+          await otherCtrl.loadInitial();
+        }
+      } catch (e) {
+        print('Error applying city filter for other projects: $e');
+      }
+    });
+
+    return Obx(() {
+
+      final items = otherCtrl.items.where((p) => p.id != project.id).toList();
+
+      if (otherCtrl.isLoading.value && otherCtrl.items.isEmpty) {
+        return Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Center(child: CircularProgressIndicator()),
+        );
+      }
+
+      if (items.isEmpty) return const SizedBox.shrink();
+
+      return Container(
+        color: ColorRes.white,
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TitleWithViewAll(
+              title: 'Other Projects',
+              subTitle: 'Explore more projects by this builder',
+              isSubTitle: true,
+            ),
+            const SizedBox(height: 8),
+            // Horizontal list of other projects
+            SizedBox(
+              height: 300,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                itemCount: items.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 12),
+                itemBuilder: (context, index) {
+                  final data = items[index];
+                  return GestureDetector(
+                    onTap: () {
+                      print("Tapped on project ${data.projectName} with ID ${data.id}");
+                      // Navigator.of(context).push(
+                      //   MaterialPageRoute(
+                      //     builder: (_) => ProjectDetailsScreen(
+                      //       projectItem: data,
+                      //       isBuilder: widget.isBuilder,
+                      //     ),
+                      //   ),
+                      // );
+                      Get.to(() => ProjectDetailsScreen(
+  projectItem: data,
+  isBuilder: widget.isBuilder,
+
+),routeName: '/project/${data.id}');
+                    },
+                    child: SizedBox(
+                      width: 260,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: ColorRes.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: BuilderProjectCard(
+                          forHome: true,
+                          project: data,
+                          width: 260,
+                          height: 150,
+                          developersName:
+                              data.projectContactInfo?.name ?? 'Unknown',
+                          imageUrl: (data.mediaGallery?.images?.isNotEmpty ?? false)
+                              ? data.mediaGallery!.images.first
+                              : IMGRes.home3,
+                          projectName: data.projectName.isNotEmpty
+                              ? data.projectName
+                              : 'N/A',
+                          location: data.address.isNotEmpty
+                              ? data.address
+                              : 'Not specified',
+                          price: data.getPriceRange(),
+                          propertySize: data.projectSize?.totalBuildings?.toString() ??
+                              '—',
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   void addInquiryFromProject(
@@ -2705,7 +2883,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         entityType: "project",
         entityId: project?.id ?? '',
         reviewCardBuilder:
-            (context, item) => PropertyReviewCard(reviewItem: item),
+            (context, item) => PropertyReviewCard(reviewItem: item, showFullDetails: false),
         overallWidgetBuilder: (total, rating, details) {
           return OverallRatingWidget(
             totalReviews: total,
@@ -2755,10 +2933,174 @@ Widget buildVideoThumbnail(String videoUrl, {double? width, double? height}) {
   );
 }
 
+// class OfferCountdown extends StatefulWidget {
+//   final Duration? duration; // used when propertyId is not provided
+//   final String? propertyId;
+//   final VoidCallback? onFinished;
+//   const OfferCountdown({super.key, this.duration, this.propertyId, this.onFinished});
+//   @override
+//   State<OfferCountdown> createState() => _OfferCountdownState();
+// }
+
+// class _OfferCountdownState extends State<OfferCountdown>
+//     with TickerProviderStateMixin {
+//   late final AnimationController _pulseController;
+//   late final AnimationController _countdownController;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _pulseController = AnimationController(
+//       vsync: this,
+//       duration: const Duration(milliseconds: 800),
+//     )..repeat(reverse: true);
+//     // determine initial duration: if propertyId provided, compute deterministic days
+//     Duration initialDuration;
+//     int initialDays = 0;
+//     if (widget.propertyId != null && widget.propertyId!.isNotEmpty) {
+//       final seed = widget.propertyId!.hashCode;
+//       initialDays = 5 + (seed.abs() % 11); // 5..15
+//       initialDuration = Duration(days: initialDays);
+//     } else {
+//       initialDuration = widget.duration ?? const Duration(days: 1);
+//     }
+
+//     _countdownController = AnimationController(
+//       vsync: this,
+//       duration: initialDuration,
+//     )..forward();
+
+//     _countdownController.addStatusListener((status) {
+//       if (status == AnimationStatus.completed) {
+//         try {
+//           widget.onFinished?.call();
+//         } catch (_) {}
+
+//         // If propertyId provided, pick a new random days between 5 and 15 and restart
+//         if (widget.propertyId != null && widget.propertyId!.isNotEmpty) {
+//           final rnd = Random();
+//           final newDays = 5 + rnd.nextInt(11); // 5..15
+//           _countdownController.duration = Duration(days: newDays);
+//           _countdownController.reset();
+//           _countdownController.forward();
+//         } else {
+//           _countdownController.reset();
+//           _countdownController.forward();
+//         }
+//       }
+//     });
+//   }
+
+//   @override
+//   void dispose() {
+//     _pulseController.dispose();
+//     _countdownController.dispose();
+//     super.dispose();
+//   }
+//   String get _timeLeft {
+//     final elapsed = _countdownController.lastElapsedDuration ?? Duration.zero;
+//     final duration = _countdownController.duration ?? Duration.zero;
+//     final left = duration - elapsed;
+//     final secs = left.inSeconds.clamp(0, duration.inSeconds);
+//     final m = (secs ~/ 60).toString().padLeft(2, '0');
+//     final s = (secs % 60).toString().padLeft(2, '0');
+//     return '$m:$s';
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       padding:  EdgeInsets.all(16),
+//       decoration: BoxDecoration(
+//         color: Colors.white,
+//         borderRadius: BorderRadius.circular(14),
+//         boxShadow: [
+//           BoxShadow(
+//             color: Colors.black.withOpacity(0.04),
+//             blurRadius: 6,
+//             offset: const Offset(0, 3),
+//           ),
+//         ],
+//       ),
+//       child: Row(
+//         mainAxisSize: MainAxisSize.max,
+//         children: [
+//           // left icon box
+//           ScaleTransition(
+//             scale: Tween<double>(begin: 0.95, end: 1.08).animate(
+//               CurvedAnimation(
+//                 parent: _pulseController,
+//                 curve: Curves.easeInOut,
+//               ),
+//             ),
+//             child: Container(
+//               padding: const EdgeInsets.all(10),
+//               decoration: BoxDecoration(
+//                 color: Color(0xFFFFEEF2), // light pink background
+//                 borderRadius: BorderRadius.circular(12),
+//               ),
+//               child: Icon(
+//                 Icons.local_fire_department,
+//                 color: ColorRes.error,
+//                 size: 22,
+//               ),
+//             ),
+//           ),
+
+//           const SizedBox(width: 16),
+
+//           // time units
+//           Expanded(
+//             child: AnimatedBuilder(
+//               animation: _countdownController,
+//               builder: (context, _) {
+//                 final elapsed = _countdownController.lastElapsedDuration ?? Duration.zero;
+//                 final duration = _countdownController.duration ?? Duration.zero;
+//                 final left = duration - elapsed;
+//                 final totalLeftSeconds = left.inSeconds.clamp(0, duration.inSeconds == 0 ? left.inSeconds : duration.inSeconds);
+//                 final daysLeft = (totalLeftSeconds + 86400 - 1) ~/ 86400; // ceil to days
+
+//                 return Row(
+//                   mainAxisAlignment: MainAxisAlignment.center,
+//                   children: [
+//                     Column(
+//                       mainAxisSize: MainAxisSize.min,
+//                       children: [
+//                         Text(
+//                           '$daysLeft',
+//                           style: TextStyle(
+//                             fontSize: 20,
+//                             fontWeight: FontWeight.w800,
+//                             color: ColorRes.leadGreyColor[900],
+//                           ),
+//                         ),
+//                         const SizedBox(height: 6),
+//                         Text(
+//                           'DAYS',
+//                           style: TextStyle(
+//                             fontSize: 10,
+//                             letterSpacing: 1,
+//                             fontWeight: FontWeight.w500,
+//                             color: ColorRes.leadGreyColor[700],
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   ],
+//                 );
+//               },
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 class OfferCountdown extends StatefulWidget {
-  final Duration duration;
-  final VoidCallback? onComplete;
-  const OfferCountdown({super.key, required this.duration, this.onComplete});
+  final Duration? duration;
+  final String? propertyId;
+  final VoidCallback? onFinished;
+  const OfferCountdown({super.key, this.duration, this.propertyId, this.onFinished});
   @override
   State<OfferCountdown> createState() => _OfferCountdownState();
 }
@@ -2767,23 +3109,50 @@ class _OfferCountdownState extends State<OfferCountdown>
     with TickerProviderStateMixin {
   late final AnimationController _pulseController;
   late final AnimationController _countdownController;
+  late final AnimationController _shimmerController;
 
   @override
   void initState() {
     super.initState();
+
     _pulseController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 1200),
     )..repeat(reverse: true);
+
+    _shimmerController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2000),
+    )..repeat();
+
+    Duration initialDuration;
+    int initialDays = 0;
+    if (widget.propertyId != null && widget.propertyId!.isNotEmpty) {
+      final seed = widget.propertyId!.hashCode;
+      initialDays = 5 + (seed.abs() % 11);
+      initialDuration = Duration(days: initialDays);
+    } else {
+      initialDuration = widget.duration ?? const Duration(days: 1);
+    }
+
     _countdownController = AnimationController(
       vsync: this,
-      duration: widget.duration,
+      duration: initialDuration,
     )..forward();
+
     _countdownController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        widget.onComplete?.call();
-        _countdownController.reset();
-        _countdownController.forward();
+        try { widget.onFinished?.call(); } catch (_) {}
+        if (widget.propertyId != null && widget.propertyId!.isNotEmpty) {
+          final rnd = Random();
+          final newDays = 5 + rnd.nextInt(11);
+          _countdownController.duration = Duration(days: newDays);
+          _countdownController.reset();
+          _countdownController.forward();
+        } else {
+          _countdownController.reset();
+          _countdownController.forward();
+        }
       }
     });
   }
@@ -2792,132 +3161,225 @@ class _OfferCountdownState extends State<OfferCountdown>
   void dispose() {
     _pulseController.dispose();
     _countdownController.dispose();
+    _shimmerController.dispose();
     super.dispose();
-  }
-
-  String get _timeLeft {
-    final elapsed = _countdownController.lastElapsedDuration ?? Duration.zero;
-    final left = widget.duration - elapsed;
-    final secs = left.inSeconds.clamp(0, widget.duration.inSeconds);
-    final m = (secs ~/ 60).toString().padLeft(2, '0');
-    final s = (secs % 60).toString().padLeft(2, '0');
-    return '$m:$s';
   }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        // 🔥 Animated Fire Icon
-        ScaleTransition(
-          scale: Tween<double>(begin: 0.9, end: 1.15).animate(
-            CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
-          ),
-          child: Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: ColorRes.error.withOpacity(0.15),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.local_fire_department,
-              color: ColorRes.error,
-              size: 22,
-            ),
-          ),
-        ),
+    return AnimatedBuilder(
+      animation: _countdownController,
+      builder: (context, _) {
+        final elapsed = _countdownController.lastElapsedDuration ?? Duration.zero;
+        final duration = _countdownController.duration ?? Duration.zero;
+        final left = duration - elapsed;
+        final totalLeftSeconds = left.inSeconds.clamp(0, duration.inSeconds == 0 ? left.inSeconds : duration.inSeconds);
+        final daysLeft = (totalLeftSeconds + 86399) ~/ 86400;
+        final hoursLeft = (totalLeftSeconds % 86400) ~/ 3600;
+        final minsLeft = (totalLeftSeconds % 3600) ~/ 60;
 
-        const SizedBox(width: 10),
-
-        // ⏱ Timer Box
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFFFF4D6D), Color(0xFFFF6B81)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFFF5F7), Color(0xFFFFFBFC)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            border: Border.all(color: const Color(0xFFFFD6DE), width: 1.2),
+            boxShadow: [
+              BoxShadow(
+                color: ColorRes.error.withOpacity(0.08),
+                blurRadius: 20,
+                spreadRadius: 0,
+                offset: const Offset(0, 6),
               ),
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.red.withOpacity(0.25),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Stack(
+              children: [
+                // Subtle shimmer overlay
+                AnimatedBuilder(
+                  animation: _shimmerController,
+                  builder: (context, _) {
+                    return Positioned.fill(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment(
+                              -1.5 + _shimmerController.value * 3.5,
+                              -0.5,
+                            ),
+                            end: Alignment(
+                              -0.5 + _shimmerController.value * 3.5,
+                              0.5,
+                            ),
+                            colors: [
+                              Colors.transparent,
+                              Colors.white.withOpacity(0.35),
+                              Colors.transparent,
+                            ],
+                          ),
+                        ),
+                        
+                      ),
+                      
+                    );
+                  },
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                  child: Row(
+                    children: [
+                      // Flame icon with pulse
+                      ScaleTransition(
+                        scale: Tween<double>(begin: 0.92, end: 1.0).animate(
+                          CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+                        ),
+                        child: Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [ColorRes.error, Color(0xFFFF3D5E)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: [
+                              BoxShadow(
+                                color: ColorRes.error.withOpacity(0.30),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(Icons.local_fire_department_rounded, color: Colors.white, size: 24),
+                        ),
+                      ),
+
+                      const SizedBox(width: 14),
+
+                      // Label
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              'LIMITED OFFER',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 1.4,
+                                color: ColorRes.error,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'Offer expires soon',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(width: 10),
+
+                      // Time units
+                      Row(
+                        children: [
+                          _TimeUnit(value: daysLeft, label: 'DAYS'),
+                          _Divider(),
+                          _TimeUnit(value: hoursLeft, label: 'HRS'),
+                          _Divider(),
+                          _TimeUnit(value: minsLeft, label: 'MIN'),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-            child: AnimatedBuilder(
-              animation: _countdownController,
-              builder: (context, _) {
-                final elapsed =
-                    _countdownController.lastElapsedDuration ?? Duration.zero;
-                final left = widget.duration - elapsed;
-                final totalSecs = left.inSeconds.clamp(
-                  0,
-                  widget.duration.inSeconds,
-                );
+          ),
+        );
+      },
+    );
+  }
+}
 
-                final hrs = (totalSecs ~/ 3600).toString().padLeft(2, '0');
-                final mins = ((totalSecs % 3600) ~/ 60).toString().padLeft(
-                  2,
-                  '0',
-                );
-                final secs = (totalSecs % 60).toString().padLeft(2, '0');
+class _TimeUnit extends StatelessWidget {
+  final int value;
+  final String label;
+  const _TimeUnit({required this.value, required this.label});
 
-                Widget timeUnit(String value, String label) {
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        value,
-                        style: const TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        label,
-                        style: const TextStyle(
-                          fontSize: 10,
-                          letterSpacing: 1,
-                          color: Colors.white70,
-                        ),
-                      ),
-                    ],
-                  );
-                }
-
-                Widget colon() => const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  child: Text(
-                    ':',
-                    style: TextStyle(
-                      fontSize: 22,
-                      color: Colors.white70,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                );
-
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    timeUnit(hrs, 'HRS'),
-                    colon(),
-                    timeUnit(mins, 'MIN'),
-                    colon(),
-                    timeUnit(secs, 'SEC'),
-                  ],
-                );
-              },
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 38,
+          padding: const EdgeInsets.symmetric(vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: const Color(0xFFFFD6DE), width: 1),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            value.toString().padLeft(2, '0'),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+              color: Color(0xFF1A1A2E),
+              height: 1,
             ),
           ),
         ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 8,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.8,
+            color: Colors.grey[500],
+          ),
+        ),
       ],
+    );
+  }
+}
+
+class _Divider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 4),
+      child: Text(
+        ':',
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w800,
+          color: ColorRes.error,
+          height: 1.2,
+        ),
+      ),
     );
   }
 }

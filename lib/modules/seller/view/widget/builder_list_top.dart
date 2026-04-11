@@ -571,7 +571,8 @@ class _BuilderCardState extends State<BuilderCard> {
                             height: 50,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                              color: Colors.teal.shade200,
+                              color: ColorRes.homeYellow.withOpacity(0.6),
+
                               shape: BoxShape.circle,
                             ),
                             child: Text(
@@ -620,7 +621,7 @@ class _BuilderCardState extends State<BuilderCard> {
                           const SizedBox(width: 4),
                           Flexible(
                             child: Text(
-                              cityState,
+                              cityState ?? 'Location not specified',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.center,
@@ -651,8 +652,6 @@ class _BuilderCardState extends State<BuilderCard> {
 
             /// Divider
             // Divider(color: Colors.grey.shade200, height: 1),
-         
-         
 
             /// Projects | Experience (contractor-style badges)
             Row(
@@ -694,9 +693,9 @@ class _BuilderCardState extends State<BuilderCard> {
                         Text(
                           '(${Formatter.formatNumber(totalProjects)})',
                           style: const TextStyle(
-                          fontSize: 12,
-                  color: ColorRes.primary,
-                  fontWeight: AppFontWeights.semiBold,
+                            fontSize: 12,
+                            color: ColorRes.primary,
+                            fontWeight: AppFontWeights.semiBold,
                           ),
                         ),
                         const SizedBox(width: 6),
@@ -812,6 +811,7 @@ class _BuilderCardState extends State<BuilderCard> {
                         userId: userId,
                         createdBy: createdBy,
                       ),
+                      routeName: '/builder/${userId}',
                     );
                   }
                 },
@@ -851,9 +851,9 @@ class _BuilderCardState extends State<BuilderCard> {
   String _formatCityState(String? city, String? state) {
     final c = (city ?? '').trim();
     final s = (state ?? '').trim();
-    if (c.isEmpty && s.isEmpty) return '—';
+    if (c.isEmpty && s.isEmpty) return 'N/A';
     if (c.isNotEmpty && s.isNotEmpty) return "$c, $s";
-    return c.isNotEmpty ? c : s;
+    return c.isNotEmpty ? c : s ?? 'Location not specified';
   }
 
   Widget _statBox({required String title, required String value}) {

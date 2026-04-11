@@ -11,6 +11,7 @@ import 'package:nesticope_app/data/network/auth/service/auth_service.dart';
 import 'package:nesticope_app/data/database/secure_storage_service.dart';
 import 'package:nesticope_app/modules/add_property/controller/create_property_controller.dart';
 import 'package:nesticope_app/modules/auth/views/ResetPasswordScreen.dart';
+import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
 import 'package:nesticope_app/modules/auth/views/seller_registration_complete.dart';
 import 'package:nesticope_app/modules/builder/view/builder_main_screen.dart';
 import 'package:nesticope_app/modules/contractor/view/contractor_main.dart';
@@ -249,7 +250,7 @@ class AuthController extends GetxController {
             phone: phone,
             token: token,
             verifyOTPFor: VerifyOTPFor.registration,
-            redirectAfterOtp: LoginScreen(),
+            redirectAfterOtp: OtpLoginScreen(),
           ),
         );
 
@@ -301,7 +302,7 @@ class AuthController extends GetxController {
             token: token,
             verifyOTPFor: VerifyOTPFor.registration,
             data: data,
-            redirectAfterOtp: LoginScreen(),
+            redirectAfterOtp: OtpLoginScreen(),
           ),
         );
 
@@ -347,7 +348,7 @@ class AuthController extends GetxController {
             token: token,
             verifyOTPFor: VerifyOTPFor.registration,
             data: data,
-            redirectAfterOtp: LoginScreen(),
+            redirectAfterOtp: OtpLoginScreen(),
           ),
         );
 
@@ -445,7 +446,7 @@ class AuthController extends GetxController {
             token: token,
             verifyOTPFor: VerifyOTPFor.sellerRegister,
             data: data,
-            redirectAfterOtp: LoginScreen(),
+            redirectAfterOtp: OtpLoginScreen(),
           ),
         );
 
@@ -633,7 +634,7 @@ class AuthController extends GetxController {
       isLoading.value = true;
       final user = await authService.convertBuyerToSeller(sellerType);
       if (user) {
-        Get.offAll(() => LoginScreen());
+        Get.offAll(() => OtpLoginScreen());
       } else {
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: "Conversion Failed",
@@ -665,7 +666,7 @@ class AuthController extends GetxController {
         zipCode: zipCode,
       );
       if (user) {
-        Get.offAll(() => LoginScreen());
+        Get.offAll(() => OtpLoginScreen());
       } else {
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: "Conversion Failed",
@@ -691,7 +692,7 @@ class AuthController extends GetxController {
       isLoading.value = true;
       final user = await authService.convertBuyerToContractor(city, type);
       if (user) {
-        Get.offAll(() => LoginScreen());
+        Get.offAll(() => OtpLoginScreen());
       } else {
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: "Conversion Failed",
@@ -724,8 +725,8 @@ class AuthController extends GetxController {
         resetToken.value,
       );
 
-      Get.offAll(() => const LoginScreen());
-
+      Get.offAll(() => const OtpLoginScreen());
+      
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Success',
         message:

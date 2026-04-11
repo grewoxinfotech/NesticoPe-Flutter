@@ -146,32 +146,53 @@ class _DashboardScreenState extends State<DashboardScreen> {
     tag: 'listing_view',
   );
 
-  late final List<Widget> _screens;
+  List<Widget> _screens = [];
   bool _didFetchListing = false;
+  String city = '';
   @override
   void initState() {
     super.initState();
-    // ✅ Removed _setAppLaunched() - it's now handled in onboarding
+    // ✅ Removed _setAppLaunched() - it's now h   andled in onboarding
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      city = await SecureStorage.getSelectedCity() ?? '';
+
+      if (mounted) {
+        setState(() {
+          _screens = [
+            HomeScreen(),
+            PropertyDetail(
+              isFromSeeAll: true,
+              // filters: [
+              //   if (city.isNotEmpty) {'city': city},
+              // ],
+            ),
+            UserActivityScreen(),
+
+            HireContractorScreen(fromDashboard: true),
+            InsightsScreen(),
+          ];
+        });
+      }
+    });
     Get.lazyPut(
       () => ProjectWizardController(isBuilderView: false),
       tag: 'builder',
     );
-    _screens = [
-      HomeScreen(),
-      PropertyDetail(isFromSeeAll: true),
-      UserActivityScreen(),
-
-      HireContractorScreen(fromDashboard: true),
-      InsightsScreen(),
-    ];
   }
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       final index = navigationController.currentIndex.value;
-      if (index == 1 && !_didFetchListing) {
+
+      if (index == 1) {
         listingController.fetchCreatedBy(withoutCity: true);
+        if (city.isNotEmpty && city != null && city != '') {
+          // listingController.applyFilters({'city': city});
+          // listingController.loadInitial();
+        }
+
         _didFetchListing = true;
       }
       return PopScope(

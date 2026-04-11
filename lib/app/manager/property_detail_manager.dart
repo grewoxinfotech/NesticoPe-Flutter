@@ -173,6 +173,7 @@
 
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/utils/formater/formater.dart';
 
@@ -184,6 +185,13 @@ class PropertyDetailManager {
   PropertyDetailManager(this.property);
 
   List<Map<String, String>> getDetails() {
+    // log(
+    //   "property.listingType?.toLowerCase() => ${property.propertyDetails?.financialInfo?.monthlyRent}",
+    // );
+    // log(
+    //   "property.finalkcn?.toLowerCase() => ${property.propertyDetails?.financialInfo?.price}",
+    // );
+
     final details = <Map<String, String>>[];
 
     // if (property.propertyDetails == null) return details;
@@ -215,10 +223,20 @@ class PropertyDetailManager {
       // ----- LISTING TYPE -----
       switch (property.listingType?.toLowerCase()) {
         case 'rent':
-          if (pd.financialInfo?.price != null) {
+          if (pd.financialInfo?.propertyRentPerMonth != null) {
             details.add({
               "Rent":
-                  "${Formatter.formatPrice(pd.financialInfo!.price)}/ month",
+                  "${Formatter.formatPrice(pd.financialInfo!.propertyRentPerMonth)}/ month",
+            });
+          } else if (pd.financialInfo?.monthlyRent != null) {
+            details.add({
+              "Rent":
+                  "${Formatter.formatPrice(num.tryParse(pd.financialInfo!.monthlyRent.toString()) ?? 0)}/ month",
+            });
+          } else if (pd.financialInfo?.price != null) {
+            details.add({
+              "Rent":
+                  "${Formatter.formatPrice(num.tryParse(pd.financialInfo!.price.toString()) ?? 0)}/ month",
             });
           }
           break;
@@ -424,8 +442,59 @@ class PropertyDetailManager {
     return details;
   }
 }
+
 bool isValidField(dynamic value) {
   if (value == null) return false;
   final str = value.toString().trim().toLowerCase();
   return str.isNotEmpty && str != 'null' && str != '0';
+}
+
+IconData getpropertyIcon(String title) {
+  switch (title.toLowerCase()) {
+    case 'bhk':
+      return Icons.bed_outlined;
+    case 'bathrooms':
+      return Icons.bathtub_outlined;
+    case 'balcony':
+      return Icons.balcony_outlined;
+    case 'floor':
+      return Icons.apartment_outlined;
+    case 'furnishing':
+      return Icons.chair_outlined;
+    case 'built-up area':
+    case 'carpet area':
+      return Icons.square_foot_outlined;
+    case 'rent':
+    case 'rent range':
+      return Icons.currency_rupee;
+    case 'price':
+      return Icons.sell_outlined;
+    case 'pg for':
+      return Icons.person_outline;
+    case 'suited for':
+      return Icons.groups_outlined;
+    case 'managed by':
+      return Icons.manage_accounts_outlined;
+    case 'parking':
+      return Icons.local_parking_outlined;
+    case 'facing':
+      return Icons.explore_outlined;
+    case 'condition':
+      return Icons.home_repair_service_outlined;
+    case 'possession':
+      return Icons.key_outlined;
+    case 'age of property':
+      return Icons.history_toggle_off;
+    case 'plot area':
+      return Icons.crop_square;
+    case 'plot length':
+    case 'plot width':
+      return Icons.straighten;
+    case 'ownership':
+      return Icons.verified_user_outlined;
+    case 'property type':
+      return Icons.home_outlined;
+    default:
+      return Icons.info_outline;
+  }
 }

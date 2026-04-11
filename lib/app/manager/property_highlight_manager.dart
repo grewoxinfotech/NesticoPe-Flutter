@@ -202,43 +202,107 @@ class PropertyHighlightManager {
       }
 
       // Listing type specific
+      // switch (property.listingType?.toLowerCase()) {
+      //   case 'rent':
+      //     if (pd.financialInfo?.propertyRentPerMonth != null &&
+      //         pd.financialInfo!.propertyRentPerMonth! > 0) {
+      //       highlights.add(
+      //         PropertyHighlightItem(
+      //           title: "Rent",
+      //           value:
+      //               "${Formatter.formatPrice(pd.financialInfo!.propertyRentPerMonth)} / month",
+      //           icon: _iconMap["Rent"],
+      //         ),
+      //       );
+      //     }
+      //     break;
+      //   case 'sell':
+      //     if (pd.financialInfo?.price != null) {
+      //       highlights.add(
+      //         PropertyHighlightItem(
+      //           title: "Price",
+      //           value: "${Formatter.formatPrice(pd.financialInfo!.price)}",
+      //           icon: _iconMap["Price"],
+      //         ),
+      //       );
+      //     }
+      //     break;
+      //   case 'pg':
+      //     if (pd.financialInfo?.propertyRentPerMonth != null) {
+      //       highlights.add(
+      //         PropertyHighlightItem(
+      //           title: "Price",
+      //           value:
+      //               "${Formatter.formatPrice(pd.financialInfo!.propertyRentPerMonth)} / month",
+      //           icon: _iconMap["Price"],
+      //         ),
+      //       );
+      //     }
+      //     break;
+      // }
       switch (property.listingType?.toLowerCase()) {
-        case 'rent':
-          if (pd.financialInfo?.propertyRentPerMonth != null) {
-            highlights.add(
-              PropertyHighlightItem(
-                title: "Rent",
-                value:
-                    "${Formatter.formatPrice(pd.financialInfo!.propertyRentPerMonth)} / month",
-                icon: _iconMap["Rent"],
-              ),
-            );
-          }
-          break;
-        case 'sell':
-          if (pd.financialInfo?.price != null) {
-            highlights.add(
-              PropertyHighlightItem(
-                title: "Price",
-                value: "${Formatter.formatPrice(pd.financialInfo!.price)}",
-                icon: _iconMap["Price"],
-              ),
-            );
-          }
-          break;
-        case 'pg':
-          if (pd.financialInfo?.propertyRentPerMonth != null) {
-            highlights.add(
-              PropertyHighlightItem(
-                title: "Price",
-                value:
-                    "${Formatter.formatPrice(pd.financialInfo!.propertyRentPerMonth)} / month",
-                icon: _iconMap["Price"],
-              ),
-            );
-          }
-          break;
-      }
+  case 'rent':
+    final fi = pd.financialInfo;
+
+    num? rentValue;
+
+    if (fi?.propertyRentPerMonth != null && fi!.propertyRentPerMonth! > 0) {
+      rentValue = fi.propertyRentPerMonth;
+    } else if (fi?.monthlyRent != null) {
+      rentValue = num.tryParse(fi!.monthlyRent.toString());
+    } else if (fi?.price != null) {
+      rentValue = num.tryParse(fi!.price.toString());
+    }
+
+    if (rentValue != null && rentValue > 0) {
+      highlights.add(
+        PropertyHighlightItem(
+          title: "Rent",
+          value: "${Formatter.formatPrice(rentValue)} / month",
+          icon: _iconMap["Rent"],
+        ),
+      );
+    }
+    break;
+
+  case 'sell':
+    final price = pd.financialInfo?.price;
+
+    if (price != null && price > 0) {
+      highlights.add(
+        PropertyHighlightItem(
+          title: "Price",
+          value: Formatter.formatPrice(price),
+          icon: _iconMap["Price"],
+        ),
+      );
+    }
+    break;
+
+  case 'pg':
+    final pg = pd.pgInfo;
+
+    if (pg != null && pg.pgRoomInfo != null && pg.pgRoomInfo!.isNotEmpty) {
+      final rents = pg.pgRoomInfo!.map((r) => r.rent ?? 0).toList();
+
+      final minRent = rents.reduce((a, b) => a < b ? a : b);
+      final maxRent = rents.reduce((a, b) => a > b ? a : b);
+
+      final rentText = (minRent == maxRent)
+          ? "${Formatter.formatPrice(minRent)} / month"
+          : "${Formatter.formatPrice(minRent)} - ${Formatter.formatPrice(maxRent)} / month";
+
+      highlights.add(
+        PropertyHighlightItem(
+          title: "Rent",
+          value: rentText,
+          icon: _iconMap["Rent"],
+        ),
+      );
+    }
+    break;
+}
+
     }
 
     // ----- COMMERCIAL -----
@@ -328,83 +392,86 @@ class PropertyHighlightManager {
 
     // Add count-based items (integer values)
     if (details.ac != null && details.ac! > 0) {
-      furnishingItems.add(FurnishingItem(
-        name: "AC",
-        count: details.ac,
-        icon: Icons.ac_unit,
-      ));
+      furnishingItems.add(
+        FurnishingItem(name: "AC", count: details.ac, icon: Icons.ac_unit),
+      );
     }
 
     if (details.bed != null && details.bed! > 0) {
-      furnishingItems.add(FurnishingItem(
-        name: "Bed",
-        count: details.bed,
-        icon: Icons.bed,
-      ));
+      furnishingItems.add(
+        FurnishingItem(name: "Bed", count: details.bed, icon: Icons.bed),
+      );
     }
 
     if (details.geyser != null && details.geyser! > 0) {
-      furnishingItems.add(FurnishingItem(
-        name: "Geyser",
-        count: details.geyser,
-        icon: Icons.water_drop,
-      ));
+      furnishingItems.add(
+        FurnishingItem(
+          name: "Geyser",
+          count: details.geyser,
+          icon: Icons.water_drop,
+        ),
+      );
     }
 
     // Add boolean-based items (available/not available)
     if (details.washingMachine == true) {
-      furnishingItems.add(FurnishingItem(
-        name: "Washing Machine",
-        isAvailable: true,
-        icon: Icons.local_laundry_service,
-      ));
+      furnishingItems.add(
+        FurnishingItem(
+          name: "Washing Machine",
+          isAvailable: true,
+          icon: Icons.local_laundry_service,
+        ),
+      );
     }
 
     if (details.cupboard == true) {
-      furnishingItems.add(FurnishingItem(
-        name: "Cupboard",
-        isAvailable: true,
-        icon: Icons.door_sliding,
-      ));
+      furnishingItems.add(
+        FurnishingItem(
+          name: "Cupboard",
+          isAvailable: true,
+          icon: Icons.door_sliding,
+        ),
+      );
     }
 
     if (details.stove == true) {
-      furnishingItems.add(FurnishingItem(
-        name: "Stove",
-        isAvailable: true,
-        icon: Icons.whatshot,
-      ));
+      furnishingItems.add(
+        FurnishingItem(name: "Stove", isAvailable: true, icon: Icons.whatshot),
+      );
     }
 
     if (details.fridge == true) {
-      furnishingItems.add(FurnishingItem(
-        name: "Fridge",
-        isAvailable: true,
-        icon: Icons.kitchen,
-      ));
+      furnishingItems.add(
+        FurnishingItem(name: "Fridge", isAvailable: true, icon: Icons.kitchen),
+      );
     }
 
     if (details.waterPurifier == true) {
-      furnishingItems.add(FurnishingItem(
-        name: "Water Purifier",
-        isAvailable: true,
-        icon: Icons.water,
-      ));
+      furnishingItems.add(
+        FurnishingItem(
+          name: "Water Purifier",
+          isAvailable: true,
+          icon: Icons.water,
+        ),
+      );
     }
 
     if (details.modularKitchen == true) {
-      furnishingItems.add(FurnishingItem(
-        name: "Modular Kitchen",
-        isAvailable: true,
-        icon: Icons.countertops,
-      ));
+      furnishingItems.add(
+        FurnishingItem(
+          name: "Modular Kitchen",
+          isAvailable: true,
+          icon: Icons.countertops,
+        ),
+      );
     }
 
     return furnishingItems;
   }
 
   /// Returns the furnishing type (e.g., "fully-furnished", "semi-furnished", "unfurnished")
-  String? get furnishingType => property.propertyDetails?.furnishInfo?.furnishType;
+  String? get furnishingType =>
+      property.propertyDetails?.furnishInfo?.furnishType;
 }
 
 /// Model to hold highlight data
@@ -423,12 +490,7 @@ class FurnishingItem {
   final bool? isAvailable; // For boolean items like Washing Machine, Fridge
   final IconData? icon;
 
-  FurnishingItem({
-    required this.name,
-    this.count,
-    this.isAvailable,
-    this.icon,
-  });
+  FurnishingItem({required this.name, this.count, this.isAvailable, this.icon});
 
   /// Returns display text for the furnishing item
   String get displayText {

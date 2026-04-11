@@ -29,6 +29,7 @@ class SecureStorage {
   static const String _keySupportTicketId = 'supportTicketId';
   static const String _keyHomeCategory = 'homeCategory';
   static const String _keyPlatformServiceInquiry = 'platformServiceInquiry';
+  static const String _keyGeneralInquiry = 'generalInquirySubmissions';
 
   static Future<void> savePlatformServiceInquiryData(String value) async {
     await _storage.write(key: _keyPlatformServiceInquiry, value: value);
@@ -248,12 +249,83 @@ class SecureStorage {
     }
   }
 
+  /// ================= General Inquiry (by type) =================
+  static Future<void> saveGeneralInquiryData(String value) async {
+    await _storage.write(key: _keyGeneralInquiry, value: value);
+  }
+
+  static Future<String?> getGeneralInquiryData() async {
+    return _storage.read(key: _keyGeneralInquiry);
+  }
+
+  static Future<bool> hasGeneralInquirySubmission({
+    required String type,
+    String? userId,
+    String? email,
+    String? phone,
+  }) async {
+    try {
+      final data = await getGeneralInquiryData();
+      if (data == null || data.isEmpty) return false;
+      final decoded = jsonDecode(data);
+      List<dynamic> list = [];
+      if (decoded is List) {
+        list = decoded;
+      } else if (decoded is Map) {
+        list = [decoded];
+      }
+      return list.any((item) {
+        final t = (item['type'] ?? '').toString();
+        final u = (item['userId'] ?? '').toString();
+        final e = (item['email'] ?? '').toString();
+        final p = (item['phone'] ?? '').toString();
+        final typeMatch = t == type;
+        final idMatch = userId == null || userId.isEmpty ? true : u == userId;
+        final contactMatch = ((email == null || email.isEmpty) ? true : e == email) &&
+            ((phone == null || phone.isEmpty) ? true : p == phone);
+        return typeMatch && idMatch && contactMatch;
+      });
+    } catch (e) {
+      print('❌ Error reading general inquiry data: $e');
+      return false;
+    }
+  }
+
+  static Future<void> addGeneralInquirySubmission(Map<String, dynamic> newInquiry) async {
+    try {
+      final data = await getGeneralInquiryData();
+      List<dynamic> list = [];
+      if (data != null && data.isNotEmpty) {
+        final decoded = jsonDecode(data);
+        if (decoded is List) {
+          list = decoded;
+        } else if (decoded is Map) {
+          list = [decoded];
+        }
+      }
+      final exists = list.any((item) {
+        return (item['type'] ?? '') == (newInquiry['type'] ?? '') &&
+            ((item['userId'] ?? '') == (newInquiry['userId'] ?? '') ||
+                (item['email'] ?? '') == (newInquiry['email'] ?? '') ||
+                (item['phone'] ?? '') == (newInquiry['phone'] ?? ''));
+      });
+      if (!exists) {
+        list.add(newInquiry);
+        await saveGeneralInquiryData(jsonEncode(list));
+      }
+    } catch (e) {
+      print('❌ Error saving general inquiry: $e');
+    }
+  }
+
   static Future<bool> hasSubscriptionInquiryForUser(
     String name, {
     required String userId,
     required String role,
   }) async {
     try {
+      print("check any thing missing api calling ${role}");
+
       final data = await getSubscriptionInquiryData();
       log('Subscription Inquiry Data: $data');
       if (data == null || data.isEmpty) return false;

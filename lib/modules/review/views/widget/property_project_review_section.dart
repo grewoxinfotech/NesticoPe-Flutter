@@ -202,6 +202,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
 
 import '../../../../app/constants/color_res.dart';
 import '../../../../app/utils/helper_function/user_helper/user_helper.dart';
@@ -214,7 +215,7 @@ import '../../controllers/review_controller.dart';
 import 'add_property_review.dart';
 import 'all_review_screen.dart';
 
-class ReviewSection extends StatelessWidget {
+class ReviewSection extends StatefulWidget {
   final RxBool canAddReview;
   final OverallRatingController overallController;
   final ReviewController reviewController;
@@ -242,25 +243,31 @@ class ReviewSection extends StatelessWidget {
   });
 
   @override
+  State<ReviewSection> createState() => _ReviewSectionState();
+}
+
+class _ReviewSectionState extends State<ReviewSection> {
+  final PageController _pageController = PageController(viewportFraction: 0.9);
+  int _current = 0;
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Obx(() {
-          final overallCtrl = overallController;
-          final reviewCtrl = reviewController;
-
-          final isOverallLoading =
-              overallCtrl.isLoading.value &&
-              overallCtrl.ratingData.value == null;
-          final isReviewLoading =
-              reviewCtrl.isLoading.value && reviewCtrl.items.isEmpty;
-
-          // Loader for both
+          final overallCtrl = widget.overallController;
+          final reviewCtrl = widget.reviewController;
+          final isOverallLoading = overallCtrl.isLoading.value && overallCtrl.ratingData.value == null;
+          final isReviewLoading = reviewCtrl.isLoading.value && reviewCtrl.items.isEmpty;
           if (isOverallLoading && isReviewLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-
-          // Hide if both empty & done loading
           if (!overallCtrl.isLoading.value &&
               !reviewCtrl.isLoading.value &&
               (overallCtrl.ratingData.value == null ||
@@ -268,8 +275,6 @@ class ReviewSection extends StatelessWidget {
               reviewCtrl.items.isEmpty) {
             return const SizedBox.shrink();
           }
-
-          // Extract
           final overallData = overallCtrl.ratingData.value?.data;
           final totalReviews = overallData?.totalReviews ?? 0;
           final overallRating = overallData?.overallRating ?? 0.0;
@@ -282,7 +287,6 @@ class ReviewSection extends StatelessWidget {
                 location: 0,
                 value: 0,
               );
-
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -292,7 +296,6 @@ class ReviewSection extends StatelessWidget {
                 color: ColorRes.leadGreyColor.shade300,
               ),
               const SizedBox(height: 12),
-
               TitleWithViewAll(
                 title: "Reviews & Ratings",
                 showViewAll: true,
@@ -300,43 +303,54 @@ class ReviewSection extends StatelessWidget {
                   Get.to(() => AllReviewScreen(reviewController: reviewCtrl));
                 },
               ),
-
               const SizedBox(height: 12),
-
-              // ⭐ Overall Rating (reusable)
-              overallWidgetBuilder(
+              widget.overallWidgetBuilder(
                 totalReviews,
                 overallRating,
                 detailedRatings,
               ),
-
               const SizedBox(height: 12),
+              if (reviewCtrl.items.isNotEmpty) ...[
+                SizedBox(
+                  height: 200,
+                  child: PageView.builder(
+                    controller: _pageController,
+                    itemCount: reviewCtrl.items.length,
 
-              // 📋 Review List (reusable)
-              if (reviewCtrl.items.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: reviewCardBuilder(
-                    context,
-                    reviewCtrl.items.first, // 👈 show only the first review
+                    onPageChanged: (i) {
+                      setState(() {
+                        _current = i;
+                      });
+                    },
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding:  EdgeInsets.only(right: 12),
+                        child: widget.reviewCardBuilder(
+                          context,
+                          reviewCtrl.items[index],
+                        ),
+                      );
+                    },
                   ),
-                )
-              // ) SizedBox(
-              //   height: 580,
-              //   child: ListView.separated(
-              //     scrollDirection: Axis.horizontal,
-              //     padding: const EdgeInsets.symmetric(horizontal: 16),
-              //     itemCount: reviewCtrl.items.length,
-              //     separatorBuilder: (_, __) => const SizedBox(width: 16),
-              //     itemBuilder: (context, index) {
-              //       return reviewCardBuilder(
-              //         context,
-              //         reviewCtrl.items[index],
-              //       );
-              //     },
-              //   ),
-              // )
-              else if (!reviewCtrl.isLoading.value && totalReviews == 0)
+                ),
+                const SizedBox(height: 8),
+                if (reviewCtrl.items.length > 1)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(
+                      reviewCtrl.items.length,
+                      (i) => Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                        width: _current == i ? 18 : 6,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: _current == i ? ColorRes.primary : ColorRes.leadGreyColor[300],
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                      ),
+                    ),
+                  ),
+              ] else if (!reviewCtrl.isLoading.value && totalReviews == 0)
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Text(
@@ -347,11 +361,8 @@ class ReviewSection extends StatelessWidget {
             ],
           );
         }),
-
-        // ➕ Add Review Button
         Obx(() {
-          if (!canAddReview.value) return const SizedBox.shrink();
-
+          if (!widget.canAddReview.value) return const SizedBox.shrink();
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: NesticoPeButton(
@@ -360,27 +371,24 @@ class ReviewSection extends StatelessWidget {
               title: "Add Review",
               onTap: () async {
                 if (UserHelper.isGuest) {
-                  Get.to(() => LoginScreen());
+                  Get.to(() => OtpLoginScreen());
                   return;
                 }
-
                 final result = await Get.to(
                   () => AddReviewScreen(
-                    entityType: entityType,
-                    entityId: entityId,
+                    entityType: widget.entityType,
+                    entityId: widget.entityId,
                   ),
                 );
-
                 if (result == true) {
-                  canAddReview.value = false;
-                  reviewController.refreshList();
-                  overallController.fetchOverallRating(entityId);
+                  widget.canAddReview.value = false;
+                  widget.reviewController.refreshList();
+                  widget.overallController.fetchOverallRating(widget.entityId);
                 }
               },
             ),
           );
         }),
-
         const SizedBox(height: 12),
       ],
     );

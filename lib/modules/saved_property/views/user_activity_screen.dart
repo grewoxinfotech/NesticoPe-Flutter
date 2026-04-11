@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
 import 'package:nesticope_app/modules/saved_property/views/saved_property_screen.dart';
 import 'package:nesticope_app/modules/auth/views/register_screen.dart';
 import 'package:lottie/lottie.dart';
@@ -66,7 +67,7 @@ class UserActivityScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      onPressed: () => Get.to(() => LoginScreen()),
+                      onPressed: () => Get.to(() => OtpLoginScreen()),
                       child: Text(
                         'Login',
                         style: TextStyle(letterSpacing: 0.5),

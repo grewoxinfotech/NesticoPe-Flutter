@@ -73,6 +73,8 @@ class BuilderService {
     try {
       final queryParameters = {
         'page': page.toString(),
+        
+          'limit': '10',
         if (filters != null) ...filters,
       };
 

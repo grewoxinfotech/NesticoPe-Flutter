@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:get/get.dart';
+import 'package:nesticope_app/app/constants/api_constants.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/app/constants/img_res.dart';
@@ -9,11 +10,16 @@ import 'package:nesticope_app/app/constants/enum.dart';
 import 'package:nesticope_app/app/utils/formater/formater.dart';
 import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:nesticope_app/app/widgets/texts/headline_text.dart';
+import 'package:nesticope_app/data/network/auth/model/user_model.dart';
 import 'package:nesticope_app/data/network/builder/model/builder_model.dart';
 import 'package:nesticope_app/data/network/history/model/success_story_model.dart';
+import 'package:nesticope_app/modules/auth/views/register_screen.dart';
+import 'package:nesticope_app/modules/auth/views/role_convert/convert_to_seller/convert_to_seller.dart';
+import 'package:nesticope_app/modules/dashboard/views/seller_dashboard_screen.dart';
 import 'package:nesticope_app/modules/home/views/home_screen/home_screen.dart';
 
 import 'package:nesticope_app/modules/subscription/controller/subscription_controller.dart';
+import 'package:nesticope_app/modules/subscription/views/widgets/sign_up_subscription_card.dart';
 import 'package:nesticope_app/modules/subscription/views/widgets/subscription_plan_widget.dart';
 import 'package:nesticope_app/modules/subscription/views/widgets/subscription_plan_widget_for_buyer_side.dart';
 import 'package:nesticope_app/widgets/New%20folder/inputs/text_field.dart';
@@ -22,6 +28,9 @@ import 'package:nesticope_app/modules/hire_contractor/controller/hire_contractor
 import 'package:nesticope_app/data/network/contractor/model/contractot_service_model/contractor_category_model.dart';
 import 'package:nesticope_app/modules/hire_contractor/view/widget/category_service_explorer.dart';
 import 'package:nesticope_app/modules/property/controllers/property_controller.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:nesticope_app/modules/property/views/widgets/property_card.dart';
 import 'package:nesticope_app/modules/builder/controller/builder_form_controller.dart';
 import 'package:nesticope_app/modules/builder/view/builder_property_listing.dart';
@@ -31,6 +40,8 @@ import 'package:nesticope_app/modules/history/controller/search_history_controll
 import 'package:intl/intl.dart';
 import 'package:nesticope_app/modules/home/controllers/home_controller/platform_review-controller.dart';
 import 'package:nesticope_app/data/network/platform_review/model/platform_review_model.dart';
+import 'package:nesticope_app/app/utils/helper_function/contact_helper.dart';
+import 'package:nesticope_app/modules/home/controllers/contact_controller.dart';
 
 class ListingIntroConfig {
   final String logoAsset;
@@ -167,6 +178,9 @@ class ListingIntroScreen extends StatelessWidget {
   final VoidCallback? onManageListings;
   final VoidCallback? onUnlockPlans;
   final VoidCallback? onFinalCta;
+  final VoidCallback? onBecomeType;
+  final VoidCallback? onBecomeInquiryType;
+
   final bool showPropertySection;
   const ListingIntroScreen({
     super.key,
@@ -179,6 +193,8 @@ class ListingIntroScreen extends StatelessWidget {
     this.isBulletPoint = false,
     this.showPropertySection = true,
     this.onFinalCta,
+    this.onBecomeType,
+    this.onBecomeInquiryType,
   });
 
   @override
@@ -290,6 +306,15 @@ class ListingIntroScreen extends StatelessWidget {
                   ),
                 ),
               ],
+
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: _BecomeSection(
+                  role: role,
+                  onBecomeInquiryType: onBecomeInquiryType,
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -311,6 +336,7 @@ class ListingIntroScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
               ],
+
               if (role == Roles.reseller.name) ...[
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -464,7 +490,8 @@ class ListingIntroScreen extends StatelessWidget {
                   onTap: onFinalCta ?? () {},
                 ),
               ),
-              const SizedBox(height: 10),
+
+              const SizedBox(height: 12),
               if (role == Roles.sellerOwner.name ||
                   role == Roles.sellerBuilder.name ||
                   role == Roles.contractor.name ||
@@ -490,10 +517,459 @@ class ListingIntroScreen extends StatelessWidget {
                             : 'reseller',
                   ),
                 ),
-                const SizedBox(height: 20),
+                // const SizedBox(height: 20),
               ],
             ],
           ),
+        ),
+      ),
+      bottomNavigationBar: _BottomActionBar(
+        role: role,
+        onBecomeType: onBecomeType,
+      ),
+    );
+  }
+}
+
+class _BecomeSection extends StatelessWidget {
+  final String? role;
+  final VoidCallback? onBecomeInquiryType;
+  const _BecomeSection({required this.role, required this.onBecomeInquiryType});
+
+  String get _label {
+    if (role == Roles.sellerOwner.name) return 'Learn About Becoming a Seller';
+    if (role == Roles.sellerBuilder.name)
+      return 'Learn About Becoming a Builder';
+    if (role == Roles.contractor.name)
+      return 'Learn About Becoming a Contractor';
+    if (role == Roles.reseller.name) return 'Learn About Becoming a Partner';
+    return 'Become';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print("check any thing missing ${role}");
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF4A6CF7), Color(0xFF6A5AE0)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.rocket_launch_outlined, color: Colors.white),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Ready to $_label?',
+                  style: const TextStyle(
+                    fontSize: AppFontSizes.medium,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () async {
+              debugPrint('onPressed: Button pressed');
+              if (UserHelper.isGuest) {
+                if (role == Roles.sellerOwner.name) {
+                  Navigator.of(context).pop();
+                  await Get.to(() => RegisterScreen(role: UserRole.seller));
+                } else if (role == Roles.sellerBuilder.name) {
+                  Navigator.of(context).pop();
+                  await Get.to(() => RegisterScreen(role: UserRole.seller));
+                } else if (role == Roles.contractor.name) {
+                  Navigator.of(context).pop();
+                  await Get.to(() => RegisterScreen(role: UserRole.contractor));
+                } else if (role == Roles.reseller.name) {
+                  Navigator.of(context).pop();
+                  await Get.to(() => RegisterScreen(role: UserRole.reseller));
+                }
+                // debugPrint('onPressed: User is guest');
+                // await Get.dialog(
+                //   SignUpSubscriptionScreen(
+                //     title: _label,
+                //     headingText: 'Become a $_label'
+                //     ,
+                //     subtitleText: 'Get more info about $_label',
+                //     ctaText: 'Become $_label',
+                //     onSubmit: (name, email, phone) async {
+                //       debugPrint('onPressed: Guest onSubmit called');
+                //       try {
+
+                //         final type = role == Roles.reseller.name
+                //             ? 'reseller'
+                //             : (role == Roles.contractor.name
+                //                 ? 'contractor'
+                //                 : (role == Roles.sellerBuilder.name ? 'builder' : 'seller'));
+                //         debugPrint('onPressed: Guest - Inquiry type: $type');
+                //         final exists = await SecureStorage.hasGeneralInquirySubmission(
+                //           type: type,
+                //           email: email,
+                //           phone: phone,
+                //         );
+                //         debugPrint('onPressed: Guest - hasGeneralInquirySubmission: $exists');
+                //         if (!exists) {
+                //           debugPrint('onPressed: Guest - Submitting new general inquiry');
+                //           final uri = Uri.parse(ApiConstants.generalInquiry);
+                //           final res = await http.post(
+                //             uri,
+                //             headers: await ApiConstants.getHeadersWithoutToken(),
+                //             body: jsonEncode({
+                //               'name': name,
+                //               'email': email,
+                //               'phone': phone,
+                //               'propertyId': '${type}-package-inquiry',
+                //               'meta': {
+                //                 'inquiryType': type,
+                //                 'type': type,
+                //                 'note': 'Become a $type - get more info',
+                //               },
+                //             }),
+                //           );
+                //           debugPrint('onPressed: Guest - General inquiry API response status: ${res.statusCode}');
+                //           if ((res.statusCode == 200 || res.statusCode == 201)) {
+                //             await SecureStorage.addGeneralInquirySubmission({
+                //               'type': type,
+                //               'email': email,
+                //               'phone': phone,
+                //               'timestamp': DateTime.now().toIso8601String(),
+                //             });
+                //             debugPrint('onPressed: Guest - General inquiry saved to SecureStorage');
+                //           }
+                //         }
+                //       } catch (e) {
+                //         debugPrint('onPressed: Guest - Error during inquiry submission: $e');
+                //       }
+                //       Get.back();
+                //       debugPrint('onPressed: Guest - Showing Thank You dialog');
+                //       Get.dialog(
+                //         const SignUpSubscriptionScreen(
+                //           title: 'Thank You',
+                //           onSubmit: _noop,
+                //           showThankYou: true,
+                //         ),
+                //       );
+                //     },
+                //   ),
+                //   barrierDismissible: true,
+                // );
+                // return;
+              } else {
+                debugPrint('onPressed: User is not guest');
+                final userId = await SecureStorage.getClientId() ?? '';
+                debugPrint('onPressed: User ID: $userId');
+                debugPrint('onPressed: Checking existing inquiry via API');
+                final already = await _checkExistingInquiryViaApi(
+                  userId,
+                  role ?? '',
+                );
+                debugPrint(
+                  'onPressed: Existing inquiry via API result: $already',
+                );
+
+                if (already) {
+                  debugPrint(
+                    'onPressed: Existing inquiry found, showing Thank You dialog',
+                  );
+                  await Get.dialog(
+                    const SignUpSubscriptionScreen(
+                      title: 'Thank You',
+                      onSubmit: _noop,
+
+                      showThankYou: true,
+                    ),
+                    barrierDismissible: true,
+                  );
+                  return;
+                }
+                try {
+                  debugPrint(
+                    'onPressed: No existing inquiry found, proceeding with new inquiry',
+                  );
+                  final type =
+                      role == Roles.reseller.name
+                          ? 'reseller'
+                          : (role == Roles.contractor.name
+                              ? 'contractor'
+                              : (role == Roles.sellerBuilder.name
+                                  ? 'builder'
+                                  : 'seller'));
+                  debugPrint('onPressed: Non-guest - Inquiry type: $type');
+                  final user = await SecureStorage.getUserData();
+                  final name =
+                      '${user?.user?.firstName ?? ''} ${user?.user?.lastName ?? ''}'
+                              .trim() 
+                              .isEmpty
+                          ? (user?.user?.username ?? '')
+                          : '${user?.user?.firstName ?? ''} ${user?.user?.lastName ?? ''}'
+                              .trim();
+                  final email = user?.user?.email ?? '';
+                  final phone = user?.user?.phone ?? '';
+                  debugPrint(
+                    'onPressed: Non-guest - User details: Name=$name, Email=$email, Phone=$phone',
+                  );
+                  // final alreadyLocal = await SecureStorage.hasGeneralInquirySubmission(
+                  //   type: type,
+                  //   userId: userId,
+                  // );
+
+                  debugPrint(
+                    'onPressed: Non-guest - Submitting new general inquiry via API',
+                  );
+                  final res = await http.post(
+                    Uri.parse(ApiConstants.generalInquiry),
+                    headers: await ApiConstants.getHeaders(),
+                    body: jsonEncode({
+                      'name': name,
+                      'email': email,
+                      'phone': phone,
+                      'propertyId': '${type}-package-inquiry',
+                      'meta': {
+                        'inquiryType': type,
+                        'type': type,
+                        'note': 'Become a $type - get more info',
+                      },
+                    }),
+                  );
+                  debugPrint(
+                    'onPressed: Non-guest - General inquiry API response status: ${res.statusCode}',
+                  );
+                  if ((res.statusCode == 200 || res.statusCode == 201)) {}
+
+                  debugPrint(
+                    'onPressed: Non-guest - Subscription inquiry saved to SecureStorage',
+                  );
+                } catch (e) {
+                  debugPrint(
+                    'onPressed: Non-guest - Error during inquiry submission: $e',
+                  );
+                }
+
+                debugPrint('onPressed: Showing final Thank You dialog');
+                await Get.dialog(
+                  const SignUpSubscriptionScreen(
+                    title: 'Thank You',
+                    onSubmit: _noop,
+                    showThankYou: true,
+                  ),
+                  barrierDismissible: true,
+                );
+              }
+            },
+
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: ColorRes.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            ),
+            child: Text(
+              _label,
+              style:  TextStyle(
+                fontWeight: AppFontWeights.semiBold,
+                fontSize: AppFontSizes.bodySmall,
+                color: ColorRes.primary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+void _noop(String a, String b, String c) {}
+
+Future<bool> _checkExistingInquiryViaApi(String userId, String role) async {
+  debugPrint(
+    '_checkExistingInquiryViaApi: Checking for existing inquiry for userId: $userId, role: $role',
+  );
+  try {
+    final uri = Uri.parse(ApiConstants.userInquiry(userId));
+    debugPrint('_checkExistingInquiryViaApi: API URL: $uri');
+    final headers = await ApiConstants.getHeaders();
+    final res = await http.get(uri, headers: headers);
+    debugPrint(
+      '_checkExistingInquiryViaApi: API response status: ${res.statusCode}',
+    );
+    debugPrint('_checkExistingInquiryViaApi: API response body: ${res.body}');
+
+    if (res.statusCode == 200 || res.statusCode == 201) {
+      final decoded = jsonDecode(res.body);
+      debugPrint('_checkExistingInquiryViaApi: Decoded API response: $decoded');
+      if (decoded['success'] == true && decoded['data'] != null) {
+        final items = (decoded['data']['items'] as List?) ?? [];
+        final exists = items.any((item) {
+          final map = item as Map<String, dynamic>;
+          final u = (map['userId'] ?? '').toString();
+          final meta = (map['meta'] as Map?) ?? {};
+          final t = (meta['type'] ?? '').toString();
+          return u == userId && t == role;
+        });
+        debugPrint(
+          '_checkExistingInquiryViaApi: Inquiry exists for userId $userId and role $role: $exists',
+        );
+        return exists;
+      }
+    }
+  } catch (e) {
+    debugPrint(
+      '❌ _checkExistingInquiryViaApi: Error checking existing inquiry via API: $e',
+    );
+  }
+  return false;
+}
+
+class _BottomActionBar extends StatelessWidget {
+  final String? role;
+  final VoidCallback? onBecomeType;
+  const _BottomActionBar({required this.role, required this.onBecomeType});
+
+  String get _becomeLabel {
+    if (role == Roles.sellerOwner.name) return 'Become a Seller';
+    if (role == Roles.sellerBuilder.name) return 'Become a Builder';
+    if (role == Roles.contractor.name) return 'Become a Contractor';
+    if (role == Roles.reseller.name) return 'Become a Partner';
+    return 'Become';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cc =
+        Get.isRegistered<ContactController>()
+            ? Get.find<ContactController>()
+            : Get.put(ContactController());
+    return SafeArea(
+      top: false,
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16),
+            topRight: Radius.circular(16),
+          ),
+
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            GestureDetector(
+              onTap: () async {
+                if (cc.primaryPhone.value.isEmpty) {
+                  await cc.loadContacts(reset: true);
+                }
+                final number = cc.primaryPhone.value;
+                if (number.isNotEmpty) {
+                  await ContactHelper.openDialer(number);
+                }
+              },
+              child: Container(
+                height: 44,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 16,
+                ),
+                decoration: BoxDecoration(
+                  color: ColorRes.primary.withOpacity(0.1),
+                  // border: Border.all(color: ColorRes.primary),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Center(
+                  child: Icon(Icons.call, color: ColorRes.primary, size: 18),
+                ),
+              ),
+            ),
+
+            const SizedBox(width: 10),
+
+            GestureDetector(
+              onTap: () async {
+                if (cc.primaryPhone.value.isEmpty) {
+                  await cc.loadContacts(reset: true);
+                }
+                final number = cc.primaryPhone.value;
+                if (number.isNotEmpty) {
+                  await ContactHelper.openWhatsApp(
+                    number,
+                    message: 'Hi, I want to know more $_becomeLabel',
+                  );
+                }
+              },
+              child: Container(
+                height: 44,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 16,
+                ),
+                decoration: BoxDecoration(
+                  color: ColorRes.green.withOpacity(0.1),
+                  // border: Border.all(color: ColorRes.green),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(
+                  child: Image.asset(
+                    'assets/images/whatsapp.png',
+                    width: 20,
+                    height: 20,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 25),
+
+            Expanded(
+              child: ElevatedButton(
+                onPressed: onBecomeType,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ColorRes.primary,
+                  disabledBackgroundColor: ColorRes.primary,
+                  foregroundColor: ColorRes.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+                child: Text(
+                  _becomeLabel,
+                  style: const TextStyle(
+                    fontWeight: AppFontWeights.semiBold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -893,19 +1369,19 @@ class _StatsCarouselState extends State<_StatsCarousel> {
                 children: [
                   SizedBox(
                     height: 28,
-                      // fit: BoxFit.scaleDown,
-                      child: Text(
-                        s.value,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style:  TextStyle(
-                          fontWeight: AppFontWeights.bold,
-                          fontSize: AppFontSizes.body,
-                          color: ColorRes.primary,
-                        ),
+                    // fit: BoxFit.scaleDown,
+                    child: Text(
+                      s.value,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontWeight: AppFontWeights.bold,
+                        fontSize: AppFontSizes.body,
+                        color: ColorRes.primary,
                       ),
                     ),
-                  
+                  ),
+
                   const SizedBox(height: 4),
                   Text(
                     s.label.toUpperCase(),
@@ -918,9 +1394,9 @@ class _StatsCarouselState extends State<_StatsCarousel> {
                 ],
               ),
             ),
-        
-        );
-      }),
+          );
+        },
+      ),
     );
   }
 }
@@ -1597,8 +2073,11 @@ class _ReviewsSection extends StatefulWidget {
   final String entityType; // seller | reseller | contractor
 
   final String newEntityType;
-  const _ReviewsSection({super.key, required this.entityType,required this.newEntityType});
-
+  const _ReviewsSection({
+    super.key,
+    required this.entityType,
+    required this.newEntityType,
+  });
 
   @override
   State<_ReviewsSection> createState() => _ReviewsSectionState();
@@ -1608,7 +2087,9 @@ class _ReviewsSectionState extends State<_ReviewsSection> {
   late final PlatformReviewController controller =
       Get.isRegistered<PlatformReviewController>()
           ? Get.find<PlatformReviewController>()
-          : Get.put(PlatformReviewController(type: [widget.entityType],filters: {}));
+          : Get.put(
+            PlatformReviewController(type: [widget.entityType], filters: {}),
+          );
 
   @override
   void initState() {
@@ -1646,12 +2127,12 @@ class _ReviewsSectionState extends State<_ReviewsSection> {
                 widget.newEntityType == 'seller'
                     ? 'What Our Property Owners Say'
                     : widget.newEntityType == 'builder'
-                        ? 'What Our Developers Say'
-                        : widget.newEntityType == 'contractor'
-                            ? 'What Our Contractors Say'
-                            : widget.newEntityType == 'reseller'
-                                ? 'What Partners Say'
-                                : 'What Our Customers Say',
+                    ? 'What Our Developers Say'
+                    : widget.newEntityType == 'contractor'
+                    ? 'What Our Contractors Say'
+                    : widget.newEntityType == 'reseller'
+                    ? 'What Partners Say'
+                    : 'What Our Customers Say',
                 style: const TextStyle(
                   fontSize: AppFontSizes.large,
                   fontWeight: AppFontWeights.bold,
@@ -1659,21 +2140,19 @@ class _ReviewsSectionState extends State<_ReviewsSection> {
                 ),
               ),
 
-
-
               const SizedBox(height: 6),
 
               Text(
                 widget.newEntityType == 'seller'
                     ? 'Real success stories from homeowners who sold faster with NesticoPe'
                     : widget.newEntityType == 'builder'
-                        ? 'See how top builders scaled their project sales with NesticoPe'
-                        : widget.newEntityType == 'contractor'
-                            ? 'Success stories from top construction professionals on NesticoPe'
-                            : widget.newEntityType == 'reseller'
-                                ? 'Real experiences from our earning partners'
-                                : 'Real experiences shared by our valued customers',
-                                textAlign: TextAlign.center,
+                    ? 'See how top builders scaled their project sales with NesticoPe'
+                    : widget.newEntityType == 'contractor'
+                    ? 'Success stories from top construction professionals on NesticoPe'
+                    : widget.newEntityType == 'reseller'
+                    ? 'Real experiences from our earning partners'
+                    : 'Real experiences shared by our valued customers',
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: AppFontSizes.caption,
                   color: ColorRes.leadGreyColor.shade700,
@@ -2194,7 +2673,7 @@ class _PremiumProjectCarouselState extends State<_PremiumProjectCarousel> {
             return const SizedBox.shrink();
           }
           return SizedBox(
-               height: 290,
+            height: 290,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: items.length.clamp(0, 10),
@@ -2208,7 +2687,7 @@ class _PremiumProjectCarouselState extends State<_PremiumProjectCarousel> {
                   child: BuilderProjectCard(
                     forHome: true,
                     project: data,
-                   width: MediaQuery.of(context).size.width * 0.85,
+                    width: MediaQuery.of(context).size.width * 0.85,
                     height: 150,
                     developersName: data.projectContactInfo?.name ?? 'Unknown',
                     imageUrl:
@@ -2888,7 +3367,7 @@ class _FinalCallout extends StatelessWidget {
           const SizedBox(height: 6),
           ...cfg.points.map(
             (p) => Padding(
-            padding: const EdgeInsets.only(bottom: 4),
+              padding: const EdgeInsets.only(bottom: 4),
               child: Row(
                 children: [
                   const Icon(

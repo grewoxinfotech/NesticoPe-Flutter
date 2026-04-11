@@ -2,12 +2,17 @@ import 'package:intl/intl.dart';
 
 class BannerItem {
   final String id;
+  final String createdBy;
+  final String updatedBy;
   final String title;
   final String image;
   final String url;
   final String status;
   final int order;
   final String type;
+  final bool isAdvertisement;
+ 
+
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -18,6 +23,10 @@ class BannerItem {
     required this.url,
     required this.status,
     required this.order,
+    required this.createdBy,
+    required this.updatedBy,
+    required this.isAdvertisement,
+    // required this.isAdvertisement,
     required this.type,
     this.createdAt,
     this.updatedAt,
@@ -40,8 +49,11 @@ class BannerItem {
       image: clean(json['image']),
       url: clean(json['url']),
       status: clean(json['status']),
+      isAdvertisement: json['advertisement'] ?? false,
       order: json['order'] ?? 0,
       type: clean(json['type']),
+      createdBy: clean(json['created_by']),
+      updatedBy: clean(json['updated_by']),
       createdAt: parseDate(json['createdAt']),
       updatedAt: parseDate(json['updatedAt']),
     );
@@ -58,6 +70,9 @@ class BannerItem {
       'status': status,
       'order': order,
       'type': type,
+      'advertisement': isAdvertisement,
+      'created_by': createdBy,
+      'updated_by': updatedBy,
       'createdAt': formatDate(createdAt),
       'updatedAt': formatDate(updatedAt),
     };

@@ -29,7 +29,8 @@ class TopContractorsService {
   }) async {
     try {
       final queryParameters = {
-        'page': page.toString(),
+        // 'page': page.toString(),
+        'limit': '10', // You can adjust the limit as needed
         if (filters != null) ...filters,
       };
 

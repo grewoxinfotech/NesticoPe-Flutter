@@ -1,26 +1,28 @@
 import 'dart:async';
 import 'package:get/get.dart';
-import 'package:nesticope_app/app/care/pagination/controller/pagination_controller.dart';
-import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
 import 'package:nesticope_app/data/network/banner/model/banner_model.dart';
 import 'package:nesticope_app/data/network/banner/service/banner_service.dart';
 
-class BannerHomeController extends PaginatedController<BannerItem> {
+class BannerHomeController extends GetxController {
   final BannerService _service = BannerService();
+  final RxList<BannerItem> items = <BannerItem>[].obs;
   final Map<String, String> filters = {};
 
   @override
   void onInit() {
     super.onInit();
-    loadInitial();
-  }
-
-  @override
-  Future<PaginationResponse<BannerItem>> fetchItems(int page) async {
-    return _service.fetchBanners(page: page, limit: 12, filters: filters);
+    _loadActiveBanners();
   }
 
   void refreshForHome() {
-    refreshList();
+    _loadActiveBanners();
+  }
+
+  Future<void> _loadActiveBanners() async {
+    try {
+      final list = await _service.fetchActiveBanners();
+      list.sort((a, b) => (a.order ?? 999).compareTo(b.order ?? 999));
+      items.value = list;
+    } catch (_) {}
   }
 }

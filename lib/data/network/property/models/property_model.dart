@@ -240,12 +240,14 @@ class Items {
     calculatedPerformanceScore = TypeConverter.parseDouble(
       json['calculatedPerformanceScore'],
     );
-    keywords = json['keywords'] is List
-        ? (json['keywords'] as List).map((e) => e as String).toList()
-        : [];
-    propertyImages = json['propertyImages'] is List
-        ? (json['propertyImages'] as List).map((e) => e as String).toList()
-        : [];
+    keywords =
+        json['keywords'] is List
+            ? (json['keywords'] as List).map((e) => e as String).toList()
+            : [];
+    propertyImages =
+        json['propertyImages'] is List
+            ? (json['propertyImages'] as List).map((e) => e as String).toList()
+            : [];
     propertyDetails =
         json['propertyDetails'] != null
             ? PropertyDetails.fromJson(
@@ -258,11 +260,12 @@ class Items {
     state = json['state'] as String?;
     zipCode = json['zipCode'] as String?;
     location = json['location'];
-    nearbyLocations = json['nearbyLocatons'] is List
-        ? (json['nearbyLocaions'] as List)
-            .map((v) => NearbyLocations.fromJson(v as Map<String, dynamic>))
-            .toList()
-        : [];
+    nearbyLocations =
+        json['nearbyLocatons'] is List
+            ? (json['nearbyLocaions'] as List)
+                .map((v) => NearbyLocations.fromJson(v as Map<String, dynamic>))
+                .toList()
+            : [];
     reraId = json['reraId'] as String?;
     propertyStatus = json['property_status'] as String?;
     builderName = json['builderName'] as String?;
@@ -284,11 +287,12 @@ class Items {
     totalVisits = TypeConverter.parseInt(json['totalVisits']);
     totalSales = TypeConverter.parseInt(json['totalSales']);
     totalCommissions = json['totalCommissions'] as String?;
-    assignedTo = json['assignedTo'] is List
-        ? (json['assignedTo'] as List<dynamic>)
-            .map((e) => AssignToInfo.fromJson(e))
-            .toList()
-        : [];
+    assignedTo =
+        json['assignedTo'] is List
+            ? (json['assignedTo'] as List<dynamic>)
+                .map((e) => AssignToInfo.fromJson(e))
+                .toList()
+            : [];
     assignmentDate = json['assignmentDate'] as String?;
     assignmentExpiryDate = json['assignmentExpiryDate'] as String?;
     potentialEarnings = json['potentialEarnings'] as String?;
@@ -581,9 +585,9 @@ class PropertyDetails {
   int? balcony;
   int? bathroom;
   List<String>? amenities;
-   String? subRegistrarOfficeName;
-   String? saleDeedDocumentNumber;
-   int? yearOfRegistration;
+  String? subRegistrarOfficeName;
+  String? saleDeedDocumentNumber;
+  int? yearOfRegistration;
   String? zoneType;
   FloorInfo? floorInfo;
   FurnishInfo? furnishInfo;
@@ -604,7 +608,7 @@ class PropertyDetails {
   double? propertyCarpetArea;
   double? propertyBuiltUpArea;
   String? khataNumberPlot;
-   String? surveyNumber;
+  String? surveyNumber;
   String? propertyCarpetAreaUnit;
   String? propertyBuiltUpAreaUnit;
   PgInfo? pgInfo;
@@ -680,11 +684,11 @@ class PropertyDetails {
             : null;
     propertyFacing = json['property_facing'] as String?;
     propertyCondition = json['property_condition'] as String?;
-    subRegistrarOfficeName=json['sub_registrar_office_name']as String?;
-    saleDeedDocumentNumber=json['sale_deed_document_number']as String?;
-    surveyNumber=json['survey_number']as String?;
-    khataNumberPlot=json['khata_number']as String?;
-    yearOfRegistration=json['year_of_registration']as int?;
+    subRegistrarOfficeName = json['sub_registrar_office_name'] as String?;
+    saleDeedDocumentNumber = json['sale_deed_document_number'] as String?;
+    surveyNumber = json['survey_number'] as String?;
+    khataNumberPlot = json['khata_number'] as String?;
+    yearOfRegistration = json['year_of_registration'] as int?;
     propertyCarpetArea = TypeConverter.parseDouble(
       json['property_carpet_area'],
     );
@@ -737,9 +741,12 @@ class PropertyDetails {
     if (availableFrom != null) data['available_from'] = availableFrom;
     if (transactionType != null) data['transaction_type'] = transactionType;
     if (plotInfo != null) data['plot_info'] = plotInfo!.toJson();
-    if(subRegistrarOfficeName!=null) data['sub_registrar_office_name']=subRegistrarOfficeName;
-    if(saleDeedDocumentNumber!=null) data['sale_deed_document_number']=saleDeedDocumentNumber;
-    if(yearOfRegistration!=null) data['year_of_registration']=yearOfRegistration;
+    if (subRegistrarOfficeName != null)
+      data['sub_registrar_office_name'] = subRegistrarOfficeName;
+    if (saleDeedDocumentNumber != null)
+      data['sale_deed_document_number'] = saleDeedDocumentNumber;
+    if (yearOfRegistration != null)
+      data['year_of_registration'] = yearOfRegistration;
     if (parkingInfo != null) {
       final parking = parkingInfo!.toJson();
       parking.removeWhere((key, value) => value == null);
@@ -790,7 +797,7 @@ class PlotInfo {
   String? ownership;
   String? zoneType;
   String? possessionStatus;
-   String? possessionDate;
+  String? possessionDate;
 
   PlotInfo({
     this.plotArea,
@@ -848,12 +855,7 @@ class FurnishInfo {
   final String? furnishType;
   final FurnishDetails? furnishDetails;
 
-
-  FurnishInfo({
-    this.furnishType,
-    this.furnishDetails,
-
-  });
+  FurnishInfo({this.furnishType, this.furnishDetails});
 
   factory FurnishInfo.fromJson(Map<String, dynamic> json) {
     return FurnishInfo(
@@ -875,7 +877,6 @@ class FurnishInfo {
     if (furnishDetails != null) {
       data['furnish_details'] = furnishDetails!.toJson();
     }
-
 
     return data;
   }
@@ -1099,6 +1100,7 @@ class FinancialInfo {
   /// Rent per month
   double propertyRentPerMonth;
   bool? brokerNegotiable;
+
   /// Optional monthly rent (PG / alternate use)
   final double? monthlyRent;
   final double? maintenanceCharges;
@@ -1108,7 +1110,6 @@ class FinancialInfo {
 
   /// Price per sqft
   double pricePerSqft;
-
 
   /// Broker commission
   double brokerCommission;

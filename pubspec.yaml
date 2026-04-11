@@ -127,6 +127,7 @@ flutter:
     - assets/icons/native_icons/ui/
     - assets/svg/
     - assets/gif/
+    - assets/png/
     - assets/icons/third_party/
 
     #- .env

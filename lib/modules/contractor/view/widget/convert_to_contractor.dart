@@ -5,6 +5,7 @@ import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
 
 import '../../../../../app/constants/color_res.dart';
 import '../../../../widgets/input/city_selection_widget.dart';
@@ -144,7 +145,7 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
                             // letterSpacing: 0.1,
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 10),
 
                         // What happens next section
                         buildContentContainer("What happens next?", options),
@@ -159,7 +160,7 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 12),
                         buildContractorTypeSelector(controller),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 10),
                         CitySelectionWidget(
                           isEditing: true,
                           controller: controller.selectedCityZ,
@@ -176,7 +177,7 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
                             // You can also store city details in your controller here
                           },
                         ),
-                        const SizedBox(height: 32),
+                        // const SizedBox(height: 32),
 
                         // Convert Button
                         SizedBox(
@@ -215,7 +216,7 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
                                               ? null
                                               : () {
                                                 if (UserHelper.isGuest) {
-                                                  Get.to(() => LoginScreen());
+                                                  Get.to(() => OtpLoginScreen());
                                                 } else {
                                                   controller
                                                       .convertBuyerToContractor(
@@ -324,7 +325,7 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
                                     ),
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 15),
 
                         // Login Link
                         SizedBox(
@@ -341,6 +342,7 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
                               children: [
                                 TextSpan(
                                   text: "Login here",
+                                  
                                   style: TextStyle(
                                     fontFamily: 'Exo',
                                     color: ColorRes.primary,
@@ -352,7 +354,7 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
                                   recognizer:
                                       TapGestureRecognizer()
                                         ..onTap = () {
-                                          Get.to(() => const LoginScreen());
+                                          Get.to(() => const OtpLoginScreen());
                                         },
                                 ),
                               ],

@@ -208,6 +208,7 @@ import 'package:nesticope_app/app/utils/formater/formater.dart';
 import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:nesticope_app/data/database/secure_storage_service.dart';
 import 'package:nesticope_app/modules/auth/views/login_screen.dart';
+import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
 import 'package:nesticope_app/modules/builder/view/project_detail/project_detail.dart';
 import 'package:nesticope_app/modules/history/controller/search_history_controller.dart';
 import 'package:nesticope_app/modules/property/views/property_detail_screen.dart';
@@ -1499,7 +1500,7 @@ Future<void> generateInquiry(
   PropertyFavoriteController controller,
 ) async {
   if (UserHelper.isGuest) {
-    Get.to(() => LoginScreen());
+    Get.to(() => OtpLoginScreen());
   } else {
     final user = await SecureStorage.getUserData();
     final inquiry = {

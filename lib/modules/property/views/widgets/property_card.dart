@@ -68,10 +68,14 @@ class _PropertyCardState extends State<PropertyCard> {
     );
 
     return GestureDetector(
-      onTap:
-          () => Get.to(
-            () => PropertyDetailScreen(propertyId: widget.property.id),
+      onTap: () {
+        // Use native Navigator to avoid unexpected Get.to format errors
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => PropertyDetailScreen(propertyId: widget.property.id),
           ),
+        );
+      },
       child: Container(
       width: MediaQuery.of(context).size.width * 0.85,
         // margin: const EdgeInsets.only(right: 12, bottom: 12),

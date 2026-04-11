@@ -5,6 +5,7 @@ import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:nesticope_app/modules/auth/controllers/auth_controller.dart';
+import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
 
 import '../../../../../widgets/messages/snack_bar.dart';
 import '../../login_screen.dart';
@@ -186,8 +187,8 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                                       ? null
                                       : () {
                                        if(UserHelper.isGuest){
-                                        Get.to(() => LoginScreen());
-
+                                        Get.to(() => OtpLoginScreen());
+  
                                        }else{
                                          if (_selectedSellerType == null) {
                                           NesticoPeSnackBar.showAwesomeSnackbar(
@@ -245,7 +246,7 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                                   recognizer:
                                       TapGestureRecognizer()
                                         ..onTap = () {
-                                          Get.to(() => const LoginScreen());
+                                          Get.to(() => const OtpLoginScreen());
                                         },
                                 ),
                               ],

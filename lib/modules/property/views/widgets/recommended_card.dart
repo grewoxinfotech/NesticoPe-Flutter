@@ -62,6 +62,7 @@ class _RecommendedCardState extends State<RecommendedCard> {
             () => Get.to(
               () => PropertyDetailScreen(propertyId: widget.property.id),
               routeName: '/property_${widget.property.id}',
+              
             ),
       
         child: AnimatedContainer(

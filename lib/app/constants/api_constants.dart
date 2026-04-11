@@ -9,9 +9,10 @@ class ApiConstants {
 
   // static const String url = "http://192.168.1.11:19725";
 
-  static const String url = "https://nesticopeapi.grewoxinfotech.com";
+  // static const String url = "https://nesticopeapi.grewoxinfotech.com";
 
-  // static const String url = "https://api.nesticope.com";
+  static const String url = "https://api.nesticope.com";
+  
 
   // static const String url = "https://commentary-flush-reprints-prison.trycloudflare.com";
   static const String frontendBaseUrl = "https://nesticope.com";
@@ -138,6 +139,8 @@ class ApiConstants {
 
   static String get leadVisit => "$baseURL/visit";
   static String get leadNegotiablePrice => "$baseURL/propertyNegotiablePrice";
+  static String get generalInquiry => "$baseURL/property/general-inquiry";
+  static String userInquiry(String userId) => "$baseURL/property/$userId/inquiry";
 
   static String get property => "$baseURL/property";
 

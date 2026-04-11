@@ -27,27 +27,30 @@ class _AllReviewScreenState extends State<AllReviewScreen> {
         ),
         backgroundColor: ColorRes.white,
         elevation: 0,
-        title:  Text('All Reviews', style: TextStyle(fontWeight: AppFontWeights.semiBold),),
+        title: Text(
+          'All Reviews',
+          style: TextStyle(fontWeight: AppFontWeights.semiBold),
+        ),
       ),
-      body: Obx(() {
-        // Reactive list
-        final items = widget.reviewController.items;
+      body: SafeArea(
+        child: Obx(() {
+          // Reactive list
+          final items = widget.reviewController.items;
 
-        if (items.isEmpty) {
-          return const Center(
-            child: Text('No reviews available'),
+          if (items.isEmpty) {
+            return const Center(child: Text('No reviews available'));
+          }
+
+          return ListView.separated(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            itemCount: items.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 8),
+            itemBuilder: (context, index) {
+              return PropertyReviewCard(reviewItem: items[index]);
+            },
           );
-        }
-
-        return ListView.separated(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          itemCount: items.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 16),
-          itemBuilder: (context, index) {
-            return PropertyReviewCard(reviewItem: items[index]);
-          },
-        );
-      }),
+        }),
+      ),
     );
   }
-}
+}//ncj have andh"bsy hgfhbbedhyfeb  bdhbv usjb ndnb kcj 

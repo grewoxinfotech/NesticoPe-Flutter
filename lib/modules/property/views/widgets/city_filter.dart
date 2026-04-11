@@ -550,9 +550,10 @@ class _CityFilterListState extends State<CityFilterList> {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.isRegistered<TrendingCityController>()
-        ? Get.find<TrendingCityController>()
-        : Get.put(TrendingCityController());
+    final controller =
+        Get.isRegistered<TrendingCityController>()
+            ? Get.find<TrendingCityController>()
+            : Get.put(TrendingCityController());
     return SizedBox(
       height: 160, // Fixed height for horizontal list
       child: ListView.builder(
@@ -571,7 +572,6 @@ class _CityFilterListState extends State<CityFilterList> {
                   ],
                 ),
               );
-              
             },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
@@ -649,17 +649,31 @@ class _CityFilterListState extends State<CityFilterList> {
                           ),
                         ),
                         const SizedBox(height: 2),
-                        Text(
-                          "${Formatter.formatNumber(city.propertyCount)} Properties",
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: ColorRes.white,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 11,
+                        if (city.propertyCount > 0) ...[
+                          Text(
+                            "${Formatter.formatNumber(city.propertyCount)} Properties",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: ColorRes.white,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 11,
+                            ),
                           ),
-                        ),
+                        ] else if (city.projectCount > 0) ...[
+                          Text(
+                            "${Formatter.formatNumber(city.projectCount)} Projects",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: ColorRes.white,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 11,
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),

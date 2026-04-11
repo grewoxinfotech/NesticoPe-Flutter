@@ -8,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nesticope_app/data/network/auth/model/user_model.dart';
 import 'package:nesticope_app/data/network/user/service/notification_sync_service.dart';
 import 'package:nesticope_app/modules/auth/views/login_screen.dart';
+import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
 import 'package:nesticope_app/utils/logger/app_logger.dart';
 import 'package:http/http.dart' as http;
 import 'package:open_filex/open_filex.dart';
@@ -582,7 +583,7 @@ class AuthService {
   Future<void> logout() async {
     await SecureStorage.clearAll();
     await NotificationService.instance.resetToGuest();
-    Get.offAll(const LoginScreen());
+    Get.offAll(OtpLoginScreen());
   }
 
   Future<bool> requestOtpLogin(String id, {String? module}) async {
@@ -590,41 +591,67 @@ class AuthService {
     final response = await http.post(
       Uri.parse('${ApiConstants.auth}/otp-login'),
       headers: {i: j},
-      body: jsonEncode({
-        'id': id,
-        if (module != null) 'module': module,
-      }),
+      body: jsonEncode({'id': id, if (module != null) 'module': module}),
     );
     final data = jsonDecode(response.body);
-    print("Request OTP Login Check payload $id ${response.statusCode} ${data} ");
+    print(
+      "Request OTP Login Check payload $id ${response.statusCode} ${data} ",
+    );
     print("OTP [DEBUG]=> ${response.body}");
     print("OTP [DEBUG]=> ${data}");
-    
+
     if (response.statusCode == 200 && data['success'] == true) {
       final token = (data['data']?['token'] ?? '').toString();
-     
+
       if (token.isNotEmpty) {
         await SecureStorage.saveLoginWithOtpToken(token);
       }
       return true;
-
+    }
+    if (response.statusCode == 429) {
+      final message =
+          (data['message'] ?? 'Too many requests. Please try again later.')
+              .toString();
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Too Many Requests',
+        message:
+            'Maximum OTP requests reached 3 times in 24 hours. Please try again later.',
+        contentType: ContentType.failure,
+      );
+      return false;
     }
     if (response.statusCode == 400) {
+      var message = data['message'].toString();
 
-        var message=data['message'];
-        
-      if(message.contains('3')){
+      // print("OTP Login Error: $message");
+
+      if (message.contains('Seller') ||
+          message.contains('Builder') ||
+          message.contains('Partner') ||
+          message.contains('Contractor')) {
+        print("OTP Login Error: $message");
         NesticoPeSnackBar.showAwesomeSnackbar(
-          title: 'Generate Otp Failed',
-          message: 'Maximum OTP requests reached 3 times in 24 hours. Please try again later.',
-          
+          title: 'Click on Login as Partner ',
+          message: message,
           contentType: ContentType.failure,
         );
-
-        throw Exception(data["message"] ?? "OTP login failed");
+        return false;
+      }
+      else{
+        print("OTP Login Error: $message");
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: 'Failed to resend OTP',
+          contentType: ContentType.failure,
+        );
+        return false;
       }
     }
-    
+    NesticoPeSnackBar.showAwesomeSnackbar(
+      title: 'Error',
+      message: 'Failed to resend OTP',
+      contentType: ContentType.failure,
+    );
     return false;
   }
 
@@ -635,8 +662,10 @@ class AuthService {
       body: jsonEncode({'otp': otp}),
     );
     final data = jsonDecode(response.body);
-    
-    print("Verify OTP [DEBUG]=> ${response.body}==============${response.statusCode}");
+
+    print(
+      "Verify OTP [DEBUG]=> ${response.body}==============${response.statusCode}",
+    );
     print("Verify OTP [DEBUG]=> ${data}");
 
     print("Signujdfhjsd dfjsd $data");
@@ -668,6 +697,46 @@ class AuthService {
       }
       return true;
     }
+    if (response.statusCode == 429) {
+      final message =
+          (data['message'] ?? 'Too many requests. Please try again later.')
+              .toString();
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Too Many Requests',
+        message:
+            'Maximum OTP requests reached 3 times in 24 hours. Please try again later.',
+        contentType: ContentType.failure,
+      );
+      return false;
+    }
+
+    if (response.statusCode == 400) {
+      var message = data['message'];
+
+      if (message.contains('Seller') ||
+          message.contains('Builder') ||
+          message.contains('Partner') ||
+          message.contains('Contractor')) {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Click on Login as Partner ',
+          message: message,
+
+          contentType: ContentType.failure,
+        );
+      } else {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: 'Failed to resend OTP',
+          contentType: ContentType.failure,
+        );
+      }
+      return false;
+    }
+    NesticoPeSnackBar.showAwesomeSnackbar(
+      title: 'Error',
+      message: 'Failed to resend OTP',
+      contentType: ContentType.failure,
+    );
     return false;
   }
 

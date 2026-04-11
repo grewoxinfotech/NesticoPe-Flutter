@@ -32,7 +32,6 @@ class FurnishingDetails extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
         // Furnishing Items
         if (furnishingItems.isNotEmpty)
           Padding(
@@ -40,14 +39,15 @@ class FurnishingDetails extends StatelessWidget {
             child: Wrap(
               spacing: 12,
               runSpacing: 12,
-              children: furnishingItems.map((item) {
-                return FurnishingCard(
-                  label: item.displayText,
-                  icon: item.icon ?? Icons.check_circle_outline,
-                  bgColor: bgColor,
-                  foreColor: txtColor,
-                );
-              }).toList(),
+              children:
+                  furnishingItems.map((item) {
+                    return FurnishingCard(
+                      label: item.displayText,
+                      icon: item.icon ?? Icons.check_circle_outline,
+                      bgColor: bgColor,
+                      foreColor: txtColor,
+                    );
+                  }).toList(),
             ),
           ),
       ],
@@ -81,12 +81,10 @@ class FurnishingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: const BoxConstraints(
-        minWidth: 80,
-      ),
+      constraints: const BoxConstraints(minWidth: 80),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        border: Border.all(color: ColorRes.primary, width: 1),
+        border: Border.all(color: ColorRes.primary.withOpacity(0.2), width: 1),
         borderRadius: BorderRadius.circular(20),
         color: ColorRes.white,
       ),
@@ -94,7 +92,7 @@ class FurnishingCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 16, color: ColorRes.primary),
+          Icon(icon, size: 14, color: ColorRes.primary),
           const SizedBox(width: 6),
           Flexible(
             child: Text(
@@ -102,7 +100,7 @@ class FurnishingCard extends StatelessWidget {
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: AppFontSizes.bodySmall,
+                fontSize: AppFontSizes.caption,
                 fontWeight: AppFontWeights.medium,
                 color: ColorRes.leadGreyColor.shade800,
               ),
@@ -127,7 +125,8 @@ class FurnishingDetailsCompact extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final furnishingItems = PropertyHighlightManager(property).getFurnishingInfo();
+    final furnishingItems =
+        PropertyHighlightManager(property).getFurnishingInfo();
 
     if (furnishingItems.isEmpty) {
       return const SizedBox.shrink();
@@ -159,7 +158,11 @@ class FurnishingDetailsCompact extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon ?? Icons.check_circle_outline, size: size, color: ColorRes.primary),
+        Icon(
+          icon ?? Icons.check_circle_outline,
+          size: size,
+          color: ColorRes.primary,
+        ),
         const SizedBox(width: 4),
         Text(
           text,

@@ -597,6 +597,23 @@ class _LoginScreenState extends State<LoginScreen> {
     authController.fillTestCredentials();
 
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: ColorRes.primary),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        // centerTitle: true,
+        title: const Text(
+          'NesticoPe',
+          style: TextStyle(
+            // fontSize: 17,
+            fontWeight: FontWeight.w700,
+            color: ColorRes.primary,
+          ),
+        ),
+      ),
       // appBar: CommonNesticoPeAppBar(title: "Login", showBackArrow: true),
       body: Container(
         decoration: const BoxDecoration(
@@ -793,55 +810,55 @@ class _LoginScreenState extends State<LoginScreen> {
                     );
                   }),
 
-                  const SizedBox(height: 24),
+                  // const SizedBox(height: 24),
 
-                  // ── OR CONTINUE WITH divider ────────────────────────────
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Divider(
-                          color: Colors.grey.shade400,
-                          thickness: 0.8,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Text(
-                          'OR CONTINUE WITH',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Colors.grey.shade600,
-                            letterSpacing: 1.0,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Divider(
-                          color: Colors.grey.shade400,
-                          thickness: 0.8,
-                        ),
-                      ),
-                    ],
-                  ),
+                  // // ── OR CONTINUE WITH divider ────────────────────────────
+                  // Row(
+                  //   children: [
+                  //     Expanded(
+                  //       child: Divider(
+                  //         color: Colors.grey.shade400,
+                  //         thickness: 0.8,
+                  //       ),
+                  //     ),
+                  //     Padding(
+                  //       padding: const EdgeInsets.symmetric(horizontal: 12),
+                  //       child: Text(
+                  //         'OR CONTINUE WITH',
+                  //         style: TextStyle(
+                  //           fontSize: 10,
+                  //           color: Colors.grey.shade600,
+                  //           letterSpacing: 1.0,
+                  //           fontWeight: FontWeight.w600,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     Expanded(
+                  //       child: Divider(
+                  //         color: Colors.grey.shade400,
+                  //         thickness: 0.8,
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
 
-                  const SizedBox(height: 18),
+                  // const SizedBox(height: 18),
 
-                  // ── Login with OTP ──────────────────────────────────────
-                  _altButton(
-                    icon: Icons.grid_view_rounded,
-                    label: 'Login with OTP',
-                    onTap: () => Get.to(() => const OtpLoginScreen()),
-                  ),
+                  // // ── Login with OTP ──────────────────────────────────────
+                  // _altButton(
+                  //   icon: Icons.grid_view_rounded,
+                  //   label: 'Login with OTP',
+                  //   onTap: () => Get.to(() => const OtpLoginScreen()),
+                  // ),
 
-                  const SizedBox(height: 20),
-                   _altButton(
-                    icon: Icons.grid_view_rounded,
-                    label: 'Login with Partner',
-                    onTap: () => Get.to(() => const OtpLoginScreen(isPartner: true)),
-                  ),
+                  // const SizedBox(height: 20),
+                  //  _altButton(
+                  //   icon: Icons.grid_view_rounded,
+                  //   label: 'Login with Partner',
+                  //   onTap: () => Get.to(() => const OtpLoginScreen(isPartner: true)),
+                  // ),
 
-                  const SizedBox(height: 20),
+                  // const SizedBox(height: 20),
 
                   // ── Login with Mobile Number ────────────────────────────
                   // _altButton(
@@ -852,7 +869,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   //   },
                   // ),
 
-                  // const SizedBox(height: 28),
+                  const SizedBox(height: 28),
 
                   // ── Sign Up Link ────────────────────────────────────────
                   Center(

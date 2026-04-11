@@ -193,8 +193,6 @@ class UnifiedComparisonFloatingButton extends StatelessWidget {
 }
 */
 
-
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
@@ -307,12 +305,21 @@ class UnifiedComparisonFloatingButton extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 gradient: LinearGradient(
-                  colors: canCompare
-                      ? [ColorRes.primary, ColorRes.primary.withOpacity(0.8)]
-                      : [
-                    ColorRes.grey.withOpacity(0.6),
-                    ColorRes.grey.withOpacity(0.4)
-                  ],
+                  colors:
+                      canCompare
+                          ? [
+                            const Color.fromARGB(255, 66, 81, 212),
+                            ColorRes.primary.withOpacity(0.8),
+                          ]
+                          : [
+                            const Color.fromARGB(255, 56, 162, 248),
+                            const Color.fromARGB(
+                              255,
+                              33,
+                              89,
+                              243,
+                            ).withOpacity(0.8),
+                          ],
                 ),
               ),
               child: Row(
@@ -321,43 +328,43 @@ class UnifiedComparisonFloatingButton extends StatelessWidget {
                   /// Left section — icon + text
                   Expanded(
                     child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(8),
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(icon, color: Colors.white, size: 20),
                         ),
-                        child: Icon(icon, color: Colors.white, size: 20),
-                      ),
-                      const SizedBox(width: 8),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            canCompare
-                                ? 'Ready to Compare!'
-                                : 'Add ${ (minRequired - activeCount).clamp(0, minRequired) } more $itemType',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: AppFontSizes.caption,
-                              fontWeight: AppFontWeights.semiBold,
+                        const SizedBox(width: 8),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              canCompare
+                                  ? 'Ready to Compare!'
+                                  : 'Add ${(minRequired - activeCount).clamp(0, minRequired)} more $itemType',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: AppFontSizes.caption,
+                                fontWeight: AppFontWeights.semiBold,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            '$activeCount/$totalAllowed $itemTypePlural selected',
-                            style: TextStyle(
-                              color: Colors.white.withOpacity(0.9),
-                              fontSize: AppFontSizes.extraSmall,
-                              fontWeight: AppFontWeights.regular,
+                            const SizedBox(height: 2),
+                            Text(
+                              '$activeCount/$totalAllowed $itemTypePlural selected',
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.9),
+                                fontSize: AppFontSizes.extraSmall,
+                                fontWeight: AppFontWeights.regular,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
 
                   /// Right section — compare + cancel
@@ -366,7 +373,9 @@ class UnifiedComparisonFloatingButton extends StatelessWidget {
                       if (canCompare)
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 8),
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(20),
@@ -405,4 +414,3 @@ class UnifiedComparisonFloatingButton extends StatelessWidget {
     );
   }
 }
-

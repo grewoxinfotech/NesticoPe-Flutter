@@ -326,12 +326,13 @@ class OnboardingController extends GetxController {
     try {
       // Perform different operations based on selection
       switch (option) {
+        // Support both older labels and the new UI labels
         case 'Buy Home':
-          // await truecallerService.loginWithTrueCaller();
+        case 'Buy Property':
           await handleBuyHome();
           break;
         case 'Rent Home':
-          // await truecallerService.loginWithTrueCaller();
+        case 'Rent Property':
           await handleRentHome();
           break;
         case 'Seller Registration':
@@ -360,8 +361,8 @@ class OnboardingController extends GetxController {
       print("❌ Unable to get city name");
     }
 
-    if ((cityLocation == null)) {
-      // ✅ Get city selection
+    if (cityLocation == null) {
+      // Try explicit city selection first
       final city = await Get.to(
         () => SelectCityScreen(
           isFromLogin: true,
@@ -370,13 +371,13 @@ class OnboardingController extends GetxController {
       );
 
       if (city != null) {
-        // ✅ Save city and mark onboarding complete
-        log("city login chage $city");
+        // Save city and mark onboarding complete
+        log("city login change $city");
         await searchHistoryController.addSearchHistory({
           'keywords': ['$city'],
         });
         await SecureStorage.saveSelectedCity(city);
-        await SecureStorage.setAppLaunched(); // ✅ Mark as not first time
+        await SecureStorage.setAppLaunched();
 
         await SecureStorage.saveHomeCategory('Buy');
         final loggedIn = await truecallerService.loginWithTrueCaller();
@@ -390,7 +391,6 @@ class OnboardingController extends GetxController {
             ),
           );
         } else {
-          await SecureStorage.saveHomeCategory('Buy');
           final proceed = await _showLoginBottomSheet(
             listingType: 'Sell',
             city: city,
@@ -407,8 +407,27 @@ class OnboardingController extends GetxController {
           }
         }
       } else {
-        // User cancelled city selection - stay on onboarding
-        selectedOption.value = '';
+        // User cancelled city selection. Allow moving forward only if they
+        // either log in or explicitly skip login. Show login bottom sheet
+        // to let them choose to login or Skip.
+        final proceed = await _showLoginBottomSheet(
+          listingType: 'Sell',
+          city: '',
+        );
+        if (proceed) {
+          await SecureStorage.saveHomeCategory('Buy');
+          await SecureStorage.setAppLaunched();
+          await Get.offAll(
+            () => DashboardScreen(
+              propertyFilter: [
+                {'listingType': 'Sell'},
+              ],
+            ),
+          );
+        } else {
+          // stay on onboarding
+          selectedOption.value = '';
+        }
       }
     } else {
       await SecureStorage.saveSelectedCity(cityLocation ?? '');
@@ -483,7 +502,6 @@ class OnboardingController extends GetxController {
             ),
           );
         } else {
-          await SecureStorage.saveHomeCategory('Rent/Lease');
           final proceed = await _showLoginBottomSheet(
             listingType: 'Rent',
             city: city,
@@ -500,8 +518,26 @@ class OnboardingController extends GetxController {
           }
         }
       } else {
-        // User cancelled city selection - stay on onboarding
-        selectedOption.value = '';
+        // User cancelled city selection. Allow moving forward only if they
+        // either log in or explicitly skip login. Show login bottom sheet
+        // to let them choose to login or Skip.
+        final proceed = await _showLoginBottomSheet(
+          listingType: 'Rent',
+          city: '',
+        );
+        if (proceed) {
+          await SecureStorage.saveHomeCategory('Rent/Lease');
+          await SecureStorage.setAppLaunched();
+          await Get.offAll(
+            () => DashboardScreen(
+              propertyFilter: [
+                {'listingType': 'Rent'},
+              ],
+            ),
+          );
+        } else {
+          selectedOption.value = '';
+        }
       }
     } else {
       await SecureStorage.saveSelectedCity(cityLocation ?? '');
@@ -514,13 +550,13 @@ class OnboardingController extends GetxController {
           () => DashboardScreen(
             propertyFilter: [
               {'city': cityLocation ?? ''},
-              {'listingType': 'Sell'},
+              {'listingType': 'Rent'},
             ],
           ),
         );
       } else {
         final proceed = await _showLoginBottomSheet(
-          listingType: 'Sell',
+          listingType: 'Rent',
           city: cityLocation ?? '',
         );
         if (proceed) {
@@ -529,7 +565,7 @@ class OnboardingController extends GetxController {
             () => DashboardScreen(
               propertyFilter: [
                 {'city': cityLocation ?? ''},
-                {'listingType': 'Sell'},
+                {'listingType': 'Rent'},
               ],
             ),
           );
@@ -590,9 +626,7 @@ class OnboardingController extends GetxController {
       _resendTimer?.cancel();
       resendSecondsLeft = 120;
       if (!isSheetOpen) return;
-      setState(() {
-        
-      });
+      setState(() {});
       _resendTimer = Timer.periodic(const Duration(seconds: 1), (t) {
         if (!isSheetOpen) {
           t.cancel();
@@ -809,13 +843,11 @@ class OnboardingController extends GetxController {
                     ),
                   ),
 
-
                   const SizedBox(height: 20),
 
                   /// STEP 1: PHONE INPUT
                   ///
                   if (!stepOtp) ...[
-
                     // TextField(
                     //   keyboardType: TextInputType.phone,
                     //   style: TextStyle(
@@ -853,7 +885,6 @@ class OnboardingController extends GetxController {
                     //   ),
                     //   onChanged: (v) => phone = v,
                     // ),
-
                     Form(
                       key: formKey,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -958,11 +989,15 @@ class OnboardingController extends GetxController {
                                 ? null
                                 : () async {
                                   final trimmed = phone.trim();
-                                  isSendingOtp = true;
-                                  setState(() {});
+
+                                  setState(() {
+                                    isSendingOtp = true;
+                                  });
                                   final ok = await AuthService()
                                       .requestOtpLogin(trimmed);
-                                  isSendingOtp = false;
+                                  setState(() {
+                                    isSendingOtp = false;
+                                  });
                                   if (ok) {
                                     NesticoPeSnackBar.showAwesomeSnackbar(
                                       title: 'OTP Sent',
@@ -972,13 +1007,8 @@ class OnboardingController extends GetxController {
                                     );
                                     stepOtp = true;
                                     _startResendTimer(setState);
-                                  } else {
-                                    NesticoPeSnackBar.showAwesomeSnackbar(
-                                      title: 'Error',
-                                      message: 'Failed to send OTP',
-                                      contentType: ContentType.failure,
-                                    );
                                   }
+
                                   setState(() {});
                                 },
                         child:
@@ -1081,18 +1111,19 @@ class OnboardingController extends GetxController {
                         ),
                         onPressed: () async {
                           // Get.to(() => const LoginScreen());
-                          Get.to(() => const OtpLoginScreen(isPartner: true,));
-
+                          Get.to(() => const OtpLoginScreen(isPartner: true));
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.person_outlined,
-                                color: ColorRes.primary),
+                            const Icon(
+                              Icons.person_outlined,
+                              color: ColorRes.primary,
+                            ),
                             const SizedBox(width: 8),
                             Text(
-                              "Login for Partner",
+                              "Login as Partner",
                               style: TextStyle(
                                 color: ColorRes.textPrimary,
                                 fontSize: AppFontSizes.bodySmall,
@@ -1285,12 +1316,6 @@ class OnboardingController extends GetxController {
                                       contentType: ContentType.success,
                                     );
                                     _startResendTimer(setState);
-                                  } else {
-                                    NesticoPeSnackBar.showAwesomeSnackbar(
-                                      title: 'Error',
-                                      message: 'Failed to resend OTP',
-                                      contentType: ContentType.failure,
-                                    );
                                   }
                                   setState(() {});
                                 },
@@ -1611,7 +1636,6 @@ class OnboardingScreen extends StatelessWidget {
                       color: Colors.white.withOpacity(0.70),
                       height: 1.55,
                     ),
-
                   ),
                   const SizedBox(height: 28),
 
@@ -1619,7 +1643,7 @@ class OnboardingScreen extends StatelessWidget {
                   _buildOptionTile(
                     controller: controller,
                     icon: Icons.home_rounded,
-                    title: 'Buy Home',
+                    title: 'Buy Property',
                     subtitle:
                         'Find premium residential and luxury homes made for first-time owners.',
                     actionLabel: 'Explore Listings',
@@ -1628,7 +1652,7 @@ class OnboardingScreen extends StatelessWidget {
                   _buildOptionTile(
                     controller: controller,
                     icon: Icons.vpn_key_rounded,
-                    title: 'Rent Home',
+                    title: 'Rent Property',
                     subtitle:
                         'Experience high-end living with our exclusive collection of luxury home opportunities.',
                     actionLabel: 'View Rentals',

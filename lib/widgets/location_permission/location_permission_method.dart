@@ -4,6 +4,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
 
 // Future<String?> getCurrentCity() async {
 //   // Step 1: Request permission
@@ -45,6 +46,13 @@ import 'package:geocoding/geocoding.dart';
 // }
 
 Future<String?> getCurrentCity() async {
+  // If a city was already chosen via SelectCityScreen, return it immediately
+  // to avoid asking for location permissions repeatedly.
+  try {
+    final savedCity = await SecureStorage.getSelectedCity();
+    if (savedCity != null && savedCity.isNotEmpty) return savedCity;
+  } catch (_) {}
+
   var serviceEnabled = await Geolocator.isLocationServiceEnabled();
   if (!serviceEnabled) {
     await Geolocator.openLocationSettings();

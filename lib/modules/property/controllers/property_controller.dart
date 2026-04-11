@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
@@ -58,13 +57,17 @@ class PropertyController extends PaginatedController<Items> {
   // Optional filters
   Map<String, String>? filters = {};
 
+  Timer? _filterDebounce;
 
   RxBool isComparePropertyFirst = false.obs;
   RxBool isComparePropertySecond = false.obs;
 
   // var favoriteIds = <String>{}.obs;
 
-  void attachScrollListener(ScrollController controller, {double threshold = 110.0}) {
+  void attachScrollListener(
+    ScrollController controller, {
+    double threshold = 110.0,
+  }) {
     controller.addListener(() {
       final shouldShow = controller.offset >= threshold;
       showPinnedSearch = shouldShow;
@@ -81,12 +84,9 @@ class PropertyController extends PaginatedController<Items> {
     fetchTradingArea(selectedCity.value);
   }
 
-
   bool get showPinnedSearch => _showPinnedSearch.value;
 
-
   set showPinnedSearch(bool value) => _showPinnedSearch.value = value;
-  
 
   Rxn<TrendingAreasResponse> trendingAreaList = Rxn<TrendingAreasResponse>();
 
@@ -314,62 +314,134 @@ class PropertyController extends PaginatedController<Items> {
   //   refreshList();
   // }
 
-  void applyFilter(String key, String val, {bool includeCity = true}) {
-    filters ??= {};
+  void applyFilter(
+    String key,
+    String val, {
+    bool includeCity = true,
+    bool homefilter = false,
+    bool immediate = false,
+  }) {
+    if (homefilter) {
+      filters ??= {};
 
-    print('ApplyFilter called: key=$key, val=$val');
+      print('ApplyFilter called: key=$key, val=$val');
+      log("Change the data of For Filter ${filters}");
 
-    log("Change the data of For Filter ${filters}");
+      // Start from existing filters and merge changes so we don't drop
+      // system-added keys like approval_status/isVerified.
+      final next = Map<String, String>.from(filters!);
 
-    if (key == 'propertyType') {
-      final cityValue = includeCity ? filters!['city'] : null;
-      filters = {
-        if (includeCity && cityValue != null) 'city': cityValue,
-        'propertyType': val,
-      };
-    } else if (key == 'city') {
-      filters = {'city': val};
-      selectedCity.value = val;
-
-      loadTopProperties();
-    } else if (key == 'listingType') {
-      // applyFilters(newFilters);
-      final cityValue = includeCity ? filters!['city'] : null;
-      filters = {
-        if (includeCity && cityValue != null) 'city': cityValue,
-        'listingType': val,
-      };
-    } else {
-      // Generic filter
-      if (includeCity) {
-        filters![key] = val;
+      if (key == 'propertyType') {
+        if (!includeCity) next.remove('city');
+        next['propertyType'] = val;
+        // keep other keys
+      } else if (key == 'city') {
+        // When city changes, clear property/listing specific filters but keep system keys
+        final preserved = <String, String>{};
+        if (next.containsKey('approval_status')) {
+          preserved['approval_status'] = next['approval_status']!;
+        }
+        if (next.containsKey('isVerified')) {
+          preserved['isVerified'] = next['isVerified']!;
+        }
+        next.clear();
+        next.addAll(preserved);
+        next['city'] = val;
+        selectedCity.value = val;
+        // Refresh top properties for new city
+        loadTopProperties();
+      } else if (key == 'listingType') {
+        if (!includeCity) next.remove('city');
+        next['listingType'] = val;
       } else {
-        filters = {key: val};
+        if (!includeCity) {
+          next.clear();
+          next[key] = val;
+        } else {
+          next[key] = val;
+        }
       }
+
+      filters = next;
+
+      print("Current filters: $filters");
+
+      // Reset pagination state and clear items so UI updates immediately
+      currentPage.value = 1;
+      totalPages.value = 1;
+      hasMore.value = true;
+      items.clear();
+      update();
+
+      // Debounce network refreshes to avoid multiple quick API calls
+      _filterDebounce?.cancel();
+      if (immediate) {
+        refreshList();
+      } else {
+        _filterDebounce = Timer(const Duration(milliseconds: 350), () {
+          refreshList();
+        });
+      }
+    } else {
+      filters ??= {};
+
+      print('ApplyFilter called: key=$key, val=$val');
+
+      log("Change the data of For Filter ${filters}");
+
+      if (key == 'propertyType') {
+        final cityValue = includeCity ? filters!['city'] : null;
+        filters = {
+          if (includeCity && cityValue != null) 'city': cityValue,
+          'propertyType': val,
+        };
+      } else if (key == 'city') {
+        filters = {'city': val};
+        selectedCity.value = val;
+
+        loadTopProperties();
+      } else if (key == 'listingType') {
+        // applyFilters(newFilters);
+        final cityValue = includeCity ? filters!['city'] : null;
+        filters = {
+          if (includeCity && cityValue != null) 'city': cityValue,
+          'listingType': val,
+        };
+      } else {
+        // Generic filter
+        if (includeCity) {
+          filters![key] = val;
+        } else {
+          filters = {key: val};
+        }
+      }
+
+      print("Current filters: $filters");
+
+      currentPage.value = 1;
+      totalPages.value = 1;
+      hasMore.value = true;
+      items.clear();
+      update();
+      refreshList();
     }
-
-    print("Current filters: $filters");
-
-    currentPage.value = 1;
-    totalPages.value = 1;
-    hasMore.value = true;
-    items.clear();
-    update();
-    refreshList();
   }
 
   @override
   Future<PaginationResponse<Items>> fetchItems(int page) async {
     try {
+      //======================NEW CODE TO ENSURE CITY FILTER LOGIC IS CONSISTENT========================
       var current = Map<String, String>.from(filters ?? {});
+      //======================NEW CODE TO ENSURE CITY FILTER LOGIC IS CONSISTENT========================
+      //=====================OLD DATA
       if (youWantWithoutCity.value) {
         current.remove('city');
       }
-
+      print("FetchItems with filters: $current   ${youWantWithoutCity.value}");
       filters = current;
-        filters!['approval_status'] = 'approved';
-        filters!['isVerified'] = true.toString();
-      
+      filters!['approval_status'] = 'approved';
+      filters!['isVerified'] = true.toString();
+
       final response = await _service.fetchProperties(
         page: page,
         filters: filters,
@@ -405,11 +477,10 @@ class PropertyController extends PaginatedController<Items> {
         );
         print("Fetched Top Properties: ${response.items.length}");
         return response; // contains items + meta (page/total)
-      }
-      else{
+      } else {
         filters!['approval_status'] = 'approved';
         filters!['isVerified'] = true.toString();
-       
+
         final response = await _service.fetchProperties(
           page: page,
           filters: filters,
@@ -427,9 +498,16 @@ class PropertyController extends PaginatedController<Items> {
   void fetchCreatedBy({bool withoutCity = false}) {
     log('Without City $withoutCity');
 
+    // Temporarily apply "without city" for this fetch only to avoid
+    // changing global UI filter state which can cause other screens to
+    // unexpectedly lose the city filter.
+    final old = youWantWithoutCity.value;
     youWantWithoutCity.value = withoutCity;
 
-    loadInitial();
+    // Run the initial load and then restore previous flag.
+    loadInitial().whenComplete(() {
+      youWantWithoutCity.value = old;
+    });
   }
 
   /// Get single property by ID (returns cached one if found)
@@ -713,6 +791,7 @@ class PropertyController extends PaginatedController<Items> {
       filters['maxPrice'] = maxBudget.text;
     }
 
+
     // Close dialog
     Get.back();
     Get.to(() => PropertyDetail(filters: [filters]));
@@ -740,6 +819,7 @@ class PropertyController extends PaginatedController<Items> {
 
   @override
   void onClose() {
+    _filterDebounce?.cancel();
     // selectedCityZ.dispose();
     // selectedLocalityController.dispose();
     // minBudget.dispose();

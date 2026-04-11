@@ -6,6 +6,7 @@ import '../../app/constants/app_font_sizes.dart';
 import '../../app/constants/color_res.dart';
 
 export 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+
 class NesticoPeSnackBar {
   static void showAwesomeSnackbar({
     required String title,
@@ -21,10 +22,17 @@ class NesticoPeSnackBar {
         title: title,
         message: message,
         contentType: contentType,
+
         color: color,
         inMaterialBanner: true,
-        titleTextStyle:  TextStyle(fontSize: AppFontSizes.large, fontWeight: AppFontWeights.bold),
-        messageTextStyle:  TextStyle(fontSize: AppFontSizes.medium, fontWeight: AppFontWeights.semiBold),
+        titleTextStyle: TextStyle(
+          fontSize: AppFontSizes.body,
+          fontWeight: AppFontWeights.bold,
+        ),
+        messageTextStyle: TextStyle(
+          fontSize: AppFontSizes.small,
+          fontWeight: AppFontWeights.semiBold,
+        ),
       ),
     );
 
@@ -33,6 +41,4 @@ class NesticoPeSnackBar {
       ..showSnackBar(snackBar);
   }
 }
-
-
 

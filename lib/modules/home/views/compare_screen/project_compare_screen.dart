@@ -92,7 +92,6 @@ class _ProjectCompareScreenState extends State<ProjectCompareScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -110,8 +109,8 @@ class _ProjectCompareScreenState extends State<ProjectCompareScreen> {
           ),
         ),
         actions: [
-         if (ProjectCompareManager.to.selectedList.length < 5)
-                TextButton(
+          if (ProjectCompareManager.to.selectedList.length < 5)
+            TextButton(
               onPressed: () => Get.back(),
               child: Text(
                 '+ Add',
@@ -127,7 +126,7 @@ class _ProjectCompareScreenState extends State<ProjectCompareScreen> {
       body: SafeArea(
         child: Obx(() {
           final selected = ProjectCompareManager.to.selectedList;
-        
+
           // If no projects selected
           if (selected.isEmpty) {
             return Center(
@@ -163,7 +162,7 @@ class _ProjectCompareScreenState extends State<ProjectCompareScreen> {
               ),
             );
           }
-        
+
           // // If only 1 project selected
           // if (selected.length == 1) {
           //   final item = selected[0];
@@ -215,7 +214,7 @@ class _ProjectCompareScreenState extends State<ProjectCompareScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                 SizedBox(height: 16),
+                SizedBox(height: 16),
                 ...selected.map((item) {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -230,10 +229,10 @@ class _ProjectCompareScreenState extends State<ProjectCompareScreen> {
                     ),
                   );
                 }).toList(),
-                
+
                 const SizedBox(height: 16),
                 Padding(
-              padding: EdgeInsets.symmetric(horizontal: AppPadding.medium,),
+                  padding: EdgeInsets.symmetric(horizontal: AppPadding.medium),
                   child: Text(
                     'Detailed Comparison',
                     style: TextStyle(
@@ -300,10 +299,10 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: AppPadding.medium,),
+      padding: EdgeInsets.symmetric(horizontal: AppPadding.medium),
       child: GestureDetector(
         onTap: () {
-         Get.to(() => ProjectDetailsScreen(projectItem: widget.item,));
+          Get.to(() => ProjectDetailsScreen(projectItem: widget.item));
         },
         child: Material(
           color: ColorRes.white,
@@ -314,8 +313,9 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
             height: 100,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              boxShadow: widget.isActive
-                    ? [
+              boxShadow:
+                  widget.isActive
+                      ? [
                         BoxShadow(
                           color: ColorRes.primary.withOpacity(0.1),
                           spreadRadius: 2,
@@ -323,21 +323,18 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
                           offset: const Offset(0, 2),
                         ),
                       ]
-                    :  [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
-                  blurRadius: 2,
-                 
-                  offset: const Offset(0, 3),
-                ),
-              ],
-                border: widget.isActive
-                    ? Border.all(
-                        color: ColorRes.primary,
-                        width: 2,
-                      )
-                    : null
-              
+                      : [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.04),
+                          blurRadius: 2,
+
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+              border:
+                  widget.isActive
+                      ? Border.all(color: ColorRes.primary, width: 2)
+                      : null,
             ),
             child: Stack(
               children: [
@@ -367,7 +364,7 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
                                 ),
                               ),
                     ),
-        
+
                     // Content Section
                     Expanded(
                       child: Padding(
@@ -388,8 +385,7 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
-                            
-        
+
                             // Address
                             Text(
                               widget.item.address,
@@ -427,10 +423,9 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
                             //     ),
                             //   ],
                             // ),
-        
+
                             // Price Row
                             Row(
-                              
                               // crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Expanded(
@@ -497,7 +492,7 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
                                                   );
                                                   return;
                                                 }
-        
+
                                                 addInquiryFromProject(
                                                   '',
                                                   '',
@@ -511,12 +506,13 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
                                                   '❌ Error in Get Offer button: $e',
                                                 );
                                                 debugPrint('$s');
-        
+
                                                 NesticoPeSnackBar.showAwesomeSnackbar(
                                                   title: 'Error',
                                                   message:
                                                       'Something went wrong. Please try again.',
-                                                  contentType: ContentType.failure,
+                                                  contentType:
+                                                      ContentType.failure,
                                                 );
                                               }
                                             }
@@ -524,7 +520,7 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
                                               try {
                                                 final user =
                                                     await SecureStorage.getUserData();
-        
+
                                                 if (user == null) {
                                                   NesticoPeSnackBar.showAwesomeSnackbar(
                                                     title: 'Error',
@@ -535,7 +531,7 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
                                                   );
                                                   return;
                                                 }
-        
+
                                                 final fullName =
                                                     user.user?.fullName ?? '';
                                                 final firstName =
@@ -546,13 +542,13 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
                                                     user.user?.email ?? '';
                                                 final phone =
                                                     user.user?.phone ?? '';
-        
+
                                                 final displayName =
                                                     (firstName.isEmpty
                                                             ? username
                                                             : fullName)
                                                         .trim();
-        
+
                                                 if (Get.context == null) {
                                                   NesticoPeSnackBar.showAwesomeSnackbar(
                                                     title: 'Error',
@@ -563,7 +559,7 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
                                                   );
                                                   return;
                                                 }
-        
+
                                                 addInquiryFromProject(
                                                   displayName,
                                                   email,
@@ -577,12 +573,13 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
                                                   '❌ Error in Get Offer button: $e',
                                                 );
                                                 debugPrint('$s');
-        
+
                                                 NesticoPeSnackBar.showAwesomeSnackbar(
                                                   title: 'Error',
                                                   message:
                                                       'Something went wrong. Please try again.',
-                                                  contentType: ContentType.failure,
+                                                  contentType:
+                                                      ContentType.failure,
                                                 );
                                               }
                                             },
@@ -622,7 +619,7 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
                     right: 8,
                     child: GestureDetector(
                       onTap: widget.onRemove,
-                      child: const Icon(
+                      child:  Icon(
                         Icons.cancel,
                         color: ColorRes.error,
                         size: 16,
@@ -855,6 +852,7 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
                                   type: SnackBarType.success,
                                 );*/
                                 Get.back();
+
                                 await controller.getAllInQuireData(
                                   widget.item.id ?? '',
                                 );
@@ -929,7 +927,8 @@ class _ProjectComparisonTable extends StatefulWidget {
   const _ProjectComparisonTable({required this.items, this.onActiveChange});
 
   @override
-  State<_ProjectComparisonTable> createState() => _ProjectComparisonTableState();
+  State<_ProjectComparisonTable> createState() =>
+      _ProjectComparisonTableState();
 }
 
 class _ProjectComparisonTableState extends State<_ProjectComparisonTable> {
@@ -952,7 +951,6 @@ class _ProjectComparisonTableState extends State<_ProjectComparisonTable> {
     });
   }
 
-
   @override
   void dispose() {
     _pageController.dispose();
@@ -964,7 +962,7 @@ class _ProjectComparisonTableState extends State<_ProjectComparisonTable> {
     return Column(
       children: [
         SizedBox(
-          height: 540,
+          height: 680,
           child: PageView.builder(
             controller: _pageController,
             itemCount: widget.items.length,
@@ -1000,9 +998,10 @@ class _ProjectComparisonTableState extends State<_ProjectComparisonTable> {
                   width: _currentPage == index ? 24 : 8,
                   height: 8,
                   decoration: BoxDecoration(
-                    color: _currentPage == index
-                        ? ColorRes.primary
-                        : ColorRes.leadGreyColor[300],
+                    color:
+                        _currentPage == index
+                            ? ColorRes.primary
+                            : ColorRes.leadGreyColor[300],
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -1021,7 +1020,7 @@ class _ProjectDetailsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -1055,30 +1054,27 @@ class _ProjectDetailsCard extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(
-            height: 470,
-            child: ListView(
-              padding: const EdgeInsets.all(0),
-              children: [
-                _row('Location', item.address),
-                Divider(color: ColorRes.leadGreyColor.shade300),
-                _row('Project Area', item.projectArea),
-                Divider(color: ColorRes.leadGreyColor.shade300),
-                _row('Status', item.status.capitalize ?? item.status),
-                Divider(color: ColorRes.leadGreyColor.shade300),
-                _row('Total Units', _getTotalUnits(item)),
-                Divider(color: ColorRes.leadGreyColor.shade300),
-                _row('Buildings', _getTotalBuildings(item)),
-                Divider(color: ColorRes.leadGreyColor.shade300),
-                _row('Configurations', _getConfigurations(item)),
-                Divider(color: ColorRes.leadGreyColor.shade300),
-                _row('Possession', _getPossessionDate(item)),
-                Divider(color: ColorRes.leadGreyColor.shade300),
-                _row('Amenities', _getAmenities(item)),
-                Divider(color: ColorRes.leadGreyColor.shade300),
-                _row('Price Range', item.getPriceRange()),
-              ],
-            ),
+          Column(
+            spacing: 5,
+            children: [
+              _row('Location', item.address),
+              Divider(color: ColorRes.leadGreyColor.shade300),
+              _row('Project Area', item.projectArea),
+              Divider(color: ColorRes.leadGreyColor.shade300),
+              _row('Status', item.status.capitalize ?? item.status),
+              Divider(color: ColorRes.leadGreyColor.shade300),
+              _row('Total Units', _getTotalUnits(item)),
+              Divider(color: ColorRes.leadGreyColor.shade300),
+              _row('Buildings', _getTotalBuildings(item)),
+              Divider(color: ColorRes.leadGreyColor.shade300),
+              _row('Configurations', _getConfigurations(item)),
+              Divider(color: ColorRes.leadGreyColor.shade300),
+              _row('Possession', _getPossessionDate(item)),
+              Divider(color: ColorRes.leadGreyColor.shade300),
+              _row('Amenities', _getAmenities(item)),
+              Divider(color: ColorRes.leadGreyColor.shade300),
+              _row('Price Range', item.getPriceRange()),
+            ],
           ),
         ],
       ),
