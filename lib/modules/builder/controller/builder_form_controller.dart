@@ -1139,7 +1139,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   }
 
   Future<void> pickFileInBuilder() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
+    FilePickerResult? result = await FilePicker.pickFiles(
       type: FileType.custom,
       allowMultiple: false,
       allowedExtensions: ['pdf', 'doc', 'txt'],
@@ -1254,7 +1254,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   // Document picker - Allow up to 2 documents
   Future<void> builderDocumentPicker() async {
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
+      FilePickerResult? result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowMultiple: false,
         allowedExtensions: ['pdf', 'doc', 'txt'],

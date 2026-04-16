@@ -266,7 +266,7 @@ class MediaUploadService {
   // Pick single 3D model file with validation
   Future<File?> pick3DModel() async {
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowMultiple: false,
         allowedExtensions: valid3DExtensions,

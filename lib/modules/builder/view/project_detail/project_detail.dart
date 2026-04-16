@@ -103,10 +103,13 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   void initState() {
     super.initState();
 
-    controller = Get.put(BuilderProjectListController());
-
     // Get project ID (from object or direct ID)
     final projectId = widget.projectItem?.id ?? widget.projectId ?? '';
+
+    controller = Get.put(
+      BuilderProjectListController(),
+      tag: 'project_list_$projectId',
+    );
 
     // Initialize wizard controller
     wizardController = Get.put(
@@ -139,6 +142,10 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   void dispose() {
     final projectId = widget.projectItem?.id ?? widget.projectId ?? '';
     Get.delete<ProjectWizardController>(tag: 'project_detail_$projectId');
+    Get.delete<BuilderProjectListController>(tag: 'project_list_$projectId');
+    Get.delete<GoogleMapSearchController>(tag: 'map_$projectId');
+    Get.delete<OverallRatingController>(tag: 'rating_$projectId');
+    Get.delete<ReviewController>(tag: 'review_$projectId');
     project.close();
     _isLoading.close();
     super.dispose();
@@ -184,7 +191,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         // } else {
         //   await otherCtrl.loadInitial();
         // }
-      } catch (e) { 
+      } catch (e) {
         log('❌ Error loading other projects: $e');
       }
       AppLogger(
@@ -225,15 +232,20 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(ProjectController());
-    
+
     AppLogger.structured(
       '🔍 Building ProjectDetailsScreen for project ID:',
       project?.toJson(),
     );
 
-    return Scaffold(
-      backgroundColor: ColorRes.white.withOpacity(0.95),
-      body: Obx(() {
+    return PopScope(
+      canPop: true,
+      onPopInvoked: (didPop) {
+        // Keep default system back behavior to reuse existing previous route.
+      },
+      child: Scaffold(
+        backgroundColor: ColorRes.white.withOpacity(0.95),
+        body: Obx(() {
         // Show loading while fetching project
         if (_isLoading.value) {
           return const Center(child: CircularProgressIndicator());
@@ -260,7 +272,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
-                  onPressed: () => Get.back(),
+                  onPressed: _goToDashboard,
                   child: const Text('Go Back'),
                 ),
               ],
@@ -301,8 +313,8 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                              const SizedBox(height: 15),
-                        
+                            const SizedBox(height: 15),
+
                             Text(
                               ' Limited Time Offer!',
                               maxLines: 1,
@@ -325,13 +337,12 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
-                                          SizedBox(height: 15),
+                            SizedBox(height: 15),
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 12,
-                                  ),
+                              padding: EdgeInsets.symmetric(horizontal: 12),
                               child: OfferCountdown(
                                 duration: Duration(minutes: 2),
-                                propertyId: project.value?.id ?? '' ,
+                                propertyId: project.value?.id ?? '',
                               ),
                             ),
 
@@ -799,8 +810,17 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                     : "View Contact",
           ),
         );
-      }),
+        }),
+      ),
     );
+  }
+
+  void _goToDashboard() {
+    if (Navigator.of(context).canPop()) {
+      Get.back();
+      return;
+    }
+    Get.offAllNamed('/dashboard', predicate: (route) => false);
   }
 
   Widget _buildMenuItem({
@@ -887,22 +907,18 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       return const SizedBox.shrink();
     }
 
-
     final otherCtrl = Get.find<BuilderProjectListController>(tag: otherTag);
     // Apply city filter once after build — prefer project's city, fallback to saved city
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
         if (otherCtrl.items.isNotEmpty) return; // already loaded
 
-     
         String? cityToApply;
 
-     
-          final storedCity = await SecureStorage.getSelectedCity();
-          if (storedCity != null && storedCity.isNotEmpty) {
-            cityToApply = storedCity;
-          }
-      
+        final storedCity = await SecureStorage.getSelectedCity();
+        if (storedCity != null && storedCity.isNotEmpty) {
+          cityToApply = storedCity;
+        }
 
         if (cityToApply != null && cityToApply.isNotEmpty) {
           await otherCtrl.applyFilters({'city': cityToApply});
@@ -915,7 +931,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     });
 
     return Obx(() {
-
       final items = otherCtrl.items.where((p) => p.id != project.id).toList();
 
       if (otherCtrl.isLoading.value && otherCtrl.items.isEmpty) {
@@ -951,7 +966,9 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                   final data = items[index];
                   return GestureDetector(
                     onTap: () {
-                      print("Tapped on project ${data.projectName} with ID ${data.id}");
+                      print(
+                        "Tapped on project ${data.projectName} with ID ${data.id}",
+                      );
                       // Navigator.of(context).push(
                       //   MaterialPageRoute(
                       //     builder: (_) => ProjectDetailsScreen(
@@ -960,11 +977,13 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                       //     ),
                       //   ),
                       // );
-                      Get.to(() => ProjectDetailsScreen(
-  projectItem: data,
-  isBuilder: widget.isBuilder,
-
-),routeName: '/project/${data.id}');
+                      Get.to(
+                        () => ProjectDetailsScreen(
+                          projectItem: data,
+                          isBuilder: widget.isBuilder,
+                        ),
+                        routeName: '/project/${data.id}',
+                      );
                     },
                     child: SizedBox(
                       width: 260,
@@ -987,17 +1006,21 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                           height: 150,
                           developersName:
                               data.projectContactInfo?.name ?? 'Unknown',
-                          imageUrl: (data.mediaGallery?.images?.isNotEmpty ?? false)
-                              ? data.mediaGallery!.images.first
-                              : IMGRes.home3,
-                          projectName: data.projectName.isNotEmpty
-                              ? data.projectName
-                              : 'N/A',
-                          location: data.address.isNotEmpty
-                              ? data.address
-                              : 'Not specified',
+                          imageUrl:
+                              (data.mediaGallery?.images?.isNotEmpty ?? false)
+                                  ? data.mediaGallery!.images.first
+                                  : IMGRes.home3,
+                          projectName:
+                              data.projectName.isNotEmpty
+                                  ? data.projectName
+                                  : 'N/A',
+                          location:
+                              data.address.isNotEmpty
+                                  ? data.address
+                                  : 'Not specified',
                           price: data.getPriceRange(),
-                          propertySize: data.projectSize?.totalBuildings?.toString() ??
+                          propertySize:
+                              data.projectSize?.totalBuildings?.toString() ??
                               '—',
                         ),
                       ),
@@ -1293,7 +1316,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       backgroundColor: ColorRes.white,
 
       leading: GestureDetector(
-        onTap: () => Navigator.pop(context),
+      onTap: _goToDashboard,
         child: Container(
           margin: const EdgeInsets.only(left: 12),
           padding: const EdgeInsets.all(8),
@@ -2883,7 +2906,8 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         entityType: "project",
         entityId: project?.id ?? '',
         reviewCardBuilder:
-            (context, item) => PropertyReviewCard(reviewItem: item, showFullDetails: false),
+            (context, item) =>
+                PropertyReviewCard(reviewItem: item, showFullDetails: false),
         overallWidgetBuilder: (total, rating, details) {
           return OverallRatingWidget(
             totalReviews: total,
@@ -3100,7 +3124,12 @@ class OfferCountdown extends StatefulWidget {
   final Duration? duration;
   final String? propertyId;
   final VoidCallback? onFinished;
-  const OfferCountdown({super.key, this.duration, this.propertyId, this.onFinished});
+  const OfferCountdown({
+    super.key,
+    this.duration,
+    this.propertyId,
+    this.onFinished,
+  });
   @override
   State<OfferCountdown> createState() => _OfferCountdownState();
 }
@@ -3142,7 +3171,9 @@ class _OfferCountdownState extends State<OfferCountdown>
 
     _countdownController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        try { widget.onFinished?.call(); } catch (_) {}
+        try {
+          widget.onFinished?.call();
+        } catch (_) {}
         if (widget.propertyId != null && widget.propertyId!.isNotEmpty) {
           final rnd = Random();
           final newDays = 5 + rnd.nextInt(11);
@@ -3170,10 +3201,14 @@ class _OfferCountdownState extends State<OfferCountdown>
     return AnimatedBuilder(
       animation: _countdownController,
       builder: (context, _) {
-        final elapsed = _countdownController.lastElapsedDuration ?? Duration.zero;
+        final elapsed =
+            _countdownController.lastElapsedDuration ?? Duration.zero;
         final duration = _countdownController.duration ?? Duration.zero;
         final left = duration - elapsed;
-        final totalLeftSeconds = left.inSeconds.clamp(0, duration.inSeconds == 0 ? left.inSeconds : duration.inSeconds);
+        final totalLeftSeconds = left.inSeconds.clamp(
+          0,
+          duration.inSeconds == 0 ? left.inSeconds : duration.inSeconds,
+        );
         final daysLeft = (totalLeftSeconds + 86399) ~/ 86400;
         final hoursLeft = (totalLeftSeconds % 86400) ~/ 3600;
         final minsLeft = (totalLeftSeconds % 3600) ~/ 60;
@@ -3223,21 +3258,25 @@ class _OfferCountdownState extends State<OfferCountdown>
                             ],
                           ),
                         ),
-                        
                       ),
-                      
                     );
                   },
                 ),
 
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 14,
+                  ),
                   child: Row(
                     children: [
                       // Flame icon with pulse
                       ScaleTransition(
                         scale: Tween<double>(begin: 0.92, end: 1.0).animate(
-                          CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+                          CurvedAnimation(
+                            parent: _pulseController,
+                            curve: Curves.easeInOut,
+                          ),
                         ),
                         child: Container(
                           width: 48,
@@ -3257,7 +3296,11 @@ class _OfferCountdownState extends State<OfferCountdown>
                               ),
                             ],
                           ),
-                          child: const Icon(Icons.local_fire_department_rounded, color: Colors.white, size: 24),
+                          child: const Icon(
+                            Icons.local_fire_department_rounded,
+                            color: Colors.white,
+                            size: 24,
+                          ),
                         ),
                       ),
 

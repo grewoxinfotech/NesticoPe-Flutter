@@ -187,10 +187,18 @@ class SellerProfileUpdate {
 
 
 
+  static const int _phoneUpdateOtpLength = 4;
+
   Future<Map<String, dynamic>> verifyOtpForSellerNumber(String otp,
       Map user,
       String userId,) async {
     try {
+      if (otp.trim().length != _phoneUpdateOtpLength) {
+        return {
+          'success': false,
+          'message': 'Please enter a 4-digit OTP',
+        };
+      }
       log('user id dshfbd $userId');
       log('user OTP  $otp');
       log("user Data ${user}");

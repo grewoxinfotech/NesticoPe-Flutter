@@ -49,6 +49,7 @@ class _TopDeveloperProfileScreenState extends State<TopDeveloperProfileScreen> {
   void initState() {
     super.initState();
     _tag = 'top_dev_profile_${widget.userId}';
+    print('tag: ${widget.userId}======== ${widget.createdBy}');
     profileController =
         Get.isRegistered<TopBuilderController>(tag: _tag)
             ? Get.find<TopBuilderController>(tag: _tag)
@@ -58,14 +59,23 @@ class _TopDeveloperProfileScreenState extends State<TopDeveloperProfileScreen> {
             ? Get.find<ProjectWizardController>(tag: _tag)
             : Get.put(ProjectWizardController(isBuilderView: false), tag: _tag);
 
-    // Load stored city (if any) to filter projects/developers shown
-    SecureStorage.getSelectedCity().then((city) {
-      if (city != null && city.isNotEmpty) {
-        selectedCity.value = city;
-      }
-    }).catchError((e) {
-      log('Error reading selected city: $e');
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Future.wait([
+        projectController.applyFilters({'created_by': widget.createdBy}),
+        profileController.loadSellerProfile(widget.userId),
+      ]);
     });
+
+    // Load stored city (if any) to filter projects/developers shown
+    SecureStorage.getSelectedCity()
+        .then((city) {
+          if (city != null && city.isNotEmpty) {
+            selectedCity.value = city;
+          }
+        })
+        .catchError((e) {
+          log('Error reading selected city: $e');
+        });
 
     ever<List<ProjectItem>>(projectController.items, (list) async {
       if (allItemsCache.isEmpty && list.isNotEmpty) {
@@ -84,311 +94,492 @@ class _TopDeveloperProfileScreenState extends State<TopDeveloperProfileScreen> {
       }
     });
   }
-  
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-     
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () async {
-            Get.back();
-            // var city = await SecureStorage.getSelectedCity();
-
-            // if (city != null) {
-            //   projectController.isCreatedByItem.value = true;
-            //   projectController.createdBy.value = '';
-            //   projectController.youWantWithoutCity.value = false;
-            //   projectController.cityAssign(city);
-            //   projectController.applyFilter('city', city);
-            //   projectController.filters?.remove('created_by');
-            //   projectController.loadInitial();
-            // }
-            
-          },
-          icon: const Icon(Icons.arrow_back),
+    return PopScope(
+      canPop: true,
+      onPopInvoked: (didPop) {
+        // Keep default system back behavior to reuse existing previous route.
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: _goToDashboard,
+            icon: const Icon(Icons.arrow_back),
+          ),
+          title: const Text(
+            'Developer Profile',
+            style: TextStyle(fontWeight: AppFontWeights.semiBold),
+          ),
+          backgroundColor: ColorRes.white,
+          elevation: 0,
+          centerTitle: false,
         ),
-        title: const Text(
-          'Developer Profile',
-          style: TextStyle(fontWeight: AppFontWeights.semiBold),
+        body: SafeArea(
+          child: Obx(() {
+            final isLoadingProfile = profileController.isLoading.value;
+            final items = projectController.items;
+            log('items: sdfdsfsdfsdf${items.length}');
 
-        ),
-        backgroundColor: ColorRes.white,
-        elevation: 0,
-        centerTitle: false,
-      ),
-      body: SafeArea(
-        child: Obx(() {
-          final isLoadingProfile = profileController.isLoading.value;
-          final items = projectController.items;
-          log('items: sdfdsfsdfsdf${items.length}');
+            if (selectedStatus.value.isEmpty &&
+                allItemsCache.isEmpty &&
+                items.isNotEmpty) {
+              allItemsCache.assignAll(items.toList(growable: false));
+            }
 
-          if (selectedStatus.value.isEmpty &&
-              allItemsCache.isEmpty &&
-              items.isNotEmpty) {
-            allItemsCache.assignAll(items.toList(growable: false));
-          }
+            final base = allItemsCache.isNotEmpty ? allItemsCache : items;
 
-          final base = allItemsCache.isNotEmpty ? allItemsCache : items;
+            final allCount = base.length;
+            final upcomingCount =
+                base
+                    .where(
+                      (e) =>
+                          (e.status ?? '').toLowerCase().contains('upcoming') ||
+                          (e.status ?? '').toLowerCase().contains('new launch'),
+                    )
+                    .length;
+            final ongoingCount =
+                base
+                    .where(
+                      (e) =>
+                          (e.status ?? '').toLowerCase().contains('ongoing') ||
+                          (e.status ?? '').toLowerCase().contains(
+                            'under construction',
+                          ),
+                    )
+                    .length;
+            final completedCount =
+                base
+                    .where(
+                      (e) =>
+                          (e.status ?? '').toLowerCase().contains('completed'),
+                    )
+                    .length;
 
-          final allCount = base.length;
-          final upcomingCount =
-              base
-                  .where(
-                    (e) =>
-                        (e.status ?? '').toLowerCase().contains('upcoming') ||
-                        (e.status ?? '').toLowerCase().contains('new launch'),
-                  )
-                  .length;
-          final ongoingCount =
-              base
-                  .where(
-                    (e) =>
-                        (e.status ?? '').toLowerCase().contains('ongoing') ||
-                        (e.status ?? '').toLowerCase().contains(
-                          'under construction',
-                        ),
-                  )
-                  .length;
-          final completedCount =
-              base
-                  .where(
-                    (e) => (e.status ?? '').toLowerCase().contains('completed'),
-                  )
-                  .length;
+            return Stack(
+              children: [
+                RefreshIndicator(
+                  onRefresh: () async {
+                    await projectController.refreshList();
+                    await profileController.loadSellerProfile(widget.userId);
+                  },
+                  child: ListView(
+                    padding: const EdgeInsets.all(16),
+                    children: [
+                      _buildHeader(isLoadingProfile),
+                      const SizedBox(height: 12),
 
-          return Stack(
-            children: [
-              RefreshIndicator(
-                onRefresh: () async {
-                  await projectController.refreshList();
-                  await profileController.loadSellerProfile(widget.userId);
-                },
-                child: ListView(
-                  padding: const EdgeInsets.all(16),
-                  children: [
-                    _buildHeader(isLoadingProfile),
-                    const SizedBox(height: 12),
+                      // --- Featured developer + horizontal list (exclude current profile) ---
+                      Obx(() {
+                        final cityFilter =
+                            selectedCity.value.trim().toLowerCase();
 
-                    // --- Featured developer + horizontal list (exclude current profile) ---
-                    Obx(() {
-                      
-                      final cityFilter = selectedCity.value.trim().toLowerCase();
+                        final developers =
+                            profileController.items.where((d) {
+                              // Only remove current user
+                              return (d.id ?? '') != widget.userId;
+                            }).toList();
 
-                      final developers = profileController.items
-                          .where((d) {
-                            final notSelf = (d.id ?? '') != widget.userId;
-                            if (!notSelf) return false;
+                        if (developers.isEmpty) return const SizedBox.shrink();
 
-                            if (cityFilter.isEmpty) return true;
+                        final featured = developers.first;
+                        final rest =
+                            developers.length > 1
+                                ? developers.sublist(1)
+                                : <BuilderItem>[];
 
-                            final devCity = (d.city ?? '').trim().toLowerCase();
-                            return devCity.isNotEmpty && devCity.contains(cityFilter);
-                          })
-                          .toList();
-
-                      if (developers.isEmpty) return const SizedBox.shrink();
-
-                      final featured = developers.first;
-                      final rest = developers.length > 1 ? developers.sublist(1) : <BuilderItem>[];
-
-
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 8),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 0.0),
-                            child: GestureDetector(
-                              onTap: () async {
-                                // load profile and navigate
-                                await profileController.loadSellerProfile(featured.id ?? '');
-                                Get.to(() => TopDeveloperProfileScreen(userId: featured.id ?? '', createdBy: featured.id ?? ''));
-                              },
-                              child: Container(
-                                height: 160,
-                                margin: const EdgeInsets.symmetric(horizontal: 0),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  image: featured.profilePic != null && featured.profilePic!.isNotEmpty
-                                      ? DecorationImage(
-                                          image: CachedNetworkImageProvider(featured.profilePic!),
-                                          fit: BoxFit.cover,
-                                        )
-                                      : null,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.03),
-                                      blurRadius: 6,
-                                      offset: const Offset(0, 3),
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 8),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 0.0,
+                              ),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  Get.to(
+                                    () => TopDeveloperProfileScreen(
+                                      userId: featured.id ?? '',
+                                      createdBy:
+                                          featured.id ??
+                                          featured.id ??
+                                          '',
                                     ),
-                                  ],
-                                ),
+                                    routeName: '/developer/${featured.id}',
+                                  );
+                                },
                                 child: Container(
+                                  width: 320,
+                                  padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [Colors.transparent, Colors.black.withOpacity(0.5)],
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(
+                                      color: Colors.grey.shade100,
                                     ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.04),
+                                        blurRadius: 12,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
                                   ),
-                                  padding: const EdgeInsets.all(12),
-                                  alignment: Alignment.bottomLeft,
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        featured.firstName ?? featured.username ?? 'Developer',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: AppFontSizes.body,
-                                          fontWeight: AppFontWeights.semiBold,
-                                        ),
+                                      /// Top Row
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          /// Avatar
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              48,
+                                            ),
+                                            child:
+                                                featured.profilePic != null &&
+                                                        featured
+                                                            .profilePic!
+                                                            .isNotEmpty
+                                                    ? CachedNetworkImage(
+                                                      imageUrl:
+                                                          featured.profilePic!,
+                                                      width: 48,
+                                                      height: 48,
+                                                      fit: BoxFit.cover,
+                                                    )
+                                                    : Container(
+                                                      width: 48,
+                                                      height: 48,
+                                                      decoration: BoxDecoration(
+                                                        color: ColorRes.primary
+                                                            .withOpacity(0.1),
+                                                        shape: BoxShape.circle,
+                                                      ),
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: Text(
+                                                        (featured.firstName ??
+                                                                'D')[0]
+                                                            .toUpperCase(),
+                                                        style: const TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          color:
+                                                              ColorRes.primary,
+                                                        ),
+                                                      ),
+                                                    ),
+                                          ),
+
+                                          const SizedBox(width: 14),
+
+                                          /// Name + Info
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  featured.firstName?.capitalize
+                                                          ?.replaceAll(
+                                                            '_',
+                                                            ' ',
+                                                          ) ??
+                                                      featured
+                                                          .username
+                                                          ?.capitalize
+                                                          ?.replaceAll(
+                                                            '_',
+                                                            ' ',
+                                                          ) ??
+                                                      'Developer',
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Color(0xFF1A1A1A),
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 5),
+
+                                                /// City Tag
+                                                Container(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 3,
+                                                      ),
+                                                  decoration: BoxDecoration(
+                                                    color: ColorRes.primary
+                                                        .withOpacity(0.1),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          99,
+                                                        ),
+                                                  ),
+                                                  child: Text(
+                                                    featured.city ?? 'N/A',
+                                                    style: TextStyle(
+                                                      fontSize: 11,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: ColorRes.primary,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        "${featured.totalExperience ?? 0}+ yrs • ${featured.city ?? 'N/A'}",
-                                        style: TextStyle(
-                                          color: Colors.white70,
-                                          fontSize: AppFontSizes.caption,
-                                        ),
+
+                                      const SizedBox(height: 14),
+
+                                      Divider(
+                                        height: 1,
+                                        thickness: 0.5,
+                                        color: ColorRes.leadGreyColor
+                                            .withOpacity(0.3),
+                                      ),
+
+                                      const SizedBox(height: 12),
+
+                                      /// Bottom Row
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.work_outline_rounded,
+                                            size: 13,
+                                            color: Colors.grey,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            "${featured.totalExperience ?? 0}+ yrs exp.",
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey.shade700,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          const Icon(
+                                            Icons.location_on_outlined,
+                                            size: 13,
+                                            color: Colors.grey,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Expanded(
+                                            child: Text(
+                                              featured.city ?? 'N/A',
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey.shade700,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+
+                                          /// CTA Button
+                                          TextButton(
+                                            onPressed: () async {
+                                              Get.to(
+                                                () => TopDeveloperProfileScreen(
+                                                  userId: featured.id ?? '',
+                                                  createdBy:
+                                                      featured.id ??
+                                                      featured.id ??
+                                                      '',
+                                                ),
+
+                                                routeName:
+                                                    '/developer/${featured.id}',
+                                              );
+                                            },
+                                            style: TextButton.styleFrom(
+                                              backgroundColor: ColorRes.primary,
+                                              foregroundColor: Colors.white,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 14,
+                                                    vertical: 6,
+                                                  ),
+                                              minimumSize: Size.zero,
+                                              tapTargetSize:
+                                                  MaterialTapTargetSize
+                                                      .shrinkWrap,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                            ),
+                                            child: const Text(
+                                              "View profile",
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 12),
-                          if (rest.isNotEmpty)
-                            SizedBox(
-                              height: 120,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                padding: const EdgeInsets.symmetric(horizontal: 0),
-                                itemCount: rest.length,
-                                itemBuilder: (context, i) {
-                                  final d = rest[i];
-                                  return Padding(
-                                    padding: const EdgeInsets.only(right: 12, left: 8),
-                                    child: _DeveloperMiniCard(builder: d),
-                                  );
-                                },
-                              ),
-                            ),
-                          const SizedBox(height: 12),
-                        ],
-                      );
-                    }),
-
-                    const SizedBox(height: 8),
-
-                    _StatusTabs(
-                      selectedStatus: selectedStatus.value,
-                      all: allCount,
-                      upcoming: upcomingCount,
-                      ongoing: ongoingCount,
-                      completed: completedCount,
-                      onSelect: (status) async {
-                        selectedStatus.value = status;
-                        log(
-                          'status: $status   selectedStatus.value: ${selectedStatus.value}',
-                        );
-                        if (status.isEmpty) {
-                          projectController.builderStatus.value = '';
-                          projectController.clearFilter('status');
-                          await projectController.applyFilters({
-                            'created_by': widget.createdBy,
-                          });
-                        } else {
-                          await projectController.applyFilters({
-                            'status': status.toLowerCase(),
-                            'created_by': widget.createdBy,
-                          });
-                        }
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    if (projectController.isLoading.value && items.isEmpty)
-                      const BuilderProjectListShimmer()
-                    else if (items.isEmpty &&
-                        !projectController.isLoading.value)
-                      SizedBox(
-                        height: 280,
-                        child: Center(
-                          child: Text(
-                            'No projects found',
-                            style: TextStyle(
-                              color: ColorRes.leadGreyColor.shade700,
-                              fontWeight: AppFontWeights.medium,
-                            ),
-                          ),
-                        ),
-                      )
-                    else
-                      ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount:
-                            (selectedStatus.value.isEmpty
-                                ? (allItemsCache.isNotEmpty
-                                    ? allItemsCache.length
-                                    : items.length)
-                                : items.length),
-                        separatorBuilder: (_, __) => const SizedBox(height: 12),
-                        itemBuilder: (context, index) {
-                          final displayItems =
-                              selectedStatus.value.isEmpty
-                                  ? (allItemsCache.isNotEmpty
-                                      ? allItemsCache
-                                      : items)
-                                  : items;
-                          final data = displayItems[index];
-                          final img =
-                              (data.mediaGallery?.images.isNotEmpty ?? false)
-                                  ? data.mediaGallery!.images.first
-                                  : '';
-                          return GestureDetector(
-                            onTap: () {
-                              Get.to(
-                                () => ProjectDetailsScreen(
-                                  projectItem: data,
-                                  isBuilder: false,
+                            const SizedBox(height: 12),
+                            if (rest.isNotEmpty)
+                              SizedBox(
+                                height: 120,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 0,
+                                  ),
+                                  itemCount: rest.length,
+                                  itemBuilder: (context, i) {
+                                    final d = rest[i];
+                                    return Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 12,
+                                        left: 8,
+                                      ),
+                                      child: _DeveloperMiniCard(builder: d),
+                                    );
+                                  },
                                 ),
-                              );
-                            },
-                            child: BuilderProjectCard(
-                              project: data,
-                              imageUrl: img,
-                              developersName:
-                                  data.projectContactInfo?.name ?? 'Unknown',
-                              projectName: data.projectName ?? 'N/A',
-                              location: data.address ?? '',
-                              price: data.getPriceRange(),
-                              propertySize:
-                                  data.projectSize?.totalBuildings
-                                      ?.toString() ??
-                                  '',
-                              height: 410,
-                              width: double.infinity,
-                              forHome: true,
-                            ),
+                              ),
+                            const SizedBox(height: 12),
+                          ],
+                        );
+                      }),
+
+                      const SizedBox(height: 8),
+
+                      _StatusTabs(
+                        selectedStatus: selectedStatus.value,
+                        all: allCount,
+                        upcoming: upcomingCount,
+                        ongoing: ongoingCount,
+                        completed: completedCount,
+                        onSelect: (status) async {
+                          selectedStatus.value = status;
+                          log(
+                            'status: $status   selectedStatus.value: ${selectedStatus.value}',
                           );
+                          if (status.isEmpty) {
+                            projectController.builderStatus.value = '';
+                            projectController.clearFilter('status');
+                            await projectController.applyFilters({
+                              'created_by': widget.createdBy,
+                            });
+                          } else {
+                            await projectController.applyFilters({
+                              'status': status.toLowerCase(),
+                              'created_by': widget.createdBy,
+                            });
+                          }
                         },
                       ),
-                  ],
+                      const SizedBox(height: 12),
+                      if (projectController.isLoading.value && items.isEmpty)
+                        const BuilderProjectListShimmer()
+                      else if (items.isEmpty &&
+                          !projectController.isLoading.value)
+                        SizedBox(
+                          height: 280,
+                          child: Center(
+                            child: Text(
+                              'No projects found',
+                              style: TextStyle(
+                                color: ColorRes.leadGreyColor.shade700,
+                                fontWeight: AppFontWeights.medium,
+                              ),
+                            ),
+                          ),
+                        )
+                      else
+                        ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount:
+                              (selectedStatus.value.isEmpty
+                                  ? (allItemsCache.isNotEmpty
+                                      ? allItemsCache.length
+                                      : items.length)
+                                  : items.length),
+                          separatorBuilder:
+                              (_, __) => const SizedBox(height: 12),
+                          itemBuilder: (context, index) {
+                            final displayItems =
+                                selectedStatus.value.isEmpty
+                                    ? (allItemsCache.isNotEmpty
+                                        ? allItemsCache
+                                        : items)
+                                    : items;
+                            final data = displayItems[index];
+                            final img =
+                                (data.mediaGallery?.images.isNotEmpty ?? false)
+                                    ? data.mediaGallery!.images.first
+                                    : '';
+                            return GestureDetector(
+                              onTap: () {
+                                Get.to(
+                                  () => ProjectDetailsScreen(
+                                    projectItem: data,
+                                    isBuilder: false,
+                                  ),
+                                  routeName: '/project/${data.id}',
+                                );
+                              },
+                              child: BuilderProjectCard(
+                                project: data,
+                                imageUrl: img,
+                                developersName:
+                                    data.projectContactInfo?.name ?? 'Unknown',
+                                projectName: data.projectName ?? 'N/A',
+                                location: data.address ?? '',
+                                price: data.getPriceRange(),
+                                propertySize:
+                                    data.projectSize?.totalBuildings
+                                        ?.toString() ??
+                                    '',
+                                height: 410,
+                                width: double.infinity,
+                                forHome: true,
+                              ),
+                            );
+                          },
+                        ),
+                    ],
+                  ),
                 ),
-              ),
-              const UnifiedComparisonFloatingButton(bottom: 16),
-            ],
-          );
-        }),
+                const UnifiedComparisonFloatingButton(bottom: 16),
+              ],
+            );
+          }),
+        ),
       ),
     );
+  }
+
+  void _goToDashboard() {
+    if (Navigator.of(context).canPop()) {
+      Get.back();
+      return;
+    }
+    Get.offAllNamed('/dashboard', predicate: (route) => false);
   }
 
   @override
@@ -426,7 +617,7 @@ class _TopDeveloperProfileScreenState extends State<TopDeveloperProfileScreen> {
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(16),
         // border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
-         boxShadow: [
+        boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
             blurRadius: 2,
@@ -659,13 +850,9 @@ class _StatusTabs extends StatelessWidget {
         decoration: BoxDecoration(
           color: selected ? ColorRes.primary.withOpacity(0.12) : ColorRes.white,
           borderRadius: BorderRadius.circular(24),
-          border: selected
-              ? Border.all(
-                  color: ColorRes.primary,
-                  width: 1.4,
-                )
-              : null,
-              
+          border:
+              selected ? Border.all(color: ColorRes.primary, width: 1.4) : null,
+
           boxShadow:
               selected
                   ? [
@@ -857,12 +1044,13 @@ class _DeveloperMiniCard extends StatelessWidget {
     // final rating = builder.userRating ?? 0.0;
     return GestureDetector(
       onTap: () async {
-        final tag = 'top_dev_profile_${builder.id}';
-        final controller = Get.isRegistered<TopBuilderController>(tag: tag)
-            ? Get.find<TopBuilderController>(tag: tag)
-            : Get.put(TopBuilderController(), tag: tag);
-        await controller.loadSellerProfile(builder.id ?? '');
-        Get.to(() => TopDeveloperProfileScreen(userId: builder.id ?? '', createdBy: builder.id ?? ''));
+        Get.to(
+          () => TopDeveloperProfileScreen(
+            userId: builder.id ?? '',
+            createdBy: builder.id ?? builder.id ?? '',
+          ),
+          routeName: '/developer/${builder.id}',
+        );
       },
       child: Container(
         width: 260,
@@ -872,6 +1060,7 @@ class _DeveloperMiniCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: ColorRes.leadGreyColor.shade100),
           boxShadow: [
+
             BoxShadow(
               color: Colors.black.withOpacity(0.03),
               blurRadius: 6,
@@ -889,21 +1078,25 @@ class _DeveloperMiniCard extends StatelessWidget {
                 height: 64,
                 fit: BoxFit.cover,
                 placeholder: (c, u) => ShimmerShapes.circle(size: 64),
-                errorWidget: (c, u, e) => Container(
-                  width: 64,
-                  height: 64,
-                  color: ColorRes.primary.withOpacity(0.1),
-                  alignment: Alignment.center,
-                  child: Text(
-                    (builder.firstName ?? builder.username ?? 'U')
-                        .trim()
-                        .split(' ')
-                        .map((e) => e.isNotEmpty ? e[0].toUpperCase() : '')
-                        .take(2)
-                        .join(),
-                    style: const TextStyle(fontWeight: FontWeight.w600, color: ColorRes.primary),
-                  ),
-                ),
+                errorWidget:
+                    (c, u, e) => Container(
+                      width: 64,
+                      height: 64,
+                      color: ColorRes.primary.withOpacity(0.1),
+                      alignment: Alignment.center,
+                      child: Text(
+                        (builder.firstName ?? builder.username ?? 'U')
+                            .trim()
+                            .split(' ')
+                            .map((e) => e.isNotEmpty ? e[0].toUpperCase() : '')
+                            .take(2)
+                            .join(),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: ColorRes.primary,
+                        ),
+                      ),
+                    ),
               ),
             ),
             const SizedBox(width: 12),
@@ -916,11 +1109,14 @@ class _DeveloperMiniCard extends StatelessWidget {
                     builder.firstName ?? builder.username ?? 'Developer',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    "${Formatter.formatNumber(num.tryParse(builder.totalExperience.toString() ?? '')?? 0) ?? '0'}+ yrs • ${builder.city ?? 'N/A'}",
+                    "${Formatter.formatNumber(num.tryParse(builder.totalExperience.toString() ?? '') ?? 0) ?? '0'}+ yrs • ${builder.city ?? 'N/A'}",
                     style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

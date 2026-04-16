@@ -338,7 +338,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String? _selectedSellerType;
   String? _contractorType;
   final _formKey = GlobalKey<FormState>();
-  
+
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -366,7 +366,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   void dispose() {
-   
     _firstNameController.dispose();
     _lastNameController.dispose();
     _emailController.dispose();
@@ -400,7 +399,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       try {
         final success = await authController.register(
           context: context,
-          
+
           password: _passwordController.text.trim(),
           email: _emailController.text.trim(),
           firstName: _firstNameController.text.trim(),
@@ -448,7 +447,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       try {
         final data = {
-        
           "firstName": _firstNameController.text.trim(),
           "lastName": _lastNameController.text.trim(),
           "email": _emailController.text.trim(),
@@ -462,7 +460,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
         final success = await authController.sellerRegister(
           context: context,
-        
+
           phone: _phoneController.text.trim(),
           referralCode: _referralCodeController.text.trim(),
           sellerType: _selectedSellerType?.toLowerCase() ?? 'owner',
@@ -498,7 +496,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       try {
         final data = {
-        
           "email": _emailController.text.trim(),
           "phone": _phoneController.text.trim(),
           "city": _cityController.text.trim(),
@@ -551,7 +548,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       try {
         final data = {
-      
           "email": _emailController.text.trim(),
           "phone": _phoneController.text.trim(),
           "contractorType": _contractorType ?? 'Labour',
@@ -679,7 +675,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 //   ),
                 //   const SizedBox(height: 10),
                 // ],
-                if (_selectedRole == UserRole.seller)...[
+                if (_selectedRole == UserRole.seller) ...[
                   CommonRadioGroup<String>(
                     title: "Select Seller Type",
                     options: const ["Owner", "Builder"],
@@ -690,7 +686,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         _selectedSellerType = value;
                       });
                     },
-                  ),]else...[SizedBox.shrink()],
+                  ),
+                ] else ...[
+                  SizedBox.shrink(),
+                ],
 
                 // if (_selectedRole == UserRole.buyer ||
                 //     _selectedRole == UserRole.contractor ||
@@ -715,64 +714,62 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 //     return null;
                 //   },
                 // ),
-
                 const SizedBox(height: 10),
 
                 // ],
                 // if (_selectedRole == UserRole.seller) ...[
-                  Row(
-                    children: [
-                      Expanded(
-                        child: NesticoPeTextField(
-                          title: "First Name",
-                          isRequired: true,
-                          style: TextStyle(
-                            fontSize: AppFontSizes.medium,
-                            fontWeight: AppFontWeights.semiBold,
-                            color: ColorRes.textPrimary,
-                          ),
-                          controller: _firstNameController,
-                          hintText: 'Enter First Name',
-                          prefixIcon: Icons.person_outline,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter first name';
-                            }
-                            return null;
-                          },
+                Row(
+                  children: [
+                    Expanded(
+                      child: NesticoPeTextField(
+                        title: "First Name",
+                        isRequired: true,
+                        style: TextStyle(
+                          fontSize: AppFontSizes.medium,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.textPrimary,
                         ),
+                        controller: _firstNameController,
+                        hintText: 'Enter First Name',
+                        prefixIcon: Icons.person_outline,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter first name';
+                          }
+                          return null;
+                        },
                       ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: NesticoPeTextField(
-                          title: "Last Name",
-                          isRequired: true,
-                          style: TextStyle(
-                            fontSize: AppFontSizes.medium,
-                            fontWeight: AppFontWeights.semiBold,
-                            color: ColorRes.textPrimary,
-                          ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: NesticoPeTextField(
+                        title: "Last Name",
+                        isRequired: true,
+                        style: TextStyle(
+                          fontSize: AppFontSizes.medium,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.textPrimary,
+                        ),
 
-                          controller: _lastNameController,
-                          hintText: 'Enter Last Name',
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          prefixIcon: Icons.person_outline,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter last name';
-                            }
-                            return null;
-                          },
-                        ),
+                        controller: _lastNameController,
+                        hintText: 'Enter Last Name',
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        prefixIcon: Icons.person_outline,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter last name';
+                          }
+                          return null;
+                        },
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+
                 // ],
-
                 NesticoPeTextField(
-
                   isRequired: true,
                   title: "Email Address",
                   style: TextStyle(
@@ -1051,8 +1048,74 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 //   title: 'Create Account',
                 //   onTap: _isLoading ? null : switchRole(_selectedRole),
                 // ),
+                // Obx(
+                //   () => NesticoPeButton(
+                //     title:
+                //         authController.isLoading.value
+                //             ? "Registering..."
+                //             : "Register",
+                //     backgroundColor:
+                //         authController.isLoading.value
+                //             ? ColorRes.primary.withOpacity(0.6)
+                //             : ColorRes.primary,
+                //     onTap:
+                //         authController.isLoading.value
+                //             ? null
+                //             : switchRole(_selectedRole),
+                //   ),
+                // ),
+                // const SizedBox(height: 10),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     Text(
+                //       'Already have an account?',
+                //       style: TextStyle(color: ColorRes.leadGreyColor.shade700),
+                //     ),
+                //     TextButton(
+                //       onPressed: () => Get.to(() => LoginScreen()),
+                //       child: Text(
+                //         'Login here',
+                //         style: TextStyle(
+                //           color: theme.colorScheme.primary,
+
+                //           fontWeight: AppFontWeights.extraBold,
+                //           // fontWeight: FontWeight.bold,
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          decoration: BoxDecoration(
+            color: ColorRes.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            boxShadow: [
+              BoxShadow(
+                color: ColorRes.black.withOpacity(0.1),
+                spreadRadius: 2,
+                blurRadius: 8,
+                offset: Offset(0, 2),
+              ),
+            ],
+            border: Border(
+              top: BorderSide(color: ColorRes.leadGreyColor.shade100, width: 1),
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
                 Obx(
                   () => NesticoPeButton(
+                    width: double.infinity,
                     title:
                         authController.isLoading.value
                             ? "Registering..."
@@ -1067,7 +1130,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             : switchRole(_selectedRole),
                   ),
                 ),
-                const SizedBox(height: 10),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -1076,12 +1139,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       style: TextStyle(color: ColorRes.leadGreyColor.shade700),
                     ),
                     TextButton(
-                      onPressed: () => Get.to(() => OtpLoginScreen()),
+                      onPressed: () => Get.to(() => LoginScreen()),
                       child: Text(
                         'Login here',
                         style: TextStyle(
                           color: theme.colorScheme.primary,
-                          
 
                           fontWeight: AppFontWeights.extraBold,
                           // fontWeight: FontWeight.bold,

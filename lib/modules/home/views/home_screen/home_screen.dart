@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:math' as Math;
+import 'dart:math' hide log;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
@@ -169,7 +170,8 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   // Controllers - Lazy initialization with Get.put and proper dependency management
   late final PropertyController propertyController;
   late final PropertyFavoriteController favoriteController;
@@ -184,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late final PlatformServicesController platformServicesController;
   late final TopContractorsController contractorServiceController;
   late final ProjectWizardController projectController;
-  late final PlatformReviewController reviewController;
+  // late final PlatformReviewController reviewController;
   late final TopSellerController topSellerController;
   late final TopBuilderAllController topBuilderController;
   late final CompareManager compareManager;
@@ -197,6 +199,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String listingTypeFilterKey = '';
   String propertyTypeFilter = '';
+  late AnimationController _controller;
+  double scrollOffset = 0;
   // bool _pinned = true;
   // bool _snap = false;
   // bool _floating = false;
@@ -231,6 +235,10 @@ class _HomeScreenState extends State<HomeScreen> {
     _initializeControllers();
     _setupCityChangeListener();
     _getCity();
+         _controller = AnimationController(
+          vsync: this,
+          duration: const Duration(seconds: 3),
+        )..repeat();
     _attachScroll(); // ✅ THIS
 
     // _scrollController.addListener(() {
@@ -286,7 +294,7 @@ class _HomeScreenState extends State<HomeScreen> {
         // else {
         //   propertyController.clearFilter('listingType');
         // }
-
+   
         if (norm.startsWith('commercial')) {
           // projectController.applyFilter('projectType', 'commercial');
           listingTypeFilterValue = 'commercial';
@@ -366,9 +374,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ? Get.find<HireContractorFilterProfileController>()
             : Get.put(HireContractorFilterProfileController());
 
-    reviewController = Get.put(
-      PlatformReviewController(type: ['site'], filters: {}),
-    );
+    // reviewController = Get.put(
+    //   PlatformReviewController(type: ['site'], filters: {}),
+    // );
     topSellerController = Get.put(TopSellerController());
     topBuilderController = Get.put(TopBuilderAllController());
     compareManager = Get.put(CompareManager(), permanent: true);
@@ -411,16 +419,20 @@ class _HomeScreenState extends State<HomeScreen> {
       // 🔄 Refresh Top Categories for selected city
       try {
         topCategoryController.fetchTopCategories();
-      } catch (_) {}
+      } catch (_) {
+
+      }
       // 🔄 Refresh Top Rated Contractors for selected city
-      try {
-        // contractorServiceController.applyFilter('city', city ?? '');
-      } catch (_) {}
+      // try {
+      //   // contractorServiceController.applyFilter('city', city ?? '');
+      // } catch (_
+      //) {
+      //}
       // 🔄 Refresh Top Builders for selected city
-      try {
-        // topBuilderController.selectedCity.value = city ?? '';
-        // topBuilderController.refreshList();
-      } catch (_) {}
+      // try {
+      //   // topBuilderController.selectedCity.value = city ?? '';
+      //   // topBuilderController.refreshList();
+      // } catch (_) {}
     });
   }
 
@@ -2021,15 +2033,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 15),
-
-
-          
         ],
       ),
     );
   }
-
-
 
   Widget _buildFurnishingTypeCard(int index) {
     final furnished = HomeScreen.furnishedType[index];
@@ -2718,14 +2725,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   bottomRight: Radius.circular(18),
                                 ),
                               ),
-                              child: const Text(
-                                'Most Popular',
-                                style: TextStyle(
-                                  color: ColorRes.textPrimary,
-                                  fontSize: AppFontSizes.small,
-                                  fontWeight: AppFontWeights.bold,
-                                ),
-                              ),
+                              child: _buildShinyText('Most Popular'),
                             ),
                           ),
                         Align(
@@ -3014,6 +3014,51 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Widget _buildShinyText(String text) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (_, __) {
+        /// 🎯 Smooth pulse scale
+        final scale = 1 + (0.04 * sin(_controller.value * 2 * 3.1416));
+
+        return Transform.scale(
+          scale: scale,
+
+          child: Stack(
+            children: [
+              /// ✨ Shimmer text
+              ShaderMask(
+                blendMode: BlendMode.srcATop,
+                shaderCallback: (bounds) {
+                  return LinearGradient(
+                    begin: Alignment(-1.5 + _controller.value * 3, 0),
+                    end: Alignment(-0.5 + _controller.value * 3, 0),
+                    colors: [
+                      Colors.transparent,
+                      Colors.white.withOpacity(0.8),
+                      Colors.white,
+                      Colors.white.withOpacity(0.8),
+                      Colors.transparent,
+                    ],
+                    stops: const [0.0, 0.4, 0.5, 0.6, 1.0],
+                  ).createShader(bounds);
+                },
+                child: Text(
+                  text,
+                  style: const TextStyle(
+                    color: ColorRes.textPrimary,
+                    fontSize: AppFontSizes.caption,
+                    fontWeight: AppFontWeights.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildNewsAndArticles() {
     return Obx(() {
       if (newsController.isLoading.value && newsController.items.isEmpty) {
@@ -3077,30 +3122,30 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildReviewsAndTestimonials() {
-    return Obx(() {
-      if (reviewController.isLoading.value &&
-          reviewController.allReviews.isEmpty) {
-        return const ReviewsTestimonialsShimmer();
-      }
+  // Widget _buildReviewsAndTestimonials() {
+  //   return Obx(() {
+  //     if (reviewController.isLoading.value &&
+  //         reviewController.allReviews.isEmpty) {
+  //       return const ReviewsTestimonialsShimmer();
+  //     }
 
-      if (reviewController.allReviews.isEmpty) {
-        return const SizedBox.shrink();
-      }
+  //     if (reviewController.allReviews.isEmpty) {
+  //       return const SizedBox.shrink();
+  //     }
 
-      return Column(
-        children: [
-          const TitleWithViewAll(
-            title: "What Our Customers Say",
-            showViewAll: false,
-          ),
-          const SizedBox(height: 12),
-          ReviewsAndTestimonials(),
-          SizedBox(height: AppSpacing.medium),
-        ],
-      );
-    });
-  }
+  //     return Column(
+  //       children: [
+  //         const TitleWithViewAll(
+  //           title: "What Our Customers Say",
+  //           showViewAll: false,
+  //         ),
+  //         const SizedBox(height: 12),
+  //         // ReviewsAndTestimonials(),
+  //         SizedBox(height: AppSpacing.medium),
+  //       ],
+  //     );
+  //   });
+  // }
 
   Widget _buildHomeProcessSteps() {
     final steps = [
@@ -3353,6 +3398,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     // ✅ Clear cached data on dispose
+    _controller.dispose();
     // _pinnedSearchNotifier.dispose();
     _bannerTimer?.cancel();
     _bannerPageController.dispose();
@@ -3744,336 +3790,7 @@ class _CityDropdownState extends State<CityDropdown> {
   }
 }
 
-class ReviewsAndTestimonials extends StatelessWidget {
-  const ReviewsAndTestimonials({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    final reviewController = Get.find<PlatformReviewController>();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Obx(() {
-          // Show loading indicator
-          if (reviewController.isLoading.value &&
-              reviewController.siteReviewWithUsers.isEmpty) {
-            return SizedBox(
-              height: 250,
-              child: Center(
-                child: CircularProgressIndicator(color: ColorRes.homeGreenFade),
-              ),
-            );
-          }
-
-          // Show empty state
-          if (reviewController.allReviews.isEmpty) {
-            return SizedBox(
-              height: 250,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.rate_review_outlined,
-                      size: 48,
-                      color: ColorRes.leadGreyColor.shade400,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'No reviews available',
-                      style: TextStyle(
-                        fontSize: AppFontSizes.body,
-                        color: ColorRes.leadGreyColor.shade600,
-                        fontWeight: AppFontWeights.medium,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-
-          // Show reviews list
-          return SizedBox(
-            height: 160,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: reviewController.allReviews.length,
-              clipBehavior: Clip.none,
-              padding: EdgeInsets.symmetric(horizontal: 12),
-              separatorBuilder:
-                  (_, __) => const SizedBox(width: AppSpacing.medium),
-              itemBuilder: (context, index) {
-                // UserItem userData=reviewController.listOfUser.map((element) => element.toMap(),).toString();
-                return _buildReviewCard(
-                  context,
-                  reviewController.allReviews[index],
-                );
-              },
-            ),
-          );
-        }),
-      ],
-    );
-  }
-
-  Widget _buildReviewCard(BuildContext context, ReviewItem review) {
-    final rating = review.rating ?? 0.0;
-    final isVerified = review.isVerified ?? false;
-
-    return GestureDetector(
-      onTap: () {},
-      child: Container(
-        width: 280,
-        decoration: BoxDecoration(
-          color: ColorRes.white,
-          borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
-          // border: Border.all(color: ColorRes.leadGreyColor.shade200, width: 1),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 2,
-
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// Header with avatar and rating
-              Row(
-                children: [
-                  /// Avatar (placeholder since we don't have reviewer details)
-                  Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [
-                          ColorRes.homeGreenFade.withOpacity(0.08),
-                          ColorRes.homeGreenDarkFade.withOpacity(0.1),
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      border: Border.all(
-                        color: Color(0xFF2E7D63).withOpacity(0.25),
-                        width: 1.5,
-                      ),
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      (() {
-                        final user = review?.entityUser;
-
-                        if (user == null) return '?';
-                        final username = user.username?.trim() ?? '';
-
-                        if (username.isNotEmpty) {
-                          return username[0]
-                              .toUpperCase(); // fallback to username
-                        } else {
-                          return '?'; // fallback if all empty
-                        }
-                      })(),
-                      style: TextStyle(
-                        fontSize: AppFontSizes.large,
-                        fontWeight: AppFontWeights.semiBold,
-                        color: ColorRes.homeGreenDarkFade,
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(width: 12),
-
-                  /// Reviewer ID and status
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      '${review.entityUser?.username}',
-                                      maxLines: 1,
-
-                                      style: TextStyle(
-                                        fontSize: AppFontSizes.medium,
-                                        fontWeight: AppFontWeights.semiBold,
-                                        color: ColorRes.homeBlackFade,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    _formatDate(review.createdAt),
-                                    style: TextStyle(
-                                      fontSize: AppFontSizes.extraSmall,
-                                      fontWeight: AppFontWeights.medium,
-                                      color: ColorRes.leadGreyColor.shade600,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            if (isVerified) ...[
-                              const SizedBox(width: 4),
-                              Container(
-                                padding: const EdgeInsets.all(2),
-                                decoration: BoxDecoration(
-                                  color: ColorRes.homeGreenDarkFade,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: const Icon(
-                                  Icons.check,
-                                  color: ColorRes.white,
-                                  size: 12,
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                        Text(
-                          '${review.entityType}',
-                          maxLines: 1,
-
-                          style: TextStyle(
-                            fontSize: AppFontSizes.caption,
-                            fontWeight: AppFontWeights.regular,
-                            color: ColorRes.grey,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 2),
-
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            ...List.generate(5, (starIndex) {
-                              if (starIndex < rating.floor()) {
-                                return const Icon(
-                                  Icons.star,
-                                  color: ColorRes.homeYellow,
-                                  size: 16,
-                                );
-                              } else if (starIndex < rating) {
-                                return const Icon(
-                                  Icons.star_half,
-                                  color: ColorRes.homeYellow,
-                                  size: 16,
-                                );
-                              } else {
-                                return Icon(
-                                  Icons.star_outline,
-                                  color: ColorRes.leadGreyColor.shade300,
-                                  size: 16,
-                                );
-                              }
-                            }),
-                            const SizedBox(width: 8),
-                            Text(
-                              rating.toStringAsFixed(1),
-                              style: TextStyle(
-                                fontSize: AppFontSizes.small,
-                                fontWeight: AppFontWeights.semiBold,
-                                color: ColorRes.homeBlackFade,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 12),
-
-              if (review.title != null && review.title!.isNotEmpty) ...[
-                SizedBox(
-                  width: 280,
-                  child: Text(
-                    review.title!,
-                    style: TextStyle(
-                      fontSize: AppFontSizes.bodySmall,
-                      fontWeight: AppFontWeights.semiBold,
-                      color: ColorRes.homeBlackFade,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-              const SizedBox(height: 8),
-              SizedBox(
-                width: 280,
-                child: Text(
-                  '"${review.content ?? 'No review content'}"',
-                  style: TextStyle(
-                    fontSize: AppFontSizes.caption,
-                    color: ColorRes.leadGreyColor.shade700,
-                    height: 1.5,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-
-              const SizedBox(height: 8),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// Helper method to get status color
-
-  /// Helper method to get status icon
-
-  /// Helper method to format date
-  String _formatDate(String? dateString) {
-    if (dateString == null) return 'Recently';
-
-    try {
-      final date = DateTime.parse(dateString);
-      final now = DateTime.now();
-      final difference = now.difference(date);
-
-      if (difference.inDays == 0) {
-        return 'Today';
-      } else if (difference.inDays == 1) {
-        return 'Yesterday';
-      } else if (difference.inDays < 7) {
-        return '${difference.inDays} days ago';
-      } else if (difference.inDays < 30) {
-        final weeks = (difference.inDays / 7).floor();
-        return '$weeks ${weeks == 1 ? 'week' : 'weeks'} ago';
-      } else if (difference.inDays < 365) {
-        final months = (difference.inDays / 30).floor();
-        return '$months ${months == 1 ? 'month' : 'months'} ago';
-      } else {
-        final years = (difference.inDays / 365).floor();
-        return '$years ${years == 1 ? 'year' : 'years'} ago';
-      }
-    } catch (e) {
-      return 'Recently';
-    }
-  }
-
-  /// Show review details in a bottom sheet
-}
 
 class NewsAndArticles extends StatelessWidget {
   final List<NewsItem> articles;

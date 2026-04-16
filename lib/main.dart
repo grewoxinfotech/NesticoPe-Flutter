@@ -47,7 +47,7 @@ void main() async {
 
 
     // 1. Initialize NotificationService FIRST
-    await NotificationService.instance.init();
+    // await NotificationService.instance.init();
     debugPrint('✅ NotificationService initialized');
 
     // 2. Set system UI overlay style
@@ -104,7 +104,7 @@ class MyApp extends StatelessWidget {
         getPages: [
           GetPage(name: '/splash', page: () => const SplashScreen()),
           GetPage(name: '/no-internet', page: () => const NoInternetScreen()),
-          GetPage(name: '/dashboard', page: () => const DashboardScreen()),
+          GetPage(name: '/dashboard', page: () => const DashboardScreen(),),
         ],
         builder: (context, child) {
           final mediaQuery = MediaQuery.of(context);

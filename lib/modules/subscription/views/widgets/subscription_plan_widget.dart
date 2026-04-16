@@ -666,6 +666,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/app/constants/font_res.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
 import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:nesticope_app/app/widgets/snackbar/snackbar.dart';
 
@@ -704,7 +705,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
         separatorBuilder: (_, __) => const SizedBox(height: 12),
         itemBuilder: (_, index) {
           return SizedBox(
-            height: 350,
+            height: 330,
             child: _buildPlanCard(plans[index], index),
           );
         },
@@ -730,18 +731,18 @@ class SubscriptionPlansWidget extends StatelessWidget {
         },
         child: Container(
           decoration: BoxDecoration(
-            color: rec ? Colors.amber.shade50 : ColorRes.white,
-            borderRadius: BorderRadius.circular(16),
+            color: rec ? Colors.amber.withOpacity(0.08) : ColorRes.white,
+            borderRadius: BorderRadius.circular(20),
             border:
                 rec
-                    ? Border.all(color: Colors.amber.shade300, width: 2)
+                    ? Border.all(color: Colors.amber.shade200, width: 1.5)
                     : (isSelected
-                        ? Border.all(color: ColorRes.primary, width: 2)
+                        ? Border.all(color: ColorRes.primary, width: 1.5)
                         : null),
             boxShadow: [
               if (rec)
                 BoxShadow(
-                  color: Colors.amber.withOpacity(0.2),
+                  color: Colors.amber.withOpacity(0.1),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -756,11 +757,28 @@ class SubscriptionPlansWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(plan),
-              if (plan.plansFor != "sellerBuilder") ...[
-                _buildPriceSection(plan),
-              ],
-              const SizedBox(height: 8),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start, // important
+                children: [
+                  /// LEFT SIDE (Header)
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 16, top: 16),
+                      child: _buildHeader(plan),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+
+                  /// RIGHT SIDE (Price)
+                  if (plan.plansFor != "sellerBuilder")
+                    Padding(
+                      padding: const EdgeInsets.only(right: 16, top: 16),
+                      child: _buildPriceSection(plan),
+                    ),
+                ],
+              ),
+
+              const SizedBox(height: 12),
               _buildFeaturePreview(plan),
               _buildShowMore(plan, index),
               _buildSelectButton(plan, isSelected, index),
@@ -776,35 +794,25 @@ class SubscriptionPlansWidget extends StatelessWidget {
   // ------------------------------------------------------
   Widget _buildHeader(SubscriptionPlan plan) {
     final bool rec = plan.isRecommended == true;
-    final bool premium = plan.isPremium == true;
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 6),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.engineering,
-                size: 18,
-                color: rec ? Colors.amber.shade700 : ColorRes.primary,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                plan.name,
-                style: TextStyle(
-                  fontSize: AppFontSizes.large,
-                  fontWeight: AppFontWeights.bold,
-                  color: rec ? Colors.amber.shade800 : ColorRes.primary,
-                ),
-              ),
-              const Spacer(),
-              if (rec) _buildRecommendedBadge(),
-              // if (!rec && premium) _buildPopularBadge(plan),
-            ],
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (rec) _buildRecommendedBadge(),
+        const SizedBox(height: 6),
+        Text(
+          '${plan.name}',
+          maxLines: 2,
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: AppFontSizes.large,
+
+            fontWeight: AppFontWeights.bold,
+            color: rec ? Colors.amber.shade800 : ColorRes.primary,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -860,87 +868,88 @@ class SubscriptionPlansWidget extends StatelessWidget {
     final double oldPrice = double.tryParse(plan.originalPrice) ?? 0;
     final bool hasDiscount =
         oldPrice > 0 && newPrice > 0 && oldPrice > newPrice;
+
     final int offPercent =
         hasDiscount ? (((oldPrice - newPrice) / oldPrice) * 100).round() : 0;
+
     final String period =
         plan.durationMonths == 12
             ? "per year"
             : "per ${plan.durationMonths} months";
+
     final String gstText =
         (plan.gstRate.isNotEmpty && plan.gstRate != '0.00')
-            ? "Inclusive of ${plan.gstRate}% GST"
+            ? "Incl. ${plan.gstRate}% GST"
             : "Taxes may apply";
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (hasDiscount)
-            Row(
-              children: [
-                Text(
-                  "₹${plan.originalPrice}",
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end, // 👈 IMPORTANT
+      children: [
+        if (hasDiscount)
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.red.shade100,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  "$offPercent% OFF",
                   style: TextStyle(
-                    fontSize: AppFontSizes.body,
-                    color: ColorRes.leadGreyColor,
-                    decoration: TextDecoration.lineThrough,
+                    color: Colors.red.shade600,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade50,
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: Colors.red.shade200),
-                  ),
-                  child: Text(
-                    "$offPercent% OFF",
-                    style: TextStyle(
-                      color: Colors.red.shade600,
-                      fontSize: AppFontSizes.extraSmall,
-                      fontWeight: AppFontWeights.semiBold,
-                    ),
-                  ),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                "${Formatter.formatPrice(num.tryParse(plan.originalPrice) ?? 0)}",
+                style: TextStyle(
+                  fontSize: 12,
+                  color: ColorRes.leadGreyColor.shade600,
+                  decoration: TextDecoration.lineThrough,
                 ),
-              ],
-            ),
-          const SizedBox(height: 2),
-          Text(
-            "₹${plan.amount}",
-            style: TextStyle(
-              fontSize: AppFontSizes.heading,
-              fontWeight: AppFontWeights.bold,
-              color:
-                  plan.isRecommended
-                      ? Colors.amber.shade800
-                      : ColorRes.textPrimary,
-            ),
+              ),
+            ],
           ),
-          const SizedBox(height: 4),
-          Text(
-            period,
-            style: TextStyle(
-              fontSize: AppFontSizes.small,
-              color: ColorRes.leadGreyColor[600],
-              fontWeight: AppFontWeights.medium,
+
+        const SizedBox(height: 4),
+
+        Row(
+          children: [
+            Text(
+              "${Formatter.formatPrice(num.tryParse(plan.amount) ?? 0)}",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: ColorRes.textPrimary,
+              ),
             ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            gstText,
-            style: TextStyle(
-              fontSize: AppFontSizes.extraSmall,
-              color: ColorRes.leadGreyColor[600],
-              fontWeight: AppFontWeights.regular,
+            Text(
+              "/year",
+              style: TextStyle(
+                fontSize: 12,
+                color: ColorRes.leadGreyColor.shade600,
+                fontWeight: FontWeight.w500,
+              ),
             ),
+          ],
+        ),
+
+        const SizedBox(height: 2),
+
+        Text(
+          gstText,
+          style: TextStyle(
+            fontSize: 10,
+            color: ColorRes.leadGreyColor.shade600,
+            fontWeight: FontWeight.w500,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -958,18 +967,34 @@ class SubscriptionPlansWidget extends StatelessWidget {
                   .take(!UserHelper.isSellerBuilder ? 3 : 5)
                   .map((f) {
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.only(bottom: 10),
                       child: Row(
                         children: [
-                          Icon(
-                            f.isIncluded ? Icons.check : Icons.close,
-                            size: 20,
-                            color:
-                                f.isIncluded
-                                    ? ColorRes.primary
-                                    : ColorRes.error,
+                          /// 🔥 Circle Background Icon (LIKE IMAGE)
+                          Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color:
+                                  f.isIncluded
+                                      ? ColorRes.primary.withOpacity(
+                                        0.15,
+                                      ) // light bg
+                                      : Colors.grey.withOpacity(0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              f.isIncluded ? Icons.check : Icons.close,
+                              size: 14,
+                              color:
+                                  f.isIncluded
+                                      ? ColorRes.primary
+                                      : ColorRes.leadGreyColor,
+                            ),
                           ),
-                          const SizedBox(width: 8),
+
+                          const SizedBox(width: 10),
+
+                          /// Text
                           Expanded(
                             child: Text(
                               f.name,
@@ -978,7 +1003,6 @@ class SubscriptionPlansWidget extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: AppFontSizes.bodySmall,
                                 fontWeight: AppFontWeights.medium,
-
                                 color:
                                     f.isIncluded
                                         ? ColorRes.textPrimary
@@ -1036,7 +1060,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
               isSelected
                   ? (rec ? Colors.amber.shade700 : ColorRes.primary)
                   : (rec
-                      ? Colors.amber.shade300
+                      ? Colors.amber.shade500
                       : ColorRes.leadGreyColor.shade100);
           final Color fg =
               isSelected ? (rec ? Colors.black : Colors.white) : Colors.black;
@@ -1132,6 +1156,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
                               : "Buy Now")
                           : "Select Plan",
                       style: const TextStyle(
+                        color: ColorRes.textPrimary,
                         fontWeight: AppFontWeights.semiBold,
                         fontSize: AppFontSizes.bodySmall,
                       ),
@@ -1157,10 +1182,27 @@ class SubscriptionPlansWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(plan),
-              if (plan.plansFor != "sellerBuilder") ...[
-                _buildPriceSection(plan),
-              ],
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start, // important
+                children: [
+                  /// LEFT SIDE (Header)
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 16),
+                      child: _buildHeader(plan),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+
+                  /// RIGHT SIDE (Price)
+                  if (plan.plansFor != "sellerBuilder")
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16),
+                      child: _buildPriceSection(plan),
+                    ),
+                ],
+              ),
+
               const SizedBox(height: 12),
 
               // Full feature list
@@ -1169,10 +1211,25 @@ class SubscriptionPlansWidget extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Row(
                     children: [
-                      Icon(
-                        f.isIncluded ? Icons.check : Icons.close,
-                        size: 20,
-                        color: f.isIncluded ? ColorRes.primary : ColorRes.error,
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color:
+                              f.isIncluded
+                                  ? ColorRes.primary.withOpacity(
+                                    0.15,
+                                  ) // light bg
+                                  : Colors.grey.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          f.isIncluded ? Icons.check : Icons.close,
+                          size: 14,
+                          color:
+                              f.isIncluded
+                                  ? ColorRes.primary
+                                  : ColorRes.leadGreyColor,
+                        ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(

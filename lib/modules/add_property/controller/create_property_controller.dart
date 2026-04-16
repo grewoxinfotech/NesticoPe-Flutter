@@ -655,12 +655,11 @@ class CreatePropertyController extends GetxController {
 
   Future<void> builderDocumentPicker() async {
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
+      FilePickerResult? result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowMultiple: false,
         allowedExtensions: ['pdf', 'doc', 'txt'],
       );
-
       if (result != null && result.files.isNotEmpty) {
         // Check total limit
         if (documentList.value.length + result.files.length > 5) {

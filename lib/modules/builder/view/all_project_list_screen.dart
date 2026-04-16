@@ -567,6 +567,7 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
       appBar: ListScreenAppbar(
         showAppBar: widget.isAppBarShow,
         isFormScreen: widget.isFromSeeAll,
+        showIconWithText: true,
         title: "Project List",
         onBack: () => Get.back(),
 

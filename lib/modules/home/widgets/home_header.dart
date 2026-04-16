@@ -73,18 +73,22 @@ class _HomeHeaderState extends State<HomeHeader> {
   @override
   void initState() {
     super.initState();
-    propertyController = Get.isRegistered<PropertyController>()
-        ? Get.find<PropertyController>()
-        : Get.put(PropertyController());
-    projectController = Get.isRegistered<ProjectWizardController>()
-        ? Get.find<ProjectWizardController>()
-        : Get.put(ProjectWizardController(isBuilderView: false));
-    topBuilderController = Get.isRegistered<TopBuilderController>()
-        ? Get.find<TopBuilderController>()
-        : Get.put(TopBuilderController());
-    searchHistoryController = Get.isRegistered<SearchHistoryController>()
-        ? Get.find<SearchHistoryController>()
-        : Get.put(SearchHistoryController());
+    propertyController =
+        Get.isRegistered<PropertyController>()
+            ? Get.find<PropertyController>()
+            : Get.put(PropertyController());
+    projectController =
+        Get.isRegistered<ProjectWizardController>()
+            ? Get.find<ProjectWizardController>()
+            : Get.put(ProjectWizardController(isBuilderView: false));
+    topBuilderController =
+        Get.isRegistered<TopBuilderController>()
+            ? Get.find<TopBuilderController>()
+            : Get.put(TopBuilderController());
+    searchHistoryController =
+        Get.isRegistered<SearchHistoryController>()
+            ? Get.find<SearchHistoryController>()
+            : Get.put(SearchHistoryController());
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final initial = await SecureStorage.getHomeCategory();
       selectedCategory = initial ?? 'Buy';
@@ -107,22 +111,25 @@ class _HomeHeaderState extends State<HomeHeader> {
         // Top Row: City + Post Property
         SizedBox(height: 14),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          padding: const EdgeInsets.only(right: 12),
 
           // color: Colors.white,
-          
-          // height: 64,
 
+          // height: 64,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Expanded(
-                child: Text(
-                  'NesticoPe',
-                  style: const TextStyle(
-                    color: ColorRes.primary,
-                    fontWeight: AppFontWeights.bold,
-                    fontSize: AppFontSizes.title,
+                child: Container(
+                  height: 32,
+                  width: 32,
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Image.asset(
+                      'assets/images/Nestico-Pe_Logo-svg.png',
+                      width: 150,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
@@ -451,6 +458,22 @@ class _HomeHeaderState extends State<HomeHeader> {
               SizedBox(
                 height: 48,
                 child: PopupMenuButton<String>(
+                  offset: const Offset(10, 0), // 👈 button height ke equal
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    side: BorderSide(
+                      color: ColorRes.primary.withOpacity(
+                        0.2,
+                      ), // 👈 border color
+                      width: 1,
+                    ),
+                  ),
+                  color: Colors.white,
+
+                  /// ✅ Shadow
+                  elevation: 8,
+
+                  position: PopupMenuPosition.under,
                   onSelected: (val) async {
                     if (val == 'Service') {
                       Get.to(() => const HireContractorScreen());

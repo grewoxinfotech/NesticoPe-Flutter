@@ -54,12 +54,13 @@ class _ContractorProfileDetailsScreenState
       Get.isRegistered<ContactController>()
           ? Get.find<ContactController>()
           : Get.put(ContactController());
+  late ContractorServiceController contractorServiceController;
 
   Future<void> contactContractor() async {
     final contractorServiceController = Get.find<ContractorServiceController>(
       tag: widget.contractor.userId,
     );
-
+    contractorServiceController.clearInquiryForm();
     print("Selected Services: ${contractorServiceController.selectedItems}");
 
     final bool result = await Get.to(
@@ -96,16 +97,22 @@ class _ContractorProfileDetailsScreenState
     // TODO: implement  initStatecccc
     super.initState();
     loadData();
+    contractorServiceController = Get.put(
+      ContractorServiceController(contractorId: widget.contractor.userId),
+      tag: widget.contractor.userId,
+    );
+  }
+
+  @override
+  void dispose() {
+    Get.delete<ContractorServiceController>(tag: widget.contractor.userId);
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     log("Contractor ID: ${widget.contractor.userId}");
 
-    final contractorServiceController = Get.put(
-      ContractorServiceController(contractorId: widget.contractor.userId),
-      tag: widget.contractor.userId,
-    );
     log(
       "User Datafgjjugnhregre: ${contractorServiceController.userData.value?.toJson()}",
     );
@@ -117,835 +124,903 @@ class _ContractorProfileDetailsScreenState
       userName: widget.contractor.username,
     );
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text(
-          "Contractor Profile",
-          style: TextStyle(
-            color: ColorRes.textColor,
-            fontWeight: AppFontWeights.semiBold,
+    return PopScope(
+      canPop: true,
+      onPopInvoked: (didPop) {
+        // Keep default back behavior so previous Home route is reused.
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          leading: IconButton(
+            onPressed: _goToDashboard,
+            icon: const Icon(Icons.arrow_back),
           ),
+          title: Text(
+            "Contractor Profile",
+            style: TextStyle(
+              color: ColorRes.textColor,
+              fontWeight: AppFontWeights.semiBold,
+            ),
+          ),
+          iconTheme: const IconThemeData(color: Colors.black),
         ),
-        iconTheme: const IconThemeData(color: Colors.black),
-      ),
-      body: SingleChildScrollView(
-        physics: AlwaysScrollableScrollPhysics(),
+        body: SafeArea(
+          // bottom: false,
+          child: SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
 
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 12),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
-                // border: Border.all(color: ColorRes.leadGreyColor.shade300),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 2,
-                    offset: const Offset(2, 3),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 12),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
+                    // border: Border.all(color: ColorRes.leadGreyColor.shade300),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 2,
+                        offset: const Offset(2, 3),
+                      ),
+                    ],
+                    color: ColorRes.white,
                   ),
-                ],
-                color: ColorRes.white,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  // ---------------- PROFILE HEADER ----------------
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: ColorRes.white,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Row(
-                            children: [
-                              // Avatar
-                              // Container(
-                              //   height: 60,
-                              //   width: 60,
-                              //   decoration: BoxDecoration(
-                              //     color: ColorRes.primary.withOpacity(0.3),
-                              //     shape: BoxShape.circle,
-                              //   ),
-                              //   child: const Icon(
-                              //     Icons.build,
-                              //     size: 32,
-                              //     color: ColorRes.primary,
-                              //   ),
-                              // ),
-                              buildProfileAvatar(
-                                displayName: displayName,
-                                radius: 30,
-                                profilePic:
-                                    _profilePic?.isNotEmpty == true
-                                        ? _profilePic!
-                                        : widget.contractor.imageUrl,
-                              ),
-                              const SizedBox(width: 16),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      // ---------------- PROFILE HEADER ----------------
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: ColorRes.white,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  // Avatar
+                                  // Container(
+                                  //   height: 60,
+                                  //   width: 60,
+                                  //   decoration: BoxDecoration(
+                                  //     color: ColorRes.primary.withOpacity(0.3),
+                                  //     shape: BoxShape.circle,
+                                  //   ),
+                                  //   child: const Icon(
+                                  //     Icons.build,
+                                  //     size: 32,
+                                  //     color: ColorRes.primary,
+                                  //   ),
+                                  // ),
+                                  buildProfileAvatar(
+                                    displayName: displayName,
+                                    radius: 30,
+                                    profilePic:
+                                        _profilePic?.isNotEmpty == true
+                                            ? _profilePic!
+                                            : widget.contractor.imageUrl,
+                                  ),
+                                  const SizedBox(width: 16),
 
-                              // Contractor Info
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Name (only if available)
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                  // Contractor Info
+                                  Expanded(
+                                    child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        if (displayName.isNotEmpty)
-                                          Expanded(
-                                            child: Text(
-                                              displayName,
-                                              style: TextStyle(
-                                                fontSize: AppFontSizes.body,
-                                                fontWeight:
-                                                    AppFontWeights.semiBold,
-                                                color: ColorRes.primary,
-                                              ),
-                                            ),
-                                          ),
-                                        // Spacer(),
-                                        SizedBox(width: 12),
-                                        if (double.tryParse(
-                                              widget.contractor.overallRating
-                                                  .toString(),
-                                            ) !=
-                                            null)
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              top: 4,
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                const Icon(
-                                                  Icons.star_rounded,
-                                                  color: Colors.amber,
-                                                  size: 14,
-                                                ),
-                                                // const SizedBox(width: 4),
-                                                const SizedBox(width: 4),
-                                                Text(
-                                                  "${widget.contractor.overallRating}",
+                                        // Name (only if available)
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            if (displayName.isNotEmpty)
+                                              Expanded(
+                                                child: Text(
+                                                  displayName.capitalize
+                                                          ?.replaceAll(
+                                                            '_',
+                                                            ' ',
+                                                          ) ??
+                                                      '',
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                    fontSize:
-                                                        AppFontSizes.small,
+                                                    fontSize: AppFontSizes.body,
                                                     fontWeight:
-                                                        AppFontWeights.bold,
+                                                        AppFontWeights.semiBold,
                                                     color: ColorRes.primary,
                                                   ),
                                                 ),
-                                                const SizedBox(width: 4),
-                                                Text(
-                                                  "(${Formatter.formatNumber(widget.contractor.totalReviews)} review${widget.contractor.totalReviews == 1 ? '' : 's'})",
+                                              ),
+                                            // Spacer(),
+                                            SizedBox(width: 12),
+                                            if (double.tryParse(
+                                                  widget
+                                                      .contractor
+                                                      .overallRating
+                                                      .toString(),
+                                                ) !=
+                                                null)
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                  top: 4,
+                                                ),
+                                                child: Column(
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        const Icon(
+                                                          Icons.star_rounded,
+                                                          color: Colors.amber,
+                                                          size: 14,
+                                                        ),
+                                                        // const SizedBox(width: 4),
+                                                        const SizedBox(
+                                                          width: 4,
+                                                        ),
+                                                        Text(
+                                                          "${widget.contractor.overallRating}",
+                                                          style: TextStyle(
+                                                            fontSize:
+                                                                AppFontSizes
+                                                                    .small,
+                                                            fontWeight:
+                                                                AppFontWeights
+                                                                    .bold,
+                                                            color:
+                                                                ColorRes
+                                                                    .primary,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    const SizedBox(width: 4),
+                                                    Text(
+                                                      "(${Formatter.formatNumber(widget.contractor.totalReviews)} review${widget.contractor.totalReviews == 1 ? '' : 's'})",
+                                                      style: TextStyle(
+                                                        fontSize:
+                                                            AppFontSizes
+                                                                .caption,
+                                                        color:
+                                                            ColorRes
+                                                                .leadGreyColor
+                                                                .shade700,
+                                                        fontWeight:
+                                                            AppFontWeights
+                                                                .medium,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+
+                                            // Rating (only if valid)
+                                          ],
+                                        ),
+                                        SizedBox(height: 6),
+                                        Row(
+                                          children: [
+                                            if (widget
+                                                        .contractor
+                                                        .contractorType !=
+                                                    null &&
+                                                widget
+                                                    .contractor
+                                                    .contractorType!
+                                                    .isNotEmpty) ...[
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 4,
+                                                    ),
+                                                decoration: BoxDecoration(
+                                                  color: ColorRes.primary
+                                                      .withOpacity(0.05),
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                  border: Border.all(
+                                                    color: ColorRes.primary
+                                                        .withOpacity(0.3),
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                  widget
+                                                      .contractor
+                                                      .contractorType!,
                                                   style: TextStyle(
                                                     fontSize:
                                                         AppFontSizes.caption,
-                                                    color:
-                                                        ColorRes
-                                                            .leadGreyColor
-                                                            .shade700,
                                                     fontWeight:
                                                         AppFontWeights.medium,
+                                                    color: ColorRes.primary,
                                                   ),
                                                 ),
-                                              ],
-                                            ),
-                                          ),
+                                              ),
+                                            ],
 
-                                        // Rating (only if valid)
+                                            if (widget
+                                                    .contractor
+                                                    .subscription
+                                                    .hasPremiumPlan ||
+                                                widget.isPremium) ...[
+                                              SizedBox(width: 6),
+
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 4,
+                                                    ),
+                                                decoration: BoxDecoration(
+                                                  color: ColorRes.orangeColor
+                                                      .withOpacity(0.05),
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                  border: Border.all(
+                                                    color: ColorRes.orangeColor
+                                                        .withOpacity(0.3),
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                  'Premium',
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        AppFontSizes.caption,
+                                                    fontWeight:
+                                                        AppFontWeights.medium,
+                                                    color: ColorRes.orangeColor,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ],
+                                        ),
                                       ],
                                     ),
-                                    SizedBox(height: 6),
-                                    Row(
-                                      children: [
-                                        if (widget.contractor.contractorType !=
-                                                null &&
-                                            widget
-                                                .contractor
-                                                .contractorType!
-                                                .isNotEmpty) ...[
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 8,
-                                              vertical: 4,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: ColorRes.primary
-                                                  .withOpacity(0.05),
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
-                                              border: Border.all(
-                                                color: ColorRes.primary
-                                                    .withOpacity(0.3),
-                                              ),
-                                            ),
-                                            child: Text(
-                                              widget.contractor.contractorType!,
-                                              style: TextStyle(
-                                                fontSize: AppFontSizes.caption,
-                                                fontWeight:
-                                                    AppFontWeights.medium,
-                                                color: ColorRes.primary,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
 
-                                        if (widget
-                                                .contractor
-                                                .subscription
-                                                .hasPremiumPlan ||
-                                            widget.isPremium) ...[
-                                          SizedBox(width: 6),
+                      // Location (only if city exists)
+                      Obx(() {
+                        final city =
+                            contractorServiceController.userData.value?.city;
 
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 8,
-                                              vertical: 4,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: ColorRes.orangeColor
-                                                  .withOpacity(0.05),
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
-                                              border: Border.all(
-                                                color: ColorRes.orangeColor
-                                                    .withOpacity(0.3),
-                                              ),
-                                            ),
-                                            child: Text(
-                                              'Premium',
-                                              style: TextStyle(
-                                                fontSize: AppFontSizes.caption,
-                                                fontWeight:
-                                                    AppFontWeights.medium,
-                                                color: ColorRes.orangeColor,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ],
-                                    ),
-                                  ],
+                        if (city == null || city.isEmpty) {
+                          return const SizedBox.shrink();
+                        }
+
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.location_on_outlined,
+                                color: ColorRes.primary,
+                                size: 18,
+                              ),
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  'Provides service in $city',
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.caption,
+                                    fontWeight: AppFontWeights.medium,
+                                    color: ColorRes.leadGreyColor.shade600,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
+                        );
+                      }),
+                      const SizedBox(height: 12),
 
-                  // Location (only if city exists)
-                  Obx(() {
-                    final city =
-                        contractorServiceController.userData.value?.city;
-
-                    if (city == null || city.isEmpty) {
-                      return const SizedBox.shrink();
-                    }
-
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: Row(
+                      // ---------------- CONTACT BUTTON ----------------
+                      // Obx(
+                      //   () => SizedBox(
+                      //     width: double.infinity,
+                      //     child: ElevatedButton(
+                      //       onPressed: () {
+                      //         if (UserHelper.isGuest) {
+                      //           Get.to(() => LoginScreen());
+                      //         }
+                      //
+                      //         if (isListSelectable.value) {
+                      //           if (contractorServiceController
+                      //               .selectedItems
+                      //               .isEmpty) {
+                      //             Get.snackbar(
+                      //               "No Service Selected",
+                      //               "Please select at least one service to continue",
+                      //               snackPosition: SnackPosition.BOTTOM,
+                      //             );
+                      //             return;
+                      //           }
+                      //           contactContractor();
+                      //           return;
+                      //         }
+                      //
+                      //         isListSelectable.value = true;
+                      //       },
+                      //       style: ElevatedButton.styleFrom(
+                      //         backgroundColor: ColorRes.primary,
+                      //         padding: const EdgeInsets.symmetric(vertical: 14),
+                      //         shape: RoundedRectangleBorder(
+                      //           borderRadius: BorderRadius.circular(10),
+                      //         ),
+                      //       ),
+                      //       child: Text(
+                      //         UserHelper.isGuest
+                      //             ? "Login to Contact"
+                      //             : isListSelectable.value
+                      //             ? "Contact Now"
+                      //             : "Select Services",
+                      //         style: TextStyle(
+                      //           fontSize: AppFontSizes.bodySmall,
+                      //           fontWeight: AppFontWeights.semiBold,
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                      /*   Obx(() {
+                      final bool isSelectable = isListSelectable.value;
+                      final bool isGuest = UserHelper.isGuest;
+        
+                      return Column(
                         children: [
-                          const Icon(
-                            Icons.location_on_outlined,
-                            color: ColorRes.primary,
-                            size: 18,
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              'Provides service in $city',
-                              style: TextStyle(
-                                fontSize: AppFontSizes.caption,
-                                fontWeight: AppFontWeights.medium,
-                                color: ColorRes.leadGreyColor.shade600,
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if (isGuest) {
+                                  Get.to(() => LoginScreen());
+                                  return;
+                                }
+        
+                                AppLogger(
+                                  "Check any Contractor id ",
+                                  widget.contractor.toJson(),
+                                );
+                                AppLogger(
+                                  "Check any Current UserId id ",
+                                  currentUserId.value,
+                                );
+                               if(currentUserId.value!=widget.contractor.userId)
+                                 {
+                                   if (isSelectable) {
+                                     if (contractorServiceController
+                                         .selectedItems
+                                         .isEmpty) {
+                                       NesticoPeSnackBar.showAwesomeSnackbar(
+                                         title: 'No Service Selected',
+                                         message:
+                                         "Please select at least one service to continue",
+                                         contentType: ContentType.failure,
+                                       );
+                                       return;
+                                     }
+                                     contactContractor();
+                                   } else {
+                                     isListSelectable.value = true;
+                                   }
+                                 }else{
+        
+                               }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:currentUserId.value!=widget.contractor.userId? ColorRes.primary:ColorRes.leadGreyColor.shade300,
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: Text(
+                                isGuest
+                                    ? "Login to Contact"
+                                    : isSelectable
+                                    ? "Contact Now"
+                                    : "Select Services",
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.bodySmall,
+                                  fontWeight: AppFontWeights.semiBold,
+                                ),
                               ),
                             ),
                           ),
                         ],
-                      ),
-                    );
-                  }),
-                  const SizedBox(height: 12),
+                      );
+                    }),
+        */
+                      Obx(() {
+                        final bool isGuest = UserHelper.isGuest;
+                        final bool isOwnService =
+                            currentUserId.value == widget.contractor.userId;
+                        final bool hasSelection =
+                            Get.find<ContractorServiceController>(
+                              tag: widget.contractor.userId,
+                            ).selectedItems.isNotEmpty;
+                        final bool enabled =
+                            !isGuest && !isOwnService && hasSelection;
 
-                  // ---------------- CONTACT BUTTON ----------------
-                  // Obx(
-                  //   () => SizedBox(
-                  //     width: double.infinity,
-                  //     child: ElevatedButton(
-                  //       onPressed: () {
-                  //         if (UserHelper.isGuest) {
-                  //           Get.to(() => LoginScreen());
-                  //         }
-                  //
-                  //         if (isListSelectable.value) {
-                  //           if (contractorServiceController
-                  //               .selectedItems
-                  //               .isEmpty) {
-                  //             Get.snackbar(
-                  //               "No Service Selected",
-                  //               "Please select at least one service to continue",
-                  //               snackPosition: SnackPosition.BOTTOM,
-                  //             );
-                  //             return;
-                  //           }
-                  //           contactContractor();
-                  //           return;
-                  //         }
-                  //
-                  //         isListSelectable.value = true;
-                  //       },
-                  //       style: ElevatedButton.styleFrom(
-                  //         backgroundColor: ColorRes.primary,
-                  //         padding: const EdgeInsets.symmetric(vertical: 14),
-                  //         shape: RoundedRectangleBorder(
-                  //           borderRadius: BorderRadius.circular(10),
-                  //         ),
-                  //       ),
-                  //       child: Text(
-                  //         UserHelper.isGuest
-                  //             ? "Login to Contact"
-                  //             : isListSelectable.value
-                  //             ? "Contact Now"
-                  //             : "Select Services",
-                  //         style: TextStyle(
-                  //           fontSize: AppFontSizes.bodySmall,
-                  //           fontWeight: AppFontWeights.semiBold,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                  /*   Obx(() {
-                    final bool isSelectable = isListSelectable.value;
-                    final bool isGuest = UserHelper.isGuest;
-
-                    return Column(
-                      children: [
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              if (isGuest) {
-                                Get.to(() => LoginScreen());
-                                return;
-                              }
-
-                              AppLogger(
-                                "Check any Contractor id ",
-                                widget.contractor.toJson(),
-                              );
-                              AppLogger(
-                                "Check any Current UserId id ",
-                                currentUserId.value,
-                              );
-                             if(currentUserId.value!=widget.contractor.userId)
-                               {
-                                 if (isSelectable) {
-                                   if (contractorServiceController
-                                       .selectedItems
-                                       .isEmpty) {
-                                     NesticoPeSnackBar.showAwesomeSnackbar(
-                                       title: 'No Service Selected',
-                                       message:
-                                       "Please select at least one service to continue",
-                                       contentType: ContentType.failure,
-                                     );
-                                     return;
-                                   }
-                                   contactContractor();
-                                 } else {
-                                   isListSelectable.value = true;
-                                 }
-                               }else{
-
-                             }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:currentUserId.value!=widget.contractor.userId? ColorRes.primary:ColorRes.leadGreyColor.shade300,
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              shape: RoundedRectangleBorder(
+                        return Column(
+                          children: [
+                            // if (isGuest)
+                            //   SizedBox(
+                            //     width: double.infinity,
+                            //     child: ElevatedButton(
+                            //       onPressed: () {
+                            //         Get.to(() => OtpLoginScreen());
+                            //       },
+                            //       style: ElevatedButton.styleFrom(
+                            //         backgroundColor: ColorRes.primary,
+                            //         padding: const EdgeInsets.symmetric(vertical: 14),
+                            //         shape: RoundedRectangleBorder(
+                            //           borderRadius: BorderRadius.circular(10),
+                            //         ),
+                            //       ),
+                            //       child: const Text(
+                            //         "Login to Contact",
+                            //         style: TextStyle(
+                            //           fontSize: AppFontSizes.bodySmall,
+                            //           fontWeight: AppFontWeights.semiBold,
+                            //         ),
+                            //       ),
+                            //     ),
+                            //   )
+                            // else
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 10,
+                                horizontal: 16,
+                              ),
+                              decoration: BoxDecoration(
+                                color: ColorRes.leadGreyColor.shade100,
                                 borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: ColorRes.leadGreyColor.shade300
+                                        .withOpacity(0.5),
+                                    spreadRadius: 2,
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () async {
+                                      if (_contactController
+                                          .primaryPhone
+                                          .value
+                                          .isEmpty) {
+                                        await _contactController.loadContacts(
+                                          reset: true,
+                                        );
+                                      }
+                                      final number =
+                                          _contactController.primaryPhone.value;
+                                      if (number.isNotEmpty) {
+                                        await ContactHelper.openDialer(number);
+                                      }
+                                    },
+                                    child: Container(
+                                      height: 44,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 12,
+                                        horizontal: 16,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: ColorRes.primary.withOpacity(
+                                          0.1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.call,
+                                          color: ColorRes.primary,
+                                          size: 18,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  GestureDetector(
+                                    onTap: () async {
+                                      if (_contactController
+                                          .primaryPhone
+                                          .value
+                                          .isEmpty) {
+                                        await _contactController.loadContacts(
+                                          reset: true,
+                                        );
+                                      }
+                                      final number =
+                                          _contactController.primaryPhone.value;
+                                      if (number.isNotEmpty) {
+                                        await ContactHelper.openWhatsApp(
+                                          number,
+                                        );
+                                      }
+                                    },
+                                    child: Container(
+                                      height: 44,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 12,
+                                        horizontal: 16,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: ColorRes.green.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Center(
+                                        child: Image.asset(
+                                          'assets/images/whatsapp.png',
+                                          width: 20,
+                                          height: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 25),
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        if (UserHelper.isGuest) {
+                                          Get.to(() => OtpLoginScreen());
+                                        }
+                                        if (enabled) {
+                                          contactContractor();
+                                        } else {
+                                          NesticoPeSnackBar.showAwesomeSnackbar(
+                                            title: 'No Service Selected',
+                                            message:
+                                                "Please select at least one service to continue",
+                                            contentType: ContentType.failure,
+                                          );
+                                        }
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            enabled
+                                                ? ColorRes.primary
+                                                : UserHelper.isGuest
+                                                ? ColorRes.primary
+                                                : ColorRes
+                                                    .leadGreyColor
+                                                    .shade300,
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 12,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        !UserHelper.isGuest
+                                            ? "Contact Contractor"
+                                            : "Login to Contact",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontWeight: AppFontWeights.semiBold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            child: Text(
-                              isGuest
-                                  ? "Login to Contact"
-                                  : isSelectable
-                                  ? "Contact Now"
-                                  : "Select Services",
+                            if (isOwnService) ...[
+                              const SizedBox(height: 8),
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: Colors.red.shade50,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: Colors.red.shade200,
+                                  ),
+                                ),
+                                child: Text(
+                                  "Contractors cannot submit inquiries for their own services.",
+                                  style: TextStyle(
+                                    color: Colors.red.shade700,
+                                    fontSize: AppFontSizes.caption,
+                                    fontWeight: AppFontWeights.medium,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
+                        );
+                      }),
+
+                      const SizedBox(height: 12),
+
+                      // ---------------- STATS GRID ----------------
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _statCard(
+                            "Total Services",
+                            widget.contractor.totalServices.toString(),
+                          ),
+                          _statCard(
+                            "Active Services",
+                            widget.contractor.activeServices.toString(),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _statCard(
+                            "Projects",
+                            widget.contractor.projectStats.totalProjects
+                                .toString(),
+                          ),
+
+                          _statCard(
+                            "Experience",
+                            "${widget.contractor.totalExperience} years",
+                            highlight: true,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // ---------------- SECTION TITLE ----------------
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "Services Offered (${widget.contractor.totalServices})",
+                          style: TextStyle(
+                            fontSize: AppFontSizes.body,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.textPrimary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 14),
+                // ---------------- SELECTED SERVICES COUNT ----------------
+                Obx(() {
+                  if (contractorServiceController.selectedItems.isNotEmpty) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        margin: const EdgeInsets.only(bottom: 14),
+                        decoration: BoxDecoration(
+                          color: ColorRes.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: ColorRes.primary),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "${contractorServiceController.selectedItems.length} service(s) selected",
                               style: TextStyle(
                                 fontSize: AppFontSizes.bodySmall,
                                 fontWeight: AppFontWeights.semiBold,
+                                color: ColorRes.primary,
                               ),
                             ),
-                          ),
+                            TextButton(
+                              onPressed: () {
+                                contractorServiceController.clearSelection();
+                              },
+                              child: Text(
+                                "Clear All",
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.bodySmall,
+                                  color: ColorRes.error,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     );
-                  }),
-*/
-                  Obx(() {
-                    final bool isGuest = UserHelper.isGuest;
-                    final bool isOwnService =
-                        currentUserId.value == widget.contractor.userId;
-                    final bool hasSelection =
-                        Get.find<ContractorServiceController>(
-                          tag: widget.contractor.userId,
-                        ).selectedItems.isNotEmpty;
-                    final bool enabled =
-                        !isGuest && !isOwnService && hasSelection;
-
-                    return Column(
-                      children: [
-                        // if (isGuest)
-                        //   SizedBox(
-                        //     width: double.infinity,
-                        //     child: ElevatedButton(
-                        //       onPressed: () {
-                        //         Get.to(() => OtpLoginScreen());
-                        //       },
-                        //       style: ElevatedButton.styleFrom(
-                        //         backgroundColor: ColorRes.primary,
-                        //         padding: const EdgeInsets.symmetric(vertical: 14),
-                        //         shape: RoundedRectangleBorder(
-                        //           borderRadius: BorderRadius.circular(10),
-                        //         ),
-                        //       ),
-                        //       child: const Text(
-                        //         "Login to Contact",
-                        //         style: TextStyle(
-                        //           fontSize: AppFontSizes.bodySmall,
-                        //           fontWeight: AppFontWeights.semiBold,
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   )
-                        // else
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 10,
-                            horizontal: 16,
-                          ),
-                          decoration: BoxDecoration(
-                            color: ColorRes.leadGreyColor.shade100,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: ColorRes.leadGreyColor.shade300
-                                    .withOpacity(0.5),
-                                spreadRadius: 2,
-                                blurRadius: 4,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              GestureDetector(
-                                onTap: () async {
-                                  if (_contactController
-                                      .primaryPhone
-                                      .value
-                                      .isEmpty) {
-                                    await _contactController.loadContacts(
-                                      reset: true,
-                                    );
-                                  }
-                                  final number =
-                                      _contactController.primaryPhone.value;
-                                  if (number.isNotEmpty) {
-                                    await ContactHelper.openDialer(number);
-                                  }
-                                },
-                                child: Container(
-                                  height: 44,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 12,
-                                    horizontal: 16,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: ColorRes.primary.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: const Center(
-                                    child: Icon(
-                                      Icons.call,
-                                      color: ColorRes.primary,
-                                      size: 18,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              GestureDetector(
-                                onTap: () async {
-                                  if (_contactController
-                                      .primaryPhone
-                                      .value
-                                      .isEmpty) {
-                                    await _contactController.loadContacts(
-                                      reset: true,
-                                    );
-                                  }
-                                  final number =
-                                      _contactController.primaryPhone.value;
-                                  if (number.isNotEmpty) {
-                                    await ContactHelper.openWhatsApp(number);
-                                  }
-                                },
-                                child: Container(
-                                  height: 44,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 12,
-                                    horizontal: 16,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: ColorRes.green.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Center(
-                                    child: Image.asset(
-                                      'assets/images/whatsapp.png',
-                                      width: 20,
-                                      height: 20,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 25),
-                              Expanded(
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    if (UserHelper.isGuest) {
-                                      Get.to(() => OtpLoginScreen());
-                                    }
-                                    if (enabled) {
-                                      contactContractor();
-                                    } else {
-                                      NesticoPeSnackBar.showAwesomeSnackbar(
-                                        title: 'No Service Selected',
-                                        message:
-                                            "Please select at least one service to continue",
-                                        contentType: ContentType.failure,
-                                      );
-                                    }
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        enabled
-                                            ? ColorRes.primary
-                                            : UserHelper.isGuest
-                                            ? ColorRes.primary
-                                            : ColorRes.leadGreyColor.shade300,
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 12,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    !UserHelper.isGuest
-                                        ? "Contact Contractor"
-                                        : "Login to Contact",
-                                    style: TextStyle(
-                                      fontWeight: AppFontWeights.semiBold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        if (isOwnService) ...[
-                          const SizedBox(height: 8),
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: Colors.red.shade50,
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: Colors.red.shade200),
-                            ),
-                            child: Text(
-                              "Contractors cannot submit inquiries for their own services.",
-                              style: TextStyle(
-                                color: Colors.red.shade700,
-                                fontSize: AppFontSizes.caption,
-                                fontWeight: AppFontWeights.medium,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ],
-                    );
-                  }),
-
-                  const SizedBox(height: 12),
-
-                  // ---------------- STATS GRID ----------------
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _statCard(
-                        "Total Services",
-                        widget.contractor.totalServices.toString(),
-                      ),
-                      _statCard(
-                        "Active Services",
-                        widget.contractor.activeServices.toString(),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _statCard(
-                        "Projects",
-                        widget.contractor.projectStats.totalProjects.toString(),
-                      ),
-
-                      _statCard(
-                        "Experience",
-                        "${widget.contractor.totalExperience} years",
-                        highlight: true,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            // ---------------- SECTION TITLE ----------------
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      "Services Offered (${widget.contractor.totalServices})",
-                      style: TextStyle(
-                        fontSize: AppFontSizes.body,
-                        fontWeight: AppFontWeights.semiBold,
-                        color: ColorRes.textPrimary,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 14),
-            // ---------------- SELECTED SERVICES COUNT ----------------
-            Obx(() {
-              if (contractorServiceController.selectedItems.isNotEmpty) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    margin: const EdgeInsets.only(bottom: 14),
+                  }
+                  return const SizedBox.shrink();
+                }),
+                // ---------------- LOGIN ALERT ----------------
+                if (UserHelper.isGuest) ...[
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: ColorRes.primary.withOpacity(0.1),
+                      color: ColorRes.primary.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: ColorRes.primary),
                     ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "${contractorServiceController.selectedItems.length} service(s) selected",
-                          style: TextStyle(
-                            fontSize: AppFontSizes.bodySmall,
-                            fontWeight: AppFontWeights.semiBold,
-                            color: ColorRes.primary,
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            contractorServiceController.clearSelection();
-                          },
+                      children: const [
+                        Icon(Icons.info_outline, color: ColorRes.primary),
+                        SizedBox(width: 10),
+                        Expanded(
                           child: Text(
-                            "Clear All",
-                            style: TextStyle(
-                              fontSize: AppFontSizes.bodySmall,
-                              color: ColorRes.error,
-                            ),
+                            "Please login to select services and contact the contractor.",
+                            style: TextStyle(fontSize: 14),
                           ),
                         ),
                       ],
-                    ),
-                  ),
-                );
-              }
-              return const SizedBox.shrink();
-            }),
-            // ---------------- LOGIN ALERT ----------------
-            if (UserHelper.isGuest) ...[
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 16),
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: ColorRes.primary.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: const [
-                    Icon(Icons.info_outline, color: ColorRes.primary),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        "Please login to select services and contact the contractor.",
-                        style: TextStyle(fontSize: 14),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-            ],
-            // ---------------- SERVICE CARDS ----------------
-            Obx(() {
-              if (contractorServiceController.isLoading.value &&
-                  contractorServiceController.items.isEmpty) {
-                return const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(32.0),
-                    child: CircularProgressIndicator(),
-                  ),
-                );
-              }
-              if (!contractorServiceController.isLoading.value &&
-                  contractorServiceController.items.isEmpty) {
-                return Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: ColorRes.leadGreyColor.shade100,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      alignment: Alignment.center,
-                      child: Text("No services found."),
-                    ),
-                  ),
-                );
-              }
-              return ListView.separated(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.zero,
-                itemBuilder: (context, index) {
-                  final data = contractorServiceController.items[index];
-                  return ServiceCard(
-                    service: data,
-                    isSelectable: !UserHelper.isGuest,
-                    tag: widget.contractor.userId,
-                  );
-                },
-                separatorBuilder: (context, index) => SizedBox(height: 16),
-                itemCount: contractorServiceController.items.length,
-              );
-            }),
-            // Loading indicator for pagination
-            Obx(() {
-              if (contractorServiceController.isLoading.value &&
-                  contractorServiceController.items.isNotEmpty) {
-                return const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Center(child: CircularProgressIndicator()),
-                );
-              }
-              return const SizedBox.shrink();
-            }),
-            // const SizedBox(height: 20),
-
-            // ---------------- OTHER CONTRACTORS (HORIZONTAL) ----------------
-            Obx(() {
-              // Hide section when viewing own profile
-              if (currentUserId.value == widget.contractor.userId) {
-                return const SizedBox.shrink();
-              }
-
-              final otherCtrl = Get.put(
-                TopContractorsController(withoutCity: false),
-                tag: 'contractors_all_profile',
-              );
-
-              if (otherCtrl.isLoading.value && otherCtrl.items.isEmpty) {
-                return const SizedBox.shrink();
-              }
-
-              final list =
-                  otherCtrl.items
-                      .where((c) => c.userId != widget.contractor.userId)
-                      .toList();
-
-              if (list.isEmpty) return const SizedBox.shrink();
-
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 12),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text(
-                      'Other Contractors',
-                      style: TextStyle(
-                        fontSize: AppFontSizes.body,
-                        fontWeight: AppFontWeights.semiBold,
-                        color: ColorRes.textPrimary,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  SizedBox(
-                    height: 140,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      // padding: const EdgeInsets.symmetric(horizontal: 4),
-                      itemCount: list.length,
-                      itemBuilder: (context, index) {
-                        final c = list[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 12),
-                          child: _ContractorMiniCard(contractor: c),
-                        );
-                      },
                     ),
                   ),
                   const SizedBox(height: 20),
                 ],
-              );
-            }),
-            const SizedBox(height: 30),
-          ],
+                // ---------------- SERVICE CARDS ----------------
+                Obx(() {
+                  if (contractorServiceController.isLoading.value &&
+                      contractorServiceController.items.isEmpty) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(32.0),
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+                  if (!contractorServiceController.isLoading.value &&
+                      contractorServiceController.items.isEmpty) {
+                    return Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: ColorRes.leadGreyColor.shade100,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text("No services found."),
+                        ),
+                      ),
+                    );
+                  }
+                  return ListView.separated(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    padding: EdgeInsets.zero,
+                    itemBuilder: (context, index) {
+                      final data = contractorServiceController.items[index];
+                      return ServiceCard(
+                        service: data,
+                        isSelectable: !UserHelper.isGuest,
+                        tag: widget.contractor.userId,
+                      );
+                    },
+                    separatorBuilder: (context, index) => SizedBox(height: 16),
+                    itemCount: contractorServiceController.items.length,
+                  );
+                }),
+                // Loading indicator for pagination
+                Obx(() {
+                  if (contractorServiceController.isLoading.value &&
+                      contractorServiceController.items.isNotEmpty) {
+                    return const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                }),
+                // const SizedBox(height: 20),
+
+                // ---------------- OTHER CONTRACTORS (HORIZONTAL) ----------------
+                Obx(() {
+                  // Hide section when viewing own profile
+                  if (currentUserId.value == widget.contractor.userId) {
+                    return const SizedBox.shrink();
+                  }
+
+                  final otherCtrl = Get.put(
+                    TopContractorsController(withoutCity: true),
+                    tag: 'contractors_all_profile',
+                  );
+
+                  if (otherCtrl.isLoading.value && otherCtrl.items.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+
+                  print(
+                    "Other Contractors: ${otherCtrl.items.map((element) => element.toJson()).toList()}",
+                  );
+                  final list =
+                      otherCtrl.items
+                          .where((c) => c.userId != widget.contractor.userId)
+                          .toList();
+
+                  if (list.isEmpty) return const SizedBox.shrink();
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 12),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Text(
+                          'Other Contractors',
+                          style: TextStyle(
+                            fontSize: AppFontSizes.body,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.textPrimary,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        height: 140,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          // padding: const EdgeInsets.symmetric(horizontal: 4),
+                          padding: EdgeInsets.only(left: 16),
+                          itemCount: list.length,
+                          itemBuilder: (context, index) {
+                            final c = list[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 10),
+                              child: _ContractorMiniCard(contractor: c),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                  );
+                }),
+                const SizedBox(height: 30),
+              ],
+            ),
+          ),
         ),
       ),
     );
+  }
+
+  void _goToDashboard() {
+    if (Navigator.of(context).canPop()) {
+      Get.back();
+      return;
+    }
+    Get.offAllNamed('/dashboard', predicate: (route) => false);
   }
 
   String getDisplayName({
@@ -2065,7 +2140,7 @@ class _ContractorMiniCard extends StatelessWidget {
       child: Container(
         width: 320,
         padding: const EdgeInsets.all(16),
-        margin: const EdgeInsets.only(left: 16),
+        // margin: const EdgeInsets.only(left: 16),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -2131,7 +2206,11 @@ class _ContractorMiniCard extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              contractor.username ?? 'User',
+                              contractor.username.capitalize?.replaceAll(
+                                    '_',
+                                    ' ',
+                                  ) ??
+                                  'User',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
@@ -2268,6 +2347,7 @@ class _ContractorMiniCard extends StatelessWidget {
                         () => ContractorProfileDetailsScreen(
                           contractor: contractor,
                         ),
+                        routeName: '/contractor/${contractor.id}',
                       ),
                   style: TextButton.styleFrom(
                     backgroundColor: ColorRes.primary,

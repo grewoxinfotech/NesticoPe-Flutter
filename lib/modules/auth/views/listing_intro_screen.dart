@@ -209,35 +209,14 @@ class ListingIntroScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         centerTitle: false,
-        titleSpacing: 16,
-        title: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: ColorRes.primary,
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Text(
-                (config.appBarBrand.isNotEmpty ? config.appBarBrand[0] : 'N')
-                    .toUpperCase(),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: AppFontWeights.bold,
-                  fontSize: AppFontSizes.large,
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              config.appBarBrand,
-              style: const TextStyle(
-                color: ColorRes.primary,
-                fontWeight: AppFontWeights.bold,
-                fontSize: AppFontSizes.title,
-              ),
-            ),
-          ],
+  titleSpacing: 0, // 👈 IMPORTANT
+        // titleSpacing: 16,
+        title: Image.asset(
+          'assets/images/Nestico-Pe_Logo-svg.png',
+          height: 48,
+          width: 150,
+          alignment: Alignment.centerLeft,
+          fit: BoxFit.cover,
         ),
       ),
       body: SafeArea(
@@ -258,6 +237,39 @@ class ListingIntroScreen extends StatelessWidget {
                 child: _StatsCarousel(stats: config.stats),
               ),
               const SizedBox(height: 10),
+                 Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // if (UserHelper.isGuest) ...[
+                    _ViewPlansCallout(
+                      title: config.viewPlansTitle,
+                      subtitle: config.viewPlansSubtitle,
+                      buttonText: config.viewPlansButtonText,
+                      onTap: onUnlockPlans,
+                    ),
+
+                    // ] else ...[
+                    //   Text(
+                    //     planTitle,
+                    //     style: TextStyle(
+                    //       fontSize: AppFontSizes.body,
+                    //       fontWeight: AppFontWeights.semiBold,
+                    //       color: ColorRes.textPrimary,
+                    //     ),
+                    //   ),
+                    //   const SizedBox(height: 10),
+                    //   SubscriptionPlansCarousel(controller: controller),
+                    //   const SizedBox(height: 16),
+                    // ],
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10,),
               if (role == Roles.reseller.name) ...[
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
@@ -306,6 +318,7 @@ class ListingIntroScreen extends StatelessWidget {
                   ),
                 ),
               ],
+               //eight: 10),
 
               const SizedBox(height: 10),
               Padding(
@@ -433,39 +446,7 @@ class ListingIntroScreen extends StatelessWidget {
                 const SizedBox(height: 16),
               ],
 
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // if (UserHelper.isGuest) ...[
-                    _ViewPlansCallout(
-                      title: config.viewPlansTitle,
-                      subtitle: config.viewPlansSubtitle,
-                      buttonText: config.viewPlansButtonText,
-                      onTap: onUnlockPlans,
-                    ),
-
-                    // ] else ...[
-                    //   Text(
-                    //     planTitle,
-                    //     style: TextStyle(
-                    //       fontSize: AppFontSizes.body,
-                    //       fontWeight: AppFontWeights.semiBold,
-                    //       color: ColorRes.textPrimary,
-                    //     ),
-                    //   ),
-                    //   const SizedBox(height: 10),
-                    //   SubscriptionPlansCarousel(controller: controller),
-                    //   const SizedBox(height: 16),
-                    // ],
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
+          
               if (config.steps.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(

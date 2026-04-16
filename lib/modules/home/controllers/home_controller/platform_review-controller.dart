@@ -210,7 +210,11 @@ class PlatformReviewController extends GetxController {
   void onInit() {
     super.onInit();
     scrollController.addListener(_scrollListener);
-    filters = {'entity_type': type};
+    filters = {
+      ...filters,
+      'status': filters['status'] ?? 'published',
+      'entity_type': type,
+    };
     fetchAllReviews();
   }
 
@@ -242,6 +246,7 @@ class PlatformReviewController extends GetxController {
 
       final response = await _reviewService.fetchReviews(
         page: currentPage.value,
+        limit: 'all',
         filters: filters,
       );
 
@@ -261,7 +266,10 @@ class PlatformReviewController extends GetxController {
         totalPages.value = response.data?.totalPages ?? 1;
         hasMore.value = response.data?.hasMore ?? false;
 
-        await filterSiteReviews();
+
+        
+
+        // await filterSiteReviews();
       }
     } catch (e) {
       debugPrint("❌ Error fetching all reviews: $e");
@@ -278,7 +286,7 @@ class PlatformReviewController extends GetxController {
         }).toList();
 
     // Fetch user data
-    await _fetchUsersData();
+    // await _fetchUsersData();
 
     final matched = <ReviewWithUser>[];
 
@@ -297,24 +305,24 @@ class PlatformReviewController extends GetxController {
   }
 
   /// 🔹 Fetch users data with pagination fields handled
-  Future<void> _fetchUsersData() async {
-    try {
-      userData.value = await _reviewService.fetchReviewsData(
-        page: userCurrentPage.value,
-      );
+  // Future<void> _fetchUsersData() async {
+  //   try {
+  //     userData.value = await _reviewService.fetchReviewsData(
+  //       page: userCurrentPage.value,
+  //     );
 
-      final response = userData.value;
-      if (response == null) return;
+  //     final response = userData.value;
+  //     if (response == null) return;
 
-      userTotal.value = response.data?.total ?? 0;
-      userCurrentPage.value = response.data?.currentPage ?? 1;
-      userTotalPages.value = response.data?.totalPages ?? 1;
-      userHasMore.value = response.data?.hasMore ?? false;
-      userFetchedAll.value = response.data?.fetchedAll ?? false;
-    } catch (e) {
-      debugPrint("❌ Error fetching user data: $e");
-    }
-  }
+  //     userTotal.value = response.data?.total ?? 0;
+  //     userCurrentPage.value = response.data?.currentPage ?? 1;
+  //     userTotalPages.value = response.data?.totalPages ?? 1;
+  //     userHasMore.value = response.data?.hasMore ?? false;
+  //     userFetchedAll.value = response.data?.fetchedAll ?? false;
+  //   } catch (e) {
+  //     debugPrint("❌ Error fetching user data: $e");
+  //   }
+  // }
 
   /// 🔹 Load more reviews (pagination)
   Future<void> loadMoreReviews() async {
@@ -326,13 +334,15 @@ class PlatformReviewController extends GetxController {
 
       final response = await _reviewService.fetchReviews(
         page: currentPage.value,
+        limit: 'all',
+        filters: filters,
       );
 
       if (response != null && response.success == true) {
         allReviews.addAll(response.data?.items ?? []);
         hasMore.value = response.data?.hasMore ?? false;
 
-        await filterSiteReviews();
+        // await filterSiteReviews();
       }
     } catch (e) {
       debugPrint("❌ Error loading more reviews: $e");

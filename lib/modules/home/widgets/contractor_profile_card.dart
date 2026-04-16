@@ -244,7 +244,7 @@ class ContractorCard extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: ColorRes.surface,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
           // border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
           boxShadow: [
             BoxShadow(
@@ -299,49 +299,58 @@ class ContractorCard extends StatelessWidget {
                               children: [
                                 Row(
                                   children: [
-                                    Text(
-                                      (contractor.firstName.isEmpty ||
-                                              contractor.lastName.isEmpty)
-                                          ? contractor.username
-                                          : "${contractor.firstName} ${contractor.lastName}",
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        fontSize: AppFontSizes.medium,
-                                        fontWeight: AppFontWeights.semiBold,
-                                        color: ColorRes.textColor,
+                                    Expanded(
+                                      child: Text(
+                                        (contractor.firstName.isEmpty ||
+                                                contractor.lastName.isEmpty)
+                                            ? contractor.username.capitalize?.replaceAll('_', ' ')??''
+                                            : "${contractor.firstName.capitalize?.replaceAll('_', ' ')} ${contractor.lastName.capitalize?.replaceAll('_', ' ')}",
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontSize: AppFontSizes.medium,
+                                          fontWeight: AppFontWeights.semiBold,
+                                          color: ColorRes.textColor,
+                                        ),
                                       ),
                                     ),
-                                    Spacer(),
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
+                                    // Spacer(),
+                                    SizedBox(width: 12),
+                                    Column(
                                       children: [
-                                        const Icon(
-                                          Icons.star_rounded,
-                                          color: Colors.amber,
-                                          size: 14,
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Icon(
+                                              Icons.star_rounded,
+                                              color: Colors.amber,
+                                              size: 14,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              rating.toStringAsFixed(1),
+                                              style: const TextStyle(
+                                                fontSize: AppFontSizes.small,
+                                                fontWeight: AppFontWeights.bold,
+                                                color: ColorRes.primary,
+                                              ),
+                                            ),
+                                           const SizedBox(width: 6),
+                                            Text(
+                                              "(${Formatter.formatNumber(contractor.totalReviews)} review${contractor.totalReviews == 1 ? '' : 's'})",
+                                              style: TextStyle(
+                                                fontSize: AppFontSizes.caption,
+                                                color:
+                                                    ColorRes
+                                                        .leadGreyColor
+                                                        .shade700,
+                                                fontWeight: AppFontWeights.medium,
+                                              ),
+                                            ),
+
+                                          ],
                                         ),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          rating.toStringAsFixed(1),
-                                          style: const TextStyle(
-                                            fontSize: AppFontSizes.small,
-                                            fontWeight: AppFontWeights.bold,
-                                            color: ColorRes.primary,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          "(${Formatter.formatNumber(contractor.totalReviews)} review${contractor.totalReviews == 1 ? '' : 's'})",
-                                          style: TextStyle(
-                                            fontSize: AppFontSizes.caption,
-                                            color:
-                                                ColorRes
-                                                    .leadGreyColor
-                                                    .shade700,
-                                            fontWeight: AppFontWeights.medium,
-                                          ),
-                                        ),
+                                       
                                       ],
                                     ),
                                   ],

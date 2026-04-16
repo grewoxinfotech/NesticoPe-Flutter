@@ -1,10 +1,9 @@
-
-
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import '../../../data/database/secure_storage_service.dart';
 import '../../../data/network/user/service/notification_sync_service.dart';
 import '../../../services/notification_service.dart';
@@ -17,6 +16,7 @@ import '../../contractor/view/contractor_main.dart';
 import '../../reseller/view/property_reseller.dart';
 import '../../saved_property/controllers/property_favorite_controller.dart';
 import 'onboarding_screen.dart';
+import '../../home/views/select_city_screen/select_city_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -87,7 +87,59 @@ class _SplashScreenState extends State<SplashScreen>
     await Future.delayed(const Duration(seconds: 2));
 
     await NotificationService.instance.init();
+    Future.delayed(const Duration(milliseconds: 500), () {
+      OneSignal.Notifications.requestPermission(true);
+    });
+
     await UserHelper.initUserType();
+
+    // Buyer onboarding: user already logged in or skipped, but closed the app
+    // on SelectCityScreen before choosing a city — resume city selection.
+    final pendingOnboardingCity =
+        await SecureStorage.getPendingOnboardingCitySelection();
+    final storedCity = await SecureStorage.getSelectedCity();
+    final hasStoredCity = storedCity != null && storedCity.trim().isNotEmpty;
+    if (pendingOnboardingCity && !hasStoredCity) {
+      final cat = await SecureStorage.getHomeCategory();
+      final title =
+          cat == 'Rent/Lease'
+              ? 'Find or Rent Property in Your Location'
+              : 'Find or Buy Property in Your Location';
+
+      final isLogin = await SecureStorage.getLoggedIn();
+      final token = await SecureStorage.getToken();
+      if (isLogin && token != null && token.isNotEmpty) {
+        final user = await SecureStorage.getUserData();
+        final userId = user?.user?.id?.toString();
+        final role = UserHelper.userType?.name ?? 'buyer';
+        if (userId != null && userId.isNotEmpty) {
+          await NotificationService.instance.attachLoggedInUser(
+            userId: userId,
+            role: role,
+            syncToBackend: (playerId) async {
+              await NotificationSyncService.instance.syncToBackend(
+                deviceToken: playerId,
+                metadata: {'user_id': userId, 'role': role, 'source': 'splash'},
+              );
+            },
+          );
+        } else {
+          await NotificationService.instance.attachGuestUser();
+        }
+      } else {
+        await NotificationService.instance.attachGuestUser();
+      }
+
+      Get.put(PropertyFavoriteController(), permanent: true);
+      Get.offAll(
+        () => SelectCityScreen(
+          isFromLogin: true,
+          resumeAfterOnboardingFromSplash: true,
+          title: title,
+        ),
+      );
+      return;
+    }
 
     final isFirstTime = await SecureStorage.isFirstTimeUser();
     if (isFirstTime) {
@@ -149,9 +201,6 @@ class _SplashScreenState extends State<SplashScreen>
     _navigate();
   }
 
-
-  
-
   void _navigate() {
     if (UserHelper.isBuyer) {
       Get.offAll(() => const DashboardScreen());
@@ -164,7 +213,7 @@ class _SplashScreenState extends State<SplashScreen>
     } else if (UserHelper.isContractor) {
       Get.offAll(() => const ContractorMainScreen());
     } else if (UserHelper.isGuest) {
-      Get.offAll(() =>  DashboardScreen());
+      Get.offAll(() => DashboardScreen());
     } else {
       Get.offAll(() => const OtpLoginScreen());
     }
@@ -205,7 +254,7 @@ class _SplashScreenState extends State<SplashScreen>
                 //     Colors.black.withOpacity(0.25),
                 //   ],
                 // ),
-                color:ColorRes.primary,
+                color: ColorRes.primary,
               ),
             ),
           ),

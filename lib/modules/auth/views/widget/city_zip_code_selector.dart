@@ -108,6 +108,7 @@ class _CityZipcodeSelectorState extends State<CityZipcodeSelector> {
               Obx(
                 () => TextField(
                   controller: _zipcodeController,
+
                   enabled: _selectedCity.value.isNotEmpty,
                   keyboardType: TextInputType.number,
                   inputFormatters: [
@@ -119,9 +120,8 @@ class _CityZipcodeSelectorState extends State<CityZipcodeSelector> {
                     contentPadding: const EdgeInsets.all(AppPadding.small),
                     filled: true,
                     fillColor:
-                        _selectedCity.value.isNotEmpty
-                            ? Colors.white
-                            : Colors.grey.shade100,
+                        // _selectedCity.value.isNotEmpty
+                        Colors.white,
                     // prefixIcon:
                     //     _controller.isVerifying.value
                     //         ? const Padding(
@@ -142,7 +142,7 @@ class _CityZipcodeSelectorState extends State<CityZipcodeSelector> {
                             : _zipErrorText.value,
                     enabledBorder: _tile(Get.theme.dividerColor),
                     focusedBorder: _tile(Get.theme.primaryColor),
-                    disabledBorder: _tile(ColorRes.leadGreyColor),
+                    disabledBorder: _tile(ColorRes.leadGreyColor.shade300),
                     errorBorder: _tile(ColorRes.error),
                     focusedErrorBorder: _tile(ColorRes.error),
                   ),

@@ -306,6 +306,7 @@ import 'dart:developer';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
@@ -447,32 +448,79 @@ class _CategoryCardState extends State<_CategoryCard>
     final isPopular = key == 'home_construction';
 
     /// 🎨 Gradient map
-    final gradientMap = {
-      'home_construction': [Color(0xFF8E7CFF), Color(0xFF6A5AE0)],
-      'interior_design': [Color(0xFF1EC8C8), Color(0xFF2FA4A9)],
-      'packers_and_movers': [Color(0xFFFF7A3D), Color(0xFFFF5C2B)],
-      'legal_services': [Color(0xFFFF5F8F), Color(0xFFE94057)],
-      'home_services': [
-        Color.fromARGB(255, 254, 120, 79),
-        Color.fromARGB(255, 212, 0, 254),
+   final gradientMap = {
+      'home_construction': [
+        Color(0xFF00F5A0), // neon green
+        Color.fromARGB(255, 0, 147, 245), // aqua blue
       ],
-      'material_supply': [Color(0xFFB06AB3), Color(0xFF4568DC)],
-      'building_material_supply': [Color(0xFFB06AB3), Color(0xFF4568DC)],
+
+      'interior_design': [
+        Color(0xFFFFD200), // bright yellow
+        Color(0xFFFF6A00), // orange
+      ],
+
+      'packers_and_movers': [
+        Color(0xFFFF512F), // orange red
+        Color(0xFFDD2476), // pink
+      ],
+
+      'legal_services': [
+        Color(0xFF7F00FF), // electric purple
+        Color(0xFFE100FF), // neon magenta
+      ],
+
+      'home_services': [
+        Color(0xFF00C6FF), // sky blue
+        Color(0xFF0072FF), // deep blue
+      ],
+
+      'material_supply': [
+        Color(0xFFFF9A00), // bright amber
+        Color(0xFFFF3D00), // strong orange red
+      ],
+
+      'building_material_supply': [
+        Color.fromARGB(255, 67, 208, 233), // bright green
+        Color.fromARGB(255, 69, 56, 249), // mint cyan
+      ],
     };
+
 
     final colors =
         gradientMap[key] ??
         [ColorRes.primary, ColorRes.primary.withOpacity(0.7)];
 
     /// 🎯 Icon map
-    final iconMap = {
-      'home_construction': Icons.home_work_outlined,
-      'interior_design': Icons.chair_alt_outlined,
-      'packers_and_movers': Icons.local_shipping,
-      'legal_services': Icons.gavel_outlined,
-      'home_services': Icons.miscellaneous_services_outlined,
-      'material_supply': Icons.inventory_2_outlined,
-      'building_material_supply': Icons.inventory_2_outlined,
+    final svgMap = {
+      'home_construction': [
+        'assets/svg/service/build-svgrepo-com.svg',
+        'assets/svg/service/building-construction-svgrepo-com.svg',
+      ],
+      'interior_design': [
+        'assets/svg/service/desk-svgrepo-com.svg',
+        'assets/svg/service/lamp-svgrepo-com.svg',
+      ],
+      'packers_and_movers': [
+        'assets/svg/service/truck-svgrepo-com.svg',
+        'assets/svg/service/giftbox-gift-svgrepo-com.svg',
+      ],
+      'legal_services': [
+        'assets/svg/service/legal-issue-svgrepo-com.svg',
+        'assets/svg/service/agreement-contract-a4-paper-svgrepo-com.svg',
+      ],
+      'home_services': [
+        'assets/svg/service/plumber-svgrepo-com.svg',
+        'assets/svg/service/painting-roller-outline-svgrepo-com.svg',
+      ],
+      'material_supply': [
+        'assets/svg/service/bricks-svgrepo-com.svg',
+        'assets/svg/service/bulldozers-svgrepo-com.svg',
+      ],
+      'building_material_supply': [
+        'assets/svg/service/bricks-svgrepo-com.svg',
+
+        'assets/svg/service/bulldozers-svgrepo-com.svg',
+      ],
     };
 
     // return GestureDetector(
@@ -607,44 +655,58 @@ class _CategoryCardState extends State<_CategoryCard>
             end: Alignment.bottomRight,
           ),
           border:
-              isPopular ? Border.all(color: ColorRes.homeYellow, width: 2) : null,
+              isPopular
+                  ? Border.all(color: ColorRes.homeYellow, width: 2)
+                  : null,
           borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
         ),
         child: Stack(
           children: [
-            /// 🎨 BACKGROUND GRADIENT
-            // Positioned.fill(
-            //   child: Container(
-            //     decoration: BoxDecoration(
-            //       gradient: LinearGradient(
-            //         colors: [
-            //           ColorRes.primary,
-            //           ColorRes.primary.withOpacity(0.7),
-            //         ],
-            //       ),
-            //       borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
-            //     ),
-            //   ),
-            // ),
-
-            /// 🔥 PATTERN (DYNAMIC)
-            Positioned.fill(
-              child: AnimatedBuilder(
-                animation: _controller,
-                builder: (_, __) {
-                  return CustomPaint(painter: _getPainter(widget.item.name));
-                },
-              ),
-            ),
+            // /// 🎨 BACKGROUND GRADIENT
+            //  Positioned.fill(
+            //                     child: CustomPaint(
+            //                       painter: CardPatternPainter(
+            //                         color1: gradientMap[key]![0],
+            //                         color2: gradientMap[key]![1],
+            //                       ),
+            //                     ),
+            //                   ),
 
             /// 🎯 ICON
             Positioned(
-              right: -5,
-              bottom: -5,
-              child: Icon(
-                iconMap[key] ?? Icons.home,
-                size: 80,
-                color: Colors.white.withOpacity(0.25),
+              right: -8,
+              bottom: -8,
+              child: SvgPicture.asset(
+                (svgMap[key] ??
+                    [
+                      'assets/svg/service/build-svgrepo-com.svg',
+                      'assets/svg/service/bricks-svgrepo-com.svg',
+                    ])[0],
+                width: 72,
+                height: 72,
+                colorFilter: ColorFilter.mode(
+                  Colors.white.withOpacity(0.22),
+                  BlendMode.srcIn,
+                ),
+              ),
+            ),
+
+            /// 🖼️ SVG IMAGE 2 — top-right (smaller, slightly more visible)
+            Positioned(
+              left: 10,
+              top: 30,
+              child: SvgPicture.asset(
+                (svgMap[key] ??
+                    [
+                      'assets/svg/service/build-svgrepo-com.svg',
+                      'assets/svg/service/bricks-svgrepo-com.svg',
+                    ])[1],
+                width: 50,
+                height: 50,
+                colorFilter: ColorFilter.mode(
+                  Colors.white.withOpacity(0.45),
+                  BlendMode.srcIn,
+                ),
               ),
             ),
 
@@ -715,7 +777,6 @@ class _CategoryCardState extends State<_CategoryCard>
             ),
             child: Stack(
               children: [
-        
                 /// ✨ Shimmer text
                 ShaderMask(
                   blendMode: BlendMode.srcATop,

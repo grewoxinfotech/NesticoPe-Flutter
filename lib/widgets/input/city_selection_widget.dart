@@ -773,7 +773,7 @@ class LocationSelectionWidget extends StatelessWidget {
         Row(
           children: [
             Text(
-              'Location',
+              'Locality',
               style: TextStyle(
                 fontSize: AppFontSizes.medium,
                 color: ColorRes.textSecondary,

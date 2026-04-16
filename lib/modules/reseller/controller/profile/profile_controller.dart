@@ -857,10 +857,10 @@ class ProfileController extends GetxController {
               TextField(
                 controller: otpController,
                 keyboardType: TextInputType.number,
-                maxLength: 6,
+                maxLength: 4,
                 decoration: InputDecoration(
                   labelText: 'Enter OTP',
-                  hintText: '000000',
+                  hintText: '0000',
                   prefixIcon: const Icon(Icons.lock_outline),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -908,11 +908,15 @@ class ProfileController extends GetxController {
         actions: [
           TextButton(
             onPressed: () {
-              otpController.dispose();
-              pendingUserData = null;
               _resendTimer?.cancel();
+              _resendTimer = null;
+              pendingUserData = null;
               pendingPhone.value = '';
+              SecureStorage.deleteUpdatePhoneToken();
               Get.back();
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                otpController.dispose();
+              });
             },
             child: const Text('Cancel'),
           ),
@@ -922,12 +926,12 @@ class ProfileController extends GetxController {
                   (!isVerifyButtonEnabled.value || isVerifyingOtp.value)
                       ? null
                       : () {
-                        if (otpController.text.length == 6) {
+                        if (otpController.text.length == 4) {
                           verifyPhoneUpdateOtp(otpController.text);
                         } else {
                           NesticoPeSnackBar.showAwesomeSnackbar(
                             title: 'Error',
-                            message: 'Please enter 6-digit OTP',
+                            message: 'Please enter 4-digit OTP',
                             contentType: ContentType.failure,
                           );
                         }

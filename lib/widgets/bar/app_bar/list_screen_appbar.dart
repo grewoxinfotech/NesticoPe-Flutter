@@ -9,11 +9,13 @@ class ListScreenAppbar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onBack;
   final VoidCallback? onFilterTap;
   final bool showFilter;
+  final bool showIconWithText;
   final bool isFormScreen;
 
   const ListScreenAppbar({
     super.key,
     this.showAppBar = true,
+    this.showIconWithText=false,
     required this.title,
     this.onBack,
     this.onFilterTap,
@@ -52,16 +54,25 @@ class ListScreenAppbar extends StatelessWidget implements PreferredSizeWidget {
       // ✅ Filter icon (optional)
       actions: showFilter
           ? [
-        Padding(
-          padding: const EdgeInsets.only(right: 12.0),
-          child: GestureDetector(
-            onTap: onFilterTap,
-            child: const Icon(
-              Icons.filter_list,
-              color: ColorRes.textColor,
-            ),
+
+
+        GestureDetector(
+          onTap: onFilterTap,
+          child:  Icon(
+            Icons.filter_list,
+            size: 22,
+            color: ColorRes.primary,
           ),
         ),
+       if(showIconWithText)...[
+         Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: GestureDetector(onTap: onFilterTap,child: Text('Filter',style: TextStyle(color: ColorRes.primary,fontSize: 15,fontWeight: FontWeight.w500),)),
+        )
+       ]else...[
+        SizedBox(width: 12,)
+       ]
+
       ]
           : [],
     );

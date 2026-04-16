@@ -378,7 +378,7 @@ class ContractorMyService {
     } catch (e) {
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
-        message: "Something went wrong",
+        message: data['message'] ?? 'Something went wrong',
         contentType: ContentType.failure,
       );
       print("Response body for create Inquiry: ${e}");

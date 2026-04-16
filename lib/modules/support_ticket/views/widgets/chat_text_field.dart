@@ -121,7 +121,7 @@ class _ChatMessageInputFieldState extends State<ChatMessageInputField> {
   // PlatformFile? _pickedFile;
 
   Future<void> pickDocument() async {
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       allowMultiple: false,
       type: FileType.any,
       withData: true,

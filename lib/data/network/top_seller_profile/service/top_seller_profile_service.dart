@@ -122,9 +122,9 @@ class TopSellerService {
       final queryParameters = {
         'page': page.toString(),
         'limit': limit.toString(),
-        if (city != null) 'city': city,
-        if (createdBy != null) 'created_by': createdBy,
-        if (status != null) 'status': status,
+        if (city != null && city.isNotEmpty) 'city': city,
+        if (createdBy != null && createdBy.isNotEmpty) 'created_by': createdBy,
+        if (status != null && status.isNotEmpty) 'status': status,
       };
 
       final uri = Uri.parse(
@@ -139,9 +139,10 @@ class TopSellerService {
         final data = jsonDecode(response.body);
 
         if (city != null) {
-          AppLogger.structured("Top Builder All $city", data);
+          print("Top Builder All with city: $city");
+          print("Top Builder All $city: ${data}");
         } else {
-          AppLogger.structured("Top Builder All ", data);
+          print("Top Builder All without: ${data}");
         }
         return PaginationResponse.fromJson(
           data,

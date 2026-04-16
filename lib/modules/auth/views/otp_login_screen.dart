@@ -561,18 +561,19 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: ColorRes.primary),
-          onPressed: () => Navigator.of(context).pop(),
+        
+        leading: GestureDetector(
+          onTap: () => Navigator.of(context).pop(),
+          child: Icon(Icons.arrow_back, color: ColorRes.primary),
         ),
         // centerTitle: true,
-        title: const Text(
-          'NesticoPe',
-          style: TextStyle(
-            // fontSize: 17,
-            fontWeight: FontWeight.w700,
-            color: ColorRes.primary,
-          ),
+        titleSpacing: 0,
+        title: Image.asset(
+          'assets/images/Nestico-Pe_Logo-svg.png',
+          height: 48,
+          width: 150,
+          alignment: Alignment.centerLeft,
+          fit: BoxFit.cover,
         ),
       ),
       body: Container(
@@ -1152,7 +1153,6 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
           ),
         ),
       ),
-      
     );
   }
 
@@ -1460,18 +1460,19 @@ class _OtpLoginAsPartnerScreenState extends State<OtpLoginAsPartnerScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: ColorRes.primary),
-          onPressed: () => Navigator.of(context).pop(),
+        
+        leading: GestureDetector(
+          onTap: () => Navigator.of(context).pop(),
+          child: Icon(Icons.arrow_back, color: ColorRes.primary),
         ),
         // centerTitle: true,
-        title: const Text(
-          'NesticoPe',
-          style: TextStyle(
-            // fontSize: 17,
-            fontWeight: FontWeight.w700,
-            color: ColorRes.primary,
-          ),
+        titleSpacing: 0,
+        title: Image.asset(
+          'assets/images/Nestico-Pe_Logo-svg.png',
+          height: 48,
+          width: 150,
+          alignment: Alignment.centerLeft,
+          fit: BoxFit.cover,
         ),
       ),
       body: Container(

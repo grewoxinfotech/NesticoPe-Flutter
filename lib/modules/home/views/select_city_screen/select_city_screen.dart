@@ -1230,18 +1230,30 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 import 'package:nesticope_app/modules/filter_property/controller/city_insigths_controller.dart';
 import 'package:nesticope_app/modules/search_property/model/search_model.dart';
 import 'package:nesticope_app/widgets/messages/snack_bar.dart';
+import 'package:nesticope_app/widgets/location_permission/location_permission_method.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../other/trending_city/controllers/trending_city_controller.dart';
 import '../../../search_property/controller/search_controller.dart';
+import '../../../auth/helpers/onboarding_city_completion_helper.dart';
 
 class SelectCityScreen extends StatefulWidget {
   bool? isFromLogin;
   String? title;
 
-  SelectCityScreen({super.key, this.isFromLogin = false, this.title});
+  /// When true, this screen was opened from [SplashScreen] to finish buyer
+  /// onboarding; completing a city must not use [Get.back] (no route below).
+  final bool resumeAfterOnboardingFromSplash;
+
+  SelectCityScreen({
+    super.key,
+    this.isFromLogin = false,
+    this.title,
+    this.resumeAfterOnboardingFromSplash = false,
+  });
 
   @override
   State<SelectCityScreen> createState() => _SelectCityScreenState();
@@ -1258,6 +1270,7 @@ class _SelectCityScreenState extends State<SelectCityScreen> {
   final FocusNode _focusNode = FocusNode();
 
   bool _isSearching = false;
+  bool _loadingLocation = false;
 
   @override
   void initState() {
@@ -1293,11 +1306,43 @@ class _SelectCityScreenState extends State<SelectCityScreen> {
     }
   }
 
+  void _finishCitySelection(String city) {
+    final t = city.trim();
+    if (t.isEmpty) return;
+    if (widget.resumeAfterOnboardingFromSplash) {
+      OnboardingCityCompletionHelper.completeAndOpenDashboard(t);
+    } else {
+      Get.back(result: t);
+    }
+  }
+
   void _onSearchSubmit() {
     final value = searchController.text.trim();
     if (value.isNotEmpty) {
       _focusNode.unfocus();
-      Get.back(result: value);
+      _finishCitySelection(value);
+    }
+  }
+
+  Future<void> _onUseCurrentLocation() async {
+    if (_loadingLocation) return;
+    setState(() => _loadingLocation = true);
+    try {
+      final city = await getCurrentCityFromDevice();
+      final trimmed = city?.trim() ?? '';
+      if (trimmed.isNotEmpty) {
+        cityController.selectedCity.value = trimmed;
+        _finishCitySelection(trimmed);
+      } else {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Location unavailable',
+          message:
+              'Could not detect your city. Enable location or pick a city below.',
+          contentType: ContentType.warning,
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _loadingLocation = false);
     }
   }
 
@@ -1330,6 +1375,53 @@ class _SelectCityScreenState extends State<SelectCityScreen> {
                 onSearchSubmit: _onSearchSubmit,
               ),
 
+              if (!_isSearching)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed:
+                          _loadingLocation ? null : _onUseCurrentLocation,
+                      icon:
+                          _loadingLocation
+                              ? SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: ColorRes.primary,
+                                ),
+                              )
+                              : const Icon(
+                                Icons.location_on_outlined,
+                                size: 20,
+                                color: ColorRes.white,
+                              ),
+                      label: Text(
+                        _loadingLocation
+                            ? 'Getting location…'
+                            : 'Use my current device location',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: ColorRes.white,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 14,
+                          horizontal: 16,
+                        ),
+                        // side: const BorderSide(color: Color(0xFF3730A3)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
               // ─── Search Results (shown while typing) ──────────────────────
               if (_isSearching)
                 Obx(() {
@@ -1353,55 +1445,56 @@ class _SelectCityScreenState extends State<SelectCityScreen> {
                   return _PredictionList(
                     predictions: controller.predictions.toList(),
                     focusNode: _focusNode,
+                    onCitySelected: _finishCitySelection,
                   );
                 }),
 
               // ─── Main Content (shown when not searching) ───────────────────
-          if (!_isSearching) ...[
-  Stack(
-    children: [
-      // ── Background image ──────────────────────────────────────
-      Positioned.fill(
-        child: Image.asset(
-          'assets/images/login_background.jpg',
-          fit: BoxFit.cover,
-        ),
-      ),
+              if (!_isSearching) ...[
+                Stack(
+                  children: [
+                    // ── Background image ──────────────────────────────────────
+                    Positioned.fill(
+                      child: Image.asset(
+                        'assets/images/login_background.jpg',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
 
-      // ── Semi-transparent overlay for readability ───────────────
-      Positioned.fill(
-        child: Container(
-          color: Colors.white.withOpacity(0.70),
-        ),
-      ),
+                    // ── Semi-transparent overlay for readability ───────────────
+                    Positioned.fill(
+                      child: Container(color: Colors.white.withOpacity(0.70)),
+                    ),
 
-      // ── Foreground content ─────────────────────────────────────
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Obx(() {
-            final cities = popularController.allTrendingCities;
-            if (cities.isEmpty) {
-              return const Padding(
-                padding: EdgeInsets.all(16),
-                child: Center(child: CircularProgressIndicator()),
-              );
-            }
-            final selected = cityController.selectedCity.value;
-            return _PopularCitiesSection(
-              cities: cities.toList(),
-              selectedCity: selected,
-              isFromLoginSide: cityController.isFromLoginSide.value,
-            );
-          }),
-          _SectionHeader(title: 'Unlock Local Insights'),
-          _InsightCards(),
-          const SizedBox(height: 50),
-        ],
-      ),
-    ],
-  ),
-],
+                    // ── Foreground content ─────────────────────────────────────
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Obx(() {
+                          final cities = popularController.allTrendingCities;
+                          if (cities.isEmpty) {
+                            return const Padding(
+                              padding: EdgeInsets.all(16),
+                              child: Center(child: CircularProgressIndicator()),
+                            );
+                          }
+                          final selected = cityController.selectedCity.value;
+                          return _PopularCitiesSection(
+                            cities: cities.toList(),
+                            selectedCity: selected,
+                            isFromLoginSide:
+                                cityController.isFromLoginSide.value,
+                            onCitySelected: _finishCitySelection,
+                          );
+                        }),
+                        _SectionHeader(title: 'Unlock Local Insights'),
+                        _InsightCards(),
+                        const SizedBox(height: 50),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
             ],
           ),
         ),
@@ -1451,9 +1544,9 @@ class _HeroBanner extends StatelessWidget {
                   end: Alignment.bottomCenter,
                   colors: [
                     Colors.white.withOpacity(0.10),
-                      Colors.white.withOpacity(0.30),
-                        Colors.white.withOpacity(0.02),
-                          Colors.black.withOpacity(0.40),
+                    Colors.white.withOpacity(0.30),
+                    Colors.white.withOpacity(0.02),
+                    Colors.black.withOpacity(0.40),
                     ColorRes.black.withOpacity(0.40),
                   ],
                 ),
@@ -1495,10 +1588,7 @@ class _HeroBanner extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
-                  colors: [
-                    Colors.black.withOpacity(0.3),
-                    Colors.transparent,
-                  ],
+                  colors: [Colors.black.withOpacity(0.3), Colors.transparent],
                 ),
               ),
             ),
@@ -1672,8 +1762,13 @@ class _DotGridPainter extends CustomPainter {
 class _PredictionList extends StatelessWidget {
   final List<Prediction> predictions;
   final FocusNode focusNode;
+  final ValueChanged<String> onCitySelected;
 
-  const _PredictionList({required this.predictions, required this.focusNode});
+  const _PredictionList({
+    required this.predictions,
+    required this.focusNode,
+    required this.onCitySelected,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1708,7 +1803,7 @@ class _PredictionList extends StatelessWidget {
             borderRadius: BorderRadius.circular(14),
             onTap: () {
               focusNode.unfocus();
-              Get.back(result: description.split(',').first.trim());
+              onCitySelected(description.split(',').first.trim());
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -1720,10 +1815,10 @@ class _PredictionList extends StatelessWidget {
                       color: const Color(0xFFEEF0FB),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Icon(
+                    child:  Icon(
                       Icons.location_on_outlined,
                       size: 20,
-                      color: Color(0xFF3730A3),
+                      color: ColorRes.primary,
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -1734,7 +1829,7 @@ class _PredictionList extends StatelessWidget {
                         Text(
                           city,
                           style: const TextStyle(
-                            fontSize: 14,
+                            fontSize: 12,
                             fontWeight: FontWeight.w600,
                             color: Colors.black87,
                           ),
@@ -1744,8 +1839,9 @@ class _PredictionList extends StatelessWidget {
                           Text(
                             location,
                             style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey.shade500,
+                              fontSize: 10,
+                              color: Colors.grey.shade600,
+                              fontWeight: AppFontWeights.medium
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -2020,11 +2116,13 @@ class _PopularCitiesSection extends StatelessWidget {
   final List cities;
   final String selectedCity;
   final bool isFromLoginSide;
+  final ValueChanged<String> onCitySelected;
 
   const _PopularCitiesSection({
     required this.cities,
     required this.selectedCity,
     required this.isFromLoginSide,
+    required this.onCitySelected,
   });
 
   @override
@@ -2046,26 +2144,28 @@ class _PopularCitiesSection extends StatelessWidget {
               return GestureDetector(
                 onTap: () {
                   if (isFromLoginSide) {
-                    Get.back(result: (city.city as String).trim());
+                    onCitySelected((city.city as String).trim());
                   }
                 },
                 child: Container(
-                  width: 100,          // ✅ fixed width — all cards same size
+                  width: 100, // ✅ fixed width — all cards same size
                   margin: const EdgeInsets.only(right: 8),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
-                      color: isSelected
-                          ? const Color(0xFF3730A3)
-                          : Colors.transparent,
+                      color:
+                          isSelected
+                              ? const Color(0xFF3730A3)
+                              : Colors.transparent,
                       width: 2,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: isSelected
-                            ? const Color(0xFF3730A3).withOpacity(0.18)
-                            : Colors.black.withOpacity(0.06),
+                        color:
+                            isSelected
+                                ? const Color(0xFF3730A3).withOpacity(0.18)
+                                : Colors.black.withOpacity(0.06),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -2080,11 +2180,15 @@ class _PopularCitiesSection extends StatelessWidget {
                           child: Image.network(
                             city.cityImage ?? '',
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Container(
-                              color: Colors.grey.shade200,
-                              child: Icon(Icons.location_city,
-                                  color: Colors.grey.shade400, size: 32),
-                            ),
+                            errorBuilder:
+                                (_, __, ___) => Container(
+                                  color: Colors.grey.shade200,
+                                  child: Icon(
+                                    Icons.location_city,
+                                    color: Colors.grey.shade400,
+                                    size: 32,
+                                  ),
+                                ),
                           ),
                         ),
 

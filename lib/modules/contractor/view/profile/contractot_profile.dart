@@ -2170,7 +2170,7 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
           // Username
           Obx(
             () => Text(
-              controller.profileData.value?.user?.username ?? '',
+              controller.profileData.value?.user?.username?.capitalize?.replaceAll('_', ' ')??'',
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,

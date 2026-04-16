@@ -45,14 +45,9 @@ import 'package:nesticope_app/data/database/secure_storage_service.dart';
 //   return null;
 // }
 
-Future<String?> getCurrentCity() async {
-  // If a city was already chosen via SelectCityScreen, return it immediately
-  // to avoid asking for location permissions repeatedly.
-  try {
-    final savedCity = await SecureStorage.getSelectedCity();
-    if (savedCity != null && savedCity.isNotEmpty) return savedCity;
-  } catch (_) {}
-
+/// Resolves locality from GPS + geocoding. Triggers the system location
+/// permission dialog when needed. Does not read cached city from storage.
+Future<String?> getCurrentCityFromDevice() async {
   var serviceEnabled = await Geolocator.isLocationServiceEnabled();
   if (!serviceEnabled) {
     await Geolocator.openLocationSettings();
@@ -84,6 +79,8 @@ Future<String?> getCurrentCity() async {
     position.longitude,
   );
 
+  if (placemarks.isEmpty) return null;
+
   print(
     "Market App Current City: $placemarks    ${placemarks.first.locality ?? ""}   ${position.latitude}   ${position.longitude}",
   );
@@ -98,11 +95,18 @@ Future<String?> getCurrentCity() async {
   );
   print("Market App Current City: ${position.toJson()}");
 
-  if (placemarks.isNotEmpty) {
-    return placemarks.first.locality;
-  }
+  return placemarks.first.locality;
+}
 
-  return null;
+Future<String?> getCurrentCity() async {
+  // If a city was already chosen via SelectCityScreen, return it immediately
+  // to avoid asking for location permissions repeatedly.
+  try {
+    final savedCity = await SecureStorage.getSelectedCity();
+    if (savedCity != null && savedCity.isNotEmpty) return savedCity;
+  } catch (_) {}
+
+  return getCurrentCityFromDevice();
 }
 
 // Future<bool> requestGalleryPermission() async {

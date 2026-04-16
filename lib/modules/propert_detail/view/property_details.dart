@@ -553,6 +553,7 @@ void _applyFilters() {
       appBar: ListScreenAppbar(
         showAppBar: widget.isAppBarShow,
         title: "Property List",
+        showIconWithText: true,
         isFormScreen: widget.isFromSeeAll,
         onBack: () => Get.back(),
 

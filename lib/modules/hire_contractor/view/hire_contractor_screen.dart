@@ -1,16 +1,21 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/size_manager.dart';
 import 'package:nesticope_app/app/widgets/texts/headline_text.dart';
+import 'package:nesticope_app/data/network/platform_review/model/platform_review_model.dart';
+import 'package:nesticope_app/modules/hire_contractor/view/widget/review_all_screen.dart';
 import 'package:nesticope_app/modules/home/controllers/contractor_profile_controller/contractor_profile_controller.dart';
+import 'package:nesticope_app/modules/home/views/home_screen/home_screen.dart';
 import 'package:nesticope_app/modules/home/widgets/contractor_profile_card.dart';
 import 'package:nesticope_app/modules/contractor/view/all_contractors_list_screen.dart';
 import 'package:nesticope_app/app/widgets/image/custom_image.dart';
 import 'package:nesticope_app/modules/hire_contractor/view/widget/hire_contractor_profilelist.dart';
 import 'package:nesticope_app/modules/home/widgets/top_categories_section.dart';
 import 'package:nesticope_app/utils/shimmer/buyer/hire_contractor/buyer_hire_contractor_list_screen_shimmer.dart';
+import 'package:nesticope_app/modules/home/controllers/home_controller/platform_review-controller.dart';
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../data/network/contractor/model/contractot_service_model/contractor_category_model.dart';
@@ -23,95 +28,104 @@ import 'widget/category_service_explorer.dart';
 
 import 'package:nesticope_app/modules/home/widgets/unified_comparison_floating_button.dart';
 
-class HireContractorScreen extends StatelessWidget {
+class HireContractorScreen extends StatefulWidget {
   final bool fromDashboard;
   const HireContractorScreen({super.key, this.fromDashboard = false});
 
   @override
+  State<HireContractorScreen> createState() => _HireContractorScreenState();
+}
+
+class _HireContractorScreenState extends State<HireContractorScreen> {
+  final controller = Get.put(HireContractorController());
+  final controllerNew = Get.put(HireContractorNewController());
+  final controllerProfileData = Get.put(
+    HireContractorListOfProfileController(),
+  );
+  final controllerFilterData = Get.put(HireContractorFilterProfileController());
+  final contractorsController = Get.put(
+    TopContractorsController(withoutCity: true),
+    tag: 'contractors_home',
+  );
+  final reviewController = Get.put(
+    PlatformReviewController(
+      type: ['site', 'seller', 'reseller', 'contractor'],
+      filters: {'status': 'published'},
+    ),
+    tag: 'hire_contractor_reviews',
+  );
+
+  // Service journey data to render the horizontal timeline cards
+  final serviceJourney = [
+    {
+      'step': '1',
+      'title': 'Select Service',
+      'subtitle': 'Choose Your Requirement',
+      'desc':
+          'Browse and select the service you need (Plumber, Electrician, Interior, etc.).',
+      'icon': Icons.search,
+      'color': ColorRes.primary,
+    },
+    {
+      'step': '2',
+      'title': 'Filter Contractors',
+      'subtitle': 'Find the Best Match',
+      'desc':
+          'Apply filters like location, budget, rating, and experience to shortlist contractors.',
+      'icon': Icons.filter_list,
+      'color': ColorRes.lightPurpleColor,
+    },
+    {
+      'step': '3',
+      'title': 'Compare Contractors',
+      'subtitle': 'Make the Right Choice',
+      'desc':
+          'Compare profiles, reviews, pricing, and past work before selecting.',
+      'icon': Icons.compare_arrows,
+      'color': ColorRes.success,
+    },
+    {
+      'step': '4',
+      'title': 'Add Inquiry',
+      'subtitle': 'Submit Your Requirement',
+      'desc': 'Share your project details, budget, and preferred timeline.',
+      'icon': Icons.edit_note,
+      'color': ColorRes.warning,
+    },
+    {
+      'step': '5',
+      'title': 'Get Quotation & Confirm',
+      'subtitle': 'Finalize the Deal',
+      'desc':
+          'Receive quotations, negotiate, and confirm booking with the contractor.',
+      'icon': Icons.question_answer_outlined,
+      'color': ColorRes.primary,
+    },
+    {
+      'step': '6',
+      'title': 'Work In Progress',
+      'subtitle': 'Track Your Project',
+      'desc':
+          'Monitor updates, communicate with the contractor, and stay informed.',
+      'icon': Icons.work,
+      'color': ColorRes.lightPurpleColor,
+    },
+    {
+      'step': '7',
+      'title': 'Work Completion & Payment',
+      'subtitle': 'Secure Payment & Closure',
+      'desc': 'Approve completed work and make payment safely.',
+      'icon': Icons.check_circle,
+      'color': ColorRes.success,
+    },
+  ];
+  @override
   Widget build(BuildContext context) {
-    final controller = Get.put(HireContractorController());
-    final controllerNew = Get.put(HireContractorNewController());
-    final controllerProfileData = Get.put(
-      HireContractorListOfProfileController(),
-    );
-    final controllerFilterData = Get.put(
-      HireContractorFilterProfileController(),
-    );
-    final contractorsController = Get.put(
-      TopContractorsController(withoutCity: true),
-      tag: 'contractors_home',
-    );
-
-    // Service journey data to render the horizontal timeline cards
-    final serviceJourney = [
-      {
-        'step': '1',
-        'title': 'Select Service',
-        'subtitle': 'Choose Your Requirement',
-        'desc':
-            'Browse and select the service you need (Plumber, Electrician, Interior, etc.).',
-        'icon': Icons.search,
-        'color': ColorRes.primary,
-      },
-      {
-        'step': '2',
-        'title': 'Filter Contractors',
-        'subtitle': 'Find the Best Match',
-        'desc':
-            'Apply filters like location, budget, rating, and experience to shortlist contractors.',
-        'icon': Icons.filter_list,
-        'color': ColorRes.lightPurpleColor,
-      },
-      {
-        'step': '3',
-        'title': 'Compare Contractors',
-        'subtitle': 'Make the Right Choice',
-        'desc':
-            'Compare profiles, reviews, pricing, and past work before selecting.',
-        'icon': Icons.compare_arrows,
-        'color': ColorRes.success,
-      },
-      {
-        'step': '4',
-        'title': 'Add Inquiry',
-        'subtitle': 'Submit Your Requirement',
-        'desc': 'Share your project details, budget, and preferred timeline.',
-        'icon': Icons.edit_note,
-        'color': ColorRes.warning,
-      },
-      {
-        'step': '5',
-        'title': 'Get Quotation & Confirm',
-        'subtitle': 'Finalize the Deal',
-        'desc':
-            'Receive quotations, negotiate, and confirm booking with the contractor.',
-        'icon': Icons.question_answer_outlined,
-        'color': ColorRes.primary,
-      },
-      {
-        'step': '6',
-        'title': 'Work In Progress',
-        'subtitle': 'Track Your Project',
-        'desc':
-            'Monitor updates, communicate with the contractor, and stay informed.',
-        'icon': Icons.work,
-        'color': ColorRes.lightPurpleColor,
-      },
-      {
-        'step': '7',
-        'title': 'Work Completion & Payment',
-        'subtitle': 'Secure Payment & Closure',
-        'desc': 'Approve completed work and make payment safely.',
-        'icon': Icons.check_circle,
-        'color': ColorRes.success,
-      },
-    ];
-
     return Scaffold(
       backgroundColor: ColorRes.background,
       appBar: AppBar(
         leading:
-            fromDashboard
+            widget.fromDashboard
                 ? null
                 : IconButton(
                   icon: Icon(Icons.arrow_back, color: ColorRes.textPrimary),
@@ -120,7 +134,7 @@ class HireContractorScreen extends StatelessWidget {
         backgroundColor: ColorRes.white,
         elevation: 0,
         title: Text(
-          'NesticoPe Verified Services',
+          'Explore Verified Services',
           style: TextStyle(
             color: ColorRes.textPrimary,
             fontWeight: AppFontWeights.semiBold,
@@ -193,7 +207,7 @@ class HireContractorScreen extends StatelessWidget {
                         children: [
                           Container(
                             padding: EdgeInsets.symmetric(vertical: 12),
-                            color: Color.fromARGB(255, 235, 244, 252),
+                            color: ColorRes.homeYellow.withOpacity(0.05),
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: Column(
@@ -206,12 +220,11 @@ class HireContractorScreen extends StatelessWidget {
                                     subTitle: 'View all verified services',
                                     isSubTitle: true,
                                     showIcon: true,
-                                    iconBgColor: ColorRes.primary.withOpacity(
-                                      0.1,
-                                    ),
+                                    iconBgColor: ColorRes.homeYellow
+                                        .withOpacity(0.1),
 
                                     icon: Icons.verified_user,
-                                    iconColor: ColorRes.primary,
+                                    iconColor: ColorRes.homeYellow,
 
                                     // size: 24,
                                     // margin: const EdgeInsets.only(right: 8),
@@ -252,12 +265,15 @@ class HireContractorScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               TitleWithViewAll(
-                                title: "Complete Service Journey",
-                                subTitle: 'How the process works',
+                                title: "Easy Service Process",
+                                subTitle: 'Quick, simple, and reliable',
                                 isSubTitle: true,
                                 icon: Icons.timeline,
-                                iconColor: ColorRes.primary,
+                                iconColor: ColorRes.homeYellow,
                                 showIcon: true,
+                                iconBgColor: ColorRes.homeYellow.withOpacity(
+                                  0.1,
+                                ),
                                 showViewAll: false,
                               ),
                               const SizedBox(height: 8),
@@ -313,6 +329,8 @@ class HireContractorScreen extends StatelessWidget {
                             ],
                           ),
 
+                          _buildReviewsAndTestimonials(),
+                          SizedBox(height: 10),
                           Obx(() {
                             if (contractorsController.isLoading.value &&
                                 contractorsController.items.isEmpty) {
@@ -488,6 +506,40 @@ class HireContractorScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildReviewsAndTestimonials() {
+    return Obx(() {
+      if (reviewController.isLoading.value &&
+          reviewController.allReviews.isEmpty) {
+        return const ReviewsTestimonialsShimmer();
+      }
+
+      if (reviewController.allReviews.isEmpty) {
+        return const SizedBox.shrink();
+      }
+
+      return Column(
+        children: [
+           TitleWithViewAll(
+            title: "What Our Customers Say",
+            showViewAll: true,
+            onViewAll: () {
+              Get.to(()=>ReviewAllScreenData());
+            },
+            icon: Icons.reviews,
+            showIcon: true,
+
+            iconColor: ColorRes.success,
+            iconBgColor: ColorRes.success.withOpacity(0.1),
+
+          ),
+          const SizedBox(height: 12),
+          ReviewsAndTestimonials(reviewController: reviewController,),
+          SizedBox(height: AppSpacing.medium),
+        ],
+      );
+    });
+  }
+
   Widget _buildCategoryCard(ContractorServiceCategory category) {
     String norm(String s) => s
         .trim()
@@ -640,122 +692,6 @@ class HireContractorScreen extends StatelessWidget {
   }
 
   // Widget _buildCategoryImageTile(
-  //   BuildContext context,
-  //   ContractorServiceCategory category,
-  // ) {
-  //   final img = _categoryImageFor(category.name);
-  //   String norm(String s) => s
-  //       .trim()
-  //       .toLowerCase()
-  //       .replaceAll('&', 'and')
-  //       .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
-  //   final key = norm(category.name);
-  //   final isHomeConstruction = key == 'home_construction';
-
-  //   return Material(
-  //     color: Colors.transparent,
-  //     child: InkWell(
-  //       borderRadius: BorderRadius.circular(14),
-  //       onTap: () {
-  //         Get.to(
-  //           () => CategoryServiceExplorer(
-  //             categoryId: category.id,
-  //             categoryName: category.name,
-  //           ),
-  //         );
-  //       },
-  //       child: Stack(
-  //         children: [
-  //           /// ✅ IMAGE (no blend, no color)
-  //           // Image.asset(
-  //           //   img,
-  //           //   fit: BoxFit.cover,
-  //           //   width: double.infinity,
-  //           //   height: double.infinity,
-  //           // ),
-  //           Positioned.fill(
-  //             child: ClipRRect(
-  //               borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
-  //               child: CustomImage(
-  //                 type: CustomImageType.asset,
-  //                 src: img,
-  //                 fit: BoxFit.cover,
-
-  //                 // height: 170,
-  //                 // width: double.infinity,
-  //               ),
-  //             ),
-  //           ),
-  //           Positioned.fill(
-  //             child: Container(
-  //               decoration: BoxDecoration(
-  //                 borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
-  //                 boxShadow:
-  //                     isHomeConstruction
-  //                         ? [
-  //                           BoxShadow(
-  //                             color: ColorRes.primary.withOpacity(0.2),
-  //                             blurRadius: 12,
-  //                             offset: const Offset(0, 4),
-  //                           ),
-  //                         ]
-  //                         : null,
-  //                 gradient: LinearGradient(
-  //                   begin: Alignment.topCenter,
-  //                   end: Alignment.bottomCenter,
-  //                   colors: [Colors.transparent, Colors.black.withOpacity(0.4)],
-  //                 ),
-  //                 border:
-  //                     isHomeConstruction
-  //                         ? Border.all(color: ColorRes.primary, width: 2.5)
-  //                         : null,
-  //               ),
-  //             ),
-  //           ),
-  // if (isHomeConstruction)
-  //   Positioned(
-  //     top: 8,
-  //     right: 8,
-  //     child: Container(
-  //       padding: const EdgeInsets.symmetric(
-  //         horizontal: 6,
-  //         vertical: 2,
-  //       ),
-  //       decoration: BoxDecoration(
-  //         color: ColorRes.primary,
-  //         borderRadius: BorderRadius.circular(4),
-  //       ),
-  //       child: const Text(
-  //         'Most Popular',
-  //         style: TextStyle(
-  //           color: Colors.white,
-  //           fontSize: AppFontSizes.caption,
-  //           fontWeight: AppFontWeights.bold,
-  //         ),
-  //       ),
-  //     ),
-  //   ),
-
-  //           /// ✅ TEXT
-  //           Positioned(
-  //             left: 10,
-  //             right: 10,
-  //             bottom: 10,
-  //             child: Text(
-  //               category.name,
-  //               style: TextStyle(
-  //                 color: Colors.white,
-  //                 fontWeight: AppFontWeights.semiBold,
-  //                 fontSize: AppFontSizes.small,
-  //               ),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Widget _buildCategoryImageTile(
     BuildContext context,
     ContractorServiceCategory category,
@@ -1148,9 +1084,10 @@ class _HorizontalContractorListState extends State<_HorizontalContractorList> {
             },
             itemBuilder: (context, index) {
               return Padding(
-                padding: EdgeInsets.only(left: 6, right: 6),
+                padding: EdgeInsets.only(right: 6),
                 child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.85,
+                  width: 300,
+
                   child: ContractorCard(contractor: widget.items[index]),
                 ),
               );
@@ -1265,16 +1202,40 @@ class CategoryCardState extends State<CategoryCard>
 
     /// 🎨 Gradient map
     final gradientMap = {
-      'home_construction': [Color(0xFF8E7CFF), Color(0xFF6A5AE0)],
-      'interior_design': [Color(0xFF1EC8C8), Color(0xFF2FA4A9)],
-      'packers_and_movers': [Color(0xFFFF7A3D), Color(0xFFFF5C2B)],
-      'legal_services': [Color(0xFFFF5F8F), Color(0xFFE94057)],
-      'home_services': [
-        Color.fromARGB(255, 254, 120, 79),
-        Color.fromARGB(255, 212, 0, 254),
+      'home_construction': [
+        Color(0xFF00F5A0), // neon green
+        Color.fromARGB(255, 0, 147, 245), // aqua blue
       ],
-      'material_supply': [Color(0xFFB06AB3), Color(0xFF4568DC)],
-      'building_material_supply': [Color(0xFFB06AB3), Color(0xFF4568DC)],
+
+      'interior_design': [
+        Color(0xFFFFD200), // bright yellow
+        Color(0xFFFF6A00), // orange
+      ],
+
+      'packers_and_movers': [
+        Color(0xFFFF512F), // orange red
+        Color(0xFFDD2476), // pink
+      ],
+
+      'legal_services': [
+        Color(0xFF7F00FF), // electric purple
+        Color(0xFFE100FF), // neon magenta
+      ],
+
+      'home_services': [
+        Color(0xFF00C6FF), // sky blue
+        Color(0xFF0072FF), // deep blue
+      ],
+
+      'material_supply': [
+        Color(0xFFFF9A00), // bright amber
+        Color(0xFFFF3D00), // strong orange red
+      ],
+
+      'building_material_supply': [
+        Color.fromARGB(255, 67, 208, 233), // bright green
+        Color.fromARGB(255, 69, 56, 249), // mint cyan
+      ],
     };
 
     final colors =
@@ -1292,121 +1253,38 @@ class CategoryCardState extends State<CategoryCard>
       'building_material_supply': Icons.inventory_2_outlined,
     };
 
-    // return GestureDetector(
-    //   onTap: () {
-    //     Get.to(
-    //       () => CategoryServiceExplorer(
-    //         categoryId: widget.item.id,
-    //         categoryName: widget.item.name,
-    //       ),
-    //     );
-    //   },
-    //   child: Container(
-    //     // padding: const EdgeInsets.all(10),
-    //     decoration: BoxDecoration(
-    //       border:
-    //           isPopular
-    //               ? Border.all(color: ColorRes.primary, width: 2)
-    //               : Border.all(color: Colors.transparent),
-    //       gradient: LinearGradient(
-    //         colors: colors,
-    //         begin: Alignment.topLeft,
-    //         end: Alignment.bottomRight,
-    //       ),
-    //       borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
-    //       boxShadow: [
-    //         BoxShadow(
-    //           color: colors.first.withOpacity(0.25),
-    //           blurRadius: 10,
-    //           offset: const Offset(0, 6),
-    //         ),
-    //       ],
-    //     ),
-    //     child: Stack(
-    //       children: [
-    //         /// 🔥 Faded Icon (background)
-    //         Positioned.fill(
-    //       child: CustomPaint(painter: DiagonalDashPatternPainter()),
-    //     ),
-    //         Positioned(
-    //           right: -5,
-    //           bottom: -5,
-    //           child: Icon(
-    //             iconMap[key] ?? Icons.home,
-    //             size: 80,
-    //             color: Colors.white.withOpacity(0.3),
-    //           ),
-    //         ),
+    /// 🖼️ SVG asset map — two images per category
+    final svgMap = {
+      'home_construction': [
+        'assets/svg/service/build-svgrepo-com.svg',
+        'assets/svg/service/building-construction-svgrepo-com.svg',
+      ],
+      'interior_design': [
+        'assets/svg/service/desk-svgrepo-com.svg',
+        'assets/svg/service/lamp-svgrepo-com.svg',
+      ],
+      'packers_and_movers': [
+        'assets/svg/service/truck-svgrepo-com.svg',
+        'assets/svg/service/giftbox-gift-svgrepo-com.svg',
+      ],
+      'legal_services': [
+        'assets/svg/service/legal-issue-svgrepo-com.svg',
+        'assets/svg/service/agreement-contract-a4-paper-svgrepo-com.svg',
+      ],
+      'home_services': [
+        'assets/svg/service/plumber-svgrepo-com.svg',
+        'assets/svg/service/painting-roller-outline-svgrepo-com.svg',
+      ],
+      'material_supply': [
+        'assets/svg/service/bricks-svgrepo-com.svg',
+        'assets/svg/service/bulldozers-svgrepo-com.svg',
+      ],
+      'building_material_supply': [
+        'assets/svg/service/bricks-svgrepo-com.svg',
 
-    //         Column(
-    //           crossAxisAlignment: CrossAxisAlignment.start,
-    //           children: [
-    //             /// ⭐ Badge
-    //             if (isPopular)
-    //               Positioned(
-    //                 top: 8,
-    //                 left: 8,
-    //                 child: Container(
-    //                   margin: const EdgeInsets.only(left: 8, top: 8),
-    //                   padding: const EdgeInsets.symmetric(
-    //                     horizontal: 6,
-    //                     vertical: 2,
-    //                   ),
-    //                   decoration: BoxDecoration(
-    //                     color: Colors.black.withOpacity(0.2),
-    //                     borderRadius: BorderRadius.circular(10),
-    //                   ),
-    //                   child: const Text(
-    //                     'Most Popular',
-    //                     style: TextStyle(
-    //                       color: Colors.white,
-    //                       fontSize: AppFontSizes.caption,
-    //                       fontWeight: AppFontWeights.bold,
-    //                     ),
-    //                   ),
-    //                 ),
-    //               ),
-
-    //             // const Spacer(),
-
-    //             /// 🧾 Title
-    //             Padding(
-    //               padding: const EdgeInsets.all(8.0),
-    //               child: Text(
-    //                 widget.item.name.capitalize?.replaceAll("_", " ") ?? '',
-    //                 // maxLines: 2,
-    //                 // overflow: TextOverflow.ellipsis,
-    //                 style: TextStyle(
-    //                   color: Colors.white,
-    //                   fontWeight: AppFontWeights.semiBold,
-    //                   fontSize: 12,
-    //                 ),
-    //               ),
-    //             ),
-
-    //             const SizedBox(height: 6),
-
-    //             /// 🎯 CTA Button
-    //             // Container(
-    //             //   padding: const EdgeInsets.symmetric(
-    //             //     horizontal: 10,
-    //             //     vertical: 5,
-    //             //   ),
-    //             //   decoration: BoxDecoration(
-    //             //     color: Colors.white,
-    //             //     borderRadius: BorderRadius.circular(20),
-    //             //   ),
-    //             //   child: const Text(
-    //             //     "BOOK NOW",
-    //             //     style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-    //             //   ),
-    //             // ),
-    //           ],
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    // );
+        'assets/svg/service/bulldozers-svgrepo-com.svg',
+      ],
+    };
     return GestureDetector(
       onTap: () {
         Get.to(
@@ -1424,44 +1302,48 @@ class CategoryCardState extends State<CategoryCard>
             end: Alignment.bottomRight,
           ),
           border:
-              isPopular ? Border.all(color: ColorRes.primary, width: 2) : null,
+              isPopular
+                  ? Border.all(color: ColorRes.homeYellow, width: 2)
+                  : null,
           borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
         ),
         child: Stack(
           children: [
-            /// 🎨 BACKGROUND GRADIENT
-            // Positioned.fill(
-            //   child: Container(
-            //     decoration: BoxDecoration(
-            //       gradient: LinearGradient(
-            //         colors: [
-            //           ColorRes.primary,
-            //           ColorRes.primary.withOpacity(0.7),
-            //         ],
-            //       ),
-            //       borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
-            //     ),
-            //   ),
-            // ),
-
-            /// 🔥 PATTERN (DYNAMIC)
-            Positioned.fill(
-              child: AnimatedBuilder(
-                animation: _controller,
-                builder: (_, __) {
-                  return CustomPaint(painter: _getPainter(widget.item.name));
-                },
+            /// 🎯 ICON
+            Positioned(
+              right: -8,
+              bottom: -8,
+              child: SvgPicture.asset(
+                (svgMap[key] ??
+                    [
+                      'assets/svg/service/build-svgrepo-com.svg',
+                      'assets/svg/service/bricks-svgrepo-com.svg',
+                    ])[0],
+                width: 72,
+                height: 72,
+                colorFilter: ColorFilter.mode(
+                  Colors.white.withOpacity(0.22),
+                  BlendMode.srcIn,
+                ),
               ),
             ),
 
-            /// 🎯 ICON
+            /// 🖼️ SVG IMAGE 2 — top-right (smaller, slightly more visible)
             Positioned(
-              right: -5,
-              bottom: -5,
-              child: Icon(
-                iconMap[key] ?? Icons.home,
-                size: 80,
-                color: Colors.white.withOpacity(0.25),
+              left: 10,
+              top: 30,
+              child: SvgPicture.asset(
+                (svgMap[key] ??
+                    [
+                      'assets/svg/service/build-svgrepo-com.svg',
+                      'assets/svg/service/bricks-svgrepo-com.svg',
+                    ])[1],
+                width: 50,
+                height: 50,
+                colorFilter: ColorFilter.mode(
+                  Colors.white.withOpacity(0.45),
+                  BlendMode.srcIn,
+                ),
               ),
             ),
 
@@ -1725,4 +1607,338 @@ class AdvancedDashPatternPainter extends CustomPainter {
         oldDelegate.opacity != opacity ||
         oldDelegate.density != density;
   }
+}
+
+
+
+class ReviewsAndTestimonials extends StatelessWidget {
+    final PlatformReviewController reviewController;  // ← a
+  const ReviewsAndTestimonials({super.key,required this.reviewController});
+
+  @override
+  Widget build(BuildContext context) {
+
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Obx(() {
+          // Show loading indicator
+          if (reviewController.isLoading.value &&
+              reviewController.allReviews.isEmpty) {
+            return SizedBox(
+              height: 250,
+              child: Center(
+                child: CircularProgressIndicator(color: ColorRes.homeGreenFade),
+              ),
+            );
+          }
+
+          // Show empty state
+          if (reviewController.allReviews.isEmpty) {
+            return SizedBox(
+              height: 250,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.rate_review_outlined,
+                      size: 48,
+                      color: ColorRes.leadGreyColor.shade400,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No reviews available',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.body,
+                        color: ColorRes.leadGreyColor.shade600,
+                        fontWeight: AppFontWeights.medium,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          // Show reviews list
+          return SizedBox(
+            height: 160,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: reviewController.allReviews.length,
+              clipBehavior: Clip.none,
+              padding: EdgeInsets.symmetric(horizontal: 12),
+              separatorBuilder:
+                  (_, __) => const SizedBox(width: AppSpacing.medium),
+              itemBuilder: (context, index) {
+                // UserItem userData=reviewController.listOfUser.map((element) => element.toMap(),).toString();
+                return _buildReviewCard(
+                  context,
+                  reviewController.allReviews[index],
+                );
+              },
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget _buildReviewCard(BuildContext context, ReviewItem review) {
+    final rating = review.rating ?? 0.0;
+    final isVerified = review.isVerified ?? false;
+
+    return GestureDetector(
+      onTap: () {},
+      child: Container(
+        width: 280,
+        decoration: BoxDecoration(
+          color: ColorRes.white,
+          borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
+          // border: Border.all(color: ColorRes.leadGreyColor.shade200, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 2,
+
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// Header with avatar and rating
+              Row(
+                children: [
+                  /// Avatar (placeholder since we don't have reviewer details)
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: [
+                          ColorRes.homeGreenFade.withOpacity(0.08),
+                          ColorRes.homeGreenDarkFade.withOpacity(0.1),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      border: Border.all(
+                        color: Color(0xFF2E7D63).withOpacity(0.25),
+                        width: 1.5,
+                      ),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      (() {
+                        final user = review?.entityUser;
+
+                        if (user == null) return '?';
+                        final username = user.username?.trim() ?? '';
+
+                        if (username.isNotEmpty) {
+                          return username[0]
+                              .toUpperCase(); // fallback to username
+                        } else {
+                          return '?'; // fallback if all empty
+                        }
+                      })(),
+                      style: TextStyle(
+                        fontSize: AppFontSizes.large,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.homeGreenDarkFade,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(width: 12),
+
+                  /// Reviewer ID and status
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      '${review.entityUser?.username?.replaceAll("_", " ").capitalize}',
+                                      maxLines: 1,
+
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.medium,
+                                        fontWeight: AppFontWeights.semiBold,
+                                        color: ColorRes.homeBlackFade,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    _formatDate(review.createdAt),
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.extraSmall,
+                                      fontWeight: AppFontWeights.medium,
+                                      color: ColorRes.leadGreyColor.shade600,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            if (isVerified) ...[
+                              const SizedBox(width: 4),
+                              Container(
+                                padding: const EdgeInsets.all(2),
+                                decoration: BoxDecoration(
+                                  color: ColorRes.homeGreenDarkFade,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Icon(
+                                  Icons.check,
+                                  color: ColorRes.white,
+                                  size: 12,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                        Text(
+                          '${review.entityType}',
+                          maxLines: 1,
+
+                          style: TextStyle(
+                            fontSize: AppFontSizes.caption,
+                            fontWeight: AppFontWeights.regular,
+                            color: ColorRes.grey,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 2),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            ...List.generate(5, (starIndex) {
+                              if (starIndex < rating.floor()) {
+                                return const Icon(
+                                  Icons.star,
+                                  color: ColorRes.homeYellow,
+                                  size: 16,
+                                );
+                              } else if (starIndex < rating) {
+                                return const Icon(
+                                  Icons.star_half,
+                                  color: ColorRes.homeYellow,
+                                  size: 16,
+                                );
+                              } else {
+                                return Icon(
+                                  Icons.star_outline,
+                                  color: ColorRes.leadGreyColor.shade300,
+                                  size: 16,
+                                );
+                              }
+                            }),
+                            const SizedBox(width: 8),
+                            Text(
+                              rating.toStringAsFixed(1),
+                              style: TextStyle(
+                                fontSize: AppFontSizes.small,
+                                fontWeight: AppFontWeights.semiBold,
+                                color: ColorRes.homeBlackFade,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 12),
+
+              if (review.title != null && review.title!.isNotEmpty) ...[
+                SizedBox(
+                  width: 280,
+                  child: Text(
+                    review.title!,
+                    style: TextStyle(
+                      fontSize: AppFontSizes.bodySmall,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.homeBlackFade,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+              const SizedBox(height: 8),
+              SizedBox(
+                width: 280,
+                child: Text(
+                  '"${review.content ?? 'No review content'}"',
+                  style: TextStyle(
+                    fontSize: AppFontSizes.caption,
+                    color: ColorRes.leadGreyColor.shade700,
+                    height: 1.5,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Helper method to get status color
+
+  /// Helper method to get status icon
+
+  /// Helper method to format date
+  String _formatDate(String? dateString) {
+    if (dateString == null) return 'Recently';
+
+    try {
+      final date = DateTime.parse(dateString);
+      final now = DateTime.now();
+      final difference = now.difference(date);
+
+      if (difference.inDays == 0) {
+        return 'Today';
+      } else if (difference.inDays == 1) {
+        return 'Yesterday';
+      } else if (difference.inDays < 7) {
+        return '${difference.inDays} days ago';
+      } else if (difference.inDays < 30) {
+        final weeks = (difference.inDays / 7).floor();
+        return '$weeks ${weeks == 1 ? 'week' : 'weeks'} ago';
+      } else if (difference.inDays < 365) {
+        final months = (difference.inDays / 30).floor();
+        return '$months ${months == 1 ? 'month' : 'months'} ago';
+      } else {
+        final years = (difference.inDays / 365).floor();
+        return '$years ${years == 1 ? 'year' : 'years'} ago';
+      }
+    } catch (e) {
+      return 'Recently';
+    }
+  }
+
+  /// Show review details in a bottom sheet
 }

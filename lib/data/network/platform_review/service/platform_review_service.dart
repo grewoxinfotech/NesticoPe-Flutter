@@ -31,13 +31,43 @@ class ReviewService {
     Map<String, dynamic>? filters,
   }) async {
     try {
-      final queryParameters = {
-        'page': page.toString(),
-        'limit': limit ?? 'all',
-        if (filters != null) ...filters,
+      final queryParametersAll = <String, List<String>>{
+        'page': [page.toString()],
+        'limit': [limit ?? 'all'],
       };
 
-      final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
+      if (filters != null) {
+        filters.forEach((key, value) {
+          if (value == null) return;
+          if (value is Iterable) {
+            final values =
+                value
+                    .where((e) => e != null)
+                    .map((e) => e.toString())
+                    .where((e) => e.isNotEmpty)
+                    .toList();
+            if (values.isNotEmpty) {
+              queryParametersAll[key] = values;
+            }
+          } else {
+            final v = value.toString();
+            if (v.isNotEmpty) {
+              queryParametersAll[key] = [v];
+            }
+          }
+        });
+      }
+
+      final queryParts = <String>[];
+      queryParametersAll.forEach((key, values) {
+        for (final value in values) {
+          queryParts.add(
+            '${Uri.encodeQueryComponent(key)}=${Uri.encodeQueryComponent(value)}',
+          );
+        }
+      });
+
+      final uri = Uri.parse(baseUrl).replace(query: queryParts.join('&'));
       debugPrint("Fetching Reviews from: $uri");
 
       final response = await http.get(uri, headers: await headers());
@@ -57,38 +87,38 @@ class ReviewService {
     }
   }
 
-  Future<UsersResponse?> fetchReviewsData({
-    int page = 1,
+  // Future<UsersResponse?> fetchReviewsData({
+  //   int page = 1,
 
-    Map<String, String>? filters,
-  }) async {
-    try {
-      final queryParameters = {
-        'page': page.toString(),
-        if (filters != null) ...filters,
-      };
+  //   Map<String, String>? filters,
+  // }) async {
+  //   try {
+  //     final queryParameters = {
+  //       'page': page.toString(),
+  //       if (filters != null) ...filters,
+  //     };
 
-      final uri = Uri.parse(
-        '$baseUrlUser',
-      ).replace(queryParameters: queryParameters);
-      debugPrint("Fetching Reviews from: $uri");
+  //     final uri = Uri.parse(
+  //       '$baseUrlUser',
+  //     ).replace(queryParameters: queryParameters);
+  //     debugPrint("Fetching Reviews from: $uri");
 
-      final response = await http.get(uri, headers: await headers());
+  //     final response = await http.get(uri, headers: await headers());
 
-      debugPrint("Reviews Data API Response: ${response.body}");
+  //     debugPrint("Reviews Data API Response: ${response.body}");
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        debugPrint(" ufhu to fetch reviews: ${response.body}");
-        debugPrint(
-          " hudsfusdhf to fetch reviews: ${UsersResponse.fromJson(data).data?.toMap()}",
-        );
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(response.body);
+  //       debugPrint(" ufhu to fetch reviews: ${response.body}");
+  //       debugPrint(
+  //         " hudsfusdhf to fetch reviews: ${UsersResponse.fromJson(data).data?.toMap()}",
+  //       );
 
-        return UsersResponse.fromJson(data);
-      }
-    } catch (e) {
-      debugPrint("Exception in fetchReviews: $e");
-      rethrow;
-    }
-  }
+  //       return UsersResponse.fromJson(data);
+  //     }
+  //   } catch (e) {
+  //     debugPrint("Exception in fetchReviews: $e");
+  //     rethrow;
+  //   }
+  // }
 }

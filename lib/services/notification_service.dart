@@ -209,6 +209,7 @@
 //   }
 // }
 
+import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:nesticope_app/data/database/secure_storage_service.dart';
@@ -232,7 +233,7 @@ class NotificationService {
     final appId = await _fetchOneSignalAppId();
     OneSignal.initialize(appId ?? "70d48857-661a-4b36-b757-f221c97a1103");
 
-    await OneSignal.Notifications.requestPermission(true);
+    // await OneSignal.Notifications.requestPermission(true);
 
     _setupNotificationClickHandler();
     _setupForegroundNotificationHandler();
@@ -243,8 +244,9 @@ class NotificationService {
 
   Future<String?> _fetchOneSignalAppId() async {
     try {
-      final uri = Uri.parse(ApiConstants.thirdPartySettings)
-          .replace(queryParameters: {'page': '1', 'limit': '10'});
+      final uri = Uri.parse(
+        ApiConstants.thirdPartySettings,
+      ).replace(queryParameters: {'page': '1', 'limit': '10'});
       final res = await http.get(uri, headers: await ApiConstants.getHeaders());
       if (res.statusCode != 200) return null;
       final body = json.decode(res.body) as Map<String, dynamic>;
@@ -283,7 +285,10 @@ class NotificationService {
 
   Future<void> attachGuestUser() async {
     debugPrint('🔔 [OneSignal] Attaching GUEST user');
-
+    if (!_isInitialized) {
+      debugPrint('⚠️ OneSignal not initialized yet');
+      return;
+    }
     // 1️⃣ Check existing player
     final existingId = OneSignal.User.pushSubscription.id;
     debugPrint('🆔 [OneSignal] Existing playerId: $existingId');
@@ -396,10 +401,31 @@ class NotificationService {
 
   /// ---------------- LOGOUT ----------------
   Future<void> resetToGuest() async {
-    await OneSignal.logout(); // destroys old identity
-    await attachGuestUser(); // creates NEW player ID
+    // Some Android builds/devices can hang/crash inside the native SDK during logout.
+    // Never block app navigation on this.
+    try {
+      await OneSignal.logout().timeout(
+        const Duration(seconds: 2),
+        onTimeout: () {
+          debugPrint('⏱️ [OneSignal] logout() timed out (continuing)');
+        },
+      );
+    } catch (e) {
+      debugPrint('❌ [OneSignal] logout() failed: $e');
+    }
 
-    debugPrint('🔄 Player ID reset after logout');
+    try {
+      await attachGuestUser().timeout(
+        const Duration(seconds: 2),
+        onTimeout: () {
+          debugPrint('⏱️ [OneSignal] attachGuestUser() timed out (continuing)');
+        },
+      );
+    } catch (e) {
+      debugPrint('❌ [OneSignal] attachGuestUser() failed: $e');
+    }
+
+    debugPrint('🔄 Player ID reset after logout (best-effort)');
   }
 
   /// ---------------- HANDLERS ----------------

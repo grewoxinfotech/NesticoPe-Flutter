@@ -95,7 +95,7 @@ class ReviewItem {
   final String? createdAt;
   final String? updatedAt;
   final Reviewer? reviewer;
- 
+ final Reviewer? adminReviewer;
   final EntityUser? entityUser;
   ReviewItem( {
     this.entityUser,
@@ -108,6 +108,7 @@ class ReviewItem {
     this.entityId,
     this.reviewerId,
     this.rating,
+    this.adminReviewer,
     this.title,
     this.content,
     this.detailedRatings,
@@ -141,6 +142,9 @@ class ReviewItem {
       rating: (json['rating'] as num?)?.toDouble(),
       title: json['title'],
       content: json['content'],
+      adminReviewer: json['adminReviewer'] != null
+    ? Reviewer.fromJson(json['adminReviewer'])
+    : null,
       reviewer: json['reviewer'] != null
           ? Reviewer.fromJson(json['reviewer'])
           : null,
@@ -180,7 +184,7 @@ class ReviewItem {
     'entity_id': entityId,
     'reviewer_id': reviewerId,
     'reviewer': reviewer?.toJson(),
-    
+    'adminReviewer': adminReviewer?.toJson(),
     'entityUser': entityUser?.toJson(),
     'rating': rating,
     'title': title,

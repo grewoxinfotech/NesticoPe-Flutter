@@ -682,38 +682,7 @@ class ProfileScreen extends StatelessWidget {
                       // SizedBox(height: 24),
                       // SizedBox.shrink(),
                       // SizedBox(height: 12),
-                      Center(
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Don't have an account?",
-                                style: TextStyle(
-                                  color: ColorRes.leadGreyColor.shade700,
-                                  fontFamily: FontRes.poppins,
-                                ),
-                              ),
-                              TextButton(
-                                onPressed:
-                                    () => Get.to(
-                                      () =>
-                                          RegisterScreen(role: UserRole.buyer),
-                                    ),
-                                child: Text(
-                                  'Sign Up here',
-                                  style: TextStyle(
-                                    color: ColorRes.primary,
-                                    fontWeight: AppFontWeights.extraBold,
-                                    fontFamily: FontRes.poppins,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                     
                     ],
                   )
                   : Column(
@@ -925,24 +894,60 @@ class ProfileScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child:
                 UserHelper.isGuest
-                    ? SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Get.to(() => OtpLoginScreen());
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: ColorRes.primary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                    ? Column(
+                      crossAxisAlignment:CrossAxisAlignment.end ,
+                       mainAxisSize: MainAxisSize.min,
+                      children: [
+                         SizedBox(
+                           width: double.infinity,
+                           child: Row(
+                             mainAxisAlignment: MainAxisAlignment.center,
+                             children: [
+                               Text(
+                                 "Don't have an account?",
+                                 style: TextStyle(
+                                   color: ColorRes.leadGreyColor.shade700,
+                                   fontFamily: FontRes.poppins,
+                                 ),
+                               ),
+                               TextButton(
+                                 onPressed:
+                                     () => Get.to(
+                                       () =>
+                                           RegisterScreen(role: UserRole.buyer),
+                                     ),
+                                 child: Text(
+                                   'Sign Up here',
+                                   style: TextStyle(
+                                     color: ColorRes.primary,
+                                     fontWeight: AppFontWeights.extraBold,
+                                     fontFamily: FontRes.poppins,
+                                   ),
+                                 ),
+                               ),
+                             ],
+                           ),
+                         ),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Get.to(() => OtpLoginScreen());
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: ColorRes.primary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
+                            child: Text(
+                              'Login',
+                              style: TextStyle(letterSpacing: 0.5),
+                            ),
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
-                        child: Text(
-                          'Login',
-                          style: TextStyle(letterSpacing: 0.5),
-                        ),
-                      ),
+                      ],
                     )
                     : Column(
                       mainAxisSize: MainAxisSize.min,
@@ -1843,8 +1848,8 @@ class ProfileScreen extends StatelessWidget {
 
           SettingsMenuTile(
             icon: Icons.engineering_outlined,
-            title: "Hire Contractor",
-            subTitle: "Hire top contractors",
+            title: "Explore Verified Services",
+            subTitle: "View all verified services",
             onTap: () => Get.to(() => HireContractorScreen()),
           ),
           const SizedBox(height: 10),

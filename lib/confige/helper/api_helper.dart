@@ -5,6 +5,8 @@ import 'package:nesticope_app/app/constants/api_constants.dart';
 class ApiConfig {
   static String mapkey = '';
   static String truecallerClientId = '';
+  /// Razorpay Checkout **key_id** (public), from ThirdPartySettings "Payment Gateway" / Razorpay row.
+  static String razorpayKeyId = '';
   static String get googleMapApi =>
       'https://maps.googleapis.com/maps/api/place/autocomplete/json?key=$mapkey';
 
@@ -42,7 +44,11 @@ class ApiConfig {
           final m = item as Map<String, dynamic>;
           final type = (m['type'] ?? '').toString().toLowerCase();
           final name = (m['name'] ?? '').toString().toLowerCase();
+          final status = (m['status'] ?? '').toString().toLowerCase();
+          final isActive = status.isEmpty || status == 'active';
+
           if (type == 'maps' || name.contains('google maps')) {
+            if (!isActive) continue;
             final key = m['apiKey']?.toString();
 
             if (key != null && key.isNotEmpty) {
@@ -88,6 +94,13 @@ class ApiConfig {
   /// Ensure map key is present before making Google requests
   static Future<void> ensureMapKey() async {
     if (mapkey.isEmpty) {
+      await fetchThirdPartySettings();
+    }
+  }
+
+  /// Load Razorpay **key_id** for Checkout when not embedded in create-order response.
+  static Future<void> ensureRazorpayKeyId() async {
+    if (razorpayKeyId.isEmpty) {
       await fetchThirdPartySettings();
     }
   }

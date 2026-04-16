@@ -28,6 +28,8 @@ class SecureStorage {
   static const String _keyLoginWithOtpToken = 'loginWithOtpToken';
   static const String _keySupportTicketId = 'supportTicketId';
   static const String _keyHomeCategory = 'homeCategory';
+  /// User finished login/skip on onboarding but has not chosen a city yet.
+  static const String _keyPendingOnboardingCity = 'pendingOnboardingCity';
   static const String _keyPlatformServiceInquiry = 'platformServiceInquiry';
   static const String _keyGeneralInquiry = 'generalInquirySubmissions';
 
@@ -542,6 +544,18 @@ class SecureStorage {
 
   static Future<String?> getHomeCategory() async {
     return _storage.read(key: _keyHomeCategory);
+  }
+
+  static Future<void> setPendingOnboardingCitySelection(bool value) async {
+    await _storage.write(
+      key: _keyPendingOnboardingCity,
+      value: value.toString(),
+    );
+  }
+
+  static Future<bool> getPendingOnboardingCitySelection() async {
+    final v = await _storage.read(key: _keyPendingOnboardingCity);
+    return v?.toLowerCase() == 'true';
   }
 
   // Clear everything

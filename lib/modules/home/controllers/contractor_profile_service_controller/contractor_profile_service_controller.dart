@@ -386,10 +386,8 @@ class ContractorServiceController
         'services': services.map((e) => e.id).toList(),
 
         'meta': {
-          if (bhkController.text.trim().isNotEmpty)
-            'bhk': bhkController.text.trim(),
-
-          'carpetArea': carpetAreaController.text.trim(),
+          'bhk': '0',
+          'carpetArea': '0',
           'city': cityController.text.trim(),
           'location': locationController.text.trim(),
           'propertyType': selectedPropertyType.value,
@@ -405,6 +403,7 @@ class ContractorServiceController
       print('✅ Inquiry created successfully: $response');
 
       if (response) {
+        clearInquiryForm();
         Get.back(result: true); // optional redirect
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: "Success",
@@ -422,6 +421,18 @@ class ContractorServiceController
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void clearInquiryForm() {
+    formKey.currentState?.reset();
+    selectedPropertyType.value = '';
+    selectedCity.value = '';
+    cityController.clear();
+    statController.clear();
+    locationController.clear();
+    bhkController.clear();
+    carpetAreaController.clear();
+    descriptionController.clear();
   }
 
   /// --------------------------------------------------------------------------

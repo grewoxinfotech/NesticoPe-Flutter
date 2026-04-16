@@ -3603,10 +3603,15 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorRes.white,
-      extendBody: true,
-      body: Obx(() {
+    return PopScope(
+      canPop: true,
+      onPopInvoked: (didPop) {
+        // Keep default system back behavior to reuse existing previous route.
+      },
+      child: Scaffold(
+        backgroundColor: ColorRes.white,
+        extendBody: true,
+        body: Obx(() {
         // Show loading while fetching property
         if (_isLoading.value) {
           return const Center(child: CircularProgressIndicator());
@@ -3636,7 +3641,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
-                  onPressed: () => Get.back(),
+                  onPressed: _goToDashboard,
                   child: const Text('Go Back'),
                 ),
               ],
@@ -3717,6 +3722,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                         //         ),
                         //       ],
                         //     ),
+            
                         //   ),
                         // ),
                         Divider(
@@ -3724,6 +3730,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                           endIndent: 18,
                           color: ColorRes.leadGreyColor.shade300,
                         ),
+                        
                         const SizedBox(height: 12),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -5126,8 +5133,17 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                     : "View Contact",
           ),
         );
-      }),
+        }),
+      ),
     );
+  }
+
+  void _goToDashboard() {
+    if (Navigator.of(context).canPop()) {
+      Get.back();
+      return;
+    }
+    Get.offAllNamed('/dashboard', predicate: (route) => false);
   }
 
   void addInquiryFromApp(
@@ -5528,7 +5544,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                 child: CircularIcon(
                   icon: Icons.arrow_back_rounded,
                   backgroundColor: ColorRes.white,
-                  onPressed: () => Get.back(),
+                  onPressed: _goToDashboard,
                 ),
               ),
               Positioned(

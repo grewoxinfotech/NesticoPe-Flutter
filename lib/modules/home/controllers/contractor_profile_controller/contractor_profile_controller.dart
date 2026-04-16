@@ -44,8 +44,9 @@ class TopContractorsController extends PaginatedController<Contractor> {
   Future<PaginationResponse<Contractor>> fetchItems(int page) async {
     try {
       final cityData = await SecureStorage.getSelectedCity();
-      if (!withoutCity && cityData != null) {
-        filters?['city'] = cityData;
+      final city = cityData?.toString().trim();
+      if (!withoutCity && city != null && city.isNotEmpty) {
+        filters?['city'] = city;
       } else {
         filters?.remove('city');
       }
