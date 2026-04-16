@@ -1365,6 +1365,11 @@ class _SelectCityScreenState extends State<SelectCityScreen> {
         extendBodyBehindAppBar: true,
         body: SingleChildScrollView(
           child: Column(
+
+
+
+
+            
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // ─── Full-width hero banner with embedded search ───────────────
