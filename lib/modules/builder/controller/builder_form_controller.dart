@@ -558,6 +558,7 @@ import 'dart:io';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/care/pagination/controller/pagination_controller.dart';
@@ -577,6 +578,7 @@ import 'package:path_provider/path_provider.dart';
 import '../../../app/constants/color_res.dart';
 import '../../../data/network/builder/model/builder_model.dart';
 import '../../../data/network/property/services/property_service.dart';
+import 'builder_listed_project_controller.dart';
 import '../view/builder_main_screen.dart';
 
 class ProjectWizardController extends PaginatedController<ProjectItem> {
@@ -647,6 +649,9 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
         brochure: null,
         projectHighlights: [],
         projectContactInfo: ProjectContactInfo(name: "", phone: "", email: ""),
+        ownerName: "",
+        ownerPhone: "",
+        ownerEmail: "",
       ).obs;
 
   late TextEditingController projectNameController;
@@ -673,15 +678,13 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   @override
   void onInit() {
     super.onInit();
-    getCity();
-
     if (isBuilderView) {
       print('isBuilderView');
-      setUserIdFilter().then((_) => loadInitial());
+      setUserIdFilter();
       // loadTopProject();
     } else {
       print('isBuyerView');
-      loadInitial();
+      getCity();
       // loadTopProject();// buyer view, no filter
     }
     assignData();
@@ -749,10 +752,20 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     stateController = TextEditingController(text: project.value.state);
     zipCodeController = TextEditingController(text: project.value.zipCode);
     locationController = TextEditingController(text: project.value.location);
-    generateBuildingFields(project.value.projectSize.totalBuildings.toString());
-    for (int i = 0; i < project.value.projectSize.totalBuildings; i++) {
-      buildingNameControllers[i].text =
-          project.value.buildingNames?["buildingName#${i + 1}"] ?? '';
+    final propertyType = (project.value.propertyTypes ?? 'apartment')
+        .toLowerCase();
+    if (propertyType == 'apartment') {
+      generateBuildingFields(project.value.projectSize.totalBuildings.toString());
+      for (int i = 0; i < project.value.projectSize.totalBuildings; i++) {
+        buildingNameControllers[i].text =
+            project.value.buildingNames?["buildingName#${i + 1}"] ?? '';
+      }
+    } else {
+      for (final c in buildingNameControllers) {
+        c.dispose();
+      }
+      buildingNameControllers.clear();
+      totalBuildingsController.clear();
     }
     brokerRageCommission = TextEditingController(
       text:
@@ -760,7 +773,8 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
               .toString(),
     );
     selectedListOfAmenities.value = List<String>.from(project.value.amenities);
-    builderPropertyType.value = project.value.propertyTypes ?? '';
+    builderPropertyType.value = (project.value.propertyTypes ?? 'apartment')
+        .toLowerCase();
     selectedBuilding.value =
         project.value.configurations.first.variants.first.buildingName ?? '';
     selectedBuilding.refresh();
@@ -789,7 +803,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       // Apply city filter and load properties
       final filter = {'city': selectedCity.value};
       await applyFilters(filter);
-      await loadInitial();
       await loadTopProject();
     } catch (e) {
       print("❌ Error getting city: $e");
@@ -1011,11 +1024,17 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       final userData = await SecureStorage.getUserData();
       if (userData != null) {
         user.value = userData;
-        // Update contact info with fetched user data
+        // Prefill owner info with logged-in user data if empty.
         project.update((p) {
-          p?.projectContactInfo?.name = userData.user?.username ?? '';
-          p?.projectContactInfo?.phone = userData.user?.phone ?? '';
-          p?.projectContactInfo?.email = userData.user?.email ?? '';
+          if ((p?.ownerName ?? '').trim().isEmpty) {
+            p?.ownerName = userData.user?.username ?? '';
+          }
+          if ((p?.ownerPhone ?? '').trim().isEmpty) {
+            p?.ownerPhone = userData.user?.phone ?? '';
+          }
+          if ((p?.ownerEmail ?? '').trim().isEmpty) {
+            p?.ownerEmail = userData.user?.email ?? '';
+          }
         });
       }
     } catch (e) {
@@ -1332,6 +1351,9 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
 
   final formKeys = List.generate(6, (_) => GlobalKey<FormState>());
 
+  bool get isBuildingBasedProperty =>
+      (project.value.propertyTypes ?? '').toLowerCase() == 'apartment';
+
   void next() {
     if (_validateCurrentStep()) {
       print('length of formkey ${formKeys.length}');
@@ -1341,6 +1363,34 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
 
   void selectedBuilderPropertyType(String index) {
     builderPropertyType.value = index;
+    project.update((p) {
+      if (p == null) return;
+      p.propertyTypes = index;
+      if (index != 'apartment') {
+        p.projectSize.totalBuildings = 0;
+        p.buildingNames = {};
+        for (final configuration in p.configurations) {
+          for (final variant in configuration.variants) {
+            variant.buildingName = '';
+          }
+        }
+      } else if (p.projectSize.totalBuildings <= 0) {
+        p.projectSize.totalBuildings = 1;
+      }
+    });
+    if (index == 'apartment') {
+      final totalBuildings = project.value.projectSize.totalBuildings <= 0
+          ? 1
+          : project.value.projectSize.totalBuildings;
+      totalBuildingsController.text = totalBuildings.toString();
+      generateBuildingFields(totalBuildings.toString());
+    } else {
+      totalBuildingsController.clear();
+      for (final c in buildingNameControllers) {
+        c.dispose();
+      }
+      buildingNameControllers.clear();
+    }
     print('Selected Property Types ${builderPropertyType.value}');
   }
 
@@ -1433,7 +1483,9 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   Future<void> submit() async {
     try {
       isLoading.value = true;
-      printProjectDetails();
+      if (kDebugMode) {
+        printProjectDetails();
+      }
       await createBuilderProject();
     } catch (e) {
       print('Create builder project error: $e');
@@ -1445,7 +1497,10 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   Future<void> updateProject(String projectId) async {
     try {
       isLoading.value = true;
-      printProjectDetails();
+      // if (kDebugMode) {
+      //   printProjectDetails();
+      // }
+      log("Updating project with ID: $projectId");
       await updateBuilderProject(projectId);
     } catch (e) {
       print('Create builder project error: $e');
@@ -1456,7 +1511,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
 
   Future<void> createBuilderProject() async {
     try {
-      final jsonBody = jsonEncode(project.value.toJson());
       log(
         "📦 Final Payload:\n${const JsonEncoder.withIndent('  ').convert(project.value.toJson())}",
       );
@@ -1464,15 +1518,12 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       AppLogger.structured("📦 Final dsjcdjhdjhdsd :\n", data.toJson());
 
       final success = await _builderService.createProject(
-        projectData: await _buildProjectPayload(),
-        images: project.value.imageList.map((path) => File(path)).toList(),
-        videos: project.value.videoList.map((path) => File(path)).toList(),
-        brochures:
-            project.value.brochure != null
-                ? File(project.value.pdfPath ?? '')
-                : null,
-        documents:
-            project.value.documentList.map((path) => File(path)).toList(),
+        
+        projectData: data,
+        images: _extractLocalFiles(project.value.imageList),
+        videos: _extractLocalFiles(project.value.videoList),
+        brochures: _extractLocalFile(project.value.pdfPath),
+        documents: _extractLocalFiles(project.value.documentList),
       );
       if (success) {
         // NesticoPeSnackBar.showAwesomeSnackbar(
@@ -1480,12 +1531,21 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
         //   message: "",
         //   contentType: ContentType.success,
         // );
-        refreshList();
         resetForm();
-        Get.offUntil(
-          MaterialPageRoute(builder: (_) => BuilderMainScreen()),
-          (route) => route.isFirst,
-        );
+        // Close the create flow first so user doesn't remain on a cleared review
+        // step. If there is no route to pop, navigate to main screen.
+        if (Get.key.currentState?.canPop() ?? false) {
+          Get.back(result: true);
+        } else {
+          Get.offAll(() => BuilderMainScreen());
+        }
+
+        // Refresh listing in background if the list controller exists.
+        if (Get.isRegistered<BuilderProjectListController>()) {
+          Future.microtask(
+            () => Get.find<BuilderProjectListController>().refreshProjects(),
+          );
+        }
       } else {
         // NesticoPeSnackBar.showAwesomeSnackbar(
         //   title: "Failed to Create Project",
@@ -1505,28 +1565,26 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
 
   Future<void> updateBuilderProject(String projectId) async {
     try {
+    
+      // var data = await _buildProjectPayload();
       final success = await _builderService.updateProject(
         projectId: projectId,
         projectData: await _buildProjectPayload(),
-        images: project.value.imageList.map((path) => File(path)).toList(),
-        videos: project.value.videoList.map((path) => File(path)).toList(),
-        documents:
-            project.value.brochure != null
-                ? File(project.value.brochure ?? '')
-                : null,
+        images: _extractLocalFiles(project.value.imageList),
+        videos: _extractLocalFiles(project.value.videoList),
+        documents: _extractLocalFile(project.value.brochure),
       );
 
       if (success) {
-        refreshList();
-        // NesticoPeSnackBar.showAwesomeSnackbar(
-        //   title: "Success",
-        //   message: "Project Updated Successfully",
-        //   contentType: ContentType.success,
-        // );
-        Get.offUntil(
-          MaterialPageRoute(builder: (_) => BuilderMainScreen()),
-          (route) => route.isFirst,
-        );
+        // Return to caller screen (listing) and let it refresh there.
+        if (Get.key.currentState?.canPop() ?? false) {
+          Get.back(result: true);
+        } else {
+          Get.offUntil(
+            MaterialPageRoute(builder: (_) => BuilderMainScreen()),
+            (route) => route.isFirst,
+          );
+        }
       } else {
         // NesticoPeSnackBar.showAwesomeSnackbar(
         //   title: "Error",
@@ -1542,6 +1600,28 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       //   contentType: ContentType.failure,
       // );
     }
+  }
+
+  bool _isRemotePath(String path) {
+    final uri = Uri.tryParse(path);
+    return uri != null && (uri.scheme == 'http' || uri.scheme == 'https');
+  }
+
+  List<File> _extractLocalFiles(List<String> paths) {
+    return paths
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty && !_isRemotePath(e))
+        .map((e) => File(e))
+        .where((file) => file.existsSync())
+        .toList();
+  }
+
+  File? _extractLocalFile(String? path) {
+    final raw = path?.trim();
+    if (raw == null || raw.isEmpty || _isRemotePath(raw)) return null;
+
+    final file = File(raw);
+    return file.existsSync() ? file : null;
   }
 
   Future<AddProjectModel> _buildProjectPayload() async {
@@ -1570,10 +1650,19 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       brochure: p.brochure,
       nearbyLocations: p.nearbyLocations,
       projectContactInfo: ProjectContactInfo(
-        name: user?.user?.username ?? '',
-        phone: user?.user?.phone ?? '',
-        email: user?.user?.email ?? '',
+        name: p.projectContactInfo?.name ?? '',
+        phone: p.projectContactInfo?.phone ?? '',
+        email: p.projectContactInfo?.email ?? '',
       ),
+      ownerName: (p.ownerName ?? '').trim().isNotEmpty
+          ? p.ownerName
+          : user?.user?.username,
+      ownerPhone: (p.ownerPhone ?? '').trim().isNotEmpty
+          ? p.ownerPhone
+          : user?.user?.phone,
+      ownerEmail: (p.ownerEmail ?? '').trim().isNotEmpty
+          ? p.ownerEmail
+          : user?.user?.email,
       propertyTypes: p.propertyTypes,
       projectHighlights: p.projectHighlights,
     );
@@ -1672,7 +1761,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
 
   Future<AddProjectModel> updateProjectData(AddProjectModel updatedData) async {
     currentStep.value = 0;
-    final user = await SecureStorage.getUserData();
 
     AppLogger("Update Project of Builder", updatedData);
 
@@ -1712,11 +1800,13 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       p.brochure = updatedData.brochure;
       p.nearbyLocations = updatedData.nearbyLocations;
       p.projectContactInfo = ProjectContactInfo(
-        name:
-            user?.user?.username ?? updatedData.projectContactInfo?.name ?? '',
-        phone: user?.user?.phone ?? updatedData.projectContactInfo?.phone ?? '',
-        email: user?.user?.email ?? updatedData.projectContactInfo?.email ?? '',
+        name: updatedData.projectContactInfo?.name ?? '',
+        phone: updatedData.projectContactInfo?.phone ?? '',
+        email: updatedData.projectContactInfo?.email ?? '',
       );
+      p.ownerName = updatedData.ownerName;
+      p.ownerPhone = updatedData.ownerPhone;
+      p.ownerEmail = updatedData.ownerEmail;
       p.propertyTypes = updatedData.propertyTypes;
       p.projectHighlights = updatedData.projectHighlights;
       p.brochure = updatedData.brochure;
@@ -1808,6 +1898,11 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       print('  Email: ${p.projectContactInfo!.email}');
     }
 
+    print('Owner Info:');
+    print('  Name: ${p.ownerName}');
+    print('  Phone: ${p.ownerPhone}');
+    print('  Email: ${p.ownerEmail}');
+
     if (p.configurations.isNotEmpty) {
       print('Configurations:');
       for (var i = 0; i < p.configurations.length; i++) {
@@ -1838,8 +1933,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   Future<bool> saveData() async {
     try {
       final projectData = project.value.toJson();
-
-      final jsonBody = jsonEncode(project.value.toJson());
       log(
         "📦 Final Payload:\n${const JsonEncoder.withIndent('  ').convert(project.value.toJson())}",
       );
@@ -1871,7 +1964,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     // Reset reactive fields
     selectedListOfAmenities.clear();
     showAllAmenities.value = false;
-    builderPropertyType.value = '';
+    builderPropertyType.value = 'apartment';
     selectedPropertyStatus.value = '';
     uploadBrocherName.value = '';
     uploadBrocherPath.value = '';
@@ -1918,6 +2011,9 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       brochure: null,
       projectHighlights: [],
       projectContactInfo: ProjectContactInfo(name: "", phone: "", email: ""),
+      ownerName: "",
+      ownerPhone: "",
+      ownerEmail: "",
     );
 
     // Reset text controllers

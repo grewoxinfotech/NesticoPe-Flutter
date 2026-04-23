@@ -12,6 +12,7 @@ import 'package:nesticope_app/app/manager/data_masker.dart';
 import 'package:nesticope_app/app/manager/icon_manager.dart';
 import 'package:nesticope_app/app/manager/project_compare_manager.dart';
 import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/app/utils/svg_widget.dart';
 import 'package:nesticope_app/app/widgets/image/custom_image.dart'
     hide ColorRes, imageOfNotAvailable;
 import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
@@ -21,7 +22,6 @@ import 'package:nesticope_app/modules/property/controllers/overall_rating_contro
 import 'package:nesticope_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 import 'package:nesticope_app/modules/review/views/widget/add_property_review.dart';
 import 'package:nesticope_app/modules/saved_property/controllers/property_favorite_controller.dart';
-import 'package:nesticope_app/utils/logger/app_logger.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
@@ -30,7 +30,6 @@ import '../../../../app/constants/size_manager.dart';
 import '../../../../app/constants/svg_res.dart';
 import '../../../../app/utils/bottom_sheet_form.dart';
 import '../../../../app/utils/helper_function/user_helper/user_helper.dart';
-import '../../../../app/utils/svg_widget.dart';
 import '../../../../app/widgets/media/media_preview.dart';
 import '../../../../app/widgets/snack_bar/custom_snackbar.dart';
 import '../../../../app/widgets/texts/headline_text.dart';
@@ -130,10 +129,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     // }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      AppLogger(
-        "Check the score card come null from backend ",
-        widget.projectItem?.toJson(),
-      );
       _loadData();
     });
   }
@@ -194,18 +189,13 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       } catch (e) {
         log('❌ Error loading other projects: $e');
       }
-      AppLogger(
-        "Check the score card come null from backend ",
-        fetchedProject?.toJson(),
-      );
-
       final currentProject = project.value;
       if (currentProject == null) return;
 
       reviewController.filters.value = {"entity_id": currentProject.id ?? ""};
       reviewController.filters.refresh();
 
-      if (currentProject.address.isNotEmpty ?? false) {
+      if ((currentProject.address).isNotEmpty) {
         await mapController.fetchAllCategoriesData(currentProject.address);
       }
 
@@ -233,11 +223,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
   Widget build(BuildContext context) {
     final controller = Get.put(ProjectController());
 
-    AppLogger.structured(
-      '🔍 Building ProjectDetailsScreen for project ID:',
-      project?.toJson(),
-    );
-
     return PopScope(
       canPop: true,
       onPopInvoked: (didPop) {
@@ -246,570 +231,607 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       child: Scaffold(
         backgroundColor: ColorRes.white.withOpacity(0.95),
         body: Obx(() {
-        // Show loading while fetching project
-        if (_isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
+          // Show loading while fetching project
+          if (_isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-        // Show error if project not found
-        if (project == null) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.error_outline,
-                  size: 64,
-                  color: ColorRes.leadGreyColor,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Project not found',
-                  style: TextStyle(
-                    fontSize: AppFontSizes.body,
+          // Show error if project not found
+          if (project.value == null) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 64,
                     color: ColorRes.leadGreyColor,
                   ),
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: _goToDashboard,
-                  child: const Text('Go Back'),
-                ),
-              ],
-            ),
-          );
-        }
-
-        AppLogger.structured("project Overview Screen ", project?.toJson());
-
-        return Stack(
-          children: [
-            CustomScrollView(
-              slivers: [
-                _buildAppBar(context, project.value!, widget.isFromPanel),
-                SliverToBoxAdapter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildProjectDetails(project.value!),
-                      _buildMediaGallery(project.value!),
-                      _buildConfigurations(controller, project.value!),
-                      // SizedBox(height: 8),
-                      _buildMapSection(controller, project.value!),
-                      _buildAmenities(project.value!),
-                      // SizedBox(height: 8),
-                      // _buildContactSection(controller, project.value!),
-                      _buildReviewSection(
-                        canAddReview: canAddReview,
-                        overallRatingController: _overallRatingController,
-                        project: project.value!,
-                        reviewController: reviewController,
-                      ),
-
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        color: ColorRes.leadGreyColor.shade200,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const SizedBox(height: 15),
-
-                            Text(
-                              ' Limited Time Offer!',
-                              maxLines: 1,
-                              style: TextStyle(
-                                fontSize: AppFontSizes.body,
-                                fontWeight: AppFontWeights.semiBold,
-                                color: ColorRes.textPrimary,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-
-                            Text(
-                              "Limited-time! Get an exclusive offer on this property.",
-                              maxLines: 1,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: AppFontSizes.small,
-                                fontWeight: AppFontWeights.medium,
-                                color: ColorRes.textColor.withOpacity(0.65),
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            SizedBox(height: 15),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 12),
-                              child: OfferCountdown(
-                                duration: Duration(minutes: 2),
-                                propertyId: project.value?.id ?? '',
-                              ),
-                            ),
-
-                            const SizedBox(height: 12),
-
-                            // Conditional Area
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 12),
-                              child: Column(
-                                children: [
-                                  Obx(() {
-                                    if (controller.hasSubmittedInquiry.value) {
-                                      return SizedBox(
-                                        height: 48,
-                                        width: double.infinity,
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            NesticoPeSnackBar.showAwesomeSnackbar(
-                                              title: 'Already Inquired',
-                                              message:
-                                                  'You have already submitted inquiry',
-                                              contentType: ContentType.warning,
-                                            );
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: ColorRes.error,
-                                            foregroundColor: ColorRes.white,
-                                            elevation: 0,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 14,
-                                            ),
-                                          ),
-                                          child: const Text(
-                                            'Already Inquired',
-                                            style: TextStyle(
-                                              fontSize: AppFontSizes.medium,
-                                              fontWeight:
-                                                  AppFontWeights.semiBold,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    } else {
-                                      return NesticoPeButton(
-                                        title: 'Get Offer',
-                                        backgroundColor: ColorRes.error,
-                                        height: 48,
-                                        width: double.infinity,
-
-                                        onTap: () async {
-                                          try {
-                                            if (UserHelper.isGuest) {
-                                              Get.to(() => OtpLoginScreen());
-                                              return;
-                                            }
-                                            final user =
-                                                await SecureStorage.getUserData();
-                                            if (user == null) {
-                                              NesticoPeSnackBar.showAwesomeSnackbar(
-                                                title: 'Error',
-                                                message:
-                                                    'No user data found. Please log in.',
-                                                contentType:
-                                                    ContentType.failure,
-                                              );
-                                              return;
-                                            }
-                                            final fullName =
-                                                user.user?.fullName ?? '';
-                                            final firstName =
-                                                user.user?.firstName ?? '';
-                                            final username =
-                                                user.user?.username ?? '';
-                                            final email =
-                                                user.user?.email ?? '';
-                                            final phone =
-                                                user.user?.phone ?? '';
-                                            final displayName =
-                                                (firstName.isEmpty
-                                                        ? username
-                                                        : fullName)
-                                                    .trim();
-                                            final inquiry = {
-                                              "name": displayName,
-                                              "phone": phone,
-                                              "email": email,
-                                              "agreeToContact": true,
-                                              "meta": {
-                                                "inquiryType": "sell",
-                                                "type": "project",
-                                              },
-                                            };
-                                            final success = await controller
-                                                .addInquiry(
-                                                  inquiry,
-                                                  project?.value?.id ?? '',
-                                                );
-                                            if (success) {
-                                              controller
-                                                  .hasSubmittedInquiry
-                                                  .value = true;
-                                              NesticoPeSnackBar.showAwesomeSnackbar(
-                                                title: 'Success',
-                                                message:
-                                                    'Inquiry Added Successfully',
-                                                contentType:
-                                                    ContentType.success,
-                                              );
-                                              await controller
-                                                  .getAllInQuireData(
-                                                    project?.value?.id ?? '',
-                                                  );
-                                              await controller
-                                                  .getHasInQuireData(
-                                                    project?.value?.id ?? '',
-                                                  );
-                                            } else {
-                                              NesticoPeSnackBar.showAwesomeSnackbar(
-                                                title: 'Error',
-                                                message:
-                                                    'Failed to Submit Inquiry',
-                                                contentType:
-                                                    ContentType.failure,
-                                              );
-                                            }
-                                          } catch (e, s) {
-                                            debugPrint(
-                                              '❌ Error in Get Offer button: $e',
-                                            );
-                                            debugPrint('$s');
-                                            NesticoPeSnackBar.showAwesomeSnackbar(
-                                              title: 'Error',
-                                              message:
-                                                  'Something went wrong. Please try again.',
-                                              contentType: ContentType.failure,
-                                            );
-                                          }
-                                        },
-                                      );
-                                    }
-                                  }),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                          ],
-                        ),
-                      ),
-
-                      if (project?.value?.brochures.isNotEmpty ?? false) ...[
-                        _buildDocuments(controller, project.value!),
-                      ],
-                      const SizedBox(height: 8),
-                      _buildSupportContactSection(),
-
-                      // Other projects by the same builder (exclude current project)
-                      _buildOtherProjectsSection(project.value!),
-
-                      if (widget.isBuilder) ...[
-                        if (project?.value?.scoreBreakdown != null) ...[
-                          PerformanceScoreWidget(
-                            score: project!.value!.scoreBreakdown!,
-                            showDivider: false,
-                            color: ColorRes.white,
-                            margin: 8,
-                            project: project.value,
-                          ),
-                        ],
-                        SizedBox(height: 8),
-                      ],
-
-                      if (widget.isBuilder) ...[
-                        // ListTile(
-                        //   tileColor: ColorRes.white,
-                        //   title: Text(
-                        //     'Approval History',
-                        //     style: TextStyle(
-                        //       fontSize: AppFontSizes.medium,
-                        //       fontWeight: AppFontWeights.semiBold,
-                        //     ),
-                        //   ),
-                        //   leading: Icon(Icons.history, color: ColorRes.primary),
-                        //   trailing: Icon(Icons.arrow_forward_ios_rounded),
-                        //   onTap: () {
-                        // Get.to(
-                        //   () => SellerPropertyApprovalHistory(
-                        //     propertyId: project?.value?.id ?? '',
-                        //     isProject: true,
-                        //   ),
-                        // );
-                        //   },
-                        // ),
-                        _buildMenuItem(
-                          iconColor: ColorRes.primary,
-                          title: "Approval History",
-                          icon: Icons.history,
-                          onTap: () {
-                            Get.to(
-                              () => SellerPropertyApprovalHistory(
-                                propertyId: project?.value?.id ?? '',
-                                isProject: true,
-                              ),
-                            );
-                          },
-                          iconBg: ColorRes.primary.withOpacity(0.1),
-                          subtitle: 'View timeline of approvals',
-                        ),
-                        const SizedBox(height: 8),
-                        // ListTile(
-                        //   tileColor: ColorRes.white,
-                        //   title: Text(
-                        //     'Leads',
-                        //     style: TextStyle(
-                        //       fontSize: AppFontSizes.medium,
-                        //       fontWeight: AppFontWeights.semiBold,
-                        //     ),
-                        //   ),
-                        //   leading: Icon(
-                        //     Icons.leaderboard_outlined,
-                        //     color: ColorRes.primary,
-                        //   ),
-                        //   trailing: Icon(Icons.arrow_forward_ios_rounded),
-                        //   onTap: () {
-                        //     log(
-                        //       "Check it is from project pass project id ${project?.value?.id}",
-                        //     );
-
-                        //     Get.to(
-                        //       () => CommonLeadScreen(
-                        //         title: 'Project Buyer Leads',
-                        //         controllerTag: 'project',
-                        //         entityId: project?.value?.id,
-                        //         showActionButton: true,
-                        //         showDataMasking: false,
-                        //         onLoadMore: (controller, id) async {
-                        //           if (id != null) {
-                        //             controller.loadMorePropertyLeads(id);
-                        //           } else {
-                        //             controller.loadMore();
-                        //           }
-                        //         },
-
-                        //         /// 👇 Custom lead card builder
-                        //         leadCardBuilder: (lead, onTap) {
-                        //           return LeadCardWidget(
-                        //             lead: lead,
-                        //             isCompact:
-                        //                 MediaQuery.of(context).size.width < 600,
-                        //             showDataMasking: false,
-                        //             onTap: onTap,
-                        //           );
-                        //         },
-                        //       ),
-                        //     );
-                        //   },
-                        // ),
-                        _buildMenuItem(
-                          iconColor: ColorRes.green,
-                          title: "Leads",
-                          icon: Icons.label_important_outline,
-                          onTap: () {
-                            Get.to(
-                              () => CommonLeadScreen(
-                                title: 'Project Buyer Leads',
-                                controllerTag: 'project',
-                                entityId: project?.value?.id,
-                                showActionButton: true,
-                                showDataMasking: false,
-                                onLoadMore: (controller, id) async {
-                                  if (id != null) {
-                                    controller.loadMorePropertyLeads(id);
-                                  } else {
-                                    controller.loadMore();
-                                  }
-                                },
-
-                                /// 👇 Custom lead card builder
-                                leadCardBuilder: (lead, onTap) {
-                                  return LeadCardWidget(
-                                    lead: lead,
-                                    isCompact:
-                                        MediaQuery.of(context).size.width < 600,
-                                    showDataMasking: false,
-                                    onTap: onTap,
-                                  );
-                                },
-                              ),
-                            );
-                          },
-                          iconBg: ColorRes.green.withOpacity(0.1),
-
-                          subtitle: 'New potential buyers',
-                        ),
-                        const SizedBox(height: 8),
-                      ],
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            UnifiedComparisonFloatingButton(bottom: 16),
-          ],
-        );
-      }),
-      bottomNavigationBar: Obx(() {
-        if (_isLoading.value || project == null) {
-          return const SizedBox.shrink();
-        }
-        return SafeArea(
-          child: ReusableBottomBar(
-            mainPriceText: project?.value?.getPriceRange() ?? '',
-            priceBreakdown: {},
-            onPrimaryAction: () {
-              if (UserHelper.isGuest) {
-                Get.to(() => OtpLoginScreen());
-              } else {
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(20),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Project not found',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.body,
+                      color: ColorRes.leadGreyColor,
                     ),
                   ),
-                  builder:
-                      (context) => DraggableScrollableSheet(
-                        expand: false,
-                        minChildSize: 0.45,
-                        initialChildSize:
-                            controller.hasSubmittedInquiry.value ? 0.45 : 0.85,
-                        maxChildSize:
-                            controller.hasSubmittedInquiry.value ? 0.45 : 0.85,
-                        builder:
-                            (
-                              context,
-                              scrollController,
-                            ) => SingleChildScrollView(
-                              controller: scrollController,
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                  bottom:
-                                      MediaQuery.of(context).viewInsets.bottom,
-                                  left: 16,
-                                  right: 16,
-                                  top: 16,
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: _goToDashboard,
+                    child: const Text('Go Back'),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return Stack(
+            children: [
+              CustomScrollView(
+                slivers: [
+                  _buildAppBar(context, project.value!, widget.isFromPanel),
+                  SliverToBoxAdapter(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildProjectDetails(project.value!),
+                        _buildMediaGallery(project.value!),
+                        _buildConfigurations(controller, project.value!),
+                        // SizedBox(height: 8),
+                        _buildMapSection(controller, project.value!),
+                        _buildAmenities(project.value!),
+                        // SizedBox(height: 8),
+                        // _buildContactSection(controller, project.value!),
+                        if (UserHelper.isGuest || UserHelper.isBuyer) ...[
+                          _buildReviewSection(
+                            canAddReview: canAddReview,
+                            overallRatingController: _overallRatingController,
+                            project: project.value!,
+                            reviewController: reviewController,
+                          ),
+
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            color: ColorRes.leadGreyColor.shade200,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const SizedBox(height: 15),
+
+                                Text(
+                                  ' Limited Time Offer!',
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.body,
+                                    fontWeight: AppFontWeights.semiBold,
+                                    color: ColorRes.textPrimary,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                child: ContactOwnerBottom(
-                                  // Check if inquiry already submitted
-                                  propertyStatus: "",
-                                  projectConfiguration:
-                                      project.value?.configuration ?? [],
-                                  isProject: 'project',
-                                  inQuireSubmitted:
-                                      controller.hasSubmittedInquiry.value,
-                                  listingType: "sell",
-                                  titleText: "Contact the Owner",
-                                  chatButtonText: "Chat via WhatsApp",
-                                  formTitle: "Quick Contact Form",
-                                  contactButtonText: "Send Request",
-                                  nameIcon: Icons.person,
-                                  phoneIcon: Icons.phone,
-                                  emailIcon: Icons.email,
-                                  allowSellerContact: false,
-                                  negotiable: false,
-                                  onChatPressed: () {
-                                    print("WhatsApp button clicked!");
-                                  },
-                                  onContactPressed: (
-                                    name,
-                                    phone,
-                                    email,
-                                    price,
-                                    isNegotiable,
-                                    isAllowAllCondition,
-                                    inquiryListing,
-                                    isBookSiteVisit,
-                                    planningToBuy,
-                                    date,
-                                    time,
-                                    roomInfo,
-                                    selectedVariant,
-                                  ) async {
-                                    final inquiry = {
-                                      "name": name ?? "",
-                                      "phone": phone ?? "",
-                                      "email": email ?? "",
-                                      "agreeToContact":
-                                          isAllowAllCondition ?? false,
-                                      "meta": {
-                                        if (price != null)
-                                          "negotiablePrice": price,
-                                        if (isNegotiable != null)
-                                          "isNegotiable": isNegotiable,
-                                        if (planningToBuy != null)
-                                          "timePeriod": planningToBuy,
-                                        if (selectedVariant != null)
-                                          "selectedVariant": selectedVariant,
-                                        if (inquiryListing != null &&
-                                            (inquiryListing?.isNotEmpty ??
-                                                false))
-                                          "inquiryType":
-                                              inquiryListing.toLowerCase(),
-                                        if (date != null)
-                                          "visitDate":
-                                              '${date.day}-${date.month}-${date.year}',
-                                        if (time != null)
-                                          "visitTime":
-                                              '${time.hour.toString().padLeft(2, '0')}:'
-                                              '${time.minute.toString().padLeft(2, '0')}',
-                                      },
-                                    };
 
-                                    final success = await controller.addInquiry(
-                                      inquiry,
-                                      project.value?.id ?? '',
-                                    );
+                                Text(
+                                  "Limited-time! Get an exclusive offer on this property.",
+                                  maxLines: 1,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.small,
+                                    fontWeight: AppFontWeights.medium,
+                                    color: ColorRes.textColor.withOpacity(0.65),
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                SizedBox(height: 15),
+                                Obx(() {
+                                  if (controller.hasSubmittedInquiry.value) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                    ),
+                                    child: OfferCountdown(
+                                      duration: const Duration(minutes: 2),
+                                      propertyId: project.value?.id ?? '',
+                                    ),
+                                  );
+                                }),
+                                Obx(
+                                  () => controller.hasSubmittedInquiry.value
+                                      ? const SizedBox.shrink()
+                                      : const SizedBox(height: 12),
+                                ),
 
-                                    if (success) {
-                                      // Mark inquiry as submitted
+                                // Conditional Area
+                                Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 12),
+                                  child: Column(
+                                    children: [
+                                      Obx(() {
+                                        if (controller
+                                            .hasSubmittedInquiry
+                                            .value) {
+                                          return SizedBox(
+                                            height: 48,
+                                            width: double.infinity,
+                                            child: ElevatedButton(
+                                              onPressed: () {
+                                                NesticoPeSnackBar.showAwesomeSnackbar(
+                                                  title: 'Already Inquired',
+                                                  message:
+                                                      'You have already submitted inquiry',
+                                                  contentType:
+                                                      ContentType.warning,
+                                                );
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: ColorRes.error,
+                                                foregroundColor: ColorRes.white,
+                                                elevation: 0,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 14,
+                                                    ),
+                                              ),
+                                              child: const Text(
+                                                'Already Inquired',
+                                                style: TextStyle(
+                                                  fontSize: AppFontSizes.medium,
+                                                  fontWeight:
+                                                      AppFontWeights.semiBold,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        } else {
+                                          return NesticoPeButton(
+                                            title: 'Get Offer',
+                                            backgroundColor: ColorRes.error,
+                                            height: 48,
+                                            width: double.infinity,
 
-                                      controller.hasSubmittedInquiry.value =
-                                          true;
+                                            onTap: () async {
+                                              try {
+                                                if (UserHelper.isGuest) {
+                                                  Get.to(
+                                                    () => OtpLoginScreen(),
+                                                  );
+                                                  return;
+                                                }
+                                                final user =
+                                                    await SecureStorage.getUserData();
+                                                if (user == null) {
+                                                  NesticoPeSnackBar.showAwesomeSnackbar(
+                                                    title: 'Error',
+                                                    message:
+                                                        'No user data found. Please log in.',
+                                                    contentType:
+                                                        ContentType.failure,
+                                                  );
+                                                  return;
+                                                }
+                                                final fullName =
+                                                    user.user?.fullName ?? '';
+                                                final firstName =
+                                                    user.user?.firstName ?? '';
+                                                final username =
+                                                    user.user?.username ?? '';
+                                                final email =
+                                                    user.user?.email ?? '';
+                                                final phone =
+                                                    user.user?.phone ?? '';
+                                                final displayName =
+                                                    (firstName.isEmpty
+                                                            ? username
+                                                            : fullName)
+                                                        .trim();
+                                                final inquiry = {
+                                                  "name": displayName,
+                                                  "phone": phone,
+                                                  "email": email,
+                                                  "agreeToContact": true,
+                                                  "meta": {
+                                                    "inquiryType": "sell",
+                                                    "type": "project",
+                                                  },
+                                                };
+                                                final success = await controller
+                                                    .addInquiry(
+                                                      inquiry,
+                                                      project?.value?.id ?? '',
+                                                    );
+                                                if (success) {
+                                                  controller
+                                                      .hasSubmittedInquiry
+                                                      .value = true;
+                                                  NesticoPeSnackBar.showAwesomeSnackbar(
+                                                    title: 'Success',
+                                                    message:
+                                                        'Inquiry Added Successfully',
+                                                    contentType:
+                                                        ContentType.success,
+                                                  );
+                                                  await controller
+                                                      .getAllInQuireData(
+                                                        project?.value?.id ??
+                                                            '',
+                                                      );
+                                                  await controller
+                                                      .getHasInQuireData(
+                                                        project?.value?.id ??
+                                                            '',
+                                                      );
+                                                } else {
+                                                  NesticoPeSnackBar.showAwesomeSnackbar(
+                                                    title: 'Error',
+                                                    message:
+                                                        'Failed to Submit Inquiry',
+                                                    contentType:
+                                                        ContentType.failure,
+                                                  );
+                                                }
+                                              } catch (e, s) {
+                                                debugPrint(
+                                                  '❌ Error in Get Offer button: $e',
+                                                );
+                                                debugPrint('$s');
+                                                NesticoPeSnackBar.showAwesomeSnackbar(
+                                                  title: 'Error',
+                                                  message:
+                                                      'Something went wrong. Please try again.',
+                                                  contentType:
+                                                      ContentType.failure,
+                                                );
+                                              }
+                                            },
+                                          );
+                                        }
+                                      }),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                              ],
+                            ),
+                          ),
+                        ],
 
-                                      NesticoPeSnackBar.showAwesomeSnackbar(
-                                        title: 'Success',
-                                        message: "Inquiry Added Successfully",
-                                        contentType: ContentType.success,
-                                      );
+                        if (project?.value?.brochures.isNotEmpty ?? false) ...[
+                          _buildDocuments(controller, project.value!),
+                        ],
 
-                                      Get.back();
-                                      await controller.getAllInQuireData(
-                                        project.value?.id ?? '',
-                                      );
-                                      await controller.getHasInQuireData(
-                                        project.value?.id ?? '',
-                                      );
+                        // Other projects by the same builder (exclude current project)
+                        if (UserHelper.isGuest || UserHelper.isBuyer) ...[
+                          const SizedBox(height: 8),
+                          _buildSupportContactSection(),
+                          _buildOtherProjectsSection(project.value!),
+                        ] else ...[
+                          SizedBox.shrink(),
+                        ],
+
+                        if (widget.isBuilder) ...[
+                          if (project?.value?.scoreBreakdown != null) ...[
+                            PerformanceScoreWidget(
+                              score: project!.value!.scoreBreakdown!,
+                              showDivider: false,
+                              color: ColorRes.white,
+                              margin: 8,
+                              project: project.value,
+                            ),
+                          ],
+                          SizedBox(height: 8),
+                        ],
+
+                        if (widget.isBuilder) ...[
+                          // ListTile(
+                          //   tileColor: ColorRes.white,
+                          //   title: Text(
+                          //     'Approval History',
+                          //     style: TextStyle(
+                          //       fontSize: AppFontSizes.medium,
+                          //       fontWeight: AppFontWeights.semiBold,
+                          //     ),
+                          //   ),
+                          //   leading: Icon(Icons.history, color: ColorRes.primary),
+                          //   trailing: Icon(Icons.arrow_forward_ios_rounded),
+                          //   onTap: () {
+                          // Get.to(
+                          //   () => SellerPropertyApprovalHistory(
+                          //     propertyId: project?.value?.id ?? '',
+                          //     isProject: true,
+                          //   ),
+                          // );
+                          //   },
+                          // ),
+                          _buildMenuItem(
+                            iconColor: ColorRes.primary,
+                            title: "Approval History",
+                            icon: Icons.history,
+                            onTap: () {
+                              Get.to(
+                                () => SellerPropertyApprovalHistory(
+                                  propertyId: project?.value?.id ?? '',
+                                  isProject: true,
+                                ),
+                              );
+                            },
+                            iconBg: ColorRes.primary.withOpacity(0.1),
+                            subtitle: 'View timeline of approvals',
+                          ),
+                          const SizedBox(height: 8),
+                          // ListTile(
+                          //   tileColor: ColorRes.white,
+                          //   title: Text(
+                          //     'Leads',
+                          //     style: TextStyle(
+                          //       fontSize: AppFontSizes.medium,
+                          //       fontWeight: AppFontWeights.semiBold,
+                          //     ),
+                          //   ),
+                          //   leading: Icon(
+                          //     Icons.leaderboard_outlined,
+                          //     color: ColorRes.primary,
+                          //   ),
+                          //   trailing: Icon(Icons.arrow_forward_ios_rounded),
+                          //   onTap: () {
+                          //     log(
+                          //       "Check it is from project pass project id ${project?.value?.id}",
+                          //     );
+
+                          //     Get.to(
+                          //       () => CommonLeadScreen(
+                          //         title: 'Project Buyer Leads',
+                          //         controllerTag: 'project',
+                          //         entityId: project?.value?.id,
+                          //         showActionButton: true,
+                          //         showDataMasking: false,
+                          //         onLoadMore: (controller, id) async {
+                          //           if (id != null) {
+                          //             controller.loadMorePropertyLeads(id);
+                          //           } else {
+                          //             controller.loadMore();
+                          //           }
+                          //         },
+
+                          //         /// 👇 Custom lead card builder
+                          //         leadCardBuilder: (lead, onTap) {
+                          //           return LeadCardWidget(
+                          //             lead: lead,
+                          //             isCompact:
+                          //                 MediaQuery.of(context).size.width < 600,
+                          //             showDataMasking: false,
+                          //             onTap: onTap,
+                          //           );
+                          //         },
+                          //       ),
+                          //     );
+                          //   },
+                          // ),
+                          _buildMenuItem(
+                            iconColor: ColorRes.green,
+                            title: "Leads",
+                            icon: Icons.label_important_outline,
+                            onTap: () {
+                              Get.to(
+                                () => CommonLeadScreen(
+                                  title: 'Project Buyer Leads',
+                                  controllerTag: 'project',
+                                  entityId: project?.value?.id,
+                                  showActionButton: true,
+                                  showDataMasking: false,
+                                  onLoadMore: (controller, id) async {
+                                    if (id != null) {
+                                      controller.loadMorePropertyLeads(id);
                                     } else {
-                                      NesticoPeSnackBar.showAwesomeSnackbar(
-                                        title: 'Error',
-                                        message: "Failed to Submit Inquiry",
-                                        contentType: ContentType.failure,
-                                      );
+                                      controller.loadMore();
                                     }
                                   },
-                                  onAllowSellerContactChanged: (value) {
-                                    print("Allow sellers changed: $value");
-                                  },
-                                  onHomeLoanInterestChanged: (value) {
-                                    print("Home loan interest changed: $value");
+
+                                  /// 👇 Custom lead card builder
+                                  leadCardBuilder: (lead, onTap) {
+                                    return LeadCardWidget(
+                                      lead: lead,
+                                      isCompact:
+                                          MediaQuery.of(context).size.width <
+                                          600,
+                                      showDataMasking: false,
+                                      onTap: onTap,
+                                    );
                                   },
                                 ),
-                              ),
-                            ),
+                              );
+                            },
+                            iconBg: ColorRes.green.withOpacity(0.1),
+
+                            subtitle: 'New potential buyers',
+                          ),
+                          const SizedBox(height: 8),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              UnifiedComparisonFloatingButton(bottom: 16),
+            ],
+          );
+        }),
+        bottomNavigationBar: Obx(() {
+          if (_isLoading.value || project == null) {
+            return const SizedBox.shrink();
+          }
+          return SafeArea(
+            child: ReusableBottomBar(
+              mainPriceText: project?.value?.getPriceRange() ?? '',
+              priceBreakdown: {},
+              onPrimaryAction: () {
+                if (UserHelper.isGuest) {
+                  Get.to(() => OtpLoginScreen());
+                } else if (UserHelper.isBuyer) {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(20),
                       ),
-                );
-              }
-            },
-            primaryTitle:
-                controller.hasSubmittedInquiry.value
-                    ? "Submitted"
-                    : "View Contact",
-          ),
-        );
+                    ),
+                    builder:
+                        (context) => DraggableScrollableSheet(
+                          expand: false,
+                          minChildSize: 0.45,
+                          initialChildSize:
+                              controller.hasSubmittedInquiry.value
+                                  ? 0.45
+                                  : 0.85,
+                          maxChildSize:
+                              controller.hasSubmittedInquiry.value
+                                  ? 0.45
+                                  : 0.85,
+                          builder:
+                              (
+                                context,
+                                scrollController,
+                              ) => SingleChildScrollView(
+                                controller: scrollController,
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                    bottom:
+                                        MediaQuery.of(
+                                          context,
+                                        ).viewInsets.bottom,
+                                    left: 16,
+                                    right: 16,
+                                    top: 16,
+                                  ),
+                                  child: ContactOwnerBottom(
+                                    // Check if inquiry already submitted
+                                    propertyStatus: "",
+                                    projectConfiguration:
+                                        project.value?.configuration ?? [],
+                                    isProject: 'project',
+                                    inQuireSubmitted:
+                                        controller.hasSubmittedInquiry.value,
+                                    listingType: "sell",
+                                    titleText: "Contact the Owner",
+                                    chatButtonText: "Chat via WhatsApp",
+                                    formTitle: "Quick Contact Form",
+                                    contactButtonText: "Send Request",
+                                    nameIcon: Icons.person,
+                                    phoneIcon: Icons.phone,
+                                    emailIcon: Icons.email,
+                                    allowSellerContact: false,
+                                    negotiable: false,
+                                    onChatPressed: () {
+                                      print("WhatsApp button clicked!");
+                                    },
+                                    onContactPressed: (
+                                      name,
+                                      phone,
+                                      email,
+                                      price,
+                                      isNegotiable,
+                                      isAllowAllCondition,
+                                      inquiryListing,
+                                      isBookSiteVisit,
+                                      planningToBuy,
+                                      date,
+                                      time,
+                                      roomInfo,
+                                      selectedVariant,
+                                    ) async {
+                                      final inquiry = {
+                                        "name": name ?? "",
+                                        "phone": phone ?? "",
+                                        "email": email ?? "",
+                                        "agreeToContact":
+                                            isAllowAllCondition ?? false,
+                                        "meta": {
+                                          if (price != null)
+                                            "negotiablePrice": price,
+                                          if (isNegotiable != null)
+                                            "isNegotiable": isNegotiable,
+                                          if (planningToBuy != null)
+                                            "timePeriod": planningToBuy,
+                                          if (selectedVariant != null)
+                                            "selectedVariant": selectedVariant,
+                                          if (inquiryListing != null &&
+                                              (inquiryListing?.isNotEmpty ??
+                                                  false))
+                                            "inquiryType":
+                                                inquiryListing.toLowerCase(),
+                                          if (date != null)
+                                            "visitDate":
+                                                '${date.day}-${date.month}-${date.year}',
+                                          if (time != null)
+                                            "visitTime":
+                                                '${time.hour.toString().padLeft(2, '0')}:'
+                                                '${time.minute.toString().padLeft(2, '0')}',
+                                        },
+                                      };
+
+                                      final success = await controller
+                                          .addInquiry(
+                                            inquiry,
+                                            project.value?.id ?? '',
+                                          );
+
+                                      if (success) {
+                                        // Mark inquiry as submitted
+
+                                        controller.hasSubmittedInquiry.value =
+                                            true;
+
+                                        NesticoPeSnackBar.showAwesomeSnackbar(
+                                          title: 'Success',
+                                          message: "Inquiry Added Successfully",
+                                          contentType: ContentType.success,
+                                        );
+
+                                        Get.back();
+                                        await controller.getAllInQuireData(
+                                          project.value?.id ?? '',
+                                        );
+                                        await controller.getHasInQuireData(
+                                          project.value?.id ?? '',
+                                        );
+                                      } else {
+                                        NesticoPeSnackBar.showAwesomeSnackbar(
+                                          title: 'Error',
+                                          message: "Failed to Submit Inquiry",
+                                          contentType: ContentType.failure,
+                                        );
+                                      }
+                                    },
+                                    onAllowSellerContactChanged: (value) {
+                                      print("Allow sellers changed: $value");
+                                    },
+                                    onHomeLoanInterestChanged: (value) {
+                                      print(
+                                        "Home loan interest changed: $value",
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                        ),
+                  );
+                } else {
+                  Get.back();
+                }
+              },
+              primaryTitle:
+                  (UserHelper.isGuest || UserHelper.isBuyer)
+                      ? (controller.hasSubmittedInquiry.value
+                          ? "Submitted"
+                          : "View Contact")
+                      : "Go Back",
+            ),
+          );
         }),
       ),
     );
@@ -986,7 +1008,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                       );
                     },
                     child: SizedBox(
-                      width: 260,
+                      width: 300,
                       child: Container(
                         decoration: BoxDecoration(
                           color: ColorRes.white,
@@ -1002,7 +1024,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                         child: BuilderProjectCard(
                           forHome: true,
                           project: data,
-                          width: 260,
+                          width: 300,
                           height: 150,
                           developersName:
                               data.projectContactInfo?.name ?? 'Unknown',
@@ -1316,7 +1338,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       backgroundColor: ColorRes.white,
 
       leading: GestureDetector(
-      onTap: _goToDashboard,
+        onTap: _goToDashboard,
         child: Container(
           margin: const EdgeInsets.only(left: 12),
           padding: const EdgeInsets.all(8),

@@ -75,6 +75,7 @@ class PropertyFavoriteController extends GetxController {
       if (propertyId.isNotEmpty) {
         // ✅ Fetch all inquiries
         await getAllInQuireData(propertyId);
+        
 
         // ✅ Check if specific inquiry exists
         await getHasInQuireData(propertyId);

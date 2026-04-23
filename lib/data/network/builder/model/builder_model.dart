@@ -499,6 +499,9 @@ class AddProjectModel {
   String? brochure;
   String? pdfPath;
   ProjectContactInfo? projectContactInfo;
+  String? ownerName;
+  String? ownerEmail;
+  String? ownerPhone;
 
   AddProjectModel({
     this.id,
@@ -527,6 +530,9 @@ class AddProjectModel {
     this.brochure,
     this.pdfPath,
     this.projectContactInfo,
+    this.ownerName,
+    this.ownerEmail,
+    this.ownerPhone,
   });
 
   Map<String, dynamic> toJson() {
@@ -538,7 +544,7 @@ class AddProjectModel {
       'launchDate': launchDate.toIso8601String(),
       'possessionDate': possessionDate.toIso8601String(),
       'reraId': reraId,
-      'propertyTypes': propertyTypes,
+      'propertyTypes': propertyTypes?.toLowerCase(),
       'status': status,
       'address': address,
       'city': city,
@@ -558,6 +564,9 @@ class AddProjectModel {
       'brochure': brochure,
       'pdfPath': pdfPath,
       'projectContactInfo': projectContactInfo?.toJson(),
+      'ownerName': ownerName,
+      'ownerEmail': ownerEmail,
+      'ownerPhone': ownerPhone,
     };
   }
 }
@@ -873,6 +882,7 @@ class ProjectItem {
   final String propertyTypes;
   final ProjectContactInfo? projectContactInfo;
   final String status;
+  
   final String address;
   final String city;
   final String state;
@@ -990,7 +1000,7 @@ class ProjectItem {
             .map((v) => ProjectConfiguration.fromJson(v))
             .toList(),
     reraId: json['reraId'] ?? '',
-    propertyTypes: json['propertyTypes'] ?? '',
+    propertyTypes: (json['propertyTypes'] ?? 'apartment').toString().toLowerCase(),
     projectContactInfo:
         json['projectContactInfo'] != null
             ? ProjectContactInfo.fromJson(json['projectContactInfo'])
@@ -1215,7 +1225,7 @@ extension ProjectItemMapper on ProjectItem {
           }).toList(),
 
       reraId: reraId,
-      propertyTypes: propertyTypes,
+      propertyTypes: propertyTypes.toLowerCase(),
       status: status,
 
       address: address,
@@ -1231,8 +1241,12 @@ extension ProjectItemMapper on ProjectItem {
 
       amenities: amenities,
       projectHighlights: projectHighlights,
+      ownerEmail: ownerEmail,
+      ownerPhone: ownerPhone,
+      ownerName: ownerName,
 
       mediaGallery: mediaGallery,
+      
 
       /// Extract only URLs from brochures list
       imageList: mediaGallery?.images ?? [],

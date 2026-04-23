@@ -173,7 +173,7 @@ class ReviewsVerticalAndTestimonials extends StatelessWidget {
               Row(
                 children: [
                   /// Avatar (placeholder since we don't have reviewer details)
-                  Container(
+                 Container(
                     width: 50,
                     height: 50,
                     decoration: BoxDecoration(
@@ -192,26 +192,41 @@ class ReviewsVerticalAndTestimonials extends StatelessWidget {
                       ),
                     ),
                     alignment: Alignment.center,
-                    child: Text(
-                      (() {
-                        final user = review?.entityUser;
+                    child: (() {
+                      final user = review.reviewer;
+                      final profilePic = user?.profilePic?.trim() ?? '';
+                      final username = user?.username?.trim() ?? '';
+                      final initial =
+                          username.isNotEmpty ? username[0].toUpperCase() : '?';
 
-                        if (user == null) return '?';
-                        final username = user.username?.trim() ?? '';
+                      if (profilePic.isNotEmpty) {
+                        return ClipOval(
+                          child: Image.network(
+                            profilePic,
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Text(
+                              initial,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.large,
+                                fontWeight: AppFontWeights.semiBold,
+                                color: ColorRes.homeGreenDarkFade,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
 
-                        if (username.isNotEmpty) {
-                          return username[0]
-                              .toUpperCase(); // fallback to username
-                        } else {
-                          return '?'; // fallback if all empty
-                        }
-                      })(),
-                      style: TextStyle(
-                        fontSize: AppFontSizes.large,
-                        fontWeight: AppFontWeights.semiBold,
-                        color: ColorRes.homeGreenDarkFade,
-                      ),
-                    ),
+                      return Text(
+                        initial,
+                        style: TextStyle(
+                          fontSize: AppFontSizes.large,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.homeGreenDarkFade,
+                        ),
+                      );
+                    })(),
                   ),
 
                   const SizedBox(width: 12),
@@ -228,7 +243,7 @@ class ReviewsVerticalAndTestimonials extends StatelessWidget {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      '${review.entityUser?.username?.replaceAll("_", " ").capitalize}',
+                                      '${review.reviewer?.username?.replaceAll("_", " ").capitalize}',
                                       maxLines: 1,
 
                                       style: TextStyle(
@@ -241,7 +256,7 @@ class ReviewsVerticalAndTestimonials extends StatelessWidget {
                                   ),
                                   SizedBox(width: 8),
                                   Text(
-                                    _formatDate(review.createdAt),
+                                    _formatDate(review.createdAt?.toIso8601String()),
                                     style: TextStyle(
                                       fontSize: AppFontSizes.extraSmall,
                                       fontWeight: AppFontWeights.medium,
@@ -270,7 +285,7 @@ class ReviewsVerticalAndTestimonials extends StatelessWidget {
                           ],
                         ),
                         Text(
-                          '${review.entityType}',
+                          '${review.reviewer?.userType?.replaceAll("_", " ").capitalize??''}',
                           maxLines: 1,
 
                           style: TextStyle(
@@ -367,7 +382,7 @@ class ReviewsVerticalAndTestimonials extends StatelessWidget {
 
   /// Helper method to get status color
 
-  /// Helper method to get status icon
+  /// Helper method to get status icon 
 
   /// Helper method to format date
   String _formatDate(String? dateString) {

@@ -249,19 +249,16 @@ class ApiConstants {
 
   static Future<Map<String, String>> getHeaders() async {
     final token = await SecureStorage.getToken();
-    print("header_token: $token");
     return {contentType: applicationJson, authorization: "Bearer $token"};
   }
 
   static Future<Map<String, String>> getUpdatedHeaders() async {
     final token = await SecureStorage.getUpdatePhoneToken();
-    print("header_token Updated token for otp verification: $token");
     return {contentType: applicationJson, authorization: "Bearer $token"};
   }
 
   static Future<Map<String, String>> getUpdatedLoginWithOtpHeaders() async {
     final token = await SecureStorage.getLoginWithOtpToken();
-    print("header_token Updated token for otp verification: $token");
     return {contentType: applicationJson, authorization: "Bearer $token"};
   }
 

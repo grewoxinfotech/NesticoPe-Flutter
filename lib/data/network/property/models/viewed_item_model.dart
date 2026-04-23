@@ -140,6 +140,21 @@ class PropertyDetails {
   });
 
   factory PropertyDetails.fromJson(Map<String, dynamic> json) {
+    final dynamic priceData = json['price'];
+    PriceRange? parsedRange;
+    num? parsedPrice;
+
+    if (priceData is Map<String, dynamic>) {
+      parsedRange = PriceRange.fromJson(priceData);
+    } else if (priceData is num) {
+      parsedPrice = priceData;
+    }
+
+    parsedRange ??=
+        json['priceRange'] != null
+            ? PriceRange.fromJson(json['priceRange'])
+            : null;
+
     return PropertyDetails(
       id: json['id'] ?? '',
       projectName: json['projectName'],
@@ -150,11 +165,8 @@ class PropertyDetails {
       location: json['location'],
       city: json['city'],
       status: json['status'],
-      priceRange:
-          json['priceRange'] != null
-              ? PriceRange.fromJson(json['priceRange'])
-              : null,
-      price: json['price'] is num ? json['price'] : null,
+      priceRange: parsedRange,
+      price: parsedPrice,
       priceType: json['priceType'],
     );
   }

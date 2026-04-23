@@ -769,7 +769,7 @@ class _BuilderLeadState extends State<BuilderLeads> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorRes.white,
+   
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading:
@@ -786,15 +786,25 @@ class _BuilderLeadState extends State<BuilderLeads> {
         backgroundColor: ColorRes.white,
         elevation: 0,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.filter_list, color: ColorRes.primary),
-            /* onPressed: () {
-              showFilterBottomSheet(
-                context,
-                leadController,
-                propertyId: widget.projectId,
-              );
-            },*/
+          // IconButton(
+          //   icon: const Icon(Icons.filter_list, color: ColorRes.primary),
+          //   /* onPressed: () {
+          //     showFilterBottomSheet(
+          //       context,
+          //       leadController,
+          //       propertyId: widget.projectId,
+          //     );
+          //   },*/
+          //   onPressed: () {
+          //     Get.to(
+          //       () => LeadBuildFilterScreen(
+          //         controller: leadController,
+          //         propertyId: widget.projectId,
+          //       ),
+          //     );
+          //   },
+          // ),
+          TextButton.icon(
             onPressed: () {
               Get.to(
                 () => LeadBuildFilterScreen(
@@ -803,6 +813,14 @@ class _BuilderLeadState extends State<BuilderLeads> {
                 ),
               );
             },
+            icon: const Icon(Icons.filter_list, color: ColorRes.primary),
+            label: const Text(
+              "Filter",
+              style: TextStyle(
+                color: ColorRes.primary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ],
       ),

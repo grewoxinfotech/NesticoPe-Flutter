@@ -5,14 +5,11 @@ import 'package:get/get.dart';
 import 'package:nesticope_app/app/care/pagination/controller/pagination_controller.dart';
 import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
 import 'package:nesticope_app/data/database/secure_storage_service.dart';
-import 'package:nesticope_app/data/network/platform_review/service/platform_review_service.dart';
-import 'package:nesticope_app/modules/seller/module/lead_screen/model/lead_model.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/color_res.dart';
 import '../../../data/network/buyer/model/my_contractor_model.dart';
 import '../../../data/network/buyer/service/my_contractor_service.dart';
-import '../../../data/network/lead/lead_service.dart';
 import '../../../data/network/review/service/review_service.dart';
 import '../../../widgets/New folder/inputs/text_field.dart';
 import '../../../widgets/messages/snack_bar.dart';
@@ -28,16 +25,22 @@ class MyContractorController
   var isReasonValid = false.obs;
   final currentUserId = "".obs;
   ReviewUserService _reviewService = ReviewUserService();
+  var txtTitle = TextEditingController();
   var txtReason = TextEditingController();
+
+  void _syncReviewFormSubmitEnabled() {
+    final titleOk = txtTitle.text.trim().length >= 3;
+    final reasonOk = txtReason.text.trim().length >= 10;
+    final ratingOk = controller.overallRating.value > 0;
+    isReasonValid.value = titleOk && reasonOk && ratingOk;
+  }
 
   @override
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    txtReason.addListener(() {
-      final text = txtReason.text.trim();
-      isReasonValid.value = text.length >= 10;
-    });
+    txtTitle.addListener(_syncReviewFormSubmitEnabled);
+    txtReason.addListener(_syncReviewFormSubmitEnabled);
     getCurrentUserid();
     loadInitial();
   }
@@ -67,8 +70,10 @@ class MyContractorController
   }
 
   void clearValues() {
+    txtTitle.clear();
     txtReason.clear();
     controller.overallRating.value = 0.0;
+    _syncReviewFormSubmitEnabled();
   }
 
   Future<bool> checkReviewDone(String id) async {
@@ -76,8 +81,12 @@ class MyContractorController
     return reponse;
   }
 
-  void openAddFollowUpDialog(String name, String contractor, String serviceId) {
-    Get.dialog(
+  Future<bool> openAddFollowUpDialog(
+    String name,
+    String contractor,
+    String serviceId,
+  ) async {
+    final result = await Get.dialog<bool>(
       Dialog(
         backgroundColor: ColorRes.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -156,7 +165,7 @@ class MyContractorController
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                name ?? 'N/A',
+                                name.capitalize?.replaceAll("_", " ") ?? 'N/A',
                                 style: TextStyle(
                                   fontSize: AppFontSizes.bodyMedium,
                                   fontWeight: AppFontWeights.semiBold,
@@ -165,7 +174,7 @@ class MyContractorController
                               ),
                               const SizedBox(height: 6),
                               Text(
-                                contractor ?? 'Unknown Contractor',
+                                contractor.capitalize?.replaceAll("_", " ") ?? 'Unknown Client',
                                 maxLines: 1,
                                 style: TextStyle(
                                   fontSize: AppFontSizes.bodySmall,
@@ -184,13 +193,36 @@ class MyContractorController
                             isRequired: true,
                             onRatingChanged: (value) {
                               controller.overallRating.value = value;
+                              _syncReviewFormSubmitEnabled();
                             },
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
                           ),
                         ),
                         const SizedBox(height: 16),
-                        // Type Dropdown
+                        NesticoPeTextField(
+                          controller: txtTitle,
+                          title: 'Title',
+                          hintText: 'Enter review title',
+                          style: TextStyle(
+                            fontSize: AppFontSizes.small,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.textSecondary,
+                          ),
+                          prefixIcon: Icons.title_outlined,
+                          isRequired: true,
+                          maxLines: 1,
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Title is required';
+                            }
+                            if (value.trim().length < 3) {
+                              return 'Title must be at least 3 characters';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
                         NesticoPeTextField(
                           controller: txtReason,
 
@@ -277,20 +309,23 @@ class MyContractorController
                                             return;
                                           }
 
-                                          Get.back();
                                           log(
                                             "Form is valid. Submitting review...",
                                           );
 
-                                          await addReviewForContractorHandler(
+                                          final ok =
+                                              await addReviewForContractorHandler(
                                             serviceId:
                                                 serviceId, // Pass contractor ID
                                             reviewerId:
                                                 currentUserId
                                                     .value, // Replace with actual logged-in user ID
                                           );
+                                          if (ok) {
+                                            Get.back(result: true);
+                                          }
                                         }
-                                        : null, // ✅ Disabled if reason < 10 chars
+                                        : null,
                                 child: Text('Submit'),
                               ),
                             ),
@@ -307,9 +342,10 @@ class MyContractorController
       ),
       barrierDismissible: true,
     );
+    return result ?? false;
   }
 
-  Future<void> addReviewForContractorHandler({
+  Future<bool> addReviewForContractorHandler({
     required String serviceId,
     required String reviewerId,
   }) async {
@@ -320,6 +356,7 @@ class MyContractorController
         "entity_id": serviceId,
         "reviewer_id": reviewerId,
         "rating": controller.overallRating.value,
+        "title": txtTitle.text.trim(),
         "content": txtReason.text.trim(),
         "pros": {},
         "cons": {},
@@ -341,6 +378,7 @@ class MyContractorController
         );
         refreshList();
         clearValues();
+        return true;
       } else {
         clearValues();
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -348,6 +386,7 @@ class MyContractorController
           message: "Failed to submit review. Please try again.",
           contentType: ContentType.failure,
         );
+        return false;
       }
     } catch (e, st) {
       log("❌ Error in addReviewForContractorHandler: $e\n$st");
@@ -357,6 +396,7 @@ class MyContractorController
         message: "Something went wrong while adding review.",
         contentType: ContentType.failure,
       );
+      return false;
     }
   }
 

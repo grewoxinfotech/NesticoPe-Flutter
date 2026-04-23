@@ -309,23 +309,33 @@ import 'location/location.dart';
 //   }
 // }
 
-class CreateProjectScreen extends GetView<ProjectWizardController> {
-  // final ProjectModel? project;
+class CreateProjectScreen extends StatelessWidget {
   final bool isFromEdit;
-  String? projectId;
+  final String? projectId;
+  final List<GlobalKey<FormState>> _formKeys = List.generate(
+    6,
+    (_) => GlobalKey<FormState>(),
+  );
+
   CreateProjectScreen({
     super.key,
     this.isFromEdit = false,
-    // this.project
-  });
+  }) : projectId = null;
+
+  ProjectWizardController get controller {
+    if (Get.isRegistered<ProjectWizardController>()) {
+      return Get.find<ProjectWizardController>();
+    }
+    if (Get.isRegistered<ProjectWizardController>(tag: "builder")) {
+      return Get.find<ProjectWizardController>(tag: "builder");
+    }
+    throw Exception('ProjectWizardController is not registered');
+  }
 
   @override
   Widget build(BuildContext context) {
-    // final ProjectWizardController controller = Get.put(ProjectWizardController(isBuilderView: false));
-
-    if (isFromEdit) {
-      projectId = Get.arguments;
-    }
+    final resolvedProjectId =
+        isFromEdit ? (Get.arguments as String?) ?? projectId ?? '' : '';
 
     return Scaffold(
       backgroundColor: ColorRes.addPropertyBackgroundColor,
@@ -420,7 +430,7 @@ class CreateProjectScreen extends GetView<ProjectWizardController> {
                                 topRight: Radius.circular(28),
                               ),
                             ),
-                            child: Obx(() {
+                          child: Obx(() {
                               final step = controller.currentStep.value;
                               print('Current styep $step');
                               return SingleChildScrollView(
@@ -502,7 +512,7 @@ class CreateProjectScreen extends GetView<ProjectWizardController> {
                   child: SizedBox(
                     height: 45,
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         // Check for remaining units when on step 1 (Configuration step)
                         if (step == 1) {
                           final p = controller.project.value;
@@ -531,14 +541,16 @@ class CreateProjectScreen extends GetView<ProjectWizardController> {
                             return; // do nothing while loading
 
                           if (isFromEdit) {
-                            controller.updateProject(
-                              projectId ?? '',
+                            await controller.updateProject(
+                              resolvedProjectId,
                             ); // update existing project
                           } else {
-                            controller.submit(); // create new project
+                            await controller.submit(); // create new project
                           }
                         } else {
-                          controller.next(); // move to next step
+                          if (_validateCurrentStep(step)) {
+                            controller.currentStep.value++;
+                          }
                         }
                       },
 
@@ -587,23 +599,22 @@ class CreateProjectScreen extends GetView<ProjectWizardController> {
   }
 
   Widget _buildStep(int step) {
-    // Ensure step is within valid range (0-5)
-    if (step < 0 || step >= controller.formKeys.length) {
+    if (step < 0 || step >= _formKeys.length) {
       return const Center(child: Text('Invalid step'));
     }
 
     switch (step) {
       case 0:
-        return StepBasicInfo(formKey: controller.formKeys[0]);
+        return StepBasicInfo(formKey: _formKeys[0]);
       case 1:
         return StepConfigurations(
-          formKey: controller.formKeys[1],
+          formKey: _formKeys[1],
           isFromEdit: isFromEdit,
         );
       case 2:
-        return StepLocation(formKey: controller.formKeys[2]);
+        return StepLocation(formKey: _formKeys[2]);
       case 3:
-        return StepAdditional(formKey: controller.formKeys[3]);
+        return StepAdditional(formKey: _formKeys[3]);
       case 4:
         return UploadMediaScreen();
       case 5:
@@ -617,5 +628,47 @@ class CreateProjectScreen extends GetView<ProjectWizardController> {
 
   Widget _buildNavBar(int step) {
     return const SizedBox.shrink();
+  }
+
+  bool _validateCurrentStep(int step) {
+    if (step < 0 || step >= _formKeys.length) {
+      return false;
+    }
+
+    final form = _formKeys[step].currentState;
+    if (form == null) {
+      return true;
+    }
+
+    if (!form.validate()) {
+      return false;
+    }
+
+    form.save();
+
+    if (step == 0) {
+      final project = controller.project.value;
+      if (project.possessionDate.isBefore(project.launchDate)) {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Error",
+          message: 'Validation Error: Possession must be after Launch',
+          contentType: ContentType.failure,
+        );
+        return false;
+      }
+    }
+
+    if (step == 4) {
+      if (controller.project.value.documentList.isEmpty) {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Document Required",
+          message: 'Please upload at least RERA document to continue.',
+          contentType: ContentType.failure,
+        );
+        return false;
+      }
+    }
+
+    return true;
   }
 }

@@ -18,11 +18,14 @@ class AppSvgIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final assetPath = 'assets/$folder/$assetName.svg';
     return SvgPicture.asset(
-      'assets/$folder/$assetName.svg',
+      assetPath,
       width: size,
       height: size,
       color: color,
+      placeholderBuilder:
+          (_) => Icon(Icons.help_outline, size: size, color: color),
     );
   }
 }

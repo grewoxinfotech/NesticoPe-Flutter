@@ -172,6 +172,7 @@ import 'package:intl/intl.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/app/manager/property/property_pricemanager.dart';
 import 'package:nesticope_app/app/utils/formater/formater.dart';
 import 'package:nesticope_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
@@ -1571,7 +1572,14 @@ class HorizontalPropertyCard extends StatelessWidget {
     } else {
       final Items? prop = await propertyService.getPropertyById(propertyId);
       log("Property Details  for inquiry deatial ${prop?.toJson()}");
-      originalPrice = prop?.propertyDetails?.financialInfo?.price ?? 0;
+      final fetchedListingType = prop?.listingType ?? listingType ?? '';
+      final priceManager = PropertyPriceManager(
+        listingType: fetchedListingType,
+        financialInfo: prop?.propertyDetails?.financialInfo ?? FinancialInfo(),
+        pgInfo: prop?.propertyDetails?.pgInfo,
+      );
+      originalPrice = priceManager.actualPrice;
+      listing = fetchedListingType.toLowerCase();
       minPrice = (originalPrice * 0.98);
     }
 

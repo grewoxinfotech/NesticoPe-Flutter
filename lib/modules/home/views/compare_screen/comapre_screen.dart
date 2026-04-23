@@ -233,7 +233,7 @@ String _title(Items i) {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: AppPadding.medium),
+      padding: EdgeInsets.symmetric(horizontal: 10),
       child: GestureDetector(
         onTap: () {
           Get.to(() => PropertyDetailScreen(propertyId: widget.item.id ?? ''));
@@ -891,6 +891,11 @@ class CompareScreen extends StatefulWidget {
 class _CompareScreenState extends State<CompareScreen> {
   final PropertyController controller = Get.find<PropertyController>();
   final PropertyContactedService _contactedService = PropertyContactedService();
+  final PageController _propertyCardsController = PageController(
+    viewportFraction: 0.94,
+  );
+  final PageController _comparisonCardsController = PageController();
+  int _currentPropertyCard = 0;
   String? _activePropertyId;
 
   @override
@@ -944,6 +949,35 @@ class _CompareScreenState extends State<CompareScreen> {
         level: 1000,
       );
     }
+  }
+
+  void _syncTopWithBottom(int index) {
+    if (!_propertyCardsController.hasClients) return;
+    final current = _propertyCardsController.page?.round() ?? 0;
+    if (current == index) return;
+    _propertyCardsController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _syncBottomWithTop(int index) {
+    if (!_comparisonCardsController.hasClients) return;
+    final current = _comparisonCardsController.page?.round() ?? 0;
+    if (current == index) return;
+    _comparisonCardsController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  @override
+  void dispose() {
+    _propertyCardsController.dispose();
+    _comparisonCardsController.dispose();
+    super.dispose();
   }
 
   @override
@@ -1031,19 +1065,65 @@ class _CompareScreenState extends State<CompareScreen> {
               children: [
                 SizedBox(height: 16),
 
-                ...selected.map((item) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: PropertyCardForCompare(
-                      item: item,
-                      isActive: item.id == _activePropertyId,
-                      isSubmitted: controller.isComparePropertyFirst.value,
-                      onRemove: () {
-                        CompareManager.to.remove(item.id ?? '');
-                      },
+                SizedBox(
+                  height: 132,
+                  child: PageView.builder(
+                    controller: _propertyCardsController,
+                    itemCount: selected.length,
+                    onPageChanged: (index) {
+                      setState(() {
+                        _currentPropertyCard = index;
+                      });
+                      _syncBottomWithTop(index);
+                    },
+                    itemBuilder: (context, index) {
+                      final item = selected[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: PropertyCardForCompare(
+                          item: item,
+                          isActive: item.id == _activePropertyId,
+                          isSubmitted: controller.isComparePropertyFirst.value,
+                          onRemove: () {
+                            CompareManager.to.remove(item.id ?? '');
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                if (selected.length > 1) ...[
+                  const SizedBox(height: 6),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(
+                      selected.length,
+                      (index) => GestureDetector(
+                        onTap: () {
+                          _propertyCardsController.animateToPage(
+                            index,
+                            duration: const Duration(milliseconds: 250),
+                            curve: Curves.easeInOut,
+                          );
+                          _syncBottomWithTop(index);
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 220),
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          width: _currentPropertyCard == index ? 18 : 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color:
+                                _currentPropertyCard == index
+                                    ? ColorRes.primary
+                                    : ColorRes.leadGreyColor.shade300,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
                     ),
-                  );
-                }).toList(),
+                  ),
+                ],
                 
                 SizedBox(height: 16),
                 Padding(
@@ -1060,6 +1140,14 @@ class _CompareScreenState extends State<CompareScreen> {
                 const SizedBox(height: 12),
                 _ComparisonTable(
                   items: selected,
+                  pageController: _comparisonCardsController,
+                  currentPage: _currentPropertyCard,
+                  onPageChanged: (index) {
+                    _syncTopWithBottom(index);
+                    setState(() {
+                      _currentPropertyCard = index;
+                    });
+                  },
                   onActiveChange: (id) {
                     setState(() {
                       _activePropertyId = id;
@@ -1543,38 +1631,20 @@ class _ComparisonRow extends StatelessWidget {
   }
 }
 
-class _ComparisonTable extends StatefulWidget {
+class _ComparisonTable extends StatelessWidget {
   final List<Items> items;
+  final PageController pageController;
+  final int currentPage;
+  final ValueChanged<int>? onPageChanged;
   final ValueChanged<String>? onActiveChange;
-  const _ComparisonTable({super.key, required this.items, this.onActiveChange});
-  @override
-  State<_ComparisonTable> createState() => _ComparisonTableState();
-}
-
-class _ComparisonTableState extends State<_ComparisonTable> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
-  bool _didInitialNotify = false;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_didInitialNotify && widget.items.isNotEmpty) {
-        final first = widget.items[0];
-        if ((first.id ?? '').isNotEmpty) {
-          widget.onActiveChange?.call(first.id!);
-        }
-        _didInitialNotify = true;
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
+  const _ComparisonTable({
+    super.key,
+    required this.items,
+    required this.pageController,
+    required this.currentPage,
+    this.onPageChanged,
+    this.onActiveChange,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1583,46 +1653,45 @@ class _ComparisonTableState extends State<_ComparisonTable> {
         SizedBox(
           height: 680,
           child: PageView.builder(
-            controller: _pageController,
-            itemCount: widget.items.length,
+            controller: pageController,
+            itemCount: items.length,
 
             onPageChanged: (i) {
-              setState(() {
-                _currentPage = i;
-              });
-              final item = widget.items[i];
+              onPageChanged?.call(i);
+              final item = items[i];
               if ((item.id ?? '').isNotEmpty) {
-                widget.onActiveChange?.call(item.id!);
+                onActiveChange?.call(item.id!);
               }
             },
 
             itemBuilder: (context, index) {
-              final item = widget.items[index];
+              final item = items[index];
               return _PropertyDetailsCard(item: item);
             },
           ),
         ),
         const SizedBox(height: 12),
-        if (widget.items.length > 1)
+        if (items.length > 1)
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(
-              widget.items.length,
+              items.length,
               (index) => GestureDetector(
                 onTap: () {
-                  _pageController.animateToPage(
+                  pageController.animateToPage(
                     index,
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeInOut,
                   );
+                  onPageChanged?.call(index);
                 },
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 4),
-                  width: _currentPage == index ? 24 : 8,
+                  width: currentPage == index ? 24 : 8,
                   height: 8,
                   decoration: BoxDecoration(
                     color:
-                        _currentPage == index
+                        currentPage == index
                             ? ColorRes.primary
                             : ColorRes.leadGreyColor[300],
                     borderRadius: BorderRadius.circular(4),
@@ -1779,8 +1848,14 @@ bool _shouldHide(String? a, String? b) {
 String _title(Items i) {
   if ((i.type ?? '').toLowerCase() == 'residential') {
     final bhk = i.propertyDetails?.bhk ?? 0;
-    return '${bhk} BHK ${i.propertyType?.capitalizeFirst ?? ''}';
+
+    if (bhk > 0) {
+      return '${bhk} BHK ${i.propertyType?.capitalizeFirst ?? ''}';
+    } else {
+      return i.propertyType?.capitalizeFirst ?? '';
+    }
   }
+
   return i.propertyType?.capitalizeFirst ?? (i.title ?? '');
 }
 

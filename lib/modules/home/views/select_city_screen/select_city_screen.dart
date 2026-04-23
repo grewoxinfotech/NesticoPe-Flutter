@@ -1408,9 +1408,12 @@ class _SelectCityScreenState extends State<SelectCityScreen> {
                             ? 'Getting location…'
                             : 'Use my current device location',
                         style: TextStyle(
-                          fontWeight: FontWeight.w600,
+                          // fontWeight: FontWeight.w600,
                           fontSize: 14,
-                          color: ColorRes.white,
+                            color: Colors.white,
+                              // fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.8,
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
@@ -1768,6 +1771,7 @@ class _PredictionList extends StatelessWidget {
   final List<Prediction> predictions;
   final FocusNode focusNode;
   final ValueChanged<String> onCitySelected;
+  static const int _maxVisiblePredictions = 3;
 
   const _PredictionList({
     required this.predictions,
@@ -1777,6 +1781,8 @@ class _PredictionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final visiblePredictions = predictions.take(_maxVisiblePredictions).toList();
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
@@ -1793,12 +1799,13 @@ class _PredictionList extends StatelessWidget {
       child: ListView.separated(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        itemCount: predictions.length,
+        itemCount: visiblePredictions.length,
+        padding: EdgeInsets.zero,
         separatorBuilder:
             (_, __) =>
                 Divider(height: 1, thickness: 1, color: Colors.grey.shade100),
         itemBuilder: (context, index) {
-          final prediction = predictions[index];
+          final prediction = visiblePredictions[index];
           final description = prediction.description.toString();
           final parts = description.split(',').map((e) => e.trim()).toList();
           final city = parts.isNotEmpty ? parts[0] : '';
@@ -1808,6 +1815,7 @@ class _PredictionList extends StatelessWidget {
             borderRadius: BorderRadius.circular(14),
             onTap: () {
               focusNode.unfocus();
+
               onCitySelected(description.split(',').first.trim());
             },
             child: Padding(
@@ -1834,7 +1842,7 @@ class _PredictionList extends StatelessWidget {
                         Text(
                           city,
                           style: const TextStyle(
-                            fontSize: 12,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: Colors.black87,
                           ),
@@ -1844,7 +1852,7 @@ class _PredictionList extends StatelessWidget {
                           Text(
                             location,
                             style: TextStyle(
-                              fontSize: 10,
+                              fontSize: 12,
                               color: Colors.grey.shade600,
                               fontWeight: AppFontWeights.medium
                             ),

@@ -29,27 +29,27 @@ class TopCategoryService {
         if (limit != null) 'limit': limit.toString(),
        
       });
-      debugPrint("Fetching Top Categories from: $uri");
+      // debugPrint("Fetching Top Categories from: $uri");
 
       final response = await http.get(
         uri,
         headers: await headers(),
       );
 
-      debugPrint("Top Categories API Response: ${response.body}");
+      // debugPrint("Top Categories API Response: ${response.body}");
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
 
         final model = TopCategoryResponse.fromJson(jsonData);
-        AppLogger.structured('Top Categorise of full ',model.toJson() );
+        // AppLogger.structured('Top Categorise of full ',model.toJson() );
 
 
         return model.data?.items ?? [];
       } else {
-        debugPrint(
-            "Failed to fetch top categories: ${response.statusCode}");
-        debugPrint("Response body: ${response.body}");
+        // debugPrint(
+        //     "Failed to fetch top categories: ${response.statusCode}");
+        // debugPrint("Response body: ${response.body}");
 
         CustomSnackBar.show(
           Get.overlayContext!,
@@ -60,7 +60,7 @@ class TopCategoryService {
         throw Exception("Failed to load top categories");
       }
     } catch (e) {
-      debugPrint("Exception in fetchTopCategories: $e");
+      // debugPrint("Exception in fetchTopCategories: $e");
       rethrow;
     }
   }
@@ -73,18 +73,18 @@ class TopCategoryService {
         headers: await headers(),
       );
 
-      debugPrint("Get category by ID response: ${response.body}");
+      // debugPrint("Get category by ID response: ${response.body}");
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
         final model = TopCategoryResponse.fromJson(jsonData);
         return model.data?.items.first;
       } else {
-        debugPrint(
-            "Failed to get category by ID: ${response.statusCode}");
+        // debugPrint(
+            // "Failed to get category by ID: ${response.statusCode}");
       }
     } catch (e) {
-      debugPrint("Get category by ID exception: $e");
+      // debugPrint("Get category by ID exception: $e");
     }
     return null;
   }

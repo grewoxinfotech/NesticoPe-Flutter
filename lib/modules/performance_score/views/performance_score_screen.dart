@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:nesticope_app/data/network/property/models/property_model.dart';
-import 'package:nesticope_app/modules/performance_score/views/widgets/analytics_pie_chart.dart';
 import 'package:nesticope_app/modules/performance_score/views/widgets/engagement_tile.dart';
 import 'package:nesticope_app/modules/performance_score/views/widgets/media_breakdown_tile.dart';
-import 'package:nesticope_app/modules/performance_score/views/widgets/score_bar_chart.dart';
 import 'package:nesticope_app/modules/performance_score/views/widgets/score_component_tile.dart';
 import 'package:nesticope_app/modules/performance_score/views/widgets/score_gauge.dart';
-import 'package:nesticope_app/utils/logger/app_logger.dart';
 
 import '../../../app/constants/color_res.dart';
 import '../../../data/network/builder/model/builder_model.dart';
@@ -31,7 +27,6 @@ class PerformanceScoreWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final components = score.components;
-    AppLogger.structured("Project that items helps", project?.toJson());
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/data/network/auth/model/user_model.dart';
 import 'package:nesticope_app/data/network/user/service/notification_sync_service.dart';
 import 'package:nesticope_app/modules/auth/views/login_screen.dart';
@@ -92,7 +93,7 @@ class AuthService {
     Map<String, dynamic> userData,
   ) async {
     try {
-      AppLogger.structured("Fetch The Certificate Data from API", userData);
+      // AppLogger.structured("Fetch The Certificate Data from API", userData);
 
       final user = {
         "userId": userData['userId'],
@@ -104,7 +105,7 @@ class AuthService {
           "phone": userData['phone'],
         },
       };
-      AppLogger.structured("Fetch The Certificate Data from API", user);
+      // AppLogger.structured("Fetch The Certificate Data from API", user);
       final response = await http.post(
         Uri.parse(ApiConstants.generateResellerCertificate),
         headers: await ApiConstants.getHeadersWithoutToken(),
@@ -612,8 +613,9 @@ class AuthService {
       final message =
           (data['message'] ?? 'Too many requests. Please try again later.')
               .toString();
-      NesticoPeSnackBar.showAwesomeSnackbar(
+      showTopAwesomeSnackbar(
         title: 'Too Many Requests',
+        color: ColorRes.white,
         message:
             'Maximum OTP requests reached 3 times in 24 hours. Please try again later.',
         contentType: ContentType.failure,
@@ -629,27 +631,29 @@ class AuthService {
           message.contains('Builder') ||
           message.contains('Partner') ||
           message.contains('Contractor')) {
-        print("OTP Login Error: $message");
-        NesticoPeSnackBar.showAwesomeSnackbar(
+        print("OTP Login Errordsvsdvd: $message");
+        showTopAwesomeSnackbar(
           title: 'Click on Login as Partner ',
+          color: ColorRes.white,
           message: message,
           contentType: ContentType.failure,
         );
         return false;
-      }
-      else{
+      } else {
         print("OTP Login Error: $message");
-        NesticoPeSnackBar.showAwesomeSnackbar(
+        showTopAwesomeSnackbar(
           title: 'Error',
           message: 'Failed to resend OTP',
+          color: ColorRes.white,
           contentType: ContentType.failure,
         );
         return false;
       }
     }
-    NesticoPeSnackBar.showAwesomeSnackbar(
+    showTopAwesomeSnackbar(
       title: 'Error',
       message: 'Failed to resend OTP',
+      color: ColorRes.white,
       contentType: ContentType.failure,
     );
     return false;

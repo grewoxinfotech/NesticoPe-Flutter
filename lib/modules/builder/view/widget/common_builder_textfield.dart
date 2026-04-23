@@ -52,8 +52,6 @@ class CommonTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     InputBorder getBorder() {
       switch (borderType) {
         case 'underline':
@@ -154,6 +152,7 @@ class CommonTextField extends StatelessWidget {
               color: Colors.red.shade700,
               fontSize: AppFontSizes.small,
             ),
+            errorMaxLines: 3,
           ),
         ),
       ],

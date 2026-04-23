@@ -40,8 +40,6 @@ class TopContractorsService {
 
       final response = await http.get(uri, headers: await headers());
 
-      debugPrint("Top Contractors API Response: ${response.body}");
-
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return PaginationResponse<Contractor>.fromJson(
@@ -74,8 +72,6 @@ class TopContractorsService {
         headers: await headers(),
       );
 
-      debugPrint("Get Contractor by ID Response: ${response.body}");
-
       if (response.statusCode == 200 || response.statusCode ==201) {
         final data = jsonDecode(response.body);
 
@@ -94,24 +90,18 @@ class TopContractorsService {
   Future<User> fetchUserModelById(String userId) async {
     try {
       final uri = Uri.parse('${ApiConstants.user}/$userId');
-      print("uri: $uri");
       final response = await http.get(uri, headers: await headers());
-
-      print("response: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
-        print("USER DATA: $data");
-
         return User.fromJson(data['data']);
       } else {
-        print("Failed to load user model: ${response.statusCode}");
-        print("Response body: ${response.body}");
+        debugPrint("Failed to load user model: ${response.statusCode}");
         throw Exception("Failed to load user model");
       }
     } catch (e) {
-      print("Exception in fetchUserModelById: $e");
+      debugPrint("Exception in fetchUserModelById: $e");
       rethrow;
     }
   }

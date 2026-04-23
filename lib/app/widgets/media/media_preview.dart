@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -23,13 +25,19 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
 
   void _determineMediaType() async {
     final lowerUrl = widget.url.toLowerCase();
+    final isNetworkUrl =
+        lowerUrl.startsWith('http://') || lowerUrl.startsWith('https://');
     if (lowerUrl.endsWith('.mp4') ||
         lowerUrl.endsWith('.mov') ||
         lowerUrl.endsWith('.mkv') ||
         lowerUrl.endsWith('.webm')) {
       _isVideo = true;
-      _videoController = VideoPlayerController.networkUrl(Uri.parse(widget.url))
-        ..initialize()
+      _videoController =
+          isNetworkUrl
+              ? VideoPlayerController.networkUrl(Uri.parse(widget.url))
+              : VideoPlayerController.file(File(widget.url));
+      _videoController!
+        .initialize()
             .then((_) {
               setState(() => _isLoading = false);
               _videoController?.play();
@@ -68,44 +76,43 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
     );
   }
 
-/*  Widget _buildImageViewer() {
-    return InteractiveViewer(
-
-      child: Image.network(
-
-        widget.url,
-        fit: BoxFit.contain,
-        loadingBuilder: (context, child, progress) {
-          if (progress == null) return child;
-          return const Center(
-            child: CircularProgressIndicator(color: Colors.white),
-          );
-        },
-        errorBuilder:
-            (context, error, stackTrace) =>
-                const Icon(Icons.broken_image, color: Colors.white, size: 80),
-      ),
-    );
-  }*/
   Widget _buildImageViewer() {
+    final lowerUrl = widget.url.toLowerCase();
+    final isNetworkUrl =
+        lowerUrl.startsWith('http://') || lowerUrl.startsWith('https://');
+
     return InteractiveViewer(
       clipBehavior: Clip.hardEdge,
       minScale: 1.0,
       maxScale: 5.0,
       boundaryMargin: EdgeInsets.zero,
       child: Center(
-        child: Image.network(
-          widget.url,
-          fit: BoxFit.contain,
-          loadingBuilder: (context, child, progress) {
-            if (progress == null) return child;
-            return const Center(
-              child: CircularProgressIndicator(color: Colors.white),
-            );
-          },
-          errorBuilder: (context, error, stackTrace) =>
-          const Icon(Icons.broken_image, color: Colors.white, size: 80),
-        ),
+        child:
+            isNetworkUrl
+                ? Image.network(
+                  widget.url,
+                  fit: BoxFit.contain,
+                  loadingBuilder: (context, child, progress) {
+                    if (progress == null) return child;
+                    return const Center(
+                      child: CircularProgressIndicator(color: Colors.white),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) => const Icon(
+                    Icons.broken_image,
+                    color: Colors.white,
+                    size: 80,
+                  ),
+                )
+                : Image.file(
+                  File(widget.url),
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) => const Icon(
+                    Icons.broken_image,
+                    color: Colors.white,
+                    size: 80,
+                  ),
+                ),
       ),
     );
   }

@@ -14,13 +14,18 @@ class NesticoPeSnackBar {
     required ContentType contentType,
     Color? color,
   }) {
+    final ctx = Get.context ?? Get.key.currentContext ?? Get.overlayContext;
+    if (ctx == null) return;
+
     final snackBar = SnackBar(
       elevation: 0,
+
       behavior: SnackBarBehavior.floating,
       backgroundColor: ColorRes.transparentColor,
       content: AwesomeSnackbarContent(
         title: title,
         message: message,
+      
         contentType: contentType,
 
         color: color,
@@ -36,9 +41,43 @@ class NesticoPeSnackBar {
       ),
     );
 
-    ScaffoldMessenger.of(Get.context!)
+    ScaffoldMessenger.of(ctx)
       ..hideCurrentSnackBar()
       ..showSnackBar(snackBar);
   }
 }
 
+
+
+
+ void showTopAwesomeSnackbar({
+  required String title,
+  required String message,
+  required ContentType contentType,
+  Color? color,
+}) {
+  Get.snackbar(
+    "",
+    "",
+    snackPosition: SnackPosition.TOP, // 👈 TOP
+    backgroundColor: Colors.transparent,
+    margin: EdgeInsets.all(12),
+    padding: EdgeInsets.zero,
+    duration: Duration(seconds: 3),
+    messageText: AwesomeSnackbarContent(
+      title: title,
+      message: message,
+      contentType: contentType,
+      color: color,
+      inMaterialBanner: false,
+      titleTextStyle: TextStyle(
+        fontSize: AppFontSizes.body,
+        fontWeight: AppFontWeights.bold,
+      ),
+      messageTextStyle: TextStyle(
+        fontSize: AppFontSizes.small,
+        fontWeight: AppFontWeights.semiBold,
+      ),
+    ),
+  );
+}

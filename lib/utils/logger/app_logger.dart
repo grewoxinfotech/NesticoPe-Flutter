@@ -49,14 +49,19 @@
 // }
 
 import 'dart:convert';
+import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
 
 class AppLogger {
   AppLogger(String title, dynamic data) {
     structured(title, data);
   }
 
-  static void structured(String title, dynamic data) {
+  static void structured(String title, dynamic data) async {
     try {
+      if (data is Future) {
+        data = await data; // auto resolve future
+      }
+
       final prettyJson = _toPrettyJson(data);
 
       final header = "\n===== $title START =====\n";
@@ -76,10 +81,53 @@ class AppLogger {
         return const JsonEncoder.withIndent('  ').convert(decoded);
       }
 
-      return const JsonEncoder.withIndent('  ').convert(data);
+      // IMPORTANT: dart:convert will auto-call `.toJson()` if present.
+      // Some project models (e.g. PaginationResponse<T>) define toJson(mapper)
+      // which is NOT compatible with jsonEncode's no-arg expectation.
+      final safe = _safeJsonEncodable(data);
+      return const JsonEncoder.withIndent('  ').convert(safe);
     } catch (_) {
-      return data.toString(); // fallback
+      return data.toString();
     }
+  }
+
+  static dynamic _safeJsonEncodable(dynamic value) {
+    if (value == null ||
+        value is num ||
+        value is bool ||
+        value is String) {
+      return value;
+    }
+
+    if (value is PaginationResponse) {
+      return {
+        'items': value.items.map(_safeJsonEncodable).toList(),
+        'meta': value.meta.toJson(),
+      };
+    }
+
+    if (value is Map) {
+      return value.map((k, v) => MapEntry(k.toString(), _safeJsonEncodable(v)));
+    }
+
+    if (value is Iterable) {
+      return value.map(_safeJsonEncodable).toList();
+    }
+
+    // Try common patterns but never let logger crash.
+    try {
+      final dynamic dyn = value;
+      final res = dyn.toJson();
+      return _safeJsonEncodable(res);
+    } catch (_) {}
+
+    try {
+      final dynamic dyn = value;
+      final res = dyn.toMap();
+      return _safeJsonEncodable(res);
+    } catch (_) {}
+
+    return value.toString();
   }
 
   static void _printInChunks(String text) {

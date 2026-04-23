@@ -319,10 +319,8 @@ class CustomImage extends StatelessWidget {
 
       case CustomImageType.network:
         if (src == null || src!.trim().isEmpty) {
-          print("src is empty ${src}");
           return fallback();
         }
-        print("src is not empty ${src}");
         return CachedNetworkImage(
           imageUrl: src ?? "",
           fit: fit,

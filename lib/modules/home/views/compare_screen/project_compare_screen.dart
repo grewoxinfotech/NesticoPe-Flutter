@@ -34,6 +34,11 @@ class ProjectCompareScreen extends StatefulWidget {
 class _ProjectCompareScreenState extends State<ProjectCompareScreen> {
   final projectController = Get.put(ProjectController());
   final PropertyContactedService _contactedService = PropertyContactedService();
+  final PageController _projectCardsController = PageController(
+    viewportFraction: 0.94,
+  );
+  final PageController _comparisonCardsController = PageController();
+  int _currentProjectCard = 0;
   String? _activeProjectId;
 
   @override
@@ -87,6 +92,35 @@ class _ProjectCompareScreenState extends State<ProjectCompareScreen> {
         level: 1000,
       );
     }
+  }
+
+  void _syncTopWithBottom(int index) {
+    if (!_projectCardsController.hasClients) return;
+    final current = _projectCardsController.page?.round() ?? 0;
+    if (current == index) return;
+    _projectCardsController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _syncBottomWithTop(int index) {
+    if (!_comparisonCardsController.hasClients) return;
+    final current = _comparisonCardsController.page?.round() ?? 0;
+    if (current == index) return;
+    _comparisonCardsController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  @override
+  void dispose() {
+    _projectCardsController.dispose();
+    _comparisonCardsController.dispose();
+    super.dispose();
   }
 
   @override
@@ -215,20 +249,66 @@ class _ProjectCompareScreenState extends State<ProjectCompareScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 16),
-                ...selected.map((item) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: ProjectCardForCompare(
-                      item: item,
-                      isActive: item.id == _activeProjectId,
-                      isSubmitted:
-                          projectController.isCompareProjectFirst.value,
-                      onRemove: () {
-                        ProjectCompareManager.to.remove(item.id);
-                      },
+                SizedBox(
+                  height: 116,
+                  child: PageView.builder(
+                    controller: _projectCardsController,
+                    itemCount: selected.length,
+                    onPageChanged: (index) {
+                      setState(() {
+                        _currentProjectCard = index;
+                      });
+                      _syncBottomWithTop(index);
+                    },
+                    itemBuilder: (context, index) {
+                      final item = selected[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: ProjectCardForCompare(
+                          item: item,
+                          isActive: item.id == _activeProjectId,
+                          isSubmitted:
+                              projectController.isCompareProjectFirst.value,
+                          onRemove: () {
+                            ProjectCompareManager.to.remove(item.id);
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                if (selected.length > 1) ...[
+                  const SizedBox(height: 6),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(
+                      selected.length,
+                      (index) => GestureDetector(
+                        onTap: () {
+                          _projectCardsController.animateToPage(
+                            index,
+                            duration: const Duration(milliseconds: 250),
+                            curve: Curves.easeInOut,
+                          );
+                          _syncBottomWithTop(index);
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 220),
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          width: _currentProjectCard == index ? 18 : 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color:
+                                _currentProjectCard == index
+                                    ? ColorRes.primary
+                                    : ColorRes.leadGreyColor.shade300,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
                     ),
-                  );
-                }).toList(),
+                  ),
+                ],
 
                 const SizedBox(height: 16),
                 Padding(
@@ -245,6 +325,14 @@ class _ProjectCompareScreenState extends State<ProjectCompareScreen> {
                 const SizedBox(height: 12),
                 _ProjectComparisonTable(
                   items: selected,
+                  pageController: _comparisonCardsController,
+                  currentPage: _currentProjectCard,
+                  onPageChanged: (index) {
+                    _syncTopWithBottom(index);
+                    setState(() {
+                      _currentProjectCard = index;
+                    });
+                  },
                   onActiveChange: (id) {
                     setState(() {
                       _activeProjectId = id;
@@ -299,7 +387,7 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: AppPadding.medium),
+      padding: EdgeInsets.symmetric(horizontal: 10),
       child: GestureDetector(
         onTap: () {
           Get.to(() => ProjectDetailsScreen(projectItem: widget.item));
@@ -619,7 +707,7 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
                     right: 8,
                     child: GestureDetector(
                       onTap: widget.onRemove,
-                      child:  Icon(
+                      child: Icon(
                         Icons.cancel,
                         color: ColorRes.error,
                         size: 16,
@@ -921,85 +1009,62 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
   }
 }
 
-class _ProjectComparisonTable extends StatefulWidget {
+class _ProjectComparisonTable extends StatelessWidget {
   final List<ProjectItem> items;
+  final PageController pageController;
+  final int currentPage;
+  final ValueChanged<int>? onPageChanged;
   final ValueChanged<String>? onActiveChange;
-  const _ProjectComparisonTable({required this.items, this.onActiveChange});
-
-  @override
-  State<_ProjectComparisonTable> createState() =>
-      _ProjectComparisonTableState();
-}
-
-class _ProjectComparisonTableState extends State<_ProjectComparisonTable> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
-
-  bool _didInitialNotify = false;
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_didInitialNotify && widget.items.isNotEmpty) {
-        final first = widget.items[0];
-        if ((first.id ?? '').isNotEmpty) {
-          widget.onActiveChange?.call(first.id!);
-        }
-        _didInitialNotify = true;
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
+  const _ProjectComparisonTable({
+    required this.items,
+    required this.pageController,
+    required this.currentPage,
+    this.onPageChanged,
+    this.onActiveChange,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         SizedBox(
-          height: 680,
+          height: 616,
           child: PageView.builder(
-            controller: _pageController,
-            itemCount: widget.items.length,
+            controller: pageController,
+            itemCount: items.length,
             onPageChanged: (i) {
-              setState(() {
-                _currentPage = i;
-              });
-              final item = widget.items[i];
-              widget.onActiveChange?.call(item.id);
+              onPageChanged?.call(i);
+              final item = items[i];
+              onActiveChange?.call(item.id);
             },
             itemBuilder: (context, index) {
-              final item = widget.items[index];
+              final item = items[index];
               return _ProjectDetailsCard(item: item);
             },
           ),
         ),
         const SizedBox(height: 12),
-        if (widget.items.length > 1)
+        if (items.length > 1)
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(
-              widget.items.length,
+              items.length,
               (index) => GestureDetector(
                 onTap: () {
-                  _pageController.animateToPage(
+                  pageController.animateToPage(
                     index,
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeInOut,
                   );
+                  onPageChanged?.call(index);
                 },
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 4),
-                  width: _currentPage == index ? 24 : 8,
+                  width: currentPage == index ? 24 : 8,
                   height: 8,
                   decoration: BoxDecoration(
                     color:
-                        _currentPage == index
+                        currentPage == index
                             ? ColorRes.primary
                             : ColorRes.leadGreyColor[300],
                     borderRadius: BorderRadius.circular(4),

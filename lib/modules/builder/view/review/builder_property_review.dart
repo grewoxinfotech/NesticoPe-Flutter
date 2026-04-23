@@ -120,14 +120,11 @@
 //   }
 // }
 
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
-import 'package:nesticope_app/app/widgets/image/custom_image.dart'
-    hide ColorRes;
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/widgets/media/media_preview.dart';
 import '../../../../data/network/builder/model/builder_model.dart';
@@ -319,7 +316,7 @@ class StepReview extends GetView<ProjectWizardController> {
                           child: _buildCompactInfo(
                             Icons.pin_drop,
                             'ZIP',
-                            p?.zipCode ?? '',
+                            p.zipCode ?? '',
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -352,12 +349,12 @@ class StepReview extends GetView<ProjectWizardController> {
                       _buildInfoBadge(
                         Icons.business_rounded,
                         'Property Type',
-                        p.propertyTypes!,
+                        p.propertyTypes?.capitalize?.replaceAll('_', ' ') ?? '',
                       ),
                       const SizedBox(height: 12),
                     ],
 
-                    _buildInfoBadge(Icons.timeline_rounded, 'Status', p.status),
+                    _buildInfoBadge(Icons.timeline_rounded, 'Status', p.status.capitalize?.replaceAll('_', ' ') ?? ''),
                     if (p.amenities.isNotEmpty) ...[
                       const SizedBox(height: 20),
                       _buildFeatureSection(
@@ -958,7 +955,7 @@ class StepReview extends GetView<ProjectWizardController> {
                         ),
                       ),
                       child: Text(
-                        item,
+                        item.capitalize?.replaceAll('_', ' ') ?? '',
                         style: TextStyle(
                           fontSize: AppFontSizes.small,
                           color: ColorRes.textPrimary,
@@ -1390,12 +1387,9 @@ class StepReview extends GetView<ProjectWizardController> {
   // }
 
   Widget _buildMediaGallerySection(ThemeData theme, AddProjectModel p) {
-    final hasImages = p.imageList != null && p.imageList.isNotEmpty;
-    final hasVideos = p.videoList != null && p.videoList.isNotEmpty;
+    final hasImages = p.imageList.isNotEmpty;
+    final hasVideos = p.videoList.isNotEmpty;
     final hasBrochure = p.brochure != null && p.brochure!.isNotEmpty;
-
-    log("Check any thing missing ${p.imageList.map((e) => e,)}");
-
 
     if (!hasImages && !hasVideos && !hasBrochure)
       return const SizedBox.shrink();
@@ -1457,10 +1451,9 @@ class StepReview extends GetView<ProjectWizardController> {
                       final isLast = index == 4 && p.imageList.length > 5;
 
                       final imagePath = p.imageList[index];
-                      log("Check why image to show ${File(imagePath).path}");
                       return GestureDetector(
                         onTap: () {
-                          Get.to(() => MediaPreviewScreen(url: File(imagePath).path));
+                          Get.to(() => MediaPreviewScreen(url: imagePath));
                         },
                         child: Container(
                           width: 120,

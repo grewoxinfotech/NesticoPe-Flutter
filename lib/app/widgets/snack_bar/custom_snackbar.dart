@@ -13,7 +13,25 @@ class CustomSnackBar {
         VoidCallback? onActionPressed,
         String? actionLabel,
       }) {
-    final overlay = Overlay.of(context, rootOverlay: true);
+    if (!context.mounted) return;
+
+    final overlay = Overlay.maybeOf(context, rootOverlay: true);
+    if (overlay == null) {
+      // Fallback for contexts that are not under an Overlay (e.g. detached or
+      // background service callbacks) to avoid runtime crashes.
+      final messenger = ScaffoldMessenger.maybeOf(context);
+      if (messenger == null) return;
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(message),
+          behavior: SnackBarBehavior.floating,
+          duration: duration ?? const Duration(seconds: 3),
+          backgroundColor: _snackBarColor(type),
+        ),
+      );
+      return;
+    }
+
     late OverlayEntry overlayEntry;
 
     overlayEntry = OverlayEntry(
@@ -28,6 +46,19 @@ class CustomSnackBar {
     );
 
     overlay.insert(overlayEntry);
+  }
+
+  static Color _snackBarColor(SnackBarType type) {
+    switch (type) {
+      case SnackBarType.success:
+        return const Color(0xFF4CAF50);
+      case SnackBarType.error:
+        return const Color(0xFFE53935);
+      case SnackBarType.warning:
+        return const Color(0xFFFFA726);
+      case SnackBarType.info:
+        return const Color(0xFF2196F3);
+    }
   }
 }
 

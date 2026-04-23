@@ -304,6 +304,7 @@ class _HomeHeaderState extends State<HomeHeader> {
                                 color: ColorRes.error.withOpacity(0.25),
 
                                 blurRadius: 6,
+
                                 offset: const Offset(0, 2),
                               ),
                             ],
@@ -517,7 +518,8 @@ class _HomeHeaderState extends State<HomeHeader> {
                           size: 20,
                         ),
                         // const SizedBox(width: 6),
-                        // Text(
+                        // Text(    i have app idea for fit ness tarker app that on base of solo leveling anime that contain the workout plan for honme and gym alltype so exercise with diet plan with ai intergartion chat white other use progress tarcker leaderbpard
+ 
                         //   selectedCategory ?? 'Buy',
                         //   style: const TextStyle(
                         //     fontSize: AppFontSizes.small,
@@ -546,25 +548,65 @@ class _HomeHeaderState extends State<HomeHeader> {
 
   PopupMenuItem<String> _buildMenuItem(String value) {
     final isSelected = selectedCategory == value;
+    final isServiceItem = value == 'Service';
+
 
     return PopupMenuItem<String>(
       value: value,
-      child: Row(
+      child: Stack(
+        clipBehavior: Clip.none,
         children: [
-          Icon(
-            isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
-            color: isSelected ? ColorRes.primary : Colors.grey,
-            size: 18,
+          Row(
+            children: [
+              Icon(
+                isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
+                color: isSelected ? ColorRes.primary : Colors.grey,
+                size: 18,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                value.toUpperCase(),
+                style: TextStyle(
+                  fontSize: AppFontSizes.small,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                  color: isSelected ? ColorRes.primary : ColorRes.textColor,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 8),
-          Text(
-            value.toUpperCase(),
-            style: TextStyle(
-              fontSize: AppFontSizes.small,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-              color: isSelected ? ColorRes.primary : ColorRes.textColor,
+          if (isServiceItem)
+            Positioned(
+          
+              right: 18,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 6,
+                  vertical: 2,
+                ),
+                decoration: BoxDecoration(
+                  color: ColorRes.error,
+                  borderRadius: BorderRadius.circular(4),
+                  boxShadow: [
+                    BoxShadow(
+                      color: ColorRes.error.withOpacity(0.25),
+                      blurRadius: 10,
+                      spreadRadius: 4,
+
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Text(
+                  'NEW',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: AppFontSizes.mini,
+                    fontWeight: AppFontWeights.bold,
+                    letterSpacing: 0.6,
+                  ),
+                ),
+              ),
             ),
-          ),
         ],
       ),
     );

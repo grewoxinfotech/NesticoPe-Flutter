@@ -49,11 +49,20 @@ class _HireContractorScreenState extends State<HireContractorScreen> {
   );
   final reviewController = Get.put(
     PlatformReviewController(
-      type: ['site', 'seller', 'reseller', 'contractor'],
+      type: ['contractor_service'],
       filters: {'status': 'published'},
     ),
     tag: 'hire_contractor_reviews',
   );
+
+  @override
+  void initState() {
+    super.initState();
+    // Ensure latest reviews are loaded whenever this screen is opened.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      reviewController.fetchAllReviews(refresh: true);
+    });
+  }
 
   // Service journey data to render the horizontal timeline cards
   final serviceJourney = [
@@ -178,6 +187,7 @@ class _HireContractorScreenState extends State<HireContractorScreen> {
                 onRefresh: () async {
                   await controller.refreshService();
                   await contractorsController.refreshList();
+                  await reviewController.fetchAllReviews(refresh: true);
                 },
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
@@ -208,29 +218,33 @@ class _HireContractorScreenState extends State<HireContractorScreen> {
                           Container(
                             padding: EdgeInsets.symmetric(vertical: 12),
                             color: ColorRes.homeYellow.withOpacity(0.05),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // const SizedBox(height: 12),
-                                  TitleWithViewAll(
-                                    title: "NesticoPe Verified Services",
-                                    showViewAll: false,
-                                    subTitle: 'View all verified services',
-                                    isSubTitle: true,
-                                    showIcon: true,
-                                    iconBgColor: ColorRes.homeYellow
-                                        .withOpacity(0.1),
-
-                                    icon: Icons.verified_user,
-                                    iconColor: ColorRes.homeYellow,
-
-                                    // size: 24,
-                                    // margin: const EdgeInsets.only(right: 8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 12),
+                                TitleWithViewAll(
+                                  title: "NesticoPe Verified Services",
+                                  showViewAll: false,
+                                  subTitle: 'View all verified services',
+                                  isSubTitle: true,
+                                  showIcon: true,
+                                  iconBgColor: ColorRes.homeYellow.withOpacity(
+                                    0.1,
                                   ),
-                                  const SizedBox(height: 12),
-                                  GridView.builder(
+
+                                  icon: Icons.verified_user,
+                                  iconColor: ColorRes.homeYellow,
+
+                                  // size: 24,
+                                  // margin: const EdgeInsets.only(right: 8),
+                                ),
+                                const SizedBox(height: 12),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                  child: GridView.builder(
                                     shrinkWrap: true,
                                     padding: EdgeInsets.zero,
                                     physics:
@@ -253,9 +267,9 @@ class _HireContractorScreenState extends State<HireContractorScreen> {
                                       );
                                     },
                                   ),
-                                  const SizedBox(height: 8),
-                                ],
-                              ),
+                                ),
+                                const SizedBox(height: 8),
+                              ],
                             ),
                           ),
                           SizedBox(height: 12),
@@ -519,21 +533,20 @@ class _HireContractorScreenState extends State<HireContractorScreen> {
 
       return Column(
         children: [
-           TitleWithViewAll(
+          TitleWithViewAll(
             title: "What Our Customers Say",
             showViewAll: true,
             onViewAll: () {
-              Get.to(()=>ReviewAllScreenData());
+              Get.to(() => ReviewAllScreenData());
             },
             icon: Icons.reviews,
             showIcon: true,
 
             iconColor: ColorRes.success,
             iconBgColor: ColorRes.success.withOpacity(0.1),
-
           ),
           const SizedBox(height: 12),
-          ReviewsAndTestimonials(reviewController: reviewController,),
+          ReviewsAndTestimonials(reviewController: reviewController),
           SizedBox(height: AppSpacing.medium),
         ],
       );
@@ -1609,16 +1622,12 @@ class AdvancedDashPatternPainter extends CustomPainter {
   }
 }
 
-
-
 class ReviewsAndTestimonials extends StatelessWidget {
-    final PlatformReviewController reviewController;  // ← a
-  const ReviewsAndTestimonials({super.key,required this.reviewController});
+  final PlatformReviewController reviewController; // ← a
+  const ReviewsAndTestimonials({super.key, required this.reviewController});
 
   @override
   Widget build(BuildContext context) {
-
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1735,26 +1744,41 @@ class ReviewsAndTestimonials extends StatelessWidget {
                       ),
                     ),
                     alignment: Alignment.center,
-                    child: Text(
-                      (() {
-                        final user = review?.entityUser;
+                    child: (() {
+                      final user = review.reviewer;
+                      final profilePic = user?.profilePic?.trim() ?? '';
+                      final username = user?.username?.trim() ?? '';
+                      final initial =
+                          username.isNotEmpty ? username[0].toUpperCase() : '?';
 
-                        if (user == null) return '?';
-                        final username = user.username?.trim() ?? '';
+                      if (profilePic.isNotEmpty) {
+                        return ClipOval(
+                          child: Image.network(
+                            profilePic,
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Text(
+                              initial,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.large,
+                                fontWeight: AppFontWeights.semiBold,
+                                color: ColorRes.homeGreenDarkFade,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
 
-                        if (username.isNotEmpty) {
-                          return username[0]
-                              .toUpperCase(); // fallback to username
-                        } else {
-                          return '?'; // fallback if all empty
-                        }
-                      })(),
-                      style: TextStyle(
-                        fontSize: AppFontSizes.large,
-                        fontWeight: AppFontWeights.semiBold,
-                        color: ColorRes.homeGreenDarkFade,
-                      ),
-                    ),
+                      return Text(
+                        initial,
+                        style: TextStyle(
+                          fontSize: AppFontSizes.large,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.homeGreenDarkFade,
+                        ),
+                      );
+                    })(),
                   ),
 
                   const SizedBox(width: 12),
@@ -1771,7 +1795,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      '${review.entityUser?.username?.replaceAll("_", " ").capitalize}',
+                                      '${review.reviewer?.username?.replaceAll("_", " ").capitalize}',
                                       maxLines: 1,
 
                                       style: TextStyle(
@@ -1784,7 +1808,9 @@ class ReviewsAndTestimonials extends StatelessWidget {
                                   ),
                                   SizedBox(width: 8),
                                   Text(
-                                    _formatDate(review.createdAt),
+                                    _formatDate(
+                                      review.createdAt?.toIso8601String(),
+                                    ),
                                     style: TextStyle(
                                       fontSize: AppFontSizes.extraSmall,
                                       fontWeight: AppFontWeights.medium,
@@ -1813,7 +1839,7 @@ class ReviewsAndTestimonials extends StatelessWidget {
                           ],
                         ),
                         Text(
-                          '${review.entityType}',
+                          '${review.reviewer?.userType?.replaceAll("_", " ").capitalize}',
                           maxLines: 1,
 
                           style: TextStyle(

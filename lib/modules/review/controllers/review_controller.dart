@@ -23,6 +23,15 @@ class ReviewController extends PaginatedController<ReviewItem> {
   RxMap<String, String> filters = <String, String>{}.obs;
 
   Rxn<ReviewItem> appReview = Rxn<ReviewItem>();
+
+  RxList<ReviewItem> contractorServiceReviews = <ReviewItem>[].obs;
+  RxBool isLoadingContractorServiceReviews = false.obs;
+  RxBool isLoadingAppReviews = false.obs;
+  RxBool isLoading = false.obs;
+  RxBool isRefreshing = false.obs;
+  RxBool isRefreshingContractorServiceReviews = false.obs;
+  RxBool isRefreshingAppReviews = false.obs;
+
   RxList<Tag> selectedListOfProc = <Tag>[].obs;
   RxList<Tag> selectedListOfCons = <Tag>[].obs;
   // Add inside ReviewController
@@ -376,6 +385,56 @@ class ReviewController extends PaginatedController<ReviewItem> {
       ].obs;
 
   /// 📌 Get all app reviews for the logged-in user
+  /// 
+  /// 
+  Future<void> getContractorServiceEntity() async {
+    isLoadingContractorServiceReviews.value = true;
+    try {
+      final user = await SecureStorage.getUserData();
+      final userId = user?.user?.id;
+      final entityType = "contractor_service";
+      print("User Entity Type: $entityType");
+      
+      
+      if (userId == null) {
+        // print("❌ No user ID found in secure storage");
+        isLoadingContractorServiceReviews.value = false;
+        return;
+      }
+      if (entityType == null) {
+        // print("❌ No entity type found in secure storage");
+        isLoadingContractorServiceReviews.value = false;
+        return;
+      }
+
+      final response = await _service.fetchReviews(
+        page: 1,
+        filters: {'entity_type': (entityType == "buyer") ? "user" : entityType, 'created_by': userId},
+        
+      );
+
+
+      debugPrint("Fetched app reviews: ${response.items.map((e) => e.toJson())}"); 
+
+
+      // ✅ Check if the list is not empty
+      if (response.items.isNotEmpty) {
+        contractorServiceReviews.value = response.items;
+        isLoadingContractorServiceReviews.value = false;
+        return;
+      } else {
+        debugPrint("❌ No app reviews found for this user");
+        contractorServiceReviews.value = [];
+        isLoadingContractorServiceReviews.value = false;
+        return;
+      }
+    } catch (e) {
+      debugPrint("❌ Error fetching app reviews: $e");
+      contractorServiceReviews.value = [];
+      isLoadingContractorServiceReviews.value = false;
+      return;
+    }
+  }
   Future<ReviewItem?> getAppReviews() async {
     try {
       final user = await SecureStorage.getUserData();
@@ -417,7 +476,8 @@ class ReviewController extends PaginatedController<ReviewItem> {
 
   Future<void> getAppReview() async {
     try {
-      final reviews = await getAppReviews(); // Your existing fetch method
+      final reviews = await getAppReviews(); 
+      getContractorServiceEntity();// Your existing fetch method
       if (reviews != null) {
         appReview.value = reviews;
       } else {

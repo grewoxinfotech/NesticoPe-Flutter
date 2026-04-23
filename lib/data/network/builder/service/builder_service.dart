@@ -2,13 +2,10 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
-import 'package:get/get.dart';
 import 'package:nesticope_app/data/network/builder/model/builder_model.dart';
-import 'package:nesticope_app/utils/logger/app_logger.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:nesticope_app/app/constants/api_constants.dart';
-import 'package:nesticope_app/app/widgets/snack_bar/custom_snackbar.dart';
 import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
 import 'package:http_parser/http_parser.dart';
 
@@ -37,7 +34,9 @@ class BuilderService {
     try {
       final queryParameters = {
         'page': page.toString(),
-        'limit': limit ?? 'all',
+        // Use paged limit by default to avoid decoding very large payloads
+        // on the UI isolate, which can cause jank/ANR-like behavior.
+        'limit': limit ?? '20',
         if (filters != null) ...filters,
       };
 
@@ -112,7 +111,7 @@ class BuilderService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         print("✅ Project API Response: $data");
-        AppLogger.structured("Project Api Calling from api",  data);
+        // AppLogger.structured("Project Api Calling from api",  data);
         return ProjectItem.fromJson(data['data']);
       } else {
         print("❌ Failed to load projects: ${response.statusCode}");
@@ -236,7 +235,7 @@ class BuilderService {
       final response = await http.Response.fromStream(streamedResponse);
 
       debugPrint("📩 Create Project Response: ${response.statusCode}");
-      debugPrint("📄 Response Body: ${response.body}");
+      debugPrint("📄 Response Body: ${_truncate(response.body)}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
@@ -285,7 +284,11 @@ class BuilderService {
     File? documents,
   }) async {
     try {
-      AppLogger("🧾 Multipart fields1:", projectData.toJson());
+      AppLogger("🧾 Multipart fields1:", {
+        "projectName": projectData.projectName,
+        "amenitiesCount": projectData.amenities.length,
+        "configCount": projectData.configurations.length,
+      });
       final uri = Uri.parse('$baseUrl/$projectId'); // include project ID
       debugPrint("📤 Updating project at: $uri");
 
@@ -299,10 +302,10 @@ class BuilderService {
 
       // Convert model to Map
       final projectMap = projectData.toJson();
-      debugPrint("Project Map: $projectMap");
-      debugPrint("Documents: $documents");
-      debugPrint("Images: $images");
-      debugPrint("Videos: $videos");
+      debugPrint("Project Map keys: ${projectMap.keys.toList()}");
+      debugPrint("Documents present: ${documents != null}");
+      debugPrint("Images count: ${images?.length ?? 0}");
+      debugPrint("Videos count: ${videos?.length ?? 0}");
 
       // ===== Attach brochure if local =====
       if (documents != null) {
@@ -368,7 +371,7 @@ class BuilderService {
       final response = await http.Response.fromStream(streamedResponse);
 
       debugPrint("📩 Update Project Response: ${response.statusCode}");
-      debugPrint("📄 Response Body: ${response.body}");
+      debugPrint("📄 Response Body: ${_truncate(response.body)}");
 
       if (response.statusCode == 200) {
         */ /*CustomSnackBar.show(
@@ -420,7 +423,7 @@ class BuilderService {
     File? documents,
   }) async {
     try {
-      AppLogger("🧾 Multipart fields1:", projectData.toJson());
+      // AppLogger("🧾 Multipart fields1:", projectData.toJson());
       final uri = Uri.parse('$baseUrl/$projectId');
       debugPrint("📤 Updating project at: $uri");
 
@@ -434,10 +437,7 @@ class BuilderService {
 
       // Convert model to Map
       final projectMap = projectData.toJson();
-      debugPrint("Project Map: $projectMap");
-      debugPrint("Documents: $documents");
-      debugPrint("Images: $images");
-      debugPrint("Videos: $videos");
+    
 
       // ===== Attach brochure if local =====
       if (documents != null) {
@@ -511,13 +511,13 @@ class BuilderService {
       request.fields.forEach((key, value) {
         if (key.startsWith('buildingNames')) log("  $key = $value");
       });
-      debugPrint("📎 Attached files: ${request.files.length}");
+     
 
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
 
-      debugPrint("📩 Update Project Response: ${response.statusCode}");
-      debugPrint("📄 Response Body: ${response.body}");
+
+
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -545,5 +545,10 @@ class BuilderService {
       );
       return false;
     }
+  }
+
+  String _truncate(String text, {int maxLength = 600}) {
+    if (text.length <= maxLength) return text;
+    return '${text.substring(0, maxLength)}...<truncated>';
   }
 }

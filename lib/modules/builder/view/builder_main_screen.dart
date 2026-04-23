@@ -102,6 +102,8 @@ import 'package:nesticope_app/modules/builder/view/builder_form_screen.dart';
 import 'package:nesticope_app/modules/builder/view/subscription_plan/builder_sunbscription_plan.dart';
 import 'package:nesticope_app/modules/profile/controllers/buyer_profiledata.dart';
 import 'package:nesticope_app/modules/property/controllers/property_controller.dart';
+import 'package:nesticope_app/modules/seller/controllers/seller_overview_controller.dart';
+import 'package:nesticope_app/modules/seller/module/lead_screen/controllers/lead_controller.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
 import '../../../app/constants/color_res.dart';
@@ -244,6 +246,200 @@ import 'builder_property_listing.dart';
 //   }
 // }
 
+// class BuilderMainScreen extends StatefulWidget {
+//   const BuilderMainScreen({Key? key}) : super(key: key);
+
+//   @override
+//   State<BuilderMainScreen> createState() => _BuilderMainScreenState();
+// }
+
+// class _BuilderMainScreenState extends State<BuilderMainScreen> {
+//   final navigationController = Get.put(BuilderNavigationController());
+
+//   late final BuyerProfileDataController profile;
+//   late final List<Widget> screens;
+
+//   @override
+//   void initState() {
+//     super.initState();
+
+//     /// ✅ Init controllers properly
+//     Get.put(ProjectWizardController(isBuilderView: true), tag: "builder");
+//     Get.lazyPut(() => PropertyController());
+
+//     if (!Get.isRegistered<BuyerProfileDataController>()) {
+//       profile = Get.put(BuyerProfileDataController());
+//     } else {
+//       profile = Get.find<BuyerProfileDataController>();
+//     }
+
+//     /// ✅ Screens list
+//     screens = [
+//       const BuilderDashboard(),
+//       const BuilderPropertyListing(),
+//       BuilderLeads(isViewAll: true),
+//       BuilderSubscriptionPlanScreen(),
+//       SellerProfileScreen(),
+//     ];
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Obx(() {
+//       final index = navigationController.currentIndex.value;
+
+//       return PopScope(
+//         canPop: index == 0,
+//         onPopInvokedWithResult: (didPop, result) {
+//           if (!didPop) {
+//             navigationController.changeTabIndex(0);
+//           }
+//         },
+//         child: Scaffold(
+//           body: IndexedStack(
+//             index: index,
+//             children: screens,
+//           ),
+
+//           /// ✅ Bottom Navigation (same as others)
+//           bottomNavigationBar: SafeArea(
+//             child: Builder(
+//               builder: (context) {
+//                 TextStyle style = TextStyle(
+//                   fontSize: AppFontSizes.caption,
+//                   fontWeight: AppFontWeights.semiBold,
+//                   color: Get.theme.colorScheme.primary,
+//                 );
+
+//                 double iconSize = 18;
+
+//                 return Card(
+//                   elevation: 6,
+//                   shadowColor: Colors.black12,
+//                   color: Get.theme.colorScheme.surface,
+//                   margin: const EdgeInsets.only(
+//                     left: AppMargin.small,
+//                     right: AppMargin.small,
+//                     bottom: AppMargin.small,
+//                   ),
+//                   shape: RoundedRectangleBorder(
+//                     borderRadius:
+//                         BorderRadius.circular(AppRadius.large),
+//                   ),
+//                   child: Container(
+//                     height: kToolbarHeight,
+//                     alignment: Alignment.center,
+//                     child: SalomonBottomBar(
+//                       duration: const Duration(milliseconds: 200),
+//                       margin:
+//                           const EdgeInsets.all(AppPadding.small),
+//                       itemPadding:
+//                           const EdgeInsets.symmetric(
+//                         horizontal: 14,
+//                         vertical: 8,
+//                       ),
+//                       itemShape: RoundedRectangleBorder(
+//                         borderRadius:
+//                             BorderRadius.circular(AppRadius.large),
+//                       ),
+//                       currentIndex: index,
+//                       onTap:
+//                           navigationController.changeTabIndex,
+//                       unselectedItemColor:
+//                           Get.theme.colorScheme.onSurface
+//                               .withOpacity(0.6),
+
+//                       items: [
+//                         /// ✅ Dashboard
+//                         SalomonBottomBarItem(
+//                           icon: Icon(
+//                             Icons.dashboard_outlined,
+//                             size: iconSize * 1.2,
+//                           ),
+//                           title: Text("Dashboard", style: style),
+//                         ),
+
+//                         /// ✅ Projects
+//                         SalomonBottomBarItem(
+//                           icon: Icon(
+//                             Icons.location_city_outlined,
+//                             size: iconSize * 1.2,
+//                           ),
+//                           title: Text("Projects", style: style),
+//                         ),
+
+//                         /// ✅ Leads
+//                         SalomonBottomBarItem(
+//                           icon: Icon(
+//                             Icons.groups_outlined,
+//                             size: iconSize * 1.2,
+//                           ),
+//                           title: Text("Leads", style: style),
+//                         ),
+
+//                         /// ✅ Plans
+//                         SalomonBottomBarItem(
+//                           icon: Icon(
+//                             Icons.credit_card,
+//                             size: iconSize * 1.2,
+//                           ),
+//                           title: Text("Plans", style: style),
+//                         ),
+
+//                         /// ✅ Profile Avatar
+//                         SalomonBottomBarItem(
+//                           icon: Obx(() {
+//                             final selected =
+//                                 navigationController
+//                                         .currentIndex.value ==
+//                                     4;
+
+//                             final imageUrl =
+//                                 profile.userProfile.value
+//                                         ?.profilePic ??
+//                                     "";
+
+//                             return Container(
+//                               height: 26,
+//                               width: 26,
+//                               decoration: BoxDecoration(
+//                                 shape: BoxShape.circle,
+//                                 border: Border.all(
+//                                   color: selected
+//                                       ? Get.theme.colorScheme
+//                                           .primary
+//                                       : Colors.grey.shade400,
+//                                   width:
+//                                       selected ? 1.5 : 1,
+//                                 ),
+//                               ),
+//                               child: CircleAvatar(
+//                                 radius: 14,
+//                                 backgroundColor:
+//                                     Get.theme.colorScheme
+//                                         .primary,
+//                                 child: const Icon(
+//                                   Icons.person,
+//                                   color: Colors.white,
+//                                   size: 16,
+//                                 ),
+//                               ),
+//                             );
+//                           }),
+//                           title: Text("Profile", style: style),
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                 );
+//               },
+//             ),
+//           ),
+//         ),
+//       );
+//     });
+//   }
+// }
 
 class BuilderMainScreen extends StatefulWidget {
   const BuilderMainScreen({Key? key}) : super(key: key);
@@ -262,17 +458,21 @@ class _BuilderMainScreenState extends State<BuilderMainScreen> {
   void initState() {
     super.initState();
 
-    /// ✅ Init controllers properly
     Get.put(ProjectWizardController(isBuilderView: true), tag: "builder");
     Get.lazyPut(() => PropertyController());
 
+    if (!Get.isRegistered<SellerOverviewController>()) {
+      Get.lazyPut(() => SellerOverviewController());
+    }
+    if (!Get.isRegistered<LeadController>()) {
+      Get.lazyPut(() => LeadController());
+    }
     if (!Get.isRegistered<BuyerProfileDataController>()) {
       profile = Get.put(BuyerProfileDataController());
     } else {
       profile = Get.find<BuyerProfileDataController>();
     }
 
-    /// ✅ Screens list
     screens = [
       const BuilderDashboard(),
       const BuilderPropertyListing(),
@@ -295,22 +495,25 @@ class _BuilderMainScreenState extends State<BuilderMainScreen> {
           }
         },
         child: Scaffold(
-          body: IndexedStack(
-            index: index,
-            children: screens,
+          body: Stack(
+            children:
+                screens.asMap().entries.map((e) {
+                  return Visibility(
+                    visible: e.key == index,
+                    maintainState: true,
+                    child: e.value,
+                  );
+                }).toList(),
           ),
-
-          /// ✅ Bottom Navigation (same as others)
           bottomNavigationBar: SafeArea(
             child: Builder(
               builder: (context) {
-                TextStyle style = TextStyle(
+                final TextStyle style = TextStyle(
                   fontSize: AppFontSizes.caption,
                   fontWeight: AppFontWeights.semiBold,
                   color: Get.theme.colorScheme.primary,
                 );
-
-                double iconSize = 18;
+                const double iconSize = 18;
 
                 return Card(
                   elevation: 6,
@@ -322,34 +525,26 @@ class _BuilderMainScreenState extends State<BuilderMainScreen> {
                     bottom: AppMargin.small,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(AppRadius.large),
+                    borderRadius: BorderRadius.circular(AppRadius.large),
                   ),
                   child: Container(
                     height: kToolbarHeight,
                     alignment: Alignment.center,
                     child: SalomonBottomBar(
                       duration: const Duration(milliseconds: 200),
-                      margin:
-                          const EdgeInsets.all(AppPadding.small),
-                      itemPadding:
-                          const EdgeInsets.symmetric(
+                      margin: const EdgeInsets.all(AppPadding.small),
+                      itemPadding: const EdgeInsets.symmetric(
                         horizontal: 14,
                         vertical: 8,
                       ),
                       itemShape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(AppRadius.large),
+                        borderRadius: BorderRadius.circular(AppRadius.large),
                       ),
                       currentIndex: index,
-                      onTap:
-                          navigationController.changeTabIndex,
-                      unselectedItemColor:
-                          Get.theme.colorScheme.onSurface
-                              .withOpacity(0.6),
-
+                      onTap: navigationController.changeTabIndex,
+                      unselectedItemColor: Get.theme.colorScheme.onSurface
+                          .withOpacity(0.6),
                       items: [
-                        /// ✅ Dashboard
                         SalomonBottomBarItem(
                           icon: Icon(
                             Icons.dashboard_outlined,
@@ -357,8 +552,6 @@ class _BuilderMainScreenState extends State<BuilderMainScreen> {
                           ),
                           title: Text("Dashboard", style: style),
                         ),
-
-                        /// ✅ Projects
                         SalomonBottomBarItem(
                           icon: Icon(
                             Icons.location_city_outlined,
@@ -366,8 +559,6 @@ class _BuilderMainScreenState extends State<BuilderMainScreen> {
                           ),
                           title: Text("Projects", style: style),
                         ),
-
-                        /// ✅ Leads
                         SalomonBottomBarItem(
                           icon: Icon(
                             Icons.groups_outlined,
@@ -375,48 +566,30 @@ class _BuilderMainScreenState extends State<BuilderMainScreen> {
                           ),
                           title: Text("Leads", style: style),
                         ),
-
-                        /// ✅ Plans
                         SalomonBottomBarItem(
-                          icon: Icon(
-                            Icons.credit_card,
-                            size: iconSize * 1.2,
-                          ),
+                          icon: Icon(Icons.credit_card, size: iconSize * 1.2),
                           title: Text("Plans", style: style),
                         ),
-
-                        /// ✅ Profile Avatar
                         SalomonBottomBarItem(
                           icon: Obx(() {
                             final selected =
-                                navigationController
-                                        .currentIndex.value ==
-                                    4;
-
-                            final imageUrl =
-                                profile.userProfile.value
-                                        ?.profilePic ??
-                                    "";
-
+                                navigationController.currentIndex.value == 4;
                             return Container(
                               height: 26,
                               width: 26,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: selected
-                                      ? Get.theme.colorScheme
-                                          .primary
-                                      : Colors.grey.shade400,
-                                  width:
-                                      selected ? 1.5 : 1,
+                                  color:
+                                      selected
+                                          ? Get.theme.colorScheme.primary
+                                          : Colors.grey.shade400,
+                                  width: selected ? 1.5 : 1,
                                 ),
                               ),
                               child: CircleAvatar(
                                 radius: 14,
-                                backgroundColor:
-                                    Get.theme.colorScheme
-                                        .primary,
+                                backgroundColor: Get.theme.colorScheme.primary,
                                 child: const Icon(
                                   Icons.person,
                                   color: Colors.white,

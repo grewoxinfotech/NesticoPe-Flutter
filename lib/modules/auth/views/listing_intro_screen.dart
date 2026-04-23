@@ -62,6 +62,7 @@ class ListingIntroConfig {
   final String viewPlansTitle;
   final String viewPlansSubtitle;
   final String viewPlansButtonText;
+
   final List<StatItemData> stats;
   final List<FeatureItemData> features;
 
@@ -209,7 +210,7 @@ class ListingIntroScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         centerTitle: false,
-  titleSpacing: 0, // 👈 IMPORTANT
+        titleSpacing: 0, // 👈 IMPORTANT
         // titleSpacing: 16,
         title: Image.asset(
           'assets/images/Nestico-Pe_Logo-svg.png',
@@ -237,7 +238,7 @@ class ListingIntroScreen extends StatelessWidget {
                 child: _StatsCarousel(stats: config.stats),
               ),
               const SizedBox(height: 10),
-                 Padding(
+              Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 8,
@@ -269,7 +270,7 @@ class ListingIntroScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 10,),
+              const SizedBox(height: 10),
               if (role == Roles.reseller.name) ...[
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
@@ -318,8 +319,8 @@ class ListingIntroScreen extends StatelessWidget {
                   ),
                 ),
               ],
-               //eight: 10),
 
+              //eight: 10),
               const SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -446,7 +447,6 @@ class ListingIntroScreen extends StatelessWidget {
                 const SizedBox(height: 16),
               ],
 
-          
               if (config.steps.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(
@@ -701,7 +701,7 @@ class _BecomeSection extends StatelessWidget {
                   final user = await SecureStorage.getUserData();
                   final name =
                       '${user?.user?.firstName ?? ''} ${user?.user?.lastName ?? ''}'
-                              .trim() 
+                              .trim()
                               .isEmpty
                           ? (user?.user?.username ?? '')
                           : '${user?.user?.firstName ?? ''} ${user?.user?.lastName ?? ''}'
@@ -770,7 +770,7 @@ class _BecomeSection extends StatelessWidget {
             ),
             child: Text(
               _label,
-              style:  TextStyle(
+              style: TextStyle(
                 fontWeight: AppFontWeights.semiBold,
                 fontSize: AppFontSizes.bodySmall,
                 color: ColorRes.primary,
@@ -2069,19 +2069,15 @@ class _ReviewsSectionState extends State<_ReviewsSection> {
       Get.isRegistered<PlatformReviewController>()
           ? Get.find<PlatformReviewController>()
           : Get.put(
-            PlatformReviewController(type: [widget.entityType], filters: {}),
+            PlatformReviewController(
+              type: [widget.entityType],
+              filters: {'status': 'published'},
+            ),
           );
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      controller.filters = {
-        'entity_type': [widget.entityType],
-        'status': 'published',
-      };
-      await controller.fetchAllReviews(refresh: true);
-    });
   }
 
   @override
@@ -2122,7 +2118,7 @@ class _ReviewsSectionState extends State<_ReviewsSection> {
               ),
 
               const SizedBox(height: 6),
-
+//hfjn hdjen hduh jdijsn hdub hdujnbbbnnnnn   hdysehb shydhb tehgs hdysbvb bchb 
               Text(
                 widget.newEntityType == 'seller'
                     ? 'Real success stories from homeowners who sold faster with NesticoPe'
@@ -2156,6 +2152,7 @@ class _ReviewsSectionState extends State<_ReviewsSection> {
               },
             ),
           ),
+          const SizedBox(height: 20),
         ],
       );
     });
@@ -2243,6 +2240,7 @@ class _ReviewCard extends StatelessWidget {
                 const contentStyle = TextStyle(
                   fontSize: AppFontSizes.caption,
                   color: Colors.black54,
+                  fontWeight: AppFontWeights.medium,
                 );
                 final painter = TextPainter(
                   text: TextSpan(text: contentText, style: contentStyle),
@@ -2306,7 +2304,7 @@ class _ReviewCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        username,
+                        username.capitalize?.replaceAll('_', ' ') ?? '',
                         style: const TextStyle(
                           fontSize: AppFontSizes.caption,
                           fontWeight: AppFontWeights.semiBold,
@@ -2317,25 +2315,31 @@ class _ReviewCard extends StatelessWidget {
                       ),
                       if (role.isNotEmpty) const SizedBox(height: 2),
                       if (role.isNotEmpty)
-                        Text(
-                          role,
-                          style: const TextStyle(
-                            fontSize: AppFontSizes.extraSmall,
-                            fontWeight: AppFontWeights.medium,
-                            color: ColorRes.primary,
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-                Text(
-                  _formatDate(DateTime.tryParse(review.createdAt ?? '')),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              role,
+                              style: const TextStyle(
+                                fontSize: AppFontSizes.extraSmall,
+                                fontWeight: AppFontWeights.medium,
+                                color: ColorRes.primary,
+                              ),
+                            ),
+                             Text(
+                  _formatDate(DateTime.tryParse(review.createdAt.toString())),
                   style: TextStyle(
                     fontSize: AppFontSizes.extraSmall,
                     fontWeight: AppFontWeights.medium,
                     color: ColorRes.leadGreyColor.shade600,
                   ),
                 ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ),
+               
               ],
             ),
           ],

@@ -96,6 +96,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => PinnedSearchNotifier(),
       child: GetMaterialApp(
+        
         debugShowCheckedModeBanner: false,
         title: 'NesticoPe',
         theme: AppTheme.lightTheme,

@@ -303,7 +303,9 @@ class ContractorCard extends StatelessWidget {
                                       child: Text(
                                         (contractor.firstName.isEmpty ||
                                                 contractor.lastName.isEmpty)
-                                            ? contractor.username.capitalize?.replaceAll('_', ' ')??''
+                                            ? contractor.username.capitalize
+                                                    ?.replaceAll('_', ' ') ??
+                                                ''
                                             : "${contractor.firstName.capitalize?.replaceAll('_', ' ')} ${contractor.lastName.capitalize?.replaceAll('_', ' ')}",
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
@@ -335,22 +337,21 @@ class ContractorCard extends StatelessWidget {
                                                 color: ColorRes.primary,
                                               ),
                                             ),
-                                           const SizedBox(width: 6),
+                                            const SizedBox(width: 6),
                                             Text(
-                                              "(${Formatter.formatNumber(contractor.totalReviews)} review${contractor.totalReviews == 1 ? '' : 's'})",
+                                              "(${Formatter.formatNumber(contractor.totalReviews)})",
                                               style: TextStyle(
                                                 fontSize: AppFontSizes.caption,
                                                 color:
                                                     ColorRes
                                                         .leadGreyColor
                                                         .shade700,
-                                                fontWeight: AppFontWeights.medium,
+                                                fontWeight:
+                                                    AppFontWeights.medium,
                                               ),
                                             ),
-
                                           ],
                                         ),
-                                       
                                       ],
                                     ),
                                   ],

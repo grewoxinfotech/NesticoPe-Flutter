@@ -516,8 +516,10 @@ import 'package:nesticope_app/app/constants/size_manager.dart';
 import 'package:nesticope_app/app/utils/formater/formater.dart';
 import 'package:nesticope_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
+import 'package:nesticope_app/modules/builder/view/all_project_list_screen.dart';
 import 'package:nesticope_app/modules/other/trending_city/controllers/trending_city_controller.dart';
 import 'package:nesticope_app/modules/propert_detail/view/property_details.dart';
+import 'package:nesticope_app/modules/property/views/property_detail_screen.dart';
 import '../../../../app/constants/img_res.dart';
 
 class CityFilterList extends StatefulWidget {
@@ -566,14 +568,14 @@ class _CityFilterListState extends State<CityFilterList> {
           return GestureDetector(
             onTap: () {
               Get.to(
-                () => PropertyDetail(
+                () => AllProjectListScreen(
                   filters: [
                     {'city': '${city.city}'},
                   ],
                 ),
               );
             },
-            child: AnimatedContainer(
+            child:(city.projectCount > 0) ? AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               margin: const EdgeInsets.only(right: 8),
               width: 120,
@@ -649,19 +651,7 @@ class _CityFilterListState extends State<CityFilterList> {
                           ),
                         ),
                         const SizedBox(height: 2),
-                        if (city.propertyCount > 0) ...[
-                          Text(
-                            "${Formatter.formatNumber(city.propertyCount)} Properties",
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: ColorRes.white,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 11,
-                            ),
-                          ),
-                        ] else if (city.projectCount > 0) ...[
+                       if (city.projectCount > 0) ...[
                           Text(
                             "${Formatter.formatNumber(city.projectCount)} Projects",
                             maxLines: 1,
@@ -702,7 +692,7 @@ class _CityFilterListState extends State<CityFilterList> {
                   ),
                 ],
               ),
-            ),
+            ) : const SizedBox.shrink(),
           );
         },
       ),

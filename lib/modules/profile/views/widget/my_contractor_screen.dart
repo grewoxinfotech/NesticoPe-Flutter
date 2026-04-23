@@ -387,7 +387,7 @@ class MyContractorScreen extends StatelessWidget {
               return meta != null && (meta.serviceId?.isNotEmpty ?? false);
             }).toList();
 
-        log("My Contractor Data ${controller.items.map((e) => e.toJson())}");
+        // log("My Contractor Data ${controller.items.map((e) => e.toJson())}");
 
         if (validItems.isEmpty) {
           return const Center(
@@ -597,7 +597,7 @@ class _ContractorCardWidgetState extends State<ContractorCardWidget> {
                             (element) => element.userId == project.createdBy,
                           )
                           .firstOrNull;
-                  log('Clinet appl long ${client?.toJson().toString() ?? ''}');
+                  // log('Clinet appl long ${client?.toJson().toString() ?? ''}');
                   if (client != null) {
                     Get.to(
                       () => ContractorProfileDetailsScreen(contractor: client),
@@ -633,11 +633,22 @@ class _ContractorCardWidgetState extends State<ContractorCardWidget> {
                           hasReviewed
                               ? null
                               : () {
-                                widget.controller.openAddFollowUpDialog(
-                                  meta?.serviceName ?? '',
-                                  project.client?.name ?? '',
-                                  meta?.serviceId ?? '',
-                                );
+                                () async {
+                                  final ok =
+                                      await widget.controller.openAddFollowUpDialog(
+                                    meta?.serviceName ?? '',
+                                    project.title ?? '',
+                                    meta?.serviceId ?? '',
+                                  );
+                                  if (!mounted) return;
+                                  if (ok) {
+                                    setState(() => hasReviewed = true);
+                                  } else {
+                                    // If user dismissed without submitting, re-check
+                                    // (also covers edge-cases where API succeeded but dialog was closed)
+                                    _checkReviewStatus();
+                                  }
+                                }();
                               },
                       style: ElevatedButton.styleFrom(
                         backgroundColor:

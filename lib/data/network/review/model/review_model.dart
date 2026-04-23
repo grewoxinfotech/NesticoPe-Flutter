@@ -29,6 +29,7 @@ class ReviewItem {
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final Reviewer? reviewer;
+    final Reviewer? adminReviewer;
   final EntityUser? entityUser;
 
   ReviewItem({
@@ -60,6 +61,7 @@ class ReviewItem {
     this.createdAt,
     this.updatedAt,
     this.reviewer,
+    this.adminReviewer,
     this.entityUser,
   });
 
@@ -100,6 +102,7 @@ class ReviewItem {
       reportCount: json['report_count'] ?? 0,
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
+      adminReviewer: json['adminReviewer'] != null ? Reviewer.fromJson(json['adminReviewer']) : null,
       reviewer: json['reviewer'] != null ? Reviewer.fromJson(json['reviewer']) : null,
       entityUser: json['entityUser'] != null ? EntityUser.fromJson(json['entityUser']) : null,
     );
@@ -123,7 +126,7 @@ class ReviewItem {
     if (videos != null && videos!.isNotEmpty) map['videos'] = videos;
     if (pros != null) map['pros'] = pros!.toJson();
     if (cons != null) map['cons'] = cons!.toJson();
-
+    if (adminReviewer != null) map['adminReviewer'] = adminReviewer!.toJson();
     if (isVerified != null) map['is_verified'] = isVerified;
     if (verificationType != null) map['verification_type'] = verificationType;
     if (status != null) map['status'] = status;

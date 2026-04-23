@@ -11,7 +11,6 @@ import '../../../../app/constants/api_constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
-import '../../../../app/widgets/snackbar/snackbar.dart';
 import '../../../../widgets/messages/snack_bar.dart';
 import '../model/contractot_service_model/contractor_category_model.dart';
 import '../model/contractot_service_model/contractor_service_model.dart';
@@ -74,7 +73,12 @@ class ContractorMyService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print("Contractor Service data: $data");
+        final items = (data['data']?['items'] as List?)?.length ?? 0;
+        final currentPage = data['data']?['currentPage'];
+        final totalPages = data['data']?['totalPages'];
+        print(
+          "Contractor Service success: items=$items, page=$currentPage/$totalPages",
+        );
 
         return PaginationResponse<ContractorServiceItem>.fromJson(
           data,
@@ -102,10 +106,10 @@ class ContractorMyService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print("Change the active and Inactive: $data");
+        // print("Change the active and Inactive: $data");
       } else {
-        print("Failed to load Active: ${response.statusCode}");
-        print("Response body: ${response.body}");
+        // print("Failed to load Active: ${response.statusCode}");
+        // print("Response body: ${response.body}");
         throw Exception("Failed to load Active");
       }
     } catch (e) {
@@ -137,8 +141,8 @@ class ContractorMyService {
           message: jsonData['message'],
           contentType: ContentType.failure,
         );
-        print("Failed to load deleted: ${response.statusCode}");
-        print("Response body: ${response.body}");
+          print("Failed to load deleted: ${response.statusCode}");
+          print("Response body: ${response.body}");
         throw Exception("Failed to deleted");
       }
     } catch (e) {
@@ -365,20 +369,29 @@ class ContractorMyService {
         );
         return data['success'];
       } else {
-        final data = jsonDecode(response.body);
+        final errorData = jsonDecode(response.body);
+        final errorMessage =
+            (errorData['error']?['message'] ?? errorData['message'] ?? '')
+                .toString()
+                .trim();
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: "Error",
-          message: data['message'] ?? 'Something went wrong',
+          message: errorMessage.isEmpty
+              ? 'Failed to create inquiry'
+              : errorMessage,
           contentType: ContentType.failure,
         );
         print("Failed to create Inquiry: ${response.statusCode}");
         print("Response body: ${response.body}");
-        throw Exception("Failed to create Inquiry");
+        return false;
       }
     } catch (e) {
+      final fallbackMessage = e.toString().trim();
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
-        message: data['message'] ?? 'Something went wrong',
+        message: fallbackMessage.isEmpty
+            ? 'Something went wrong while creating inquiry'
+            : fallbackMessage,
         contentType: ContentType.failure,
       );
       print("Response body for create Inquiry: ${e}");

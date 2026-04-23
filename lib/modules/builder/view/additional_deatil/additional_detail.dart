@@ -720,8 +720,6 @@
 //   );
 // }
 
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
@@ -782,7 +780,8 @@ class StepAdditional extends GetView<ProjectWizardController> {
                     buildBuilderDefaultText('Amenities'),
                     const SizedBox(height: 12),
                     Obx(() {
-                      final amenitiesList = IconManager.allAmenities;
+                      final amenitiesList =
+                          IconManager.builderAdditionalAmenities;
                       final showAll = controller.showAllAmenities.value;
                       final displayList =
                           showAll
@@ -807,18 +806,11 @@ class StepAdditional extends GetView<ProjectWizardController> {
                                             normalizeAmenity(e.title),
                                       );
 
-                                  print(
-                                    "Selected Amenities ${controller.project.value.amenities}",
-                                  );
-
                                   return Padding(
                                     padding: const EdgeInsets.all(4.0),
                                     child: GestureDetector(
                                       onTap: () {
                                         controller.addBuilderAmenities(e.title);
-                                        print(
-                                          "Selected Amenities ${controller.project.value.amenities}",
-                                        );
                                       },
                                       child: Container(
                                         width: 95,
@@ -926,38 +918,33 @@ class StepAdditional extends GetView<ProjectWizardController> {
               const SizedBox(height: 16),
               buildBuilderDefaultText('Property Status'),
               SizedBox(height: 8),
-              Obx(
-                () => Wrap(
+              Obx(() {
+                final selectedStatus =
+                    controller.project.value.status.toLowerCase();
+                return Wrap(
                   spacing: 12,
                   runSpacing: 12,
                   children:
                       controller.propertyStatusList.map((e) {
-                        controller.selectedPropertyStatus.value =
-                            controller.project.value.status?.capitalize ?? '';
-                        log(
-                          "Selected Property Status ${controller.selectedPropertyStatus.value}",
-                        );
-                        log(
-                          "Project Status ${controller.project.value.status}",
-                        );
-
+                        final statusValue = e.toLowerCase();
                         return buildChoice(
                           title: e.capitalize.toString(),
-                          selected:
-                              controller.selectedPropertyStatus.value == e,
+                          selected: selectedStatus == statusValue,
                           onTap: () {
                             controller.setCommonMethodValue(
                               controller.selectedPropertyStatus,
                               e,
                             );
                             controller.project.update((x) {
-                              x?.status = e.toLowerCase();
+                              x?.status = statusValue;
                             });
                           },
                         );
                       }).toList(),
-                ),
-              ),
+                );
+              }),
+
+              
               // Wrap(
               //   children: ['Completed','Ongoing','Launch'].map((e) => buildChoice(title: title, selected: selected, onTap: onTap),),
               // ),
@@ -1054,6 +1041,69 @@ class StepAdditional extends GetView<ProjectWizardController> {
                         controller.project.update((x) {
                           x!.projectContactInfo ??= ProjectContactInfo();
                           x.projectContactInfo!.email = v?.trim();
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Owner Information Card
+              _buildCard(
+                theme: theme,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    buildBuilderDefaultHeaderText('Owner Information'),
+                    const SizedBox(height: 8),
+                    CommonTextField(
+                      label: 'Owner Name',
+                      hint: 'e.g. dev_seed_seller_1',
+                      initialValue: p.ownerName ?? '',
+                      prefixIcon: Icon(
+                        Icons.person_outline,
+                        size: 20,
+                        color: ColorRes.primary,
+                      ),
+                      onSaved: (v) {
+                        controller.project.update((x) {
+                          x?.ownerName = v?.trim();
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 8),
+                    CommonTextField(
+                      label: 'Owner Phone',
+                      hint: '+91',
+                      initialValue: p.ownerPhone ?? '',
+                      prefixIcon: Icon(
+                        Icons.phone_outlined,
+                        size: 20,
+                        color: ColorRes.primary,
+                      ),
+                      keyboardType: TextInputType.phone,
+                      onSaved: (v) {
+                        controller.project.update((x) {
+                          x?.ownerPhone = v?.trim();
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 8),
+                    CommonTextField(
+                      label: 'Owner Email',
+                      hint: 'owner@gmail.com',
+                      initialValue: p.ownerEmail ?? '',
+                      prefixIcon: Icon(
+                        Icons.email_outlined,
+                        size: 20,
+                        color: ColorRes.primary,
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                      validator: ProjectValidators.email,
+                      onSaved: (v) {
+                        controller.project.update((x) {
+                          x?.ownerEmail = v?.trim();
                         });
                       },
                     ),

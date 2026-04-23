@@ -235,10 +235,10 @@ class _HomeScreenState extends State<HomeScreen>
     _initializeControllers();
     _setupCityChangeListener();
     _getCity();
-         _controller = AnimationController(
-          vsync: this,
-          duration: const Duration(seconds: 3),
-        )..repeat();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat();
     _attachScroll(); // ✅ THIS
 
     // _scrollController.addListener(() {
@@ -294,7 +294,7 @@ class _HomeScreenState extends State<HomeScreen>
         // else {
         //   propertyController.clearFilter('listingType');
         // }
-   
+
         if (norm.startsWith('commercial')) {
           // projectController.applyFilter('projectType', 'commercial');
           listingTypeFilterValue = 'commercial';
@@ -419,9 +419,7 @@ class _HomeScreenState extends State<HomeScreen>
       // 🔄 Refresh Top Categories for selected city
       try {
         topCategoryController.fetchTopCategories();
-      } catch (_) {
-
-      }
+      } catch (_) {}
       // 🔄 Refresh Top Rated Contractors for selected city
       // try {
       //   // contractorServiceController.applyFilter('city', city ?? '');
@@ -1823,7 +1821,6 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Widget _buildHorizontalPropertyList(List<dynamic> properties) {
-    print("_buildHorizontalPropertyList called ${properties.length}");
     return Padding(
       padding: const EdgeInsets.only(left: 12),
       child: SizedBox(
@@ -1933,7 +1930,6 @@ class _HomeScreenState extends State<HomeScreen>
       if (activeProjects.isEmpty) {
         return const SizedBox.shrink();
       }
-
       return Container(
         // margin: const EdgeInsets.only(top: 24),
         padding: const EdgeInsets.symmetric(vertical: 12),
@@ -1956,9 +1952,9 @@ class _HomeScreenState extends State<HomeScreen>
                 } else {
                   Get.to(
                     () => AllProjectListScreen(
-                      // filters: [
-                      //   {'city': selectedCity!},
-                      // ],
+                      filters: [
+                        {'city': projectController.selectedCity.value},
+                      ],
                     ),
                   );
                 }
@@ -3472,7 +3468,6 @@ Widget _buildDialogHeader() {
         const Expanded(
           child: Text(
             "Find Your Dream Property",
-
             style: TextStyle(
               fontSize: AppFontSizes.body,
               fontWeight: AppFontWeights.semiBold,
@@ -3789,8 +3784,6 @@ class _CityDropdownState extends State<CityDropdown> {
     );
   }
 }
-
-
 
 class NewsAndArticles extends StatelessWidget {
   final List<NewsItem> articles;
@@ -5612,12 +5605,12 @@ class CityFilterListShimmer extends StatelessWidget {
   }
 }
 
-/// Shimmer for Seller List
+/// Shimmer for Seller Listhdhj hjsdin  jsikn jdun lso
 class SellerListShimmer extends StatelessWidget {
   const SellerListShimmer({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {  
     return SizedBox(
       height: 140,
       child: ListView.separated(
@@ -6897,7 +6890,7 @@ class SocialMediaDialog extends StatelessWidget {
                 _socialItem('assets/png/twitter.png', social?.twitter),
                 _socialItem(
                   'assets/png/social.png',
-                  social?.instagram, // or generic link
+                  social?.instagram, // or generic link hfnbndj ksimn ndhbsb  vssgsgdvdvdv
                 ),
               ],
             ),

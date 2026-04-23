@@ -1,16 +1,9 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nesticope_app/app/utils/formater/formater.dart';
 import 'package:nesticope_app/modules/builder/view/property_detail/widget/variation_media_upload_widget.dart';
-import 'package:nesticope_app/modules/saved_property/views/saved_property_screen.dart';
 import 'package:nesticope_app/utils/logger/app_logger.dart';
-import 'package:nesticope_app/widgets/button/button.dart';
-import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
 
 // import '../../../data/validators/project_validators.dart';
 import '../../../../app/constants/app_font_sizes.dart';
@@ -20,7 +13,6 @@ import '../../controller/builder_form_controller.dart';
 
 // import '../../controllers/project_wizard_controller.dart';
 // import '../../../data/models/project_model.dart';
-import '../media/upload_media_screen.dart';
 import '../widget/common_builder_textfield.dart';
 import '../widget/validation/validation.dart';
 
@@ -529,6 +521,19 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                                       num.tryParse(n ?? ''),
                                                       field: 'Built-up Area',
                                                     ),
+                                            onChanged: (n) {
+                                              controller.project.update(
+                                                (x) =>
+                                                    x!
+                                                            .configurations[ci]
+                                                            .variants[vi]
+                                                            .builtUpArea =
+                                                        double.tryParse(
+                                                          n ?? '',
+                                                        ) ??
+                                                        0,
+                                              );
+                                            },
                                             onSaved:
                                                 (
                                                   n,
@@ -560,12 +565,44 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                                     ? ''
                                                     : v.carpetArea.toString(),
                                             keyboardType: TextInputType.number,
-                                            validator:
-                                                (n) =>
-                                                    ProjectValidators.positiveNumber(
-                                                      num.tryParse(n ?? ''),
-                                                      field: 'Carpet Area',
-                                                    ),
+                                            validator: (n) {
+                                              final positiveError =
+                                                  ProjectValidators.positiveNumber(
+                                                    num.tryParse(n ?? ''),
+                                                    field: 'Carpet Area',
+                                                  );
+                                              if (positiveError != null) {
+                                                return positiveError;
+                                              }
+
+                                              final carpetArea =
+                                                  double.tryParse(n ?? '') ?? 0;
+                                              final builtUpArea =
+                                                  controller
+                                                          .project
+                                                          .value
+                                                          .configurations[ci]
+                                                          .variants[vi]
+                                                          .builtUpArea;
+
+                                              if (carpetArea >= builtUpArea) {
+                                                return 'Carpet area must be less than built-up area';
+                                              }
+                                              return null;
+                                            },
+                                            onChanged: (n) {
+                                              controller.project.update(
+                                                (x) =>
+                                                    x!
+                                                            .configurations[ci]
+                                                            .variants[vi]
+                                                            .carpetArea =
+                                                        double.tryParse(
+                                                          n ?? '',
+                                                        ) ??
+                                                        0,
+                                              );
+                                            },
                                             onSaved:
                                                 (
                                                   n,
@@ -876,32 +913,6 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                         ),
                                       ],
                                     ),*/
-                                    Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          child: _InfoTile(
-                                            label: 'Platform Fees (5% of Price)',
-                                            value: v.platformFees == 0
-                                                ? '--'
-                                                : '${Formatter.formatPrice(num.tryParse(v.platformFees?.toStringAsFixed(2)??'0')??0)}',
-                                            icon: Icons.aspect_ratio_outlined,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 12),
-                                        Expanded(
-                                          child: _InfoTile(
-                                            label: 'Broker Commission (2% of Platform Fees)',
-                                            value: v.brokerCommission == 0
-                                                ? '--'
-                                                : '${Formatter.formatPrice(num.tryParse(v.brokerCommission?.toStringAsFixed(2)??"0")??0)}',
-                                            icon: Icons.straighten,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
-
                                     const SizedBox(height: 12),
                                     Row(
                                       crossAxisAlignment:
@@ -1075,6 +1086,16 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                     ),
                                     const SizedBox(height: 12),
                                     Obx(() {
+                                      final propertyType =
+                                          (controller
+                                                      .project
+                                                      .value
+                                                      .propertyTypes ??
+                                                  'apartment')
+                                              .toLowerCase();
+                                      if (propertyType != 'apartment') {
+                                        return const SizedBox();
+                                      }
                                       final buildingMap =
                                           controller
                                               .project
@@ -2078,53 +2099,3 @@ class StepConfigurations extends GetView<ProjectWizardController> {
 //   }
 // }
 
-class _InfoTile extends StatelessWidget {
-  final String label;
-  final String value;
-  final IconData icon;
-
-  const _InfoTile({
-    required this.label,
-    required this.value,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey.shade600,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-          decoration: BoxDecoration(
-            color: Colors.grey.shade100,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade300),
-          ),
-          child: Row(
-            children: [
-              Icon(icon, size: 16, color: Colors.grey.shade700),
-              const SizedBox(width: 8),
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}

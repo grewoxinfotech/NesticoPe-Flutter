@@ -157,7 +157,7 @@ class ReviewUserService {
 
         if (data["success"] == true) {
           final hasReviewed = data["data"]?["hasReviewed"] ?? false;
-          log("✅ Buyer hasReviewed: $hasReviewed");
+          // log("✅ Buyer hasReviewed: $hasReviewed");
           return hasReviewed is bool ? hasReviewed : false;
         }
       }

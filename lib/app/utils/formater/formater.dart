@@ -145,6 +145,37 @@ class Formatter {
   }
 
 
+
+static String formatDecimalPrice(num price) {
+  const String prefix = '₹';
+  String suffix = '';
+  num value = price;
+
+  if (price.abs() >= 10000000) {
+    value = price / 10000000;
+    suffix = 'Cr';
+  } else if (price.abs() >= 100000) {
+    value = price / 100000;
+    suffix = 'L';
+  } else if (price.abs() >= 1000) {
+    value = price / 1000;
+    suffix = 'K';
+  } else {
+    // ✅ Fix here
+    return '$prefix ${price.toStringAsFixed(2)}';
+  }
+
+  String formatted = value.toStringAsFixed(2);
+
+  // remove trailing zeros
+  formatted = formatted.replaceAll(RegExp(r'0+$'), '');
+  if (formatted.endsWith('.')) {
+    formatted = formatted.substring(0, formatted.length - 1);
+  }
+
+  return '$prefix $formatted$suffix';
+}
+
   static String formatNumber(num price) {
     String suffix = '';
     num value = price;

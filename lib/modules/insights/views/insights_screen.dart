@@ -1983,7 +1983,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                               viewPlansTitle: 'Find the Perfect Plan for You',
                               viewPlansSubtitle:
                                   'Choose from our range of premium plans designed to get your property sold faster with maximum exposure.',
-                              viewPlansButtonText: 'View Plans',
+                              viewPlansButtonText: 'Explore Plans',
                               stats: const [
                                 StatItemData('Growing', 'Active Buyers'),
                                 StatItemData('Massive', 'Monthly Leads'),
@@ -2191,7 +2191,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                               viewPlansTitle: 'Find the Perfect Plan for You',
                               viewPlansSubtitle:
                                   'Choose from premium plans to maximize reach and brand visibility.',
-                              viewPlansButtonText: 'View Plans',
+                              viewPlansButtonText: 'Explore Plans',
                               stats: const [
                                 StatItemData('Growing', 'Projects Listed'),
                                 StatItemData('Massive', 'Monthly Leads'),
@@ -2396,7 +2396,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                               viewPlansSubtitle:
                                   'Choose from premium plans to maximize your partner visibility.',
 
-                              viewPlansButtonText: 'View Plans',
+                              viewPlansButtonText: 'Explore Plans',
                               stats: const [
                                 StatItemData('High', 'Commission Payouts'),
                                 StatItemData(
@@ -2656,7 +2656,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                               viewPlansTitle: 'Find the Perfect Plan for You',
                               viewPlansSubtitle:
                                   'Choose from premium plans to maximize your reach and brand visibility.',
-                              viewPlansButtonText: 'View Plans',
+                              viewPlansButtonText: 'Explore Plans',
                               stats: const [
                                 StatItemData('₹100Cr+', 'Projects Completed'),
                                 StatItemData('800+', 'Active Projects'),

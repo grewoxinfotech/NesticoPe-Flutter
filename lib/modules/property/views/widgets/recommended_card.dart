@@ -56,19 +56,18 @@ class _RecommendedCardState extends State<RecommendedCard> {
       pgInfo: widget.property.propertyDetails?.pgInfo, // Added for PG support
     );
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.0),
+      padding: EdgeInsets.symmetric(vertical: 6.0),
       child: GestureDetector(
         onTap:
             () => Get.to(
               () => PropertyDetailScreen(propertyId: widget.property.id),
               routeName: '/property_${widget.property.id}',
-              
             ),
-      
+
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 250),
           curve: Curves.easeInOut,
-          width: 200,
+          width: 300,
           decoration: BoxDecoration(
             color: ColorRes.white,
             // border: Border.all(
@@ -108,7 +107,7 @@ class _RecommendedCardState extends State<RecommendedCard> {
                       width: double.infinity,
                       fit: BoxFit.cover,
                     ),
-      
+
                     Container(
                       height: 150,
                       width: double.infinity,
@@ -123,15 +122,15 @@ class _RecommendedCardState extends State<RecommendedCard> {
                         ),
                       ),
                     ),
-      
+
                     // Rent Tag (top-left)
                     Positioned(
                       top: 10,
                       left: 10,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          vertical: 4,
-                          horizontal: 8,
+                          vertical: 6,
+                          horizontal: 10,
                         ),
                         decoration: BoxDecoration(
                           color: ColorRes.white,
@@ -147,7 +146,7 @@ class _RecommendedCardState extends State<RecommendedCard> {
                         ),
                       ),
                     ),
-      
+
                     // Favorite & Compare Buttons (top-right)
                     Positioned(
                       top: 10,
@@ -166,34 +165,37 @@ class _RecommendedCardState extends State<RecommendedCard> {
                               );
                               return CircleAvatar(
                                 backgroundColor:
-                                    selected ? ColorRes.primary : ColorRes.white,
-      
-                                radius: 16,
-      
+                                    selected
+                                        ? ColorRes.primary
+                                        : ColorRes.white,
+
+                                radius: 20,
+
                                 child: Icon(
                                   Icons.compare_arrows,
                                   color:
                                       selected
                                           ? ColorRes.white
                                           : ColorRes.primary,
-                                  size: 16,
+                                  size: 20,
                                 ),
                               );
                             }),
                           ),
-      
+
                           const SizedBox(width: 6),
                           // Favorite button
                           Obx(() {
                             final controller = Get.find<PropertyController>();
-                            final PropertyFavoriteController favoriteController =
+                            final PropertyFavoriteController
+                            favoriteController =
                                 Get.find<PropertyFavoriteController>();
-      
+
                             final isFavorite = favoriteController.favorites
                                 .contains(widget.property.id);
                             return CircularIcon(
-                              iconSize: 16,
-                              sizeContainer: 32,
+                              iconSize: 20,
+                              sizeContainer: 40,
                               icon:
                                   isFavorite
                                       ? Icons.favorite
@@ -213,7 +215,7 @@ class _RecommendedCardState extends State<RecommendedCard> {
                         ],
                       ),
                     ),
-      
+
                     // Recently Viewed Badge (bottom-left)
                     if (widget.isRecentlyViewed) // only show if true
                       Positioned(
@@ -241,7 +243,7 @@ class _RecommendedCardState extends State<RecommendedCard> {
                   ],
                 ),
               ),
-      
+
               // 🔹 Content Section
               Expanded(
                 child: Padding(
@@ -253,34 +255,39 @@ class _RecommendedCardState extends State<RecommendedCard> {
                       Text(
                         title.displayName,
                         style: TextStyle(
-                          fontSize: AppFontSizes.medium,
-                          color: ColorRes.textPrimary,
-                          fontWeight: AppFontWeights.medium,
+                    fontWeight: AppFontWeights.semiBold,
+
+                      fontSize: AppFontSizes.body,
+                      color: ColorRes.blackShade87,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 6),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              widget.property.address ?? '-',
-                              style: TextStyle(
-                                fontWeight: AppFontWeights.medium,
-                                fontSize: AppFontSizes.extraSmall,
-                                color: ColorRes.leadGreyColor.shade600,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
+                    children: [
+                      const Icon(
+                        Icons.location_on_outlined,
+                        size: 14,
+                        color: ColorRes.grey,
                       ),
-      
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          widget.property.address ?? "-",
+                          style: TextStyle(
+                            fontSize: AppFontSizes.caption,
+                            color: ColorRes.leadGreyColor.shade700,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+
                       // const SizedBox(height: 6),
-      
+
                       // Property Info
                       // if (widget.property.propertyDetails?.bhk != null) ...[
                       //   Text(
@@ -326,7 +333,7 @@ class _RecommendedCardState extends State<RecommendedCard> {
                       //   Facilities(property: widget.property),
                       // ],
                       const SizedBox(height: 6),
-      
+
                       // Row(
                       //   children: [
                       //     Transform.translate(
@@ -365,10 +372,12 @@ class _RecommendedCardState extends State<RecommendedCard> {
                       //   overflow: TextOverflow.ellipsis,
                       // ),
                       // SizedBox(height: 5),
+                      //  const SizedBox(height: 10),
+                  Facilities(property: widget.property),
                       const SizedBox(width: 10),
                       Text(
                         price.displayPrice.toString() ?? '0',
-      
+
                         style: TextStyle(
                           fontWeight: AppFontWeights.semiBold,
                           fontSize: AppFontSizes.bodyMedium,
@@ -385,34 +394,41 @@ class _RecommendedCardState extends State<RecommendedCard> {
                       ),
                       const SizedBox(height: 5),
                       SizedBox(
-                        height: 32,
+                        height: 40,
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Expanded(
                               child: Container(
+                                height: 40,
+
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 4,
+                                  horizontal: 14,
+                                  vertical: 8,
                                 ),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
-      
-                                  // ignore: deprecated_member_use
-                                  border: Border.all(
-                                    color: ColorRes.primary,
-                                    width: 1,
-                                  ),
-                                  color: ColorRes.white,
+                                  color: ColorRes.primary,
                                 ),
                                 alignment: Alignment.center,
-                                child: const Text(
-                                  "View Phone",
-                                  style: TextStyle(
-                                    fontSize: AppFontSizes.caption,
-                                    fontWeight: AppFontWeights.medium,
-                                    color: ColorRes.primary,
-                                  ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.call_outlined,
+                                      color: ColorRes.white,
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      'Contact Now',
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.small,
+                                        fontWeight: AppFontWeights.semiBold,
+                                        color: ColorRes.white,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),

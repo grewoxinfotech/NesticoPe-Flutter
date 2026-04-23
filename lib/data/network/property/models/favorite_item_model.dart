@@ -111,7 +111,7 @@ class FavoriteDetails {
   final String? location;
   final String? city;
   final String? status;
-  final int? price;
+  final num? price;
   final String? priceType;
   final PriceRange? priceRange;
 
@@ -131,6 +131,21 @@ class FavoriteDetails {
   });
 
   factory FavoriteDetails.fromJson(Map<String, dynamic> json) {
+    final dynamic priceData = json['price'];
+    PriceRange? parsedRange;
+    num? parsedPrice;
+
+    if (priceData is Map<String, dynamic>) {
+      parsedRange = PriceRange.fromJson(priceData);
+    } else if (priceData is num) {
+      parsedPrice = priceData;
+    }
+
+    parsedRange ??=
+        json['priceRange'] != null
+            ? PriceRange.fromJson(json['priceRange'])
+            : null;
+
     return FavoriteDetails(
       id: json['id'] ?? '',
       projectName: json['projectName'],
@@ -141,12 +156,9 @@ class FavoriteDetails {
       location: json['location'],
       city: json['city'],
       status: json['status'],
-      price: json['price'],
+      price: parsedPrice,
       priceType: json['priceType'],
-      priceRange:
-          json['priceRange'] != null
-              ? PriceRange.fromJson(json['priceRange'])
-              : null,
+      priceRange: parsedRange,
     );
   }
 

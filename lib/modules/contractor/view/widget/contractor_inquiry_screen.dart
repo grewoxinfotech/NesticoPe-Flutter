@@ -755,7 +755,7 @@ class InquiryCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      inquiry.name,
+                      inquiry.name.capitalize?.replaceAll("_", " ")??" ",
                       style: const TextStyle(
                         fontSize: AppFontSizes.medium,
                         color: ColorRes.textColor,

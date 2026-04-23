@@ -1,6 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 import 'package:nesticope_app/app/utils/formater/formater.dart';
 
 import '../../../../app/constants/color_res.dart';
@@ -176,8 +175,6 @@ class MonthlyBarChart extends StatelessWidget {
 
     // ✅ Round top value to next clean multiple of interval
     final adjustedMaxY = ((effectiveMax / interval).ceil()) * interval;
-
-    print("BarChart -> minY: $minValue, maxY: $adjustedMaxY, interval: $interval");
 
     return BarChart(
       BarChartData(

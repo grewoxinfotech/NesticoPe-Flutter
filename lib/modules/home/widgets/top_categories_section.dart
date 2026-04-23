@@ -640,6 +640,8 @@ class _CategoryCardState extends State<_CategoryCard>
     // );
     return GestureDetector(
       onTap: () {
+
+        print("Contractor data ${widget.item.id}");
         Get.to(
           () => CategoryServiceExplorer(
             categoryId: widget.item.id,

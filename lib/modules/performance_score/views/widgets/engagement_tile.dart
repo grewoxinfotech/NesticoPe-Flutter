@@ -88,15 +88,12 @@
 //   );
 // }
 
-import 'dart:math';
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../data/network/property/models/analytics_model.dart';
-import '../../../../data/network/property/models/property_model.dart';
 class EngagementSubBreakDownPieChart extends StatefulWidget {
   final Map<String, SubBreakdown> breakdown;
   final Color? color;
@@ -296,7 +293,6 @@ class _EngagementPieChartState extends State<EngagementPieChart> {
   @override
   Widget build(BuildContext context) {
     /// Normalize engagement data
-    print("Engagement Pie Chart ${widget.breakdown}");
     final engagement = {
       "Total Favorites": widget.breakdown["totalFavorites"] ?? 0,
       "Total Inquiries": widget.breakdown["totalInquiries"] ?? 0,
@@ -353,7 +349,7 @@ class _EngagementPieChartState extends State<EngagementPieChart> {
 
     return Container(
       color: widget.color,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

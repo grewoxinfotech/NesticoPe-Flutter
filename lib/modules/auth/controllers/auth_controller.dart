@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
@@ -5,27 +6,21 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:nesticope_app/data/network/auth/model/user_model.dart'
-    show UserModel, UserRole, User;
-import 'package:fluttertoast/fluttertoast.dart';
+    show UserModel, UserRole;
 import 'package:nesticope_app/data/network/auth/service/auth_service.dart';
 import 'package:nesticope_app/data/database/secure_storage_service.dart';
-import 'package:nesticope_app/modules/add_property/controller/create_property_controller.dart';
 import 'package:nesticope_app/modules/auth/views/ResetPasswordScreen.dart';
 import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
-import 'package:nesticope_app/modules/auth/views/seller_registration_complete.dart';
 import 'package:nesticope_app/modules/builder/view/builder_main_screen.dart';
 import 'package:nesticope_app/modules/contractor/view/contractor_main.dart';
 import 'package:nesticope_app/modules/dashboard/views/seller_dashboard_screen.dart';
-import 'package:nesticope_app/modules/profile/views/profile_screen.dart';
 import 'package:nesticope_app/modules/reseller/view/property_reseller.dart';
 import 'package:nesticope_app/utils/logger/app_logger.dart';
 import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import '../../../data/network/user/service/notification_sync_service.dart';
 import '../../../services/notification_service.dart';
-import '../../add_property/view/create_property.dart';
 import '../../dashboard/views/dashboard_screen.dart';
-import '../views/login_screen.dart';
 import '../views/otp_verification_screen.dart';
 import '../views/splash_screen.dart';
 
@@ -96,12 +91,16 @@ class AuthController extends GetxController {
     // emailController.text = "admin11@example.com";
     // passwordController.text = "CRM_GrewoxAdmin@123";
     /// Seller
-    emailController.text = "sb1@yopmail.com";
-    passwordController.text = "sb1@yopmail.com";
+    emailController.text = "dev_seed_seller_1@test.local";
+    passwordController.text = "Test@123456";
+    
   }
 
   void setCity(String value) {
+    
     city.value = value;
+
+
   }
 
   void setRole(UserRole role) => selectedRole.value = role;
@@ -785,18 +784,51 @@ class AuthController extends GetxController {
     }
   }
 
+
   Future<void> logout() async {
-    final playerId = await SecureStorage.getNotificationToken();
-    if (playerId != null) {
-      NotificationSyncService.instance.removeNotificationToken(playerId);
+    // IMPORTANT: Logout must never hang the UI thread.
+    // We do local teardown first, and run network cleanups best-effort.
+    try {
+      isLoading.value = true;
+
+      final playerId = await SecureStorage.getNotificationToken();
+      if (playerId != null && playerId.isNotEmpty) {
+        unawaited(
+          NotificationSyncService.instance
+              .removeNotificationToken(playerId)
+              .timeout(
+                const Duration(seconds: 2),
+                onTimeout: () {
+                  debugPrint(
+                    '⏱️ removeNotificationToken() timed out (continuing)',
+                  );
+                },
+              )
+              .catchError((e) {
+                debugPrint('❌ removeNotificationToken() failed: $e');
+              }),
+        );
+      }
+
+      await SecureStorage.clearAll().timeout(
+        const Duration(seconds: 2),
+        onTimeout: () {
+          debugPrint('⏱️ SecureStorage.clearAll() timed out (continuing)');
+        },
+      );
+      UserHelper.clearUserType();
+      currentUser.value = null;
+      authState.value = AuthState.unauthenticated;
+
+      unawaited(NotificationService.instance.resetToGuest());
+    } catch (e, st) {
+      debugPrint('❌ Logout failed: $e');
+      debugPrint('Stack: $st');
+    } finally {
+      isLoading.value = false;
     }
-    await SecureStorage.clearAll();
-    UserHelper.clearUserType();
-    currentUser.value = null;
-    authState.value = AuthState.unauthenticated;
 
-    await NotificationService.instance.resetToGuest();
-
-    Get.offAll(() => const DashboardScreen());
+    // Navigate last (fresh boot path avoids stale controllers doing work).
+    Get.offAll(() => SplashScreen());
   }
 }

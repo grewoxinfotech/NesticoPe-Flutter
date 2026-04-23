@@ -658,35 +658,55 @@
 //   );
 // }
 
-import 'dart:async';
 import 'dart:developer';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
-import 'package:nesticope_app/app/constants/font_res.dart';
 import 'package:nesticope_app/app/utils/formater/formater.dart';
 import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
-import 'package:nesticope_app/app/widgets/snackbar/snackbar.dart';
+import 'package:nesticope_app/app/widgets/texts/headline_text.dart';
+import 'package:nesticope_app/data/network/auth/model/user_model.dart';
+import 'package:nesticope_app/data/network/platform_review/model/platform_review_model.dart';
+import 'package:nesticope_app/modules/auth/views/register_screen.dart';
+import 'package:nesticope_app/modules/contractor/view/contractor_main.dart';
+import 'package:nesticope_app/modules/contractor/view/widget/convert_to_contractor.dart';
+import 'package:nesticope_app/modules/home/controllers/home_controller/platform_review-controller.dart';
+import 'package:nesticope_app/modules/subscription/views/widgets/contractor_all_review_screen.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
-import '../../../../app/widgets/snack_bar/custom_snackbar.dart';
 import '../../../../data/database/secure_storage_service.dart';
 import '../../../../data/network/subscription/model/subscription_model.dart';
 import '../../../../utils/shimmer/common_screen/plan_screen/plan_list_screen_shimmer.dart';
 import '../../../../widgets/New folder/inputs/text_field.dart';
-import '../../../../widgets/display/ic.dart';
 import '../../../../widgets/messages/snack_bar.dart';
 import '../../controller/subscription_controller.dart';
 
 class SubscriptionPlansWidget extends StatelessWidget {
   final SubscriptionPlanController controller;
+  final RxString selectedPlanName;
+  final PlatformReviewController reviewController =
+      Get.isRegistered<PlatformReviewController>(tag: 'subscription_reviews')
+          ? Get.find<PlatformReviewController>(tag: 'subscription_reviews')
+          : Get.put(
+            PlatformReviewController(
+              type: ['contractor'],
+              filters: {'status': 'published'},
+            ),
+            tag: 'subscription_reviews',
+          );
 
-  /// Selected index stored in GetX (so it works anywhere)
-  final RxInt selectedPlanIndex = (-1).obs;
-
-  SubscriptionPlansWidget({super.key, required this.controller});
+  SubscriptionPlansWidget({
+    super.key,
+    required this.controller,
+    required this.selectedPlanName,
+  }) {
+    if (reviewController.allReviews.isEmpty &&
+        !reviewController.isLoading.value) {
+      reviewController.fetchAllReviews(refresh: true);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -695,20 +715,76 @@ class SubscriptionPlansWidget extends StatelessWidget {
         return PlanListScreenShimmer();
       }
 
-      final plans = controller.items;
+      final plans =
+          controller.items
+              .where((plan) => plan.name == selectedPlanName.value)
+              .toList();
 
-      return ListView.separated(
-        physics: NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemCount: plans.length,
-        padding: const EdgeInsets.all(12),
-        separatorBuilder: (_, __) => const SizedBox(height: 12),
-        itemBuilder: (_, index) {
-          return SizedBox(
-            height: 330,
-            child: _buildPlanCard(plans[index], index),
-          );
-        },
+      if (plans.isEmpty) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          child: Text(
+            'No plans available for "${selectedPlanName.value}".',
+            style: TextStyle(
+              fontSize: AppFontSizes.bodySmall,
+              color: ColorRes.leadGreyColor.shade700,
+              fontWeight: AppFontWeights.medium,
+            ),
+          ),
+        );
+      }
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ListView.separated(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: plans.length,
+            padding: const EdgeInsets.all(12),
+            separatorBuilder: (_, __) => const SizedBox(height: 12),
+            itemBuilder: (_, index) {
+              final double newPrice = double.tryParse(plans[index].amount) ?? 0;
+              final double oldPrice =
+                  double.tryParse(plans[index].originalPrice) ?? 0;
+              final bool hasDiscount =
+                  oldPrice > 0 && newPrice > 0 && oldPrice > newPrice;
+
+              return SizedBox(
+                height: hasDiscount ? 396 : 365,
+                child: _buildPlanCard(plans[index], index),
+              );
+            },
+          ),
+          const SizedBox(height: 10),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(horizontal: 12),
+          //   child: Text(
+          //     'Contractor Reviews',
+          //     style: TextStyle(
+          //       color: ColorRes.textPrimary,
+          //       fontSize: AppFontSizes.body,
+          //       fontWeight: AppFontWeights.bold,
+          //     ),
+          //   ),
+          // ),
+          TitleWithViewAll(
+            title: "Contractor Reviews",
+            showViewAll: true,
+            onViewAll: () {
+              Get.to(() => ContractorAllReviewScreen());
+            },
+            icon: Icons.reviews,
+            showIcon: true,
+
+            iconColor: ColorRes.success,
+            iconBgColor: ColorRes.success.withOpacity(0.1),
+          ),
+
+          const SizedBox(height: 8),
+          ReviewsAndTestimonials(reviewController: reviewController),
+          const SizedBox(height: 12),
+        ],
       );
     });
   }
@@ -717,28 +793,45 @@ class SubscriptionPlansWidget extends StatelessWidget {
   // CARD UI
   // ------------------------------------------------------
   Widget _buildPlanCard(SubscriptionPlan plan, int index) {
-    return Obx(() {
-      log("Plan is Active or Not  ${plan.isActive}");
-      final bool isSelected = selectedPlanIndex.value == index;
-      final bool rec = plan.isRecommended == true;
-      final bool premium = plan.isPremium == true;
+    final bool rec = plan.isRecommended == true;
 
-      log("Plan Selected : ${selectedPlanIndex.value == index}");
-
-      return GestureDetector(
-        onTap: () async {
-          selectedPlanIndex.value = index;
-        },
-        child: Container(
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          margin: EdgeInsets.only(top: rec ? 12 : 0),
           decoration: BoxDecoration(
-            color: rec ? Colors.amber.withOpacity(0.08) : ColorRes.white,
+            gradient:
+                rec
+                    ? LinearGradient(
+                      colors: [
+                        Color(0xffFFC107), // base
+                        Color(0xffFFB300), // dark
+                        Color.fromARGB(255, 247, 230, 174), // very light
+                        Color(0xffFFE082), // light
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    )
+                    : LinearGradient(
+                      colors: [
+                        //  brant blue
+                        const Color(0xff426DD4), // your base color
+                        const Color(0xff2F54C6), // deeper blue for depth
+                        const Color(0xff6A8DFF), // lighter bluish highlight
+                        const Color(0xff4A7BFF), // vi
+                      ],
+                      stops: const [0.0, 0.3, 0.7, 1.0],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
             borderRadius: BorderRadius.circular(20),
             border:
                 rec
                     ? Border.all(color: Colors.amber.shade200, width: 1.5)
-                    : (isSelected
-                        ? Border.all(color: ColorRes.primary, width: 1.5)
-                        : null),
+                    : Border.all(
+                      color: ColorRes.primary.withValues(alpha: 0.2),
+                    ),
             boxShadow: [
               if (rec)
                 BoxShadow(
@@ -748,45 +841,46 @@ class SubscriptionPlansWidget extends StatelessWidget {
                 ),
               if (!rec)
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
+                  color: ColorRes.primary.withValues(alpha: 0.04),
                   blurRadius: 10,
                   offset: const Offset(0, 3),
                 ),
             ],
           ),
+
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start, // important
-                children: [
-                  /// LEFT SIDE (Header)
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 16, top: 16),
-                      child: _buildHeader(plan),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-
-                  /// RIGHT SIDE (Price)
-                  if (plan.plansFor != "sellerBuilder")
-                    Padding(
-                      padding: const EdgeInsets.only(right: 16, top: 16),
-                      child: _buildPriceSection(plan),
-                    ),
-                ],
+              Padding(
+                padding: const EdgeInsets.only(left: 16, top: 16),
+                child: _buildHeader(plan),
               ),
+              SizedBox(width: 10),
+
+              /// RIGHT SIDE (Price)
+              if (plan.plansFor != "sellerBuilder")
+                Padding(
+                  padding: const EdgeInsets.only(left: 16, top: 5),
+                  child: _buildPriceSection(plan, rec),
+                ),
 
               const SizedBox(height: 12),
-              _buildFeaturePreview(plan),
-              _buildShowMore(plan, index),
-              _buildSelectButton(plan, isSelected, index),
+              _buildFeaturePreview(plan, rec),
+              _buildShowMore(plan, index, rec),
+              Spacer(),
+              _buildSelectButton(plan),
             ],
           ),
         ),
-      );
-    });
+        if (rec)
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Center(child: _buildRecommendedBadge()),
+          ),
+      ],
+    );
   }
 
   // ------------------------------------------------------
@@ -798,18 +892,18 @@ class SubscriptionPlansWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (rec) _buildRecommendedBadge(),
-        const SizedBox(height: 6),
         Text(
           '${plan.name}',
           maxLines: 2,
           textAlign: TextAlign.center,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-            fontSize: AppFontSizes.large,
+            fontSize: rec ? AppFontSizes.title : AppFontSizes.large,
 
             fontWeight: AppFontWeights.bold,
-            color: rec ? Colors.amber.shade800 : ColorRes.primary,
+            color: rec ? ColorRes.textPrimary : ColorRes.white,
+            // fontFamily: FontFamily.,
+            fontStyle: FontStyle.italic,
           ),
         ),
       ],
@@ -818,43 +912,26 @@ class SubscriptionPlansWidget extends StatelessWidget {
 
   Widget _buildRecommendedBadge() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.amber.shade600,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: const Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.recommend, size: 14, color: Colors.white),
-          SizedBox(width: 4),
-          Text(
-            'Recommended',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: AppFontSizes.extraSmall,
-              fontWeight: AppFontWeights.semiBold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Popular Badge
-  Widget _buildPopularBadge(SubscriptionPlan plan) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
         color: ColorRes.primary,
-        borderRadius: BorderRadius.circular(4),
+        boxShadow: [
+          BoxShadow(
+            color: ColorRes.primary.withValues(alpha: 0.5),
+            blurRadius: 10,
+            offset: Offset(0, 5),
+          ),
+        ],
+        border: Border.all(color: ColorRes.primary, width: 1),
+        borderRadius: BorderRadius.circular(20),
       ),
-      child: const Text(
-        'Premium',
+      child: Text(
+        'MOST POPULAR',
         style: TextStyle(
-          color: Colors.white,
-          fontSize: AppFontSizes.extraSmall,
+          color: ColorRes.white,
+          fontSize: AppFontSizes.small,
           fontWeight: AppFontWeights.semiBold,
+          letterSpacing: 0.2,
         ),
       ),
     );
@@ -863,7 +940,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
   // ------------------------------------------------------
   // Price
   // ------------------------------------------------------
-  Widget _buildPriceSection(SubscriptionPlan plan) {
+  Widget _buildPriceSection(SubscriptionPlan plan, bool rec) {
     final double newPrice = double.tryParse(plan.amount) ?? 0;
     final double oldPrice = double.tryParse(plan.originalPrice) ?? 0;
     final bool hasDiscount =
@@ -872,50 +949,53 @@ class SubscriptionPlansWidget extends StatelessWidget {
     final int offPercent =
         hasDiscount ? (((oldPrice - newPrice) / oldPrice) * 100).round() : 0;
 
-    final String period =
-        plan.durationMonths == 12
-            ? "per year"
-            : "per ${plan.durationMonths} months";
-
     final String gstText =
         (plan.gstRate.isNotEmpty && plan.gstRate != '0.00')
             ? "Incl. ${plan.gstRate}% GST"
             : "Taxes may apply";
 
+    final int months = plan.durationMonths;
+    final String durationText = months == 1 ? " /month" : " /$months months";
+
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.end, // 👈 IMPORTANT
+      crossAxisAlignment: CrossAxisAlignment.start, // 👈 IMPORTANT
       children: [
-        if (hasDiscount)
+        if (hasDiscount) ...[
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: Colors.red.shade100,
+                  color: rec ? Colors.red.shade100 : ColorRes.white,
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
                   "$offPercent% OFF",
                   style: TextStyle(
-                    color: Colors.red.shade600,
-                    fontSize: 10,
+                    color: !rec ? ColorRes.primary : Colors.red.shade600,
+                    fontSize:
+                        rec ? AppFontSizes.small : AppFontSizes.extraSmall,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
               const SizedBox(width: 6),
               Text(
-                "${Formatter.formatPrice(num.tryParse(plan.originalPrice) ?? 0)}",
+                "${plan.originalPrice}",
                 style: TextStyle(
-                  fontSize: 12,
-                  color: ColorRes.leadGreyColor.shade600,
+                  fontSize: AppFontSizes.bodySmall,
+                  color:
+                      rec
+                          ? ColorRes.leadGreyColor.shade700
+                          : ColorRes.white.withValues(alpha: 0.7),
+                  fontWeight: FontWeight.w600,
                   decoration: TextDecoration.lineThrough,
                 ),
               ),
             ],
           ),
-
+        ],
         const SizedBox(height: 4),
 
         Row(
@@ -923,17 +1003,20 @@ class SubscriptionPlansWidget extends StatelessWidget {
             Text(
               "${Formatter.formatPrice(num.tryParse(plan.amount) ?? 0)}",
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 30,
                 fontWeight: FontWeight.bold,
-                color: ColorRes.textPrimary,
+                color: rec ? ColorRes.textPrimary : ColorRes.white,
               ),
             ),
             Text(
-              "/year",
+              durationText,
               style: TextStyle(
                 fontSize: 12,
-                color: ColorRes.leadGreyColor.shade600,
-                fontWeight: FontWeight.w500,
+                color:
+                    rec
+                        ? ColorRes.leadGreyColor.shade700
+                        : ColorRes.white.withValues(alpha: 0.7),
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],
@@ -944,8 +1027,11 @@ class SubscriptionPlansWidget extends StatelessWidget {
         Text(
           gstText,
           style: TextStyle(
-            fontSize: 10,
-            color: ColorRes.leadGreyColor.shade600,
+            fontSize: 12,
+            color:
+                rec
+                    ? ColorRes.textPrimary
+                    : ColorRes.white.withValues(alpha: 0.7),
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -956,66 +1042,64 @@ class SubscriptionPlansWidget extends StatelessWidget {
   // ------------------------------------------------------
   // Feature preview (first 3)
   // ------------------------------------------------------
-  Widget _buildFeaturePreview(SubscriptionPlan plan) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          children:
-              plan.features
-                  .toFeatureList()
-                  .take(!UserHelper.isSellerBuilder ? 3 : 5)
-                  .map((f) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: Row(
-                        children: [
-                          /// 🔥 Circle Background Icon (LIKE IMAGE)
-                          Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color:
-                                  f.isIncluded
-                                      ? ColorRes.primary.withOpacity(
-                                        0.15,
-                                      ) // light bg
-                                      : Colors.grey.withOpacity(0.1),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              f.isIncluded ? Icons.check : Icons.close,
-                              size: 14,
-                              color:
-                                  f.isIncluded
-                                      ? ColorRes.primary
-                                      : ColorRes.leadGreyColor,
-                            ),
-                          ),
-
-                          const SizedBox(width: 10),
-
-                          /// Text
-                          Expanded(
-                            child: Text(
-                              f.name,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: AppFontSizes.bodySmall,
-                                fontWeight: AppFontWeights.medium,
-                                color:
-                                    f.isIncluded
-                                        ? ColorRes.textPrimary
-                                        : ColorRes.leadGreyColor,
-                              ),
-                            ),
-                          ),
-                        ],
+  Widget _buildFeaturePreview(SubscriptionPlan plan, bool rec) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+      child: Column(
+        children:
+            plan.features.toFeatureList().take(4).map((f) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Row(
+                  children: [
+                    /// 🔥 Circle Background Icon (LIKE IMAGE)
+                    Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color:
+                            f.isIncluded
+                                ? rec
+                                    ? ColorRes.black.withValues(alpha: 0.8)
+                                    : ColorRes.white.withValues(alpha: 0.2)
+                                : ColorRes.leadGreyColor.shade200,
+                        shape: BoxShape.circle,
                       ),
-                    );
-                  })
-                  .toList(),
-        ),
+                      child: Icon(
+                        f.isIncluded ? Icons.check : Icons.close,
+                        size: 10,
+                        color:
+                            f.isIncluded
+                                ? (ColorRes.white)
+                                : ColorRes.leadGreyColor.shade200,
+                      ),
+                    ),
+
+                    const SizedBox(width: 10),
+
+                    /// Text
+                    Expanded(
+                      child: Text(
+                        f.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: AppFontSizes.bodySmall,
+                          fontWeight: AppFontWeights.medium,
+                          color:
+                              f.isIncluded
+                                  ? rec
+                                      ? ColorRes.textPrimary
+                                      : ColorRes.white.withValues(alpha: 0.8)
+                                  : rec
+                                  ? ColorRes.leadGreyColor
+                                  : ColorRes.white.withValues(alpha: 0.8),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
       ),
     );
   }
@@ -1023,9 +1107,9 @@ class SubscriptionPlansWidget extends StatelessWidget {
   // ------------------------------------------------------
   // "Show more"
   // ------------------------------------------------------
-  Widget _buildShowMore(SubscriptionPlan plan, int index) {
+  Widget _buildShowMore(SubscriptionPlan plan, int index, bool rec) {
     return GestureDetector(
-      onTap: () => Get.bottomSheet(_buildPlanExpanded(plan, index)),
+      onTap: () => Get.bottomSheet(_buildPlanExpanded(plan, index, rec)),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 18),
         child: Row(
@@ -1033,12 +1117,16 @@ class SubscriptionPlansWidget extends StatelessWidget {
             Text(
               "Show more",
               style: TextStyle(
-                color: ColorRes.primary,
+                color: rec ? ColorRes.black : ColorRes.white,
                 fontSize: AppFontSizes.small,
                 fontWeight: AppFontWeights.medium,
               ),
             ),
-            Icon(Icons.keyboard_arrow_down, color: ColorRes.primary, size: 16),
+            Icon(
+              Icons.keyboard_arrow_down,
+              color: rec ? ColorRes.black : ColorRes.white,
+              size: 16,
+            ),
           ],
         ),
       ),
@@ -1048,7 +1136,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
   // ------------------------------------------------------
   // Select Button - UPDATED WITH RAZORPAY INTEGRATION
   // ------------------------------------------------------
-  Widget _buildSelectButton(SubscriptionPlan plan, bool isSelected, int index) {
+  Widget _buildSelectButton(SubscriptionPlan plan) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: SizedBox(
@@ -1056,23 +1144,32 @@ class SubscriptionPlansWidget extends StatelessWidget {
         child: Obx(() {
           final isProcessing = controller.isProcessingPayment.value;
           final bool rec = plan.isRecommended == true;
-          final Color bg =
-              isSelected
-                  ? (rec ? Colors.amber.shade700 : ColorRes.primary)
-                  : (rec
-                      ? Colors.amber.shade500
-                      : ColorRes.leadGreyColor.shade100);
+          final Color bg = rec ? ColorRes.black : ColorRes.white;
           final Color fg =
-              isSelected ? (rec ? Colors.black : Colors.white) : Colors.black;
+              rec ? Colors.black : Colors.white.withValues(alpha: 0.8);
 
           return ElevatedButton(
             onPressed:
-                (isSelected && !isProcessing)
+                (!isProcessing)
                     ? () async {
-                      if (UserHelper.isSellerBuilder) {
+                      if (UserHelper.isGuest) {
+                        // Navigator.of(Get.context!).pop();
+                        await Get.to(
+                          () => RegisterScreen(role: UserRole.contractor),
+                        );
+                        return;
+                      } else if (UserHelper.isBuyer) {
+                        // Get.to(() => ManageListingsScreen());
+                        await Get.to(
+                          () => ConvertToContractorConversionScreen(),
+                        );
+                        return;
+                      } else if (UserHelper.isContractor) {
+                        await Get.to(() => ContractorMainScreen());
+                        return;
+                      } else if (UserHelper.isSellerBuilder) {
                         // For seller builders, show inquiry dialog
                         log("Seller builder - showing inquiry dialog");
-                        selectedPlanIndex.value = index;
                         try {
                           final user = await SecureStorage.getUserData();
 
@@ -1121,42 +1218,39 @@ class SubscriptionPlansWidget extends StatelessWidget {
                             contentType: ContentType.failure,
                           );
                         }
+                        return;
                       } else {
                         // For other users, open Razorpay checkout
                         log("Opening Razorpay checkout for plan: ${plan.id}");
                         await controller.openRazorpayCheckout(plan.id);
+                        return;
                       }
                     }
-                    : () => selectedPlanIndex.value = index,
+                    : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: bg,
               foregroundColor: fg,
               elevation: 0,
-              padding: const EdgeInsets.symmetric(vertical: 12),
+              padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(16),
               ),
             ),
             child:
-                isProcessing && isSelected
+                isProcessing
                     ? SizedBox(
                       height: 20,
                       width: 20,
+
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          isSelected ? Colors.white : ColorRes.primary,
-                        ),
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
                     )
                     : Text(
-                      isSelected
-                          ? (UserHelper.isSellerBuilder
-                              ? "Get Offer"
-                              : "Buy Now")
-                          : "Select Plan",
-                      style: const TextStyle(
-                        color: ColorRes.textPrimary,
+                      "Buy Now",
+                      style: TextStyle(
+                        color: rec ? ColorRes.white : ColorRes.primary,
                         fontWeight: AppFontWeights.semiBold,
                         fontSize: AppFontSizes.bodySmall,
                       ),
@@ -1170,38 +1264,73 @@ class SubscriptionPlansWidget extends StatelessWidget {
   // ------------------------------------------------------
   // Expanded bottom sheet
   // ------------------------------------------------------
-  Widget _buildPlanExpanded(SubscriptionPlan plan, int index) {
+  Widget _buildPlanExpanded(SubscriptionPlan plan, int index, bool rec) {
     return SafeArea(
       child: Container(
         padding: const EdgeInsets.all(16),
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        decoration: BoxDecoration(
+          gradient:
+              rec
+                  ? LinearGradient(
+                    colors: [
+                      Color(0xffFFC107), // base
+                      Color(0xffFFB300), // dark
+                      Color.fromARGB(255, 247, 230, 174), // very light
+                      Color(0xffFFE082), // light
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  )
+                  : LinearGradient(
+                    colors: [
+                      //  brant blue
+                      const Color(
+                        0xff426DD4,
+                      ), // your base color bbvhhebnajin ndjsnojdjnskj
+                      const Color(0xff2F54C6), // deeper blue for depth
+                      const Color(0xff6A8DFF), // lighter bluish highlight
+                      const Color(0xff4A7BFF), // vi
+                    ],
+                    stops: const [0.0, 0.3, 0.7, 1.0],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          border:
+              rec
+                  ? Border.all(color: Colors.amber.shade200, width: 1.5)
+                  : Border.all(color: ColorRes.primary.withValues(alpha: 0.2)),
+          boxShadow: [
+            if (rec)
+              BoxShadow(
+                color: Colors.amber.withOpacity(0.1),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            if (!rec)
+              BoxShadow(
+                color: ColorRes.primary.withValues(alpha: 0.04),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
+              ),
+          ],
         ),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start, // important
-                children: [
-                  /// LEFT SIDE (Header)
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 16),
-                      child: _buildHeader(plan),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-
-                  /// RIGHT SIDE (Price)
-                  if (plan.plansFor != "sellerBuilder")
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16),
-                      child: _buildPriceSection(plan),
-                    ),
-                ],
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: _buildHeader(plan),
               ),
+              SizedBox(width: 10),
+
+              /// RIGHT SIDE (Price)
+              if (plan.plansFor != "sellerBuilder")
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: _buildPriceSection(plan, rec),
+                ),
 
               const SizedBox(height: 12),
 
@@ -1212,23 +1341,23 @@ class SubscriptionPlansWidget extends StatelessWidget {
                   child: Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(6),
+                        padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
                           color:
                               f.isIncluded
-                                  ? ColorRes.primary.withOpacity(
-                                    0.15,
-                                  ) // light bg
-                                  : Colors.grey.withOpacity(0.1),
+                                  ? rec
+                                      ? ColorRes.black.withValues(alpha: 0.8)
+                                      : ColorRes.white.withValues(alpha: 0.2)
+                                  : ColorRes.leadGreyColor.shade200,
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           f.isIncluded ? Icons.check : Icons.close,
-                          size: 14,
+                          size: 10,
                           color:
                               f.isIncluded
-                                  ? ColorRes.primary
-                                  : ColorRes.leadGreyColor,
+                                  ? (ColorRes.white)
+                                  : ColorRes.leadGreyColor.shade200,
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -1241,8 +1370,12 @@ class SubscriptionPlansWidget extends StatelessWidget {
 
                             color:
                                 f.isIncluded
-                                    ? ColorRes.textPrimary
-                                    : ColorRes.leadGreyColor,
+                                    ? rec
+                                        ? ColorRes.textPrimary
+                                        : ColorRes.white.withValues(alpha: 0.8)
+                                    : rec
+                                    ? ColorRes.leadGreyColor
+                                    : ColorRes.white.withValues(alpha: 0.8),
                           ),
                         ),
                       ),
@@ -1255,6 +1388,326 @@ class SubscriptionPlansWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class ReviewsAndTestimonials extends StatelessWidget {
+  final PlatformReviewController reviewController;
+  const ReviewsAndTestimonials({super.key, required this.reviewController});
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      if (reviewController.isLoading.value &&
+          reviewController.allReviews.isEmpty) {
+        return const SizedBox(
+          height: 170,
+          child: Center(
+            child: CircularProgressIndicator(color: ColorRes.homeGreenFade),
+          ),
+        );
+      }
+
+      if (reviewController.allReviews.isEmpty) {
+        return SizedBox(
+          height: 170,
+          child: Center(
+            child: Text(
+              'No reviews available',
+              style: TextStyle(
+                fontSize: AppFontSizes.bodySmall,
+                color: ColorRes.leadGreyColor.shade600,
+                fontWeight: AppFontWeights.medium,
+              ),
+            ),
+          ),
+        );
+      }
+
+      return SizedBox(
+        height: 160,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: reviewController.allReviews.length,
+          clipBehavior: Clip.none,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          separatorBuilder: (_, __) => const SizedBox(width: 10),
+          itemBuilder:
+              (context, index) =>
+                  _buildReviewCard(context, reviewController.allReviews[index]),
+        ),
+      );
+    });
+  }
+
+  Widget _buildReviewCard(BuildContext context, ReviewItem review) {
+    final rating = review.rating ?? 0.0;
+    final isVerified = review.isVerified ?? false;
+
+    return GestureDetector(
+      onTap: () {},
+      child: Container(
+        width: 300,
+        decoration: BoxDecoration(
+          color: ColorRes.white,
+          borderRadius: BorderRadius.circular(16),
+          // border: Border.all(color: ColorRes.leadGreyColor.shade200, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 2,
+
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// Header with avatar and rating
+              Row(
+                children: [
+                  /// Avatar (placeholder since we don't have reviewer details)
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: [
+                          ColorRes.homeGreenFade.withOpacity(0.08),
+                          ColorRes.homeGreenDarkFade.withOpacity(0.1),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      border: Border.all(
+                        color: Color(0xFF2E7D63).withOpacity(0.25),
+                        width: 1.5,
+                      ),
+                    ),
+                    alignment: Alignment.center,
+                    child:
+                        (() {
+                          final user = review.reviewer;
+                          final profilePic = user?.profilePic?.trim() ?? '';
+                          final username = user?.username?.trim() ?? '';
+                          final initial =
+                              username.isNotEmpty
+                                  ? username[0].toUpperCase()
+                                  : '?';
+
+                          if (profilePic.isNotEmpty) {
+                            return ClipOval(
+                              child: Image.network(
+                                profilePic,
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                                errorBuilder:
+                                    (_, __, ___) => Text(
+                                      initial,
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.large,
+                                        fontWeight: AppFontWeights.semiBold,
+                                        color: ColorRes.homeGreenDarkFade,
+                                      ),
+                                    ),
+                              ),
+                            );
+                          }
+
+                          return Text(
+                            initial,
+                            style: TextStyle(
+                              fontSize: AppFontSizes.large,
+                              fontWeight: AppFontWeights.semiBold,
+                              color: ColorRes.homeGreenDarkFade,
+                            ),
+                          );
+                        })(),
+                  ),
+
+                  const SizedBox(width: 12),
+
+                  /// Reviewer ID and status
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      '${review.reviewer?.username?.replaceAll("_", " ").capitalize}',
+                                      maxLines: 1,
+
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.medium,
+                                        fontWeight: AppFontWeights.semiBold,
+                                        color: ColorRes.homeBlackFade,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    _formatDate(
+                                      review.createdAt?.toIso8601String(),
+                                    ),
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.extraSmall,
+                                      fontWeight: AppFontWeights.medium,
+                                      color: ColorRes.leadGreyColor.shade600,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            if (isVerified) ...[
+                              const SizedBox(width: 4),
+                              Container(
+                                padding: const EdgeInsets.all(2),
+                                decoration: BoxDecoration(
+                                  color: ColorRes.homeGreenDarkFade,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Icon(
+                                  Icons.check,
+                                  color: ColorRes.white,
+                                  size: 12,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                        Text(
+                          '${review.reviewer?.userType?.replaceAll("_", " ").capitalize}',
+                          maxLines: 1,
+
+                          style: TextStyle(
+                            fontSize: AppFontSizes.caption,
+                            fontWeight: AppFontWeights.regular,
+                            color: ColorRes.grey,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 2),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            ...List.generate(5, (starIndex) {
+                              if (starIndex < rating.floor()) {
+                                return const Icon(
+                                  Icons.star,
+                                  color: ColorRes.homeYellow,
+                                  size: 16,
+                                );
+                              } else if (starIndex < rating) {
+                                return const Icon(
+                                  Icons.star_half,
+                                  color: ColorRes.homeYellow,
+                                  size: 16,
+                                );
+                              } else {
+                                return Icon(
+                                  Icons.star_outline,
+                                  color: ColorRes.leadGreyColor.shade300,
+                                  size: 16,
+                                );
+                              }
+                            }),
+                            const SizedBox(width: 8),
+                            Text(
+                              rating.toStringAsFixed(1),
+                              style: TextStyle(
+                                fontSize: AppFontSizes.small,
+                                fontWeight: AppFontWeights.semiBold,
+                                color: ColorRes.homeBlackFade,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 12),
+
+              if (review.title != null && review.title!.isNotEmpty) ...[
+                SizedBox(
+                  width: 280,
+                  child: Text(
+                    review.title!,
+                    style: TextStyle(
+                      fontSize: AppFontSizes.bodySmall,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.homeBlackFade,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+              const SizedBox(height: 8),
+              SizedBox(
+                width: 280,
+                child: Text(
+                  '"${review.content ?? 'No review content'}"',
+                  style: TextStyle(
+                    fontSize: AppFontSizes.caption,
+                    color: ColorRes.leadGreyColor.shade700,
+                    height: 1.5,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _formatDate(String? dateString) {
+    if (dateString == null) return 'Recently';
+
+    try {
+      final date = DateTime.parse(dateString);
+      final now = DateTime.now();
+      final difference = now.difference(date);
+
+      if (difference.inDays == 0) {
+        return 'Today';
+      } else if (difference.inDays == 1) {
+        return 'Yesterday';
+      } else if (difference.inDays < 7) {
+        return '${difference.inDays} days ago';
+      } else if (difference.inDays < 30) {
+        final weeks = (difference.inDays / 7).floor();
+        return '$weeks ${weeks == 1 ? 'week' : 'weeks'} ago';
+      } else if (difference.inDays < 365) {
+        final months = (difference.inDays / 30).floor();
+        return '$months ${months == 1 ? 'month' : 'months'} ago';
+      } else {
+        final years = (difference.inDays / 365).floor();
+        return '$years ${years == 1 ? 'year' : 'years'} ago';
+      }
+    } catch (e) {
+      return 'Recently';
+    }
   }
 }
 

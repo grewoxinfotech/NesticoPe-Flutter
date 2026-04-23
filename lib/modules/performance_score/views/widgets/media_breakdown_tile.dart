@@ -103,11 +103,12 @@ class BreakdownColumnChart extends StatelessWidget {
     return Container(
       color: color,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12),
+        padding: EdgeInsets.symmetric(horizontal: 12,vertical: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// Title
+            
             Text(
               title,
               style: TextStyle(

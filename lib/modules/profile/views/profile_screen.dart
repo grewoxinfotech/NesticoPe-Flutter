@@ -570,6 +570,7 @@
 // }
 
 import 'dart:developer';
+import 'dart:math' hide log;
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -636,7 +637,7 @@ import '../../visit/screen/visit_screen.dart';
 import '../controllers/buyer_profiledata.dart';
 import 'login_as_partner_options_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   final String imageUrl;
 
   ProfileScreen({super.key, required this.imageUrl});
@@ -644,6 +645,12 @@ class ProfileScreen extends StatelessWidget {
   static const double _defaultPadding = 16.0;
   static const double _cardRadius = 16.0;
   static const double _profileRadius = 36.0;
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
   final profileController = Get.find<BuyerProfileDataController>();
 
   @override
@@ -653,12 +660,12 @@ class ProfileScreen extends StatelessWidget {
       appBar: _buildAppBar(),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(_defaultPadding),
+          padding: const EdgeInsets.all(ProfileScreen._defaultPadding),
           child:
               UserHelper.isGuest
                   ? Column(
                     children: [
-                      _buildProfileCard(BuyerProfileDataController(), imageUrl),
+                      _buildProfileCard(BuyerProfileDataController(), widget.imageUrl),
                       const SizedBox(height: 20),
 
                       // 🎯 Role-Based Action Buttons Section
@@ -682,13 +689,12 @@ class ProfileScreen extends StatelessWidget {
                       // SizedBox(height: 24),
                       // SizedBox.shrink(),
                       // SizedBox(height: 12),
-                     
                     ],
                   )
                   : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildProfileCard(profileController, imageUrl),
+                      _buildProfileCard(profileController, widget.imageUrl),
                       const SizedBox(height: 20),
 
                       // 🎯 Role-Based Action Buttons Section
@@ -891,43 +897,14 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.only(left: 16,right: 16,top: 16),
             child:
                 UserHelper.isGuest
                     ? Column(
-                      crossAxisAlignment:CrossAxisAlignment.end ,
-                       mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                         SizedBox(
-                           width: double.infinity,
-                           child: Row(
-                             mainAxisAlignment: MainAxisAlignment.center,
-                             children: [
-                               Text(
-                                 "Don't have an account?",
-                                 style: TextStyle(
-                                   color: ColorRes.leadGreyColor.shade700,
-                                   fontFamily: FontRes.poppins,
-                                 ),
-                               ),
-                               TextButton(
-                                 onPressed:
-                                     () => Get.to(
-                                       () =>
-                                           RegisterScreen(role: UserRole.buyer),
-                                     ),
-                                 child: Text(
-                                   'Sign Up here',
-                                   style: TextStyle(
-                                     color: ColorRes.primary,
-                                     fontWeight: AppFontWeights.extraBold,
-                                     fontFamily: FontRes.poppins,
-                                   ),
-                                 ),
-                               ),
-                             ],
-                           ),
-                         ),
+                     
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
@@ -945,6 +922,38 @@ class ProfileScreen extends StatelessWidget {
                               'Login',
                               style: TextStyle(letterSpacing: 0.5),
                             ),
+                          ),
+                        ),
+                           SizedBox(
+                          width: double.infinity,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Don't have an account?",
+                                style: TextStyle(
+                                  color: ColorRes.leadGreyColor.shade700,
+                                  fontFamily: FontRes.poppins,
+                                  fontSize: 12,fontWeight: FontWeight.w500
+                                ),
+                              ),
+                              TextButton(
+                                onPressed:
+                                    () => Get.to(
+                                      () =>
+                                          RegisterScreen(role: UserRole.buyer),
+                                    ),
+                                child: Text(
+                                  'Sign Up here',
+                                  style: TextStyle(
+                                    color: ColorRes.primary,
+                                    fontWeight: AppFontWeights.extraBold,
+                                    fontSize: 13,
+                                    fontFamily: FontRes.poppins,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -1850,6 +1859,7 @@ class ProfileScreen extends StatelessWidget {
             icon: Icons.engineering_outlined,
             title: "Explore Verified Services",
             subTitle: "View all verified services",
+            badgeText: "RECOMMENDED",
             onTap: () => Get.to(() => HireContractorScreen()),
           ),
           const SizedBox(height: 10),
@@ -1895,6 +1905,8 @@ class ProfileScreen extends StatelessWidget {
                     final id = items.first.id!;
                     final ticket =
                         await service.fetchTicketById(id) ?? items.first;
+
+                        print(" Ticket item that shgo ${items.map((e) => e.id,)}");
                     Get.to(
                       () =>
                           SupportTicketChatScreen(ticketId: id, ticket: ticket),
@@ -1960,7 +1972,6 @@ class ProfileScreen extends StatelessWidget {
           //   icon: Icons.support_agent_outlined,
           //   label: "Support Ticket",
 
-          
           //   subtitle: 'Talk to support',
           //   onTap: () {
 
@@ -2184,7 +2195,7 @@ class ProfileScreen extends StatelessWidget {
     String image,
   ) {
     return Container(
-      padding: const EdgeInsets.all(_defaultPadding),
+      padding: const EdgeInsets.all(ProfileScreen._defaultPadding),
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
@@ -2436,85 +2447,175 @@ class _ProfileWelcomeSection extends StatelessWidget {
   }
 }
 
-class SettingsMenuTile extends StatelessWidget {
+class SettingsMenuTile extends StatefulWidget {
+
   const SettingsMenuTile({
     super.key,
     required this.icon,
     required this.title,
     required this.subTitle,
+    this.badgeText,
     this.trailing,
     this.onTap,
   });
 
   final IconData icon;
   final String title, subTitle;
+  final String? badgeText;
   final Widget? trailing;
   final VoidCallback? onTap;
 
   @override
+  State<SettingsMenuTile> createState() => _SettingsMenuTileState();
+}
+
+class _SettingsMenuTileState extends State<SettingsMenuTile> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  double scrollOffset = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat();
+  }
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-        decoration: BoxDecoration(
-          color: ColorRes.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+      onTap: widget.onTap,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            decoration: BoxDecoration(
+              color: ColorRes.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-          ],
-        ),
-
-        child: Row(
-          children: [
-            /// ✅ Icon Container
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: ColorRes.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Icon(icon, size: 24, color: ColorRes.primary),
-            ),
-
-            const SizedBox(width: 14),
-
-            /// ✅ Title + Subtitle
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: AppFontSizes.medium,
-                      fontWeight: AppFontWeights.semiBold,
-                      color: ColorRes.black,
-                    ),
+            child: Row(
+              children: [
+                /// ✅ Icon Container
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: ColorRes.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(14),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subTitle,
-                    style: TextStyle(
-                      fontSize: AppFontSizes.caption,
-                      color: ColorRes.leadGreyColor[600],
-                      fontWeight: AppFontWeights.medium,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                  child: Icon(widget.icon, size: 24, color: ColorRes.primary),
+                ),
 
-            /// ✅ Trailing Arrow
-            trailing ??
-                Icon(Icons.chevron_right, color: ColorRes.leadGreyColor[400]),
-          ],
-        ),
+                const SizedBox(width: 14),
+
+                /// ✅ Title + Subtitle
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.title,
+                        style: TextStyle(
+                          fontSize: AppFontSizes.medium,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.black,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        widget.subTitle,
+                        style: TextStyle(
+                          fontSize: AppFontSizes.caption,
+                          color: ColorRes.leadGreyColor[600],
+                          fontWeight: AppFontWeights.medium,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                /// ✅ Trailing Arrow
+                widget.trailing ??
+                    Icon(
+                      Icons.chevron_right,
+                      color: ColorRes.leadGreyColor[400],
+                    ),
+              ],
+            ),
+          ),
+          if (widget.badgeText != null && widget.badgeText!.isNotEmpty)
+            Positioned(
+              right: 20,
+              top: -5,
+              child: _buildShinyText(widget.badgeText??''),
+            ),
+        ],
       ),
+    );
+  }
+
+ Widget _buildShinyText(String text) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (_, __) {
+        /// 🎯 Smooth pulse scale
+        final scale = 1 + (0.04 * sin(_controller.value * 2 * 3.1416));
+
+        return Transform.scale(
+          scale: scale,
+
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: ColorRes.homeYellow,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Stack(
+              children: [
+                /// ✨ Shimmer text
+                ShaderMask(
+                  blendMode: BlendMode.srcATop,
+                  shaderCallback: (bounds) {
+                    return LinearGradient(
+                      begin: Alignment(-1.5 + _controller.value * 3, 0),
+                      end: Alignment(-0.5 + _controller.value * 3, 0),
+                      colors: [
+                        Colors.transparent,
+                        Colors.white.withOpacity(0.8),
+                        Colors.white,
+                        Colors.white.withOpacity(0.8),
+                        Colors.transparent,
+                      ],
+                      stops: const [0.0, 0.4, 0.5, 0.6, 1.0],
+                    ).createShader(bounds);
+                  },
+                  child: Text(
+                    text,
+                    style: const TextStyle(
+                      color: Colors.black,
+                    fontSize: AppFontSizes.mini,
+                    fontWeight: AppFontWeights.bold,
+                    letterSpacing: 0.6,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

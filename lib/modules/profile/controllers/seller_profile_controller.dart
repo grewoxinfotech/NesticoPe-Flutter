@@ -176,7 +176,7 @@ class SellerProfileController extends GetxController {
   void _populateControllers() {
     // Contact Info fields
     nameController.text = profileData.value?.user?.firstName ?? "";
-    
+
     lastNameController.text = profileData.value?.user?.lastName ?? "";
     emailController.text = profileData.value?.user?.email ?? "";
     phoneController.text = profileData.value?.user?.phone ?? "";
@@ -247,36 +247,35 @@ class SellerProfileController extends GetxController {
   }
 
   Future<void> pickImageFromCamera() async {
-    bool isGranted= await requestCameraPermission();
-    if(isGranted)
-      {
-        try {
-          isLoadingIMage.value = true;
-          final XFile? image = await _picker.pickImage(
-            source: ImageSource.camera,
-            maxWidth: 1024,
-            maxHeight: 1024,
-            imageQuality: 85,
-          );
+    bool isGranted = await requestCameraPermission();
+    if (isGranted) {
+      try {
+        isLoadingIMage.value = true;
+        final XFile? image = await _picker.pickImage(
+          source: ImageSource.camera,
+          maxWidth: 1024,
+          maxHeight: 1024,
+          imageQuality: 85,
+        );
 
-          if (image != null) {
-            selectedImage.value = File(image.path);
-            NesticoPeSnackBar.showAwesomeSnackbar(
-              title: 'Success',
-              message: "Image captured successfully",
-              contentType: ContentType.success,
-            );
-          }
-        } catch (e) {
+        if (image != null) {
+          selectedImage.value = File(image.path);
           NesticoPeSnackBar.showAwesomeSnackbar(
-            title: 'Error',
-            message: 'Failed to capture image: ${e.toString()}',
-            contentType: ContentType.failure,
+            title: 'Success',
+            message: "Image captured successfully",
+            contentType: ContentType.success,
           );
-        } finally {
-          isLoadingIMage.value = false;
         }
+      } catch (e) {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: 'Failed to capture image: ${e.toString()}',
+          contentType: ContentType.failure,
+        );
+      } finally {
+        isLoadingIMage.value = false;
       }
+    }
   }
 
   void showImagePickerOptions(BuildContext context) {
@@ -556,9 +555,10 @@ class SellerProfileController extends GetxController {
             token: profileData.value?.token,
           );
           await SecureStorage.saveUserData(profileData.value!);
-          BuyerProfileDataController b = Get.isRegistered<BuyerProfileDataController>()
-              ? Get.find<BuyerProfileDataController>()
-              : Get.put(BuyerProfileDataController());
+          BuyerProfileDataController b =
+              Get.isRegistered<BuyerProfileDataController>()
+                  ? Get.find<BuyerProfileDataController>()
+                  : Get.put(BuyerProfileDataController());
           b.userProfile.value = profileData.value?.user;
           b.userProfile.refresh();
         }
@@ -660,9 +660,10 @@ class SellerProfileController extends GetxController {
           );
 
           await SecureStorage.saveUserData(profileData.value!);
-          BuyerProfileDataController b = Get.isRegistered<BuyerProfileDataController>()
-              ? Get.find<BuyerProfileDataController>()
-              : Get.put(BuyerProfileDataController());
+          BuyerProfileDataController b =
+              Get.isRegistered<BuyerProfileDataController>()
+                  ? Get.find<BuyerProfileDataController>()
+                  : Get.put(BuyerProfileDataController());
           b.userProfile.value = profileData.value?.user;
           b.userProfile.refresh();
 

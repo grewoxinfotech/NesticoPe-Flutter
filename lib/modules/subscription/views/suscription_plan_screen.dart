@@ -3,9 +3,12 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/enum.dart';
+import 'package:nesticope_app/app/utils/helper_function/contact_helper.dart';
 import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:nesticope_app/modules/auth/views/register_screen.dart';
 import 'package:nesticope_app/modules/auth/views/role_convert/convert_to_seller/convert_to_seller.dart';
+import 'package:nesticope_app/modules/home/controllers/contact_controller.dart';
 import 'package:nesticope_app/modules/subscription/views/widgets/sign_up_subscription_card.dart';
 import 'package:nesticope_app/utils/shimmer/common_screen/plan_screen/plan_list_screen_shimmer.dart';
 
@@ -15,17 +18,56 @@ import '../../../data/network/auth/model/user_model.dart';
 import '../../../data/database/secure_storage_service.dart';
 import '../../auth/views/role_convert/covert_to_reseller/convert_to_reseller.dart';
 import '../../contractor/view/widget/convert_to_contractor.dart';
-import '../../reseller/view/property_reseller.dart';
 import '../controller/subscription_controller.dart';
 import '../controller/user_subscription_controller.dart';
 import 'widgets/subscription_plan_widget.dart';
 import 'package:get/get.dart';
 
+class _ToggleChip extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _ToggleChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(22),
+      onTap: onTap,
+      child: Container(
+        // duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
+        decoration: BoxDecoration(
+          color: selected ? ColorRes.primary : Colors.white,
+          borderRadius: BorderRadius.circular(22),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          '${label}',
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 3,
+          style: TextStyle(
+            fontSize: AppFontSizes.bodySmall,
+            fontWeight: AppFontWeights.semiBold,
+            color: selected ? ColorRes.white : ColorRes.textPrimary,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class SubscriptionPlansScreen extends StatefulWidget {
   final String role;
   final bool isShowCurrentPlan;
   final String origin;
-   bool isInquirySubmitted;
+  final bool isInquirySubmitted;
   final bool isNotFromBuyerSide;
   final bool showArrow;
 
@@ -47,13 +89,18 @@ class SubscriptionPlansScreen extends StatefulWidget {
 class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
   // ✅ Declare once as fields — never reassign inside build/Obx
   final RxBool _unlocked = false.obs;
+  final RxString _selectedPlanName = ''.obs;
+  final GlobalKey _plansListKey = GlobalKey();
+  late bool _isInquirySubmitted;
 
   late SubscriptionPlanController controller;
   CurrentUserPlanController? currentPlanController;
 
   @override
   void initState() {
+
     super.initState();
+    _isInquirySubmitted = widget.isInquirySubmitted;
 
     controller =
         Get.isRegistered<SubscriptionPlanController>(tag: widget.role)
@@ -80,25 +127,14 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
 
       if (data == true && mounted) {
         setState(() {
-          widget.isInquirySubmitted = true;
+          _isInquirySubmitted = true;
         });
       }
     });
   }
 
-  // ✅ Pure computed getters — no side effects, no RxBool creation
-  bool get _isBuyerOrGuest => UserHelper.isBuyer || UserHelper.isGuest;
-
-  /// Gate is active when the user is buyer/guest AND hasn't unlocked AND hasn't submitted inquiry
-  bool get _showBlurGate => _isBuyerOrGuest && !_unlocked.value;
-
-  /// Show the inline compact CTA banner after unlocking (buyer/guest only)
-  bool get _showCompactCta => _isBuyerOrGuest && _unlocked.value;
-
   @override
   Widget build(BuildContext context) {
-    log("SubscriptionPlansScreen - build() ${widget.isNotFromBuyerSide}");
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -118,6 +154,13 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
           style: TextStyle(fontWeight: AppFontWeights.semiBold),
         ),
       ),
+      bottomNavigationBar:
+          widget.isNotFromBuyerSide
+              ? _BottomActionBar(
+                role: widget.role,
+                onBecomeType: UserHelper.isGuest ? onGuestTap : onBuyerTap,
+              )
+              : null,
       body: Stack(
         children: [
           // ─── Scrollable content ───────────────────────────────────────────
@@ -126,6 +169,9 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
+                  // if (!widget.isNotFromBuyerSide) ...[
+                    _buildTopHeader(),
+                  // ],
                   // Current plan section (seller/builder/reseller/contractor only)
                   if (widget.isNotFromBuyerSide) ...[
                     if (currentPlanController != null &&
@@ -196,7 +242,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                   if (!widget.isNotFromBuyerSide) ...[
                     Obx(() {
                       final unlocked = _unlocked.value;
-              if (!unlocked) {
+                      if (!unlocked) {
                         return const SizedBox.shrink();
                       }
                       return Column(
@@ -219,7 +265,13 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                     }),
                   ],
 
-                  SubscriptionPlansWidget(controller: controller),
+                  KeyedSubtree(
+                    key: _plansListKey,
+                    child: SubscriptionPlansWidget(
+                      controller: controller,
+                      selectedPlanName: _selectedPlanName,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -252,7 +304,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                 child: SignUpSubscriptionScreen(
                   title: _mapRoleToTitle(widget.role),
                   compact: false,
-                  showThankYou: widget.isInquirySubmitted,
+                  showThankYou: _isInquirySubmitted,
                   onSubmit: (name, email, phone) async {
                     final planId =
                         controller.items.isNotEmpty
@@ -278,7 +330,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                       _saveInquiryToStorage(name, email, phone);
                       if (mounted) {
                         setState(() {
-                          widget.isInquirySubmitted = true;
+                          _isInquirySubmitted = true;
                         });
                       }
                     }
@@ -323,7 +375,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                       child: SignUpSubscriptionScreen(
                         title: _mapRoleToTitle(widget.role),
                         compact: false,
-                        showThankYou: widget.isInquirySubmitted,
+                        showThankYou: _isInquirySubmitted,
                         onSubmit: (name, email, phone) async {
                           final planId =
                               controller.items.isNotEmpty
@@ -348,7 +400,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                             _saveInquiryToStorage(name, email, phone);
                             if (mounted) {
                               setState(() {
-                                widget.isInquirySubmitted = true;
+                                _isInquirySubmitted = true;
                               });
                             }
                           }
@@ -360,6 +412,115 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
               }),
             ],
           ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTopHeader() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 238, 242, 255),
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(22),
+          bottomRight: Radius.circular(22),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height: 6),
+          Text(
+            "Choose Your Plan",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: AppFontWeights.bold,
+              color: ColorRes.textPrimary,
+            ),
+          ),
+          // const SizedBox(height: 6),
+          // Text(
+          //   "Elevate your digital presence with a\nplan curated for your specific growth\nneeds.",
+          //   textAlign: TextAlign.center,
+          //   style: TextStyle(
+          //     fontSize: AppFontSizes.bodySmall,
+          //     height: 1.35,
+          //     color: ColorRes.leadGreyColor.shade700,
+          //     fontWeight: AppFontWeights.medium,
+          //   ),
+          // ),
+          const SizedBox(height: 14),
+          Obx(
+            () {
+              final names = controller.items
+                  .map((e) => e.name.trim())
+                  .where((e) => e.isNotEmpty)
+                  .toSet()
+                  .toList()
+                ..sort();
+              if (_selectedPlanName.value.isEmpty && names.isNotEmpty) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (!mounted) return;
+                  if (_selectedPlanName.value.isEmpty) {
+                    _selectedPlanName.value = names.first;
+                  }
+                });
+              }
+
+              return Row(
+                spacing: 8,
+                
+                // alignment: WrapAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: names
+                    .map(
+                      (name) => Expanded(
+                        child: _ToggleChip(
+                          label: name,
+                          selected: _selectedPlanName.value == name,
+                          onTap: () => _selectedPlanName.value = name,  
+                        ),
+                      ),
+                    )
+                    .toList(),
+              );
+            },
+          ),
+          // const SizedBox(height: 14),
+          // SizedBox(
+          //   height: 44,
+          //   width: 190,
+          //   child: ElevatedButton(
+          //     style: ElevatedButton.styleFrom(
+          //       backgroundColor: ColorRes.primary,
+          //       foregroundColor: Colors.white,
+          //       elevation: 0,
+          //       shape: RoundedRectangleBorder(
+          //         borderRadius: BorderRadius.circular(28),
+          //       ),
+          //     ),
+
+          //     onPressed: () {
+          //       final ctx = _plansListKey.currentContext;
+          //       if (ctx == null) return;
+          //       Scrollable.ensureVisible(
+          //         ctx,
+          //         duration: const Duration(milliseconds: 450),
+          //         curve: Curves.easeOutCubic,
+          //       );
+          //     },
+          //     child: const Text(
+          //       "Explore Plans",
+          //       style: TextStyle(
+          //         fontWeight: AppFontWeights.semiBold,
+          //         fontSize: AppFontSizes.body,
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
@@ -776,6 +937,132 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
             overflow: TextOverflow.ellipsis,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _BottomActionBar extends StatelessWidget {
+  final String? role;
+  final VoidCallback? onBecomeType;
+  const _BottomActionBar({required this.role, required this.onBecomeType});
+
+  String get _becomeLabel {
+    if (role == Roles.sellerOwner.name) return 'Become a Seller';
+    if (role == Roles.sellerBuilder.name) return 'Become a Builder';
+    if (role == Roles.contractor.name) return 'Become a Contractor';
+    if (role == Roles.reseller.name) return 'Become a Partner';
+    return 'Become';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cc =
+        Get.isRegistered<ContactController>()
+            ? Get.find<ContactController>()
+            : Get.put(ContactController());
+    return SafeArea(
+      top: false,
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(16),
+            topRight: Radius.circular(16),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            GestureDetector(
+              onTap: () async {
+                if (cc.primaryPhone.value.isEmpty) {
+                  await cc.loadContacts(reset: true);
+                }
+                final number = cc.primaryPhone.value;
+                if (number.isNotEmpty) {
+                  await ContactHelper.openDialer(number);
+                }
+              },
+              child: Container(
+                height: 44,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 16,
+                ),
+                decoration: BoxDecoration(
+                  color: ColorRes.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Center(
+                  child: Icon(Icons.call, color: ColorRes.primary, size: 18),
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            GestureDetector(
+              onTap: () async {
+                if (cc.primaryPhone.value.isEmpty) {
+                  await cc.loadContacts(reset: true);
+                }
+                final number = cc.primaryPhone.value;
+                if (number.isNotEmpty) {
+                  await ContactHelper.openWhatsApp(
+                    number,
+                    message: 'Hi, I want to know more $_becomeLabel',
+                  );
+                }
+              },
+              child: Container(
+                height: 44,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 16,
+                ),
+                decoration: BoxDecoration(
+                  color: ColorRes.green.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(
+                  child: Image.asset(
+                    'assets/images/whatsapp.png',
+                    width: 20,
+                    height: 20,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 25),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: onBecomeType,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ColorRes.primary,
+                  disabledBackgroundColor: ColorRes.primary,
+                  foregroundColor: ColorRes.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+                child: Text(
+                  _becomeLabel,
+                  style: const TextStyle(
+                    fontWeight: AppFontWeights.semiBold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

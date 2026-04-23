@@ -574,6 +574,7 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
         onFilterTap: () async {
           final result = await Get.to(
             () => ResellerProjectFilterScreen(
+              isProjectItemBuyerFilter: true,
               /* initialFilters: Map<String, String>.from(selectedFilters),
               onApply: (filterData) {
                 filterData.removeWhere((key, value) => ( value == 'false'),);

@@ -60,6 +60,8 @@ class _TopDeveloperProfileScreenState extends State<TopDeveloperProfileScreen> {
             : Get.put(ProjectWizardController(isBuilderView: false), tag: _tag);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      projectController.youWantWithoutCity.value = true;
+      projectController.filters?.remove('city');
       await Future.wait([
         projectController.applyFilters({'created_by': widget.createdBy}),
         profileController.loadSellerProfile(widget.userId),
@@ -199,6 +201,7 @@ class _TopDeveloperProfileScreenState extends State<TopDeveloperProfileScreen> {
                               ),
                               child: GestureDetector(
                                 onTap: () async {
+                                  
                                   Get.to(
                                     () => TopDeveloperProfileScreen(
                                       userId: featured.id ?? '',
@@ -207,6 +210,7 @@ class _TopDeveloperProfileScreenState extends State<TopDeveloperProfileScreen> {
                                           featured.id ??
                                           '',
                                     ),
+
                                     routeName: '/developer/${featured.id}',
                                   );
                                 },

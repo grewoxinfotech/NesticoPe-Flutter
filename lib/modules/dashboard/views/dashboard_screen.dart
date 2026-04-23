@@ -113,6 +113,9 @@ import 'package:nesticope_app/modules/dashboard/views/widget/favourite_screen.da
 import 'package:nesticope_app/modules/profile/controllers/buyer_profiledata.dart';
 import 'package:nesticope_app/modules/profile/views/profile_screen.dart';
 import 'package:nesticope_app/modules/property/controllers/property_controller.dart';
+import 'package:nesticope_app/modules/saved_property/controllers/property_contacted_controller.dart';
+import 'package:nesticope_app/modules/saved_property/controllers/property_favorite_controller.dart';
+import 'package:nesticope_app/modules/saved_property/controllers/property_view_controller.dart';
 import 'package:nesticope_app/modules/saved_property/views/saved_property_screen.dart';
 import 'package:nesticope_app/modules/saved_property/views/user_activity_screen.dart';
 import 'package:nesticope_app/widgets/bar/navigation_bar/navigation_Bar.dart';
@@ -149,6 +152,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   List<Widget> _screens = [];
   bool _didFetchListing = false;
   String city = '';
+  int _lastNavIndex = 0;
+
+  
   @override
   void initState() {
     super.initState();

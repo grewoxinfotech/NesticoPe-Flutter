@@ -1,14 +1,10 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
-import 'package:nesticope_app/app/constants/img_res.dart';
 import 'package:nesticope_app/app/manager/project_compare_manager.dart';
-import 'package:nesticope_app/app/widgets/snack_bar/custom_snackbar.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:nesticope_app/data/network/builder/model/builder_model.dart';
-import 'package:nesticope_app/modules/builder/controller/project_controller.dart';
 import 'package:nesticope_app/modules/builder/view/project_detail/project_detail.dart';
 import 'package:nesticope_app/utils/logger/app_logger.dart';
 import 'package:nesticope_app/utils/shimmer/seller/builder/project_screen/project_list_screen_shimmer.dart';
@@ -16,11 +12,8 @@ import 'package:shimmer/shimmer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../app/constants/size_manager.dart';
-import '../../../app/manager/property/property_pricemanager.dart';
-import '../../../app/manager/property_highlight_manager.dart';
 
 // import '../../../data/network/builder/model/builder_projectModel.dart';
-import '../../../data/database/secure_storage_service.dart';
 import '../../../utils/global.dart';
 import '../../../widgets/bar/filter_bar/filter_chip_bar.dart';
 import '../../propert_detail/view/property_details.dart';
@@ -223,8 +216,29 @@ class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
         automaticallyImplyLeading: false,
         actions: [
           // IconButton(icon: const Icon(Icons.search_rounded), onPressed: () {}),
-          IconButton(
-            icon: const Icon(Icons.filter_list_rounded),
+          // IconButton(
+          //   icon: const Icon(Icons.filter_list_rounded),
+          //   onPressed: () async {
+          //     final result = await Get.to(() => ResellerPropertyFilter());
+          //     if (result == null) return;
+
+          //     final newFilter = convertFiltersToString(result);
+
+          //     if (newFilter.containsKey('propertyType')) {
+          //       final propertyType = newFilter.remove('propertyType');
+          //       if (propertyType != null) {
+          //         newFilter['propertyTypes'] = propertyType;
+          //       }
+          //     }
+
+          //     selectedFilters
+          //       ..clear()
+          //       ..addAll(newFilter);
+
+          //     controller.applyFilters(newFilter);
+          //   },
+          // ),
+          TextButton.icon(
             onPressed: () async {
               final result = await Get.to(() => ResellerPropertyFilter());
               if (result == null) return;
@@ -244,6 +258,17 @@ class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
 
               controller.applyFilters(newFilter);
             },
+            icon: const Icon(
+              Icons.filter_list_rounded,
+              color: ColorRes.primary,
+            ),
+            label: const Text(
+              "Filter",
+              style: TextStyle(
+                color: ColorRes.primary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ],
       ),
@@ -310,13 +335,16 @@ class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
                                 () => ProjectDetailsScreen(
                                   projectItem: data,
                                   isBuilder: true,
+                                  isFromPanel: true,
                                 ),
                               );
                             },
                             child: BuilderProjectCard(
                               project: data,
+
                               developersName:
                                   data.projectContactInfo?.name ?? 'Unknown',
+                              onUpdated: controller.loadInitial,
                               imageUrl:
                                   (data.mediaGallery?.images.isNotEmpty ??
                                           false)
@@ -358,6 +386,8 @@ class BuilderProjectCard extends StatelessWidget {
   final String developersName;
   final String propertySize;
   final String price;
+  final VoidCallback? onUpdated;
+
   final double height;
   final double width;
 
@@ -373,6 +403,7 @@ class BuilderProjectCard extends StatelessWidget {
     this.width = double.infinity,
     required this.project,
     this.forHome = false,
+    this.onUpdated,
   }) : super(key: key);
 
   String _getConfigurationText() {
@@ -421,11 +452,6 @@ class BuilderProjectCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller =
-        forHome
-            ? Get.find<ProjectWizardController>()
-            : Get.find<ProjectWizardController>(tag: "builder");
-
     final PropertyFavoriteController favoriteController =
         Get.isRegistered<PropertyFavoriteController>()
             ? Get.find<PropertyFavoriteController>()
@@ -558,7 +584,7 @@ class BuilderProjectCard extends StatelessWidget {
                   ),
                 ),
                 // Favorite & Compare Buttons (Only for home view, not for builder's own projects)
-                if (forHome)
+                if (UserHelper.isGuest || UserHelper.isBuyer) ...[
                   Positioned(
                     top: 10,
                     right: 10,
@@ -575,7 +601,7 @@ class BuilderProjectCard extends StatelessWidget {
                             return CircleAvatar(
                               backgroundColor:
                                   selected ? ColorRes.primary : ColorRes.white,
-                            radius: 20,
+                              radius: 20,
                               child: Icon(
                                 Icons.compare_arrows,
                                 color:
@@ -616,6 +642,9 @@ class BuilderProjectCard extends StatelessWidget {
                       ],
                     ),
                   ),
+                ] else ...[
+                  SizedBox.shrink(),
+                ],
                 // RERA Badge
                 if (!forHome) ...[
                   if (project.reraId.isNotEmpty)
@@ -684,7 +713,7 @@ class BuilderProjectCard extends StatelessWidget {
                           );
 
                           if (result == true) {
-                            controller.loadInitial();
+                            onUpdated?.call();
                           }
                         },
                         borderRadius: BorderRadius.circular(10),
@@ -788,7 +817,7 @@ class BuilderProjectCard extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: AppFontSizes.caption,
                                 color: ColorRes.leadGreyColor.shade700,
-                                fontWeight: AppFontWeights.regular,
+                                fontWeight: AppFontWeights.medium,
                                 height: 1.2,
                               ),
                               maxLines: 1,
@@ -831,7 +860,12 @@ class BuilderProjectCard extends StatelessWidget {
                                   const SizedBox(width: 7),
                                   Expanded(
                                     child: Text(
-                                      developersName,
+                                      project
+                                              .projectContactInfo
+                                              ?.name
+                                              ?.capitalize
+                                              ?.replaceAll("_", " ") ??
+                                          '',
                                       style: TextStyle(
                                         fontSize: AppFontSizes.small,
                                         color: ColorRes.primary,

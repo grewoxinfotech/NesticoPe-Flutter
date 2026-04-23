@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/care/pagination/controller/pagination_controller.dart';
 import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
@@ -24,10 +25,7 @@ class TopContractorsController extends PaginatedController<Contractor> {
   TopContractorsController({this.withoutCity = false});
 
   Future<Contractor?> getContractorById(String id) async {
-    print("Contactor Id : ${id}");
     final data = await _service.fetchContractorById(id);
-    print("Contactor Data : ${data?.toJson()}");
-    
 
     if (data != null) {
       items.removeWhere((element) => element.id == id);
@@ -55,10 +53,9 @@ class TopContractorsController extends PaginatedController<Contractor> {
         page: page,
         filters: filters,
       );
-      print("Fetched news items: ${response.items.length}");
       return response;
     } catch (e) {
-      print("Exception in fetchItems: $e");
+      debugPrint("Exception in fetchItems: $e");
       rethrow;
     }
   }

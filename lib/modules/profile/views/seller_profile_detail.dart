@@ -235,7 +235,7 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
                                       );
                                     },
                                   ),
-                                  
+
                                   const SizedBox(height: 16),
                                   _buildActionButton(
                                     icon: Icons.support_agent_outlined,
@@ -293,46 +293,83 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
           }),
         ],
       ),
-      bottomNavigationBar:Obx(() => (!profileController.isEditing.value)? SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(
-                width: double.infinity,
-                child: NesticoPeButton(
-                  width: double.infinity,
-                  borderRadius: BorderRadius.circular(10),
-                  titleTextStyle: TextStyle(
-                    fontSize: AppFontSizes.medium,
-                    color: ColorRes.white,
-                    fontWeight: AppFontWeights.semiBold,
-
+      bottomNavigationBar: Obx(
+        () =>
+            (!profileController.isEditing.value)
+                ? SafeArea(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          ColorRes.white,
+                          ColorRes.white.withOpacity(0.5), // top: solid white
+                          ColorRes.white.withOpacity(
+                            0.0,
+                          ), // bottom: transparent
+                        ],
+                      ),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(20),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: ColorRes.black.withOpacity(0.1),
+                          spreadRadius: 2,
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                      border: Border(
+                        top: BorderSide(
+                          color: ColorRes.leadGreyColor.shade100,
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width: double.infinity,
+                            child: NesticoPeButton(
+                              width: double.infinity,
+                              borderRadius: BorderRadius.circular(10),
+                              titleTextStyle: TextStyle(
+                                fontSize: AppFontSizes.medium,
+                                color: ColorRes.white,
+                                fontWeight: AppFontWeights.semiBold,
+                              ),
+                              height: 45,
+                              onTap: () {
+                                final controller =
+                                    Get.isRegistered<AuthController>()
+                                        ? Get.find<AuthController>()
+                                        : Get.put(AuthController());
+                                controller.logout();
+                              },
+                              title: 'Logout',
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          _buildDeleteAccountButton(),
+                        ],
+                      ),
+                    ),
                   ),
-                  height: 45,
-                  onTap: () {
-                    final controller = Get.isRegistered<AuthController>()
-                        ? Get.find<AuthController>()
-                        : Get.put(AuthController());
-                    controller.logout();
-                  },
-                  title: 'Logout',
-                ),
-              ),
-              const SizedBox(height: 12),
-              _buildDeleteAccountButton(),
-            ],
-          ),
-        ),
-      ):SizedBox.shrink(),)
+                )
+                : SizedBox.shrink(),
+      ),
     );
   }
 
   Widget _buildDeleteAccountButton() {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF1F2),
+        // color: const Color(0xFFFFF1F2),
         borderRadius: BorderRadius.circular(14),
       ),
       child: const RequestDeleteAccount(),
@@ -754,7 +791,10 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
           // Username
           Obx(
             () => Text(
-              controller.profileData.value?.user?.username ?? '',
+              (controller.profileData.value?.user?.username ?? 'User Name')
+                      .capitalize
+                      ?.replaceAll('_', ' ') ??
+                  '',
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,

@@ -28,6 +28,21 @@ class _ContractorComparisonScreenState
     extends State<ContractorComparisonScreen> {
   final ContractorCompareManager _compareManager =
       Get.find<ContractorCompareManager>();
+  final PageController _contractorCardsController = PageController(
+    viewportFraction: 0.94,
+  );
+  final PageController _comparisonCardsController = PageController();
+  int _currentContractorCard = 0;
+  final PageController _contractorCardsController = PageController(
+    viewportFraction: 0.94,
+  );
+  final PageController _comparisonCardsController = PageController();
+  int _currentContractorCard = 0;
+  final PageController _contractorCardsController = PageController(
+    viewportFraction: 0.94,
+  );
+  final PageController _comparisonCardsController = PageController();
+  int _currentContractorCard = 0;
 
   final RxBool _isLoading = false.obs;
   final RxMap<String, ContractorDataResponse> _contractorData =
@@ -78,6 +93,64 @@ class _ContractorComparisonScreenState
     } finally {
       _isLoading.value = false;
     }
+  }
+
+  void _syncTopWithBottom(int index) {
+    if (!_contractorCardsController.hasClients) return;
+    final current = _contractorCardsController.page?.round() ?? 0;
+    if (current == index) return;
+    _contractorCardsController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _syncBottomWithTop(int index) {
+    if (!_comparisonCardsController.hasClients) return;
+    final current = _comparisonCardsController.page?.round() ?? 0;
+    if (current == index) return;
+    _comparisonCardsController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  @override
+  void dispose() {
+    _contractorCardsController.dispose();
+    _comparisonCardsController.dispose();
+    super.dispose();
+  }
+
+  void _syncTopWithBottom(int index) {
+    if (!_contractorCardsController.hasClients) return;
+    final current = _contractorCardsController.page?.round() ?? 0;
+    if (current == index) return;
+    _contractorCardsController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _syncBottomWithTop(int index) {
+    if (!_comparisonCardsController.hasClients) return;
+    final current = _comparisonCardsController.page?.round() ?? 0;
+    if (current == index) return;
+    _comparisonCardsController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  @override
+  void dispose() {
+    _contractorCardsController.dispose();
+    _comparisonCardsController.dispose();
+    super.dispose();
   }
 
   @override
@@ -316,6 +389,7 @@ class _ContractorCardForCompare extends StatelessWidget {
                         child: ClipOval(
                           child: url.isNotEmpty
                               ? CachedNetworkImage(
+
                                   imageUrl: url,
                                   width: 70,
                                   height: 70,
@@ -1347,6 +1421,11 @@ class _ContractorComparisonScreenState
     extends State<ContractorComparisonScreen> {
   final ContractorCompareManager _compareManager =
       Get.find<ContractorCompareManager>();
+  final PageController _contractorCardsController = PageController(
+    viewportFraction: 0.94,
+  );
+  final PageController _comparisonCardsController = PageController();
+  int _currentContractorCard = 0;
 
   final RxBool _isLoading = false.obs;
   final RxMap<String, ContractorDataResponse> _contractorData =
@@ -1395,6 +1474,35 @@ class _ContractorComparisonScreenState
     } finally {
       _isLoading.value = false;
     }
+  }
+
+  void _syncTopWithBottom(int index) {
+    if (!_contractorCardsController.hasClients) return;
+    final current = _contractorCardsController.page?.round() ?? 0;
+    if (current == index) return;
+    _contractorCardsController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _syncBottomWithTop(int index) {
+    if (!_comparisonCardsController.hasClients) return;
+    final current = _comparisonCardsController.page?.round() ?? 0;
+    if (current == index) return;
+    _comparisonCardsController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  @override
+  void dispose() {
+    _contractorCardsController.dispose();
+    _comparisonCardsController.dispose();
+    super.dispose();
   }
 
   @override
@@ -1510,25 +1618,71 @@ class _ContractorComparisonScreenState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 16),
-                ...contractors.map((c) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: _ContractorCardForCompare(
-                      contractor: c,
-                      isActive: c.data.contractor.id == _activeId,
-                      onRemove: () {
-                        final userId =
-                            _contractorData.entries
-                                .firstWhere((e) => e.value == c)
-                                .key;
-                        _contractorData.remove(userId);
-                        ContractorCompareManager.to.remove(
-                          c.data.contractor.id,
-                        );
-                      },
+                SizedBox(
+                  height: 116,
+                  child: PageView.builder(
+                    controller: _contractorCardsController,
+                    itemCount: contractors.length,
+                    onPageChanged: (index) {
+                      setState(() {
+                        _currentContractorCard = index;
+                      });
+                      _syncBottomWithTop(index);
+                    },
+                    itemBuilder: (context, index) {
+                      final c = contractors[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: _ContractorCardForCompare(
+                          contractor: c,
+                          isActive: c.data.contractor.id == _activeId,
+                          onRemove: () {
+                            final userId =
+                                _contractorData.entries
+                                    .firstWhere((e) => e.value == c)
+                                    .key;
+                            _contractorData.remove(userId);
+                            ContractorCompareManager.to.remove(
+                              c.data.contractor.id,
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                if (contractors.length > 1) ...[
+                  const SizedBox(height: 6),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(
+                      contractors.length,
+                      (index) => GestureDetector(
+                        onTap: () {
+                          _contractorCardsController.animateToPage(
+                            index,
+                            duration: const Duration(milliseconds: 250),
+                            curve: Curves.easeInOut,
+                          );
+                          _syncBottomWithTop(index);
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 220),
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          width: _currentContractorCard == index ? 18 : 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color:
+                                _currentContractorCard == index
+                                    ? ColorRes.primary
+                                    : ColorRes.leadGreyColor.shade300,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
                     ),
-                  );
-                }).toList(),
+                  ),
+                ],
 
                 const SizedBox(height: 16),
                 Padding(
@@ -1543,9 +1697,17 @@ class _ContractorComparisonScreenState
                     ),
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
                 _ContractorComparisonTable(
                   contractors: contractors,
+                  pageController: _comparisonCardsController,
+                  currentPage: _currentContractorCard,
+                  onPageChanged: (index) {
+                    _syncTopWithBottom(index);
+                    setState(() {
+                      _currentContractorCard = index;
+                    });
+                  },
                   onActiveChange: (id) {
                     setState(() {
                       _activeId = id;
@@ -1584,7 +1746,7 @@ class _ContractorCardForCompare extends StatelessWidget {
     final p = contractor.data.profile;
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: AppPadding.medium),
+      padding: EdgeInsets.symmetric(horizontal: 10),
       child: Material(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
@@ -1669,7 +1831,11 @@ class _ContractorCardForCompare extends StatelessWidget {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    c.username,
+                                    c.username.capitalize?.replaceAll(
+                                          "_",
+                                          " ",
+                                        ) ??
+                                        '',
                                     style: const TextStyle(
                                       fontSize: AppFontSizes.bodyMedium,
                                       fontWeight: AppFontWeights.semiBold,
@@ -1847,48 +2013,27 @@ class _ContractorCardForCompare extends StatelessWidget {
   }
 }
 
-class _ContractorComparisonTable extends StatefulWidget {
+class _ContractorComparisonTable extends StatelessWidget {
   final List<ContractorDataResponse> contractors;
+  final PageController pageController;
+  final int currentPage;
+  final ValueChanged<int>? onPageChanged;
   final ValueChanged<String>? onActiveChange;
 
   const _ContractorComparisonTable({
     required this.contractors,
+    required this.pageController,
+    required this.currentPage,
+    this.onPageChanged,
     this.onActiveChange,
   });
-
-  @override
-  State<_ContractorComparisonTable> createState() =>
-      _ContractorComparisonTableState();
-}
-
-class _ContractorComparisonTableState
-    extends State<_ContractorComparisonTable> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
-
-  bool _didInitialNotify = false;
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_didInitialNotify && widget.contractors.isNotEmpty) {
-        widget.onActiveChange?.call(widget.contractors[0].data.contractor.id);
-        _didInitialNotify = true;
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     // Collect all unique services
     Map<String, Map<String, dynamic>> allServices = {};
 
-    for (var contractor in widget.contractors) {
+    for (var contractor in contractors) {
       for (var category in contractor.data.servicesByCategory) {
         for (var service in category.services) {
           String key = '${category.categoryName}|${service.serviceName}';
@@ -1916,26 +2061,29 @@ class _ContractorComparisonTableState
     return Column(
       children: [
         SizedBox(
-          height: 550,
+          height: 440,
           child: PageView.builder(
-            controller: _pageController,
-            itemCount: widget.contractors.length,
+            controller: pageController,
+            itemCount: contractors.length,
             onPageChanged: (index) {
-              setState(() {
-                _currentPage = index;
-              });
-              final contractor = widget.contractors[index];
-              widget.onActiveChange?.call(contractor.data.contractor.id);
+              onPageChanged?.call(index);
+              final contractor = contractors[index];
+              onActiveChange?.call(contractor.data.contractor.id);
             },
             itemBuilder: (context, index) {
-              final contractor = widget.contractors[index];
+              final contractor = contractors[index];
               return _ContractorServicesCard(
                 contractor: contractor,
                 activeServices: contractor.data.totalActiveServices.toString(),
                 totalServices: contractor.data.totalServices.toString(),
                 contractorType: contractor.data.profile.contractorType,
                 location: contractor.data.contractor.city ?? '',
-                title: contractor.data.contractor.username,
+                title:
+                    contractor.data.contractor.username.capitalize?.replaceAll(
+                      "_",
+                      " ",
+                    ) ??
+                    '',
                 membershipSince: formatMemberSince(
                   contractor.data.contractor.memberSince.toIso8601String(),
                 ),
@@ -1945,26 +2093,27 @@ class _ContractorComparisonTableState
         ),
         const SizedBox(height: 12),
         // Page Indicator Dots
-        if (widget.contractors.length > 1)
+        if (contractors.length > 1)
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(
-              widget.contractors.length,
+              contractors.length,
               (index) => GestureDetector(
                 onTap: () {
-                  _pageController.animateToPage(
+                  pageController.animateToPage(
                     index,
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeInOut,
                   );
+                  onPageChanged?.call(index);
                 },
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 4),
-                  width: _currentPage == index ? 24 : 8,
+                  width: currentPage == index ? 24 : 8,
                   height: 8,
                   decoration: BoxDecoration(
                     color:
-                        _currentPage == index
+                        currentPage == index
                             ? ColorRes.primary
                             : ColorRes.leadGreyColor[300],
                     borderRadius: BorderRadius.circular(4),
@@ -2054,7 +2203,7 @@ class _ContractorServicesCard extends StatelessWidget {
 
           // Services List in Slider
           SizedBox(
-            height: 484,
+            height: 370,
             child: ListView(
               padding: const EdgeInsets.all(0),
               children: [

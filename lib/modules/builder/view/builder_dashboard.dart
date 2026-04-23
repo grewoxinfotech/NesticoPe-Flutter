@@ -662,15 +662,15 @@ class _BuilderDashboardState extends State<BuilderDashboard> {
   final controller = Get.find<PropertyController>();
   late final SellerOverviewController overviewController;
   late Future<void> _dashboardFuture;
-  late Future<void> _dashboardRefreshFuture;
+  // late Future<void> _dashboardRefreshFuture;
   DigitalSignatureController? signatureController;
 
   @override
   void initState() {
     super.initState();
 
-    Get.lazyPut(() => LeadController());
-    Get.lazyPut(() => SellerOverviewController());
+    // Get.lazyPut(() => LeadController());
+    // Get.lazyPut(() => SellerOverviewController());
 
     overviewController = Get.find<SellerOverviewController>();
 
@@ -680,7 +680,7 @@ class _BuilderDashboardState extends State<BuilderDashboard> {
     _dashboardFuture = overviewController.getFetchSellerApi(
       overviewController.selectedGraphYear.value,
     );
-    _dashboardRefreshFuture = overviewController.refreshSellerDashboard();
+    // _dashboardRefreshFuture = overviewController.refreshSellerDashboard();
   }
 
   Future<void> loadPropertyBySeller() async {
@@ -710,14 +710,16 @@ class _BuilderDashboardState extends State<BuilderDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    Get.lazyPut(() => LeadController());
-    Get.lazyPut(() => SellerOverviewController());
-    final overviewController = Get.find<SellerOverviewController>();
+    // Get.lazyPut(() => LeadController());
+    // Get.lazyPut(() => SellerOverviewController());
+    // final overviewController = Get.find<SellerOverviewController>();
 
     return DashboardLayout(
       onRefresh: () async {
         setState(() {
-          _dashboardRefreshFuture = overviewController.refreshSellerDashboard();
+          _dashboardFuture = overviewController.getFetchSellerApi(
+            overviewController.selectedGraphYear.value,
+          );
         });
       },
 

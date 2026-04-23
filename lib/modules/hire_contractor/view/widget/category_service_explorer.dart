@@ -428,13 +428,10 @@ class _CategoryServiceExplorerState extends State<CategoryServiceExplorer>
                                                     decoration: BoxDecoration(
                                                       color:
                                                           isSelected
-                                                              ? ColorRes.primary
+                                                              ? ColorRes.white
+                                                              : ColorRes.white
                                                                   .withOpacity(
-                                                                    0.05,
-                                                                  )
-                                                              : ColorRes.grey
-                                                                  .withOpacity(
-                                                                    0.06,
+                                                                    0.9,
                                                                   ),
                                                       border: Border.all(
                                                         color:

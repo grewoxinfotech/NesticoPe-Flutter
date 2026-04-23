@@ -264,13 +264,36 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
     SearchHistoryController(),
   );
 
+  Future<void> _syncTabData(int tabIndex) async {
+    switch (tabIndex) {
+      case 0:
+        await favoriteManager.loadData();
+        break;
+      case 1:
+        await viewController.fetchViewedProperties();
+        await favoriteManager.loadViews(viewController.viewedProperties);
+        break;
+      case 2:
+        await contactedController.fetchContactedProperties();
+        break;
+      case 3:
+        await searchHistoryController.fetchSearchHistory();
+        break;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     // Load seen properties once
-    viewController.fetchViewedProperties();
-    contactedController.fetchContactedProperties();
-    searchHistoryController.fetchSearchHistory();
+    // Defer async state changes until after first build to avoid:
+    // "setState() or markNeedsBuild() called during build."
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _syncTabData(0);
+      await _syncTabData(1);
+      await _syncTabData(2);
+      await _syncTabData(3);
+    });
   }
 
   @override
@@ -283,138 +306,132 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
           style: TextStyle(fontWeight: AppFontWeights.semiBold),
         ),
       ),
-      body:
-          (UserHelper.isGuest)
-              ? SizedBox.shrink()
-              : Column(
-                children: [
-                  /// Header Tabs
-                  Card(
-                    elevation: 5,
-                    child: Container(
-                      padding: const EdgeInsets.only(
-                        top: 0,
-                        left: 10,
-                        right: 10,
-                        bottom: 16,
-                      ),
-                      decoration: const BoxDecoration(
-                        color: ColorRes.white,
-                        borderRadius: BorderRadius.vertical(
-                          bottom: Radius.circular(20),
-                        ),
-                      ),
-                      child: Obx(() {
-                        // Reactive counts from GetX observables
-                        final savedCount = favoriteManager.favorites.length;
-                        final seenCount =
-                            viewController.viewedProperties.length;
-                        final contactedCount =
-                            contactedController.contactedPropertyIds.length;
-                        final recentCount =
-                            searchHistoryController
-                                .searchHistoryResponse
-                                .value
-                                ?.data
-                                .item
-                                .length; // TODO: link with recent searches
+      body: Column(
+        children: [
+          /// Header Tabs
+          Card(
+            elevation: 5,
+            child: Container(
+              padding: const EdgeInsets.only(
+                top: 0,
+                left: 10,
+                right: 10,
+                bottom: 16,
+              ),
+              decoration: const BoxDecoration(
+                color: ColorRes.white,
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(20),
+                ),
+              ),
+              child: Obx(() {
+                // Reactive counts from GetX observables
+                final savedCount = favoriteManager.favorites.length;
+                final seenCount = viewController.viewedProperties.length;
+                final contactedCount =
+                    contactedController.contactedPropertyIds.length;
+                final recentCount =
+                    searchHistoryController
+                        .searchHistoryResponse
+                        .value
+                        ?.data
+                        .item
+                        .length; // TODO: link with recent searches
 
-                        final List<int> tabsCount = [
-                          savedCount,
-                          seenCount,
-                          contactedCount,
-                          recentCount ?? 0,
-                        ];
+                final List<int> tabsCount = [
+                  savedCount,
+                  seenCount,
+                  contactedCount,
+                  recentCount ?? 0,
+                ];
 
-                        return Row(
-                          children: List.generate(tabs.length, (index) {
-                            final bool isSelected = selectedIndex == index;
-                            return Expanded(
-                              child: GestureDetector(
-                                onTap:
-                                    () => setState(() => selectedIndex = index),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 10,
-                                  ),
-                                  margin: const EdgeInsets.symmetric(
-                                    horizontal: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                      AppRadius.mediumLarge,
-                                    ),
-                                    color:
-                                        isSelected
-                                            ? ColorRes.primary.withOpacity(0.15)
-                                            : ColorRes.white,
-                                    border: Border.all(
-                                      color:
-                                          isSelected
-                                              ? ColorRes.primary
-                                              : ColorRes.leadGreyColor[300]!,
-                                      width: 1.5,
-                                    ),
-                                  ),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        tabsIcon[index],
-                                        size: 20,
-                                        color:
-                                            isSelected
-                                                ? ColorRes.primary
-                                                : ColorRes.blackShade54,
-                                      ),
-                                      Text(
-                                        tabs[index],
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: AppFontSizes.small,
-                                          color:
-                                              isSelected
-                                                  ? ColorRes.primary
-                                                  : ColorRes.blackShade87,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        "(${tabsCount[index]})",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: AppFontSizes.small,
-                                          color:
-                                              isSelected
-                                                  ? ColorRes.primary
-                                                  : ColorRes.blackShade87,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                return Row(
+                  children: List.generate(tabs.length, (index) {
+                    final bool isSelected = selectedIndex == index;
+                    return Expanded(
+                      child: GestureDetector(
+                        onTap: () async {
+                          setState(() => selectedIndex = index);
+                          await _syncTabData(index);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(
+                              AppRadius.mediumLarge,
+                            ),
+                            color:
+                                isSelected
+                                    ? ColorRes.primary.withOpacity(0.15)
+                                    : ColorRes.white,
+                            border: Border.all(
+                              color:
+                                  isSelected
+                                      ? ColorRes.primary
+                                      : ColorRes.leadGreyColor[300]!,
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                tabsIcon[index],
+                                size: 20,
+                                color:
+                                    isSelected
+                                        ? ColorRes.primary
+                                        : ColorRes.blackShade54,
+                              ),
+                              Text(
+                                tabs[index],
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.small,
+                                  color:
+                                      isSelected
+                                          ? ColorRes.primary
+                                          : ColorRes.blackShade87,
                                 ),
                               ),
-                            );
-                          }),
-                        );
-                      }),
-                    ),
-                  ),
+                              const SizedBox(height: 4),
+                              Text(
+                                "(${tabsCount[index]})",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.small,
+                                  color:
+                                      isSelected
+                                          ? ColorRes.primary
+                                          : ColorRes.blackShade87,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                );
+              }),
+            ),
+          ),
 
-                  /// Tab Content
-                  Expanded(
-                    child: IndexedStack(
-                      index: selectedIndex,
-                      children: const [
-                        SavedPropertiesTab(),
-                        SeenPropertiesTab(),
-                        ContactedPropertiesTab(),
-                        RecentSearchesTab(),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+          /// Tab Content
+          Expanded(
+            child: IndexedStack(
+              index: selectedIndex,
+              children: const [
+                SavedPropertiesTab(),
+                SeenPropertiesTab(),
+                ContactedPropertiesTab(),
+                RecentSearchesTab(),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -427,7 +444,7 @@ class SeenPropertiesTab extends StatefulWidget {
 }
 
 class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
-  final PropertyViewController controller = Get.put(PropertyViewController());
+  final PropertyViewController controller = Get.find<PropertyViewController>();
   final propertyController = Get.find<PropertyController>();
   final manager = Get.find<PropertyFavoriteController>();
 
@@ -441,6 +458,16 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
     // ever(manager.favorites, (_) => loadFavorite());
   }
 
+  Future<void> _refreshAfterDetail(String propertyId) async {
+    if (propertyId.isEmpty) return;
+    final favoriteController = Get.find<PropertyFavoriteController>();
+    await favoriteController.getAllInQuireData(propertyId);
+    await favoriteController.getHasInQuireData(propertyId);
+    if (Get.isRegistered<PropertyContactedController>()) {
+      await Get.find<PropertyContactedController>().fetchContactedProperties();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -450,13 +477,15 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
           return BuyerMyActivityListScreenShimmer();
         }
 
-        if (controller.viewedProperties.isEmpty) {
-          return const Center(
-            child: Text(
-              "No viewed properties yet",
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-          );
+        if (!UserHelper.isGuest) {
+          if (controller.viewedProperties.isEmpty) {
+            return const Center(
+              child: Text(
+                "No viewed properties yet",
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+            );
+          }
         }
 
         return NotificationListener<ScrollNotification>(
@@ -482,7 +511,7 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
               itemBuilder: (context, index) {
                 if (index < controller.viewedProperties.length) {
                   final property = controller.viewedProperties[index];
-                  log("Most View ${property.toJson()}");
+                  log("Most View ${property.details?.toJson()}");
                   return Obx(() {
                     final PropertyFavoriteController favoriteController =
                         Get.find<PropertyFavoriteController>();
@@ -581,10 +610,22 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
 
                     final pid = property.details?.id ?? '';
                     if (pid.isNotEmpty) {
+                      final hasInquiryKey = favoriteController
+                          .hasSubmittedInquiryMap
+                          .containsKey(pid);
+                      if (!hasInquiryKey) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          favoriteController.getHasInQuireData(pid);
+                        });
+                      }
                       final hasKey = favoriteController.hasNegotiableOfferMap
                           .containsKey(pid);
                       if (!hasKey) {
-                        favoriteController.loadNegotiableMetaForProperty(pid);
+                        // Defer side-effects; calling this during build can
+                        // trigger "markNeedsBuild called during build".
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          favoriteController.loadNegotiableMetaForProperty(pid);
+                        });
                       }
                     }
                     return HorizontalPropertyCard(
@@ -614,20 +655,18 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
 
                       // Actions
                       isFavorite: isFavorite,
-                      onTap: () {
+                      onTap: () async {
+                        final propertyId = property.details?.id ?? '';
                         if (property.entityType == "property") {
-                          Get.to(
-                            () => PropertyDetailScreen(
-                              propertyId: property.details?.id,
-                            ),
+                          await Get.to(
+                            () => PropertyDetailScreen(propertyId: propertyId),
                           );
                         } else {
-                          Get.to(
-                            () => ProjectDetailsScreen(
-                              projectId: property.details?.id,
-                            ),
+                          await Get.to(
+                            () => ProjectDetailsScreen(projectId: propertyId),
                           );
                         }
+                        await _refreshAfterDetail(propertyId);
                       },
                       onFavoritePressed: () {
                         favoriteController.toggleFavorite(
@@ -635,17 +674,19 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
                         );
                       },
                       onContactPressed: () async {
-                        generateInquiry(
-                          property.details?.id ?? '',
+                        final propertyId = property.details?.id ?? '';
+                        final isSubmitted = await generateInquiry(
+                          propertyId,
                           favoriteController,
                         );
-                        await favoriteController.getAllInQuireData(
-                          property.details?.id ?? '',
-                        );
-
-                        await favoriteController.getHasInQuireData(
-                          property.details?.id ?? '',
-                        );
+                        if (isSubmitted && propertyId.isNotEmpty) {
+                          favoriteController
+                                  .hasSubmittedInquiryMap[propertyId] =
+                              true;
+                          favoriteController.hasSubmittedInquiryMap.refresh();
+                        }
+                        await favoriteController.getAllInQuireData(propertyId);
+                        await favoriteController.getHasInQuireData(propertyId);
                       },
                     );
                   });
@@ -692,6 +733,15 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
     // ever(manager.favorites, (_) => loadFavorite());
   }
 
+  Future<void> _refreshAfterDetail(String propertyId) async {
+    await manager.loadData();
+    await contactedController.fetchContactedProperties();
+    if (propertyId.isNotEmpty) {
+      await manager.getAllInQuireData(propertyId);
+      await manager.getHasInQuireData(propertyId);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -701,8 +751,10 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
           return BuyerMyActivityListScreenShimmer();
         }
 
-        if (!manager.isLoading.value && manager.favorites.isEmpty) {
-          return const Center(child: Text("No Property found."));
+        if (!UserHelper.isGuest) {
+          if (!manager.isLoading.value && manager.favorites.isEmpty) {
+            return const Center(child: Text("No Property found."));
+          }
         }
 
         return RefreshIndicator(
@@ -733,20 +785,20 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
                   manager.favoriteResponse.value!.data!.favorite[index];
 
               return GestureDetector(
-                onTap: () {
+                onTap: () async {
+                  final propertyId = property.details.id;
                   if (property.entityType == "property") {
                     // Property Screen
-                    Get.to(
-                      () =>
-                          PropertyDetailScreen(propertyId: property.details.id),
+                    await Get.to(
+                      () => PropertyDetailScreen(propertyId: propertyId),
                     );
                   } else {
                     // Project Screen
-                    Get.to(
-                      () =>
-                          ProjectDetailsScreen(projectId: property.details.id),
+                    await Get.to(
+                      () => ProjectDetailsScreen(projectId: propertyId),
                     );
                   }
+                  await _refreshAfterDetail(propertyId);
                 },
                 child: Obx(() {
                   final PropertyFavoriteController favoriteController =
@@ -821,6 +873,15 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
                       displayLocation = property.details.city!;
                     }
                   }
+                  final pid = property.details.id;
+                  if (pid.isNotEmpty &&
+                      !favoriteController.hasSubmittedInquiryMap.containsKey(
+                        pid,
+                      )) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      favoriteController.getHasInQuireData(pid);
+                    });
+                  }
                   return HorizontalPropertyCard(
                     // Image
                     imageUrl: property.details.images ?? '',
@@ -847,33 +908,35 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
 
                     // Actions
                     isFavorite: isFavorite,
-                    onTap: () {
+                    onTap: () async {
+                      final propertyId = property.details.id;
                       if (property.entityType == "property") {
-                        Get.to(
-                          () => PropertyDetailScreen(
-                            propertyId: property.details.id,
-                          ),
+                        await Get.to(
+                          () => PropertyDetailScreen(propertyId: propertyId),
                         );
                       } else {
-                        Get.to(
-                          () => ProjectDetailsScreen(
-                            projectId: property.details.id,
-                          ),
+                        await Get.to(
+                          () => ProjectDetailsScreen(projectId: propertyId),
                         );
                       }
+                      await _refreshAfterDetail(propertyId);
                     },
                     onFavoritePressed: () {
                       favoriteController.toggleFavorite(property.details.id);
                     },
                     onContactPressed: () async {
-                      generateInquiry(property.details.id, favoriteController);
-                      await favoriteController.getAllInQuireData(
-                        property.details?.id ?? '',
+                      final propertyId = property.details.id;
+                      final isSubmitted = await generateInquiry(
+                        propertyId,
+                        favoriteController,
                       );
-
-                      await favoriteController.getHasInQuireData(
-                        property.details?.id ?? '',
-                      );
+                      if (isSubmitted && propertyId.isNotEmpty) {
+                        favoriteController.hasSubmittedInquiryMap[propertyId] =
+                            true;
+                        favoriteController.hasSubmittedInquiryMap.refresh();
+                      }
+                      await favoriteController.getAllInQuireData(propertyId);
+                      await favoriteController.getHasInQuireData(propertyId);
                     },
                   );
                 }),
@@ -901,6 +964,15 @@ class _ContactedPropertiesTabState extends State<ContactedPropertiesTab> {
       Get.isRegistered<PropertyContactedController>()
           ? Get.find<PropertyContactedController>()
           : Get.put(PropertyContactedController());
+
+  Future<void> _refreshAfterDetail(String propertyId) async {
+    await controller.fetchContactedProperties();
+    if (propertyId.isNotEmpty) {
+      final favoriteController = Get.find<PropertyFavoriteController>();
+      await favoriteController.getAllInQuireData(propertyId);
+      await favoriteController.getHasInQuireData(propertyId);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -972,13 +1044,15 @@ class _ContactedPropertiesTabState extends State<ContactedPropertiesTab> {
           return BuyerMyActivityListScreenShimmer();
         }
 
-        if (!controller.isLoading.value && controller.inquiries.isEmpty) {
-          return const Center(
-            child: Text(
-              "No viewed properties yet",
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-          );
+        if (!UserHelper.isGuest) {
+          if (!controller.isLoading.value && controller.inquiries.isEmpty) {
+            return const Center(
+              child: Text(
+                "No viewed properties yet",
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+            );
+          }
         }
 
         return NotificationListener<ScrollNotification>(
@@ -1022,7 +1096,11 @@ class _ContactedPropertiesTabState extends State<ContactedPropertiesTab> {
                         !favoriteController.hasNegotiableOfferMap.containsKey(
                           pid,
                         )) {
-                      favoriteController.loadNegotiableMetaForProperty(pid);
+                      // Defer side-effects; calling this during build can
+                      // trigger "markNeedsBuild called during build".
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        favoriteController.loadNegotiableMetaForProperty(pid);
+                      });
                     }
 
                     final isFavorite = favoriteController.favorites.contains(
@@ -1167,20 +1245,18 @@ class _ContactedPropertiesTabState extends State<ContactedPropertiesTab> {
 
                       // Actions
                       isFavorite: isFavorite,
-                      onTap: () {
+                      onTap: () async {
+                        final propertyId = property.details?.id ?? '';
                         if (property.entityType == "property") {
-                          Get.to(
-                            () => PropertyDetailScreen(
-                              propertyId: property.details?.id,
-                            ),
+                          await Get.to(
+                            () => PropertyDetailScreen(propertyId: propertyId),
                           );
                         } else {
-                          Get.to(
-                            () => ProjectDetailsScreen(
-                              projectId: property.details?.id,
-                            ),
+                          await Get.to(
+                            () => ProjectDetailsScreen(projectId: propertyId),
                           );
                         }
+                        await _refreshAfterDetail(propertyId);
                       },
                       onFavoritePressed: () {
                         favoriteController.toggleFavorite(
@@ -1228,7 +1304,10 @@ class _RecentSearchesTabState extends State<RecentSearchesTab> {
   @override
   initState() {
     super.initState();
-    controller.fetchSearchHistory();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.fetchSearchHistory();
+    });
   }
 
   @override
@@ -1242,14 +1321,16 @@ class _RecentSearchesTabState extends State<RecentSearchesTab> {
           return BuyerMyActivityListScreenShimmer();
         }
 
-        if (controller.searchHistoryResponse.value?.data.item.isEmpty ??
-            false) {
-          return const Center(
-            child: Text(
-              "No viewed properties yet",
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-          );
+        if (!UserHelper.isGuest) {
+          if (controller.searchHistoryResponse.value?.data.item.isEmpty ??
+              false) {
+            return const Center(
+              child: Text(
+                "No viewed properties yet",
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+            );
+          }
         }
 
         final items = controller.searchHistoryResponse.value?.data.item ?? [];
@@ -1495,12 +1576,13 @@ class _RecentSearchesTabState extends State<RecentSearchesTab> {
   }
 }
 
-Future<void> generateInquiry(
+Future<bool> generateInquiry(
   String propertyId,
   PropertyFavoriteController controller,
 ) async {
   if (UserHelper.isGuest) {
     Get.to(() => OtpLoginScreen());
+    return false;
   } else {
     final user = await SecureStorage.getUserData();
     final inquiry = {
@@ -1512,6 +1594,6 @@ Future<void> generateInquiry(
         Get.isRegistered<PropertyContactedController>()
             ? Get.find<PropertyContactedController>()
             : Get.put(PropertyContactedController());
-    contactedCtrl.addInquiry(inquiry, propertyId);
+    return await contactedCtrl.addInquiry(inquiry, propertyId);
   }
 }

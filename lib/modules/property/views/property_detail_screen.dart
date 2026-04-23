@@ -3306,6 +3306,8 @@ import 'package:nesticope_app/modules/review/views/widget/add_property_review.da
 import 'package:nesticope_app/modules/review/views/widget/property_review_card.dart';
 import 'package:nesticope_app/app/manager/compare_manager.dart';
 import 'package:nesticope_app/modules/saved_property/controllers/property_favorite_controller.dart';
+import 'package:nesticope_app/modules/saved_property/controllers/property_contacted_controller.dart';
+import 'package:nesticope_app/modules/saved_property/controllers/property_view_controller.dart';
 import 'package:nesticope_app/widgets/bar/bottom_bar/customer_bottom_bar.dart';
 import 'package:nesticope_app/widgets/bar/navigation_bar/navigation_Bar.dart';
 
@@ -3361,6 +3363,11 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
   final RxBool _isLoading = true.obs;
 
+
+
+
+
+
   @override
   void initState() {
     super.initState();
@@ -3391,6 +3398,25 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
     });
   }
 
+  Future<void> _refreshUserActivityData() async {
+    final PropertyFavoriteController favoriteController =
+        Get.find<PropertyFavoriteController>();
+
+    await favoriteController.loadData();
+
+    if (Get.isRegistered<PropertyViewController>()) {
+      final PropertyViewController viewController =
+          Get.find<PropertyViewController>();
+      await viewController.fetchViewedProperties();
+      await favoriteController.loadViews(viewController.viewedProperties);
+    }
+
+    if (Get.isRegistered<PropertyContactedController>()) {
+      final PropertyContactedController contactedController =
+          Get.find<PropertyContactedController>();
+      await contactedController.fetchContactedProperties();
+    }
+  }
   Future<void> _loadData() async {
     try {
       if (!mounted) return;
@@ -3573,6 +3599,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
       ),
     );
   }
+  
 
   @override
   void dispose() {
@@ -4726,15 +4753,24 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                               overflow: TextOverflow.ellipsis,
                             ),
                             SizedBox(height: 15),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                              ),
-                              child: OfferCountdown(
-                                propertyId: currentProperty.id ?? '',
-                              ),
+                            Obx(() {
+                              if (controller.hasSubmittedInquiry.value) {
+                                return const SizedBox.shrink();
+                              }
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                child: OfferCountdown(
+                                  propertyId: currentProperty.id ?? '',
+                                ),
+                              );
+                            }),
+                            Obx(
+                              () => controller.hasSubmittedInquiry.value
+                                  ? const SizedBox.shrink()
+                                  : const SizedBox(height: 8),
                             ),
-                            SizedBox(height: 8),
 
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 12),
@@ -4865,6 +4901,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                                   .getHasInQuireData(
                                                     widget.propertyId ?? '',
                                                   );
+                                              await _refreshUserActivityData();
                                             } else {
                                               NesticoPeSnackBar.showAwesomeSnackbar(
                                                 title: 'Error',
@@ -4893,7 +4930,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 15),
+                            const SizedBox(height: 10),
                           ],
                         ),
                       ),
@@ -5106,6 +5143,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                     await controller.getHasInQuireData(
                                       widget.propertyId ?? '',
                                     );
+                                    await _refreshUserActivityData();
                                     Get.back();
                                   } else {
                                     NesticoPeSnackBar.showAwesomeSnackbar(

@@ -15,7 +15,7 @@ class ScoreComponentTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: color,
-      padding: EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 12,vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

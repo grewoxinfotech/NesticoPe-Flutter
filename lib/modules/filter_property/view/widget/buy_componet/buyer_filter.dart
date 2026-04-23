@@ -58,6 +58,11 @@ class _BuyFiltersState extends State<BuyFilters> {
 
                 print("mxa ${widget.controllerForFilter.max.value}");
               }
+
+
+
+
+              
             },
             minLabel: "Min Budget",
             maxLabel: "Max Budget",

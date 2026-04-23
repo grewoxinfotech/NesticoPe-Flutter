@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/api_constants.dart';
 import 'package:nesticope_app/app/utils/helper_function/contact_helper.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
 
 import '../../app/constants/color_res.dart';
 import '../../app/manager/compare_manager.dart';
@@ -51,7 +52,7 @@ class EntityActionButtons extends StatelessWidget {
             isSelected = compareController!.isSelected(id);
           }
 
-          return CircularIcon(
+          return (UserHelper.isGuest || UserHelper.isBuyer)? CircularIcon(
             icon: Icons.compare_arrows_rounded,
             backgroundColor: isSelected ? ColorRes.primary : ColorRes.white,
             iconColor: isSelected ? ColorRes.white : ColorRes.primary,
@@ -119,7 +120,7 @@ class EntityActionButtons extends StatelessWidget {
                 );
               }
             },
-          );
+          ):SizedBox.shrink();
         }),
 
         const SizedBox(width: 12),
@@ -128,12 +129,12 @@ class EntityActionButtons extends StatelessWidget {
         Obx(() {
           final isFav = favoriteController.favorites.contains(id);
 
-          return CircularIcon(
+          return (UserHelper.isGuest || UserHelper.isBuyer)? CircularIcon(
             icon: isFav ? Icons.favorite : Icons.favorite_border_rounded,
             backgroundColor: ColorRes.white,
             iconColor: isFav ? ColorRes.redAccentColor : ColorRes.primary,
             onPressed: () => favoriteController.toggleFavorite(id),
-          );
+          ):SizedBox.shrink();
         }),
 
         const SizedBox(width: 12),

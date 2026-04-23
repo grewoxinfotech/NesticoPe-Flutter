@@ -58,8 +58,6 @@ class _PropertyCardState extends State<PropertyCard> {
 
   @override
   Widget build(BuildContext context) {
-    print("property of data card in buyer side: ${widget.property.propertyMedia?.images?.first ?? ""}");
-    
     final priceManager = PropertyPriceManager(
       listingType: widget.property.listingType ?? "",
       financialInfo:

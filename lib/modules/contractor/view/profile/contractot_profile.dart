@@ -1769,185 +1769,184 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                                         ),
                               ),
                               const SizedBox(height: 20),
-                              if (!profileController.isEditing.value)...[
-                              _buildSectionTitle('Performance Overview'),
-                              const SizedBox(height: 10),
-                              _buildPerformanceCard(profileController),
-                              const SizedBox(height: 20),
-                              _buildSectionTitle('Account Information'),
-                              const SizedBox(height: 10),
-                              _buildAccountInfoCard(profileController),
-                              const SizedBox(height: 20),
-                              _buildActionTile(
-                                icon: Icons.local_offer_outlined,
-                                iconColor: const Color(0xFF6366F1),
-                                iconBg: const Color(0xFFEEF2FF),
-                                label: 'Offers & Discounts',
-                                subtitle:
-                                    'View and manage your active promos',
-                                onTap:
-                                    () => Get.to(
-                                      () => const OffersDiscountsScreen(
-                                        userType: 'contractor',
+                              if (!profileController.isEditing.value) ...[
+                                _buildSectionTitle('Performance Overview'),
+                                const SizedBox(height: 10),
+                                _buildPerformanceCard(profileController),
+                                const SizedBox(height: 20),
+                                _buildSectionTitle('Account Information'),
+                                const SizedBox(height: 10),
+                                _buildAccountInfoCard(profileController),
+                                const SizedBox(height: 20),
+                                _buildActionTile(
+                                  icon: Icons.local_offer_outlined,
+                                  iconColor: const Color(0xFF6366F1),
+                                  iconBg: const Color(0xFFEEF2FF),
+                                  label: 'Offers & Discounts',
+                                  subtitle:
+                                      'View and manage your active promos',
+                                  onTap:
+                                      () => Get.to(
+                                        () => const OffersDiscountsScreen(
+                                          userType: 'contractor',
+                                        ),
                                       ),
-                                    ),
-                              ),
-                              const SizedBox(height: 10),
-                              _buildActionTile(
-                                icon: Icons.credit_card_outlined,
-                                iconColor: const Color(0xFF0EA5E9),
-                                iconBg: const Color(0xFFE0F2FE),
-                                label: 'Plan & Subscription',
-                                subtitle: 'Membership details and billing',
-                                onTap:
-                                    () =>
-                                        Get.to(() => ContractorPlanScreen()),
-                              ),
-                              const SizedBox(height: 10),
-                              _buildActionTile(
-                                icon: Icons.my_library_books_outlined,
-                                iconColor: const Color(0xFF10B981),
-                                iconBg: const Color(0xFFD1FAE5),
-                                label: 'Service Categories',
-                                subtitle:
-                                    'View and manage your service categories',
-                                onTap: () => Get.to(() => MyServiceScreen()),
-                              ),
-                              const SizedBox(height: 10),
-                              _buildActionTile(
-                                icon: Icons.notifications_outlined,
-                                iconColor: const Color(0xFF6366F1),
-                                iconBg: const Color(0xFFEEF2FF),
-                                label: "Notifications",
-                                subtitle: "Notifications and messages",
-                                onTap:
-                                    () => Get.to(() => InAppMessageScreen()),
-                              ),
-                              const SizedBox(height: 10),
-                              _buildActionTile(
-                                icon: Icons.workspace_premium,
-                                iconColor: const Color(0xFF6366F1),
-                                iconBg: const Color(0xFFEEF2FF),
-                                label: "My Subscription",
-                                subtitle: "Track your Subscription",
-                                onTap:
-                                    () =>
-                                        Get.to(() => MySubscriptionScreen()),
-                              ),
-          
-                              const SizedBox(height: 10),
-                              _buildActionTile(
-                                icon: Icons.support_agent_outlined,
-                                label: "Support Ticket",
-                                iconColor: const Color(0xFFEC4899),
-                                iconBg: const Color(0xFFFCE7F3),
-                                subtitle: 'Talk to support',
-                                onTap: () {
-                                  Get.put(SocketController());
-                                  Get.to(() => SupportTicketScreen());
-                                },
-                              ),
-                              const SizedBox(height: 10),
-                              _buildActionTile(
-                                icon: Icons.event_available,
-                                iconColor: const Color(0xFF6366F1),
-                                iconBg: const Color(0xFFEEF2FF),
-                                label: "Events",
-                                subtitle: "Upcoming events",
-                                onTap: () => Get.to(() => CalendarScreen()),
-                              ),
-          
-                              // const SizedBox(height: 16),
-                              const SizedBox(height: 10),
-                              _buildActionTile(
-                                icon: Icons.card_giftcard,
-                                iconColor: const Color(0xFF6366F1),
-                                iconBg: const Color(0xFFEEF2FF),
-                                label: "Referral",
-                                subtitle: "Refer And Earn",
-                                onTap:
-                                    () =>
-                                        Get.to(() => ReferralProgramScreen()),
-                              ),
-                              const SizedBox(height: 10),
-                              Obx(() {
-                                final controller = Get.put(
-                                  ReviewController(),
-                                );
-                                final review = controller.appReview.value;
-          
-                                if (review == null) {
-                                  return _buildActionTile(
-                                    icon: Icons.reviews_outlined,
-                                    label: "Reviews and Ratings",
-                                    iconColor: const Color(0xFFEC4899),
-                                    iconBg: const Color(0xFFFCE7F3),
-                                    subtitle: "Add your review",
-                                    onTap: () {
-                                      Get.dialog(AddAppReviewDialog()).then((
-                                        _,
-                                      ) {
-                                        controller.getAppReview();
-                                      });
-                                    },
+                                ),
+                                const SizedBox(height: 10),
+                                _buildActionTile(
+                                  icon: Icons.credit_card_outlined,
+                                  iconColor: const Color(0xFF0EA5E9),
+                                  iconBg: const Color(0xFFE0F2FE),
+                                  label: 'Plan & Subscription',
+                                  subtitle: 'Membership details and billing',
+                                  onTap:
+                                      () =>
+                                          Get.to(() => ContractorPlanScreen()),
+                                ),
+                                const SizedBox(height: 10),
+                                _buildActionTile(
+                                  icon: Icons.my_library_books_outlined,
+                                  iconColor: const Color(0xFF10B981),
+                                  iconBg: const Color(0xFFD1FAE5),
+                                  label: 'Service Categories',
+                                  subtitle:
+                                      'View and manage your service categories',
+                                  onTap: () => Get.to(() => MyServiceScreen()),
+                                ),
+                                const SizedBox(height: 10),
+                                _buildActionTile(
+                                  icon: Icons.notifications_outlined,
+                                  iconColor: const Color(0xFF6366F1),
+                                  iconBg: const Color(0xFFEEF2FF),
+                                  label: "Notifications",
+                                  subtitle: "Notifications and messages",
+                                  onTap:
+                                      () => Get.to(() => InAppMessageScreen()),
+                                ),
+                                const SizedBox(height: 10),
+                                _buildActionTile(
+                                  icon: Icons.workspace_premium,
+                                  iconColor: const Color(0xFF6366F1),
+                                  iconBg: const Color(0xFFEEF2FF),
+                                  label: "My Subscription",
+                                  subtitle: "Track your Subscription",
+                                  onTap:
+                                      () =>
+                                          Get.to(() => MySubscriptionScreen()),
+                                ),
+
+                                const SizedBox(height: 10),
+                                _buildActionTile(
+                                  icon: Icons.support_agent_outlined,
+                                  label: "Support Ticket",
+                                  iconColor: const Color(0xFFEC4899),
+                                  iconBg: const Color(0xFFFCE7F3),
+                                  subtitle: 'Talk to support',
+                                  onTap: () {
+                                    Get.put(SocketController());
+                                    Get.to(() => SupportTicketScreen());
+                                  },
+                                ),
+                                const SizedBox(height: 10),
+                                _buildActionTile(
+                                  icon: Icons.event_available,
+                                  iconColor: const Color(0xFF6366F1),
+                                  iconBg: const Color(0xFFEEF2FF),
+                                  label: "Events",
+                                  subtitle: "Upcoming events",
+                                  onTap: () => Get.to(() => CalendarScreen()),
+                                ),
+
+                                // const SizedBox(height: 16),
+                                const SizedBox(height: 10),
+                                _buildActionTile(
+                                  icon: Icons.card_giftcard,
+                                  iconColor: const Color(0xFF6366F1),
+                                  iconBg: const Color(0xFFEEF2FF),
+                                  label: "Referral",
+                                  subtitle: "Refer And Earn",
+                                  onTap:
+                                      () =>
+                                          Get.to(() => ReferralProgramScreen()),
+                                ),
+                                const SizedBox(height: 10),
+                                Obx(() {
+                                  final controller = Get.put(
+                                    ReviewController(),
                                   );
-                                } else {
-                                  return _buildReviewSection(review);
-                                }
-                              }),
-          
-                              const SizedBox(height: 10),
-                              _buildActionTile(
-                                icon: Icons.miscellaneous_services_outlined,
-                                iconColor: const Color(0xFFF59E0B),
-                                iconBg: const Color(0xFFFEF3C7),
-                                label: 'My Service',
-                                subtitle: 'View and manage your services',
-                                onTap:
-                                    () => Get.to(() => ContractorService()),
-                              ),
-                              const SizedBox(height: 10),
-                              _buildActionTile(
-                                icon: Icons.person_outline,
-                                iconColor: const Color(0xFF8B5CF6),
-                                iconBg: const Color(0xFFEDE9FE),
-                                label: 'Employees',
-                                subtitle: 'View and manage your employees',
-                                onTap:
-                                    () => Get.to(
-                                      () => ContractorEmployeeScreen(),
-                                    ),
-                              ),
-                              const SizedBox(height: 10),
-                              _buildActionTile(
-                                icon: Icons.dashboard_outlined,
-                                iconColor: const Color(0xFFEC4899),
-                                iconBg: const Color(0xFFFCE7F3),
-                                label: 'Success Story',
-                                subtitle:
-                                    'View and manage your success stories',
-                                onTap:
-                                    () => Get.to(
-                                      () => ContractorSuccessStoryScreen(),
-                                    ),
-                              ),
-                              const SizedBox(height: 10),
-                              _buildActionTile(
-                                icon: Icons.receipt_long_outlined,
-                                iconColor: const Color(0xFF14B8A6),
-                                iconBg: const Color(0xFFCCFBF1),
-                                label: 'My Quotations',
-                                subtitle: 'View and manage your quotations',
-                                onTap:
-                                    () => Get.to(
-                                      () => ContractorQuotationListScreen(),
-                                    ),
-                              ),
-                              // const SizedBox(height: 24),
-                              ]
+                                  final review = controller.appReview.value;
+
+                                  if (review == null) {
+                                    return _buildActionTile(
+                                      icon: Icons.reviews_outlined,
+                                      label: "Reviews and Ratings",
+                                      iconColor: const Color(0xFFEC4899),
+                                      iconBg: const Color(0xFFFCE7F3),
+                                      subtitle: "Add your review",
+                                      onTap: () {
+                                        Get.dialog(AddAppReviewDialog()).then((
+                                          _,
+                                        ) {
+                                          controller.getAppReview();
+                                        });
+                                      },
+                                    );
+                                  } else {
+                                    return _buildReviewSection(review);
+                                  }
+                                }),
+
+                                const SizedBox(height: 10),
+                                _buildActionTile(
+                                  icon: Icons.miscellaneous_services_outlined,
+                                  iconColor: const Color(0xFFF59E0B),
+                                  iconBg: const Color(0xFFFEF3C7),
+                                  label: 'My Service',
+                                  subtitle: 'View and manage your services',
+                                  onTap:
+                                      () => Get.to(() => ContractorService()),
+                                ),
+                                const SizedBox(height: 10),
+                                _buildActionTile(
+                                  icon: Icons.person_outline,
+                                  iconColor: const Color(0xFF8B5CF6),
+                                  iconBg: const Color(0xFFEDE9FE),
+                                  label: 'Employees',
+                                  subtitle: 'View and manage your employees',
+                                  onTap:
+                                      () => Get.to(
+                                        () => ContractorEmployeeScreen(),
+                                      ),
+                                ),
+                                const SizedBox(height: 10),
+                                _buildActionTile(
+                                  icon: Icons.dashboard_outlined,
+                                  iconColor: const Color(0xFFEC4899),
+                                  iconBg: const Color(0xFFFCE7F3),
+                                  label: 'Success Story',
+                                  subtitle:
+                                      'View and manage your success stories',
+                                  onTap:
+                                      () => Get.to(
+                                        () => ContractorSuccessStoryScreen(),
+                                      ),
+                                ),
+                                const SizedBox(height: 10),
+                                _buildActionTile(
+                                  icon: Icons.receipt_long_outlined,
+                                  iconColor: const Color(0xFF14B8A6),
+                                  iconBg: const Color(0xFFCCFBF1),
+                                  label: 'My Quotations',
+                                  subtitle: 'View and manage your quotations',
+                                  onTap:
+                                      () => Get.to(
+                                        () => ContractorQuotationListScreen(),
+                                      ),
+                                ),
+                                // const SizedBox(height: 24),
+                              ],
                             ],
                           ),
-                  
                         ),
                       )
                       : const SizedBox.shrink(),
@@ -1972,42 +1971,77 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
           }),
         ],
       ),
-      bottomNavigationBar:Obx(() =>  (!profileController.isEditing.value)
-              ? SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SizedBox(
-                        width: double.infinity,
-                        child: NesticoPeButton(
-                          width: double.infinity,
-                          borderRadius: BorderRadius.circular(10),
-                          titleTextStyle: TextStyle(
-                            fontSize: AppFontSizes.medium,
-                            color: ColorRes.white,
-                            fontWeight: AppFontWeights.semiBold,
-                          ),
-                          height: 45,
-                          onTap: () {
-                            final controller =
-                                Get.isRegistered<AuthController>()
-                                    ? Get.find<AuthController>()
-                                    : Get.put(AuthController());
-                            controller.logout();
-                          },
-                          title: 'Logout',
+      bottomNavigationBar: Obx(
+        () =>
+            (!profileController.isEditing.value)
+                ? SafeArea(
+                  child: Container(
+                     decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          ColorRes.white,
+                          ColorRes.white.withOpacity(0.5), // top: solid white
+                          ColorRes.white.withOpacity(
+                            0.0,
+                          ), // bottom: transparent
+                        ],
+                      ),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(20),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: ColorRes.black.withOpacity(0.1),
+                          spreadRadius: 2,
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                      border: Border(
+                        top: BorderSide(
+                          color: ColorRes.leadGreyColor.shade100,
+                          width: 1,
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      _buildDeleteAccountButton(),
-                    ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width: double.infinity,
+                            child: NesticoPeButton(
+                              width: double.infinity,
+                              borderRadius: BorderRadius.circular(10),
+                              titleTextStyle: TextStyle(
+                                fontSize: AppFontSizes.medium,
+                                color: ColorRes.white,
+                                fontWeight: AppFontWeights.semiBold,
+                              ),
+                              height: 45,
+                              onTap: () {
+                                final controller =
+                                    Get.isRegistered<AuthController>()
+                                        ? Get.find<AuthController>()
+                                        : Get.put(AuthController());
+                                controller.logout();
+                              },
+                              title: 'Logout',
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          _buildDeleteAccountButton(),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              )
-              : SizedBox.shrink(),
-    ),);
+                )
+                : SizedBox.shrink(),
+      ),
+    );
   }
 
   Widget _buildReviewSection(ReviewItem review) {
@@ -2170,7 +2204,9 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
           // Username
           Obx(
             () => Text(
-              controller.profileData.value?.user?.username?.capitalize?.replaceAll('_', ' ')??'',
+              controller.profileData.value?.user?.username?.capitalize
+                      ?.replaceAll('_', ' ') ??
+                  '',
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -2940,7 +2976,7 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
   Widget _buildDeleteAccountButton() {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF1F2),
+        // color: const Color(0xFFFFF1F2),
         borderRadius: BorderRadius.circular(14),
       ),
       child: const RequestDeleteAccount(),

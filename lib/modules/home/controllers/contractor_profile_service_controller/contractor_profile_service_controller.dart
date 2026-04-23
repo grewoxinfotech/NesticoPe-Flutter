@@ -352,7 +352,9 @@ class ContractorServiceController
 
   Future<void> fetchUserDataFromUrl() async {
     userData.value = await _serviceUser.getUserById(contractorId);
-    log("Fetched User Data From Have: ${userData.value?.toJson()}");
+    final userId = userData.value?.id ?? '';
+    final username = userData.value?.username ?? '';
+    log("Fetched user profile for contractorId=$userId username=$username");
   }
 
   Future<void> createInquiry(
@@ -363,7 +365,17 @@ class ContractorServiceController
       isLoading.value = true;
 
       // Validate Form
-      if (!formKey.currentState!.validate()) {
+      final formState = formKey.currentState;
+      if (formState == null) {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: 'Form is not ready. Please try again.',
+          contentType: ContentType.failure,
+        );
+        return;
+      }
+
+      if (!formState.validate()) {
         print("❌ Form validation failed");
         return;
       }
@@ -374,16 +386,40 @@ class ContractorServiceController
       final username = user?.user?.username ?? '';
       final phone = user?.user?.phone ?? '';
 
+      if (!GetUtils.isEmail(email)) {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Invalid Email',
+          message: 'Please update your profile with a valid email address.',
+          contentType: ContentType.failure,
+        );
+        return;
+      }
+
       // Extracting state (if user entered "City, State")
 
       // Prepare request body
+      final serviceIds = services
+          .map((e) => e.id)
+          .whereType<String>()
+          .where((id) => id.trim().isNotEmpty)
+          .toList();
+
+      if (serviceIds.isEmpty) {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: 'Please select at least one valid service.',
+          contentType: ContentType.failure,
+        );
+        return;
+      }
+
       final data = {
         'contractorId': contractorId,
         'email': email,
         'name': username,
         'phone': phone,
 
-        'services': services.map((e) => e.id).toList(),
+        'services': serviceIds,
 
         'meta': {
           'bhk': '0',
@@ -403,16 +439,29 @@ class ContractorServiceController
       print('✅ Inquiry created successfully: $response');
 
       if (response) {
-        clearInquiryForm();
-        Get.back(result: true); // optional redirect
-        NesticoPeSnackBar.showAwesomeSnackbar(
-          title: "Success",
-          message: "Inquiry submitted successfully",
-          contentType: ContentType.success,
-        );
+        try {
+          clearInquiryForm();
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: "Success",
+            message: "Inquiry submitted successfully",
+            contentType: ContentType.success,
+          );
+        } catch (e, st) {
+          log('⚠️ Post-success UI step failed: $e');
+          log('Stack: $st');
+        }
+
+        // Always attempt to close the dialog/screen on success.
+        try {
+          Get.back(result: true); // optional redirect
+        } catch (e, st) {
+          log('❌ Get.back failed after inquiry success: $e');
+          log('Stack: $st');
+        }
       }
-    } catch (e) {
-      print('❌ Error creating inquiry: $e');
+    } catch (e, st) {
+      log('❌ Error creating inquiry: $e');
+      log('Stack: $st');
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: e.toString(),

@@ -79,8 +79,8 @@ class ReviewItem {
   final DetailedRatings? detailedRatings;
   final List<String>? photos;
   final List<String>? videos;
-  final String? pros;
-  final String? cons;
+  final ReviewProsCons? pros;
+  final ReviewProsCons? cons;
   final bool? isVerified;
   final String? verificationType;
   final String? status;
@@ -92,15 +92,15 @@ class ReviewItem {
   final String? responseDate;
   final int? helpfulCount;
   final int? reportCount;
-  final String? createdAt;
-  final String? updatedAt;
+    final DateTime? createdAt;
+  final DateTime? updatedAt;
   final Reviewer? reviewer;
- final Reviewer? adminReviewer;
+  final Reviewer? adminReviewer;
   final EntityUser? entityUser;
-  ReviewItem( {
+  ReviewItem({
     this.entityUser,
     this.reviewer,
- 
+
     this.id,
     this.createdBy,
     this.updatedBy,
@@ -142,24 +142,31 @@ class ReviewItem {
       rating: (json['rating'] as num?)?.toDouble(),
       title: json['title'],
       content: json['content'],
-      adminReviewer: json['adminReviewer'] != null
-    ? Reviewer.fromJson(json['adminReviewer'])
-    : null,
-      reviewer: json['reviewer'] != null
-          ? Reviewer.fromJson(json['reviewer'])
-          : null,
-   
-      entityUser: json['entityUser'] != null
-          ? EntityUser.fromJson(json['entityUser'])
-          : null,
+      adminReviewer:
+          json['adminReviewer'] != null
+              ? Reviewer.fromJson(json['adminReviewer'])
+              : null,
+      reviewer:
+          json['reviewer'] != null ? Reviewer.fromJson(json['reviewer']) : null,
+
+      entityUser:
+          json['entityUser'] != null
+              ? EntityUser.fromJson(json['entityUser'])
+              : null,
       detailedRatings:
           json['detailed_ratings'] != null
               ? DetailedRatings.fromJson(json['detailed_ratings'])
               : null,
       photos: (json['photos'] as List?)?.map((e) => e.toString()).toList(),
       videos: (json['videos'] as List?)?.map((e) => e.toString()).toList(),
-      pros: json['pros'],
-      cons: json['cons'],
+      pros:
+          json['pros'] != null && json['pros'] is Map<String, dynamic>
+              ? ReviewProsCons.fromJson(json['pros'])
+              : null,
+      cons:
+          json['cons'] != null && json['cons'] is Map<String, dynamic>
+              ? ReviewProsCons.fromJson(json['cons'])
+              : null,
       isVerified: json['is_verified'],
       verificationType: json['verification_type'],
       status: json['status'],
@@ -171,8 +178,8 @@ class ReviewItem {
       responseDate: json['response_date'],
       helpfulCount: json['helpful_count'],
       reportCount: json['report_count'],
-      createdAt: json['createdAt'],
-      updatedAt: json['updatedAt'],
+            createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
     );
   }
 
@@ -192,8 +199,9 @@ class ReviewItem {
     'detailed_ratings': detailedRatings?.toJson(),
     'photos': photos,
     'videos': videos,
-    'pros': pros,
-    'cons': cons,
+    'pros': pros?.toJson(),
+    'cons': cons?.toJson(),
+
     'is_verified': isVerified,
     'verification_type': verificationType,
     'status': status,
@@ -205,10 +213,11 @@ class ReviewItem {
     'response_date': responseDate,
     'helpful_count': helpfulCount,
     'report_count': reportCount,
-    'createdAt': createdAt,
-    'updatedAt': updatedAt,
+    'createdAt': createdAt?.toIso8601String(),
+    'updatedAt': updatedAt?.toIso8601String(),
   };
 }
+
 class EntityUser {
   final String? username;
   final String? userType;
@@ -216,16 +225,10 @@ class EntityUser {
   EntityUser({this.username, this.userType});
 
   factory EntityUser.fromJson(Map<String, dynamic> json) {
-    return EntityUser(
-      username: json['username'],
-      userType: json['userType'],
-    );
+    return EntityUser(username: json['username'], userType: json['userType']);
   }
 
-  Map<String, dynamic> toJson() => {
-    'username': username,
-    'userType': userType,
-  };
+  Map<String, dynamic> toJson() => {'username': username, 'userType': userType};
 }
 
 class DetailedRatings {
@@ -266,14 +269,17 @@ class Reviewer {
   final String? id;
   final String? username;
   final String? userType;
+  final String? profilePic;
 
-  Reviewer({this.id, this.username, this.userType});
+  Reviewer({this.id, this.username, this.userType,this.profilePic});
 
   factory Reviewer.fromJson(Map<String, dynamic> json) {
     return Reviewer(
       id: json['id'],
       username: json['username'],
       userType: json['userType'],
+      profilePic: json['profilePic'],
+
     );
   }
 
@@ -281,8 +287,10 @@ class Reviewer {
     'id': id,
     'username': username,
     'userType': userType,
+    'profilePic':profilePic
   };
 }
+
 class UsersResponse {
   final bool success;
   final String message;
@@ -449,4 +457,25 @@ class UserItem {
     'createdAt': createdAt,
     'updatedAt': updatedAt,
   };
+}
+
+class ReviewProsCons {
+  final String? text;
+  final List<String>? tags;
+
+  ReviewProsCons({this.text, this.tags});
+
+  factory ReviewProsCons.fromJson(Map<String, dynamic> json) {
+    return ReviewProsCons(
+      text: json['text'] ?? '',
+      tags: (json['tags'] as List?)?.map((e) => e.toString()).toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    if (text != null) map['text'] = text;
+    if (tags != null && tags!.isNotEmpty) map['tags'] = tags;
+    return map;
+  }
 }

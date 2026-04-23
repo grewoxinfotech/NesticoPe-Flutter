@@ -561,7 +561,7 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        
+
         leading: GestureDetector(
           onTap: () => Navigator.of(context).pop(),
           child: Icon(Icons.arrow_back, color: ColorRes.primary),
@@ -740,12 +740,6 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
                 const SizedBox(height: 18),
 
                 // Back to email login (pill button)
-                _altButton(
-                  icon: Icons.mail_rounded,
-                  label: 'Login with Email',
-                  onTap: () => Get.to(() => LoginScreen()),
-                ),
-                const SizedBox(height: 20),
                 _altButton(
                   icon: Icons.person_rounded,
                   label: 'Login as Partner',
@@ -1460,7 +1454,7 @@ class _OtpLoginAsPartnerScreenState extends State<OtpLoginAsPartnerScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        
+
         leading: GestureDetector(
           onTap: () => Navigator.of(context).pop(),
           child: Icon(Icons.arrow_back, color: ColorRes.primary),
@@ -1605,7 +1599,43 @@ class _OtpLoginAsPartnerScreenState extends State<OtpLoginAsPartnerScreen> {
                   onTap: _sending ? null : _requestOtp,
                   height: 48,
                 ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Divider(
+                        color: Colors.grey.shade400,
+                        thickness: 0.8,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Text(
+                        'OR CONTINUE WITH',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Colors.grey.shade600,
+                          letterSpacing: 1.0,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Divider(
+                        color: Colors.grey.shade400,
+                        thickness: 0.8,
+                      ),
+                    ),
+                  ],
+                ),
 
+                const SizedBox(height: 18),
+                _altButton(
+                  icon: Icons.mail_rounded,
+                  label: 'Login with Email',
+                  onTap: () => Get.to(() => LoginScreen()),
+                ),
+                const SizedBox(height: 20),
                 // const SizedBox(height: 24),
                 //    Row(
                 //     children: [

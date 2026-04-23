@@ -547,7 +547,7 @@ class OnboardingController extends GetxController {
                     vertical: 16,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.85),
+                    color: Colors.white.withOpacity(0.70),
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(24),
                       topRight: Radius.circular(24),
@@ -558,7 +558,9 @@ class OnboardingController extends GetxController {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       // crossAxisAlignment: CrossAxisAlignment.start
+
                       children: [
+                        
                         /// Drag Handle
                         ///
                         Stack(
@@ -587,14 +589,16 @@ class OnboardingController extends GetxController {
                             ),
 
                             /// 🔥 Center Drag Handle
-                            Container(
-                              width: 50,
-                              height: 5,
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade300,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
+                           SizedBox(
+                             height: 52,
+                             width: 150,
+                             child: Image.asset(
+                               'assets/images/Nestico-Pe_Logo-svg.png',
+                               height: 52,
+                               width: 150,
+                               fit: BoxFit.cover,
+                             ),
+                           ),
                           ],
                         ),
 
@@ -603,9 +607,7 @@ class OnboardingController extends GetxController {
                           children: [
                             Expanded(
                               child: Text(
-                                stepOtp
-                                    ? "Verify Mobile Number"
-                                    : "Login with NesticoPe",
+                                stepOtp ? "Verify Mobile Number" : "Login",
                                 style: TextStyle(
                                   fontSize: 18,
                                   color: ColorRes.textPrimary,
@@ -701,6 +703,7 @@ class OnboardingController extends GetxController {
                                 FilteringTextInputFormatter.digitsOnly,
                                 LengthLimitingTextInputFormatter(10),
                               ],
+
                               style: TextStyle(
                                 fontSize: AppFontSizes.small,
                                 fontWeight: AppFontWeights.medium,
@@ -727,6 +730,8 @@ class OnboardingController extends GetxController {
                                     width: 1,
                                   ),
                                 ),
+                                fillColor: Colors.white,
+                                filled: true,
 
                                 // ENABLED (NORMAL STATE)
                                 enabledBorder: OutlineInputBorder(
@@ -784,64 +789,196 @@ class OnboardingController extends GetxController {
                           const SizedBox(height: 20),
 
                           /// Get OTP Button
-                          SizedBox(
-                            width: double.infinity,
-                            height: 48,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    isPhoneValid ? ColorRes.primary : null,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              onPressed:
-                                  (!isPhoneValid || isSendingOtp)
-                                      ? null
-                                      : () async {
-                                        final trimmed = phone.trim();
+                          // SizedBox(
+                          //   width: double.infinity,
+                          //   height: 48,
+                          //   child: ElevatedButton(
+                          //     style: ElevatedButton.styleFrom(
+                                
+                          //       backgroundColor: ColorRes.primary,
+                          //       // When disabled, keep it visible but clearly inactive.
+                          //       disabledBackgroundColor:
+                          //           ColorRes.primary,
+                          //       elevation: 6,
+                              
+                          //       shadowColor: ColorRes.primary.withOpacity(0.35),
+                          //       shape: RoundedRectangleBorder(
+                          //         borderRadius: BorderRadius.circular(12),
+                          //         side: BorderSide(
+                          //           color: ColorRes.primary,
+                          //           width: 1,
+                          //         ),
+                          //       ),
+                          //     ),
+                          //     onPressed:
+                          //         (!isPhoneValid || isSendingOtp)
+                          //             ? null
+                          //             : () async {
+                          //               final trimmed = phone.trim();
 
-                                        setState(() {
-                                          isSendingOtp = true;
-                                        });
-                                        final ok = await AuthService()
-                                            .requestOtpLogin(trimmed);
-                                        setState(() {
-                                          isSendingOtp = false;
-                                        });
-                                        if (ok) {
-                                          NesticoPeSnackBar.showAwesomeSnackbar(
-                                            title: 'OTP Sent',
-                                            message:
-                                                'Please enter the OTP within 2 minutes',
-                                            contentType: ContentType.success,
-                                          );
-                                          stepOtp = true;
-                                          _startResendTimer(setState);
-                                        }
+                          //               setState(() {
+                          //                 isSendingOtp = true;
+                          //               });
+                          //               final ok = await AuthService()
+                          //                   .requestOtpLogin(trimmed);
+                          //               setState(() {
+                          //                 isSendingOtp = false;
+                          //               });
+                          //               if (ok) {
+                          //                 NesticoPeSnackBar.showAwesomeSnackbar(
+                          //                   title: 'OTP Sent',
+                          //                   message:
+                          //                       'Please enter the OTP within 2 minutes',
+                          //                   contentType: ContentType.success,
+                          //                 );
+                          //                 stepOtp = true;
+                          //                 _startResendTimer(setState);
+                          //               }
 
-                                        setState(() {});
-                                      },
-                              child:
-                                  isSendingOtp
-                                      ? const SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                        ),
-                                      )
-                                      : const Text("Get OTP"),
-                            ),
-                          ),
+                          //               setState(() {});
+                          //             },
+                          //     child:
+                          //         isSendingOtp
+                          //             ? const SizedBox(
+                          //               width: 20,
+                          //               height: 20,
+                          //               child: CircularProgressIndicator(
+                          //                 strokeWidth: 2,
+                          //               ),
+                          //             )
+                          //             : const Text(
+                          //               "Get OTP",
+                          //               style: TextStyle(
+                          //                 color: Colors.white,
+                          //                 fontWeight: FontWeight.w800,
+                          //                 fontSize: 16,
+                          //               ),
+                          //             ),
+                          //   ),
+                          // ),
 
+SizedBox(
+  width: double.infinity,
+  height: 48,
+  child: GestureDetector(
+    onTap: (!isPhoneValid || isSendingOtp)
+        ? null
+        : () async {
+            final trimmed = phone.trim();
+
+            setState(() {
+              isSendingOtp = true;
+            });
+
+            final ok = await AuthService().requestOtpLogin(trimmed);
+
+            setState(() {
+              isSendingOtp = false;
+            });
+
+            if (ok) {
+              NesticoPeSnackBar.showAwesomeSnackbar(
+                title: 'OTP Sent',
+                message: 'Please enter the OTP within 2 minutes',
+                contentType: ContentType.success,
+              );
+
+              stepOtp = true;
+              _startResendTimer(setState);
+            }
+
+            setState(() {});
+          },
+    child: Container(
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+    
+        /// 🔥 MAIN GRADIENT
+        gradient: LinearGradient(
+          colors: [
+            ColorRes.primary.withOpacity(0.9),
+            ColorRes.primary,
+            ColorRes.primary.withOpacity(0.85),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+    
+        /// ✨ BORDER
+        border: Border.all(
+          color: Colors.white.withOpacity(0.2),
+        ),
+    
+        /// 🌟 SHADOW (elevation feel)
+        boxShadow: [
+          BoxShadow(
+            color: ColorRes.primary.withOpacity(0.4),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+    
+      /// ✨ HIGHLIGHT OVERLAY (glass shine effect)
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          /// Top light highlight
+          // Positioned(
+          //   top: 0,
+          //   left: 0,
+          //   right: 0,
+          
+          //   child: Container(
+          //     height: 20,
+          //     decoration: BoxDecoration(
+          //       borderRadius: const BorderRadius.vertical(
+          //         top: Radius.circular(12),
+          //       ),
+          //       gradient: LinearGradient(
+          //         colors: [
+          //           Colors.white.withOpacity(0.25),
+          //           Colors.transparent,
+          //         ],
+          //         begin: Alignment.topCenter,
+          //         end: Alignment.bottomCenter,
+          //       ),
+          //     ),
+          //   ),
+          // ),
+    
+          /// Content
+          isSendingOtp
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+              : const Text(
+                  "Get OTP",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+        ],
+      ),
+    ),
+  ),
+),
                           const SizedBox(height: 16),
 
                           /// OR Divider
                           Row(
                             children: [
                               Expanded(
-                                child: Divider(color: Colors.grey.shade300),
+                                child: Divider(color: Colors.white),
                               ),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -857,7 +994,7 @@ class OnboardingController extends GetxController {
                                 ),
                               ),
                               Expanded(
-                                child: Divider(color: Colors.grey.shade300),
+                                child: Divider(color: Colors.white),
                               ),
                             ],
                           ),
@@ -875,6 +1012,7 @@ class OnboardingController extends GetxController {
                                   color: Colors.grey.shade300,
                                   width: 1,
                                 ),
+                                backgroundColor: Colors.white,
                                 shape: RoundedRectangleBorder(
                                   side: BorderSide(color: Colors.grey.shade300),
                                   borderRadius: BorderRadius.circular(12),
@@ -968,6 +1106,7 @@ class OnboardingController extends GetxController {
                                 // padding: const EdgeInsets.symmetric(horizontal: 12),
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
+                                  color: ColorRes.white,
                                   border: Border.all(
                                     color: Colors.grey.shade300,
                                   ),
@@ -977,12 +1116,15 @@ class OnboardingController extends GetxController {
                                   textAlign: TextAlign.center,
                                   keyboardType: TextInputType.number,
                                   maxLength: 1,
+                                  
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly,
                                   ],
                                   decoration: const InputDecoration(
                                     counterText: "",
                                     border: InputBorder.none,
+                                    // fillColor: ColorRes.white,
+                                    // filled: true,
                                   ),
                                   onChanged: (v) {
                                     otpDigits[index] = v;

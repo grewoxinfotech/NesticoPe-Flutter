@@ -16,7 +16,6 @@ class StepBasicInfo extends GetView<ProjectWizardController> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final labelStyle = theme.textTheme.labelMedium;
     return Form(
       key: formKey,
       child: Obx(() {
@@ -79,48 +78,88 @@ class StepBasicInfo extends GetView<ProjectWizardController> {
 
               const SizedBox(height: 12),
 
+              Text(
+                'Property Type',
+                style: theme.textTheme.titleMedium,
+              ),
+              const SizedBox(height: 8),
+              Obx(() {
+                final selectedType =
+                    (controller.project.value.propertyTypes ?? 'apartment')
+                        .toLowerCase();
+                final options = const <MapEntry<String, String>>[
+                  MapEntry('apartment', 'Apartment'),
+                  MapEntry('house', 'House'),
+                  MapEntry('villa', 'Villa'),
+                ];
+
+                return Wrap(
+                  spacing: 10,
+                  runSpacing: 8,
+                  children: options.map((option) {
+                    final isSelected = selectedType == option.key;
+                    return ChoiceChip(
+                      label: Text(option.value,style: theme.textTheme.bodyMedium?.copyWith(color: isSelected ? ColorRes.white : ColorRes.textPrimary)),
+                      selected: isSelected,
+                      selectedColor: ColorRes.primary,
+                      backgroundColor: isSelected ? ColorRes.primary.withOpacity(0.1) : ColorRes.grey.withOpacity(0.1),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                          color: isSelected ? ColorRes.primary : ColorRes.grey.withOpacity(0.1),
+                        ),
+                      ),
+                      onSelected: (_) {
+                        controller.selectedBuilderPropertyType(option.key);
+                      },
+                    );
+                  }).toList(),
+                );
+              }),
+
+              const SizedBox(height: 12),
+
               IntrinsicHeight(
                 child: Row(
                   children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CommonTextField(
-                            label: 'Total Building',
-                            controller: controller.totalBuildingsController,
-                            initialValue:
-                                p.projectSize.totalBuildings.toString(),
-                            keyboardType: TextInputType.number,
-                            prefixIcon: Icon(
-                              Icons.domain_outlined,
-                              size: 20,
-                              color: ColorRes.primary,
-                            ),
-                            textInputAction: TextInputAction.next,
-                            /*  onChanged: (v) {
-                      controller.generateBuildingFields(v);
-                    },*/
-                            validator:
-                                (v) => ProjectValidators.minNumber(
-                                  num.tryParse(v ?? ''),
-                                  1,
-                                  field: 'Total Buildings',
-                                ),
-                            onSaved: (v) {
-                              controller.generateBuildingFields(v ?? '0');
+                    if (controller.isBuildingBasedProperty) ...[
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CommonTextField(
+                              label: 'Total Building',
+                              controller: controller.totalBuildingsController,
+                              initialValue:
+                                  p.projectSize.totalBuildings.toString(),
+                              keyboardType: TextInputType.number,
+                              prefixIcon: Icon(
+                                Icons.domain_outlined,
+                                size: 20,
+                                color: ColorRes.primary,
+                              ),
+                              textInputAction: TextInputAction.next,
+                              validator:
+                                  (v) => ProjectValidators.minNumber(
+                                    num.tryParse(v ?? ''),
+                                    1,
+                                    field: 'Total Buildings',
+                                  ),
+                              onSaved: (v) {
+                                controller.generateBuildingFields(v ?? '0');
 
-                              controller.project.update(
-                                (x) =>
-                                    x!.projectSize.totalBuildings =
-                                        int.tryParse(v ?? '') ?? 1,
-                              );
-                            },
-                          ),
-                        ],
+                                controller.project.update(
+                                  (x) =>
+                                      x!.projectSize.totalBuildings =
+                                          int.tryParse(v ?? '') ?? 1,
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
+                      const SizedBox(width: 12),
+                    ],
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,6 +198,9 @@ class StepBasicInfo extends GetView<ProjectWizardController> {
 
               // 🆕 Dynamic Building Name Fields (2 per row)
               Obx(() {
+                if (!controller.isBuildingBasedProperty) {
+                  return const SizedBox();
+                }
                 final controllers = controller.buildingNameControllers;
 
                 if (controllers.isEmpty) return const SizedBox();
