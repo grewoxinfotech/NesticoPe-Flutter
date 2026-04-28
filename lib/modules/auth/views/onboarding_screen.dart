@@ -351,6 +351,7 @@ class OnboardingController extends GetxController {
     required String selectCityTitle,
   }) async {
     await SecureStorage.saveHomeCategory(homeCategory);
+    await SecureStorage.setAppLaunched();
     await SecureStorage.setPendingOnboardingCitySelection(true);
 
     final city = await Get.to<String?>(

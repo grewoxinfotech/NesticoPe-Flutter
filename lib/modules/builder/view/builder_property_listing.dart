@@ -620,9 +620,10 @@ class BuilderProjectCard extends StatelessWidget {
                             favoriteController.toggleFavorite(project.id);
                           },
                           child: Obx(() {
-                            isFavorite = favoriteController.favorites.contains(
-                              project.id,
-                            );
+                            final inFavorites = favoriteController.favorites
+                                .contains(project.id);
+                            isFavorite =
+                                !UserHelper.isGuest && inFavorites;
                             return CircleAvatar(
                               backgroundColor: ColorRes.white,
                               radius: 20,

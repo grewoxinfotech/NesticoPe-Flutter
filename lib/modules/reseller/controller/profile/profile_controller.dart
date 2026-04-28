@@ -266,6 +266,9 @@ class ProfileController extends GetxController {
       try {
         isLoadingIMage.value = true;
         final XFile? image = await _picker.pickImage(
+
+          // preferredCameraDevice: CameraDevice.rear,
+          // preferredImageCaptureResolution: ResolutionPreset.max,
           source: ImageSource.gallery,
           maxWidth: 1024,
           maxHeight: 1024,

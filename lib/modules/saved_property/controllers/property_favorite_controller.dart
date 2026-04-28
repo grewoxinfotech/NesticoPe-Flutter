@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:nesticope_app/data/database/secure_storage_service.dart';
-import 'package:nesticope_app/modules/auth/views/login_screen.dart';
 import 'package:lottie/lottie.dart';
 import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
 import '../../../data/network/auth/model/user_model.dart';
@@ -42,43 +41,56 @@ class PropertyFavoriteController extends GetxController {
   }
 
   Future<void> loadData() async {
+    if (isClosed) return;
     final user = await SecureStorage.getUserData();
+    if (isClosed) return;
     final userId = user?.user?.id ?? '';
+    if (userId.isEmpty) {
+      clearAllFavoriteState();
+      return;
+    }
     await getFavorite(userId);
-
+    if (isClosed) return;
     await loadFavorite();
   }
 
   Future<void> loadFavorite() async {
+    if (isClosed) return;
     final favorites = favoriteResponse.value?.data?.favorite ?? [];
 
     for (final item in favorites) {
-      final propertyId = item.propertyId ?? item.details?.id ?? '';
+      if (isClosed) return;
+      final propertyId = item.propertyId;
 
       if (propertyId.isNotEmpty) {
         // ✅ Fetch all inquiries
         await getAllInQuireData(propertyId);
+        if (isClosed) return;
 
         // ✅ Check if specific inquiry exists
         await getHasInQuireData(propertyId);
+        if (isClosed) return;
         await loadNegotiableMetaForProperty(propertyId);
       }
     }
   }
 
   Future<void> loadViews(List<PropertyView> viewedProperties) async {
+    if (isClosed) return;
     List<PropertyView> favorites = viewedProperties;
 
     for (final item in favorites) {
-      final propertyId = item.details?.id ?? item.details?.id ?? '';
+      if (isClosed) return;
+      final propertyId = item.details?.id ?? '';
 
       if (propertyId.isNotEmpty) {
         // ✅ Fetch all inquiries
         await getAllInQuireData(propertyId);
-        
+        if (isClosed) return;
 
         // ✅ Check if specific inquiry exists
         await getHasInQuireData(propertyId);
+        if (isClosed) return;
         await loadNegotiableMetaForProperty(propertyId);
       }
     }
@@ -88,10 +100,17 @@ class PropertyFavoriteController extends GetxController {
 
   /// Fetch favorites from API and update local set
   Future<void> getFavorite(String userId) async {
+    if (userId.isEmpty) {
+      clearAllFavoriteState();
+      return;
+    }
+
     try {
+      if (isClosed) return;
       isLoading.value = true;
 
       final response = await _favoriteService.getFavorite(userId);
+      if (isClosed) return;
 
       if (response != null && response.success) {
         favoriteResponse.value = response;
@@ -116,11 +135,27 @@ class PropertyFavoriteController extends GetxController {
         contentType: ContentType.failure,
       );
     } finally {
-      isLoading.value = false;
+      if (!isClosed) isLoading.value = false;
     }
   }
 
   /// --- LOCAL MANAGEMENT ---
+
+  void clearAllFavoriteState() {
+    favoriteResponse.value = null;
+    favorites.clear();
+    inquiryResponse.clear();
+    hasSubmittedInquiryMap.clear();
+    hasNegotiableOfferMap.clear();
+    negotiableOfferPriceMap.clear();
+
+    favoriteResponse.refresh();
+    favorites.refresh();
+    inquiryResponse.refresh();
+    hasSubmittedInquiryMap.refresh();
+    hasNegotiableOfferMap.refresh();
+    negotiableOfferPriceMap.refresh();
+  }
 
   bool isFavorite(String propertyId) => favorites.contains(propertyId);
 
@@ -182,10 +217,13 @@ class PropertyFavoriteController extends GetxController {
     log('Property Id For Inquiry $propertyId');
 
     try {
+      if (isClosed) return;
       final UserModel user = await SecureStorage.getUserData() ?? UserModel();
+      if (isClosed) return;
       final userId = user.user?.id ?? '';
       if (inquiryResponse.isEmpty) {
         final inquiries = await _contactedService.fetchContactedInquiries(userId);
+        if (isClosed) return;
         inquiryResponse.assignAll(inquiries);
       }
 
@@ -206,12 +244,15 @@ class PropertyFavoriteController extends GetxController {
     log('Property Id For Inquiry $propertyId');
 
     try {
+      if (isClosed) return false;
       final UserModel user = await SecureStorage.getUserData() ?? UserModel();
+      if (isClosed) return false;
       final userId = user.user?.id ?? '';
       final inquiries = await _contactedService.fetchHasInquiries(
         userId,
         itemId: propertyId,
       );
+      if (isClosed) return false;
 
       hasSubmittedInquiryMap[propertyId] = inquiries;
       hasSubmittedInquiryMap.refresh();
@@ -221,9 +262,17 @@ class PropertyFavoriteController extends GetxController {
       print("Inquiry Response ** ${inquiries} ");
       return inquiries;
     } catch (e) {
+      // When the screen/app is closing or network is off, we don't want
+      // cascading errors. Just return false.
       print("Error fetching inquiries: $e");
-      rethrow;
+      return false;
     }
+  }
+
+  @override
+  void onClose() {
+    // Prevent pending async work from trying to update observables.
+    super.onClose();
   }
 
   /// Fetch inquiries for a specific property and collect negotiable meta (for current user)
@@ -258,7 +307,6 @@ class PropertyFavoriteController extends GetxController {
   }
 
   void _showGuestFavoriteSheet(BuildContext context) {
-    final theme = Theme.of(context);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,

@@ -8,7 +8,6 @@ import '../../../data/database/secure_storage_service.dart';
 import '../../../data/network/user/service/notification_sync_service.dart';
 import '../../../services/notification_service.dart';
 import '../../../app/utils/helper_function/user_helper/user_helper.dart';
-import '../../auth/views/login_screen.dart';
 import '../../dashboard/views/dashboard_screen.dart';
 import '../../dashboard/views/seller_dashboard_screen.dart';
 import '../../builder/view/builder_main_screen.dart';
@@ -190,11 +189,11 @@ class _SplashScreenState extends State<SplashScreen>
         );
       } else {
         await NotificationService.instance.attachGuestUser();
-        print("Step -4 ");
+        // print("Step -4 ");
       }
     } else {
       await NotificationService.instance.attachGuestUser();
-      print("Step -2 ");
+      // print("Step -2 ");
     }
 
     Get.put(PropertyFavoriteController(), permanent: true);
@@ -272,21 +271,35 @@ class _SplashScreenState extends State<SplashScreen>
           //     ),
           //   ),
           // ),
-
+////=======================OLD CODE =======================
           // 🪄 Animated Logo
-          Center(
-            child: ScaleTransition(
-              scale: _animation,
-              child: FadeTransition(
-                opacity: _animation,
-                child: Container(
-                  child: Image.asset(
-                    'assets/images/NesticoPe_logo.png',
-                    width: 230,
-                    height: 230,
-                    fit: BoxFit.contain,
-                  ),
-                ),
+          // Center(
+          //   child: ScaleTransition(
+          //     scale: _animation,
+          //     child: FadeTransition(
+          //       opacity: _animation,
+          //       child: Container(
+          //         child: Image.asset(
+          //           'assets/gif/Nestico_gif.gif',
+          //           width: 230,
+          //           height: 230,
+          //           fit: BoxFit.contain,
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // ),
+////=======================NEW CODE =======================
+           Center(
+            child: FadeTransition(
+              opacity: _animation,
+              child: Container(
+                child: Image.asset(
+                  'assets/gif/Nestico_gif.gif',
+                  width: 230,
+                  height: 230,
+                  fit: BoxFit.contain,
+                ),  
               ),
             ),
           ),

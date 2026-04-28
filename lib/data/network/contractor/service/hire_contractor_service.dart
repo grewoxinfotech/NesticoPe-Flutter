@@ -49,7 +49,7 @@ class HireContractorService {
         _baseUrlForByCategory,
       ).replace(queryParameters: queryParameters);
 
-      log("📡 Fetch All Contractor By Category URL: $uri");
+      print(" Fetch All Contractor By Category URL: $uri");
 
       final response = await http.get(uri, headers: await headers());
       log("✅ Response Status Code: ${response.statusCode}");

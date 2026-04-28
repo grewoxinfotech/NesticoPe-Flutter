@@ -55,7 +55,7 @@ class _DashboardLayoutState extends State<DashboardLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorRes.white,
+  //  
       appBar: AppBar(
         title: Text(
           'Dashboard',

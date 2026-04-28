@@ -10,6 +10,7 @@ import 'package:nesticope_app/app/constants/size_manager.dart';
 import 'package:nesticope_app/app/manager/data_masker.dart';
 import 'package:nesticope_app/app/manager/property/property_name_manager.dart';
 import 'package:nesticope_app/app/manager/property/property_pricemanager.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:nesticope_app/app/utils/formater/formater.dart';
 import 'package:nesticope_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
@@ -238,8 +239,10 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                             radius: 17,
                             backgroundColor: ColorRes.white,
                             child: Obx(() {
-                              final isFavorite = favoriteController.favorites
+                              final inFavorites = favoriteController.favorites
                                   .contains(widget.property.id);
+                              final isFavorite =
+                                  !UserHelper.isGuest && inFavorites;
                               return Icon(
                                 isFavorite
                                     ? Icons.favorite

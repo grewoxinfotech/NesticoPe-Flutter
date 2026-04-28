@@ -259,6 +259,7 @@ import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/data/network/builder/model/builder_model.dart';
 import 'package:nesticope_app/modules/builder/controller/all_project_controller.dart';
 import 'package:nesticope_app/modules/builder/view/project_detail/project_detail.dart';
+import 'package:nesticope_app/modules/builder/view/widget/buyer_side_project_filter_screen.dart';
 import 'package:nesticope_app/modules/builder/view/widget/project_filter_screen.dart';
 import 'package:nesticope_app/widgets/bar/app_bar/list_screen_appbar.dart';
 import 'package:nesticope_app/widgets/bar/filter_bar/filter_chip_bar.dart';
@@ -573,7 +574,7 @@ class _AllProjectListScreenState extends State<AllProjectListScreen> {
 
         onFilterTap: () async {
           final result = await Get.to(
-            () => ResellerProjectFilterScreen(
+            () => BuyerSideProjectFilterScreen(
               isProjectItemBuyerFilter: true,
               /* initialFilters: Map<String, String>.from(selectedFilters),
               onApply: (filterData) {

@@ -13,17 +13,17 @@ class InAppMessageScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NotificationController controller = Get.isRegistered<NotificationController>()
-    ? Get.find<NotificationController>()
-    : Get.put(NotificationController());
-        
+    final NotificationController controller =
+        Get.isRegistered<NotificationController>()
+            ? Get.find<NotificationController>()
+            : Get.put(NotificationController());
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: const Text(
           "Notifications",
-          style: TextStyle(fontWeight: FontWeight.w700,),
+          style: TextStyle(fontWeight: FontWeight.w700),
         ),
 
         elevation: 0,
@@ -46,7 +46,6 @@ class InAppMessageScreen extends StatelessWidget {
         ],
       ),
       body: SafeArea(
-
         child: RefreshIndicator(
           onRefresh: controller.refreshNotifications,
           color: Theme.of(context).primaryColor,
@@ -54,12 +53,14 @@ class InAppMessageScreen extends StatelessWidget {
             if (controller.isLoading.value && controller.items.isEmpty) {
               return InAppMessageListScreenShimmer();
             }
-        
+
             if (controller.items.isEmpty) {
-              return RefreshIndicator(onRefresh: controller.refreshNotifications,child: _EmptyState());
-        
+              return RefreshIndicator(
+                onRefresh: controller.refreshNotifications,
+                child: _EmptyState(),
+              );
             }
-        
+
             return ListView.builder(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.symmetric(vertical: 8),
@@ -75,9 +76,9 @@ class InAppMessageScreen extends StatelessWidget {
                     ),
                   );
                 }
-        
+
                 final notification = controller.items[index];
-        
+
                 return _NotificationCard(
                   notification: notification,
                   index: index,
@@ -213,8 +214,16 @@ class _NotificationCardState extends State<_NotificationCard>
               borderRadius: BorderRadius.circular(16),
               child: Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey[200]!, width: 1),
+                  // border: Border.all(color: Colors.grey[200]!, width: 1),
                   borderRadius: BorderRadius.circular(16),
+                  color: ColorRes.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
                 padding: const EdgeInsets.all(16),
                 child: Row(

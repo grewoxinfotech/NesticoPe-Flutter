@@ -255,7 +255,7 @@ class _ProjectListingScreenState extends State<ProjectListingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorRes.white,
+      // backgroundColor: ColorRes.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppBar(
@@ -510,14 +510,22 @@ class ProjectCard extends StatelessWidget {
         child: Container(
           height: 120,
           decoration: BoxDecoration(
+            color: ColorRes.white,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color:
                   isSelected
                       ? ColorRes.primary
-                      : ColorRes.leadGreyColor.shade200,
+                      : Colors.transparent,
               width: isSelected ? 2 : 1,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Row(
             children: [

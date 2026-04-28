@@ -651,7 +651,10 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final profileController = Get.find<BuyerProfileDataController>();
+  final profileController =
+      Get.isRegistered<BuyerProfileDataController>()
+          ? Get.find<BuyerProfileDataController>()
+          : Get.put(BuyerProfileDataController());
 
   @override
   Widget build(BuildContext context) {
@@ -665,7 +668,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               UserHelper.isGuest
                   ? Column(
                     children: [
-                      _buildProfileCard(BuyerProfileDataController(), widget.imageUrl),
+                      _buildProfileCard(profileController),
                       const SizedBox(height: 20),
 
                       // 🎯 Role-Based Action Buttons Section
@@ -694,7 +697,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildProfileCard(profileController, widget.imageUrl),
+                      _buildProfileCard(profileController),
                       const SizedBox(height: 20),
 
                       // 🎯 Role-Based Action Buttons Section
@@ -897,14 +900,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.only(left: 16,right: 16,top: 16),
+            padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
             child:
                 UserHelper.isGuest
                     ? Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                     
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
@@ -924,7 +926,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                         ),
-                           SizedBox(
+                        SizedBox(
                           width: double.infinity,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -934,7 +936,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 style: TextStyle(
                                   color: ColorRes.leadGreyColor.shade700,
                                   fontFamily: FontRes.poppins,
-                                  fontSize: 12,fontWeight: FontWeight.w500
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                               TextButton(
@@ -1906,7 +1909,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     final ticket =
                         await service.fetchTicketById(id) ?? items.first;
 
-                        print(" Ticket item that shgo ${items.map((e) => e.id,)}");
+                    print(" Ticket item that shgo ${items.map((e) => e.id)}");
                     Get.to(
                       () =>
                           SupportTicketChatScreen(ticketId: id, ticket: ticket),
@@ -2190,10 +2193,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildProfileCard(
-    BuyerProfileDataController? profileController,
-    String image,
-  ) {
+  Widget _buildProfileCard(BuyerProfileDataController? profileController) {
     return Container(
       padding: const EdgeInsets.all(ProfileScreen._defaultPadding),
       decoration: BoxDecoration(
@@ -2211,7 +2211,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           Row(
             children: [
-              _buildProfileAvatar(image ?? ''),
+              Obx(
+                () => _buildProfileAvatar(
+                  profileController?.userProfile.value?.profilePic ?? '',
+                ),
+              ),
               const SizedBox(width: 16),
               Expanded(
                 child: Obx(
@@ -2225,9 +2229,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Divider(color: ColorRes.leadGreyColor.shade200),
           const SizedBox(height: 4),
           GestureDetector(
-            onTap: () {
-              Get.to(() => BuyerProfileScreen());
-            },
+            onTap:
+                (UserHelper.isGuest)
+                    ? () {
+
+                      NesticoPeSnackBar.showAwesomeSnackbar(
+                        title: 'Not Authorized',
+                        message: 'Please login to visit profile',
+                        contentType: ContentType.help,
+                      );
+                    }
+                    : () {
+                      Get.to(() => BuyerProfileScreen());
+                    },
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -2448,7 +2462,6 @@ class _ProfileWelcomeSection extends StatelessWidget {
 }
 
 class SettingsMenuTile extends StatefulWidget {
-
   const SettingsMenuTile({
     super.key,
     required this.icon,
@@ -2469,7 +2482,8 @@ class SettingsMenuTile extends StatefulWidget {
   State<SettingsMenuTile> createState() => _SettingsMenuTileState();
 }
 
-class _SettingsMenuTileState extends State<SettingsMenuTile> with SingleTickerProviderStateMixin {
+class _SettingsMenuTileState extends State<SettingsMenuTile>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   double scrollOffset = 0;
 
@@ -2481,11 +2495,13 @@ class _SettingsMenuTileState extends State<SettingsMenuTile> with SingleTickerPr
       duration: const Duration(seconds: 3),
     )..repeat();
   }
+
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -2559,14 +2575,14 @@ class _SettingsMenuTileState extends State<SettingsMenuTile> with SingleTickerPr
             Positioned(
               right: 20,
               top: -5,
-              child: _buildShinyText(widget.badgeText??''),
+              child: _buildShinyText(widget.badgeText ?? ''),
             ),
         ],
       ),
     );
   }
 
- Widget _buildShinyText(String text) {
+  Widget _buildShinyText(String text) {
     return AnimatedBuilder(
       animation: _controller,
       builder: (_, __) {
@@ -2605,9 +2621,9 @@ class _SettingsMenuTileState extends State<SettingsMenuTile> with SingleTickerPr
                     text,
                     style: const TextStyle(
                       color: Colors.black,
-                    fontSize: AppFontSizes.mini,
-                    fontWeight: AppFontWeights.bold,
-                    letterSpacing: 0.6,
+                      fontSize: AppFontSizes.mini,
+                      fontWeight: AppFontWeights.bold,
+                      letterSpacing: 0.6,
                     ),
                   ),
                 ),

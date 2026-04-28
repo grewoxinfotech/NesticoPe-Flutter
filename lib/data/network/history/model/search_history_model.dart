@@ -13,10 +13,14 @@ class SearchHistoryResponse {
   });
 
   factory SearchHistoryResponse.fromJson(Map<String, dynamic> json) {
+    final rawData = json['data'];
     return SearchHistoryResponse(
       success: json['success'] ?? false,
       message: json['message'] ?? '',
-      data: SearchHistoryResponseData.fromJson(json['data'] ?? {}),
+      data:
+          rawData is List
+              ? SearchHistoryResponseData.fromItems(rawData)
+              : SearchHistoryResponseData.fromJson(rawData ?? {}),
     );
   }
 
@@ -61,6 +65,21 @@ class SearchHistoryResponseData {
     );
   }
 
+  factory SearchHistoryResponseData.fromItems(List<dynamic> items) {
+    return SearchHistoryResponseData(
+      item:
+          items
+              .whereType<Map<String, dynamic>>()
+              .map(SearchHistory.fromJson)
+              .toList(),
+      total: items.length,
+      currentPage: 1,
+      totalPages: 1,
+      hasMore: false,
+      fetchedAll: true,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'items': item.map((e) => e.toJson()).toList(),
@@ -76,6 +95,10 @@ class SearchHistoryResponseData {
 /// Individual Search History Item
 class SearchHistory {
   final int id;
+
+
+
+  
   final String userId;
   final List<String> keywords;
   final String searchedAt;

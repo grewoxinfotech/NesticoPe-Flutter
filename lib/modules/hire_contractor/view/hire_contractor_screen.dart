@@ -375,6 +375,8 @@ class _HireContractorScreenState extends State<HireContractorScreen> {
 
                                   onViewAll:
                                       () => Get.to(
+                                        transition: Transition.fadeIn,
+                                        duration: Duration(milliseconds: 250),
                                         () => const AllContractorsListScreen(),
                                       ),
                                   // size: 24,
@@ -537,7 +539,11 @@ class _HireContractorScreenState extends State<HireContractorScreen> {
             title: "What Our Customers Say",
             showViewAll: true,
             onViewAll: () {
-              Get.to(() => ReviewAllScreenData());
+              Get.to(
+                () => ReviewAllScreenData(),
+                transition: Transition.fadeIn,
+                duration: Duration(milliseconds: 250),
+              );
             },
             icon: Icons.reviews,
             showIcon: true,
@@ -842,7 +848,7 @@ class _HireContractorScreenState extends State<HireContractorScreen> {
 
                 /// ⭐ Badge
                 // if (isPopular)
-                //   Container(
+                //   Container(nvjn cnadkf
                 //     padding:
                 //         const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 //     decoration: BoxDecoration(
@@ -1097,7 +1103,10 @@ class _HorizontalContractorListState extends State<_HorizontalContractorList> {
             },
             itemBuilder: (context, index) {
               return Padding(
-                padding: EdgeInsets.only(right: 6),
+                padding: EdgeInsets.only(
+                  right: index == 0 ? 6 : 0,
+                  left: index == count - 1 ? 8 : 0,
+                ),
                 child: SizedBox(
                   width: 300,
 
@@ -1744,41 +1753,45 @@ class ReviewsAndTestimonials extends StatelessWidget {
                       ),
                     ),
                     alignment: Alignment.center,
-                    child: (() {
-                      final user = review.reviewer;
-                      final profilePic = user?.profilePic?.trim() ?? '';
-                      final username = user?.username?.trim() ?? '';
-                      final initial =
-                          username.isNotEmpty ? username[0].toUpperCase() : '?';
+                    child:
+                        (() {
+                          final user = review.reviewer;
+                          final profilePic = user?.profilePic?.trim() ?? '';
+                          final username = user?.username?.trim() ?? '';
+                          final initial =
+                              username.isNotEmpty
+                                  ? username[0].toUpperCase()
+                                  : '?';
 
-                      if (profilePic.isNotEmpty) {
-                        return ClipOval(
-                          child: Image.network(
-                            profilePic,
-                            width: 50,
-                            height: 50,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Text(
-                              initial,
-                              style: TextStyle(
-                                fontSize: AppFontSizes.large,
-                                fontWeight: AppFontWeights.semiBold,
-                                color: ColorRes.homeGreenDarkFade,
+                          if (profilePic.isNotEmpty) {
+                            return ClipOval(
+                              child: Image.network(
+                                profilePic,
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                                errorBuilder:
+                                    (_, __, ___) => Text(
+                                      initial,
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.large,
+                                        fontWeight: AppFontWeights.semiBold,
+                                        color: ColorRes.homeGreenDarkFade,
+                                      ),
+                                    ),
                               ),
-                            ),
-                          ),
-                        );
-                      }
+                            );
+                          }
 
-                      return Text(
-                        initial,
-                        style: TextStyle(
-                          fontSize: AppFontSizes.large,
-                          fontWeight: AppFontWeights.semiBold,
-                          color: ColorRes.homeGreenDarkFade,
-                        ),
-                      );
-                    })(),
+                          return Text(
+                            initial,
+                            style: TextStyle(
+                              fontSize: AppFontSizes.large,
+                              fontWeight: AppFontWeights.semiBold,
+                              color: ColorRes.homeGreenDarkFade,
+                            ),
+                          );
+                        })(),
                   ),
 
                   const SizedBox(width: 12),

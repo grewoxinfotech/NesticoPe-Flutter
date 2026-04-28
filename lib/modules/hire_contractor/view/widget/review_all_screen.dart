@@ -41,6 +41,14 @@ class _ReviewAllScreenDataState extends State<ReviewAllScreenData> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            Get.back(canPop: true);
+            
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
+        
         title: Text(
           'Review Screen',
           style: TextStyle(fontWeight: FontWeight.w500),

@@ -308,14 +308,12 @@ import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 import 'package:nesticope_app/app/utils/validation.dart';
 import 'package:nesticope_app/modules/auth/views/login_screen.dart';
-import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
 import 'package:nesticope_app/modules/auth/views/widget/city_zip_code_selector.dart';
 import 'package:nesticope_app/widgets/bar/app_bar/common_bar.dart';
 import 'package:nesticope_app/widgets/button/button.dart';
 import 'package:nesticope_app/modules/auth/controllers/auth_controller.dart';
 
 import '../../../app/constants/color_res.dart';
-import '../../../app/widgets/snackbar/snackbar.dart';
 import '../../../data/network/auth/model/user_model.dart';
 import '../../../widgets/New folder/inputs/text_field.dart';
 import '../../../widgets/input/city_selection_widget.dart';
@@ -337,6 +335,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   String? _selectedSellerType;
   String? _contractorType;
+  String _sellerPropertyType = 'residential';
+  String _sellerLookingTo = 'rent';
   final _formKey = GlobalKey<FormState>();
 
   final _firstNameController = TextEditingController();
@@ -352,7 +352,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _confirmPasswordController = TextEditingController();
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
-  bool _isLoading = false;
   bool _acceptTerms = false;
   bool _haveReferralCode = false;
 
@@ -394,8 +393,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         return;
       }
 
-      setState(() => _isLoading = true);
-
       try {
         final success = await authController.register(
           context: context,
@@ -426,7 +423,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       } catch (e) {
         _showErrorDialog('Registration failed: ${e.toString()}');
       } finally {
-        if (mounted) setState(() => _isLoading = false);
       }
     }
   }
@@ -443,27 +439,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
         return;
       }
 
-      setState(() => _isLoading = true);
-
       try {
-        final data = {
-          "firstName": _firstNameController.text.trim(),
-          "lastName": _lastNameController.text.trim(),
-          "email": _emailController.text.trim(),
+        // Seller basic registration (OTP) — personal details are collected later
+        // on `SellerRegistrationDetailsScreen`.
+        final data = <String, dynamic>{};
 
-          "password": _passwordController.text.trim(),
-          // "address": _addressController.text.trim(),
-          //  "city": _cityController.text.trim(),
-          // "state": _stateController.text.trim(),
-          // "zip_code": _zipCodeController.text.trim(),
-        };
+        final isBuilder =
+            (_selectedSellerType?.toLowerCase().trim() ?? 'owner') == 'builder';
 
-        final success = await authController.sellerRegister(
+        await authController.sellerRegister(
           context: context,
 
           phone: _phoneController.text.trim(),
           referralCode: _referralCodeController.text.trim(),
           sellerType: _selectedSellerType?.toLowerCase() ?? 'owner',
+          propertyType: isBuilder ? 'residential' : _sellerPropertyType,
+          lookingTo: isBuilder ? 'rent' : _sellerLookingTo,
           data: data,
         );
 
@@ -480,7 +471,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       } catch (e) {
         _showErrorDialog('Registration failed: ${e.toString()}');
       } finally {
-        if (mounted) setState(() => _isLoading = false);
       }
     }
   }
@@ -491,8 +481,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _showErrorDialog('Please accept the terms and conditions');
         return;
       }
-
-      setState(() => _isLoading = true);
 
       try {
         final data = {
@@ -508,7 +496,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           "referralCode": _referralCodeController.text.trim(),
         };
 
-        final success = await authController.resellerRegister(
+        await authController.resellerRegister(
           data: data,
           phone: _phoneController.text.trim(),
           referralCode: _referralCodeController.text.trim(),
@@ -527,7 +515,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       } catch (e) {
         _showErrorDialog('Registration failed: ${e.toString()}');
       } finally {
-        if (mounted) setState(() => _isLoading = false);
       }
     }
   }
@@ -544,8 +531,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         return;
       }
 
-      setState(() => _isLoading = true);
-
       try {
         final data = {
           "email": _emailController.text.trim(),
@@ -561,7 +546,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           "referralCode": _referralCodeController.text.trim(),
         };
 
-        final success = await authController.contractorRegister(
+        await authController.contractorRegister(
           // username: _usernameController.text.trim(),
           phone: _phoneController.text.trim(),
           // referralCode: _referralCodeController.text.trim(),
@@ -571,7 +556,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       } catch (e) {
         _showErrorDialog('Registration failed: ${e.toString()}');
       } finally {
-        if (mounted) setState(() => _isLoading = false);
       }
     }
   }
@@ -587,20 +571,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       case UserRole.contractor:
         return 'contractor';
     }
-  }
-
-  void _showSuccessDialog() {
-    NesticoPeSnackBar.showAwesomeSnackbar(
-      title: "Success",
-      message: "OTP sent Successfully",
-      contentType: ContentType.success,
-    );
-    // ScaffoldMessenger.of(
-    //   context,
-    // ).showSnackBar(const SnackBar(content: Text('Registration Successful!')));
-    // Navigator.of(context).pushReplacement(
-    //   MaterialPageRoute(builder: (context) => const LoginScreen()),
-    // );
   }
 
   void _showErrorDialog(String message) {
@@ -684,9 +654,49 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     onChanged: (value) {
                       setState(() {
                         _selectedSellerType = value;
+                        // Keep defaults ready for builder flow (hidden UI but still sent).
+                        if ((_selectedSellerType ?? '').toLowerCase() ==
+                            'builder') {
+                          _sellerPropertyType = 'residential';
+                          _sellerLookingTo = 'rent';
+                        }
                       });
                     },
                   ),
+                  if ((_selectedSellerType ?? '').toLowerCase() != 'builder')
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CommonRadioGroup<String>(
+                          title: "Property Type",
+                          options: const ["Residential", "Commercial"],
+                          groupValue:
+                              _sellerPropertyType == 'commercial'
+                                  ? 'Commercial'
+                                  : 'Residential',
+                          labelBuilder: (v) => v,
+                          onChanged: (value) {
+                            setState(() {
+                              _sellerPropertyType =
+                                  (value ?? 'Residential').toLowerCase();
+                            });
+                          },
+                        ),
+                        CommonRadioGroup<String>(
+                          title: "Looking To",
+                          options: const ["Rent", "Sell"],
+                          groupValue:
+                              _sellerLookingTo == 'sell' ? 'Sell' : 'Rent',
+                          labelBuilder: (v) => v,
+                          onChanged: (value) {
+                            setState(() {
+                              _sellerLookingTo =
+                                  (value ?? 'Rent').toLowerCase();
+                            });
+                          },
+                        ),
+                      ],
+                    ),
                 ] else ...[
                   SizedBox.shrink(),
                 ],
@@ -718,84 +728,82 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 // ],
                 // if (_selectedRole == UserRole.seller) ...[
-                Row(
-                  children: [
-                    Expanded(
-                      child: NesticoPeTextField(
-                        title: "First Name",
-                        isRequired: true,
-                        style: TextStyle(
-                          fontSize: AppFontSizes.medium,
-                          fontWeight: AppFontWeights.semiBold,
-                          color: ColorRes.textPrimary,
+                if (_selectedRole != UserRole.seller) ...[
+                  Row(
+                    children: [
+                      Expanded(
+                        child: NesticoPeTextField(
+                          title: "First Name",
+                          isRequired: true,
+                          style: TextStyle(
+                            fontSize: AppFontSizes.medium,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.textPrimary,
+                          ),
+                          controller: _firstNameController,
+                          hintText: 'Enter First Name',
+                          prefixIcon: Icons.person_outline,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter first name';
+                            }
+                            return null;
+                          },
                         ),
-                        controller: _firstNameController,
-                        hintText: 'Enter First Name',
-                        prefixIcon: Icons.person_outline,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter first name';
-                          }
-                          return null;
-                        },
                       ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: NesticoPeTextField(
-                        title: "Last Name",
-                        isRequired: true,
-                        style: TextStyle(
-                          fontSize: AppFontSizes.medium,
-                          fontWeight: AppFontWeights.semiBold,
-                          color: ColorRes.textPrimary,
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: NesticoPeTextField(
+                          title: "Last Name",
+                          isRequired: true,
+                          style: TextStyle(
+                            fontSize: AppFontSizes.medium,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.textPrimary,
+                          ),
+                          controller: _lastNameController,
+                          hintText: 'Enter Last Name',
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          prefixIcon: Icons.person_outline,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter last name';
+                            }
+                            return null;
+                          },
                         ),
-
-                        controller: _lastNameController,
-                        hintText: 'Enter Last Name',
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        prefixIcon: Icons.person_outline,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter last name';
-                          }
-                          return null;
-                        },
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-
-                // ],
-                NesticoPeTextField(
-                  isRequired: true,
-                  title: "Email Address",
-                  style: TextStyle(
-                    fontSize: AppFontSizes.medium,
-                    fontWeight: AppFontWeights.semiBold,
-                    color: ColorRes.textPrimary,
+                    ],
                   ),
-                  controller: _emailController,
-                  hintText: 'Enter Email Address',
-                  keyboardType: TextInputType.emailAddress,
-                  prefixIcon: Icons.email_outlined,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter email';
-                    }
-                    if (!RegExp(
-                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                    ).hasMatch(value)) {
-                      return 'Please enter a valid email';
-                    }
-                    return null;
-                  },
-                ),
-
-                const SizedBox(height: 10),
+                  const SizedBox(height: 10),
+                  NesticoPeTextField(
+                    isRequired: true,
+                    title: "Email Address",
+                    style: TextStyle(
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.textPrimary,
+                    ),
+                    controller: _emailController,
+                    hintText: 'Enter Email Address',
+                    keyboardType: TextInputType.emailAddress,
+                    prefixIcon: Icons.email_outlined,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter email';
+                      }
+                      if (!RegExp(
+                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                      ).hasMatch(value)) {
+                        return 'Please enter a valid email';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                ],
                 NesticoPeTextField(
                   hintText: 'Enter Phone Number',
                   title: "Phone Number",
@@ -884,82 +892,82 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 if (_selectedRole == UserRole.reseller) ...[
                   CityZipcodeSelector(
                     onSelected: (city, zipcode) {
-                      _cityController.text = city ?? '';
-                      _zipCodeController.text = zipcode ?? '';
+                      _cityController.text = city;
+                      _zipCodeController.text = zipcode;
                       print('City: $city, Zipcode: $zipcode');
                     },
                   ),
                   SizedBox(height: 10),
                 ],
-                NesticoPeTextField(
-                  hintText: 'Enter Password',
-                  title: "Password",
-                  style: TextStyle(
-                    fontSize: AppFontSizes.medium,
-                    fontWeight: AppFontWeights.semiBold,
-                    color: ColorRes.textPrimary,
-                  ),
-                  controller: _passwordController,
-                  obscureText: !_isPasswordVisible,
-                  prefixIcon: Icons.lock_outline,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _isPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                      color: ColorRes.leadGreyColor,
-                      size: 20,
+                if (_selectedRole != UserRole.seller) ...[
+                  NesticoPeTextField(
+                    hintText: 'Enter Password',
+                    title: "Password",
+                    style: TextStyle(
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.textPrimary,
                     ),
-                    onPressed: _togglePasswordVisibility,
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a password';
-                    }
-                    if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
-                    }
-                    return null;
-                  },
-                ),
-
-                const SizedBox(height: 10),
-                NesticoPeTextField(
-                  hintText: 'Enter Confirm Password',
-                  title: "Confirm Password",
-                  style: TextStyle(
-                    fontSize: AppFontSizes.medium,
-                    fontWeight: AppFontWeights.semiBold,
-                    color: ColorRes.textPrimary,
-                  ),
-                  controller: _confirmPasswordController,
-                  obscureText: !_isConfirmPasswordVisible,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-
-                  prefixIcon: Icons.lock_outline,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _isConfirmPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                      color: ColorRes.leadGreyColor,
-                      size: 20,
+                    controller: _passwordController,
+                    obscureText: !_isPasswordVisible,
+                    prefixIcon: Icons.lock_outline,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: ColorRes.leadGreyColor,
+                        size: 20,
+                      ),
+                      onPressed: _togglePasswordVisibility,
                     ),
-                    onPressed: _toggleConfirmPasswordVisibility,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a password';
+                      }
+                      if (value.length < 6) {
+                        return 'Password must be at least 6 characters';
+                      }
+                      return null;
+                    },
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please confirm password';
-                    }
-                    if (value != _passwordController.text) {
-                      return 'Passwords do not match';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 10),
+                  const SizedBox(height: 10),
+                  NesticoPeTextField(
+                    hintText: 'Enter Confirm Password',
+                    title: "Confirm Password",
+                    style: TextStyle(
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.textPrimary,
+                    ),
+                    controller: _confirmPasswordController,
+                    obscureText: !_isConfirmPasswordVisible,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    prefixIcon: Icons.lock_outline,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isConfirmPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: ColorRes.leadGreyColor,
+                        size: 20,
+                      ),
+                      onPressed: _toggleConfirmPasswordVisibility,
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please confirm password';
+                      }
+                      if (value != _passwordController.text) {
+                        return 'Passwords do not match';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                ],
+                
                 Row(
                   children: [
                     Checkbox(
@@ -1173,35 +1181,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-  Widget _buildRadioOption(String label) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Radio<String>(
-          value: label,
-          activeColor: ColorRes.primary,
-          groupValue: _selectedSellerType,
-          onChanged: (value) {
-            setState(() {
-              _selectedSellerType = value;
-            });
-          },
-        ),
-        Text(label, style: const TextStyle(fontSize: 13)),
-      ],
-    );
-  }
-}
-
-Widget _buildFieldLabel(String label) {
-  return Text(
-    label,
-    style: const TextStyle(
-      fontSize: AppFontSizes.medium,
-      fontWeight: AppFontWeights.semiBold,
-      color: ColorRes.textPrimary,
-    ),
-  );
 }
 
 class CommonRadioGroup<T> extends StatelessWidget {

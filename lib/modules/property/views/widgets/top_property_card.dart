@@ -7,6 +7,7 @@ import 'package:nesticope_app/app/constants/img_res.dart';
 import 'package:nesticope_app/app/constants/size_manager.dart';
 import 'package:nesticope_app/app/manager/property/property_name_manager.dart';
 import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:nesticope_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
 import 'package:nesticope_app/data/network/property/models/top_property_model.dart';
@@ -162,8 +163,10 @@ class _TopPropertyCardState extends State<TopPropertyCard> {
                             backgroundColor: ColorRes.white,
                             radius: 18,
                             child: Obx(() {
-                              isFavorite = favoriteController.favorites
+                              final inFavorites = favoriteController.favorites
                                   .contains(widget.property.id);
+                              isFavorite =
+                                  !UserHelper.isGuest && inFavorites;
                               return Icon(
                                 isFavorite
                                     ? Icons.favorite

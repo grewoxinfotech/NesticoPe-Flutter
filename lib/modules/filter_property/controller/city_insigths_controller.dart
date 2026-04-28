@@ -10,6 +10,7 @@ class CityController extends GetxController {
 
   // Unique states
   RxList<String> uniqueStates = <String>[].obs;
+  RxList<String> uniqueCities = <String>[].obs;
  RxString selectedCity = ''.obs;
 RxBool isFromLoginSide= false.obs;
   // State-wise city map
@@ -31,6 +32,8 @@ RxBool isFromLoginSide= false.obs;
 
   // Generate unique states and state-wise city map
   void _generateStateData() {
+    final cities = allCities.map((city) => city.city).toSet().toList();
+    uniqueCities.value = cities;
     // Extract unique states
     final states = allCities.map((city) => city.state).toSet().toList();
     uniqueStates.value = states;

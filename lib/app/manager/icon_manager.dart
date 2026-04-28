@@ -19,6 +19,33 @@ class IconItem {
 class IconManager {
   IconManager._();
 
+  static const List<String> projectAmenitiesList = [
+    "Swimming Pool",
+    "Gymnasium",
+    "Club House",
+    "Children Play Area",
+    "Jogging Track",
+    "Gardens",
+    "Meditation Area",
+    "Multipurpose Hall",
+    "Amphitheatre",
+    "Temple",
+    "24x7 Security",
+    "CCTV Surveillance",
+    "Visitor Parking",
+    "Covered Parking",
+    "Fire Safety",
+    "Power Backup",
+    "Lift",
+    "Service Lift",
+    "Waste Disposal",
+    "Solar Panels",
+    "EV Charging",
+    "Wi-Fi Connectivity",
+    "Maintenance Staff",
+    "Laundry Service",
+  ];
+
   static final List<IconItem> items = [
     IconItem(key: AppSvgRes.area, title: "Plot", icon: Icons.square_foot),
     IconItem(

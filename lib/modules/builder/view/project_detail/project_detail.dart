@@ -1369,7 +1369,13 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
               id: project.id,
               entity: project,
               projectCompareController: Get.find<ProjectCompareManager>(),
-              favoriteController: Get.find<PropertyFavoriteController>(),
+              favoriteController:
+                  Get.isRegistered<PropertyFavoriteController>()
+                      ? Get.find<PropertyFavoriteController>()
+                      : Get.put(
+                        PropertyFavoriteController(),
+                        permanent: true,
+                      ),
             ),
           ),
         ],

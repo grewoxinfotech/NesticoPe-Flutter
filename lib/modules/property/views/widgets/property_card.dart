@@ -196,8 +196,10 @@ class _PropertyCardState extends State<PropertyCard> {
                             backgroundColor: ColorRes.white,
                             radius: 20,
                             child: Obx(() {
-                              isFavorite = favoriteController.favorites
+                              final inFavorites = favoriteController.favorites
                                   .contains(widget.property.id);
+                              isFavorite =
+                                  !UserHelper.isGuest && inFavorites;
                               return Icon(
                                 isFavorite
                                     ? Icons.favorite

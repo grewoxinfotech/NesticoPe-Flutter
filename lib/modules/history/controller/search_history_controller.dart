@@ -25,7 +25,7 @@ class SearchHistoryController extends PaginatedController<BuyerSideResellerSucce
   Future<bool> addSearchHistory(Map<String, dynamic> data) async {
     try {
       bool success = await SearchHistoryService.service.addSearchHistory(data);
-      fetchSearchHistory();
+      await fetchSearchHistory();
       return success;
     } catch (e) {
       print("Error in controller while adding search history: $e");
@@ -59,9 +59,9 @@ class SearchHistoryController extends PaginatedController<BuyerSideResellerSucce
   Future<void> deleteAllHistory() async {
     final success = await SearchHistoryService.service.deletedSearchHistory();
     if (success) {
-     fetchSearchHistory();
-     searchHistoryResponse.value?.data.item.clear();
 
+     searchHistoryResponse.value?.data.item.clear();
+    await fetchSearchHistory();
     }
   }
 

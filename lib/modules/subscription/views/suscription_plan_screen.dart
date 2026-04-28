@@ -98,7 +98,6 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
 
   @override
   void initState() {
-
     super.initState();
     _isInquirySubmitted = widget.isInquirySubmitted;
 
@@ -156,10 +155,12 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
       ),
       bottomNavigationBar:
           widget.isNotFromBuyerSide
-              ? _BottomActionBar(
-                role: widget.role,
-                onBecomeType: UserHelper.isGuest ? onGuestTap : onBuyerTap,
-              )
+              ? (UserHelper.isBuyer || UserHelper.isGuest)
+                  ? _BottomActionBar(
+                    role: widget.role,
+                    onBecomeType: UserHelper.isGuest ? onGuestTap : onBuyerTap,
+                  )
+                  : null
               : null,
       body: Stack(
         children: [
@@ -170,7 +171,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
               child: Column(
                 children: [
                   // if (!widget.isNotFromBuyerSide) ...[
-                    _buildTopHeader(),
+                  _buildTopHeader(),
                   // ],
                   // Current plan section (seller/builder/reseller/contractor only)
                   if (widget.isNotFromBuyerSide) ...[
@@ -453,42 +454,42 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
           //   ),
           // ),
           const SizedBox(height: 14),
-          Obx(
-            () {
-              final names = controller.items
-                  .map((e) => e.name.trim())
-                  .where((e) => e.isNotEmpty)
-                  .toSet()
-                  .toList()
-                ..sort();
-              if (_selectedPlanName.value.isEmpty && names.isNotEmpty) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (!mounted) return;
-                  if (_selectedPlanName.value.isEmpty) {
-                    _selectedPlanName.value = names.first;
-                  }
-                });
-              }
+          Obx(() {
+            final names =
+                controller.items
+                    .map((e) => e.name.trim())
+                    .where((e) => e.isNotEmpty)
+                    .toSet()
+                    .toList()
+                  ..sort();
+            if (_selectedPlanName.value.isEmpty && names.isNotEmpty) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (!mounted) return;
+                if (_selectedPlanName.value.isEmpty) {
+                  _selectedPlanName.value = names.first;
+                }
+              });
+            }
 
-              return Row(
-                spacing: 8,
-                
-                // alignment: WrapAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: names
-                    .map(
-                      (name) => Expanded(
-                        child: _ToggleChip(
-                          label: name,
-                          selected: _selectedPlanName.value == name,
-                          onTap: () => _selectedPlanName.value = name,  
+            return Row(
+              spacing: 8,
+
+              // alignment: WrapAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children:
+                  names
+                      .map(
+                        (name) => Expanded(
+                          child: _ToggleChip(
+                            label: name,
+                            selected: _selectedPlanName.value == name,
+                            onTap: () => _selectedPlanName.value = name,
+                          ),
                         ),
-                      ),
-                    )
-                    .toList(),
-              );
-            },
-          ),
+                      )
+                      .toList(),
+            );
+          }),
           // const SizedBox(height: 14),
           // SizedBox(
           //   height: 44,
@@ -861,7 +862,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
 
   Widget _buildNoSubscriptionState() {
     return Container(
-      margin: const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 5),
+      margin: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 5),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
@@ -964,20 +965,29 @@ class _BottomActionBar extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Container(
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(16),
-            topRight: Radius.circular(16),
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              ColorRes.white,
+              ColorRes.white.withOpacity(0.8), // top: solid white
+              ColorRes.white.withOpacity(0.2), // bottom: transparent
+            ],
           ),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: ColorRes.black.withOpacity(0.1),
+              spreadRadius: 2,
               blurRadius: 8,
-              offset: const Offset(0, -2),
+              offset: const Offset(0, 2),
             ),
           ],
+          border: Border(
+            top: BorderSide(color: ColorRes.leadGreyColor.shade100, width: 1),
+          ),
         ),
         child: Row(
           children: [

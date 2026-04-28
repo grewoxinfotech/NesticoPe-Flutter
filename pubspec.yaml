@@ -99,16 +99,16 @@ flutter_native_splash:
   android: true
   ios: true
   android_12:
-    color: "#426DD4"
+    color: "#FFFFFF "
     image: assets/images/NesticoPe_App_Icon_Logo.png
 
 flutter_launcher_icons:
   android: true
   ios: true
   remove_alpha_ios: true
-  image_path: "assets/images/NesticoPe_App_Icon_Logo.png"
+  image_path: "assets/images/NesticoPe_App_Icon_Logo_some.png"
   adaptive_icon_background: "#426DD4"
-  adaptive_icon_foreground: "assets/images/NesticoPe_App_Icon_Logo.png"
+  adaptive_icon_foreground: "assets/images/NesticoPe_App_Icon_Logo_some.png"
 
 flutter:
   uses-material-design: true

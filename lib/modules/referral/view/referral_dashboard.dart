@@ -598,7 +598,7 @@ import '../controller/referral_controller.dart';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorRes.white,
+      // backgroundColor: ColorRes.white,
       appBar: AppBar(
         backgroundColor: ColorRes.white,
         elevation: 0,
@@ -1108,9 +1108,16 @@ import '../controller/referral_controller.dart';
       margin: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       decoration: BoxDecoration(
-        color: ColorRes.leadGreyColor.shade50,
+        color: ColorRes.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+        // border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

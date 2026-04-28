@@ -1323,6 +1323,9 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
     final details = propertyDetails;
     if (details == null) return SizedBox.shrink();
     final nameManager = PropertyNameManager(propertyData);
+    final reraId = propertyData.reraId;
+    final hasValidReraId =
+        reraId != null && reraId.isNotEmpty && reraId.toLowerCase() != 'null';
 
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -1382,6 +1385,66 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
               ),
             ],
           ),
+          if (hasValidReraId) ...[
+            const SizedBox(height: 16),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: ColorRes.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: ColorRes.success.withOpacity(0.18),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 8,
+                    color: Colors.black.withOpacity(0.05),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.shield_moon_outlined,
+                    size: 20,
+                    color: ColorRes.success,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'RERA ID',
+                          style: TextStyle(
+                            fontSize:
+                                isCompact
+                                    ? AppFontSizes.extraSmall
+                                    : AppFontSizes.small,
+                            fontWeight: AppFontWeights.medium,
+                            color: ColorRes.leadGreyColor[700],
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          reraId,
+                          style: TextStyle(
+                            fontSize:
+                                isCompact
+                                    ? AppFontSizes.small
+                                    : AppFontSizes.medium,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.textColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
           const SizedBox(height: 20),
 
           // ✅ Replaced static Row with dynamic highlights

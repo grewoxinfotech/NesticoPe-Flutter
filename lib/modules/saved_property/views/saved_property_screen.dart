@@ -188,8 +188,8 @@
 //     ];
 //
 //     return ListView.separated(
-//       padding: const EdgeInsets.all(12),
-//       itemCount: seenProperties.length,
+//       padding: const EdgeInsets.all(12),  hdbksiunmnb nchdun 
+//       itemCount: seenProperties.length,   ncjsnjdunajdn nbvhjb 
 //       separatorBuilder: (context, index) => const Divider(),
 //       itemBuilder: (context, index) {
 //         final property = dummyItems[index];
@@ -207,27 +207,27 @@ import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/app/utils/formater/formater.dart';
 import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:nesticope_app/data/database/secure_storage_service.dart';
-import 'package:nesticope_app/modules/auth/views/login_screen.dart';
 import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
 import 'package:nesticope_app/modules/builder/view/project_detail/project_detail.dart';
 import 'package:nesticope_app/modules/history/controller/search_history_controller.dart';
 import 'package:nesticope_app/modules/property/views/property_detail_screen.dart';
-import 'package:nesticope_app/modules/property/views/widgets/property_list_screen_card.dart';
 import 'package:nesticope_app/modules/saved_property/controllers/property_favorite_controller.dart';
 import 'package:nesticope_app/modules/saved_property/views/widget/saved_property_card.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
-import '../../../app/constants/img_res.dart';
 import '../../../app/constants/size_manager.dart';
-import '../../../data/network/property/models/property_model.dart';
-import '../../../data/network/property/models/viewed_item_model.dart';
 import '../../../utils/shimmer/buyer/my_activity/buyer_my_activity_list_screen_shimmer.dart';
 import '../../feedback/views/feedback_and_report.dart';
-import '../../propert_detail/view/property_details.dart';
-import '../../propert_detail/view/widget/property_card_widget.dart';
 import '../../property/controllers/property_controller.dart';
 import '../controllers/property_contacted_controller.dart';
 import '../controllers/property_view_controller.dart';
+
+PropertyFavoriteController _favoriteController() {
+  if (Get.isRegistered<PropertyFavoriteController>()) {
+    return Get.find<PropertyFavoriteController>();
+  }
+  return Get.put(PropertyFavoriteController(), permanent: true);
+}
 
 //
 class SavedPropertyScreen extends StatefulWidget {
@@ -239,6 +239,7 @@ class SavedPropertyScreen extends StatefulWidget {
 
 class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
   int selectedIndex = 0;
+  bool _disposed = false;
 
   final List<String> tabs = ["Saved", "Seen", "Contacted", "Recent"];
   final List<IconData> tabsIcon = [
@@ -252,8 +253,7 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
   final PropertyViewController viewController = Get.put(
     PropertyViewController(),
   );
-  final PropertyFavoriteController favoriteManager =
-      Get.find<PropertyFavoriteController>();
+  final PropertyFavoriteController favoriteManager = _favoriteController();
 
   // final FavoriteManager favoriteManager = FavoriteManager();
   final PropertyContactedController contactedController = Get.put(
@@ -265,12 +265,16 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
   );
 
   Future<void> _syncTabData(int tabIndex) async {
+    if (UserHelper.isGuest) return;
+    if (_disposed || !mounted) return;
+
     switch (tabIndex) {
       case 0:
         await favoriteManager.loadData();
         break;
       case 1:
         await viewController.fetchViewedProperties();
+        if (_disposed || !mounted) return;
         await favoriteManager.loadViews(viewController.viewedProperties);
         break;
       case 2:
@@ -285,15 +289,27 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
   @override
   void initState() {
     super.initState();
+    if (UserHelper.isGuest) return;
+
     // Load seen properties once
     // Defer async state changes until after first build to avoid:
     // "setState() or markNeedsBuild() called during build."
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (_disposed || !mounted) return;
       await _syncTabData(0);
+      if (_disposed || !mounted) return;
       await _syncTabData(1);
+      if (_disposed || !mounted) return;
       await _syncTabData(2);
+      if (_disposed || !mounted) return;
       await _syncTabData(3);
     });
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
   }
 
   @override
@@ -351,6 +367,7 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
                     return Expanded(
                       child: GestureDetector(
                         onTap: () async {
+                          // if (UserHelper.isGuest) return;
                           setState(() => selectedIndex = index);
                           await _syncTabData(index);
                         },
@@ -420,17 +437,55 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
 
           /// Tab Content
           Expanded(
-            child: IndexedStack(
-              index: selectedIndex,
-              children: const [
-                SavedPropertiesTab(),
-                SeenPropertiesTab(),
-                ContactedPropertiesTab(),
-                RecentSearchesTab(),
-              ],
-            ),
+            child:
+                UserHelper.isGuest
+                    ? const _GuestStaticActivityView()
+                    : IndexedStack(
+                      index: selectedIndex,
+                      children: const [
+                        SavedPropertiesTab(),
+                        SeenPropertiesTab(),
+                        ContactedPropertiesTab(),
+                        RecentSearchesTab(),
+                      ],
+                    ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _GuestStaticActivityView extends StatelessWidget {
+  const _GuestStaticActivityView();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Icon(
+            //   Icons.lock_outline_rounded,
+            //   size: 52,
+            //   color: ColorRes.leadGreyColor[500],
+            // ),
+            // const SizedBox(height: 12),
+            // const Text(
+            //   "Login to view your activity",
+            //   textAlign: TextAlign.center,
+            //   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            // ),
+            // const SizedBox(height: 8),
+            // Text(
+            //   "Saved, seen, contacted properties and recent searches are available after login.",
+            //   textAlign: TextAlign.center,
+            //   style: TextStyle(fontSize: 13, color: ColorRes.blackShade54),
+            // ),
+          ],
+        ),
       ),
     );
   }
@@ -446,7 +501,7 @@ class SeenPropertiesTab extends StatefulWidget {
 class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
   final PropertyViewController controller = Get.find<PropertyViewController>();
   final propertyController = Get.find<PropertyController>();
-  final manager = Get.find<PropertyFavoriteController>();
+  final manager = _favoriteController();
 
   // final RxList<Items> favoriteProperties = <Items>[].obs;
 
@@ -460,7 +515,7 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
 
   Future<void> _refreshAfterDetail(String propertyId) async {
     if (propertyId.isEmpty) return;
-    final favoriteController = Get.find<PropertyFavoriteController>();
+    final favoriteController = _favoriteController();
     await favoriteController.getAllInQuireData(propertyId);
     await favoriteController.getHasInQuireData(propertyId);
     if (Get.isRegistered<PropertyContactedController>()) {
@@ -514,7 +569,7 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
                   log("Most View ${property.details?.toJson()}");
                   return Obx(() {
                     final PropertyFavoriteController favoriteController =
-                        Get.find<PropertyFavoriteController>();
+                        _favoriteController();
 
                     final isFavorite = favoriteController.favorites.contains(
                       property.details?.id,
@@ -715,7 +770,7 @@ class SavedPropertiesTab extends StatefulWidget {
 
 class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
   final controller = Get.find<PropertyController>();
-  final manager = Get.find<PropertyFavoriteController>();
+  final manager = _favoriteController();
   final contactedController =
       Get.isRegistered<PropertyContactedController>()
           ? Get.find<PropertyContactedController>()
@@ -762,7 +817,7 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
             await controller.refreshList();
             await manager.loadData();
             await contactedController.fetchContactedProperties();
-            final favoriteController = Get.find<PropertyFavoriteController>();
+            final favoriteController = _favoriteController();
             for (final inquiry in contactedController.inquiries) {
               final pid = inquiry.details?.id ?? inquiry.propertyId;
               if (pid.isNotEmpty) {
@@ -770,7 +825,7 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
               }
             }
             log(
-              "Contacted Properties: ${manager.favoriteResponse.value?.data?.favorite.map((e) => e.details?.priceRange).toList()}",
+              "Contacted Properties: ${manager.favoriteResponse.value?.data?.favorite.map((e) => e.details.priceRange).toList()}",
             );
           },
           child: ListView.builder(
@@ -802,7 +857,7 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
                 },
                 child: Obx(() {
                   final PropertyFavoriteController favoriteController =
-                      Get.find<PropertyFavoriteController>();
+                      _favoriteController();
 
                   final isFavorite = favoriteController.favorites.contains(
                     property.details.id,
@@ -885,7 +940,7 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
                   return HorizontalPropertyCard(
                     // Image
                     imageUrl: property.details.images ?? '',
-                    propertyId: property.details?.id ?? '',
+                    propertyId: property.details.id,
 
                     // Basic info
                     isForRent: property.details.listingType == 'Rent',
@@ -968,7 +1023,7 @@ class _ContactedPropertiesTabState extends State<ContactedPropertiesTab> {
   Future<void> _refreshAfterDetail(String propertyId) async {
     await controller.fetchContactedProperties();
     if (propertyId.isNotEmpty) {
-      final favoriteController = Get.find<PropertyFavoriteController>();
+      final favoriteController = _favoriteController();
       await favoriteController.getAllInQuireData(propertyId);
       await favoriteController.getHasInQuireData(propertyId);
     }
@@ -1069,7 +1124,7 @@ class _ContactedPropertiesTabState extends State<ContactedPropertiesTab> {
           child: RefreshIndicator(
             onRefresh: () async {
               await controller.fetchContactedProperties();
-              final favoriteController = Get.find<PropertyFavoriteController>();
+              final favoriteController = _favoriteController();
               for (final inquiry in controller.inquiries) {
                 final pid = inquiry.details?.id ?? inquiry.propertyId;
                 if (pid.isNotEmpty) {
@@ -1090,7 +1145,7 @@ class _ContactedPropertiesTabState extends State<ContactedPropertiesTab> {
                   log("Most View ${property.toJson()}");
                   return Obx(() {
                     final PropertyFavoriteController favoriteController =
-                        Get.find<PropertyFavoriteController>();
+                        _favoriteController();
                     final pid = property.details?.id ?? property.propertyId;
                     if (pid.isNotEmpty &&
                         !favoriteController.hasNegotiableOfferMap.containsKey(
@@ -1357,8 +1412,9 @@ class _RecentSearchesTabState extends State<RecentSearchesTab> {
                       ),
                     ),
                     TextButton.icon(
-                      onPressed: () {
-                        controller.deleteAllHistory(); // 🧹 add this function
+                      onPressed: () async {
+                        await controller
+                            .deleteAllHistory(); // 🧹 add this function
                       },
                       icon: const Icon(
                         Icons.delete_outline,
@@ -1384,13 +1440,7 @@ class _RecentSearchesTabState extends State<RecentSearchesTab> {
                     if (scrollInfo.metrics.pixels >=
                             scrollInfo.metrics.maxScrollExtent - 100 &&
                         !controller.isLoadingMore.value &&
-                        controller.currentIndex <
-                            controller
-                                .searchHistoryResponse
-                                .value!
-                                .data
-                                .item
-                                .length) {
+                        controller.currentIndex < items.length) {
                       // controller.loadNextBatch();
                     }
                     return false;
@@ -1413,8 +1463,7 @@ class _RecentSearchesTabState extends State<RecentSearchesTab> {
 
                       final property = items[index];
                       final keywords =
-                          (property.keywords != null &&
-                                  property.keywords.isNotEmpty)
+                          (property.keywords.isNotEmpty)
                               ? property.keywords.join(', ')
                               : 'No keywords found';
 

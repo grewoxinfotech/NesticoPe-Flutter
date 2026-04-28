@@ -112,7 +112,7 @@ class ResidentialPropertyFilter extends StatelessWidget {
                             .residentialSelectedSubCategory
                             .value ==
                             controllerForFilter
-                                .residentialSubCategory[index],
+                                .residentialSubCategory[index] && controllerForFilter.hasUserSelectedPropertyType.value,
                         isExpanded: true,
                       ),
                     ),

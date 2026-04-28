@@ -14,6 +14,7 @@ class PropertyFilterControllerForFilter extends GetxController {
   RxBool isPropertyHaveImage = false.obs;
   RxBool isPropertyHaveVideo = false.obs;
   RxList<String> amenities = <String>[].obs;
+  
   final showAllAmenities = false.obs;
 
   void addBuilderAmenities(String items) {
@@ -511,7 +512,7 @@ class PropertyFilterControllerForFilter extends GetxController {
 
   /// Reset ALL filters including search, verification and location (used by Reset button)
   void resetAllFilters() {
-    resetFilters();
+    
     hasUserSelectedPropertyType.value = false;
     // Common
     isRERAVerified.value = false;
@@ -521,6 +522,7 @@ class PropertyFilterControllerForFilter extends GetxController {
     selectedPurchaseType.value = '';
     statusApplicateIndex.value = '';
     searchFilterByID.clear();
+
 
     // Location
     selectedState.value = '';

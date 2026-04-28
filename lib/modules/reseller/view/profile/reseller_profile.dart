@@ -65,6 +65,7 @@ class _ResellerProfileScreenState extends State<ResellerProfileScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F6FA),
       appBar: AppBar(
+        
         automaticallyImplyLeading: false,
         title: const Text(
           'Profile',
@@ -74,7 +75,7 @@ class _ResellerProfileScreenState extends State<ResellerProfileScreen> {
             color: Color(0xFF1A1A2E),
           ),
         ),
-        backgroundColor: const Color(0xFFF5F6FA),
+        backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: false,
         actions: [

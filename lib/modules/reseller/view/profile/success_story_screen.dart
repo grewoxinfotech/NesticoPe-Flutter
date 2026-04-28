@@ -21,6 +21,7 @@ class _SuccessStoryScreenState extends State<SuccessStoryScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: ColorRes.white,
         title: Text('Success Story ',style: TextStyle(fontWeight: AppFontWeights.semiBold),),
 
       ),

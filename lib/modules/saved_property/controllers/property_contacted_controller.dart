@@ -54,7 +54,7 @@ class PropertyContactedController extends GetxController {
       // await loadNextBatch();
     } catch (e) {
       print(
-        'Error in PropertyContactedController.fetchContactedProperties: $e',
+        'Error in Property Contacted Controller fetch Contacted Properties: $e',
       );
     } finally {
       isLoading.value = false;

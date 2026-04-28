@@ -15,7 +15,8 @@ import 'package:nesticope_app/modules/builder/view/builder_main_screen.dart';
 import 'package:nesticope_app/modules/contractor/view/contractor_main.dart';
 import 'package:nesticope_app/modules/dashboard/views/seller_dashboard_screen.dart';
 import 'package:nesticope_app/modules/reseller/view/property_reseller.dart';
-import 'package:nesticope_app/utils/logger/app_logger.dart';
+import 'package:nesticope_app/modules/saved_property/controllers/property_favorite_controller.dart';
+import 'package:nesticope_app/modules/profile/controllers/buyer_profiledata.dart';
 import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import '../../../data/network/user/service/notification_sync_service.dart';
@@ -93,14 +94,10 @@ class AuthController extends GetxController {
     /// Seller
     emailController.text = "dev_seed_seller_1@test.local";
     passwordController.text = "Test@123456";
-    
   }
 
   void setCity(String value) {
-    
     city.value = value;
-
-
   }
 
   void setRole(UserRole role) => selectedRole.value = role;
@@ -310,6 +307,7 @@ class AuthController extends GetxController {
           message: 'Registration successful. Please verify OTP sent to $phone.',
           contentType: ContentType.success,
         );
+        await SecureStorage.setAppLaunched();
       } else {
         throw Exception(
           response['message'] ?? 'Registration failed - no token received',
@@ -350,6 +348,7 @@ class AuthController extends GetxController {
             redirectAfterOtp: OtpLoginScreen(),
           ),
         );
+        await SecureStorage.setAppLaunched();
 
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: 'Success',
@@ -422,6 +421,8 @@ class AuthController extends GetxController {
 
     required String phone,
     required String sellerType,
+    required String propertyType,
+    required String lookingTo,
     String? referralCode,
   }) async {
     try {
@@ -432,11 +433,22 @@ class AuthController extends GetxController {
         phone: phone,
         referCode: referralCode,
         sellerType: sellerType,
+        propertyType: propertyType,
+        lookingTo: lookingTo,
       );
 
       if (response['success'] == true && response['data']['token'] != null) {
         final token = response['data']['token'];
         await SecureStorage.saveToken(token);
+        final otpData = {
+          ...?data,
+          'phone': phone,
+          'userType': 'seller',
+          'sellerType': sellerType,
+          'referralCode': referralCode ?? '',
+          'propertyType': propertyType,
+          'lookingTo': lookingTo,
+        };
 
         // Navigate to OTP screen using the passed phone
         Get.to(
@@ -444,11 +456,11 @@ class AuthController extends GetxController {
             phone: phone,
             token: token,
             verifyOTPFor: VerifyOTPFor.sellerRegister,
-            data: data,
+            data: otpData,
             redirectAfterOtp: OtpLoginScreen(),
           ),
         );
-
+        await SecureStorage.setAppLaunched();
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: 'Success',
           message: 'Registration successful. Please verify OTP sent to $phone.',
@@ -476,27 +488,47 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
       print("Received data: $data");
-      final receivedToken = await authService.sellerRegistrationComplete(data);
-      if (receivedToken != null) {
-        await SecureStorage.saveToken(receivedToken);
+      final user = await authService.sellerRegistrationComplete(data);
+      if (user != null) {
+        final fallbackSellerType = data['sellerType']?.toString();
+        if ((user.user?.sellerType == null || user.user!.sellerType!.isEmpty) &&
+            fallbackSellerType != null &&
+            fallbackSellerType.isNotEmpty) {
+          user.user?.sellerType = fallbackSellerType;
+        }
 
-        // final user = UserModel(
-        //   token: receivedToken,
-        //   user: User(
-        //     address: data[''],
-        //     city: data[''],
-        //     email: data[''],
-        //     firstName: data[''],
-        //     lastName: data[''],
-        //     state: data[''],
-        //     zipCode: data[''],
-        //     address: data[''],
-        //     address: data[''],
-        //     address: data[''],
-        //
-        //   )
-        // );
-        // await SecureStorage.saveUserData(user);
+        await SecureStorage.saveToken(user.token!);
+        await SecureStorage.saveUserData(user);
+        await SecureStorage.saveLoggedIn(true);
+        await SecureStorage.saveTermAndConditionValue(false.toString());
+
+        currentUser.value = user;
+        await UserHelper.setUserType(
+          user.user?.userType,
+          sellerType: user.user?.sellerType,
+          isAadharVerified: user.user?.isAadharVerified,
+        );
+
+        authState.value = AuthState.authenticated;
+
+        // 4️⃣ 🔔 NOTIFICATION SYNC
+        final userId = user.user?.id?.toString();
+        final role = UserHelper.userType?.name ?? 'buyer';
+
+        if (userId != null && userId.isNotEmpty) {
+          await NotificationService.instance.attachLoggedInUser(
+            userId: userId,
+            role: role,
+            syncToBackend: (playerId) async {
+              // ✅ THIS IS THE SYNC POINT
+              await NotificationSyncService.instance.syncToBackend(
+                deviceToken: playerId,
+                metadata: {'user_id': userId, 'role': role},
+              );
+            },
+          );
+        }
+
         return true;
       } else {
         print("Registration failed or token not received");
@@ -532,10 +564,45 @@ class AuthController extends GetxController {
       await SecureStorage.saveLoggedIn(true);
 
       currentUser.value = user;
-      AppLogger.structured(
-        "VerifyOtp method current user value ",
-        user.toJson(),
+      debugPrint(
+        "User: ${user.user?.toJson()} =================================================",
       );
+
+      // 2️⃣ Save auth dat
+      await SecureStorage.saveTermAndConditionValue(false.toString());
+
+      // 3️⃣ Set user role/type
+      await UserHelper.setUserType(
+        user.user?.userType,
+        sellerType: user.user?.sellerType,
+        isAadharVerified: user.user?.isAadharVerified,
+      );
+
+      currentUser.value = user;
+      authState.value = AuthState.authenticated;
+
+      // 4️⃣ 🔔 NOTIFICATION SYNC
+
+      await UserHelper.setUserType(
+        user.user?.userType,
+        sellerType: user.user?.sellerType,
+        isAadharVerified: user.user?.isAadharVerified,
+      );
+
+      final userId = user.user?.id?.toString();
+      final role = UserHelper.userType?.name ?? 'buyer';
+      if (userId != null && userId.isNotEmpty) {
+        await NotificationService.instance.attachLoggedInUser(
+          userId: userId,
+          role: role,
+          syncToBackend: (playerId) async {
+            await NotificationSyncService.instance.syncToBackend(
+              deviceToken: playerId,
+              metadata: {'user_id': userId, 'role': role},
+            );
+          },
+        );
+      }
 
       authState.value = AuthState.authenticated;
     } catch (e) {
@@ -543,6 +610,24 @@ class AuthController extends GetxController {
       rethrow;
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  void navigateToUserPanel() {
+    if (UserHelper.userType == UserType.buyer) {
+      Get.offAll(() => const DashboardScreen());
+    } else if (UserHelper.userType == UserType.seller &&
+        UserHelper.sellerType == SellerType.owner) {
+      Get.offAll(() => const SellerDashboardScreen());
+    } else if (UserHelper.userType == UserType.reseller) {
+      Get.offAll(() => const MainNavigationScreen());
+    } else if (UserHelper.userType == UserType.contractor) {
+      Get.offAll(() => ContractorMainScreen());
+    } else if (UserHelper.userType == UserType.seller &&
+        UserHelper.sellerType == SellerType.builder) {
+      Get.offAll(() => const BuilderMainScreen());
+    } else {
+      Get.offAll(() => const DashboardScreen());
     }
   }
 
@@ -725,7 +810,7 @@ class AuthController extends GetxController {
       );
 
       Get.offAll(() => const OtpLoginScreen());
-      
+
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Success',
         message:
@@ -784,7 +869,6 @@ class AuthController extends GetxController {
     }
   }
 
-
   Future<void> logout() async {
     // IMPORTANT: Logout must never hang the UI thread.
     // We do local teardown first, and run network cleanups best-effort.
@@ -816,6 +900,19 @@ class AuthController extends GetxController {
           debugPrint('⏱️ SecureStorage.clearAll() timed out (continuing)');
         },
       );
+
+      if (Get.isRegistered<PropertyFavoriteController>()) {
+        final favoriteController = Get.find<PropertyFavoriteController>();
+        favoriteController.clearAllFavoriteState();
+        Get.delete<PropertyFavoriteController>(force: true);
+      }
+
+      if (Get.isRegistered<BuyerProfileDataController>()) {
+        final buyerProfileController = Get.find<BuyerProfileDataController>();
+        buyerProfileController.clearProfileState();
+        Get.delete<BuyerProfileDataController>(force: true);
+      }
+
       UserHelper.clearUserType();
       currentUser.value = null;
       authState.value = AuthState.unauthenticated;

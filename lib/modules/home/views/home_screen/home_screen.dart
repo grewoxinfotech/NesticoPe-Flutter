@@ -360,7 +360,15 @@ class _HomeScreenState extends State<HomeScreen>
     trendingCityController = Get.put(TrendingCityController());
     micController = Get.put(MicController());
     googleMapController = Get.put(GoogleMapSearchController(), tag: 'city');
-    profileController = Get.put(BuyerProfileDataController());
+    profileController =
+        Get.isRegistered<BuyerProfileDataController>()
+            ? Get.find<BuyerProfileDataController>()
+            : Get.put(BuyerProfileDataController(), permanent: true);
+    // Warm up profile data early so profile screen doesn't stay on shimmer.
+    if (!profileController.isLoading.value &&
+        profileController.userProfile.value == null) {
+      profileController.getUserProfile();
+    }
     propertyShareController = Get.put(SharePropertyController());
     recommendedPropertyController = Get.put(RecommendedPropertyController());
     propertyFilterController = Get.put(PropertyFilterControllerForFilter());
@@ -903,10 +911,11 @@ class _HomeScreenState extends State<HomeScreen>
         _buildLimitedOfferCard(),
 
         // _buildPlatformServices(),
-        PromotionBanners(),
-        const SizedBox(height: 12),
         _buildNewsAndArticles(),
         _resellerSuccessStories(),
+        const SizedBox(height: 12),
+        PromotionBanners(),
+        const SizedBox(height: 12),
         // const SizedBox(height: 15),
         // _buildWhyChooseUs(),
         // _buildReviewsAndTestimonials(),
@@ -956,7 +965,7 @@ class _HomeScreenState extends State<HomeScreen>
       return Container(
         padding: EdgeInsets.symmetric(vertical: 12),
         // margin: EdgeInsets.symmetric(vertical: 20),
-        color: Color.fromARGB(255, 253, 247, 240),
+        color: Color.fromARGB(255, 241, 252, 253),
         child: Column(
           children: [
             TitleWithViewAll(
@@ -1523,7 +1532,11 @@ class _HomeScreenState extends State<HomeScreen>
                 });
 
                 if (selectedCity == null) {
-                  Get.to(() => PropertyDetail());
+                  Get.to(
+                    () => PropertyDetail(),
+                    transition: Transition.fadeIn,
+                    duration: Duration(milliseconds: 250),
+                  );
                 } else {
                   Get.to(
                     () => PropertyDetail(
@@ -1531,6 +1544,8 @@ class _HomeScreenState extends State<HomeScreen>
                         {'city': selectedCity!},
                       ],
                     ),
+                    transition: Transition.fadeIn,
+                    duration: Duration(milliseconds: 250),
                   );
                 }
               },
@@ -1948,7 +1963,11 @@ class _HomeScreenState extends State<HomeScreen>
               subTitle: 'Discover new projects in your city',
               onViewAll: () {
                 if (projectController.selectedCity == null) {
-                  Get.to(() => AllProjectListScreen());
+                  Get.to(
+                    () => AllProjectListScreen(),
+                    transition: Transition.fadeIn,
+                    duration: Duration(milliseconds: 250),
+                  );
                 } else {
                   Get.to(
                     () => AllProjectListScreen(
@@ -1956,6 +1975,8 @@ class _HomeScreenState extends State<HomeScreen>
                         {'city': projectController.selectedCity.value},
                       ],
                     ),
+                    transition: Transition.fadeIn,
+                    duration: Duration(milliseconds: 250),
                   );
                 }
               },
@@ -3080,7 +3101,7 @@ class _HomeScreenState extends State<HomeScreen>
         padding: EdgeInsets.symmetric(vertical: 12),
 
         // margin: EdgeInsets.symmetric(vertical: 20),
-        color: Color.fromARGB(255, 252, 245, 237),
+        color: Color.fromARGB(255, 252, 253, 241),
 
         child: Column(
           children: [
@@ -3804,7 +3825,8 @@ class NewsAndArticles extends StatelessWidget {
       child: ListView.separated(
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: EdgeInsets.symmetric(horizontal: 12),
+        // padding: EdgeInsets.zero,
         clipBehavior: Clip.none,
         itemCount: articles.length,
         separatorBuilder: (_, __) => const SizedBox(width: 16),
@@ -5610,7 +5632,7 @@ class SellerListShimmer extends StatelessWidget {
   const SellerListShimmer({super.key});
 
   @override
-  Widget build(BuildContext context) {  
+  Widget build(BuildContext context) {
     return SizedBox(
       height: 140,
       child: ListView.separated(
@@ -6176,7 +6198,7 @@ class ShareBanner extends StatelessWidget {
                   "Invite your friends and earn exciting rewards on every successful referral.",
               buttonText: "Share Now",
               onTap: () {
-                // Get.toNamed(Routes.share);
+                // Get.toNamed(Routes.share)   ;
               },
             ),
           ),
@@ -6890,7 +6912,8 @@ class SocialMediaDialog extends StatelessWidget {
                 _socialItem('assets/png/twitter.png', social?.twitter),
                 _socialItem(
                   'assets/png/social.png',
-                  social?.instagram, // or generic link hfnbndj ksimn ndhbsb  vssgsgdvdvdv
+                  social
+                      ?.instagram, // or generic link hfnbndj ksimn ndhbsb  vssgsgdvdvdv
                 ),
               ],
             ),

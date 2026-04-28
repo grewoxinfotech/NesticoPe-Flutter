@@ -45,12 +45,19 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
   String saleType = "New Properties";
 
   @override
-  
   void initState() {
     super.initState();
-    controllerForFilter = Get.put(PropertyFilterControllerForFilter());
+    controllerForFilter =
+        Get.isRegistered<PropertyFilterControllerForFilter>(tag: 'listing_view')
+            ? Get.find<PropertyFilterControllerForFilter>(tag: 'listing_view')
+            : Get.put(PropertyFilterControllerForFilter(), tag: 'listing_view');
+
+    // Always start from clean controller state when opening this screen.
+    // If initialFilters exist, they are re-applied after reset.
+    controllerForFilter.resetAllFilters();
+    controllerForFilter.resetFilters();
+
     if (widget.initialFilters.isNotEmpty) {
-      // Initialize filters after widget is built
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await controllerForFilter.initializeWithFilters(widget.initialFilters);
       });
@@ -80,6 +87,7 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
           TextButton(
             onPressed: () {
               controllerForFilter.resetAllFilters();
+              controllerForFilter.resetFilters();
             },
             child: Text(
               'Reset',
@@ -98,61 +106,60 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Search by ID
-            Obx(() {
-              final chips = controllerForFilter.getSelectedFilterChips();
-              if (chips.isEmpty) return const SizedBox.shrink();
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        buildCommonText(
-                          'Selected',
-                          AppFontSizes.medium,
-                          AppFontWeights.semiBold,
-                          ColorRes.textColor.withOpacity(0.7),
-                          1,
-                        ),
-                        const Spacer(),
-                        TextButton(
-                          onPressed: controllerForFilter.resetAllFilters,
-                          child: Text(
-                            'Clear all',
-                            style: TextStyle(
-                              color: ColorRes.primary,
-                              fontWeight: AppFontWeights.semiBold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        for (final chip in chips)
-                          Chip(
-                            label: Text(chip['label'] ?? ''),
-                            deleteIcon: const Icon(Icons.close, size: 16),
-                            onDeleted: () {
-                              final key = chip['key'];
-                              if (key != null) {
-                                controllerForFilter.clearFilterByKey(key);
-                              }
-                            },
-                          ),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            }),
+            // Obx(() {
+            //   final chips = controllerForFilter.getSelectedFilterChips();
+            //   if (chips.isEmpty) return const SizedBox.shrink();
+            //   return Padding(
+            //     padding: const EdgeInsets.symmetric(horizontal: 10),
+            //     child: Column(
+            //       crossAxisAlignment: CrossAxisAlignment.start,
+            //       children: [
+            //         Row(
+            //           children: [
+            //             buildCommonText(
+            //               'Selected',
+            //               AppFontSizes.medium,
+            //               AppFontWeights.semiBold,
+            //               ColorRes.textColor.withOpacity(0.7),
+            //               1,
+            //             ),
+            //             const Spacer(),
+            //             TextButton(
+            //               onPressed: controllerForFilter.resetAllFilters,
+            //               child: Text(
+            //                 'Clear all',
+            //                 style: TextStyle(
+            //                   color: ColorRes.primary,
+            //                   fontWeight: AppFontWeights.semiBold,
+            //                 ),
+            //               ),
+            //             ),
+            //           ],
+            //         ),
+            //         const SizedBox(height: 8),
+            //         Wrap(
+            //           spacing: 8,
+            //           runSpacing: 8,
+            //           children: [
+            //             for (final chip in chips)
+            //               Chip(
+            //                 label: Text(chip['label'] ?? ''),
+            //                 deleteIcon: const Icon(Icons.close, size: 16),
+            //                 onDeleted: () {
+            //                   final key = chip['key'];
+            //                   if (key != null) {
+            //                     controllerForFilter.clearFilterByKey(key);
+            //                   }
+            //                 },
+            //               ),
+            //           ],
+            //         ),
+            //       ],
+            //     ),
+            //   );
+            // }),
 
-            const SizedBox(height: 16),
-
+            // const SizedBox(height: 16),
             if (widget.showSearchById)
               Padding(
                 padding: const EdgeInsets.fromLTRB(10, 12, 10, 8),
@@ -474,6 +481,7 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
                     controllerForFilter.propertyType.length,
                     (index) {
                       final isSelected =
+                          controllerForFilter.hasUserSelectedPropertyType.value &&
                           controllerForFilter.selectedPropertyTypeIndex.value ==
                           index;
                       return Padding(

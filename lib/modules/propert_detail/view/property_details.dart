@@ -424,7 +424,6 @@ import '../../../widgets/empty_state/empty_state.dart';
 import '../../home/widgets/unified_comparison_floating_button.dart';
 import '../../property/controllers/property_controller.dart';
 
-
 //   double minVal =
 //       (min is num) ? min.toDouble() : double.tryParse(min.toString()) ?? 0;
 //   double maxVal =
@@ -467,85 +466,92 @@ class _PropertyDetailState extends State<PropertyDetail> {
   final CompareManager compare = Get.find<CompareManager>();
 
   /// 🔒 Hard-locked filter (never visible, never removable)
-  static const Map<String, String> _lockedFilters = {
-    "approval_status": "approved",
-  };
+  // static const Map<String, String> _lockedFilters = {
+  //   "approval_status": "approved",
+  // };
 
   bool _isLoading = true; // ✅ Start with loading state
   List<Items> _items = [];
 
   @override
-void initState() {
-  super.initState();
+  void initState() {
+    super.initState();
 
-  print("🔵 initState called");
+    print("🔵 initState called");
 
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    print("🟡 PostFrameCallback triggered");
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      print("🟡 PostFrameCallback triggered");
 
-    final Map<String, String> uiFilters = {};
+      final Map<String, String> uiFilters = {};
 
-    if (widget.filters != null && widget.filters!.isNotEmpty) {
-      print("🟢 Incoming widget.filters: ${widget.filters}");
+      if (widget.filters != null && widget.filters!.isNotEmpty) {
+        print("🟢 Incoming widget.filters: ${widget.filters}");
 
-      for (final filter in widget.filters!) {
-        print("➡️ Adding filter: $filter");
-        uiFilters.addAll(filter);
+        if (widget.filters![0].containsKey('approval_status')) {
+          uiFilters['approval_status'] = '';
+        }
+        if (widget.filters![0].containsKey('isVerified')) {
+          uiFilters['isVerified'] = '';
+        }
+
+        for (final filter in widget.filters!) {
+          print("➡️ Adding filter: $filter");
+          uiFilters.addAll(filter);
+        }
+      } else {
+        print("⚠️ No filters received from widget");
       }
-    } else {
-      print("⚠️ No filters received from widget");
-    }
 
-    print("✅ Final uiFilters: $uiFilters");
+      print("✅ Final uiFilters: $uiFilters");
 
-    setState(() {
-      selectedFilters = uiFilters;
-      
+      setState(() {
+        selectedFilters = uiFilters;
+      });
+
+      print("📌 selectedFilters set: $selectedFilters");
+
+      _applyFilters();
     });
 
-    print("📌 selectedFilters set: $selectedFilters");
+    // Listen to controller loading
+    controller.isLoading.listen((loading) {
+      print("⏳ isLoading changed: $loading");
 
-    _applyFilters();
-  });
+      if (mounted) {
+        setState(() {
+          _isLoading = loading;
+        });
+      }
+    });
 
-  // Listen to controller loading
-  controller.isLoading.listen((loading) {
-    print("⏳ isLoading changed: $loading");
+    // Listen to items
+    controller.items.listen((items) {
+      print("📦 Items updated: ${items.length} items");
 
-    if (mounted) {
-      setState(() {
-        _isLoading = loading;
-      });
-    }
-  });
+      if (mounted) {
+        setState(() {
+          _items = items;
+        });
+      }
+    });
+  }
 
-  // Listen to items
-  controller.items.listen((items) {
-    print("📦 Items updated: ${items.length} items");
+  void _applyFilters() {
+    print("🚀 Applying Filters...");
 
-    if (mounted) {
-      setState(() {
-        _items = items;
-      });
-    }
-  });
-}
+    print("🔒 Locked Filters: ");
+    print("🎯 Selected Filters: $selectedFilters");
 
-void _applyFilters() {
-  print("🚀 Applying Filters...");
+    final finalFilters = {
+      // ..._lockedFilters,
+      ...selectedFilters,
+    };
 
-  print("🔒 Locked Filters: $_lockedFilters");
-  print("🎯 Selected Filters: $selectedFilters");
+    print("🧾 Final Filters Sent to Controller: $finalFilters");
 
-  final finalFilters = {
-    ..._lockedFilters,
-    ...selectedFilters,
-  };
+    controller.applyFilters(finalFilters);
+  }
 
-  print("🧾 Final Filters Sent to Controller: $finalFilters");
-
-  controller.applyFilters(finalFilters);
-}
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,10 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/data/network/auth/model/user_model.dart';
-import 'package:nesticope_app/data/network/user/service/notification_sync_service.dart';
-import 'package:nesticope_app/modules/auth/views/login_screen.dart';
 import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
-import 'package:nesticope_app/utils/logger/app_logger.dart';
 import 'package:http/http.dart' as http;
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
@@ -19,7 +15,6 @@ import '../../../../app/constants/api_constants.dart';
 import 'package:nesticope_app/data/database/secure_storage_service.dart';
 import 'package:get/get.dart';
 
-import '../../../../app/widgets/snackbar/snackbar.dart';
 import '../../../../services/notification_service.dart';
 import '../../../../widgets/messages/snack_bar.dart';
 
@@ -305,6 +300,8 @@ class AuthService {
     required String phone,
     required String userType,
     required String sellerType,
+    String propertyType = 'residential',
+    String lookingTo = 'rent',
     String? referCode,
   }) async {
     final response = await http.post(
@@ -314,6 +311,8 @@ class AuthService {
         'phone': phone,
         'userType': userType,
         'sellerType': sellerType,
+        'propertyType': propertyType,
+        'lookingTo': lookingTo,
         if (referCode != null) 'referralCode': referCode,
       }),
     );
@@ -403,7 +402,7 @@ class AuthService {
     }
   }
 
-  Future<String?> sellerRegistrationComplete(Map<String, dynamic> data) async {
+  Future<UserModel?> sellerRegistrationComplete(Map<String, dynamic> data) async {
     try {
       final response = await http.post(
         Uri.parse("$url/complete-seller-registration"),
@@ -418,8 +417,15 @@ class AuthService {
         print("Seller Complete [DEBUG]=> ${response.body}");
 
         if (body['success'] == true) {
-          // Return token from response
-          return body['data']['token'];
+          final responseData = body['data'] as Map<String, dynamic>? ?? {};
+          final userJson = responseData['user'] as Map<String, dynamic>? ?? {};
+          final token = responseData['token']?.toString();
+          if (token == null || token.isEmpty) return null;
+
+          return UserModel(
+            token: token,
+            user: User.fromJson(userJson),
+          );
         }
       }
       return null;
@@ -449,15 +455,28 @@ class AuthService {
       body: jsonEncode({'otp': otp}),
     );
 
+    debugPrint("response : -----------------> ${response.body}");
+    debugPrint("response : -----------------> ${response.statusCode}");
+    debugPrint("response : -----------------> ${response.headers}");
+    debugPrint("response : -----------------> ${ApiConstants.auth}/verify-otp}");
+    debugPrint("response : -----------------> ${response.isRedirect}");
+    debugPrint("response : -----------------> ${response.statusCode}");
+    debugPrint("response : -----------------> ${response.statusCode}");
     final data = jsonDecode(response.body);
     if (response.statusCode == 200 && data['success'] == true) {
-      if (data['data']['user']['userType'] == "reseller") {
-        generateResellerCertificate(data['data']['certificateData']);
-        return UserModel.fromJson(data['data']['user'])
-          ..token = data['data']['token'] ?? token;
+      final responseData = data['data'] as Map<String, dynamic>? ?? {};
+      final userJson = responseData['user'] as Map<String, dynamic>? ?? {};
+      final resolvedToken = (responseData['token'] ?? token).toString();
+
+      if (userJson['userType'] == "reseller" &&
+          responseData['certificateData'] != null) {
+        generateResellerCertificate(responseData['certificateData']);
       }
-      return UserModel.fromJson(data['data']['user'])
-        ..token = data['data']['token'] ?? token;
+
+      return UserModel(
+        token: resolvedToken,
+        user: User.fromJson(userJson),
+      );
     }
     throw Exception(data['message'] ?? 'OTP verification failed');
   }
@@ -610,9 +629,6 @@ class AuthService {
       return true;
     }
     if (response.statusCode == 429) {
-      final message =
-          (data['message'] ?? 'Too many requests. Please try again later.')
-              .toString();
       showTopAwesomeSnackbar(
         title: 'Too Many Requests',
         color: ColorRes.white,
@@ -702,9 +718,6 @@ class AuthService {
       return true;
     }
     if (response.statusCode == 429) {
-      final message =
-          (data['message'] ?? 'Too many requests. Please try again later.')
-              .toString();
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Too Many Requests',
         message:

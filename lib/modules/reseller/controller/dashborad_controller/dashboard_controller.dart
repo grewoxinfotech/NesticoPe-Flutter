@@ -680,6 +680,7 @@ class DashboardController extends GetxController {
   final RxBool isResellerDetailExpanded = false.obs;
   final isGenerated = false.obs;
   final Rx<DashboardMetrics> metrics =
+
       DashboardMetrics(
         totalSales: 0,
         totalLeads: 0,
@@ -687,6 +688,9 @@ class DashboardController extends GetxController {
         growthPercentage: 0,
       ).obs;
 
+TextEditingController cityController = TextEditingController();
+TextEditingController locationController = TextEditingController();
+// TextEditingController addressController = TextEditingController();
   final RxList<Lead> recentLeads = <Lead>[].obs;
   final RxList<Product> topProducts = <Product>[].obs;
   final RxList<ResellerLeadOverview> _allProducts =

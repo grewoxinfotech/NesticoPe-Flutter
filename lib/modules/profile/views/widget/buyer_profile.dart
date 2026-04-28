@@ -18,6 +18,7 @@ import '../../../../widgets/messages/snack_bar.dart';
 import '../../../auth/views/delete_account.dart';
 import '../../../reseller/controller/profile/profile_controller.dart';
 import '../../controllers/seller_profile_controller.dart';
+import '../../../../widgets/input/city_selection_widget.dart';
 
 class BuyerProfileScreen extends StatelessWidget {
   const BuyerProfileScreen({Key? key}) : super(key: key);
@@ -39,6 +40,37 @@ class BuyerProfileScreen extends StatelessWidget {
           'Profile',
           style: TextStyle(fontWeight: AppFontWeights.bold),
         ),
+        actions: [
+          Obx(
+            () => TextButton.icon(
+              onPressed:
+                  profileController.isEditing.value
+                      ? profileController.saveProfile
+                      : profileController.toggleEdit,
+              icon:
+                  profileController.isSaving.value
+                      ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                      : Icon(
+                        profileController.isEditing.value
+                            ? Icons.check
+                            : Icons.edit_outlined,
+                        color: ColorRes.primary,
+                        size: 18,
+                      ),
+              label: Text(
+                profileController.isEditing.value ? 'Save' : 'Edit',
+                style: TextStyle(
+                  color: ColorRes.primary,
+                  fontWeight: AppFontWeights.semiBold,
+                ),
+              ),
+            ),
+          ),
+        ],
 
         backgroundColor: const Color(0xFFF5F6FA),
         elevation: 0,
@@ -105,10 +137,30 @@ class BuyerProfileScreen extends StatelessWidget {
               Obx(() {
                 ImageProvider? imageProvider;
                 final profilePic = controller.userProfile.value?.profilePic;
+                final selectedImage = controller.selectedImage.value;
 
                 bool isNetworkImage = false;
 
-                if (profilePic != null && profilePic.isNotEmpty) {
+                if (controller.isLoadingIMage.value) {
+                  return Container(
+                    width: 74,
+                    height: 74,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: ColorRes.primary, width: 2),
+                    ),
+                    child: const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  );
+                }
+
+                if (selectedImage != null) {
+                  imageProvider = FileImage(selectedImage);
+                } else if (profilePic != null && profilePic.isNotEmpty) {
                   // ✅ If it's a network URL
                   if (profilePic.startsWith('http') ||
                       profilePic.startsWith('https')) {
@@ -134,9 +186,9 @@ class BuyerProfileScreen extends StatelessWidget {
                         height: 70,
                         child:
                             imageProvider != null
-                                ? (isNetworkImage
+                                ? (isNetworkImage && profilePic != null
                                     ? Image.network(
-                                      profilePic!,
+                                      profilePic,
                                       fit: BoxFit.cover,
                                       loadingBuilder: (
                                         context,
@@ -167,8 +219,8 @@ class BuyerProfileScreen extends StatelessWidget {
                                                 ),
                                               ),
                                     )
-                                    : Image.file(
-                                      File(profilePic!),
+                                    : Image(
+                                      image: imageProvider,
                                       fit: BoxFit.cover,
                                     ))
                                 : CircleAvatar(
@@ -187,6 +239,30 @@ class BuyerProfileScreen extends StatelessWidget {
                   ),
                 );
               }),
+              Obx(() {
+                if (!controller.isEditing.value) return const SizedBox.shrink();
+                return Positioned(
+                  right: 0,
+                  bottom: 0,
+                  child: GestureDetector(
+                    onTap: () => controller.showImagePickerOptions(Get.context!),
+                    child: Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        color: ColorRes.primary,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: ColorRes.white, width: 2),
+                      ),
+                      child: const Icon(
+                        Icons.camera_alt,
+                        color: ColorRes.white,
+                        size: 14,
+                      ),
+                    ),
+                  ),
+                );
+              }),
             ],
           ),
           const SizedBox(width: 16),
@@ -198,8 +274,10 @@ class BuyerProfileScreen extends StatelessWidget {
                 SizedBox(
                   width: 140,
                   child: Text(
-                    '${controller.userProfile.value?.username ?? ''}',
+                    '${controller.userProfile.value?.firstName ?? ''} ${controller.userProfile.value?.lastName ?? ''}'
+                        .trim(),
                     maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: AppFontSizes.body,
                       fontWeight: AppFontWeights.bold,
@@ -223,6 +301,8 @@ class BuyerProfileScreen extends StatelessWidget {
                   ),
                   child: Text(
                     '${controller.userProfile.value?.userType ?? ''}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: AppFontSizes.extraSmall,
                       color: ColorRes.primary,
@@ -584,43 +664,146 @@ class BuyerProfileScreen extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        children: [
-          _infoRow(
-            icon: Icons.person_outline,
-            iconColor: const Color(0xFF6366F1),
-            iconBg: const Color(0xFFEEF2FF),
-            label: 'Username',
-            value: user?.username ?? '',
-          ),
-          _divider(),
-          _infoRow(
-            icon: Icons.email_outlined,
-            iconColor: const Color(0xFF10B981),
-            iconBg: const Color(0xFFD1FAE5),
-            label: 'Email Address',
-            value: user?.email ?? '',
-          ),
-          _divider(),
-          _infoRow(
-            icon: Icons.phone_outlined,
-            iconColor: const Color(0xFFF59E0B),
-            iconBg: const Color(0xFFFEF3C7),
-            label: 'Phone Number',
-            value: user?.phone ?? '',
-          ),
-          if (user?.city != null && user!.city!.isNotEmpty) ...[
-            _divider(),
-            _infoRow(
-              icon: Icons.location_on_outlined,
-              iconColor: const Color(0xFFEC4899),
-              iconBg: const Color(0xFFFCE7F3),
-              label: 'City',
-              value: user.city ?? '',
-            ),
-          ],
-        ],
-      ),
+      child:
+          controller.isEditing.value
+              ? Form(
+                key: controller.formKey,
+                child: Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: Column(
+                    children: [
+                      _buildFormField(
+                        controller: controller.firstNameController,
+                        label: 'First Name',
+                        icon: Icons.person_outline,
+                      ),
+                      const SizedBox(height: 12),
+                      _buildFormField(
+                        controller: controller.lastNameController,
+                        label: 'Last Name',
+                        icon: Icons.person_outline,
+                      ),
+                      const SizedBox(height: 12),
+                      _buildFormField(
+                        controller: controller.emailController,
+                        label: 'Email Address',
+                        icon: Icons.email_outlined,
+                        keyboardType: TextInputType.emailAddress,
+                      ),
+                      const SizedBox(height: 12),
+                      _buildFormField(
+                        controller: controller.phoneController,
+                        label: 'Phone Number',
+                        icon: Icons.phone_outlined,
+                        keyboardType: TextInputType.phone,
+                      ),
+                      const SizedBox(height: 12),
+                      CitySelectionWidget(
+                        controller: controller.cityController,
+                        isEditing: controller.isEditing.value,
+                        isRequiredTitle: false,
+                        onCitySelected: (selectedCity) {
+                          controller.cityController.text =
+                              selectedCity.description ?? '';
+                          controller.cityPlaceIdController.text =
+                              selectedCity.reference ?? '';
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed:
+                                  controller.isSaving.value
+                                      ? null
+                                      : controller.saveProfile,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: ColorRes.blueColor,
+                                foregroundColor: ColorRes.white,
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child:
+                                  controller.isSaving.value
+                                      ? const SizedBox(
+                                        width: 18,
+                                        height: 18,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: ColorRes.white,
+                                        ),
+                                      )
+                                      : const Text('Save Changes'),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed:
+                                  controller.isSaving.value
+                                      ? null
+                                      : controller.cancelEdit,
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: ColorRes.leadGreyColor[700],
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                side: BorderSide(
+                                  color: ColorRes.leadGreyColor.withOpacity(0.3),
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: const Text('Cancel'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              )
+              : Column(
+                children: [
+                  _infoRow(
+                    icon: Icons.person_outline,
+                    iconColor: const Color(0xFF6366F1),
+                    iconBg: const Color(0xFFEEF2FF),
+                    label: 'Full Name',
+                    value:
+                        '${user?.firstName ?? ''} ${user?.lastName ?? ''}'.trim(),
+                  ),
+                  _divider(),
+                  _infoRow(
+                    icon: Icons.email_outlined,
+                    iconColor: const Color(0xFF10B981),
+                    iconBg: const Color(0xFFD1FAE5),
+                    label: 'Email Address',
+                    value: user?.email ?? '',
+                  ),
+                  _divider(),
+                  _infoRow(
+                    icon: Icons.phone_outlined,
+                    iconColor: const Color(0xFFF59E0B),
+                    iconBg: const Color(0xFFFEF3C7),
+                    label: 'Phone Number',
+                    value: user?.phone ?? '',
+                  ),
+                  if (user?.city != null && user!.city!.isNotEmpty) ...[
+                    _divider(),
+                    _infoRow(
+                      icon: Icons.location_on_outlined,
+                      iconColor: const Color(0xFFEC4899),
+                      iconBg: const Color(0xFFFCE7F3),
+                      label: 'City',
+                      value: user.city ?? '',
+                    ),
+                  ],
+                ],
+              ),
     );
   }
 

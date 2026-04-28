@@ -607,31 +607,31 @@ import '../property_share/reseller_property_share.dart';
 //     );
 //   }
 //
-  // /*PopupMenuItem<SortOption> _buildSortMenuItem(
-  //   IconData icon,
-  //   String text,
-  //   SortOption value,
-  //   Color color,
-  // ) {
-  //   return PopupMenuItem(
-  //     value: value,
-  //     child: Row(
-  //       children: [
-  //         Container(
-  //           padding: EdgeInsets.all(8),
-  //           decoration: BoxDecoration(
-  //             color: color.withOpacity(0.08),
-  //             border: Border.all(width: 1, color: color.withOpacity(0.3)),
-  //             borderRadius: BorderRadius.circular(8),
-  //           ),
-  //           child: Icon(icon, size: 15, color: color),
-  //         ),
-  //         SizedBox(width: 12),
-  //         Text(text, style: TextStyle(fontSize: AppFontSizes.caption)),
-  //       ],
-  //     ),
-  //   );
-  // }*/
+// /*PopupMenuItem<SortOption> _buildSortMenuItem(
+//   IconData icon,
+//   String text,
+//   SortOption value,
+//   Color color,
+// ) {
+//   return PopupMenuItem(
+//     value: value,
+//     child: Row(
+//       children: [
+//         Container(
+//           padding: EdgeInsets.all(8),
+//           decoration: BoxDecoration(
+//             color: color.withOpacity(0.08),
+//             border: Border.all(width: 1, color: color.withOpacity(0.3)),
+//             borderRadius: BorderRadius.circular(8),
+//           ),
+//           child: Icon(icon, size: 15, color: color),
+//         ),
+//         SizedBox(width: 12),
+//         Text(text, style: TextStyle(fontSize: AppFontSizes.caption)),
+//       ],
+//     ),
+//   );
+// }*/
 // }
 
 // Update FilterPanel (no changes needed, keeping for completeness)
@@ -942,8 +942,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorRes.white,
-
+      // backgroundColor: ColorRes.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Obx(
@@ -1110,7 +1109,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
           ),
         ],
       ),
-                 floatingActionButton: Obx(
+      floatingActionButton: Obx(
         () =>
             isSelectionMode.value && selectedPropertyIds.isNotEmpty
                 ? FloatingActionButton.extended(
@@ -1129,6 +1128,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
       ),
     );
   }
+
   PopupMenuItem<SortOption> _buildSortMenuItem(
     IconData icon,
     String text,
@@ -1606,7 +1606,7 @@ class ProductCard extends StatelessWidget {
 
     return Material(
       color: ColorRes.white,
-      
+
       borderRadius: BorderRadius.circular(14),
       elevation: isSelected ? 3 : 1,
       shadowColor:
@@ -1627,14 +1627,19 @@ class ProductCard extends StatelessWidget {
         child: Container(
           height: 120,
           decoration: BoxDecoration(
+            color: ColorRes.white,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color:
-                  isSelected
-                      ? ColorRes.primary
-                      : ColorRes.leadGreyColor.shade200,
+              color: isSelected ? ColorRes.primary : Colors.transparent,
               width: isSelected ? 2 : 1,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Row(
             children: [

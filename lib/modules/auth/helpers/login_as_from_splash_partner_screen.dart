@@ -38,7 +38,7 @@ class _LoginAsPartnerOptionsFromSplashScreenState
         icon: Icons.handshake_outlined,
         color: const Color(0xFF4A6CF7),
         onTap: () async {
-          await SecureStorage.setAppLaunched();
+        
           Get.to(() => RegisterScreen(role: UserRole.reseller));
         },
       ),

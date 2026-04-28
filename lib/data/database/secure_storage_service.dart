@@ -565,11 +565,15 @@ class SecureStorage {
     final subscriptionInquiry = await getSubscriptionInquiryData();
     final loginSkipped = await getLoginSkipped();
     final storedTicketId = await getSupportTicketId();
+    final isFirstTismeUser = await isFirstTimeUser();
 
     await _storage.deleteAll();
 
     if (city != null && city.isNotEmpty) {
       await SecureStorage.saveSelectedCity(city);
+    }
+    if (isFirstTismeUser) {
+      await setAppLaunched();
     }
     if (offerInquiry != null && offerInquiry.isNotEmpty) {
       await saveOfferInquiryData(offerInquiry);

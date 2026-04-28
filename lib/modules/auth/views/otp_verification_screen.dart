@@ -739,19 +739,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
-import 'package:nesticope_app/app/constants/app_font_sizes.dart';
-import 'package:nesticope_app/data/network/auth/service/auth_service.dart';
 import 'package:flutter/services.dart';
 
 import '../../../app/constants/color_res.dart';
 import '../../../data/database/secure_storage_service.dart';
-import '../../../utils/logger/app_logger.dart';
 import '../../../widgets/button/button.dart';
 import '../../../widgets/messages/snack_bar.dart';
 
 import '../../auth/controllers/auth_controller.dart';
-import '../../dashboard/views/dashboard_screen.dart';
 import 'ResetPasswordScreen.dart';
+import 'seller_registration_details_screen.dart';
 
 import 'package:nesticope_app/widgets/New folder/inputs/text_field.dart';
 
@@ -907,36 +904,16 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   Future<void> _handleSellerAccountVerificationFlow(String token) async {
     final authController = Get.find<AuthController>();
 
-    // Step 1: Verify OTP
+    // Step 1: Verify OTP and receive temporary completion token.
     await authController.verifyOtpSellerRegister(_otpValue, token);
 
-    // Step 2: Complete seller registration
-    final success = await authController.completeSellerRegistration(
-      widget.data ?? {},
-    );
-
-    if (!success) {
-      NesticoPeSnackBar.showAwesomeSnackbar(
-        title: 'Error',
-        message: 'Failed to complete registration.',
-        contentType: ContentType.failure,
-      );
-      return; // Stop navigation if registration fails
-    }
-
-    // Step 3: Success message and redirect
+    // Step 2: Open seller details screen (first name, last name, email, password).
     NesticoPeSnackBar.showAwesomeSnackbar(
       title: 'Success',
-      message: 'Seller account verified and registration completed!',
+      message: 'OTP verified. Please complete your registration details.',
       contentType: ContentType.success,
     );
-
-    Get.offUntil(
-      MaterialPageRoute(
-        builder: (_) => widget.redirectAfterOtp ?? const DashboardScreen(),
-      ),
-      (route) => route.isFirst,
-    );
+    Get.to(() => SellerRegistrationDetailsScreen(initialData: widget.data));
   }
 
   /// ✅ Normal Registration Flow
@@ -955,9 +932,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       contentType: ContentType.success,
     );
 
-    await SecureStorage.saveToken(token);
-
-    Get.offAll(() => widget.redirectAfterOtp ?? const DashboardScreen());
+    authController.navigateToUserPanel();
   }
 
   /// ✅ Error Handler
@@ -1025,18 +1000,21 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: ColorRes.primary, size: 20),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          title: const Text(
-               'NesticoPe',
-            style: TextStyle(
-              fontWeight: FontWeight.w700,
-              color: ColorRes.primary,
-            ),
-          ),
+            elevation: 0,
+
+        leading: GestureDetector(
+          onTap: () => Navigator.of(context).pop(),
+          child: Icon(Icons.arrow_back, color: ColorRes.primary),
+        ),
+        // centerTitle: true,
+        titleSpacing: 0,
+        title: Image.asset(
+          'assets/images/Nestico-Pe_Logo-svg.png',
+          height: 48,
+          width: 150,
+          alignment: Alignment.centerLeft,
+          fit: BoxFit.cover,
+        ),
           // actions: [
           //   IconButton(
           //     icon: const Icon(Icons.more_vert, color: ColorRes.primary, size: 20),
@@ -1305,6 +1283,17 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     return '+(91)••• ••• ••$last2';
   }
 
+  void _scheduleOtpFocusChange(int targetIndex) {
+    if (targetIndex < 0 || targetIndex >= _otpFocusNodes.length) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final targetNode = _otpFocusNodes[targetIndex];
+      if (!targetNode.hasFocus) {
+        FocusScope.of(context).requestFocus(targetNode);
+      }
+    });
+  }
+
   Widget _otpBox(int index) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6.0),
@@ -1325,10 +1314,10 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             hintText: '',
             autovalidateMode: AutovalidateMode.onUserInteraction,
             onChanged: (val) {
-              if (val.isNotEmpty && index < 5) {
-                FocusScope.of(context).requestFocus(_otpFocusNodes[index + 1]);
+              if (val.isNotEmpty && index < _otpFocusNodes.length - 1) {
+                _scheduleOtpFocusChange(index + 1);
               } else if (val.isEmpty && index > 0) {
-                FocusScope.of(context).requestFocus(_otpFocusNodes[index - 1]);
+                _scheduleOtpFocusChange(index - 1);
               }
               setState(() {});
             },

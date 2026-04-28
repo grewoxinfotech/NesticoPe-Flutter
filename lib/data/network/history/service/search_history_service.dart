@@ -57,7 +57,7 @@ class SearchHistoryService {
   Future<Map<String, dynamic>> fetchSearchHistory() async {
     try {
       final response = await http.get(
-        Uri.parse(baseUrl),
+        Uri.parse("$baseUrl/user/history"),
         headers: await headers(),
       );
       try {
@@ -93,7 +93,9 @@ class SearchHistoryService {
         headers: await headers(),
       );
       try {
-        log("Response History Data Url: ${Uri.parse("$baseUrl/clear/history")}");
+        log(
+          "Response History Data Url: ${Uri.parse("$baseUrl/clear/history")}",
+        );
         log("Response body: ${response.body}");
 
         if (response.statusCode == 200 || response.statusCode == 201) {

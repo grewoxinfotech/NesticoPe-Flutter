@@ -768,7 +768,8 @@ class SubscriptionPlansWidget extends StatelessWidget {
           //     ),
           //   ),
           // ),
-          TitleWithViewAll(
+        if(UserHelper.isBuyer || UserHelper.isGuest)...[
+            TitleWithViewAll(
             title: "Contractor Reviews",
             showViewAll: true,
             onViewAll: () {
@@ -783,6 +784,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
 
           const SizedBox(height: 8),
           ReviewsAndTestimonials(reviewController: reviewController),
+        ],
           const SizedBox(height: 12),
         ],
       );
@@ -1070,7 +1072,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
                         color:
                             f.isIncluded
                                 ? (ColorRes.white)
-                                : ColorRes.leadGreyColor.shade200,
+                                : ColorRes.primary,
                       ),
                     ),
 
@@ -1357,7 +1359,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
                           color:
                               f.isIncluded
                                   ? (ColorRes.white)
-                                  : ColorRes.leadGreyColor.shade200,
+                                  : ColorRes.primary,
                         ),
                       ),
                       const SizedBox(width: 8),

@@ -169,6 +169,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             HomeScreen(),
             PropertyDetail(
               isFromSeeAll: true,
+            
               // filters: [
               //   if (city.isNotEmpty) {'city': city},
               // ],
@@ -192,7 +193,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Obx(() {
       final index = navigationController.currentIndex.value;
 
-      if (index == 1) {
+      if (index == 1 && _lastNavIndex != 1) {
         listingController.fetchCreatedBy(withoutCity: true);
         if (city.isNotEmpty && city != null && city != '') {
           // listingController.applyFilters({'city': city});
@@ -201,6 +202,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
         _didFetchListing = true;
       }
+      _lastNavIndex = index;
       return PopScope(
         canPop: index == 0,
         onPopInvokedWithResult: (didPop, result) {

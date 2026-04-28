@@ -847,11 +847,13 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
                                     decoration: BoxDecoration(
                                       color: ColorRes.white,
                                       borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(
-                                        color: ColorRes.leadGreyColor
-                                            .withOpacity(0.3),
-                                        width: 1,
-                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.05),
+                                          blurRadius: 12,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
                                     ),
                                     child: DropdownButtonHideUnderline(
                                       child: DropdownButton<int>(
@@ -1459,14 +1461,22 @@ class SuccessStoryCard extends StatelessWidget {
       alignment: Alignment.center,
       child: FractionallySizedBox(
         widthFactor: 1,
-        child: Card(
-          color: ColorRes.white,
-          shape: RoundedRectangleBorder(
+        child: Container(
+          
+          decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: ColorRes.leadGreyColor.shade300),
+            color: ColorRes.white,
+            // side: BorderSide(color: ColorRes.leadGreyColor.shade300),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           margin: const EdgeInsets.symmetric(vertical: 10),
-          elevation: 3,
+          // elevation: 3,
           clipBehavior: Clip.hardEdge,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1998,10 +2008,13 @@ Widget buildTopPropertyForGoodCommission(
     decoration: BoxDecoration(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(
-        color: ColorRes.leadGreyColor.withOpacity(0.3),
-        width: 1,
-      ),
+     boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2344,10 +2357,13 @@ Widget buildLeadGraph(DashboardController controller) {
     decoration: BoxDecoration(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(12),
-      border: Border.all(
-        color: ColorRes.leadGreyColor.withOpacity(0.3),
-        width: 1,
-      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.05),
+          blurRadius: 12,
+          offset: const Offset(0, 4),
+        ),
+      ],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2456,10 +2472,13 @@ Widget buildCommissionGraph(DashboardController controller) {
     decoration: BoxDecoration(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(
-        color: ColorRes.leadGreyColor.withOpacity(0.3),
-        width: 1,
-      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.05),
+          blurRadius: 12,
+          offset: const Offset(0, 4),
+        ),
+      ],
     ),
     child: Column(
       children: [
@@ -2836,10 +2855,17 @@ Widget buildReferralProgram({
     decoration: BoxDecoration(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(12),
-      border: Border.all(
-        color: ColorRes.leadGreyColor.withOpacity(0.3),
-        width: 1,
-      ),
+        // border: Border.all(
+        //   color: ColorRes.leadGreyColor.withOpacity(0.3),
+        //   width: 1,
+        // ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -3149,10 +3175,14 @@ Widget buildLeaderBoardRanking({
     decoration: BoxDecoration(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(
-        color: ColorRes.leadGreyColor.withOpacity(0.3),
-        width: 1,
-      ),
+      // borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -3894,7 +3924,13 @@ Widget resellerLeaderBoard({
     decoration: BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.05),
+          blurRadius: 12,
+          offset: const Offset(0, 4),
+        ),
+      ],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -4108,7 +4144,14 @@ Widget buildBestResellerOnTheMonth({
     decoration: BoxDecoration(
       borderRadius: const BorderRadius.all(Radius.circular(16)),
       color: ColorRes.white,
-      border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+    // borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
     ),
     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     child: Column(
@@ -4354,8 +4397,14 @@ Widget buildDailyGoals({
   return Container(
     decoration: BoxDecoration(
       borderRadius: const BorderRadius.all(Radius.circular(16)),
-      color: ColorRes.white,
-      border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+      color: Colors.white,
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.05),
+          blurRadius: 12,
+          offset: const Offset(0, 4),
+        ),
+      ],
     ),
     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     child: Column(
@@ -5551,11 +5600,14 @@ Widget buildMonthlyPerformance({
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
       color: ColorRes.white,
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(
-        color: ColorRes.leadGreyColor.withOpacity(0.3),
-        width: 1,
-      ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -6440,14 +6492,11 @@ class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({Key? key}) : super(key: key);
 
   @override
-  State<MainNavigationScreen> createState() =>
-      _MainNavigationScreenState();
+  State<MainNavigationScreen> createState() => _MainNavigationScreenState();
 }
 
-class _MainNavigationScreenState
-    extends State<MainNavigationScreen> {
-  final navigationController =
-      Get.put(ResellerNavigationController());
+class _MainNavigationScreenState extends State<MainNavigationScreen> {
+  final navigationController = Get.put(ResellerNavigationController());
 
   late final BuyerProfileDataController profile;
   late final List<Widget> screens;
@@ -6488,10 +6537,7 @@ class _MainNavigationScreenState
           }
         },
         child: Scaffold(
-          body: IndexedStack(
-            index: index,
-            children: screens,
-          ),
+          body: IndexedStack(index: index, children: screens),
 
           /// ✅ Bottom Navigation (consistent UI)
           bottomNavigationBar: SafeArea(
@@ -6515,31 +6561,25 @@ class _MainNavigationScreenState
                     bottom: AppMargin.small,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(AppRadius.large),
+                    borderRadius: BorderRadius.circular(AppRadius.large),
                   ),
                   child: Container(
                     height: kToolbarHeight,
                     alignment: Alignment.center,
                     child: SalomonBottomBar(
                       duration: const Duration(milliseconds: 200),
-                      margin:
-                          const EdgeInsets.all(AppPadding.small),
-                      itemPadding:
-                          const EdgeInsets.symmetric(
+                      margin: const EdgeInsets.all(AppPadding.small),
+                      itemPadding: const EdgeInsets.symmetric(
                         horizontal: 14,
                         vertical: 8,
                       ),
                       itemShape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(AppRadius.large),
+                        borderRadius: BorderRadius.circular(AppRadius.large),
                       ),
                       currentIndex: index,
-                      onTap:
-                          navigationController.changeTabIndex,
-                      unselectedItemColor:
-                          Get.theme.colorScheme.onSurface
-                              .withOpacity(0.6),
+                      onTap: navigationController.changeTabIndex,
+                      unselectedItemColor: Get.theme.colorScheme.onSurface
+                          .withOpacity(0.6),
 
                       items: [
                         /// ✅ Dashboard
@@ -6553,20 +6593,13 @@ class _MainNavigationScreenState
 
                         /// ✅ Property
                         SalomonBottomBarItem(
-                          icon: Icon(
-                            Icons.home_outlined,
-                            
-                            size: iconSize * 1.2,
-                          ),
+                          icon: Icon(Icons.home_outlined, size: iconSize * 1.2),
                           title: Text("Property", style: style),
                         ),
 
                         /// ✅ Project
                         SalomonBottomBarItem(
-                          icon: Icon(
-                            Icons.apartment,
-                            size: iconSize * 1.2,
-                          ),
+                          icon: Icon(Icons.apartment, size: iconSize * 1.2),
                           title: Text("Project", style: style),
                         ),
 
@@ -6583,14 +6616,10 @@ class _MainNavigationScreenState
                         SalomonBottomBarItem(
                           icon: Obx(() {
                             final selected =
-                                navigationController
-                                        .currentIndex.value ==
-                                    4;
+                                navigationController.currentIndex.value == 4;
 
                             final imageUrl =
-                                profile.userProfile.value
-                                        ?.profilePic ??
-                                    "";
+                                profile.userProfile.value?.profilePic ?? "";
 
                             return Container(
                               height: 26,
@@ -6598,19 +6627,16 @@ class _MainNavigationScreenState
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: selected
-                                      ? Get.theme.colorScheme
-                                          .primary
-                                      : Colors.grey.shade400,
-                                  width:
-                                      selected ? 1.5 : 1,
+                                  color:
+                                      selected
+                                          ? Get.theme.colorScheme.primary
+                                          : Colors.grey.shade400,
+                                  width: selected ? 1.5 : 1,
                                 ),
                               ),
                               child: CircleAvatar(
                                 radius: 14,
-                                backgroundColor:
-                                    Get.theme.colorScheme
-                                        .primary,
+                                backgroundColor: Get.theme.colorScheme.primary,
                                 child: const Icon(
                                   Icons.person,
                                   color: Colors.white,
