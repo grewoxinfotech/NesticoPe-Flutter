@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nesticope_app/modules/contractor/controller/contractor_dashboard_controller.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/modules/contractor/controller/contractot_employee_controller.dart';
@@ -9,7 +10,7 @@ import '../../../../utils/shimmer/contractor/employee/contractor_employee_list_s
 import '../../../../widgets/New folder/inputs/text_field.dart';
 import '../../../../widgets/messages/snack_bar.dart';
 // import '../../../data/network/contractor/model/employee/contractor_employee_model.dart';
-import 'employee_task_data_screen.dart';
+ 
 
 class ContractorEmployeeScreen extends StatelessWidget {
   const ContractorEmployeeScreen({super.key});
@@ -19,6 +20,10 @@ class ContractorEmployeeScreen extends StatelessWidget {
     final ContractorEmployeeController controller = Get.put(
       ContractorEmployeeController(),
     );
+    final ContractorDashboardController dashboardController = Get.isRegistered<
+            ContractorDashboardController>()
+        ? Get.find<ContractorDashboardController>()
+        : Get.put(ContractorDashboardController());
 
     return Scaffold(
       backgroundColor: ColorRes.background,
@@ -82,16 +87,35 @@ class ContractorEmployeeScreen extends StatelessWidget {
                   ),
         );
       }),
+      floatingActionButton: Obx(() {
+        final bool showDisabledStyle =
+            !dashboardController.hasActivePlan ||
+            dashboardController.hasReachedUserLimit;
 
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: Add new employee
-          controller.isEditing.value = false;
-          showAddEmployeeDialog(context, controller);
-        },
-        backgroundColor: ColorRes.primary,
-        child: Icon(Icons.add, color: ColorRes.white),
-      ),
+        return FloatingActionButton(
+          backgroundColor: showDisabledStyle
+              ? Colors.grey.shade400
+              : ColorRes.primary,
+          foregroundColor: ColorRes.white,
+          onPressed: () async {
+            if (showDisabledStyle) {
+              await dashboardController.showUpgradePlanDialog(
+                title: dashboardController.hasActivePlan
+                    ? 'Limit Reached'
+                    : 'Active plan required',
+                message: dashboardController.hasActivePlan
+                    ? 'Limit Reached, please upgrade your plan.'
+                    : 'You do not have an active subscription. Please activate a plan to continue.',
+              );
+              return;
+            }
+
+            controller.isEditing.value = false;
+            showAddEmployeeDialog(context, controller);
+          },
+          child: const Icon(Icons.add),
+        );
+      }),
     );
   }
 
@@ -536,6 +560,21 @@ void showAddEmployeeDialog(
                               : () {
                                 if (controller.addEmployeeFormKey.currentState!
                                     .validate()) {
+                                  final dashboardController =
+                                      Get.find<ContractorDashboardController>();
+                                  final limitReached = dashboardController
+                                          .activeSubscription.value
+                                          ?.isUserLimitReached ??
+                                      true;
+
+                                  if (limitReached) {
+                                    dashboardController.showUpgradePlanDialog(
+                                      title: 'Limit Reached',
+                                      message:
+                                          'Limit Reached, please upgrade your plan.',
+                                    );
+                                    return;
+                                  }
                                   Get.back();
                                   controller.addEmployee();
                                 }

@@ -8,6 +8,7 @@ import '../../../../app/care/pagination/models/pagination_models.dart';
 import '../../../../app/constants/api_constants.dart';
 import '../../../../utils/logger/app_logger.dart';
 import '../../../../widgets/messages/snack_bar.dart';
+import 'subscription/subscription_limit_guard.dart';
 import '../model/contractor_quotation/contractor_quotation.dart';
 import '../model/contractot_service_model/contractor_inquiry_model.dart';
 
@@ -282,6 +283,10 @@ class ContractorInquiryService {
         );
         return data['success'];
       } else {
+        final handled =
+            await SubscriptionLimitGuard.handlePlanLimitResponse(response);
+        if (handled) return false;
+
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -291,7 +296,7 @@ class ContractorInquiryService {
         );
         print("Failed to convert Into Lead: ${response.statusCode}");
         print("Response body: ${response.body}");
-        throw Exception("Failed to Convert into lead");
+        return false;
       }
     } catch (e) {
       NesticoPeSnackBar.showAwesomeSnackbar(
@@ -324,6 +329,10 @@ class ContractorInquiryService {
         print("Contractor Inquiry Send Quotation : $data");
         return data['success'];
       } else {
+        final handled =
+            await SubscriptionLimitGuard.handlePlanLimitResponse(response);
+        if (handled) return false;
+
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -333,7 +342,7 @@ class ContractorInquiryService {
         );
         print("Failed to Send Quotation: ${response.statusCode}");
         print("Response body: ${response.body}");
-        throw Exception("Failed to Send Quotation");
+        return false;
       }
     } catch (e) {
       NesticoPeSnackBar.showAwesomeSnackbar(
@@ -366,6 +375,10 @@ class ContractorInquiryService {
         print("Contractor Inquiry Send Quotation : $data");
         return data['success'];
       } else {
+        final handled =
+            await SubscriptionLimitGuard.handlePlanLimitResponse(response);
+        if (handled) return false;
+
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -375,7 +388,7 @@ class ContractorInquiryService {
         );
         print("Failed to Send Quotation: ${response.statusCode}");
         print("Response body: ${response.body}");
-        throw Exception("Failed to Send Quotation");
+        return false;
       }
     } catch (e) {
       NesticoPeSnackBar.showAwesomeSnackbar(

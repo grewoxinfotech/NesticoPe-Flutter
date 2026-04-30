@@ -372,6 +372,7 @@ import '../../../../data/network/contractor/model/contractot_service_model/contr
 import '../../../../utils/shimmer/contractor/inquiry/contractor_inquiry_list_screen_shimmer.dart';
 import '../../../../widgets/New folder/inputs/dropdown_field.dart';
 import '../../../../widgets/bar/filter_bar/filter_chip_bar.dart';
+import '../../controller/contractor_dashboard_controller.dart';
 import '../../controller/contractor_inquiry_controller.dart';
 import '../../controller/contractor_referral_controller.dart';
 import '../filter/contractor_inquiry_filter.dart';
@@ -946,7 +947,25 @@ class InquiryCard extends StatelessWidget {
                             icon: Icons.transform,
                             label: 'Convert to Quotation',
                             color: ColorRes.success,
-                            onPressed: onLeadConvert,
+                            onPressed: () {
+                              final dashboardController =
+                                  Get.find<ContractorDashboardController>();
+                              final limitReached = dashboardController
+                                      .activeSubscription.value
+                                      ?.isServiceLimitReached ??
+                                  true;
+
+                              if (limitReached) {
+                                dashboardController.showUpgradePlanDialog(
+                                  title: 'Limit Reached',
+                                  message:
+                                      'Limit Reached, please upgrade your plan.',
+                                );
+                                return;
+                              }
+
+                              onLeadConvert();
+                            },
                           ),
                       // const SizedBox(height: 8),
                       //

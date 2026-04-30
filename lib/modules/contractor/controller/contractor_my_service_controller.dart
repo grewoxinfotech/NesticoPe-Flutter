@@ -502,6 +502,7 @@ class ContractorMyServiceController
       final contractorServiceItem = ContractorServiceItem(
         category: selectedCategory.value,
         contractorId: userId,
+        
         serviceName: serviceNameController.text
             .trim()
             .toLowerCase()

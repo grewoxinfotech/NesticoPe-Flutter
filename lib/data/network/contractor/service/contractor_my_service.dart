@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:nesticope_app/data/network/contractor/service/subscription/subscription_limit_guard.dart';
 import 'package:nesticope_app/utils/logger/app_logger.dart';
 
 import 'package:http_parser/http_parser.dart';
@@ -105,7 +106,7 @@ class ContractorMyService {
       );
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        jsonDecode(response.body);
         // print("Change the active and Inactive: $data");
       } else {
         // print("Failed to load Active: ${response.statusCode}");
@@ -216,13 +217,33 @@ class ContractorMyService {
       var request = http.MultipartRequest('POST', uri);
       request.headers.addAll(await headers());
 
+      final hasNewImages = imagePaths != null && imagePaths.isNotEmpty;
+
       // Add other fields
       data.forEach((key, value) {
+        if (key == 'serviceImage') {
+          // If user picked no images, send an empty array so the backend
+          // validation ("must be an array") passes.
+          // If user picked images, rely on multipart files instead.
+          if (value == null) {
+            if (!hasNewImages) {
+              request.fields[key] = jsonEncode(<dynamic>[]);
+            }
+          } else if (value is List) {
+            request.fields[key] = jsonEncode(value);
+          }
+          return;
+        }
+
+        if (value == null) return;
+
+        // Meta is a nested object; send as JSON string.
         if (key == 'meta') {
           request.fields[key] = jsonEncode(value);
-        } else {
-          request.fields[key] = value.toString();
+          return;
         }
+
+        request.fields[key] = value.toString();
       });
 
       // Add images if available
@@ -253,7 +274,11 @@ class ContractorMyService {
         );
         print("Service created successfully: $resData");
         return resData['success'];
-      } else {
+      }
+       else {
+        final handled =
+            await SubscriptionLimitGuard.handlePlanLimitResponse(response);
+        if (handled) return false;
         final resData = jsonDecode(response.body);
         print("Failed to create service: ${response.statusCode}");
         print("Response body: ${response.body}");
@@ -288,14 +313,26 @@ class ContractorMyService {
 
       // Add other fields
       service.forEach((key, value) {
+        if (value == null) {
+          // The backend expects `serviceImage` to be an array.
+          if (key == 'serviceImage') {
+            request.fields[key] = jsonEncode([]);
+          }
+          return;
+        }
+
         if (key == 'meta') {
           request.fields[key] = jsonEncode(value);
-        } else if (key == 'serviceImage') {
-          // Send remaining existing image URLs
-          request.fields[key] = jsonEncode(value);
-        } else {
-          request.fields[key] = value.toString();
+          return;
         }
+
+        if (key == 'serviceImage') {
+          // Send remaining existing image URLs as an array.
+          request.fields[key] = jsonEncode(value);
+          return;
+        }
+
+        request.fields[key] = value.toString();
       });
 
       // Add new images if available
@@ -327,6 +364,9 @@ class ContractorMyService {
         AppLogger.structured("Service Updated Successfully: ", resData);
         return resData['success'];
       } else {
+        final handled =
+            await SubscriptionLimitGuard.handlePlanLimitResponse(response);
+        if (handled) return false;
         final resData = jsonDecode(response.body);
         print("Failed to update service: ${response.statusCode}");
         print("Response body: ${response.body}");

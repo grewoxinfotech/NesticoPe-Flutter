@@ -2854,6 +2854,7 @@ import 'package:nesticope_app/data/network/contractor/model/contractot_service_m
 import 'package:nesticope_app/data/network/contractor/model/contractor_quotation/contractor_quotation.dart';
 import 'package:nesticope_app/modules/contractor/controller/contractor_inquiry_controller.dart';
 import 'package:nesticope_app/modules/contractor/controller/contractor_quotation_controller.dart';
+import 'package:nesticope_app/modules/contractor/controller/contractor_dashboard_controller.dart';
 import 'package:nesticope_app/modules/contractor/controller/contractor_referral_controller.dart';
 import 'package:nesticope_app/utils/logger/app_logger.dart';
 import 'package:intl/intl.dart';
@@ -3788,6 +3789,20 @@ class _ContractorInquiryQuotationScreenState
 
   void _submitQuotation() {
     if (_formKey.currentState!.validate()) {
+      final dashboardController =
+          Get.find<ContractorDashboardController>();
+      final limitReached =
+          dashboardController.activeSubscription.value?.isServiceLimitReached ??
+              true;
+
+      if (limitReached) {
+        dashboardController.showUpgradePlanDialog(
+          title: 'Limit Reached',
+          message: 'Limit Reached, please upgrade your plan.',
+        );
+        return;
+      }
+
       final quotationPrice = int.tryParse(_quotationController.text);
       String? expectedStartDateForApi;
 

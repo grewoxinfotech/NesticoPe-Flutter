@@ -9,6 +9,7 @@ import 'package:nesticope_app/app/utils/formater/formater.dart';
 import 'package:nesticope_app/data/database/secure_storage_service.dart';
 import 'package:nesticope_app/data/network/contractor/model/contractor_quotation/contractor_quotation.dart';
 import 'package:nesticope_app/modules/contractor/controller/contractor_quotation_controller.dart';
+import 'package:nesticope_app/modules/contractor/controller/contractor_dashboard_controller.dart';
 import 'package:nesticope_app/modules/contractor/view/widget/contractor_inquiry_quotation_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
@@ -932,26 +933,50 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
           SafeArea(
             child: SizedBox(
               width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: _convertToLead,
-                icon: const Icon(Icons.transform, color: ColorRes.white),
-                label: const Text(
-                  'Convert to Lead',
-                  style: TextStyle(
-                    fontSize: AppFontSizes.medium,
-                    fontWeight: AppFontWeights.semiBold,
-                    color: ColorRes.white,
+              child: Obx(() {
+                final dashboardController = Get.isRegistered<ContractorDashboardController>()
+                    ? Get.find<ContractorDashboardController>()
+                    : Get.put(ContractorDashboardController());
+
+                final bool showDisabledStyle = !dashboardController.hasActivePlan ||
+                    (dashboardController.activeSubscription.value?.isLeadLimitReached ?? true);
+
+                return ElevatedButton.icon(
+                  onPressed: () async {
+                    if (showDisabledStyle) {
+                      await dashboardController.showUpgradePlanDialog(
+                        title: dashboardController.hasActivePlan
+                            ? 'Limit Reached'
+                            : 'Active plan required',
+                        message: dashboardController.hasActivePlan
+                            ? 'Limit Reached, please upgrade your plan.'
+                            : 'You do not have an active subscription. Please activate a plan to continue.',
+                      );
+                      return;
+                    }
+
+                    _convertToLead();
+                  },
+                  icon: const Icon(Icons.transform, color: ColorRes.white),
+                  label: const Text(
+                    'Convert to Lead',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.white,
+                    ),
                   ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        showDisabledStyle ? Colors.grey.shade400 : Colors.green,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
                   ),
-                  elevation: 0,
-                ),
-              ),
+                );
+              }),
             ),
           ),
 
@@ -1051,6 +1076,10 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
   }
 
   void _convertToLead() {
+    final dashboardController = Get.find<ContractorDashboardController>();
+    final bool showDisabledStyle = !dashboardController.hasActivePlan ||
+        (dashboardController.activeSubscription.value?.isLeadLimitReached ?? true);
+
     Get.dialog(
       AlertDialog(
         backgroundColor: ColorRes.white,
@@ -1081,13 +1110,28 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
             ),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
+
+              if (showDisabledStyle) {
+                await dashboardController.showUpgradePlanDialog(
+                  title: dashboardController.hasActivePlan
+                      ? 'Limit Reached'
+                      : 'Active plan required',
+                  message: dashboardController.hasActivePlan
+                      ? 'Limit Reached, please upgrade your plan.'
+                      : 'You do not have an active subscription. Please activate a plan to continue.',
+                );
+                return;
+              }
+
               final controller = Get.find<ContractorQuotationController>();
               controller.convertIntoLead(widget.quotation);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
+              backgroundColor: showDisabledStyle
+                  ? Colors.grey.shade400
+                  : Colors.green,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),

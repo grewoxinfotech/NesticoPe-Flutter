@@ -85,6 +85,8 @@ class ApiConstants {
   static String get searchHistory => "$baseURL/searchHistory";
 
   static String get subscription => "$baseURL/subscription";
+  static String subscriptionActive(String userId) =>
+      "$baseURL/subscription/active/$userId";
   static String get subscriptionPlanInquiry =>
       "$baseURL/subscriptionPlanInquiry";
 

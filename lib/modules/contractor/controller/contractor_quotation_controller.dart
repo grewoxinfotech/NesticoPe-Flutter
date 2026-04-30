@@ -11,6 +11,7 @@ import '../../../data/network/auth/model/user_model.dart';
 import '../../../data/network/contractor/model/contractor_quotation/contractor_quotation.dart';
 import '../../../data/network/contractor/model/contractot_service_model/contractor_inquiry_model.dart';
 import '../../../data/network/contractor/service/contractor_inquiry_service.dart';
+import '../../../data/network/contractor/service/subscription/subscription_limit_guard.dart';
 import '../../../widgets/messages/snack_bar.dart';
 import 'contractor_lead_controller.dart';
 
@@ -124,6 +125,7 @@ class ContractorQuotationController
         refresh();
         Get.back(); // Go back to previous screen
       } else {
+        if (SubscriptionLimitGuard.consumeHandledState()) return;
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: "Error",
           message: 'Failed to convert quotation to lead',
@@ -348,6 +350,7 @@ class ContractorQuotationController
         );
         Navigator.pop(Get.context!);
       } else {
+        if (SubscriptionLimitGuard.consumeHandledState()) return;
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: "Error",
           message: 'Failed to update quotation',
@@ -423,6 +426,9 @@ class ContractorQuotationController
       controllerLead.refreshLead();
       refreshList();
       Navigator.pop(Get.context!);
+    } else {
+      // Reset plan-limit "handled" state so it doesn't leak into other actions.
+      SubscriptionLimitGuard.consumeHandledState();
     }
   }
 }

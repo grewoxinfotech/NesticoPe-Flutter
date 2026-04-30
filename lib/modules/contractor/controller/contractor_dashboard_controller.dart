@@ -2,9 +2,13 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/data/network/contractor/model/dashboard/contractor_dashboard_model.dart';
+import 'package:nesticope_app/data/network/contractor/model/subscription/contractor_active_subscription_model.dart';
+import 'package:nesticope_app/data/network/contractor/service/subscription/contractor_subscription_service.dart';
+import 'package:nesticope_app/modules/subscription/views/suscription_plan_screen.dart';
 
-import '../../../app/constants/color_res.dart';
 import '../../../data/database/secure_storage_service.dart';
 import '../../../data/network/contractor/service/dashboard/contractor_dashboard_service.dart';
 import '../../../widgets/messages/snack_bar.dart';
@@ -15,6 +19,8 @@ class ContractorDashboardController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool isRefreshing = false.obs;
   final RxInt createdUserYear = DateTime.now().year.obs;
+  final Rxn<ContractorActiveSubscriptionData> activeSubscription =
+      Rxn<ContractorActiveSubscriptionData>();
 
   @override
   void onInit() {
@@ -22,6 +28,7 @@ class ContractorDashboardController extends GetxController {
     super.onInit();
     getCreatedYearOfUser();
     getContractorDashboard(leadsYear: selectedGraphYear.value);
+    fetchActiveSubscription();
   }
 
   // Add these observable variables
@@ -84,6 +91,7 @@ class ContractorDashboardController extends GetxController {
     try {
       isRefreshing.value = true;
       await getContractorDashboard();
+      await fetchActiveSubscription(showDialogWhenMissing: false);
       await Future.delayed(const Duration(seconds: 1));
 
       // Update metrics with new values
@@ -96,6 +104,123 @@ class ContractorDashboardController extends GetxController {
     } finally {
       isRefreshing.value = false;
     }
+  }
+
+  Future<void> fetchActiveSubscription({bool showDialogWhenMissing = true}) async {
+    final user = await SecureStorage.getUserData();
+    final userId = user?.user?.id;
+
+    if (userId == null || userId.isEmpty) return;
+
+    final plan = await ContractorSubscriptionService.instance.fetchActivePlan(
+      userId,
+    );
+    activeSubscription.value = plan;
+
+    if (showDialogWhenMissing &&
+        plan == null &&
+        (Get.isDialogOpen ?? false) == false) {
+      await showUpgradePlanDialog(
+        title: 'Active plan required',
+        message:
+            'You do not have an active subscription. Please activate a plan to continue.',
+      );
+    }
+  }
+
+  bool get hasActivePlan => activeSubscription.value != null;
+
+  bool get hasReachedServiceLimit {
+    final plan = activeSubscription.value;
+    if (plan == null) return true;
+    return plan.isServiceLimitReached;
+  }
+
+  bool get hasReachedLeadLimit {
+    final plan = activeSubscription.value;
+    if (plan == null) return true;
+    return plan.isLeadLimitReached;
+  }
+
+  bool get hasReachedUserLimit {
+    final plan = activeSubscription.value;
+    if (plan == null) return true;
+    return plan.isUserLimitReached;
+  }
+
+  Future<void> guardAddServiceAction(VoidCallback onAllowed) async {
+    await fetchActiveSubscription(showDialogWhenMissing: true);
+
+    if (!hasActivePlan) return;
+    if (hasReachedServiceLimit) {
+      await showUpgradePlanDialog(
+        title: 'Limit Reached',
+        message: 'Limit Reached, please upgrade your plan.',
+      );
+      return;
+    }
+    onAllowed();
+  }
+
+  Future<void> guardAddLeadAction(VoidCallback onAllowed) async {
+    await fetchActiveSubscription(showDialogWhenMissing: true);
+
+    if (!hasActivePlan) return;
+    if (hasReachedLeadLimit) {
+      await showUpgradePlanDialog(
+        title: 'Limit Reached',
+        message: 'Limit Reached, please upgrade your plan.',
+      );
+      return;
+    }
+    onAllowed();
+  }
+
+  Future<void> guardAddUserAction(VoidCallback onAllowed) async {
+    await fetchActiveSubscription(showDialogWhenMissing: true);
+
+    if (!hasActivePlan) return;
+    if (hasReachedUserLimit) {
+      await showUpgradePlanDialog(
+        title: 'Limit Reached',
+        message: 'Limit Reached, please upgrade your plan.',
+      );
+      return;
+    }
+    onAllowed();
+  }
+
+  Future<void> showUpgradePlanDialog({
+    required String title,
+    required String message,
+  }) async {
+    if (Get.isDialogOpen ?? false) return;
+
+    await Get.dialog<void>(
+      AlertDialog(
+        backgroundColor: ColorRes.white,
+        title: Text(title,style: TextStyle(fontSize: AppFontSizes.title,fontWeight: AppFontWeights.semiBold,color: ColorRes.textPrimary),),
+        content: Text(message,style: TextStyle(fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium),),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text('Later'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Get.back();
+              Get.to(
+                () => SubscriptionPlansScreen(
+                  role: 'contractor',
+                  isShowCurrentPlan: true,
+                ),
+              );
+            },
+            child: const Text('Upgrade Plan'),
+          ),
+        ],
+      ),
+    );
   }
 
   //

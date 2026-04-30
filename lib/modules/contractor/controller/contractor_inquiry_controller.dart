@@ -13,6 +13,7 @@ import '../../../data/database/secure_storage_service.dart';
 import '../../../data/network/auth/model/user_model.dart';
 import '../../../data/network/contractor/model/contractot_service_model/contractor_inquiry_model.dart';
 import '../../../widgets/messages/snack_bar.dart';
+import '../../../data/network/contractor/service/subscription/subscription_limit_guard.dart';
 
 class ContractorInquiryController
     extends PaginatedController<ContractorInquiryItem> {
@@ -162,6 +163,9 @@ class ContractorInquiryController
         .convertInquiryIntoLead(payload);
     if (response) {
       refreshList();
+    } else {
+      // Reset plan-limit "handled" state so it doesn't leak into other actions.
+      SubscriptionLimitGuard.consumeHandledState();
     }
   }
 
@@ -506,6 +510,7 @@ class ContractorInquiryController
         refreshList();
         getFilterData();
       } else {
+        if (SubscriptionLimitGuard.consumeHandledState()) return;
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: 'Error',
           message: 'Failed to submit quotation',

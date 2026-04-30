@@ -670,7 +670,7 @@ import 'package:nesticope_app/app/widgets/texts/headline_text.dart';
 import 'package:nesticope_app/data/network/auth/model/user_model.dart';
 import 'package:nesticope_app/data/network/platform_review/model/platform_review_model.dart';
 import 'package:nesticope_app/modules/auth/views/register_screen.dart';
-import 'package:nesticope_app/modules/contractor/view/contractor_main.dart';
+import 'package:nesticope_app/modules/contractor/controller/contractor_dashboard_controller.dart';
 import 'package:nesticope_app/modules/contractor/view/widget/convert_to_contractor.dart';
 import 'package:nesticope_app/modules/home/controllers/home_controller/platform_review-controller.dart';
 import 'package:nesticope_app/modules/subscription/views/widgets/contractor_all_review_screen.dart';
@@ -686,6 +686,7 @@ import '../../controller/subscription_controller.dart';
 class SubscriptionPlansWidget extends StatelessWidget {
   final SubscriptionPlanController controller;
   final RxString selectedPlanName;
+ 
   final PlatformReviewController reviewController =
       Get.isRegistered<PlatformReviewController>(tag: 'subscription_reviews')
           ? Get.find<PlatformReviewController>(tag: 'subscription_reviews')
@@ -707,7 +708,9 @@ class SubscriptionPlansWidget extends StatelessWidget {
       reviewController.fetchAllReviews(refresh: true);
     }
   }
-
+ final ContractorDashboardController dashboardController = Get.isRegistered<ContractorDashboardController>()
+            ? Get.find<ContractorDashboardController>()
+            : Get.put(ContractorDashboardController());
   @override
   Widget build(BuildContext context) {
     return Obx(() {
@@ -752,7 +755,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
 
               return SizedBox(
                 height: hasDiscount ? 396 : 365,
-                child: _buildPlanCard(plans[index], index),
+                child: _buildPlanCard(plans[index], index,dashboardController),
               );
             },
           ),
@@ -768,23 +771,23 @@ class SubscriptionPlansWidget extends StatelessWidget {
           //     ),
           //   ),
           // ),
-        if(UserHelper.isBuyer || UserHelper.isGuest)...[
+          if (UserHelper.isBuyer || UserHelper.isGuest) ...[
             TitleWithViewAll(
-            title: "Contractor Reviews",
-            showViewAll: true,
-            onViewAll: () {
-              Get.to(() => ContractorAllReviewScreen());
-            },
-            icon: Icons.reviews,
-            showIcon: true,
+              title: "Contractor Reviews",
+              showViewAll: true,
+              onViewAll: () {
+                Get.to(() => ContractorAllReviewScreen());
+              },
+              icon: Icons.reviews,
+              showIcon: true,
 
-            iconColor: ColorRes.success,
-            iconBgColor: ColorRes.success.withOpacity(0.1),
-          ),
+              iconColor: ColorRes.success,
+              iconBgColor: ColorRes.success.withOpacity(0.1),
+            ),
 
-          const SizedBox(height: 8),
-          ReviewsAndTestimonials(reviewController: reviewController),
-        ],
+            const SizedBox(height: 8),
+            ReviewsAndTestimonials(reviewController: reviewController),
+          ],
           const SizedBox(height: 12),
         ],
       );
@@ -794,7 +797,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
   // ------------------------------------------------------
   // CARD UI
   // ------------------------------------------------------
-  Widget _buildPlanCard(SubscriptionPlan plan, int index) {
+  Widget _buildPlanCard(SubscriptionPlan plan, int index,ContractorDashboardController dashboardController) {
     final bool rec = plan.isRecommended == true;
 
     return Stack(
@@ -870,7 +873,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
               _buildFeaturePreview(plan, rec),
               _buildShowMore(plan, index, rec),
               Spacer(),
-              _buildSelectButton(plan),
+              _buildSelectButton(plan,dashboardController),
             ],
           ),
         ),
@@ -894,19 +897,51 @@ class SubscriptionPlansWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          '${plan.name}',
-          maxLines: 2,
-          textAlign: TextAlign.center,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontSize: rec ? AppFontSizes.title : AppFontSizes.large,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text(
+              '${plan.name}',
+              maxLines: 2,
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: rec ? AppFontSizes.title : AppFontSizes.large,
 
-            fontWeight: AppFontWeights.bold,
-            color: rec ? ColorRes.textPrimary : ColorRes.white,
-            // fontFamily: FontFamily.,
-            fontStyle: FontStyle.italic,
-          ),
+                fontWeight: AppFontWeights.bold,
+                color: rec ? ColorRes.textPrimary : ColorRes.white,
+                // fontFamily: FontFamily.,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            Spacer(),
+            if (plan.isPremium)
+              Container(
+                margin: EdgeInsets.only(right: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: ColorRes.primary,
+                  boxShadow: [
+                    BoxShadow(
+                      color: ColorRes.primary.withValues(alpha: 0.5),
+                      blurRadius: 10,
+                      offset: Offset(0, 5),
+                    ),
+                  ],
+                  border: Border.all(color: ColorRes.primary, width: 1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  'Premium',
+                  style: TextStyle(
+                    color: ColorRes.white,
+                    fontSize: AppFontSizes.small,
+                    fontWeight: AppFontWeights.semiBold,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+              ),
+          ],
         ),
       ],
     );
@@ -1070,9 +1105,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
                         f.isIncluded ? Icons.check : Icons.close,
                         size: 10,
                         color:
-                            f.isIncluded
-                                ? (ColorRes.white)
-                                : ColorRes.primary,
+                            f.isIncluded ? (ColorRes.white) : ColorRes.primary,
                       ),
                     ),
 
@@ -1138,7 +1171,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
   // ------------------------------------------------------
   // Select Button - UPDATED WITH RAZORPAY INTEGRATION
   // ------------------------------------------------------
-  Widget _buildSelectButton(SubscriptionPlan plan) {
+  Widget _buildSelectButton(SubscriptionPlan plan,ContractorDashboardController dashboardController) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: SizedBox(
@@ -1167,7 +1200,10 @@ class SubscriptionPlansWidget extends StatelessWidget {
                         );
                         return;
                       } else if (UserHelper.isContractor) {
-                        await Get.to(() => ContractorMainScreen());
+                        log(
+                          "Contractor user - opening Razorpay checkout for plan: ${plan.id}",
+                        );
+                        await controller.openRazorpayCheckout(plan.id);
                         return;
                       } else if (UserHelper.isSellerBuilder) {
                         // For seller builders, show inquiry dialog

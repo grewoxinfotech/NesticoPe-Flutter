@@ -9,6 +9,7 @@ import 'package:http/http.dart';
 
 import '../../../../../widgets/messages/snack_bar.dart';
 import '../../model/employee/contractor_employee_model.dart';
+import '../subscription/subscription_limit_guard.dart';
 
 class ContractorEmployeeServices {
   ContractorEmployeeServices._();
@@ -78,6 +79,10 @@ class ContractorEmployeeServices {
         );
         return data['success'];
       } else {
+        final handled =
+            await SubscriptionLimitGuard.handlePlanLimitResponse(response);
+        if (handled) return false;
+
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -154,6 +159,10 @@ class ContractorEmployeeServices {
         // Handle the response data as needed
         return data['success'];
       } else {
+        final handled =
+            await SubscriptionLimitGuard.handlePlanLimitResponse(response);
+        if (handled) return false;
+
         final data = jsonDecode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: 'Failed',

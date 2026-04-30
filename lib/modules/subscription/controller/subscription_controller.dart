@@ -133,6 +133,7 @@ import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:nesticope_app/modules/contractor/controller/contractor_dashboard_controller.dart';
 import 'package:nesticope_app/modules/subscription/controller/user_subscription_controller.dart';
 import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -145,6 +146,11 @@ import '../../../data/network/subscription/services/subscription_services.dart';
 
 class SubscriptionPlanController extends PaginatedController<SubscriptionPlan> {
   final SubscriptionPlanService _service = SubscriptionPlanService();
+ final ContractorDashboardController dashboardController = Get.isRegistered<ContractorDashboardController>()
+            ? Get.find<ContractorDashboardController>()
+            : Get.put(ContractorDashboardController());
+
+  
 
   /// Role always comes from UI (seller, sellerBuilder, reseller, contractor)
   final String userRole;
@@ -327,16 +333,41 @@ class SubscriptionPlanController extends PaginatedController<SubscriptionPlan> {
       );
 
       if (isVerified) {
+        await dashboardController.fetchActiveSubscription(
+          showDialogWhenMissing: false,
+        );
+        
+        /// Backend may take a moment to flip the subscription status
+        /// from `pending` -> `active`. Poll a few times so the UI updates
+        /// without requiring screen close/reopen.
+        final hasCurrentPlanController = Get.isRegistered<CurrentUserPlanController>();
+        final currentPlanCtrl = hasCurrentPlanController
+            ? Get.find<CurrentUserPlanController>()
+            : null;
+
+        if (currentPlanCtrl != null) {
+          const int attempts = 5;
+          for (int i = 0; i < attempts; i++) {
+            await currentPlanCtrl.refreshList();
+            final hasActive = currentPlanCtrl.items.any(
+              (e) => (e.status ?? '').toLowerCase() == 'active',
+            );
+            if (hasActive) break;
+            await Future.delayed(const Duration(seconds: 2));
+          }
+        }
+        
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: 'Success',
           message: 'Payment completed successfully!',
           contentType: ContentType.success,
         );
 
-        if (Get.isRegistered<CurrentUserPlanController>()) {
-          Get.find<CurrentUserPlanController>().refreshList();
+        /// Extra refresh to ensure any derived UI is recomputed.
+        if (currentPlanCtrl != null) {
+          await currentPlanCtrl.refreshList();
         }
-      }
+      }     
     } catch (e) {
       debugPrint("Error verifying payment: $e");
     } finally {

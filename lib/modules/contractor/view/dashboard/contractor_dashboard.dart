@@ -12,7 +12,6 @@ import 'package:timeago/timeago.dart' as timeago;
 import '../../../../app/utils/formater/formater.dart';
 import '../../../../data/network/contractor/model/dashboard/contractor_dashboard_model.dart';
 import '../../../../utils/excel/generate_excel.dart';
-import '../../../dashboard/views/dashboard_screen.dart';
 import '../../../reseller/view/property_reseller.dart';
 import '../../../reseller/widget/graph/linear_graph.dart';
 import '../../../seller/module/seller_home_screen/views/widget/property_distribution_pie_graph.dart';
@@ -47,48 +46,51 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
   Widget build(BuildContext context) {
     return DashboardLayout(
       onRefresh: contractorDashboardController.refreshDashboard,
-      floatingButton: FloatingActionButton.extended(
-        onPressed: () {
-          if (!UserHelper.isAadharVerified) {
-            Get.to(() => AadharAuthScreen());
-          } else {
-            controller.clearForm();
-            Get.to(() => AddServiceScreen());
-          }
-        },
-        label: Text(
-          '+ Add Service',
-          style: TextStyle(
-            color: ColorRes.white,
-            fontWeight: AppFontWeights.semiBold,
+      floatingButton: Obx(() {
+        final bool activePlan = contractorDashboardController.hasActivePlan;
+        final bool limitReached = contractorDashboardController.hasReachedServiceLimit;
+        final bool showDisabledStyle = !activePlan || limitReached;
+
+        return FloatingActionButton.extended(
+          backgroundColor: showDisabledStyle ? Colors.grey.shade400 : ColorRes.primary,
+          foregroundColor: ColorRes.white,
+          onPressed: () async {
+            // If the user can't add service, show the correct upgrade dialog
+            // and keep the button styled as disabled.
+            if (showDisabledStyle) {
+              await contractorDashboardController.showUpgradePlanDialog(
+                title: activePlan ? 'Limit Reached' : 'Active plan required',
+                message: activePlan
+                    ? 'Limit Reached, please upgrade your plan.'
+                    : 'You do not have an active subscription. Please activate a plan to continue.',
+              );
+              return;
+            }
+
+            await contractorDashboardController.guardAddServiceAction(() {
+              Get.to(() => AddServiceScreen());
+              controller.clearForm();
+            });
+          },
+          label: Text(
+            '+ Add Service',
+            style: TextStyle(
+              color: ColorRes.white,
+              fontWeight: AppFontWeights.semiBold,
+            ),
           ),
-        ),
-      ),
-      child: FutureBuilder(
-        future: contractorDashboardController.getContractorDashboard(
-          leadsYear: contractorDashboardController.selectedGraphYear.value,
-        ),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return DashboardShimmer();
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData) {
-            return const Center(child: Text('No data found'));
-          }
-          return Obx(() {
-            if (contractorDashboardController.isLoading.value) {
-              return DashboardShimmer();
-            }
-            contractorDashboardController.contractorInsights = snapshot.data!;
+        );
+      }),
+      child: Obx(() {
+        if (contractorDashboardController.isLoading.value) {
+          return DashboardShimmer();
+        }
 
-            // Check if data exists before building
-            if (contractorDashboardController.contractorInsights.value ==
-                null) {
-              return const Center(child: CircularProgressIndicator());
-            }
+        if (contractorDashboardController.contractorInsights.value == null) {
+          return const Center(child: Text('No data found'));
+        }
 
-            return RefreshIndicator(
+        return RefreshIndicator(
               onRefresh: contractorDashboardController.refreshDashboard,
               child: SingleChildScrollView(
                 physics: const NeverScrollableScrollPhysics(),
@@ -654,9 +656,7 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
                 ),
               ),
             );
-          });
-        },
-      ),
+      }),
     );
   }
 }

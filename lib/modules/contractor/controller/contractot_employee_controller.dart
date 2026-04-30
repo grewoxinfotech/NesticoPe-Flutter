@@ -8,6 +8,7 @@ import '../../../app/constants/color_res.dart';
 import '../../../data/network/contractor/model/employee/contractor_employee_model.dart';
 import '../../../data/network/contractor/service/employee/contractor_employee_services.dart';
 import '../../../widgets/messages/snack_bar.dart';
+import '../../../data/network/contractor/service/subscription/subscription_limit_guard.dart';
 
 class ContractorEmployeeController
     extends PaginatedController<ContractorEmployeeItem> {
@@ -96,6 +97,7 @@ class ContractorEmployeeController
         clearControllers();
         refreshList();
       } else {
+        if (SubscriptionLimitGuard.consumeHandledState()) return;
         clearControllers();
 
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -133,6 +135,7 @@ class ContractorEmployeeController
         clearControllers();
         refreshList();
       } else {
+        if (SubscriptionLimitGuard.consumeHandledState()) return;
         clearControllers();
 
         NesticoPeSnackBar.showAwesomeSnackbar(

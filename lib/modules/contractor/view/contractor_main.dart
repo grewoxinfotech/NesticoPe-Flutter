@@ -4,20 +4,17 @@ import 'package:nesticope_app/modules/contractor/view/lead/contractor_lead_scree
 
 import 'package:nesticope_app/modules/contractor/view/profile/contractot_profile.dart';
 import 'package:nesticope_app/modules/contractor/view/project/contractor_project.dart';
-import 'package:nesticope_app/modules/contractor/view/project/contractor_service.dart';
 import 'package:nesticope_app/modules/contractor/view/widget/contractor_inquiry_screen.dart';
 import 'package:nesticope_app/modules/profile/controllers/buyer_profiledata.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
-import '../../../app/constants/color_res.dart';
 
 import 'package:get/get.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 import '../controller/contractor_navigate_controller.dart';
-import 'contractor_plan/contractor_plan_screen.dart';
+import '../controller/contractor_dashboard_controller.dart';
 import 'dashboard/contractor_dashboard.dart';
-import 'lead/contractor_lead.dart';
 
 class ContractorMainScreen extends StatefulWidget {
 
@@ -32,6 +29,7 @@ class _ContractorMainScreenState extends State<ContractorMainScreen> {
   
    final navigationController =
       Get.put(ContractorNavigationController());
+  final dashboardController = Get.put(ContractorDashboardController());
 
   late final BuyerProfileDataController profile;
    late final List<Widget> screens;
@@ -39,6 +37,7 @@ class _ContractorMainScreenState extends State<ContractorMainScreen> {
   @override
   void initState() {
     super.initState();
+    dashboardController.fetchActiveSubscription(showDialogWhenMissing: false);
 
     // ✅ Proper controller init
     if (!Get.isRegistered<BuyerProfileDataController>()) {
@@ -226,8 +225,23 @@ class _ContractorMainScreenState extends State<ContractorMainScreen> {
                             BorderRadius.circular(AppRadius.large),
                       ),
                       currentIndex: index,
-                      onTap:
-                          navigationController.changeTabIndex,
+                      onTap: (tabIndex) async {
+                        final bool restrictedTab =
+                            tabIndex != 0 && tabIndex != 4;
+                        final bool hasActivePlan =
+                            dashboardController.activeSubscription.value != null;
+
+                        if (restrictedTab && !hasActivePlan) {
+                          await dashboardController.showUpgradePlanDialog(
+                            title: 'Active plan required',
+                            message:
+                                'Please activate or upgrade your subscription to access this section.',
+                          );
+                          return;
+                        }
+
+                        navigationController.changeTabIndex(tabIndex);
+                      },
                       unselectedItemColor:
                           Get.theme.colorScheme.onSurface
                               .withOpacity(0.6),
@@ -276,11 +290,6 @@ class _ContractorMainScreenState extends State<ContractorMainScreen> {
                                 navigationController
                                         .currentIndex.value ==
                                     4;
-
-                            final imageUrl =
-                                profile.userProfile.value
-                                        ?.profilePic ??
-                                    "";
 
                             return Container(
                               height: 26,
