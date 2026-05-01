@@ -55,6 +55,36 @@ class _LeadVisitState extends State<LeadVisit> {
     }
   }
 
+  String _normalizeVisitStatus(String? status) {
+    final value = (status ?? '').trim().toLowerCase();
+    if (value == 'confirmed' || value == 'approved') return 'approved';
+    if (value == 'cancelled' || value == 'canceled' || value == 'rejected') {
+      return 'rejected';
+    }
+    if (value == 'rescheduled') return 'rescheduled';
+    return value;
+  }
+
+  bool _isFinalVisitStatus(String? status) {
+    final normalized = _normalizeVisitStatus(status);
+    return normalized == 'approved' ||
+        normalized == 'rejected' ||
+        normalized == 'rescheduled';
+  }
+
+  (String, Color, IconData) _getVisitStatusUi(String? status) {
+    switch (_normalizeVisitStatus(status)) {
+      case 'approved':
+        return ('Approved', Colors.green, Icons.check_circle_outline);
+      case 'rejected':
+        return ('Rejected', ColorRes.error, Icons.cancel_outlined);
+      case 'rescheduled':
+        return ('Rescheduled', ColorRes.primary, Icons.timer_outlined);
+      default:
+        return ('Pending', Colors.orange, Icons.pending_outlined);
+    }
+  }
+
   late final leadVisitController = widget.leadVisitController;
   late final propertyInquiryController = widget.propertyInquiryController;
 
@@ -114,7 +144,7 @@ class _LeadVisitState extends State<LeadVisit> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorRes.white,
+      // backgroundColor: ColorRes.white,
       appBar: AppBar(
         backgroundColor: ColorRes.white,
         elevation: 0,
@@ -201,7 +231,14 @@ class _LeadVisitState extends State<LeadVisit> {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+        // border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -359,73 +396,94 @@ class _LeadVisitState extends State<LeadVisit> {
           ),
           const SizedBox(height: 16),
 
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                // TODO: reject action
-                controller.openAddFollowUpDialog();
-                controller.populatePayloadData(visit);
+          if (_isFinalVisitStatus(visit.status)) ...[
+            Builder(
+              builder: (_) {
+                final (label, color, icon) = _getVisitStatusUi(visit.status);
+                return SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: null,
+                    icon: Icon(icon, color: ColorRes.white),
+                    label: Text(
+                      label,
+                      style: const TextStyle(color: ColorRes.white),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      disabledBackgroundColor: color,
+                      disabledForegroundColor: ColorRes.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                  ),
+                );
               },
-              icon: const Icon(Icons.timer_outlined, color: ColorRes.white),
-              label: const Text(
-                "Rescheduled",
-                style: TextStyle(color: ColorRes.white),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ColorRes.primary,
-                side: const BorderSide(color: ColorRes.primary),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+            ),
+          ] else ...[
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  controller.openAddFollowUpDialog();
+                  controller.populatePayloadData(visit);
+                },
+                icon: const Icon(Icons.timer_outlined, color: ColorRes.white),
+                label: const Text(
+                  "Rescheduled",
+                  style: TextStyle(color: ColorRes.white),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 14),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ColorRes.primary,
+                  side: const BorderSide(color: ColorRes.primary),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 8),
-          // Accept / Reject buttons
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    controller.deleteLead();
-                    controller.populatePayloadData(visit);
-                  },
-                  icon: const Icon(Icons.cancel_outlined, color: Colors.white),
-                  label: const Text("Reject"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorRes.error,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      controller.deleteLead();
+                      controller.populatePayloadData(visit);
+                    },
+                    icon: const Icon(Icons.cancel_outlined, color: Colors.white),
+                    label: const Text("Reject"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorRes.error,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                 ),
-              ),
-
-              const SizedBox(width: 12),
-
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    // TODO: accept action
-
-                    controller.approvedVisite(visit.id ?? '');
-                  },
-                  icon: const Icon(Icons.check, color: Colors.white),
-                  label: const Text("Approved"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      controller.approvedVisite(visit.id ?? '');
+                    },
+                    icon: const Icon(Icons.check, color: Colors.white),
+                    label: const Text("Approved"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
+          ],
         ],
       ),
     );
@@ -450,7 +508,7 @@ class _LeadVisitState extends State<LeadVisit> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "$title : $name",
+                " ${name.capitalize?.replaceAll("_", " ")}",
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(

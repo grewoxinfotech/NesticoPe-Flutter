@@ -365,10 +365,69 @@ class PropertyService {
     try {
       final url = Uri.parse('$baseUrl/$id');
 
+      final hasLocalImage = (images ?? []).any((f) => !isNetworkFile(f.path));
+      final hasLocalVideo = (videos ?? []).any((f) => !isNetworkFile(f.path));
+      final hasLocalDocument =
+          (documents ?? []).any((f) => !isNetworkFile(f.path));
+      final hasLocalMediaUpload =
+          hasLocalImage || hasLocalVideo || hasLocalDocument;
+
+      final retainImageUrls =
+          (images ?? [])
+              .where((f) => isNetworkFile(f.path))
+              .map((f) => f.path)
+              .toList();
+      final retainVideoUrls =
+          (videos ?? [])
+              .where((f) => isNetworkFile(f.path))
+              .map((f) => f.path)
+              .toList();
+      final retainDocumentUrls =
+          (documents ?? [])
+              .where((f) => isNetworkFile(f.path))
+              .map((f) => f.path)
+              .toList();
+
+      // If there are no local files to upload, send plain JSON.
+      // This preserves `propertyMedia` as a real object with array values.
+      if (!hasLocalMediaUpload) {
+        final payload = Map<String, dynamic>.from(property);
+        payload['propertyMedia'] = {
+          'images': retainImageUrls,
+          'videos': retainVideoUrls,
+          'documents': retainDocumentUrls,
+        };
+
+        final response = await http.put(
+          url,
+          headers: await headers(),
+          body: jsonEncode(payload),
+        );
+
+        AppLogger.structured("Update property response: ", response.body);
+
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: "Success",
+            message: "Update Property Successful",
+            contentType: ContentType.success,
+          );
+        } else {
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: "Error",
+            message: "Failed to Update property. Please try again.",
+            contentType: ContentType.failure,
+          );
+        }
+
+        return response.statusCode == 200 || response.statusCode == 201;
+      }
+
       var request = http.MultipartRequest("PUT", url);
       request.headers.addAll(await headers());
 
       property.forEach((key, value) {
+        if (key == 'propertyMedia') return;
         if (value is Map || value is List) {
           request.fields[key] = jsonEncode(value);
         } else {
@@ -377,14 +436,11 @@ class PropertyService {
       });
 
       // ─── IMAGES ───────────────────────────────────────────────
-      List<String> retainImageUrls = [];
-      List<String> retainVideoUrls = [];
-      List<String> retainDocumentUrls = [];
 
       if (images != null && images.isNotEmpty) {
         for (var image in images) {
           if (isNetworkFile(image.path)) {
-            retainImageUrls.add(image.path); // old URL → keep
+            // old URL already collected in retainImageUrls
           } else {
             request.files.add(
               // new local file → upload
@@ -402,7 +458,7 @@ class PropertyService {
       if (videos != null && videos.isNotEmpty) {
         for (var video in videos) {
           if (isNetworkFile(video.path)) {
-            retainVideoUrls.add(video.path);
+            // old URL already collected in retainVideoUrls
           } else {
             request.files.add(
               await http.MultipartFile.fromPath(
@@ -419,7 +475,7 @@ class PropertyService {
       if (documents != null && documents.isNotEmpty) {
         for (var document in documents) {
           if (isNetworkFile(document.path)) {
-            retainDocumentUrls.add(document.path);
+            // old URL already collected in retainDocumentUrls
           } else {
             request.files.add(
               await http.MultipartFile.fromPath(
@@ -440,17 +496,25 @@ class PropertyService {
       // Case 2: user kept some/all old images → retainImageUrls has URLs
       //         → backend merges them with newly uploaded property_images
       //
-      final propertyMedia = {
-        'images': retainImageUrls,
-        'videos': retainVideoUrls,
-        'documents': retainDocumentUrls,
-      };
-      request.fields['propertyMedia'] = jsonEncode(propertyMedia);
+      for (int i = 0; i < retainImageUrls.length; i++) {
+        request.fields['propertyMedia[images][$i]'] = retainImageUrls[i];
+      }
+      for (int i = 0; i < retainVideoUrls.length; i++) {
+        request.fields['propertyMedia[videos][$i]'] = retainVideoUrls[i];
+      }
+      for (int i = 0; i < retainDocumentUrls.length; i++) {
+        request.fields['propertyMedia[documents][$i]'] = retainDocumentUrls[i];
+      }
 
       log("retainImageUrls: $retainImageUrls");
       log("retainVideoUrls: $retainVideoUrls");
       log("retainDocumentUrls: $retainDocumentUrls");
-      log("propertyMedia field sent: ${request.fields['propertyMedia']}");
+      log(
+        "propertyMedia fields sent: "
+        "images=${retainImageUrls.length}, "
+        "videos=${retainVideoUrls.length}, "
+        "documents=${retainDocumentUrls.length}",
+      );
 
       // ─── Send ─────────────────────────────────────────────────
       final streamedResponse = await request.send();

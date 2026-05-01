@@ -20,7 +20,7 @@ class SupportTicketScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Support Tickets'), centerTitle: true),
+      appBar: AppBar(title: const Text('Support Tickets'),backgroundColor: ColorRes.white,),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           controller.resetFormField();

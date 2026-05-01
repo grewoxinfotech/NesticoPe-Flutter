@@ -99,11 +99,13 @@ class _HomeHeaderState extends State<HomeHeader> {
       setState(() {});
     });
   }
-
+  final BuyerProfileDataController profileController =
+        Get.isRegistered<BuyerProfileDataController>()
+            ? Get.find<BuyerProfileDataController>()
+            : Get.put(BuyerProfileDataController());
   @override
   Widget build(BuildContext context) {
-    final BuyerProfileDataController profileController =
-        Get.find<BuyerProfileDataController>();
+  
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,

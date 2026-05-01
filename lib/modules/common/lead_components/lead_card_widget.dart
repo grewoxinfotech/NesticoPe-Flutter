@@ -71,7 +71,14 @@ class _LeadCardWidgetState extends State<LeadCardWidget> {
         decoration: BoxDecoration(
           color: ColorRes.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+          // border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: ColorRes.black.withOpacity(0.08),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,7 +136,7 @@ class _LeadCardWidgetState extends State<LeadCardWidget> {
                                     ? AppFontSizes.extraSmall
                                     : AppFontSizes.small,
                             color: ColorRes.leadGreyColor[700],
-                            fontWeight: AppFontWeights.regular,
+                            fontWeight: AppFontWeights.medium,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -145,8 +152,8 @@ class _LeadCardWidgetState extends State<LeadCardWidget> {
                                 DataMasker.maskEmail(widget.lead.email!),
                                 style: TextStyle(
                                   fontSize: AppFontSizes.extraSmall,
-                                  color: ColorRes.leadGreyColor[600],
-                                  fontWeight: AppFontWeights.regular,
+                                  color: ColorRes.leadGreyColor[700],
+                                  fontWeight: AppFontWeights.medium,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -169,7 +176,7 @@ class _LeadCardWidgetState extends State<LeadCardWidget> {
                         style: TextStyle(
                           fontSize: AppFontSizes.extraSmall,
                           color: ColorRes.leadGreyColor[800],
-                          fontWeight: AppFontWeights.regular,
+                          fontWeight: AppFontWeights.medium,
                         ),
                       ),
                       SizedBox(height: 4),
@@ -213,8 +220,8 @@ class _LeadCardWidgetState extends State<LeadCardWidget> {
                       formatTime(widget.lead.createdAt!),
                       style: TextStyle(
                         fontSize: AppFontSizes.caption,
-                        color: ColorRes.leadGreyColor[600],
-                        fontWeight: AppFontWeights.regular,
+                        color: ColorRes.leadGreyColor[700],
+                        fontWeight: AppFontWeights.medium,
                       ),
                     ),
                   ],
@@ -222,7 +229,7 @@ class _LeadCardWidgetState extends State<LeadCardWidget> {
               ],
             ),
             SizedBox(height: widget.isCompact ? 8 : 12),
-            Divider(color: ColorRes.leadGreyColor, thickness: 0.5),
+            Divider(color: ColorRes.leadGreyColor.shade300, thickness: 0.5),
             SizedBox(height: widget.isCompact ? 8 : 12),
 
             // Status & Stage Badges + Action Buttons

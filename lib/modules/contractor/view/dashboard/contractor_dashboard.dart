@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:nesticope_app/data/network/auth/model/user_model.dart';
 import 'package:nesticope_app/modules/contractor/controller/contractor_dashboard_controller.dart';
 import 'package:nesticope_app/modules/contractor/view/widget/create_service_from.dart';
 import 'package:nesticope_app/modules/dashboard/views/widget/dashboard_layout.dart';
@@ -57,7 +58,9 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
           onPressed: () async {
             // If the user can't add service, show the correct upgrade dialog
             // and keep the button styled as disabled.
-            if (showDisabledStyle) {
+          if(UserHelper.isContractor)
+          {
+             if (showDisabledStyle ) {
               await contractorDashboardController.showUpgradePlanDialog(
                 title: activePlan ? 'Limit Reached' : 'Active plan required',
                 message: activePlan
@@ -66,6 +69,7 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
               );
               return;
             }
+          }
 
             await contractorDashboardController.guardAddServiceAction(() {
               Get.to(() => AddServiceScreen());

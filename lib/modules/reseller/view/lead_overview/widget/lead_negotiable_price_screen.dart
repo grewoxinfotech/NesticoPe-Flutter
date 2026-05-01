@@ -51,10 +51,12 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        
         title: Text(
           'Negotiable Prices',
           style: TextStyle(fontWeight: AppFontWeights.semiBold),
         ),
+        backgroundColor: ColorRes.white,
       ),
       body: Obx(() {
         if (widget.controller.isLoading.value) {
@@ -109,7 +111,13 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         color: ColorRes.white,
-        border: Border.all(color: ColorRes.leadGreyColor.shade300),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -153,7 +161,7 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
                             child: Obx(() {
                               final username = controller.buyerProfiles[item.buyerId]?.username ?? 'John D.';
                               return Text(
-                                username,
+                                username.capitalize?.replaceAll("_", " ")??'',
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
                                   fontWeight: AppFontWeights.semiBold,
@@ -280,7 +288,7 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
             children: [
               Expanded(
                 child: Text(
-      item.negotiablePrice.toString(),
+      Formatter.formatDecimalPrice(num.parse(item.negotiablePrice ?? '0')),
                   style:  TextStyle(
                     fontSize: AppFontSizes.bodySmall,
                     fontWeight: AppFontWeights.semiBold,
@@ -291,7 +299,7 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
 
 
               Text(
-                "${item.previousNegotiablePrice}",
+                Formatter.formatDecimalPrice(num.parse(item.previousNegotiablePrice ?? '0')),
                 style: TextStyle(
                   color: ColorRes.textColor,
                   fontWeight: AppFontWeights.medium,

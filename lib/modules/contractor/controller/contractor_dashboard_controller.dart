@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:nesticope_app/data/network/contractor/model/dashboard/contractor_dashboard_model.dart';
 import 'package:nesticope_app/data/network/contractor/model/subscription/contractor_active_subscription_model.dart';
 import 'package:nesticope_app/data/network/contractor/service/subscription/contractor_subscription_service.dart';
@@ -61,23 +62,30 @@ class ContractorDashboardController extends GetxController {
     int? leadsYear,
   }) async {
     isLoading.value = true;
-    final user = await SecureStorage.getUserData();
-    final userId = user?.user?.id;
+    try {
+      final user = await SecureStorage.getUserData();
+      final userId = user?.user?.id;
 
-    if (userId == null || userId.isEmpty) {
+      if (userId == null || userId.isEmpty) {
+        log("Contractor dashboard skipped: user id missing in secure storage");
+        contractorInsights.value = null;
+        return contractorInsights;
+      }
+
+      final data = await ContractorDashboardService.contractorDashboardService
+          .getContractorDashboard(
+            userId,
+            leadsYear: leadsYear ?? selectedGraphYear.value,
+          );
+
+      contractorInsights.value = ContractorInsightsModel.fromJson(data);
+      log("Contractor dashboard fetched successfully");
+    } catch (e, s) {
+      log("Failed to fetch contractor dashboard: $e", stackTrace: s);
+      contractorInsights.value = null;
+    } finally {
       isLoading.value = false;
-      throw Exception("User ID not found in secure storage");
     }
-
-    final data = await ContractorDashboardService.contractorDashboardService
-        .getContractorDashboard(
-          userId,
-          leadsYear: leadsYear ?? selectedGraphYear.value,
-        );
-
-    contractorInsights.value = ContractorInsightsModel.fromJson(data);
-    print("✅ Contractor dashboard fetched successfully");
-    isLoading.value = false;
     return contractorInsights;
   }
 
@@ -120,11 +128,14 @@ class ContractorDashboardController extends GetxController {
     if (showDialogWhenMissing &&
         plan == null &&
         (Get.isDialogOpen ?? false) == false) {
-      await showUpgradePlanDialog(
-        title: 'Active plan required',
-        message:
-            'You do not have an active subscription. Please activate a plan to continue.',
-      );
+      if(UserHelper.isContractor)
+      {
+        await showUpgradePlanDialog(
+          title: 'Active plan required',
+          message:
+              'You do not have an active subscription. Please activate a plan to continue.',
+        );
+      }
     }
   }
 
@@ -153,11 +164,14 @@ class ContractorDashboardController extends GetxController {
 
     if (!hasActivePlan) return;
     if (hasReachedServiceLimit) {
-      await showUpgradePlanDialog(
-        title: 'Limit Reached',
-        message: 'Limit Reached, please upgrade your plan.',
-      );
-      return;
+      if(UserHelper.isContractor)
+      {
+        await showUpgradePlanDialog(
+          title: 'Limit Reached',
+          message: 'Limit Reached, please upgrade your plan.',
+        );
+        return;
+      }
     }
     onAllowed();
   }
@@ -181,10 +195,14 @@ class ContractorDashboardController extends GetxController {
 
     if (!hasActivePlan) return;
     if (hasReachedUserLimit) {
-      await showUpgradePlanDialog(
-        title: 'Limit Reached',
-        message: 'Limit Reached, please upgrade your plan.',
-      );
+      if(UserHelper.isContractor)
+      { 
+        await showUpgradePlanDialog(
+          title: 'Limit Reached',
+          message: 'Limit Reached, please upgrade your plan.',
+        );
+        return;
+      }
       return;
     }
     onAllowed();

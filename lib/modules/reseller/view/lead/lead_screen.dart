@@ -1082,7 +1082,7 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorRes.white,
+      // backgroundColor: ColorRes.white,
       appBar: AppBar(
         backgroundColor: ColorRes.white,
         elevation: 0,

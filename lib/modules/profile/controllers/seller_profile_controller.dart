@@ -96,8 +96,11 @@ class SellerProfileController extends GetxController {
 
     // Simulate API call
     Future.delayed(const Duration(milliseconds: 500), () async {
+      if (isClosed) return;
       await getUserProfileData();
+      if (isClosed) return;
       _populateControllers();
+      if (isClosed) return;
       isLoading.value = false;
     });
   }
@@ -118,6 +121,7 @@ class SellerProfileController extends GetxController {
 
   Future<void> getUserProfileData() async {
     final user = await getUserProfile();
+    if (isClosed) return;
 
     // Initialize profileData with fetched user so subsequent `.user` reads work
     profileData.value = UserModel(user: user);
@@ -131,6 +135,7 @@ class SellerProfileController extends GetxController {
       resellerProfile.value = ProfileSellerModel.fromJson(data ?? {});
       print("Seller efgryfgrfyy${resellerProfile.value?.toJson()}");
     }
+    if (isClosed) return;
     _populateControllers();
     print("Lok ${resellerProfile.value?.id}");
   }
@@ -174,6 +179,7 @@ class SellerProfileController extends GetxController {
   }
 
   void _populateControllers() {
+    if (isClosed) return;
     // Contact Info fields
     nameController.text = profileData.value?.user?.firstName ?? "";
 

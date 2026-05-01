@@ -165,11 +165,13 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
       body: Stack(
         children: [
           // ─── Scrollable content ───────────────────────────────────────────
-          SafeArea(
-            top: false,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
+          AbsorbPointer(
+            absorbing: UserHelper.isReseller,
+            child: SafeArea(
+              top: false,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
                   // if (!widget.isNotFromBuyerSide) ...[
                   _buildTopHeader(),
                   // ],
@@ -266,14 +268,15 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                     }),
                   ],
 
-                  KeyedSubtree(
-                    key: _plansListKey,
-                    child: SubscriptionPlansWidget(
-                      controller: controller,
-                      selectedPlanName: _selectedPlanName,
+                    KeyedSubtree(
+                      key: _plansListKey,
+                      child: SubscriptionPlansWidget(
+                        controller: controller,
+                        selectedPlanName: _selectedPlanName,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -413,6 +416,81 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
               }),
             ],
           ],
+
+          // ─── Reseller Coming Soon lock overlay ───────────────────────────
+          if (UserHelper.isReseller) _buildResellerComingSoonOverlay(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildResellerComingSoonOverlay() {
+    return Positioned.fill(
+      child: Stack(
+        children: [
+          ClipRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+              child: Container(color: Colors.white.withOpacity(0.40)),
+            ),
+          ),
+          Center(
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
+              decoration: BoxDecoration(
+                color: ColorRes.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: ColorRes.black.withOpacity(0.12),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    height: 52,
+                    width: 52,
+                    decoration: BoxDecoration(
+                      color: ColorRes.primary.withOpacity(0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.construction_rounded,
+                      color: ColorRes.primary,
+                      size: 28,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Partner Plan Coming Soon',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 18,
+                      height: 1.2,
+                      
+                      fontWeight: AppFontWeights.bold,
+                      color: ColorRes.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'Subscription plans for partner will be available soon.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: AppFontSizes.bodySmall,
+                      color: ColorRes.leadGreyColor.shade700,
+                      fontWeight: AppFontWeights.medium,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -539,7 +617,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
   }) {
     return Container(
       padding: const EdgeInsets.all(16),
-      margin: const EdgeInsets.symmetric(horizontal: 12,vertical: 12),
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -672,8 +750,8 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
 
           const SizedBox(height: 10),
 
-          const Text(
-            "Property Listing Usage",
+          Text(
+            "${getPlanName(widget.role)} Listing Usage",
             style: TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: 14,
@@ -716,7 +794,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
             ),
             const SizedBox(height: 6),
             Text(
-              "${(max - used).clamp(0, max)} ${userRole == UserRole.contractor ? 'services' : 'properties'} remaining in your current cycle",
+              "${(max - used).clamp(0, max)} ${getPlanName(widget.role).toLowerCase()} remaining in your current cycle",
               style: const TextStyle(color: Colors.black54, fontSize: 12),
             ),
           ] else ...[
@@ -749,8 +827,8 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Unlimited Property Listings",
+                        Text(
+                          "Unlimited ${getPlanName(widget.role)} Listings",
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -759,7 +837,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          "Your plan allows for unlimited property listings",
+                          "Your plan allows for unlimited ${getPlanName(widget.role).toLowerCase()} listings",
                           style: TextStyle(
                             fontSize: 11,
                             color: ColorRes.leadGreyColor.shade600,
@@ -778,6 +856,19 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
   }
 
   // ─── Helpers ─────────────────────────────────────────────────────────────
+
+  String getPlanName(String role) {
+    switch (role) {
+      case 'contractor':
+        return 'Services';
+      case 'sellerBuilder':
+        return 'Projects';
+      case 'reseller':
+        return 'Properties';
+      default:
+        return 'Properties';
+    }
+  }
 
   String _mapRoleToTitle(String role) {
     switch (role) {

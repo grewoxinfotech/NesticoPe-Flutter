@@ -670,7 +670,6 @@ import 'package:nesticope_app/app/widgets/texts/headline_text.dart';
 import 'package:nesticope_app/data/network/auth/model/user_model.dart';
 import 'package:nesticope_app/data/network/platform_review/model/platform_review_model.dart';
 import 'package:nesticope_app/modules/auth/views/register_screen.dart';
-import 'package:nesticope_app/modules/contractor/controller/contractor_dashboard_controller.dart';
 import 'package:nesticope_app/modules/contractor/view/widget/convert_to_contractor.dart';
 import 'package:nesticope_app/modules/home/controllers/home_controller/platform_review-controller.dart';
 import 'package:nesticope_app/modules/subscription/views/widgets/contractor_all_review_screen.dart';
@@ -708,9 +707,6 @@ class SubscriptionPlansWidget extends StatelessWidget {
       reviewController.fetchAllReviews(refresh: true);
     }
   }
- final ContractorDashboardController dashboardController = Get.isRegistered<ContractorDashboardController>()
-            ? Get.find<ContractorDashboardController>()
-            : Get.put(ContractorDashboardController());
   @override
   Widget build(BuildContext context) {
     return Obx(() {
@@ -755,7 +751,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
 
               return SizedBox(
                 height: hasDiscount ? 396 : 365,
-                child: _buildPlanCard(plans[index], index,dashboardController),
+                child: _buildPlanCard(plans[index], index),
               );
             },
           ),
@@ -797,7 +793,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
   // ------------------------------------------------------
   // CARD UI
   // ------------------------------------------------------
-  Widget _buildPlanCard(SubscriptionPlan plan, int index,ContractorDashboardController dashboardController) {
+  Widget _buildPlanCard(SubscriptionPlan plan, int index) {
     final bool rec = plan.isRecommended == true;
 
     return Stack(
@@ -873,7 +869,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
               _buildFeaturePreview(plan, rec),
               _buildShowMore(plan, index, rec),
               Spacer(),
-              _buildSelectButton(plan,dashboardController),
+              _buildSelectButton(plan),
             ],
           ),
         ),
@@ -1171,7 +1167,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
   // ------------------------------------------------------
   // Select Button - UPDATED WITH RAZORPAY INTEGRATION
   // ------------------------------------------------------
-  Widget _buildSelectButton(SubscriptionPlan plan,ContractorDashboardController dashboardController) {
+  Widget _buildSelectButton(SubscriptionPlan plan) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: SizedBox(

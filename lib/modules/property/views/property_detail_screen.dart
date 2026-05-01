@@ -3314,6 +3314,7 @@ import 'package:nesticope_app/widgets/bar/navigation_bar/navigation_Bar.dart';
 import 'package:nesticope_app/modules/search_property/view/search_screen.dart';
 import 'package:nesticope_app/widgets/button/button.dart';
 import 'package:timeago/timeago.dart' as timeFormatter;
+import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -3362,11 +3363,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   final Rxn<Items> _property = Rxn<Items>();
 
   final RxBool _isLoading = true.obs;
-
-
-
-
-
 
   @override
   void initState() {
@@ -3417,6 +3413,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
       await contactedController.fetchContactedProperties();
     }
   }
+
   Future<void> _loadData() async {
     try {
       if (!mounted) return;
@@ -3599,7 +3596,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
       ),
     );
   }
-  
 
   @override
   void dispose() {
@@ -3639,1538 +3635,1597 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
         backgroundColor: ColorRes.white,
         extendBody: true,
         body: Obx(() {
-        // Show loading while fetching property
-        if (_isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
+          // Show loading while fetching property
+          if (_isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-        // Get current property value
-        final currentProperty = _property.value;
+          // Get current property value
+          final currentProperty = _property.value;
 
-        // Show error if property not found
-        if (currentProperty == null) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.error_outline,
-                  size: 64,
-                  color: ColorRes.leadGreyColor,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Property not found',
-                  style: TextStyle(
-                    fontSize: AppFontSizes.body,
+          // Show error if property not found
+          if (currentProperty == null) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 64,
                     color: ColorRes.leadGreyColor,
                   ),
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: _goToDashboard,
-                  child: const Text('Go Back'),
-                ),
-              ],
-            ),
-          );
-        }
-
-        return SafeArea(
-          child: Stack(
-            children: [
-              SingleChildScrollView(
-                padding: const EdgeInsets.only(
-                  bottom: kBottomNavigationBarHeight / 2,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Builder(
-                      builder: (context) {
-                        return _buildMediaBanner(
-                          currentProperty.propertyMedia ?? PropertyMedia(),
-                          currentProperty.id ?? '',
-                          currentProperty,
-                        );
-                      },
+                  const SizedBox(height: 16),
+                  Text(
+                    'Property not found',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.body,
+                      color: ColorRes.leadGreyColor,
                     ),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: _goToDashboard,
+                    child: const Text('Go Back'),
+                  ),
+                ],
+              ),
+            );
+          }
 
-                    Builder(
-                      builder: (context) {
-                        return _buildTitleSection(currentProperty);
-                      },
-                    ),
-                    const SizedBox(height: 8),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: _buildSupportContactSection(currentProperty),
-                    ),
-                    if ((currentProperty
-                                .propertyDetails
-                                ?.financialInfo
-                                ?.is_for_sellorrent ??
-                            false) &&
-                        (currentProperty.listingType?.toLowerCase() ==
-                            'sell')) ...[
-                      if (currentProperty
-                              .propertyDetails
-                              ?.financialInfo
-                              ?.propertyRentPerMonth !=
-                          null) ...[
-                        // Padding(
-                        //   padding: const EdgeInsets.symmetric(horizontal: 16),
-                        //   child: Container(
-                        //     padding: const EdgeInsets.all(12),
-                        //     decoration: BoxDecoration(
-                        //       color: ColorRes.primary.withOpacity(0.05),
-                        //       borderRadius: BorderRadius.circular(10),
-                        //       border: Border.all(
-                        //         color: ColorRes.primary.withOpacity(0.2),
-                        //       ),
-                        //     ),
-                        //     child: Row(
-                        //       children: [
-                        //         const Icon(
-                        //           Icons.house,
-                        //           color: ColorRes.primary,
-                        //         ),
-                        //         const SizedBox(width: 8),
-                        //         Expanded(
-                        //           child: Text(
-                        //             'This property is also available for rent at '
-                        //             '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}/month.',
-                        //             style: const TextStyle(
-                        //               fontSize: AppFontSizes.bodySmall,
-                        //               fontWeight: AppFontWeights.medium,
-                        //               color: ColorRes.textPrimary,
-                        //             ),
-                        //           ),
-                        //         ),
-                        //       ],
-                        //     ),
-            
-                        //   ),
-                        // ),
-                        Divider(
-                          indent: 18,
-                          endIndent: 18,
-                          color: ColorRes.leadGreyColor.shade300,
-                        ),
-                        
-                        const SizedBox(height: 12),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const TitleWithViewAll(title: 'Also for Rent'),
-                            const SizedBox(height: 8),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                              ),
-                              child: Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: ColorRes.primary.withOpacity(0.15),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: ColorRes.primary.withOpacity(0.3),
-                                    width: 0.8,
-                                  ),
-                                ),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'Available Rent Price',
-                                          style: const TextStyle(
-                                            fontSize: AppFontSizes.caption,
-                                            fontWeight: AppFontWeights.medium,
-                                            color: ColorRes.textPrimary,
-                                          ),
-                                        ),
-                                        Text(
-                                          '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}/month',
-                                          style: const TextStyle(
-                                            fontSize: AppFontSizes.body,
-                                            fontWeight: AppFontWeights.semiBold,
-                                            color: ColorRes.textPrimary,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Divider(
-                          indent: 18,
-                          endIndent: 18,
-                          color: ColorRes.leadGreyColor.shade300,
-                        ),
-                      ] else ...[
-                        SizedBox.shrink(),
-                      ],
-                    ],
-                    if ((currentProperty
-                                .propertyDetails
-                                ?.financialInfo
-                                ?.is_for_sellorrent ??
-                            false) &&
-                        (currentProperty.listingType?.toLowerCase() ==
-                            'rent')) ...[
-                      if (currentProperty
-                              .propertyDetails
-                              ?.financialInfo
-                              ?.price !=
-                          null) ...[
-                        const SizedBox(height: 12),
-                        Divider(
-                          indent: 18,
-                          endIndent: 18,
-                          color: ColorRes.leadGreyColor.shade300,
-                        ),
-                        const SizedBox(height: 12),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const TitleWithViewAll(title: 'Also for Sell'),
-                            const SizedBox(height: 8),
-
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                              ),
-                              child: Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: ColorRes.primary.withOpacity(0.15),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: ColorRes.primary.withOpacity(0.3),
-                                    width: 0.8,
-                                  ),
-                                ),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'Available Sell Price',
-                                          style: const TextStyle(
-                                            fontSize: AppFontSizes.caption,
-                                            fontWeight: AppFontWeights.medium,
-                                            color: ColorRes.textPrimary,
-                                          ),
-                                        ),
-                                        Text(
-                                          '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.price ?? 0)}',
-                                          style: const TextStyle(
-                                            fontSize: AppFontSizes.body,
-                                            fontWeight: AppFontWeights.semiBold,
-                                            color: ColorRes.textPrimary,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 12),
-                        Divider(
-                          indent: 18,
-                          endIndent: 18,
-                          color: ColorRes.leadGreyColor.shade300,
-                        ),
-                      ] else ...[
-                        SizedBox.shrink(),
-                      ],
-                    ],
-
-                    if (currentProperty.propertyDetails?.amenities != null) ...[
-                      const SizedBox(height: 12),
-                      const TitleWithViewAll(title: 'Amenities'),
+          return SafeArea(
+            child: Stack(
+              children: [
+                SingleChildScrollView(
+                  padding: const EdgeInsets.only(
+                    bottom: kBottomNavigationBarHeight / 2,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       Builder(
                         builder: (context) {
-                          return AmenitiesSection(
-                            amenities:
-                                currentProperty.propertyDetails!.amenities ??
-                                [],
+                          return _buildMediaBanner(
+                            currentProperty.propertyMedia ?? PropertyMedia(),
+                            currentProperty.id ?? '',
+                            currentProperty,
                           );
                         },
                       ),
-                      const SizedBox(height: 8),
-                      // Divider(
-                      //   indent: 18,
-                      //   endIndent: 18,
-                      //   color: ColorRes.leadGreyColor.shade300,
-                      // ),
-                    ],
 
-                    if (currentProperty.propertyDetails != null) ...[
-                      SizedBox(height: 20),
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        color: ColorRes.leadGreyColor.shade50,
-
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 12),
-                            TitleWithViewAll(
-                              title: 'Property Details',
-                              icon: Icons.apartment,
-                              iconBgColor: ColorRes.white,
-                              iconColor: ColorRes.primary,
-
-                              showIcon: true,
-                            ),
-                            const SizedBox(height: 8),
-                            Builder(
-                              builder: (context) {
-                                print('[PropertyDetail] 📋 Building Details');
-                                return Details(property: currentProperty);
-                              },
-                            ),
-                            const SizedBox(height: 12),
-                            // Divider(
-                            //   indent: 18,
-                            //   endIndent: 18,
-                            //   color: ColorRes.leadGreyColor.shade300,
-                            // ),
-                          ],
-                        ),
+                      Builder(
+                        builder: (context) {
+                          return _buildTitleSection(currentProperty);
+                        },
                       ),
-                    ],
+                      const SizedBox(height: 8),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: _buildSupportContactSection(currentProperty),
+                      ),
+                      const SizedBox(height: 12),
+                      Divider(
+                        thickness: 8,
+                        color: ColorRes.leadGreyColor.shade100,
+                      ),
 
-                    if ((currentProperty
-                                .propertyDetails
-                                ?.financialInfo
-                                ?.is_for_sellorrent ??
-                            false) &&
-                        (currentProperty.listingType?.toLowerCase() ==
-                            'sell')) ...[
-                      if (currentProperty
-                              .propertyDetails
-                              ?.financialInfo
-                              ?.propertyRentPerMonth !=
-                          null) ...[
-                        const SizedBox(height: 12),
-
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const TitleWithViewAll(title: 'Also for rent'),
-                            const SizedBox(height: 8),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                              ),
-                              child: Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: ColorRes.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: ColorRes.leadGreyColor.shade300,
-                                    width: 0.8,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.1),
-                                      blurRadius: 6,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      child: Text.rich(
-                                        TextSpan(
-                                          text:
-                                              'This property is also available for rent at ',
-                                          style: TextStyle(
-                                            fontSize: AppFontSizes.caption,
-                                            fontWeight: AppFontWeights.medium,
-                                            color: ColorRes.leadGreyColor[700],
-                                          ),
-                                          children: [
-                                            TextSpan(
-                                              text:
-                                                  '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}/month',
-                                              style: const TextStyle(
-                                                fontSize:
-                                                    AppFontSizes.bodySmall,
-                                                fontWeight:
-                                                    AppFontWeights.semiBold,
-                                                color: ColorRes.textPrimary,
-                                              ),
-                                            ),
-                                            const TextSpan(text: '.'),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
+                      // if (!UserHelper.isGuest && !UserHelper.isBuyer) ...[
+                        if ((currentProperty
+                                .propertyMedia
+                                ?.documents
+                                ?.isNotEmpty ??
+                            false))
+                          _buildPropertyDocumentsSection(currentProperty),
+                        if ((currentProperty
+                                .propertyMedia
+                                ?.documents
+                                ?.isNotEmpty ??
+                            false))
+                          Divider(
+                            thickness: 8,
+                            color: ColorRes.leadGreyColor.shade100,
+                          ),
+                      // ],
+                      if (((currentProperty
+                                      .propertyDetails
+                                      ?.subRegistrarOfficeName
+                                      ?.trim()
+                                      .isNotEmpty ??
+                                  false) ||
+                              (currentProperty
+                                      .propertyDetails
+                                      ?.saleDeedDocumentNumber
+                                      ?.trim()
+                                      .isNotEmpty ??
+                                  false) ||
+                              ((currentProperty
+                                          .propertyDetails
+                                          ?.yearOfRegistration
+                                          ?.toString() ??
+                                      '')
+                                  .trim()
+                                  .isNotEmpty))) ...[
+                        _buildSubRegistrarSection(currentProperty),
                         Divider(
-                          indent: 18,
-                          endIndent: 18,
-                          color: ColorRes.leadGreyColor.shade300,
+                          thickness: 8,
+                          color: ColorRes.leadGreyColor.shade100,
                         ),
-                      ] else ...[
-                        SizedBox.shrink(),
                       ],
-                    ],
-                    if ((currentProperty
+                      if ((currentProperty
+                                  .propertyDetails
+                                  ?.financialInfo
+                                  ?.is_for_sellorrent ??
+                              false) &&
+                          (currentProperty.listingType?.toLowerCase() ==
+                              'sell')) ...[
+                        if (currentProperty
                                 .propertyDetails
                                 ?.financialInfo
-                                ?.is_for_sellorrent ??
-                            false) &&
-                        (currentProperty.listingType?.toLowerCase() ==
-                            'rent')) ...[
-                      if (currentProperty
-                              .propertyDetails
-                              ?.financialInfo
-                              ?.price !=
+                                ?.propertyRentPerMonth !=
+                            null) ...[
+                          // Padding(
+                          //   padding: const EdgeInsets.symmetric(horizontal: 16),
+                          //   child: Container(
+                          //     padding: const EdgeInsets.all(12),
+                          //     decoration: BoxDecoration(
+                          //       color: ColorRes.primary.withOpacity(0.05),
+                          //       borderRadius: BorderRadius.circular(10),
+                          //       border: Border.all(
+                          //         color: ColorRes.primary.withOpacity(0.2),
+                          //       ),
+                          //     ),
+                          //     child: Row(
+                          //       children: [
+                          //         const Icon(
+                          //           Icons.house,
+                          //           color: ColorRes.primary,
+                          //         ),
+                          //         const SizedBox(width: 8),
+                          //         Expanded(
+                          //           child: Text(
+                          //             'This property is also available for rent at '
+                          //             '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}/month.',
+                          //             style: const TextStyle(
+                          //               fontSize: AppFontSizes.bodySmall,
+                          //               fontWeight: AppFontWeights.medium,
+                          //               color: ColorRes.textPrimary,
+                          //             ),
+                          //           ),
+                          //         ),
+                          //       ],
+                          //     ),
+
+                          //   ),
+                          // ),
+                          // Divider(
+                          //   indent: 18,
+                          //   endIndent: 18,
+                          //   color: ColorRes.leadGreyColor.shade300,
+                          // ),
+                          const SizedBox(height: 12),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const TitleWithViewAll(title: 'Also for Rent'),
+                              const SizedBox(height: 8),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                child: Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: ColorRes.primary.withOpacity(0.15),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: ColorRes.primary.withOpacity(0.3),
+                                      width: 0.8,
+                                    ),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Available Rent Price',
+                                            style: const TextStyle(
+                                              fontSize: AppFontSizes.caption,
+                                              fontWeight: AppFontWeights.medium,
+                                              color: ColorRes.textPrimary,
+                                            ),
+                                          ),
+                                          Text(
+                                            '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}/month',
+                                            style: const TextStyle(
+                                              fontSize: AppFontSizes.body,
+                                              fontWeight:
+                                                  AppFontWeights.semiBold,
+                                              color: ColorRes.textPrimary,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                        ] else ...[
+                          SizedBox.shrink(),
+                        ],
+                      ],
+                      if ((currentProperty
+                                  .propertyDetails
+                                  ?.financialInfo
+                                  ?.is_for_sellorrent ??
+                              false) &&
+                          (currentProperty.listingType?.toLowerCase() ==
+                              'rent')) ...[
+                        if (currentProperty
+                                .propertyDetails
+                                ?.financialInfo
+                                ?.price !=
+                            null) ...[
+                          const SizedBox(height: 12),
+                          Divider(
+                            thickness: 8,
+                            color: ColorRes.leadGreyColor.shade100,
+                          ),
+                          const SizedBox(height: 12),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const TitleWithViewAll(title: 'Also for Sell'),
+                              const SizedBox(height: 8),
+
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                child: Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: ColorRes.primary.withOpacity(0.15),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: ColorRes.primary.withOpacity(0.3),
+                                      width: 0.8,
+                                    ),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Available Sell Price',
+                                            style: const TextStyle(
+                                              fontSize: AppFontSizes.caption,
+                                              fontWeight: AppFontWeights.medium,
+                                              color: ColorRes.textPrimary,
+                                            ),
+                                          ),
+                                          Text(
+                                            '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.price ?? 0)}',
+                                            style: const TextStyle(
+                                              fontSize: AppFontSizes.body,
+                                              fontWeight:
+                                                  AppFontWeights.semiBold,
+                                              color: ColorRes.textPrimary,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 12),
+                        ] else ...[
+                          SizedBox.shrink(),
+                        ],
+                      ],
+
+                      if (currentProperty.propertyDetails?.amenities !=
                           null) ...[
-                        // const SizedBox(height: 12),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // const TitleWithViewAll(title: 'Also for Sell'),
-                            // const SizedBox(height: 8),
-                            // Padding(
-                            //   padding: const EdgeInsets.symmetric(
-                            //     horizontal: 12,
-                            //   ),
-
-                            //   child: Container(
-                            //     padding: const EdgeInsets.all(12),
-                            //     decoration: BoxDecoration(
-                            //       color: ColorRes.white,
-                            //       borderRadius: BorderRadius.circular(12),
-                            //       border: Border.all(
-                            //         color: ColorRes.leadGreyColor.shade300,
-                            //         width: 0.8,
-                            //       ),
-                            //       boxShadow: [
-                            //         BoxShadow(
-                            //           color: Colors.grey.withOpacity(0.1),
-                            //           blurRadius: 6,
-                            //           offset: const Offset(0, 2),
-                            //         ),
-                            //       ],
-                            //     ),
-                            //     child: Row(
-                            //       crossAxisAlignment: CrossAxisAlignment.center,
-                            //       children: [
-                            //         Expanded(
-                            //           child: Text.rich(
-                            //             TextSpan(
-                            //               text:
-                            //                   'This property is also available for sell at ',
-                            //               style: TextStyle(
-                            //                 fontSize: AppFontSizes.caption,
-                            //                 fontWeight: AppFontWeights.medium,
-                            //                 color: ColorRes.leadGreyColor[700],
-                            //               ),
-                            //               children: [
-                            //                 TextSpan(
-                            //                   text:
-                            //                       '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.price ?? 0)}',
-                            //                   style: const TextStyle(
-                            //                     fontSize:
-                            //                         AppFontSizes.bodySmall,
-                            //                     fontWeight:
-                            //                         AppFontWeights.semiBold,
-                            //                     color: ColorRes.textPrimary,
-                            //                   ),
-                            //                 ),
-                            //                 const TextSpan(text: '.'),
-                            //               ],
-                            //             ),
-                            //           ),
-                            //         ),
-                            //       ],
-                            //     ),
-                            //   ),
-                            // ),
-                          ],
+                        const SizedBox(height: 12),
+                        const TitleWithViewAll(title: 'Amenities'),
+                        Builder(
+                          builder: (context) {
+                            return AmenitiesSection(
+                              amenities:
+                                  currentProperty.propertyDetails!.amenities ??
+                                  [],
+                            );
+                          },
                         ),
-
-                        // const SizedBox(height: 12),
+                        const SizedBox(height: 8),
                         // Divider(
                         //   indent: 18,
                         //   endIndent: 18,
                         //   color: ColorRes.leadGreyColor.shade300,
                         // ),
-                      ] else ...[
-                        SizedBox.shrink(),
                       ],
-                    ],
 
-                    // if ((currentProperty
-                    //             .propertyDetails
-                    //             ?.financialInfo
-                    //             ?.is_for_sellorrent ??
-                    //         false) &&
-                    //     (currentProperty.listingType?.toLowerCase() ==
-                    //         'sell')) ...[
-                    //   if (currentProperty
-                    //           .propertyDetails
-                    //           ?.financialInfo
-                    //           ?.propertyRentPerMonth !=
-                    //       null) ...[
-                    //     const SizedBox(height: 12),
-                    //     // Padding(
-                    //     //   padding: const EdgeInsets.symmetric(horizontal: 16),
-                    //     //   child: Container(
-                    //     //     padding: const EdgeInsets.all(12),
-                    //     //     decoration: BoxDecoration(
-                    //     //       color: ColorRes.primary.withOpacity(0.05),
-                    //     //       borderRadius: BorderRadius.circular(10),
-                    //     //       border: Border.all(
-                    //     //         color: ColorRes.primary.withOpacity(0.2),
-                    //     //       ),
-                    //     //     ),
-                    //     //     child: Row(
-                    //     //       children: [
-                    //     //         const Icon(
-                    //     //           Icons.house,
-                    //     //           color: ColorRes.primary,
-                    //     //         ),
-                    //     //         const SizedBox(width: 8),
-                    //     //         Expanded(
-                    //     //           child: Text(
-                    //     //             'This property is also available for rent at '
-                    //     //             '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}/month.',
-                    //     //             style: const TextStyle(
-                    //     //               fontSize: AppFontSizes.bodySmall,
-                    //     //               fontWeight: AppFontWeights.medium,
-                    //     //               color: ColorRes.textPrimary,
-                    //     //             ),
-                    //     //           ),
-                    //     //         ),
-                    //     //       ],
-                    //     //     ),
-                    //     //   ),
-                    //     // ),
-                    //     Column(
-                    //       crossAxisAlignment: CrossAxisAlignment.start,
-                    //       children: [
-                    //         const TitleWithViewAll(title: 'Also for rent'),
-                    //         const SizedBox(height: 8),
-                    //         Padding(
-                    //           padding: const EdgeInsets.symmetric(
-                    //             horizontal: 16,
-                    //           ),
-                    //           child: Container(
-                    //             padding: const EdgeInsets.all(12),
-                    //             decoration: BoxDecoration(
-                    //               color: ColorRes.white,
-                    //               borderRadius: BorderRadius.circular(12),
-                    //               border: Border.all(
-                    //                 color: ColorRes.leadGreyColor.shade300,
-                    //                 width: 0.8,
-                    //               ),
-                    //               boxShadow: [
-                    //                 BoxShadow(
-                    //                   color: Colors.grey.withOpacity(0.1),
-                    //                   blurRadius: 6,
-                    //                   offset: const Offset(0, 2),
-                    //                 ),
-                    //               ],
-                    //             ),
-                    //             child: Row(
-                    //               crossAxisAlignment: CrossAxisAlignment.center,
-                    //               children: [
-                    //                 Expanded(
-                    //                   child: Text.rich(
-                    //                     TextSpan(
-                    //                       text:
-                    //                           'This property is also available for rent at ',
-                    //                       style: TextStyle(
-                    //                         fontSize: AppFontSizes.caption,
-                    //                         fontWeight: AppFontWeights.medium,
-                    //                         color: ColorRes.leadGreyColor[700],
-                    //                       ),
-                    //                       children: [
-                    //                         TextSpan(
-                    //                           text:
-                    //                               '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}/month',
-                    //                           style: const TextStyle(
-                    //                             fontSize:
-                    //                                 AppFontSizes.bodySmall,
-                    //                             fontWeight:
-                    //                                 AppFontWeights.semiBold,
-                    //                             color: ColorRes.textPrimary,
-                    //                           ),
-                    //                         ),
-                    //                         const TextSpan(text: '.'),
-                    //                       ],
-                    //                     ),
-                    //                   ),
-                    //                 ),
-                    //               ],
-                    //             ),
-                    //           ),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //     const SizedBox(height: 12),
-                    //     Divider(
-                    //       indent: 18,
-                    //       endIndent: 18,
-                    //       color: ColorRes.leadGreyColor.shade300,
-                    //     ),
-                    //   ] else ...[
-                    //     SizedBox.shrink(),
-                    //   ],
-                    // ],
-                    // if ((currentProperty
-                    //             .propertyDetails
-                    //             ?.financialInfo
-                    //             ?.is_for_sellorrent ??
-                    //         false) &&
-                    //     (currentProperty.listingType?.toLowerCase() ==
-                    //         'rent')) ...[
-                    //   if (currentProperty
-                    //           .propertyDetails
-                    //           ?.financialInfo
-                    //           ?.price !=
-                    //       null) ...[
-                    //     const SizedBox(height: 12),
-                    //     Column(
-                    //       crossAxisAlignment: CrossAxisAlignment.start,
-                    //       children: [
-                    //         const TitleWithViewAll(title: 'Also for Sell'),
-                    //         const SizedBox(height: 8),
-                    //         Padding(
-                    //           padding: const EdgeInsets.symmetric(
-                    //             horizontal: 16,
-                    //           ),
-                    //           child: Container(
-                    //             padding: const EdgeInsets.all(12),
-                    //             decoration: BoxDecoration(
-                    //               color: ColorRes.white,
-                    //               borderRadius: BorderRadius.circular(12),
-                    //               border: Border.all(
-                    //                 color: ColorRes.leadGreyColor.shade300,
-                    //                 width: 0.8,
-                    //               ),
-                    //               boxShadow: [
-                    //                 BoxShadow(
-                    //                   color: Colors.grey.withOpacity(0.1),
-                    //                   blurRadius: 6,
-                    //                   offset: const Offset(0, 2),
-                    //                 ),
-                    //               ],
-                    //             ),
-                    //             child: Row(
-                    //               crossAxisAlignment: CrossAxisAlignment.center,
-                    //               children: [
-                    //                 Expanded(
-                    //                   child: Text.rich(
-                    //                     TextSpan(
-                    //                       text:
-                    //                           'This property is also available for sell at ',
-                    //                       style: TextStyle(
-                    //                         fontSize: AppFontSizes.caption,
-                    //                         fontWeight: AppFontWeights.medium,
-                    //                         color: ColorRes.leadGreyColor[700],
-                    //                       ),
-                    //                       children: [
-                    //                         TextSpan(
-                    //                           text:
-                    //                               '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.price ?? 0)}',
-                    //                           style: const TextStyle(
-                    //                             fontSize:
-                    //                                 AppFontSizes.bodySmall,
-                    //                             fontWeight:
-                    //                                 AppFontWeights.semiBold,
-                    //                             color: ColorRes.textPrimary,
-                    //                           ),
-                    //                         ),
-                    //                         const TextSpan(text: '.'),
-                    //                       ],
-                    //                     ),
-                    //                   ),
-                    //                 ),
-                    //               ],
-                    //             ),
-                    //           ),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //
-                    //     const SizedBox(height: 12),
-                    //     Divider(
-                    //       indent: 18,
-                    //       endIndent: 18,
-                    //       color: ColorRes.leadGreyColor.shade300,
-                    //     ),
-                    //   ] else ...[
-                    //     SizedBox.shrink(),
-                    //   ],
-                    // ],
-                    if (currentProperty
-                            .propertyDetails
-                            ?.furnishInfo
-                            ?.furnishDetails !=
-                        null) ...[
-                      const SizedBox(height: 12),
-                      const TitleWithViewAll(title: 'Furnishing'),
-                      Builder(
-                        builder: (context) {
-                          return FurnishingDetails(
-                            property: currentProperty,
-                            bgColor: ColorRes.propertyBg,
-                            txtColor: ColorRes.primary,
-                          );
-                        },
-                      ),
-                      // Divider(
-                      //   indent: 18,
-                      //   endIndent: 18,
-                      //   color: ColorRes.leadGreyColor.shade300,
-                      // ),
-                    ],
-                    if (currentProperty.listingType?.toUpperCase() == "PG" &&
-                        currentProperty.propertyDetails?.pgInfo?.pgRules !=
-                            null) ...[
-                      const SizedBox(height: 12),
-                      const TitleWithViewAll(title: 'PG Rules'),
-                      const SizedBox(height: 8),
-                      _buildPgRulesSection(
-                        currentProperty.propertyDetails!.pgInfo!.pgRules!,
-                      ),
-                      const SizedBox(height: 20),
-                      // Divider(
-                      //   indent: 18,
-                      //   endIndent: 18,
-                      //   color: ColorRes.leadGreyColor.shade300,
-                      // ),
-                    ],
-
-                    if (currentProperty.listingType?.toUpperCase() == "PG" &&
-                        currentProperty.propertyDetails?.pgInfo?.pgRoomInfo !=
-                            null &&
-                        currentProperty
-                            .propertyDetails!
-                            .pgInfo!
-                            .pgRoomInfo!
-                            .isNotEmpty) ...[
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        color: ColorRes.leadGreyColor.shade50,
-
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 12),
-                            const TitleWithViewAll(
-                              title: 'Room Options & Pricing',
-                              showIcon: true,
-                              icon: Icons.room_outlined,
-                              iconBgColor: ColorRes.white,
-                              iconColor: ColorRes.primary,
-                            ),
-                            const SizedBox(height: 15),
-                            _buildRoomOptionsSection(
-                              currentProperty
-                                  .propertyDetails!
-                                  .pgInfo!
-                                  .pgRoomInfo!,
-                            ),
-                            const SizedBox(height: 15),
-                            // Divider(
-                            //   indent: 18,
-                            //   endIndent: 18,
-                            //   color: ColorRes.leadGreyColor.shade300,
-                            // ),
-                          ],
-                        ),
-                      ),
-                    ],
-
-                    if (currentProperty.propertyDescription != null) ...[
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        color: ColorRes.homeYellowDark.withOpacity(0.06),
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 12),
-                            const TitleWithViewAll(
-                              title: 'Description',
-                              icon: Icons.description_outlined,
-                              iconBgColor: ColorRes.white,
-                              iconColor: ColorRes.orangeColor,
-                              showIcon: true,
-                            ),
-                            const SizedBox(height: 8),
-                            // Padding(
-                            //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                            //   child: Text(
-                            //     currentProperty.propertyDescription ?? '-',
-                            //     style: const TextStyle(
-                            //       fontSize: 11,
-                            //       fontWeight: FontWeight.w400,
-                            //     ),
-                            //   ),
-                            // ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12.0,
-                              ),
-                              child: ReadMoreClass(
-                                description:
-                                    currentProperty.propertyDescription ?? '',
-                                trimLines: 5,
-                                size: 12,
-
-                                colorClickableText: ColorRes.primary,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            // Divider(
-                            //   indent: 18,
-                            //   endIndent: 18,
-                            //   color: ColorRes.leadGreyColor.shade300,
-                            // ),
-                          ],
-                        ),
-                      ),
-                    ],
-
-                    if (currentProperty
-                                .propertyDetails
-                                ?.financialInfo
-                                ?.propertyPriceTrend !=
-                            null &&
-                        currentProperty.investmentInsightModel != null &&
-                        currentProperty.listingType!.toLowerCase() ==
-                            "sell") ...[
-                      if (currentProperty
-                              .propertyDetails
-                              ?.financialInfo
-                              ?.propertyPriceTrend
-                              .isNotEmpty ??
-                          false) ...[
+                      if (currentProperty.propertyDetails != null) ...[
+                        SizedBox(height: 20),
                         Container(
                           padding: const EdgeInsets.symmetric(vertical: 12),
-                          color: ColorRes.primary.withOpacity(0.05),
+                          color: ColorRes.leadGreyColor.shade50,
 
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const SizedBox(height: 12),
                               TitleWithViewAll(
-                                title: 'Investment Insight',
-                                icon: Icons.auto_graph,
+                                title: 'Property Details',
+                                icon: Icons.apartment,
                                 iconBgColor: ColorRes.white,
                                 iconColor: ColorRes.primary,
+
                                 showIcon: true,
                               ),
                               const SizedBox(height: 8),
                               Builder(
                                 builder: (context) {
-                                  // ✅ Check if controller exists before building chart
-                                  if (Get.isRegistered<
-                                    LocationPriceMatrixController
-                                  >(tag: 'matrix_${currentProperty.id}')) {
-                                    return InvestmentInsightChart(
-                                      currentProperty: currentProperty,
-                                    );
-                                  }
-                                  return const Center(
-                                    child: CircularProgressIndicator(),
-                                  );
+                                  print('[PropertyDetail] 📋 Building Details');
+                                  return Details(property: currentProperty);
                                 },
                               ),
                               const SizedBox(height: 12),
+                              // Divider(
+                              //   indent: 18,
+                              //   endIndent: 18,
+                              //   color: ColorRes.leadGreyColor.shade300,
+                              // ),
                             ],
                           ),
                         ),
                       ],
-                    ],
 
-                    if (currentProperty.location?.isNotEmpty ?? false) ...[
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        color: ColorRes.leadGreyColor.shade100,
+                      // if ((currentProperty
+                      //             .propertyDetails
+                      //             ?.financialInfo
+                      //             ?.is_for_sellorrent ??
+                      //         false) &&
+                      //     (currentProperty.listingType?.toLowerCase() ==
+                      //         'sell')) ...[
+                      //   if (currentProperty
+                      //           .propertyDetails
+                      //           ?.financialInfo
+                      //           ?.propertyRentPerMonth !=
+                      //       null) ...[
+                      //     const SizedBox(height: 12),
 
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 12),
-                            TitleWithViewAll(
-                              title: 'Location',
-                              icon: Icons.location_on_outlined,
-                              iconBgColor: ColorRes.white,
-                              iconColor: ColorRes.success,
-                              showIcon: true,
-                            ),
-                            const SizedBox(height: 8),
-                            Builder(
-                              builder: (context) {
-                                return AddressAndMapDetails(
-                                  address: currentProperty.address ?? '',
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                      //     Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         const TitleWithViewAll(title: 'Also for rent'),
+                      //         const SizedBox(height: 8),
+                      //         Padding(
+                      //           padding: const EdgeInsets.symmetric(
+                      //             horizontal: 12,
+                      //           ),
+                      //           child: Container(
+                      //             padding: const EdgeInsets.all(12),
+                      //             decoration: BoxDecoration(
+                      //               color: ColorRes.white,
+                      //               borderRadius: BorderRadius.circular(12),
+                      //               border: Border.all(
+                      //                 color: ColorRes.leadGreyColor.shade300,
+                      //                 width: 0.8,
+                      //               ),
+                      //               boxShadow: [
+                      //                 BoxShadow(
+                      //                   color: Colors.grey.withOpacity(0.1),
+                      //                   blurRadius: 6,
+                      //                   offset: const Offset(0, 2),
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //             child: Row(
+                      //               crossAxisAlignment: CrossAxisAlignment.center,
+                      //               children: [
+                      //                 Expanded(
+                      //                   child: Text.rich(
+                      //                     TextSpan(
+                      //                       text:
+                      //                           'This property is also available for rent at ',
+                      //                       style: TextStyle(
+                      //                         fontSize: AppFontSizes.caption,
+                      //                         fontWeight: AppFontWeights.medium,
+                      //                         color: ColorRes.leadGreyColor[700],
+                      //                       ),
+                      //                       children: [
+                      //                         TextSpan(
+                      //                           text:
+                      //                               '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}/month',
+                      //                           style: const TextStyle(
+                      //                             fontSize:
+                      //                                 AppFontSizes.bodySmall,
+                      //                             fontWeight:
+                      //                                 AppFontWeights.semiBold,
+                      //                             color: ColorRes.textPrimary,
+                      //                           ),
+                      //                         ),
+                      //                         const TextSpan(text: '.'),
+                      //                       ],
+                      //                     ),
+                      //                   ),
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //     const SizedBox(height: 12),
+                      //     Divider(
+                      //       indent: 18,
+                      //       endIndent: 18,
+                      //       color: ColorRes.leadGreyColor.shade300,
+                      //     ),
+                      //   ] else ...[
+                      //     SizedBox.shrink(),
+                      //   ],
+                      // ],
+                      // if ((currentProperty
+                      //             .propertyDetails
+                      //             ?.financialInfo
+                      //             ?.is_for_sellorrent ??
+                      //         false) &&
+                      //     (currentProperty.listingType?.toLowerCase() ==
+                      //         'rent')) ...[
+                      //   if (currentProperty
+                      //           .propertyDetails
+                      //           ?.financialInfo
+                      //           ?.price !=
+                      //       null) ...[
+                      //     // const SizedBox(height: 12),
+                      //     Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         // const TitleWithViewAll(title: 'Also for Sell'),
+                      //         // const SizedBox(height: 8),
+                      //         // Padding(
+                      //         //   padding: const EdgeInsets.symmetric(
+                      //         //     horizontal: 12,
+                      //         //   ),
 
-                    Builder(
-                      builder: (context) {
-                        return Obx(() {
-                          if (mapController.isLoading.value) {
-                            return const Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: CircularProgressIndicator(),
-                              ),
-                            );
-                          }
+                      //         //   child: Container(
+                      //         //     padding: const EdgeInsets.all(12),
+                      //         //     decoration: BoxDecoration(
+                      //         //       color: ColorRes.white,
+                      //         //       borderRadius: BorderRadius.circular(12),
+                      //         //       border: Border.all(
+                      //         //         color: ColorRes.leadGreyColor.shade300,
+                      //         //         width: 0.8,
+                      //         //       ),
+                      //         //       boxShadow: [
+                      //         //         BoxShadow(
+                      //         //           color: Colors.grey.withOpacity(0.1),
+                      //         //           blurRadius: 6,
+                      //         //           offset: const Offset(0, 2),
+                      //         //         ),
+                      //         //       ],
+                      //         //     ),
+                      //         //     child: Row(
+                      //         //       crossAxisAlignment: CrossAxisAlignment.center,
+                      //         //       children: [
+                      //         //         Expanded(
+                      //         //           child: Text.rich(
+                      //         //             TextSpan(
+                      //         //               text:
+                      //         //                   'This property is also available for sell at ',
+                      //         //               style: TextStyle(
+                      //         //                 fontSize: AppFontSizes.caption,
+                      //         //                 fontWeight: AppFontWeights.medium,
+                      //         //                 color: ColorRes.leadGreyColor[700],
+                      //         //               ),
+                      //         //               children: [
+                      //         //                 TextSpan(
+                      //         //                   text:
+                      //         //                       '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.price ?? 0)}',
+                      //         //                   style: const TextStyle(
+                      //         //                     fontSize:
+                      //         //                         AppFontSizes.bodySmall,
+                      //         //                     fontWeight:
+                      //         //                         AppFontWeights.semiBold,
+                      //         //                     color: ColorRes.textPrimary,
+                      //         //                   ),
+                      //         //                 ),
+                      //         //                 const TextSpan(text: '.'),
+                      //         //               ],
+                      //         //             ),
+                      //         //           ),
+                      //         //         ),
+                      //         //       ],
+                      //         //     ),
+                      //         //   ),
+                      //         // ),
+                      //       ],
+                      //     ),
 
-                          final hasData = mapController.allCategoriesData.values
-                              .any((places) => places.isNotEmpty);
+                      //     // const SizedBox(height: 12),
+                      //     // Divider(
+                      //     //   indent: 18,
+                      //     //   endIndent: 18,
+                      //     //   color: ColorRes.leadGreyColor.shade300,
+                      //     // ),
+                      //   ] else ...[
+                      //     SizedBox.shrink(),
+                      //   ],
+                      // ],
 
-                          if (!hasData ||
-                              mapController.propertyLatLng.value == null) {
-                            print('No data found');
-                            return const SizedBox.shrink();
-                          }
-
-                          return Container(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            color: ColorRes.leadGreyColor.shade50.withOpacity(
-                              0.5,
-                            ),
-
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 12),
-                                TitleWithViewAll(
-                                  title: 'Nearby Locations',
-                                  icon: Icons.near_me_outlined,
-                                  iconBgColor: ColorRes.white,
-                                  iconColor: ColorRes.deepPurpleColor,
-                                  showIcon: true,
-                                ),
-                                const SizedBox(height: 20),
-                                NearbyLocationMapSection(
-                                  address: currentProperty.address ?? '',
-                                  mapController: mapController,
-                                ),
-                                const SizedBox(height: 12),
-                              ],
-                            ),
-                          );
-                        });
-                      },
-                    ),
-
-                    // if (currentProperty.ownerName?.isNotEmpty ?? false) ...[
-                    //   // Divider(
-                    //   //   indent: 18,
-                    //   //   endIndent: 18,
-                    //   //   color: ColorRes.leadGreyColor.shade300,
-                    //   // ),
-                    //   Container(
-                    //     padding: const EdgeInsets.symmetric(vertical: 12),
-                    //     color: ColorRes.homeYellowDark.withOpacity(0.08),
-                    //     child: Column(
-                    //       children: [
-                    //         const SizedBox(height: 12),
-
-                    //         Row(
-                    //           children: [
-                    //             Expanded(
-                    //               child: TitleWithViewAll(
-                    //                 title: 'Owner Details',
-                    //                 icon: Icons.person_outlined,
-                    //                 iconBgColor: ColorRes.white,
-                    //                 iconColor: ColorRes.deepPurpleColor,
-                    //                 showIcon: true,
-                    //               ),
-                    //             ),
-                    //             SizedBox(width: 12),
-                    //             GestureDetector(
-                    //               onTap: () async {
-                    //                 if (!canAddReview.value) return;
-                    //                 final result = await Get.to(
-                    //                   () => AddReviewScreen(
-                    //                     entityType: "property",
-                    //                     entityId: currentProperty.id ?? '',
-                    //                   ),
-                    //                 );
-                    //                 if (result == true) {
-                    //                   canAddReview.value = false;
-                    //                   reviewController.refreshList();
-                    //                   _overallRatingController
-                    //                       .fetchOverallRating(
-                    //                         currentProperty.id ?? '',
-                    //                       );
-                    //                 }
-                    //               },
-                    //               child: Obx(() {
-                    //                 final enabled = canAddReview.value;
-                    //                 final label =
-                    //                     enabled ? "Add Review" : "Reviewed";
-                    //                 final color =
-                    //                     enabled
-                    //                         ? ColorRes.deepPurpleColor
-                    //                         : ColorRes.green;
-                    //                 return Container(
-                    //                   padding: const EdgeInsets.symmetric(
-                    //                     horizontal: 12,
-                    //                     vertical: 8,
-                    //                   ),
-                    //                   decoration: BoxDecoration(
-                    //                     color: Colors.white,
-                    //                     borderRadius: BorderRadius.circular(20),
-                    //                     border: Border.all(color: color),
-                    //                   ),
-                    //                   child: Row(
-                    //                     children: [
-                    //                       Text(
-                    //                         label,
-                    //                         style: TextStyle(
-                    //                           color: color,
-                    //                           fontWeight: FontWeight.w600,
-                    //                           fontSize: 11,
-                    //                         ),
-                    //                       ),
-                    //                     ],
-                    //                   ),
-                    //                 );
-                    //               }),
-                    //             ),
-                    //             SizedBox(width: 12),
-                    //           ],
-                    //         ),
-                    //         const SizedBox(height: 8),
-                    //         Builder(
-                    //           builder: (context) {
-                    //             log(
-                    //               '[PropertyDetail] 👤 Building OwnerInformation - START',
-                    //             );
-                    //             final widget = OwnerInformation(
-                    //               property: currentProperty,
-                    //               controller: controller,
-                    //             );
-                    //             log(
-                    //               '[PropertyDetail] 👤 Building OwnerInformation - END',
-                    //             );
-                    //             return widget;
-                    //           },
-                    //         ),
-                    //         const SizedBox(height: 12),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ],
-                    Builder(
-                      builder: (context) {
-                        final widget = ReviewSection(
-                          canAddReview: canAddReview,
-                          overallController: _overallRatingController,
-                          reviewController: reviewController,
-                          entityType: "property",
-                          entityId: currentProperty.id ?? '',
-                          reviewCardBuilder:
-                              (context, item) =>
-                                  PropertyReviewCard(reviewItem: item,showFullDetails: false,),
-                          overallWidgetBuilder: (total, rating, details) {
-                            return OverallRatingWidget(
-                              totalReviews: total,
-                              overallRating: rating,
-                              detailedRatings: details,
+                      // if ((currentProperty
+                      //             .propertyDetails
+                      //             ?.financialInfo
+                      //             ?.is_for_sellorrent ??
+                      //         false) &&
+                      //     (currentProperty.listingType?.toLowerCase() ==
+                      //         'sell')) ...[
+                      //   if (currentProperty
+                      //           .propertyDetails
+                      //           ?.financialInfo
+                      //           ?.propertyRentPerMonth !=
+                      //       null) ...[
+                      //     const SizedBox(height: 12),
+                      //     // Padding(
+                      //     //   padding: const EdgeInsets.symmetric(horizontal: 16),
+                      //     //   child: Container(
+                      //     //     padding: const EdgeInsets.all(12),
+                      //     //     decoration: BoxDecoration(
+                      //     //       color: ColorRes.primary.withOpacity(0.05),
+                      //     //       borderRadius: BorderRadius.circular(10),
+                      //     //       border: Border.all(
+                      //     //         color: ColorRes.primary.withOpacity(0.2),
+                      //     //       ),
+                      //     //     ),
+                      //     //     child: Row(
+                      //     //       children: [
+                      //     //         const Icon(
+                      //     //           Icons.house,
+                      //     //           color: ColorRes.primary,
+                      //     //         ),
+                      //     //         const SizedBox(width: 8),
+                      //     //         Expanded(
+                      //     //           child: Text(
+                      //     //             'This property is also available for rent at '
+                      //     //             '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}/month.',
+                      //     //             style: const TextStyle(
+                      //     //               fontSize: AppFontSizes.bodySmall,
+                      //     //               fontWeight: AppFontWeights.medium,
+                      //     //               color: ColorRes.textPrimary,
+                      //     //             ),
+                      //     //           ),
+                      //     //         ),
+                      //     //       ],
+                      //     //     ),
+                      //     //   ),
+                      //     // ),
+                      //     Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         const TitleWithViewAll(title: 'Also for rent'),
+                      //         const SizedBox(height: 8),
+                      //         Padding(
+                      //           padding: const EdgeInsets.symmetric(
+                      //             horizontal: 16,
+                      //           ),
+                      //           child: Container(
+                      //             padding: const EdgeInsets.all(12),
+                      //             decoration: BoxDecoration(
+                      //               color: ColorRes.white,
+                      //               borderRadius: BorderRadius.circular(12),
+                      //               border: Border.all(
+                      //                 color: ColorRes.leadGreyColor.shade300,
+                      //                 width: 0.8,
+                      //               ),
+                      //               boxShadow: [
+                      //                 BoxShadow(
+                      //                   color: Colors.grey.withOpacity(0.1),
+                      //                   blurRadius: 6,
+                      //                   offset: const Offset(0, 2),
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //             child: Row(
+                      //               crossAxisAlignment: CrossAxisAlignment.center,
+                      //               children: [
+                      //                 Expanded(
+                      //                   child: Text.rich(
+                      //                     TextSpan(
+                      //                       text:
+                      //                           'This property is also available for rent at ',
+                      //                       style: TextStyle(
+                      //                         fontSize: AppFontSizes.caption,
+                      //                         fontWeight: AppFontWeights.medium,
+                      //                         color: ColorRes.leadGreyColor[700],
+                      //                       ),
+                      //                       children: [
+                      //                         TextSpan(
+                      //                           text:
+                      //                               '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}/month',
+                      //                           style: const TextStyle(
+                      //                             fontSize:
+                      //                                 AppFontSizes.bodySmall,
+                      //                             fontWeight:
+                      //                                 AppFontWeights.semiBold,
+                      //                             color: ColorRes.textPrimary,
+                      //                           ),
+                      //                         ),
+                      //                         const TextSpan(text: '.'),
+                      //                       ],
+                      //                     ),
+                      //                   ),
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //     const SizedBox(height: 12),
+                      //     Divider(
+                      //       indent: 18,
+                      //       endIndent: 18,
+                      //       color: ColorRes.leadGreyColor.shade300,
+                      //     ),
+                      //   ] else ...[
+                      //     SizedBox.shrink(),
+                      //   ],
+                      // ],
+                      // if ((currentProperty
+                      //             .propertyDetails
+                      //             ?.financialInfo
+                      //             ?.is_for_sellorrent ??
+                      //         false) &&
+                      //     (currentProperty.listingType?.toLowerCase() ==
+                      //         'rent')) ...[
+                      //   if (currentProperty
+                      //           .propertyDetails
+                      //           ?.financialInfo
+                      //           ?.price !=
+                      //       null) ...[
+                      //     const SizedBox(height: 12),
+                      //     Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         const TitleWithViewAll(title: 'Also for Sell'),
+                      //         const SizedBox(height: 8),
+                      //         Padding(
+                      //           padding: const EdgeInsets.symmetric(
+                      //             horizontal: 16,
+                      //           ),
+                      //           child: Container(
+                      //             padding: const EdgeInsets.all(12),
+                      //             decoration: BoxDecoration(
+                      //               color: ColorRes.white,
+                      //               borderRadius: BorderRadius.circular(12),
+                      //               border: Border.all(
+                      //                 color: ColorRes.leadGreyColor.shade300,
+                      //                 width: 0.8,
+                      //               ),
+                      //               boxShadow: [
+                      //                 BoxShadow(
+                      //                   color: Colors.grey.withOpacity(0.1),
+                      //                   blurRadius: 6,
+                      //                   offset: const Offset(0, 2),
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //             child: Row(
+                      //               crossAxisAlignment: CrossAxisAlignment.center,
+                      //               children: [
+                      //                 Expanded(
+                      //                   child: Text.rich(
+                      //                     TextSpan(
+                      //                       text:
+                      //                           'This property is also available for sell at ',
+                      //                       style: TextStyle(
+                      //                         fontSize: AppFontSizes.caption,
+                      //                         fontWeight: AppFontWeights.medium,
+                      //                         color: ColorRes.leadGreyColor[700],
+                      //                       ),
+                      //                       children: [
+                      //                         TextSpan(
+                      //                           text:
+                      //                               '${Formatter.formatPrice(currentProperty.propertyDetails?.financialInfo?.price ?? 0)}',
+                      //                           style: const TextStyle(
+                      //                             fontSize:
+                      //                                 AppFontSizes.bodySmall,
+                      //                             fontWeight:
+                      //                                 AppFontWeights.semiBold,
+                      //                             color: ColorRes.textPrimary,
+                      //                           ),
+                      //                         ),
+                      //                         const TextSpan(text: '.'),
+                      //                       ],
+                      //                     ),
+                      //                   ),
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //
+                      //     const SizedBox(height: 12),
+                      //     Divider(
+                      //       indent: 18,
+                      //       endIndent: 18,
+                      //       color: ColorRes.leadGreyColor.shade300,
+                      //     ),
+                      //   ] else ...[
+                      //     SizedBox.shrink(),
+                      //   ],
+                      // ],
+                      if (currentProperty
+                              .propertyDetails
+                              ?.furnishInfo
+                              ?.furnishDetails !=
+                          null) ...[
+                        const SizedBox(height: 12),
+                        const TitleWithViewAll(title: 'Furnishing'),
+                        Builder(
+                          builder: (context) {
+                            return FurnishingDetails(
+                              property: currentProperty,
+                              bgColor: ColorRes.propertyBg,
+                              txtColor: ColorRes.primary,
                             );
                           },
-                        );
-
-                        return widget;
-                      },
-                    ),
-                    if (property?.propertyStatus?.toLowerCase() != "sold") ...[
-                      // Divider(
-                      //   indent: 18,
-                      //   endIndent: 18,
-                      //   color: ColorRes.leadGreyColor.shade300,
-                      // ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        color: ColorRes.leadGreyColor.shade200,
-                        alignment: Alignment.center,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-
-                          children: [
-                            const SizedBox(height: 15),
-                        
-                            Text(
-                              ' Limited Time Offer!',
-                              maxLines: 1,
-                              style: TextStyle(
-                                fontSize: AppFontSizes.body,
-                                fontWeight: AppFontWeights.semiBold,
-                                color: ColorRes.textPrimary,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-
-                            Text(
-                              "Limited-time! Get an exclusive offer on this property.",
-                              maxLines: 1,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: AppFontSizes.small,
-                                fontWeight: AppFontWeights.medium,
-                                color: ColorRes.textColor.withOpacity(0.65),
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            SizedBox(height: 15),
-                            Obx(() {
-                              if (controller.hasSubmittedInquiry.value) {
-                                return const SizedBox.shrink();
-                              }
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                ),
-                                child: OfferCountdown(
-                                  propertyId: currentProperty.id ?? '',
-                                ),
-                              );
-                            }),
-                            Obx(
-                              () => controller.hasSubmittedInquiry.value
-                                  ? const SizedBox.shrink()
-                                  : const SizedBox(height: 8),
-                            ),
-
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 12),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  // Offer Text
-                                  const SizedBox(height: 12),
-
-                                  // Conditional Area
-                                  Obx(() {
-                                    if (controller.hasSubmittedInquiry.value) {
-                                      return SizedBox(
-                                        width: double.infinity,
-                                        height: 48,
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            NesticoPeSnackBar.showAwesomeSnackbar(
-                                              title: 'Already Inquired',
-                                              message:
-                                                  'You have already submitted inquiry',
-                                              contentType: ContentType.warning,
-                                            );
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: ColorRes.error,
-                                            foregroundColor: ColorRes.white,
-                                            elevation: 0,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 14,
-                                            ),
-                                          ),
-                                          child: const Text(
-                                            'Already Inquired',
-                                            style: TextStyle(
-                                              fontSize: AppFontSizes.medium,
-                                              fontWeight:
-                                                  AppFontWeights.semiBold,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    } else {
-                                      return NesticoPeButton(
-                                        title: 'Get Offer',
-                                        backgroundColor: ColorRes.error,
-                                        height: 48,
-                                        width: double.infinity,
-                                        borderRadius: BorderRadius.circular(10),
-                                        titleTextStyle: TextStyle(
-                                          color: ColorRes.white,
-                                          fontSize: AppFontSizes.medium,
-                                          fontWeight: AppFontWeights.semiBold,
-                                        ),
-                                        onTap: () async {
-                                          try {
-                                            if (UserHelper.isGuest) {
-                                              Get.to(() => OtpLoginScreen());
-                                              return;
-                                            }
-                                            final user =
-                                                await SecureStorage.getUserData();
-                                            if (user == null) {
-                                              NesticoPeSnackBar.showAwesomeSnackbar(
-                                                title: "Error",
-                                                message:
-                                                    'No user data found. Please log in.',
-                                                contentType:
-                                                    ContentType.failure,
-                                              );
-                                              return;
-                                            }
-                                            final fullName =
-                                                user.user?.fullName ?? '';
-                                            final firstName =
-                                                user.user?.firstName ?? '';
-                                            final username =
-                                                user.user?.username ?? '';
-                                            final email =
-                                                user.user?.email ?? '';
-                                            final phone =
-                                                user.user?.phone ?? '';
-                                            final displayName =
-                                                (firstName.isEmpty
-                                                        ? username
-                                                        : fullName)
-                                                    .trim();
-                                            final listing =
-                                                currentProperty.listingType
-                                                    ?.toLowerCase()
-                                                    .replaceAll(" ", "_") ??
-                                                '';
-                                            final inquiry = {
-                                              "name": displayName,
-                                              "phone": phone,
-                                              "email": email,
-                                              "agreeToContact": true,
-                                              "meta": {
-                                                "inquiryType": listing,
-                                                "type": "property",
-                                              },
-                                            };
-                                            final success = await controller
-                                                .addInquiry(
-                                                  inquiry,
-                                                  currentProperty.id ?? '',
-                                                );
-                                            if (success) {
-                                              controller
-                                                  .hasSubmittedInquiry
-                                                  .value = true;
-                                              NesticoPeSnackBar.showAwesomeSnackbar(
-                                                title: 'Success',
-                                                message:
-                                                    'Inquiry Added Successfully',
-                                                contentType:
-                                                    ContentType.success,
-                                              );
-                                              await controller
-                                                  .getAllInQuireData(
-                                                    widget.propertyId ?? '',
-                                                  );
-                                              await controller
-                                                  .getHasInQuireData(
-                                                    widget.propertyId ?? '',
-                                                  );
-                                              await _refreshUserActivityData();
-                                            } else {
-                                              NesticoPeSnackBar.showAwesomeSnackbar(
-                                                title: 'Error',
-                                                message:
-                                                    'Failed to Submit Inquiry',
-                                                contentType:
-                                                    ContentType.failure,
-                                              );
-                                            }
-                                          } catch (e, s) {
-                                            debugPrint(
-                                              '❌ Error in Get Offer button: $e',
-                                            );
-                                            debugPrint('$s');
-                                            NesticoPeSnackBar.showAwesomeSnackbar(
-                                              title: "Error",
-                                              message:
-                                                  'Something went wrong. Please try again.',
-                                              contentType: ContentType.failure,
-                                            );
-                                          }
-                                        },
-                                      );
-                                    }
-                                  }),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                          ],
                         ),
-                      ),
-                    ],
-
-                    if (!UserHelper.isGuest) ...[
-                      if (controller.items.isNotEmpty) ...[
                         // Divider(
                         //   indent: 18,
                         //   endIndent: 18,
                         //   color: ColorRes.leadGreyColor.shade300,
                         // ),
-                        Builder(
-                          builder: (context) {
-                            const widget = RecommendedProperty();
+                      ],
+                      if (currentProperty.listingType?.toUpperCase() == "PG" &&
+                          currentProperty.propertyDetails?.pgInfo?.pgRules !=
+                              null) ...[
+                        const SizedBox(height: 12),
+                        const TitleWithViewAll(title: 'PG Rules'),
+                        const SizedBox(height: 8),
+                        _buildPgRulesSection(
+                          currentProperty.propertyDetails!.pgInfo!.pgRules!,
+                        ),
+                        const SizedBox(height: 20),
+                        // Divider(
+                        //   indent: 18,
+                        //   endIndent: 18,
+                        //   color: ColorRes.leadGreyColor.shade300,
+                        // ),
+                      ],
 
-                            return widget;
-                          },
+                      if (currentProperty.listingType?.toUpperCase() == "PG" &&
+                          currentProperty.propertyDetails?.pgInfo?.pgRoomInfo !=
+                              null &&
+                          currentProperty
+                              .propertyDetails!
+                              .pgInfo!
+                              .pgRoomInfo!
+                              .isNotEmpty) ...[
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          color: ColorRes.leadGreyColor.shade50,
+
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 12),
+                              const TitleWithViewAll(
+                                title: 'Room Options & Pricing',
+                                showIcon: true,
+                                icon: Icons.room_outlined,
+                                iconBgColor: ColorRes.white,
+                                iconColor: ColorRes.primary,
+                              ),
+                              const SizedBox(height: 15),
+                              _buildRoomOptionsSection(
+                                currentProperty
+                                    .propertyDetails!
+                                    .pgInfo!
+                                    .pgRoomInfo!,
+                              ),
+                              const SizedBox(height: 15),
+                              // Divider(
+                              //   indent: 18,
+                              //   endIndent: 18,
+                              //   color: ColorRes.leadGreyColor.shade300,
+                              // ),
+                            ],
+                          ),
                         ),
                       ],
-                    ],
-                  ],
-                ),
-              ),
-              Builder(
-                builder: (context) {
-                  return UnifiedComparisonFloatingButton(bottom: 16);
-                },
-              ),
-            ],
-          ),
-        );
-      }),
 
-      bottomNavigationBar: Obx(() {
-        if (_isLoading.value) {
-          return const SizedBox.shrink();
-        }
-
-        final currentProperty = _property.value;
-        if (currentProperty == null) {
-          return const SizedBox.shrink();
-        }
-
-        final priceManager = PropertyPriceManager(
-          financialInfo:
-              currentProperty.propertyDetails?.financialInfo ?? FinancialInfo(),
-          listingType: currentProperty.listingType ?? '',
-          pgInfo: currentProperty.propertyDetails?.pgInfo,
-        );
-
-        return SafeArea(
-          child: ReusableBottomBar(
-            mainPriceText:
-                priceManager.isPG
-                    ? priceManager.maxPgPriceDisplay
-                    : priceManager.totalPriceDisplay,
-            priceBreakdown: priceManager.propertyPriceSummary,
-            onPrimaryAction: () {
-              if (UserHelper.isGuest) {
-                Get.to(() => OtpLoginScreen());
-              } else {
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(20),
-                    ),
-                  ),
-                  builder: (context) {
-                    final hasSubmitted = controller.hasSubmittedInquiry.value;
-                    final propertySold =
-                        (currentProperty.propertyStatus ?? '').toLowerCase() ==
-                        "sold";
-
-                    // Decide which section is showing
-                    final bool isCompactView = hasSubmitted || propertySold;
-
-                    return DraggableScrollableSheet(
-                      expand: false,
-                      minChildSize: 0.45,
-                      initialChildSize: isCompactView ? 0.45 : 0.85,
-                      maxChildSize: isCompactView ? 0.45 : 0.85,
-                      builder:
-                          (context, scrollController) => SingleChildScrollView(
-                            controller: scrollController,
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                bottom:
-                                    MediaQuery.of(context).viewInsets.bottom,
-                                left: 16,
-                                right: 16,
-                                top: 16,
+                      if (currentProperty.propertyDescription != null) ...[
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          color: ColorRes.homeYellowDark.withOpacity(0.06),
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 12),
+                              const TitleWithViewAll(
+                                title: 'Description',
+                                icon: Icons.description_outlined,
+                                iconBgColor: ColorRes.white,
+                                iconColor: ColorRes.orangeColor,
+                                showIcon: true,
                               ),
-                              child: ContactOwnerBottom(
-                                isProject: 'property',
-                                propertyStatus:
-                                    currentProperty.propertyStatus ?? '',
-                                pgRoomData:
-                                    currentProperty
-                                        .propertyDetails
-                                        ?.pgInfo
-                                        ?.pgRoomInfo ??
-                                    [],
+                              const SizedBox(height: 8),
+                              // Padding(
+                              //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                              //   child: Text(
+                              //     currentProperty.propertyDescription ?? '-',
+                              //     style: const TextStyle(
+                              //       fontSize: 11,
+                              //       fontWeight: FontWeight.w400,
+                              //     ),
+                              //   ),
+                              // ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12.0,
+                                ),
+                                child: ReadMoreClass(
+                                  description:
+                                      currentProperty.propertyDescription ?? '',
+                                  trimLines: 5,
+                                  size: 12,
 
-                                price: priceManager.actualPrice,
-                                listingType:
-                                    currentProperty.listingType
-                                        ?.toLowerCase() ??
-                                    '',
-                                forRentPrice:
-                                    currentProperty
-                                        .propertyDetails
-                                        ?.financialInfo
-                                        ?.propertyRentPerMonth ??
-                                    0,
-                                forSellPrice:
-                                    currentProperty
-                                        .propertyDetails
-                                        ?.financialInfo
-                                        ?.price ??
-                                    0,
-                                isForSell:
-                                    currentProperty
-                                        .propertyDetails
-                                        ?.financialInfo
-                                        ?.is_for_sellorrent ??
-                                    false,
-
-                                inQuireSubmitted:
-                                    controller.hasSubmittedInquiry.value,
-                                titleText: "Contact the Owner",
-                                chatButtonText: "Chat via WhatsApp",
-                                formTitle: "Quick Contact Form",
-                                contactButtonText: "Send Request",
-                                nameIcon: Icons.person,
-                                phoneIcon: Icons.phone,
-                                emailIcon: Icons.email,
-                                allowSellerContact: false,
-                                negotiable: false,
-
-                                bookSiteVisit: false,
-                                onChatPressed: () {
-                                  print("WhatsApp button clicked!");
-                                },
-                                onContactPressed: (
-                                  name,
-                                  phone,
-                                  email,
-                                  price,
-                                  isNegotiable,
-
-                                  isAllowAllCondition,
-                                  inquiryListing,
-                                  isBookSiteVisit,
-                                  planningToBuy,
-                                  date,
-                                  time,
-                                  roomInfo,
-                                  selectedVariant,
-                                ) async {
-                                  final inquiry = {
-                                    "name": name ?? "",
-                                    "phone": phone ?? "",
-                                    "email": email ?? "",
-                                    "agreeToContact":
-                                        isAllowAllCondition ?? false,
-                                    "meta": {
-                                      if (price != null)
-                                        "negotiablePrice": price,
-                                      if (inquiryListing != null &&
-                                          (inquiryListing?.isNotEmpty ?? false))
-                                        "inquiryType":
-                                            inquiryListing.toLowerCase(),
-                                      if (isNegotiable != null)
-                                        "isNegotiable": isNegotiable,
-                                      if (planningToBuy != null)
-                                        "timePeriod": planningToBuy,
-                                      if (date != null)
-                                        "visitDate":
-                                            '${date.day}-${date.month}-${date.year}',
-                                      if (roomInfo != null)
-                                        "selectedRoomType": roomInfo,
-                                      if (time != null)
-                                        "visitTime":
-                                            '${time.hour.toString().padLeft(2, '0')}:'
-                                            '${time.minute.toString().padLeft(2, '0')}',
-                                    },
-                                  };
-
-                                  print('Submitting inquiry: ${inquiry}');
-
-                                  final success = await controller.addInquiry(
-                                    inquiry,
-                                    currentProperty.id ?? '',
-                                  );
-
-                                  if (success) {
-                                    controller.hasSubmittedInquiry.value = true;
-
-                                    NesticoPeSnackBar.showAwesomeSnackbar(
-                                      title: "Success",
-                                      message: "Inquiry Added Successfully",
-                                      contentType: ContentType.success,
-                                    );
-                                    await controller.getAllInQuireData(
-                                      widget.propertyId ?? '',
-                                    );
-                                    await controller.getHasInQuireData(
-                                      widget.propertyId ?? '',
-                                    );
-                                    await _refreshUserActivityData();
-                                    Get.back();
-                                  } else {
-                                    NesticoPeSnackBar.showAwesomeSnackbar(
-                                      title: "Error",
-                                      message: "Failed to Submit Inquiry",
-                                      contentType: ContentType.failure,
-                                    );
-                                  }
-                                },
-                                onAllowSellerContactChanged: (value) {},
-                                onHomeLoanInterestChanged: (value) {},
+                                  colorClickableText: ColorRes.primary,
+                                ),
                               ),
+                              const SizedBox(height: 12),
+                              // Divider(
+                              //   indent: 18,
+                              //   endIndent: 18,
+                              //   color: ColorRes.leadGreyColor.shade300,
+                              // ),
+                            ],
+                          ),
+                        ),
+                      ],
+
+                      if (currentProperty
+                                  .propertyDetails
+                                  ?.financialInfo
+                                  ?.propertyPriceTrend !=
+                              null &&
+                          currentProperty.investmentInsightModel != null &&
+                          currentProperty.listingType!.toLowerCase() ==
+                              "sell") ...[
+                        if (currentProperty
+                                .propertyDetails
+                                ?.financialInfo
+                                ?.propertyPriceTrend
+                                .isNotEmpty ??
+                            false) ...[
+                          Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            color: ColorRes.primary.withOpacity(0.05),
+
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 12),
+                                TitleWithViewAll(
+                                  title: 'Investment Insight',
+                                  icon: Icons.auto_graph,
+                                  iconBgColor: ColorRes.white,
+                                  iconColor: ColorRes.primary,
+                                  showIcon: true,
+                                ),
+                                const SizedBox(height: 8),
+                                Builder(
+                                  builder: (context) {
+                                    // ✅ Check if controller exists before building chart
+                                    if (Get.isRegistered<
+                                      LocationPriceMatrixController
+                                    >(tag: 'matrix_${currentProperty.id}')) {
+                                      return InvestmentInsightChart(
+                                        currentProperty: currentProperty,
+                                      );
+                                    }
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  },
+                                ),
+                                const SizedBox(height: 12),
+                              ],
                             ),
                           ),
-                    );
+                        ],
+                      ],
+
+                      if (currentProperty.location?.isNotEmpty ?? false) ...[
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          color: ColorRes.leadGreyColor.shade100,
+
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 12),
+                              TitleWithViewAll(
+                                title: 'Location',
+                                icon: Icons.location_on_outlined,
+                                iconBgColor: ColorRes.white,
+                                iconColor: ColorRes.success,
+                                showIcon: true,
+                              ),
+                              const SizedBox(height: 8),
+                              Builder(
+                                builder: (context) {
+                                  return AddressAndMapDetails(
+                                    address: currentProperty.address ?? '',
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+
+                      Builder(
+                        builder: (context) {
+                          return Obx(() {
+                            if (mapController.isLoading.value) {
+                              return const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(16.0),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            }
+
+                            final hasData = mapController
+                                .allCategoriesData
+                                .values
+                                .any((places) => places.isNotEmpty);
+
+                            if (!hasData ||
+                                mapController.propertyLatLng.value == null) {
+                              print('No data found');
+                              return const SizedBox.shrink();
+                            }
+
+                            return Container(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              color: ColorRes.leadGreyColor.shade50.withOpacity(
+                                0.5,
+                              ),
+
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 12),
+                                  TitleWithViewAll(
+                                    title: 'Nearby Locations',
+                                    icon: Icons.near_me_outlined,
+                                    iconBgColor: ColorRes.white,
+                                    iconColor: ColorRes.deepPurpleColor,
+                                    showIcon: true,
+                                  ),
+                                  const SizedBox(height: 20),
+                                  NearbyLocationMapSection(
+                                    address: currentProperty.address ?? '',
+                                    mapController: mapController,
+                                  ),
+                                  const SizedBox(height: 12),
+                                ],
+                              ),
+                            );
+                          });
+                        },
+                      ),
+
+                      // if (currentProperty.ownerName?.isNotEmpty ?? false) ...[
+                      //   // Divider(
+                      //   //   indent: 18,
+                      //   //   endIndent: 18,
+                      //   //   color: ColorRes.leadGreyColor.shade300,
+                      //   // ),
+                      //   Container(
+                      //     padding: const EdgeInsets.symmetric(vertical: 12),
+                      //     color: ColorRes.homeYellowDark.withOpacity(0.08),
+                      //     child: Column(
+                      //       children: [
+                      //         const SizedBox(height: 12),
+
+                      //         Row(
+                      //           children: [
+                      //             Expanded(
+                      //               child: TitleWithViewAll(
+                      //                 title: 'Owner Details',
+                      //                 icon: Icons.person_outlined,
+                      //                 iconBgColor: ColorRes.white,
+                      //                 iconColor: ColorRes.deepPurpleColor,
+                      //                 showIcon: true,
+                      //               ),
+                      //             ),
+                      //             SizedBox(width: 12),
+                      //             GestureDetector(
+                      //               onTap: () async {
+                      //                 if (!canAddReview.value) return;
+                      //                 final result = await Get.to(
+                      //                   () => AddReviewScreen(
+                      //                     entityType: "property",
+                      //                     entityId: currentProperty.id ?? '',
+                      //                   ),
+                      //                 );
+                      //                 if (result == true) {
+                      //                   canAddReview.value = false;
+                      //                   reviewController.refreshList();
+                      //                   _overallRatingController
+                      //                       .fetchOverallRating(
+                      //                         currentProperty.id ?? '',
+                      //                       );
+                      //                 }
+                      //               },
+                      //               child: Obx(() {
+                      //                 final enabled = canAddReview.value;
+                      //                 final label =
+                      //                     enabled ? "Add Review" : "Reviewed";
+                      //                 final color =
+                      //                     enabled
+                      //                         ? ColorRes.deepPurpleColor
+                      //                         : ColorRes.green;
+                      //                 return Container(
+                      //                   padding: const EdgeInsets.symmetric(
+                      //                     horizontal: 12,
+                      //                     vertical: 8,
+                      //                   ),
+                      //                   decoration: BoxDecoration(
+                      //                     color: Colors.white,
+                      //                     borderRadius: BorderRadius.circular(20),
+                      //                     border: Border.all(color: color),
+                      //                   ),
+                      //                   child: Row(
+                      //                     children: [
+                      //                       Text(
+                      //                         label,
+                      //                         style: TextStyle(
+                      //                           color: color,
+                      //                           fontWeight: FontWeight.w600,
+                      //                           fontSize: 11,
+                      //                         ),
+                      //                       ),
+                      //                     ],
+                      //                   ),
+                      //                 );
+                      //               }),
+                      //             ),
+                      //             SizedBox(width: 12),
+                      //           ],
+                      //         ),
+                      //         const SizedBox(height: 8),
+                      //         Builder(
+                      //           builder: (context) {
+                      //             log(
+                      //               '[PropertyDetail] 👤 Building OwnerInformation - START',
+                      //             );
+                      //             final widget = OwnerInformation(
+                      //               property: currentProperty,
+                      //               controller: controller,
+                      //             );
+                      //             log(
+                      //               '[PropertyDetail] 👤 Building OwnerInformation - END',
+                      //             );
+                      //             return widget;
+                      //           },
+                      //         ),
+                      //         const SizedBox(height: 12),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ],
+                      Builder(
+                        builder: (context) {
+                          final widget = ReviewSection(
+                            canAddReview: canAddReview,
+                            overallController: _overallRatingController,
+                            reviewController: reviewController,
+                            entityType: "property",
+                            entityId: currentProperty.id ?? '',
+                            reviewCardBuilder:
+                                (context, item) => PropertyReviewCard(
+                                  reviewItem: item,
+                                  showFullDetails: false,
+                                ),
+                            overallWidgetBuilder: (total, rating, details) {
+                              return OverallRatingWidget(
+                                totalReviews: total,
+                                overallRating: rating,
+                                detailedRatings: details,
+                              );
+                            },
+                          );
+
+                          return widget;
+                        },
+                      ),
+                      if (property?.propertyStatus?.toLowerCase() !=
+                          "sold") ...[
+                        // Divider(
+                        //   indent: 18,
+                        //   endIndent: 18,
+                        //   color: ColorRes.leadGreyColor.shade300,
+                        // ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          color: ColorRes.leadGreyColor.shade200,
+                          alignment: Alignment.center,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+
+                            children: [
+                              const SizedBox(height: 15),
+
+                              Text(
+                                ' Limited Time Offer!',
+                                maxLines: 1,
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.body,
+                                  fontWeight: AppFontWeights.semiBold,
+                                  color: ColorRes.textPrimary,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+
+                              Text(
+                                "Limited-time! Get an exclusive offer on this property.",
+                                maxLines: 1,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.small,
+                                  fontWeight: AppFontWeights.medium,
+                                  color: ColorRes.textColor.withOpacity(0.65),
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              SizedBox(height: 15),
+                              Obx(() {
+                                if (controller.hasSubmittedInquiry.value) {
+                                  return const SizedBox.shrink();
+                                }
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                  ),
+                                  child: OfferCountdown(
+                                    propertyId: currentProperty.id ?? '',
+                                  ),
+                                );
+                              }),
+                              Obx(
+                                () =>
+                                    controller.hasSubmittedInquiry.value
+                                        ? const SizedBox.shrink()
+                                        : const SizedBox(height: 8),
+                              ),
+
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 12),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    // Offer Text
+                                    const SizedBox(height: 12),
+
+                                    // Conditional Area
+                                    Obx(() {
+                                      if (controller
+                                          .hasSubmittedInquiry
+                                          .value) {
+                                        return SizedBox(
+                                          width: double.infinity,
+                                          height: 48,
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              NesticoPeSnackBar.showAwesomeSnackbar(
+                                                title: 'Already Inquired',
+                                                message:
+                                                    'You have already submitted inquiry',
+                                                contentType:
+                                                    ContentType.warning,
+                                              );
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: ColorRes.error,
+                                              foregroundColor: ColorRes.white,
+                                              elevation: 0,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 14,
+                                                  ),
+                                            ),
+                                            child: const Text(
+                                              'Already Inquired',
+                                              style: TextStyle(
+                                                fontSize: AppFontSizes.medium,
+                                                fontWeight:
+                                                    AppFontWeights.semiBold,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      } else {
+                                        return NesticoPeButton(
+                                          title: 'Get Offer',
+                                          backgroundColor: ColorRes.error,
+                                          height: 48,
+                                          width: double.infinity,
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                          titleTextStyle: TextStyle(
+                                            color: ColorRes.white,
+                                            fontSize: AppFontSizes.medium,
+                                            fontWeight: AppFontWeights.semiBold,
+                                          ),
+                                          onTap: () async {
+                                            try {
+                                              if (UserHelper.isGuest) {
+                                                Get.to(() => OtpLoginScreen());
+                                                return;
+                                              }
+                                              final user =
+                                                  await SecureStorage.getUserData();
+                                              if (user == null) {
+                                                NesticoPeSnackBar.showAwesomeSnackbar(
+                                                  title: "Error",
+                                                  message:
+                                                      'No user data found. Please log in.',
+                                                  contentType:
+                                                      ContentType.failure,
+                                                );
+                                                return;
+                                              }
+                                              final fullName =
+                                                  user.user?.fullName ?? '';
+                                              final firstName =
+                                                  user.user?.firstName ?? '';
+                                              final username =
+                                                  user.user?.username ?? '';
+                                              final email =
+                                                  user.user?.email ?? '';
+                                              final phone =
+                                                  user.user?.phone ?? '';
+                                              final displayName =
+                                                  (firstName.isEmpty
+                                                          ? username
+                                                          : fullName)
+                                                      .trim();
+                                              final listing =
+                                                  currentProperty.listingType
+                                                      ?.toLowerCase()
+                                                      .replaceAll(" ", "_") ??
+                                                  '';
+                                              final inquiry = {
+                                                "name": displayName,
+                                                "phone": phone,
+                                                "email": email,
+                                                "agreeToContact": true,
+                                                "meta": {
+                                                  "inquiryType": listing,
+                                                  "type": "property",
+                                                },
+                                              };
+                                              final success = await controller
+                                                  .addInquiry(
+                                                    inquiry,
+                                                    currentProperty.id ?? '',
+                                                  );
+                                              if (success) {
+                                                controller
+                                                    .hasSubmittedInquiry
+                                                    .value = true;
+                                                NesticoPeSnackBar.showAwesomeSnackbar(
+                                                  title: 'Success',
+                                                  message:
+                                                      'Inquiry Added Successfully',
+                                                  contentType:
+                                                      ContentType.success,
+                                                );
+                                                await controller
+                                                    .getAllInQuireData(
+                                                      widget.propertyId ?? '',
+                                                    );
+                                                await controller
+                                                    .getHasInQuireData(
+                                                      widget.propertyId ?? '',
+                                                    );
+                                                await _refreshUserActivityData();
+                                              } else {
+                                                NesticoPeSnackBar.showAwesomeSnackbar(
+                                                  title: 'Error',
+                                                  message:
+                                                      'Failed to Submit Inquiry',
+                                                  contentType:
+                                                      ContentType.failure,
+                                                );
+                                              }
+                                            } catch (e, s) {
+                                              debugPrint(
+                                                '❌ Error in Get Offer button: $e',
+                                              );
+                                              debugPrint('$s');
+                                              NesticoPeSnackBar.showAwesomeSnackbar(
+                                                title: "Error",
+                                                message:
+                                                    'Something went wrong. Please try again.',
+                                                contentType:
+                                                    ContentType.failure,
+                                              );
+                                            }
+                                          },
+                                        );
+                                      }
+                                    }),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                            ],
+                          ),
+                        ),
+                      ],
+
+                      if (!UserHelper.isGuest) ...[
+                        if (controller.items.isNotEmpty) ...[
+                          // Divider(
+                          //   indent: 18,
+                          //   endIndent: 18,
+                          //   color: ColorRes.leadGreyColor.shade300,
+                          // ),
+                          Builder(
+                            builder: (context) {
+                              const widget = RecommendedProperty();
+
+                              return widget;
+                            },
+                          ),
+                        ],
+                      ],
+                    ],
+                  ),
+                ),
+                Builder(
+                  builder: (context) {
+                    return UnifiedComparisonFloatingButton(bottom: 16);
                   },
-                );
-              }
-            },
-            primaryTitle:
-                (currentProperty.propertyStatus?.toLowerCase() == "sold")
-                    ? "Property Sold"
-                    : (controller.hasSubmittedInquiry.value)
-                    ? "Submitted"
-                    : "View Contact",
-          ),
-        );
+                ),
+              ],
+            ),
+          );
+        }),
+
+        bottomNavigationBar: Obx(() {
+          if (_isLoading.value) {
+            return const SizedBox.shrink();
+          }
+
+          final currentProperty = _property.value;
+          if (currentProperty == null) {
+            return const SizedBox.shrink();
+          }
+
+          final priceManager = PropertyPriceManager(
+            financialInfo:
+                currentProperty.propertyDetails?.financialInfo ??
+                FinancialInfo(),
+            listingType: currentProperty.listingType ?? '',
+            pgInfo: currentProperty.propertyDetails?.pgInfo,
+          );
+
+          return SafeArea(
+            child: ReusableBottomBar(
+              mainPriceText:
+                  priceManager.isPG
+                      ? priceManager.maxPgPriceDisplay
+                      : priceManager.totalPriceDisplay,
+              priceBreakdown: priceManager.propertyPriceSummary,
+              onPrimaryAction: () {
+                if (UserHelper.isGuest) {
+                  Get.to(() => OtpLoginScreen());
+                } else {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(20),
+                      ),
+                    ),
+                    builder: (context) {
+                      final hasSubmitted = controller.hasSubmittedInquiry.value;
+                      final propertySold =
+                          (currentProperty.propertyStatus ?? '')
+                              .toLowerCase() ==
+                          "sold";
+
+                      // Decide which section is showing
+                      final bool isCompactView = hasSubmitted || propertySold;
+
+                      return DraggableScrollableSheet(
+                        expand: false,
+                        minChildSize: 0.45,
+                        initialChildSize: isCompactView ? 0.45 : 0.85,
+                        maxChildSize: isCompactView ? 0.45 : 0.85,
+                        builder:
+                            (
+                              context,
+                              scrollController,
+                            ) => SingleChildScrollView(
+                              controller: scrollController,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  bottom:
+                                      MediaQuery.of(context).viewInsets.bottom,
+                                  left: 16,
+                                  right: 16,
+                                  top: 16,
+                                ),
+                                child: ContactOwnerBottom(
+                                  isProject: 'property',
+                                  propertyStatus:
+                                      currentProperty.propertyStatus ?? '',
+                                  pgRoomData:
+                                      currentProperty
+                                          .propertyDetails
+                                          ?.pgInfo
+                                          ?.pgRoomInfo ??
+                                      [],
+
+                                  price: priceManager.actualPrice,
+                                  listingType:
+                                      currentProperty.listingType
+                                          ?.toLowerCase() ??
+                                      '',
+                                  forRentPrice:
+                                      currentProperty
+                                          .propertyDetails
+                                          ?.financialInfo
+                                          ?.propertyRentPerMonth ??
+                                      0,
+                                  forSellPrice:
+                                      currentProperty
+                                          .propertyDetails
+                                          ?.financialInfo
+                                          ?.price ??
+                                      0,
+                                  isForSell:
+                                      currentProperty
+                                          .propertyDetails
+                                          ?.financialInfo
+                                          ?.is_for_sellorrent ??
+                                      false,
+
+                                  inQuireSubmitted:
+                                      controller.hasSubmittedInquiry.value,
+                                  titleText: "Contact the Owner",
+                                  chatButtonText: "Chat via WhatsApp",
+                                  formTitle: "Quick Contact Form",
+                                  contactButtonText: "Send Request",
+                                  nameIcon: Icons.person,
+                                  phoneIcon: Icons.phone,
+                                  emailIcon: Icons.email,
+                                  allowSellerContact: false,
+                                  negotiable: false,
+
+                                  bookSiteVisit: false,
+                                  onChatPressed: () {
+                                    print("WhatsApp button clicked!");
+                                  },
+                                  onContactPressed: (
+                                    name,
+                                    phone,
+                                    email,
+                                    price,
+                                    isNegotiable,
+
+                                    isAllowAllCondition,
+                                    inquiryListing,
+                                    isBookSiteVisit,
+                                    planningToBuy,
+                                    date,
+                                    time,
+                                    roomInfo,
+                                    selectedVariant,
+                                  ) async {
+                                    final inquiry = {
+                                      "name": name ?? "",
+                                      "phone": phone ?? "",
+                                      "email": email ?? "",
+                                      "agreeToContact":
+                                          isAllowAllCondition ?? false,
+                                      "meta": {
+                                        if (price != null)
+                                          "negotiablePrice": price,
+                                        if (inquiryListing != null &&
+                                            (inquiryListing?.isNotEmpty ??
+                                                false))
+                                          "inquiryType":
+                                              inquiryListing.toLowerCase(),
+                                        if (isNegotiable != null)
+                                          "isNegotiable": isNegotiable,
+                                        if (planningToBuy != null)
+                                          "timePeriod": planningToBuy,
+                                        if (date != null)
+                                          "visitDate":
+                                              '${date.day}-${date.month}-${date.year}',
+                                        if (roomInfo != null)
+                                          "selectedRoomType": roomInfo,
+                                        if (time != null)
+                                          "visitTime":
+                                              '${time.hour.toString().padLeft(2, '0')}:'
+                                              '${time.minute.toString().padLeft(2, '0')}',
+                                      },
+                                    };
+
+                                    print('Submitting inquiry: ${inquiry}');
+
+                                    final success = await controller.addInquiry(
+                                      inquiry,
+                                      currentProperty.id ?? '',
+                                    );
+
+                                    if (success) {
+                                      controller.hasSubmittedInquiry.value =
+                                          true;
+
+                                      NesticoPeSnackBar.showAwesomeSnackbar(
+                                        title: "Success",
+                                        message: "Inquiry Added Successfully",
+                                        contentType: ContentType.success,
+                                      );
+                                      await controller.getAllInQuireData(
+                                        widget.propertyId ?? '',
+                                      );
+                                      await controller.getHasInQuireData(
+                                        widget.propertyId ?? '',
+                                      );
+                                      await _refreshUserActivityData();
+                                      Get.back();
+                                    } else {
+                                      NesticoPeSnackBar.showAwesomeSnackbar(
+                                        title: "Error",
+                                        message: "Failed to Submit Inquiry",
+                                        contentType: ContentType.failure,
+                                      );
+                                    }
+                                  },
+                                  onAllowSellerContactChanged: (value) {},
+                                  onHomeLoanInterestChanged: (value) {},
+                                ),
+                              ),
+                            ),
+                      );
+                    },
+                  );
+                }
+              },
+              primaryTitle:
+                  (currentProperty.propertyStatus?.toLowerCase() == "sold")
+                      ? "Property Sold"
+                      : (controller.hasSubmittedInquiry.value)
+                      ? "Submitted"
+                      : "View Contact",
+            ),
+          );
         }),
       ),
     );
@@ -5850,6 +5905,206 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
               ),
             ),
           ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPropertyDocumentsSection(Items property) {
+    final docs = property.propertyMedia?.documents ?? <String>[];
+    if (docs.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const TitleWithViewAll(title: 'Property Documents & Brochures'),
+          const SizedBox(height: 8),
+          ...docs.asMap().entries.map((entry) {
+            final index = entry.key;
+            final docUrl = entry.value;
+            final fileName = Uri.tryParse(docUrl)?.pathSegments.last;
+            final displayName =
+                (fileName != null && fileName.isNotEmpty)
+                    ? fileName
+                    : 'Document ${index + 1}';
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () => _openDocumentUrl(docUrl),
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: ColorRes.black.withOpacity(0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        // PDF icon badge
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: ColorRes.error.withOpacity(0.08),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(
+                            Icons.picture_as_pdf_rounded,
+                            color: ColorRes.error,
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        // File name + subtitle
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                displayName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: AppFontWeights.semiBold,
+                                  color: ColorRes.textColor,
+                                ),
+                              ),
+                              const SizedBox(height: 3),
+                              Text(
+                                'PDF · Tap to download',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                  color: ColorRes.textColor.withOpacity(0.7),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        // Download chip
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            color: ColorRes.primary.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.download_rounded,
+                                size: 18,
+                                color: ColorRes.primary,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _openDocumentUrl(String docUrl) async {
+    final uri = Uri.tryParse(docUrl);
+    if (uri == null) {
+      Get.snackbar('Invalid document', 'Unable to open this file.');
+      return;
+    }
+
+    final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!opened) {
+      Get.snackbar('Download failed', 'Unable to open document right now.');
+    }
+  }
+
+  Widget _buildSubRegistrarSection(Items? currentProperty) {
+    final subRegistrarOfficeName =
+        currentProperty?.propertyDetails?.subRegistrarOfficeName?.trim() ?? '';
+    final saleDeedDocumentNumber =
+        currentProperty?.propertyDetails?.saleDeedDocumentNumber?.trim() ?? '';
+    final yearOfRegistration =
+        currentProperty?.propertyDetails?.yearOfRegistration?.toString() ?? '';
+    if (subRegistrarOfficeName.isEmpty &&
+        saleDeedDocumentNumber.isEmpty &&
+        yearOfRegistration.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    final formattedSubRegistrarOfficeName =
+        subRegistrarOfficeName.capitalize?.replaceAll("_", " ") ??
+        subRegistrarOfficeName.replaceAll("_", " ");
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 8),
+          const TitleWithViewAll(title: 'Sub-Registrar Office'),
+          const SizedBox(height: 8),
+          Container(
+            width: double.infinity,
+            margin: EdgeInsets.symmetric(horizontal: 12),
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: ColorRes.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: ColorRes.leadGreyColor.shade200),
+            ),
+            child: Column(
+              children: [
+                _SubRegistrarRow(
+                  label: 'Office',
+                  value:
+                      formattedSubRegistrarOfficeName.isNotEmpty
+                          ? formattedSubRegistrarOfficeName
+                          : 'Not defined',
+                ),
+                SizedBox(height: 10),
+                _SubRegistrarRow(
+                  label: 'Sale Deed Number',
+                  value:
+                      saleDeedDocumentNumber.isNotEmpty
+                          ? saleDeedDocumentNumber
+                          : 'Not defined',
+                ),
+                SizedBox(height: 10),
+                _SubRegistrarRow(
+                  label: 'Year of Registration',
+                  value:
+                      yearOfRegistration.isNotEmpty
+                          ? yearOfRegistration
+                          : 'Not defined',
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -6654,7 +6909,12 @@ class OfferCountdown extends StatefulWidget {
   final Duration? duration;
   final String? propertyId;
   final VoidCallback? onFinished;
-  const OfferCountdown({super.key, this.duration, this.propertyId, this.onFinished});
+  const OfferCountdown({
+    super.key,
+    this.duration,
+    this.propertyId,
+    this.onFinished,
+  });
   @override
   State<OfferCountdown> createState() => _OfferCountdownState();
 }
@@ -6696,7 +6956,9 @@ class _OfferCountdownState extends State<OfferCountdown>
 
     _countdownController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        try { widget.onFinished?.call(); } catch (_) {}
+        try {
+          widget.onFinished?.call();
+        } catch (_) {}
         if (widget.propertyId != null && widget.propertyId!.isNotEmpty) {
           final rnd = Random();
           final newDays = 5 + rnd.nextInt(11);
@@ -6724,10 +6986,14 @@ class _OfferCountdownState extends State<OfferCountdown>
     return AnimatedBuilder(
       animation: _countdownController,
       builder: (context, _) {
-        final elapsed = _countdownController.lastElapsedDuration ?? Duration.zero;
+        final elapsed =
+            _countdownController.lastElapsedDuration ?? Duration.zero;
         final duration = _countdownController.duration ?? Duration.zero;
         final left = duration - elapsed;
-        final totalLeftSeconds = left.inSeconds.clamp(0, duration.inSeconds == 0 ? left.inSeconds : duration.inSeconds);
+        final totalLeftSeconds = left.inSeconds.clamp(
+          0,
+          duration.inSeconds == 0 ? left.inSeconds : duration.inSeconds,
+        );
         final daysLeft = (totalLeftSeconds + 86399) ~/ 86400;
         final hoursLeft = (totalLeftSeconds % 86400) ~/ 3600;
         final minsLeft = (totalLeftSeconds % 3600) ~/ 60;
@@ -6783,13 +7049,19 @@ class _OfferCountdownState extends State<OfferCountdown>
                 ),
 
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 14,
+                  ),
                   child: Row(
                     children: [
                       // Flame icon with pulse
                       ScaleTransition(
                         scale: Tween<double>(begin: 0.92, end: 1.0).animate(
-                          CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+                          CurvedAnimation(
+                            parent: _pulseController,
+                            curve: Curves.easeInOut,
+                          ),
                         ),
                         child: Container(
                           width: 48,
@@ -6809,7 +7081,11 @@ class _OfferCountdownState extends State<OfferCountdown>
                               ),
                             ],
                           ),
-                          child: const Icon(Icons.local_fire_department_rounded, color: Colors.white, size: 24),
+                          child: const Icon(
+                            Icons.local_fire_department_rounded,
+                            color: Colors.white,
+                            size: 24,
+                          ),
                         ),
                       ),
 
@@ -7500,6 +7776,44 @@ class ProjectBrochure extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _SubRegistrarRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _SubRegistrarRow({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontSize: AppFontSizes.caption,
+              color: ColorRes.textColor,
+              fontWeight: AppFontWeights.medium,
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            value,
+            textAlign: TextAlign.right,
+            style: const TextStyle(
+              fontSize: AppFontSizes.bodySmall,
+              color: ColorRes.textPrimary,
+              fontWeight: AppFontWeights.semiBold,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

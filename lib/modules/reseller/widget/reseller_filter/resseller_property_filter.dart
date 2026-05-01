@@ -61,6 +61,52 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
 
   DateTime? startDate;
   DateTime? endDate;
+  bool _isPriceFilterTouched = false;
+
+  final List<double> _rentPgBudgetValues = List<double>.generate(
+    60,
+    (index) => (index + 1) * 5000.0,
+  );
+
+  List<double> _getBudgetValuesByListingType([String? listingType]) {
+    final selectedListing =
+        (listingType ?? controller.resellerListingType.value).trim().toLowerCase();
+    if (selectedListing == 'rent' || selectedListing == 'pg') {
+      return _rentPgBudgetValues;
+    }
+    return controller.budgetValues.toList();
+  }
+
+  void _syncBudgetRangeForListingType(String listingType) {
+    final budgetList = _getBudgetValuesByListingType(listingType);
+    if (budgetList.length < 2) return;
+
+    double minValue = controller.resellerMinPrice.value;
+    if (!budgetList.contains(minValue)) {
+      minValue = budgetList.first;
+    }
+
+    final maxOptions = budgetList.where((value) => value > minValue).toList();
+    if (maxOptions.isEmpty) return;
+
+    double maxValue = controller.resellerMaxPrice.value;
+    if (!maxOptions.contains(maxValue)) {
+      maxValue = maxOptions.first;
+    }
+
+    controller.resellerMinPrice.value = minValue;
+    controller.resellerMaxPrice.value = maxValue;
+    controller.buyerPriceRange(RangeValues(minValue, maxValue));
+    _isPriceFilterTouched = false;
+  }
+
+  void _onListingTypeChanged(String listingType) {
+    controller.setValue(controller.resellerListingType, listingType);
+    _syncBudgetRangeForListingType(listingType);
+    log(
+      "resellerListingType Type Reseller PropertyFilter ${controller.resellerListingType}",
+    );
+  }
 
   @override
   void initState() {
@@ -82,6 +128,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
       tempMinPrice = controller.resellerMinPrice.value;
       tempMaxPrice = controller.resellerMaxPrice.value;
     }
+    _syncBudgetRangeForListingType(controller.resellerListingType.value);
     // log("Check all Method ${controllerProject.items.map((element) => element.toJson(),)} ${!UserHelper.isSellerBuilder}");
     // if (!UserHelper.isSellerBuilder) {
     //   controller.resellerStatePropertyList.value =
@@ -309,10 +356,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
     };
   }*/
   Map<String, dynamic> _buildFilterResult() {
-    // ✅ Only include price if user actually selected something
-    final bool hasPriceFilter =
-        controller.resellerMinPrice.value != 0.0 ||
-        controller.resellerMaxPrice.value != 0.0;
+    final bool hasPriceFilter = _isPriceFilterTouched;
 
     return {
       // Date Range
@@ -362,12 +406,11 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
           }
         }(),
 
-      // ✅ Price Range - ONLY when user actually changed values
-      if (hasPriceFilter)
-        'priceRange': jsonEncode({
-          'min': controller.resellerMinPrice.value,
-          'max': controller.resellerMaxPrice.value,
-        }),
+      // ✅ Price Range - send as minPrice/maxPrice query params
+      if (hasPriceFilter) ...{
+        'minPrice': controller.resellerMinPrice.value.toInt(),
+        'maxPrice': controller.resellerMaxPrice.value.toInt(),
+      },
 
       // Verification Status
       if (controller.resellerVerified.value.isNotEmpty)
@@ -412,6 +455,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
             controller.resellerPropertyType.value = '';
             controller.resellerVerified.value = '';
             controller.builderProjectStatus.value = '';
+            _isPriceFilterTouched = false;
 
             // ✅ Clear the dropdown lists
             controllerForFilter.availableStates.clear();
@@ -1138,13 +1182,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                                       controller.resellerListingType.value ==
                                       option,
                                   onTap: () {
-                                    controller.setValue(
-                                      controller.resellerListingType,
-                                      option,
-                                    );
-                                    log(
-                                      "resellerListingType Type Reseller PropertyFilter ${controller.resellerListingType}",
-                                    );
+                                    _onListingTypeChanged(option);
                                   },
                                 ),
                               )
@@ -1385,9 +1423,10 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                 () => BudgetFilterChange(
                   minSelected: controller.resellerMinPrice.value,
                   maxSelected: controller.resellerMaxPrice.value,
-                  budgetList: controller.budgetValues.value,
+                  budgetList: _getBudgetValuesByListingType(),
                   onMinChanged: (val) {
                     if (val != null) {
+                      _isPriceFilterTouched = true;
                       controller.resellerMinPrice.value = val;
 
                       print("Main ${controller.resellerMinPrice.value}");
@@ -1395,6 +1434,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                   },
                   onMaxChanged: (val) {
                     if (val != null) {
+                      _isPriceFilterTouched = true;
                       controller.resellerMaxPrice.value = val;
                       controller.buyerPriceRange(
                         RangeValues(controller.resellerMinPrice.value, val),
@@ -1587,6 +1627,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                           controller.resellerPropertyCategory.value = '';
                           controller.resellerPropertyType.value = '';
                           controller.resellerVerified.value = '';
+                          _isPriceFilterTouched = false;
 
                           // ✅ Clear the dropdown lists
 
@@ -1675,6 +1716,7 @@ class _ResellerPropertyFilterState extends State<ResellerPropertyFilter> {
                           controller.resellerVerified.value = '';
                           controller.txtBuilderProjectName.clear();
                           controller.txtBuilderRERAID.clear();
+                          _isPriceFilterTouched = false;
                           // ✅ Clear the dropdown lists
 
                           controller.resellerStatePropertyList.value =
@@ -1779,6 +1821,52 @@ class _ResellerPropertyFilterScreenState
 
   DateTime? startDate;
   DateTime? endDate;
+  bool _isPriceFilterTouched = false;
+
+  final List<double> _rentPgBudgetValues = List<double>.generate(
+    60,
+    (index) => (index + 1) * 5000.0,
+  );
+
+  List<double> _getBudgetValuesByListingType([String? listingType]) {
+    final selectedListing =
+        (listingType ?? controller.resellerListingType.value).trim().toLowerCase();
+    if (selectedListing == 'rent' || selectedListing == 'pg') {
+      return _rentPgBudgetValues;
+    }
+    return controller.budgetValues.toList();
+  }
+
+  void _syncBudgetRangeForListingType(String listingType) {
+    final budgetList = _getBudgetValuesByListingType(listingType);
+    if (budgetList.length < 2) return;
+
+    double minValue = controller.resellerMinPrice.value;
+    if (!budgetList.contains(minValue)) {
+      minValue = budgetList.first;
+    }
+
+    final maxOptions = budgetList.where((value) => value > minValue).toList();
+    if (maxOptions.isEmpty) return;
+
+    double maxValue = controller.resellerMaxPrice.value;
+    if (!maxOptions.contains(maxValue)) {
+      maxValue = maxOptions.first;
+    }
+
+    controller.resellerMinPrice.value = minValue;
+    controller.resellerMaxPrice.value = maxValue;
+    controller.buyerPriceRange(RangeValues(minValue, maxValue));
+    _isPriceFilterTouched = false;
+  }
+
+  void _onListingTypeChanged(String listingType) {
+    controller.setValue(controller.resellerListingType, listingType);
+    _syncBudgetRangeForListingType(listingType);
+    log(
+      "resellerListingType Type Reseller PropertyFilter ${controller.resellerListingType}",
+    );
+  }
 
   @override
   void initState() {
@@ -1792,6 +1880,7 @@ class _ResellerPropertyFilterScreenState
       tempMinPrice = controller.resellerMinPrice.value;
       tempMaxPrice = controller.resellerMaxPrice.value;
     }
+    _syncBudgetRangeForListingType(controller.resellerListingType.value);
 
     _initializeUserData();
   }
@@ -1973,10 +2062,7 @@ class _ResellerPropertyFilterScreenState
     };
   }*/
   Map<String, dynamic> _buildFilterResult() {
-    // ✅ Only include price if user actually selected something
-    final bool hasPriceFilter =
-        controller.resellerMinPrice.value != 0.0 ||
-            controller.resellerMaxPrice.value != 0.0;
+    final bool hasPriceFilter = _isPriceFilterTouched;
 
     return {
       // Date Range
@@ -2021,13 +2107,12 @@ class _ResellerPropertyFilterScreenState
           }
         }(),
 
-      // ✅ Price Range - only when user actually changed values
-      if (!UserHelper.isSellerBuilder && hasPriceFilter)
-        'priceRange': jsonEncode({
-          'min': controller.resellerMinPrice.value,
-          'max': controller.resellerMaxPrice.value,
-        }),
-
+      // ✅ Price Range - send as minPrice/maxPrice query params
+      if (!UserHelper.isSellerBuilder && hasPriceFilter) ...{
+        'minPrice': controller.resellerMinPrice.value.toInt(),
+        'maxPrice': controller.resellerMaxPrice.value.toInt(),
+      },
+  
       // Verification Status
       if (controller.resellerVerified.value.isNotEmpty)
         'isVerified': controller.resellerVerified.value == 'Verified',
@@ -2065,6 +2150,7 @@ class _ResellerPropertyFilterScreenState
             controller.resellerPropertyCategory.value = '';
             controller.resellerPropertyType.value = '';
             controller.resellerVerified.value = '';
+            _isPriceFilterTouched = false;
             controllerForFilter.availableStates.clear();
             controllerForFilter.availableCities.clear();
             controllerForFilter.selectedState.value = '';
@@ -2353,13 +2439,7 @@ class _ResellerPropertyFilterScreenState
                                       controller.resellerListingType.value ==
                                       option,
                                   onTap: () {
-                                    controller.setValue(
-                                      controller.resellerListingType,
-                                      option,
-                                    );
-                                    log(
-                                      "resellerListingType Type Reseller PropertyFilter ${controller.resellerListingType}",
-                                    );
+                                    _onListingTypeChanged(option);
                                   },
                                 ),
                               )
@@ -2519,9 +2599,10 @@ class _ResellerPropertyFilterScreenState
                 () => BudgetFilterChange(
                   minSelected: controller.resellerMinPrice.value,
                   maxSelected: controller.resellerMaxPrice.value,
-                  budgetList: controller.budgetValues.value,
+                  budgetList: _getBudgetValuesByListingType(),
                   onMinChanged: (val) {
                     if (val != null) {
+                      _isPriceFilterTouched = true;
                       controller.resellerMinPrice.value = val;
 
                       print("Main ${controller.resellerMinPrice.value}");
@@ -2529,6 +2610,7 @@ class _ResellerPropertyFilterScreenState
                   },
                   onMaxChanged: (val) {
                     if (val != null) {
+                      _isPriceFilterTouched = true;
                       controller.resellerMaxPrice.value = val;
                       controller.buyerPriceRange(
                         RangeValues(controller.resellerMinPrice.value, val),
@@ -2721,6 +2803,7 @@ class _ResellerPropertyFilterScreenState
                           controller.resellerPropertyCategory.value = '';
                           controller.resellerPropertyType.value = '';
                           controller.resellerVerified.value = '';
+                          _isPriceFilterTouched = false;
 
                           // ✅ Clear the dropdown lists
 
@@ -2803,6 +2886,7 @@ class _ResellerPropertyFilterScreenState
                           controller.resellerPropertyCategory.value = '';
                           controller.resellerPropertyType.value = '';
                           controller.resellerVerified.value = '';
+                          _isPriceFilterTouched = false;
 
                           // ✅ Clear the dropdown lists
 

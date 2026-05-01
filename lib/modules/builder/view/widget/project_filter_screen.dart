@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -861,10 +860,6 @@ class _ResellerProjectFilterScreenState
     };
   }*/
   Map<String, dynamic> _buildFilterResult() {
-    final bool hasPriceFilter =
-        controller.resellerMinPrice.value != 0.0 ||
-        controller.resellerMaxPrice.value != 0.0;
-
     return {
       // Date Range
       if (controller.txtStartDate.text.isNotEmpty &&
@@ -913,12 +908,11 @@ class _ResellerProjectFilterScreenState
           }
         }(),
 
-      // ✅ Price Range - ONLY when user actually selected something
-      if (hasPriceFilter)
-        'priceRange': jsonEncode({
-          'min': controller.resellerMinPrice.value,
-          'max': controller.resellerMaxPrice.value,
-        }),
+      // Price - send as minPrice/maxPrice only when selected
+      if (controller.resellerMinPrice.value > 0)
+        'minPrice': controller.resellerMinPrice.value.toInt(),
+      if (controller.resellerMaxPrice.value > 0)
+        'maxPrice': controller.resellerMaxPrice.value.toInt(),
 
       // Verification Status
       if (controller.resellerVerified.value.isNotEmpty)
@@ -985,6 +979,9 @@ class _ResellerProjectFilterScreenState
             controller.resellerSelectedState.value = '';
             controller.resellerSelectedCity.value = '';
             controller.builderProjectStatus.value = '';
+            controller.resellerMinPrice.value = 0.0;
+            controller.resellerMaxPrice.value = 0.0;
+            controller.priceRangeSeller.clear();
 
             setState(() {
               startDate = null;
@@ -1578,6 +1575,9 @@ class _ResellerProjectFilterScreenState
                           controller.resellerSelectedState.value = '';
                           controller.resellerSelectedCity.value = '';
                           controller.builderProjectStatus.value = '';
+                          controller.resellerMinPrice.value = 0.0;
+                          controller.resellerMaxPrice.value = 0.0;
+                          controller.priceRangeSeller.clear();
 
                           setState(() {
                             startDate = null;
@@ -1663,6 +1663,9 @@ class _ResellerProjectFilterScreenState
                           controller.resellerSelectedState.value = '';
                           controller.resellerSelectedCity.value = '';
                           controller.builderProjectStatus.value = '';
+                          controller.resellerMinPrice.value = 0.0;
+                          controller.resellerMaxPrice.value = 0.0;
+                          controller.priceRangeSeller.clear();
 
                           setState(() {
                             startDate = null;

@@ -16,6 +16,7 @@ import 'package:nesticope_app/modules/reseller/view/lead_overview/widget/lead_fo
 import 'package:nesticope_app/modules/reseller/view/lead_overview/widget/lead_negotiable_price_screen.dart';
 import 'package:nesticope_app/modules/reseller/view/lead_overview/widget/lead_visit.dart';
 import 'package:nesticope_app/modules/seller/module/lead_screen/model/lead_model.dart';
+import 'package:nesticope_app/widgets/property/furnishing_details.dart';
 import '../../../../app/manager/property_highlight_manager.dart';
 import '../../../../app/utils/svg_widget.dart';
 import '../../../../data/network/property/models/property_model.dart';
@@ -164,11 +165,14 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
           ? leadProperty.value?.propertyDetails
           : widget.property!.propertyDetails;
 
+  Items get property =>
+      widget.isFromLead ? leadProperty?.value ?? Items() : widget.property ?? Items();
+
   @override
   Widget build(BuildContext context) {
     final isCompact = MediaQuery.of(context).size.width < 600;
 
-    log("Building Name in Reseller ${builderName}");
+    log("Building Name in Reseller ${property.propertyDetails?.furnishInfo?.furnishDetails?.toJson()}");
 
     return Scaffold(
       backgroundColor: ColorRes.white,
@@ -271,6 +275,12 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
 
                               // 5. Amenities
                               _buildAmenitiesSection(context, isCompact),
+                              Divider(
+                                thickness: 8,
+                                color: ColorRes.leadGreyColor[100],
+                              ),
+                            
+                             
                             ],
 
                             Obx(() => _buildExpandButton(context)),
@@ -1393,9 +1403,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
               decoration: BoxDecoration(
                 color: ColorRes.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: ColorRes.success.withOpacity(0.18),
-                ),
+                border: Border.all(color: ColorRes.success.withOpacity(0.18)),
                 boxShadow: [
                   BoxShadow(
                     blurRadius: 8,
@@ -1484,10 +1492,20 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
   Widget _buildSectionHeader(String title, IconData icon, bool isCompact) {
     return Row(
       children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: ColorRes.primary.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, size: 18, color: ColorRes.primary),
+        ),
+
+        const SizedBox(width: 12),
         Text(
           title,
           style: TextStyle(
-            fontSize: isCompact ? AppFontSizes.body : AppFontSizes.large,
+            fontSize: isCompact ? AppFontSizes.bodySmall : AppFontSizes.body,
             fontWeight: AppFontWeights.semiBold,
             color: ColorRes.textColor,
           ),
@@ -1578,6 +1596,148 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if ((propertyDetails?.financialInfo?.is_for_sellorrent ?? false) &&
+              (listingType?.toLowerCase() == 'sell')) ...[
+            if (propertyDetails?.financialInfo?.propertyRentPerMonth !=
+                null) ...[
+              // Padding(
+             
+              Divider(
+                indent: 18,
+                endIndent: 18,
+                color: ColorRes.leadGreyColor.shade300,
+              ),
+
+              const SizedBox(height: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSectionHeader(
+                    'Also for Rent',
+                    Icons.sell_outlined,
+                    true,
+                  ),
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: ColorRes.primary.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: ColorRes.primary.withOpacity(0.3),
+                          width: 0.8,
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Available Rent Price',
+                                style: const TextStyle(
+                                  fontSize: AppFontSizes.caption,
+                                  fontWeight: AppFontWeights.medium,
+                                  color: ColorRes.textPrimary,
+                                ),
+                              ),
+                              Text(
+                                '${Formatter.formatPrice(propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}/month',
+                                style: const TextStyle(
+                                  fontSize: AppFontSizes.body,
+                                  fontWeight: AppFontWeights.semiBold,
+                                  color: ColorRes.textPrimary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Divider(
+                indent: 18,
+                endIndent: 18,
+                color: ColorRes.leadGreyColor.shade300,
+              ),
+            ] 
+          ],
+          if ((propertyDetails?.financialInfo?.is_for_sellorrent ?? false) &&
+              (listingType?.toLowerCase() == 'rent')) ...[
+            if (propertyDetails?.financialInfo?.price != null) ...[
+              const SizedBox(height: 12),
+              Divider(
+                indent: 18,
+                endIndent: 18,
+                color: ColorRes.leadGreyColor.shade300,
+              ),
+              const SizedBox(height: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSectionHeader(
+                    'Also for Sell',
+                    Icons.sell_outlined,
+                    true,
+                  ),
+                  const SizedBox(height: 8),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: ColorRes.primary.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: ColorRes.primary.withOpacity(0.3),
+                          width: 0.8,
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Available Sell Price',
+                                style: const TextStyle(
+                                  fontSize: AppFontSizes.caption,
+                                  fontWeight: AppFontWeights.medium,
+                                  color: ColorRes.textPrimary,
+                                ),
+                              ),
+                              Text(
+                                '${Formatter.formatPrice(propertyDetails?.financialInfo?.price ?? 0)}',
+                                style: const TextStyle(
+                                  fontSize: AppFontSizes.body,
+                                  fontWeight: AppFontWeights.semiBold,
+                                  color: ColorRes.textPrimary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 12),
+              Divider(
+                indent: 18,
+                endIndent: 18,
+                color: ColorRes.leadGreyColor.shade300,
+              ),
+            ] 
+          ],
+
           _buildSectionHeader('Property Details', Icons.info_outline, true),
           SizedBox(height: 16),
 
@@ -1633,7 +1793,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
           if (possessionInfo?.propertyAgeInYear != null)
             _buildDetailRow(
               'Property Age',
-              '${possessionInfo?.propertyAgeInYear != null ? possessionInfo?.propertyAgeInYear : "Not define"} years',
+              '${possessionInfo?.propertyAgeInYear != null && possessionInfo?.propertyAgeInYear != "null" ? possessionInfo?.propertyAgeInYear : "Not define"} years',
             ),
         ],
       ),

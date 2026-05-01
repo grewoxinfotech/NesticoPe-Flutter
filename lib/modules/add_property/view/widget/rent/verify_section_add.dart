@@ -763,7 +763,7 @@ class ReviewPropertyScreen extends StatelessWidget {
         Expanded(
           child: SingleChildScrollView(
             child: Obx(
-              () =>  Column(
+              () => Column(
                 children: [
                   // Success Card
                   const SizedBox(height: 16),
@@ -797,9 +797,7 @@ class ReviewPropertyScreen extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildPropertyCard(),
-        ],
+        children: [_buildPropertyCard()],
       ),
     );
   }
@@ -831,20 +829,17 @@ class ReviewPropertyScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      Formatter.formatPrice(
-                        int.tryParse(
-                              controller.sell_ExpectedPrice.text.toString(),
-                            ) ??
-                            0,
+                    if (controller.sell_ExpectedPrice.text != '0') ...[
+                      Text(
+                        '${Formatter.formatPrice(int.tryParse(controller.sell_ExpectedPrice.text.toString()) ?? 0)}',
+                        style: const TextStyle(
+                          color: ColorRes.textPrimary,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: -0.5,
+                        ),
                       ),
-                      style: const TextStyle(
-                        color: ColorRes.textPrimary,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
+                    ],
                     const SizedBox(height: 2),
                     RichText(
                       text: TextSpan(
@@ -1017,6 +1012,39 @@ class ReviewPropertyScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
           ],
+          if (controller.selectedFurnishing.values.isNotEmpty) ...[
+            _buildSectionTitle('Furnishing'),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children:
+                  controller.selectedFurnishing.values.map((furnishing) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: ColorRes.primary.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: ColorRes.primary.withOpacity(0.3),
+                        ),
+                      ),
+                      child: Text(
+                        '${furnishing.title ?? ''} (${furnishing.quantity ?? 1})',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: ColorRes.primary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+            ),
+            const SizedBox(height: 16),
+          ],
 
           // Additional Details
           _buildSectionTitle('Additional Details'),
@@ -1069,7 +1097,7 @@ class ReviewPropertyScreen extends StatelessWidget {
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style:  TextStyle(
+      style: TextStyle(
         fontSize: AppFontSizes.medium,
         fontWeight: AppFontWeights.semiBold,
         color: ColorRes.textPrimary,
@@ -1103,7 +1131,7 @@ class ReviewPropertyScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: AppFontSizes.small,
                 color: ColorRes.textPrimary,
-                fontWeight: AppFontWeights.semiBold
+                fontWeight: AppFontWeights.semiBold,
               ),
               textAlign: TextAlign.right,
             ),

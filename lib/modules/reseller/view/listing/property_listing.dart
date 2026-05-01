@@ -4,8 +4,10 @@ import 'dart:developer';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nesticope_app/app/constants/api_constants.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/app/utils/helper_function/contact_helper.dart';
 import 'package:nesticope_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
 import 'package:nesticope_app/data/database/secure_storage_service.dart';
@@ -969,41 +971,43 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
               child: Container(color: ColorRes.leadGreyColor[200], height: 1),
             ),
             actions: [
-              if (isSelectionMode.value) ...[
-                TextButton(
-                  onPressed: () {
-                    if (selectedPropertyIds.length ==
-                        propertyController?.items.length) {
-                      selectedPropertyIds.clear();
-                    } else {
-                      selectedPropertyIds
-                        ..clear()
-                        ..addAll(
-                          propertyController?.items
-                                  .where((p) => p.id != null)
-                                  .map((p) => p.id!) ??
-                              [],
-                        );
-                    }
-                  },
-                  child: Text(
-                    selectedPropertyIds.length ==
-                            propertyController?.items.length
-                        ? 'Deselect All'
-                        : 'Select All',
-                    style: TextStyle(
-                      color: ColorRes.primary,
-                      fontSize: AppFontSizes.small,
-                      fontWeight: AppFontWeights.semiBold,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-              ] else ...[
+              // if (isSelectionMode.value) ...[
+              //   TextButton(
+              //     onPressed: () {
+              //       if (selectedPropertyIds.length ==
+              //           propertyController?.items.length) {
+              //         selectedPropertyIds.clear();
+              //       } else {
+              //         selectedPropertyIds
+              //           ..clear()
+              //           ..addAll(
+              //             propertyController?.items
+              //                     .where((p) => p.id != null)
+              //                     .map((p) => p.id!) ??
+              //                 [],
+              //           );
+              //       }
+              //     },
+              //     child: Text(
+              //       selectedPropertyIds.length ==
+              //               propertyController?.items.length
+              //           ? 'Deselect All'
+              //           : 'Select All',
+              //       style: TextStyle(
+              //         color: ColorRes.primary,
+              //         fontSize: AppFontSizes.small,
+              //         fontWeight: AppFontWeights.semiBold,
+              //       ),
+              //     ),
+              //   ),
+              //   const SizedBox(width: 8),
+              // ] else ...[
                 GestureDetector(
                   onTap: () async {
-                    if (!Get.isRegistered<PropertyController>())
+                    if (!Get.isRegistered<PropertyController>()) {
                       Get.put(PropertyController());
+                    }
+
                     final result = await Get.to(
                       () => ResellerPropertyFilterScreen(),
                     );
@@ -1028,17 +1032,30 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                       }
                     }
                   },
-                  child: const Icon(Icons.filter_list),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.filter_list, size: 20),
+                      SizedBox(width: 6),
+                      Text(
+                        "Filter",
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(width: 8),
-                IconButton(
-                  onPressed: toggleSelectionMode,
-                  icon: const Icon(Icons.share_outlined),
-                  color: ColorRes.primary,
-                  iconSize: 22,
-                ),
+                // IconButton(
+                //   onPressed: toggleSelectionMode,
+                //   icon: const Icon(Icons.share_outlined),
+                //   color: ColorRes.primary,
+                //   iconSize: 22,
+                // ),
               ],
-            ],
+            // ],
           ),
         ),
       ),
@@ -1769,19 +1786,43 @@ class ProductCard extends StatelessWidget {
                                 final resellerId = user?.user?.id ?? '';
                                 final propertyId = product.id ?? '';
 
-                                if (resellerId.isEmpty || propertyId.isEmpty) {
-                                  Get.snackbar(
-                                    "Error",
-                                    "Missing reseller or property information.",
-                                  );
-                                  return;
-                                }
+                                // if (resellerId.isEmpty || propertyId.isEmpty) {
+                                //   Get.snackbar(
+                                //     "Error",
+                                //     "Missing reseller or property information.",
+                                //   );
+                                //   return;
+                                // }
 
-                                await propertyShareController
-                                    .handleShareButtonTap(
-                                      propertyId: propertyId,
-                                      resellerId: resellerId,
-                                    );
+                                // await propertyShareController
+                                //     .handleShareButtonTap(
+                                //       propertyId: propertyId,
+                                //       resellerId: resellerId,
+                                //     );
+                                // await controller.getPropertyLinkById(
+                                //   propertyId,
+                                // );
+                                // final propertyIdShare =
+                                //     controller
+                                //         .shareProperty
+                                //         .value
+                                //         ?.data
+                                //         ?.propertyId;
+
+                                if (propertyId != null &&
+                                    propertyId.isNotEmpty) {
+                                  ContactHelper.shareContent(
+                                    link:
+                                        '${ApiConstants.frontendBaseUrl}/properties/$propertyId',
+                                  );
+                                } else {
+                                  NesticoPeSnackBar.showAwesomeSnackbar(
+                                    title: "Error",
+                                    message:
+                                        "Unable to generate share link right now.",
+                                    contentType: ContentType.failure,
+                                  );
+                                }
                               },
                               child: const Icon(Icons.share, size: 16),
                             ),

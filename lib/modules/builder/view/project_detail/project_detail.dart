@@ -337,9 +337,10 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                   );
                                 }),
                                 Obx(
-                                  () => controller.hasSubmittedInquiry.value
-                                      ? const SizedBox.shrink()
-                                      : const SizedBox(height: 12),
+                                  () =>
+                                      controller.hasSubmittedInquiry.value
+                                          ? const SizedBox.shrink()
+                                          : const SizedBox(height: 12),
                                 ),
 
                                 // Conditional Area
@@ -500,9 +501,22 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                           ),
                         ],
 
-                        if (project?.value?.brochures.isNotEmpty ?? false) ...[
-                          _buildDocuments(controller, project.value!),
-                        ],
+                        // if (!UserHelper.isGuest && !UserHelper.isBuyer) ...[
+                          if (project?.value?.brochures.isNotEmpty ?? false)
+                            _buildBrochuresSection(controller, project.value!),
+                        // ],
+                        // if (!UserHelper.isGuest && !UserHelper.isBuyer) ...[
+                          if ((project
+                                  ?.value
+                                  ?.mediaGallery
+                                  ?.documents
+                                  .isNotEmpty ??
+                              false))
+                            _buildProjectDocumentsSection(
+                              controller,
+                              project.value!,
+                            ),
+                        // ],
 
                         // Other projects by the same builder (exclude current project)
                         if (UserHelper.isGuest || UserHelper.isBuyer) ...[
@@ -1372,10 +1386,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
               favoriteController:
                   Get.isRegistered<PropertyFavoriteController>()
                       ? Get.find<PropertyFavoriteController>()
-                      : Get.put(
-                        PropertyFavoriteController(),
-                        permanent: true,
-                      ),
+                      : Get.put(PropertyFavoriteController(), permanent: true),
             ),
           ),
         ],
@@ -2484,7 +2495,10 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     );
   }
 
-  Widget _buildDocuments(ProjectController controller, ProjectItem project) {
+  Widget _buildBrochuresSection(
+    ProjectController controller,
+    ProjectItem project,
+  ) {
     return Container(
       margin: const EdgeInsets.only(top: 8),
       padding: const EdgeInsets.all(16),
@@ -2501,41 +2515,63 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          if (project.brochures.isNotEmpty)
-            ...project.brochures.map((brochure) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: _buildDocumentItem(
-                  icon: Icons.description,
-                  title: brochure.name ?? '-',
-                  onTap: () => controller.downloadDocument(brochure.url),
-                ),
-              );
-            }).toList(),
-          if (project.mediaGallery?.documents != null &&
-              project.mediaGallery!.documents.isNotEmpty) ...[
-            SizedBox(height: 12),
-            const Text(
-              'Documents',
-              style: TextStyle(
-                fontSize: AppFontSizes.medium,
-                fontWeight: AppFontWeights.semiBold,
-                color: ColorRes.textPrimary,
+          ...project.brochures.map((brochure) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _buildDocumentItem(
+                icon: Icons.description,
+                title: brochure.name ?? '-',
+                onTap: () => controller.downloadDocument(brochure.url),
               ),
-            ),
-            const SizedBox(height: 16),
+            );
+          }).toList(),
+        ],
+      ),
+    );
+  }
 
-            ...project.mediaGallery!.documents.map((document) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: _buildDocumentItem(
-                  icon: Icons.description,
-                  title: "Document" ?? '-',
-                  onTap: () => controller.downloadDocument(document),
-                ),
-              );
-            }).toList(),
-          ],
+  Widget _buildProjectDocumentsSection(
+    ProjectController controller,
+    ProjectItem project,
+  ) {
+    final documents = project.mediaGallery?.documents ?? <String>[];
+
+    return Container(
+      margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.all(16),
+      color: ColorRes.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Documents',
+            style: TextStyle(
+              fontSize: AppFontSizes.medium,
+              fontWeight: AppFontWeights.semiBold,
+              color: ColorRes.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ...documents.asMap().entries.map((entry) {
+            final index = entry.key;
+            final document = entry.value;
+            final parsed = Uri.tryParse(document);
+            final fileName =
+                (parsed != null && parsed.pathSegments.isNotEmpty)
+                    ? parsed.pathSegments.last
+                    : '';
+            final title =
+                fileName.isNotEmpty ? fileName : 'Document ${index + 1}';
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _buildDocumentItem(
+                icon: Icons.description,
+                title: title,
+                onTap: () => controller.downloadDocument(document),
+              ),
+            );
+          }).toList(),
         ],
       ),
     );
@@ -2575,13 +2611,14 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                 ),
               ),
             ),
-            const Text(
-              'View',
-              style: TextStyle(
-                fontSize: AppFontSizes.small,
-                color: ColorRes.primary,
-                fontWeight: AppFontWeights.semiBold,
+            SizedBox(width: 12),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: ColorRes.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
               ),
+              child: Icon(Icons.download, color: ColorRes.primary, size: 20),
             ),
           ],
         ),

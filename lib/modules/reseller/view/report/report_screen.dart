@@ -1625,7 +1625,7 @@ class PropertyOverviewCard extends StatelessWidget {
                         Text(
                           item["value"]!,
                           style: TextStyle(
-                            fontSize: AppFontSizes.medium,
+                            fontSize: AppFontSizes.body,
                             height: 1,
                             fontWeight: AppFontWeights.semiBold,
                             color: item["color"] as Color,
@@ -1635,9 +1635,9 @@ class PropertyOverviewCard extends StatelessWidget {
                         Text(
                           item["title"]!,
                           style: TextStyle(
-                            fontSize: AppFontSizes.extraSmall,
+                            fontSize: AppFontSizes.small,
                             height: 1,
-                            color: ColorRes.leadGreyColor.shade600,
+                            color: ColorRes.leadGreyColor.shade700,
                             fontWeight: AppFontWeights.medium,
                           ),
                         ),

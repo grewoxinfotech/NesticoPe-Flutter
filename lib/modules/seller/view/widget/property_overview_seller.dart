@@ -5,10 +5,13 @@ import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/app/manager/icon_manager.dart';
 import 'package:nesticope_app/app/manager/property/property_name_manager.dart';
+import 'package:nesticope_app/app/utils/formater/formater.dart';
+import 'package:nesticope_app/app/widgets/texts/headline_text.dart';
 import 'package:nesticope_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 import 'package:nesticope_app/modules/seller/view/widget/seller_property_approval_history.dart';
 import 'package:nesticope_app/utils/property_mapper/property_mapper.dart';
 import 'package:nesticope_app/widgets/dialog/delete_confirmation_dialog.dart';
+import 'package:nesticope_app/widgets/property/furnishing_details.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/manager/property/property_pricemanager.dart';
@@ -25,6 +28,7 @@ import '../../module/lead_screen/controllers/lead_property_inquiry_controller.da
 import '../../module/lead_screen/controllers/lead_property_negotiable_price_controller.dart';
 import '../../module/lead_screen/controllers/lead_visit_controller.dart';
 import '../../module/lead_screen/views/lead_screen_enhanced.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // class PropertyOverviewSellerScreen extends StatelessWidget {
 //   final Items property;
@@ -273,13 +277,29 @@ class _PropertyOverviewSellerScreenState
                   showShare: false,
                 ),
 
+                // if ((property.propertyMedia?.documents?.isNotEmpty ?? false))
+                // Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
                 Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
 
                 _buildStatusSection(context, isCompact),
                 Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-
+               
                 _buildPropertyOverviewSection(context, isCompact),
                 Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+                if (((property.propertyDetails?.subRegistrarOfficeName?.trim().isNotEmpty ??
+                        false) ||
+                    (property.propertyDetails?.saleDeedDocumentNumber?.trim().isNotEmpty ??
+                        false) ||
+                    ((property.propertyDetails?.yearOfRegistration?.toString() ?? '')
+                        .trim()
+                        .isNotEmpty))) ...[
+                  _buildSubRegistrarSection(property),
+                  Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+                ],
+                if ((property.propertyMedia?.documents?.isNotEmpty ?? false))
+                  _buildPropertyDocumentsSection(property),
+                Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+
 
                 _buildFinancialSection(context, isCompact),
                 Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
@@ -290,6 +310,111 @@ class _PropertyOverviewSellerScreenState
                 if (property.propertyDetails?.amenities?.isNotEmpty ??
                     false) ...[
                   _buildAmenitiesSection(context, isCompact),
+                  Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+                ],
+
+                if (property.propertyDetails?.furnishInfo?.furnishDetails !=
+                    null) ...[
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      'Furnishing',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.body,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.textColor,
+                      ),
+                    ),
+                  ),
+                  Builder(
+                    builder: (context) {
+                      return FurnishingDetails(
+                        property: property,
+                        bgColor: ColorRes.propertyBg,
+                        txtColor: ColorRes.primary,
+                      );
+                    },
+                  ),
+                  Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+                ],
+                if (property.listingType?.toUpperCase() == "PG" &&
+                    property.propertyDetails?.pgInfo?.pgRules != null) ...[
+                  const SizedBox(height: 12),
+                  // const TitleWithViewAll(title: 'PG Rules'),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      'PG Rules',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.body,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.textColor,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  _buildPgRulesSection(
+                    property.propertyDetails!.pgInfo!.pgRules!,
+                  ),
+                  const SizedBox(height: 20),
+                  // Divider(
+                  //   indent: 18,
+                  //   endIndent: 18,
+                  //   color: ColorRes.leadGreyColor.shade300,
+                  // ),
+                ],
+
+                if (property.listingType?.toUpperCase() == "PG" &&
+                    property.propertyDetails?.pgInfo?.pgRoomInfo != null &&
+                    property
+                        .propertyDetails!
+                        .pgInfo!
+                        .pgRoomInfo!
+                        .isNotEmpty) ...[
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+
+                    // color: ColorRes.white,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Divider(
+                          thickness: 8,
+                          color: ColorRes.leadGreyColor[100],
+                        ),
+                        const SizedBox(height: 12),
+                        //  TitleWithViewAll(
+                        //   title: 'Room Options & Pricing',
+                        //   showIcon: true,
+                        //   icon: Icons.room_outlined,
+                        //   iconBgColor: ColorRes.white,
+                        //   iconColor: ColorRes.primary,
+                        // ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            'Room Options & Pricing',
+                            style: TextStyle(
+                              fontSize: AppFontSizes.body,
+                              fontWeight: AppFontWeights.semiBold,
+                              color: ColorRes.textColor,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 15),
+                        _buildRoomOptionsSection(
+                          property.propertyDetails!.pgInfo!.pgRoomInfo!,
+                        ),
+                        const SizedBox(height: 15),
+                        // Divider(
+                        //   indent: 18,
+                        //   endIndent: 18,
+                        //   color: ColorRes.leadGreyColor.shade300,
+                        // ),
+                      ],
+                    ),
+                  ),
                   Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
                 ],
 
@@ -388,6 +513,307 @@ class _PropertyOverviewSellerScreenState
             ),
           );
         }),
+      ),
+    );
+  }
+
+  Widget _buildPgRulesSection(PgRules rules) {
+    final rulesList = <Map<String, dynamic>>[];
+
+    if (rules.nonVegAllowed != null) {
+      rulesList.add({
+        'label': 'Non-Veg',
+        'allowed': rules.nonVegAllowed!,
+        'icon': Icons.restaurant,
+      });
+    }
+    if (rules.petsAllowed != null) {
+      rulesList.add({
+        'label': 'Pets',
+        'allowed': rules.petsAllowed!,
+        'icon': Icons.pets,
+      });
+    }
+    if (rules.lateEntryAllowed != null) {
+      rulesList.add({
+        'label': 'Late Entry',
+        'allowed': rules.lateEntryAllowed!,
+        'icon': Icons.access_time,
+      });
+    }
+    if (rules.smokingAllowed != null) {
+      rulesList.add({
+        'label': 'Smoking',
+        'allowed': rules.smokingAllowed!,
+        'icon': Icons.smoke_free,
+      });
+    }
+    if (rules.drinkingAllowed != null) {
+      rulesList.add({
+        'label': 'Drinking',
+        'allowed': rules.drinkingAllowed!,
+        'icon': Icons.no_drinks,
+      });
+    }
+    if (rules.visitorAllowed != null) {
+      rulesList.add({
+        'label': 'Visitor',
+        'allowed': rules.visitorAllowed!,
+        'icon': Icons.people,
+      });
+    }
+
+    if (rulesList.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 12),
+        child: Text(
+          'No rules specified',
+          style: TextStyle(
+            fontSize: AppFontSizes.bodySmall,
+            color: ColorRes.leadGreyColor,
+          ),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Wrap(
+        spacing: 12,
+        runSpacing: 12,
+        children:
+            rulesList.map((rule) {
+              final isAllowed = rule['allowed'] as bool;
+              return Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color:
+                      isAllowed
+                          ? ColorRes.green.withOpacity(0.02)
+                          : ColorRes.error.withOpacity(0.02),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color:
+                        isAllowed
+                            ? ColorRes.green.withOpacity(0.8)
+                            : ColorRes.error.withOpacity(0.8),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      rule['icon'] as IconData,
+                      size: 16,
+                      color:
+                          isAllowed
+                              ? ColorRes.green.withOpacity(0.8)
+                              : ColorRes.error.withOpacity(0.8),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      rule['label'] as String,
+                      style: TextStyle(
+                        fontSize: AppFontSizes.bodySmall,
+                        fontWeight: AppFontWeights.medium,
+                        color:
+                            isAllowed
+                                ? ColorRes.green.withOpacity(0.8)
+                                : ColorRes.error.withOpacity(0.8),
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Icon(
+                      isAllowed ? Icons.check_circle : Icons.cancel,
+                      size: 14,
+                      color:
+                          isAllowed
+                              ? ColorRes.green.withOpacity(0.8)
+                              : ColorRes.error.withOpacity(0.8),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildRoomOptionsSection(List<PgRoomInfo> rooms) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Column(
+        children:
+            rooms.map((room) {
+              return Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: ColorRes.white,
+                  borderRadius: BorderRadius.circular(12),
+                  // border: Border.all(color: ColorRes.leadGreyColor.shade300),
+                  boxShadow: [
+                    BoxShadow(
+                      color: ColorRes.black.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          room.roomType?.toUpperCase() ?? 'Room',
+                          style: TextStyle(
+                            fontSize: AppFontSizes.body,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.textPrimary,
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: ColorRes.primary.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            '${Formatter.formatPrice(room.rent ?? 0)} / month',
+                            style: const TextStyle(
+                              fontSize: AppFontSizes.small,
+                              fontWeight: AppFontWeights.semiBold,
+                              color: ColorRes.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    if (room.securityDeposit != null &&
+                        room.securityDeposit! > 0) ...[
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.security,
+                            size: 14,
+                            color: ColorRes.leadGreyColor,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Security Deposit: ${Formatter.formatPrice(room.securityDeposit ?? 0)}',
+                            style: TextStyle(
+                              fontSize: AppFontSizes.small,
+                              color: ColorRes.leadGreyColor.shade700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+
+                    // Room Facilities
+                    if (room.roomFacilityInfo != null) ...[
+                      const SizedBox(height: 12),
+                      const Text(
+                        'Facilities:',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.bodySmall,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.blackShade87,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: _buildFacilityChips(room.roomFacilityInfo!),
+                      ),
+                    ],
+                  ],
+                ),
+              );
+            }).toList(),
+      ),
+    );
+  }
+
+  List<Widget> _buildFacilityChips(RoomFacilityInfo facilities) {
+    final chips = <Widget>[];
+
+    if (facilities.wifi == true) {
+      chips.add(_buildFacilityChip('WiFi', Icons.wifi));
+    }
+    if (facilities.ac == true) {
+      chips.add(_buildFacilityChip('AC', Icons.ac_unit));
+    }
+    if (facilities.tv == true) {
+      chips.add(_buildFacilityChip('TV', Icons.tv));
+    }
+    if (facilities.geyser == true) {
+      chips.add(_buildFacilityChip('Geyser', Icons.hot_tub));
+    }
+    if (facilities.fridge == true) {
+      chips.add(_buildFacilityChip('Fridge', Icons.kitchen));
+    }
+    if (facilities.cupboard == true) {
+      chips.add(_buildFacilityChip('Cupboard', Icons.door_sliding));
+    }
+    if (facilities.other != null && facilities.other!.isNotEmpty) {
+      chips.addAll(
+        facilities.other!
+            .split("\n\n")
+            .map((e) => _buildFacilityChip(e, Icons.more_horiz))
+            .toList(),
+      );
+    }
+
+    if (chips.isEmpty) {
+      chips.add(
+        const Text(
+          'No facilities specified',
+          style: TextStyle(
+            fontSize: AppFontSizes.caption,
+            color: ColorRes.leadGreyColor,
+          ),
+        ),
+      );
+    }
+
+    return chips;
+  }
+
+  /// Build individual facility chip
+  Widget _buildFacilityChip(String label, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: ColorRes.primary.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: ColorRes.primary),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: AppFontSizes.caption,
+              fontWeight: AppFontWeights.medium,
+              color: ColorRes.primary,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -566,6 +992,214 @@ class _PropertyOverviewSellerScreenState
   //     ),
   //   );
   // }
+
+  Widget _buildPropertyDocumentsSection(Items property) {
+    final docs = property.propertyMedia?.documents ?? <String>[];
+    if (docs.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'PROPERTY DOCUMENTS & BROCHURES',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: AppFontWeights.semiBold,
+              color: ColorRes.textColor,
+              letterSpacing: 1.1,
+            ),
+          ),
+          const SizedBox(height: 14),
+          ...docs.asMap().entries.map((entry) {
+            final index = entry.key;
+            final docUrl = entry.value;
+            final fileName = Uri.tryParse(docUrl)?.pathSegments.last;
+            final displayName =
+                (fileName != null && fileName.isNotEmpty)
+                    ? fileName
+                    : 'Document ${index + 1}';
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () => _openDocumentUrl(docUrl),
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: ColorRes.black.withOpacity(0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        // PDF icon badge
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: ColorRes.error.withOpacity(0.08),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(
+                            Icons.picture_as_pdf_rounded,
+                            color: ColorRes.error,
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        // File name + subtitle
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                displayName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: AppFontWeights.semiBold,
+                                  color: ColorRes.textColor,
+                                ),
+                              ),
+                              const SizedBox(height: 3),
+                              Text(
+                                'PDF · Tap to download',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                  color: ColorRes.textColor.withOpacity(0.7),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        // Download chip
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            color: ColorRes.primary.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.download_rounded,
+                                size: 18,
+                                color: ColorRes.primary,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _openDocumentUrl(String docUrl) async {
+    final uri = Uri.tryParse(docUrl);
+    if (uri == null) {
+      Get.snackbar('Invalid document', 'Unable to open this file.');
+      return;
+    }
+
+    final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!opened) {
+      Get.snackbar('Download failed', 'Unable to open document right now.');
+    }
+  }
+
+  Widget _buildSubRegistrarSection(Items? currentProperty) {
+    final subRegistrarOfficeName =
+        currentProperty?.propertyDetails?.subRegistrarOfficeName?.trim() ?? '';
+    final saleDeedDocumentNumber =
+        currentProperty?.propertyDetails?.saleDeedDocumentNumber?.trim() ?? '';
+    final yearOfRegistration =
+        currentProperty?.propertyDetails?.yearOfRegistration?.toString() ?? '';
+    if (subRegistrarOfficeName.isEmpty &&
+        saleDeedDocumentNumber.isEmpty &&
+        yearOfRegistration.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    final formattedSubRegistrarOfficeName =
+        subRegistrarOfficeName.capitalize?.replaceAll("_", " ") ??
+        subRegistrarOfficeName.replaceAll("_", " ");
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 8),
+          const TitleWithViewAll(title: 'Sub-Registrar Office'),
+          const SizedBox(height: 8),
+          Container(
+            width: double.infinity,
+            margin: EdgeInsets.symmetric(horizontal: 12),
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: ColorRes.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: ColorRes.leadGreyColor.shade200),
+            ),
+            child: Column(
+              children: [
+                _SubRegistrarRow(
+                  label: 'Office',
+                  value:
+                      formattedSubRegistrarOfficeName.isNotEmpty
+                          ? formattedSubRegistrarOfficeName
+                          : 'Not defined',
+                ),
+                SizedBox(height: 10),
+                _SubRegistrarRow(
+                  label: 'Sale Deed Number',
+                  value:
+                      saleDeedDocumentNumber.isNotEmpty
+                          ? saleDeedDocumentNumber
+                          : 'Not defined',
+                ),
+                SizedBox(height: 10),
+                _SubRegistrarRow(
+                  label: 'Year of Registration',
+                  value:
+                      yearOfRegistration.isNotEmpty
+                          ? yearOfRegistration
+                          : 'Not defined',
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildStatusSection(BuildContext context, bool isCompact) {
     final property = _property.value!;
@@ -769,6 +1403,7 @@ class _PropertyOverviewSellerScreenState
     final priceManager = PropertyPriceManager(
       listingType: listingType,
       financialInfo: financialInfo,
+      pgInfo: property.propertyDetails?.pgInfo,
     );
 
     return Padding(
@@ -915,6 +1550,161 @@ class _PropertyOverviewSellerScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if ((property.propertyDetails?.financialInfo?.is_for_sellorrent ??
+                false) &&
+            (property.listingType?.toLowerCase() == 'sell')) ...[
+          if (property.propertyDetails?.financialInfo?.propertyRentPerMonth !=
+              null) ...[
+            // Padding(
+            Divider(
+              indent: 18,
+              endIndent: 18,
+              color: ColorRes.leadGreyColor.shade300,
+            ),
+
+            const SizedBox(height: 12),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    'Also for Rent',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.body,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.textColor,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: ColorRes.primary.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: ColorRes.primary.withOpacity(0.3),
+                        width: 0.8,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Available Rent Price',
+                              style: const TextStyle(
+                                fontSize: AppFontSizes.caption,
+                                fontWeight: AppFontWeights.medium,
+                                color: ColorRes.textPrimary,
+                              ),
+                            ),
+                            Text(
+                              '${Formatter.formatPrice(property.propertyDetails?.financialInfo?.propertyRentPerMonth ?? 0)}/month',
+                              style: const TextStyle(
+                                fontSize: AppFontSizes.body,
+                                fontWeight: AppFontWeights.semiBold,
+                                color: ColorRes.textPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Divider(
+              indent: 18,
+              endIndent: 18,
+              color: ColorRes.leadGreyColor.shade300,
+            ),
+          ],
+        ],
+        if ((property.propertyDetails?.financialInfo?.is_for_sellorrent ??
+                false) &&
+            (property.listingType?.toLowerCase() == 'rent')) ...[
+          if (property.propertyDetails?.financialInfo?.price != null) ...[
+            const SizedBox(height: 12),
+            Divider(
+              indent: 18,
+              endIndent: 18,
+              color: ColorRes.leadGreyColor.shade300,
+            ),
+            const SizedBox(height: 12),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    'Also for Sell',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.body,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.textColor,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: ColorRes.primary.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: ColorRes.primary.withOpacity(0.3),
+                        width: 0.8,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Available Sell Price',
+                              style: const TextStyle(
+                                fontSize: AppFontSizes.caption,
+                                fontWeight: AppFontWeights.medium,
+                                color: ColorRes.textPrimary,
+                              ),
+                            ),
+                            Text(
+                              '${Formatter.formatPrice(property.propertyDetails?.financialInfo?.price ?? 0)}',
+                              style: const TextStyle(
+                                fontSize: AppFontSizes.body,
+                                fontWeight: AppFontWeights.semiBold,
+                                color: ColorRes.textPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 12),
+            Divider(
+              indent: 18,
+              endIndent: 18,
+              color: ColorRes.leadGreyColor.shade300,
+            ),
+          ],
+        ],
+
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           child: Text(
@@ -926,7 +1716,7 @@ class _PropertyOverviewSellerScreenState
             ),
           ),
         ),
-        SizedBox(height: 16),
+        // SizedBox(height: 16),
 
         // if (property.builderName != null)
         //   _buildDetailRow('Builder', property.builderName!),
@@ -1432,5 +2222,43 @@ class _PropertyOverviewSellerScreenState
     if (parkingInfo.open ?? false) parking.add('Open');
     if (parkingInfo.covered ?? false) parking.add('Covered');
     return parking.isEmpty ? 'None' : parking.join(' & ');
+  }
+}
+
+class _SubRegistrarRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _SubRegistrarRow({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontSize: AppFontSizes.caption,
+              color: ColorRes.textColor,
+              fontWeight: AppFontWeights.medium,
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            value,
+            textAlign: TextAlign.right,
+            style: const TextStyle(
+              fontSize: AppFontSizes.bodySmall,
+              color: ColorRes.textPrimary,
+              fontWeight: AppFontWeights.semiBold,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

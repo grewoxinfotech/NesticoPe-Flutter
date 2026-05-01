@@ -6220,7 +6220,7 @@ Widget buildMetricComparisonCard({
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Current Month',
+                    'This Month',
                     style: TextStyle(
                       fontSize: AppFontSizes.extraSmall,
                       color: ColorRes.textColor,
@@ -6267,7 +6267,7 @@ Widget buildMetricComparisonCard({
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Previous Month',
+                    'Last Month',
                     style: TextStyle(
                       fontSize: AppFontSizes.extraSmall,
                       color: ColorRes.textColor,

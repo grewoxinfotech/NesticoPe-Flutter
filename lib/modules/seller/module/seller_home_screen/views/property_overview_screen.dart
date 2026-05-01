@@ -222,6 +222,7 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
     final priceManager = PropertyPriceManager(
       listingType: property.listingType ?? "",
       financialInfo: property.propertyDetails?.financialInfo ?? FinancialInfo(),
+      pgInfo: property.propertyDetails?.pgInfo ?? PgInfo(),
     );
 
     // final bool isFeatured = property['featured'] ?? false;

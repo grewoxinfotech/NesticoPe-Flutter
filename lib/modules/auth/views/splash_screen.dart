@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
@@ -24,25 +25,10 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
+class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1800),
-    );
-    _animation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOutBack,
-    );
-
-    _controller.forward();
     _initialize();
   }
 
@@ -83,7 +69,7 @@ class _SplashScreenState extends State<SplashScreen>
   // }
 
   Future<void> _initialize() async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 3));
 
     await NotificationService.instance.init();
     Future.delayed(const Duration(milliseconds: 500), () {
@@ -266,12 +252,12 @@ class _SplashScreenState extends State<SplashScreen>
           //       radius: 1.0,
           //       colors: [
           //         Colors.white.withOpacity(0.05),
-          //         Colors.transparent,
+          //         Colors.transparent,  
           //       ],
           //     ),
           //   ),
           // ),
-////=======================OLD CODE =======================
+          ////=======================OLD CODE =======================
           // 🪄 Animated Logo
           // Center(
           //   child: ScaleTransition(
@@ -289,19 +275,22 @@ class _SplashScreenState extends State<SplashScreen>
           //     ),
           //   ),
           // ),
-////=======================NEW CODE =======================
-           Center(
-            child: FadeTransition(
-              opacity: _animation,
-              child: Container(
-                child: Image.asset(
-                  'assets/gif/Nestico_gif.gif',
-                  width: 230,
-                  height: 230,
+          ////=======================NEW CODE =======================
+          Center(
+            child: Image.asset(
+                  'assets/images/nesticoPe_logo3.png',
+                  width: 400,
+                  height: 400,
                   fit: BoxFit.contain,
-                ),  
-              ),
-            ),
+                )
+                .animate()
+                .fadeIn(duration: 1300.ms)
+                .scale(
+                  begin: const Offset(0.20, 0.20),
+                  end: const Offset(1.0, 1.0),
+                  duration: 1300.ms,
+                  curve: Curves.easeOutBack,
+                ),
           ),
         ],
       ),

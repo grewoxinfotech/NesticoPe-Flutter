@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../../../data/network/property/models/property_model.dart';
 import '../../constants/enum.dart';
 import '../../utils/formater/formater.dart';
@@ -84,6 +86,7 @@ class PropertyPriceManager {
     // For PG properties, show price range with room details
     if (isPG) {
       if (pgInfo?.pgRoomInfo != null && pgInfo!.pgRoomInfo!.isNotEmpty) {
+        debugPrint("pgInfo?.pgRoomInfo: ${pgInfo?.pgRoomInfo?.map((r) => r.rent).toList().toString()}");
         final rooms = pgInfo!.pgRoomInfo!;
         final rents =
             rooms.map((r) => r.rent ?? 0).where((r) => r > 0).toList();

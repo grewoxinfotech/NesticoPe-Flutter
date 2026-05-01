@@ -36,6 +36,28 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
   RxString leadIdFollowUp = ''.obs;
   Rxn<GlobalKey> formKey = Rxn<GlobalKey>();
 
+  String _formatTimeForDisplay(String? timeSlot) {
+    if (timeSlot == null || timeSlot.trim().isEmpty) return '';
+    final value = timeSlot.trim();
+    try {
+      final parsed = DateFormat('HH:mm').parseStrict(value);
+      return DateFormat('h:mm a').format(parsed);
+    } catch (_) {
+      return value;
+    }
+  }
+
+  String _formatTimeForApi(String? displayTime) {
+    if (displayTime == null || displayTime.trim().isEmpty) return '';
+    final value = displayTime.trim();
+    try {
+      final parsed = DateFormat('h:mm a').parseStrict(value);
+      return DateFormat('HH:mm').format(parsed);
+    } catch (_) {
+      return value;
+    }
+  }
+
   // final payload = {
   //   "property_id": "XBaFK4a5znQSIBw68ZztTRw",
   //   "buyer_id": "QdKzQ3VAeZCgjrD6Rfu73ZT",
@@ -78,7 +100,7 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
     } else {
       txtDate.text = '';
     }
-    txtTime.text = payload.timeSlot ?? '';
+    txtTime.text = _formatTimeForDisplay(payload.timeSlot);
     log("Populated payload data: ${payload.toMap()}");
   }
 
@@ -401,7 +423,7 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
       "action": "reject",
       "cancellationReason": txtReason.text,
       "visitDate": txtDate.text.isNotEmpty ? "${txtDate.text}" : "",
-      "timeSlot": txtTime.text,
+      "timeSlot": _formatTimeForApi(txtTime.text),
     };
   }
 
@@ -615,19 +637,8 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
                                     initialTime: TimeOfDay.now(),
                                   );
                                   if (picked != null) {
-                                    // Convert TimeOfDay to 24-hour formatted string (HH:mm)
-                                    final now = DateTime.now();
-                                    final formattedTime = DateFormat(
-                                      'HH:mm',
-                                    ).format(
-                                      DateTime(
-                                        now.year,
-                                        now.month,
-                                        now.day,
-                                        picked.hour,
-                                        picked.minute,
-                                      ),
-                                    );
+                                    final localContext = Get.context!;
+                                    final formattedTime = picked.format(localContext);
 
                                     txtTime.text = formattedTime;
                                     log("Picked time: $formattedTime");

@@ -50,7 +50,7 @@ class BuilderLeadOverView extends StatelessWidget {
     controller.initConfigs(project.configuration.length);
 
     return Scaffold(
-      backgroundColor: ColorRes.background,
+      // backgroundColor: ColorRes.background,
       appBar: AppBar(
         title: Text(
           "Lead Overview",
@@ -59,7 +59,7 @@ class BuilderLeadOverView extends StatelessWidget {
             fontWeight: AppFontWeights.semiBold,
           ),
         ),
-
+        backgroundColor: ColorRes.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: ColorRes.textPrimary),
       ),
@@ -97,14 +97,12 @@ class BuilderLeadOverView extends StatelessWidget {
             ],
 
             /// ================= Project Highlights =================
-            if (project.projectHighlights.isNotEmpty)
-              const SizedBox(height: 15),
-            _buildProjectHighlights(),
+            if (project.projectHighlights.isNotEmpty) _buildProjectHighlights(),
 
             /// ================= Interest & Documents =================
             _buildInterestSection(),
             const SizedBox(height: 8),
-            if (!isFromResellerProject) ...[
+            if (!isFromResellerProject) ...[  
               //  ListTile(
               //    tileColor: ColorRes.white,
               //    title: Text(
@@ -284,37 +282,37 @@ class BuilderLeadOverView extends StatelessWidget {
             //   ),
             SafeArea(
               child: _buildMenuItem(
-                  iconColor: ColorRes.purpleColor,
-                  title: "Follow Ups",
-                  icon: Icons.follow_the_signs,
-                   onTap: () {
-                    final selectedInquiry =
-                        leadPropertyInquiryController?.selectedInquiry.value;
-                    if (selectedInquiry != null) {
-                      // Set visit id
-                      print(
-                        'Setting visit ID for user ${selectedInquiry.userId} and property ${selectedInquiry.propertyId}',
-                      );
-                      leadPropertyNegotiablePriceController
-                          .setLeadNegotiablePriceId(
-                            selectedInquiry.propertyId ?? '',
-                            buyerID: selectedInquiry.userId ?? '',
-                          );
-                      print(
-                        'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
-                      );
-                    }
-                    Get.to(
-                      () => LeadFollowUpScreen(controller: leadVisitController),
+                iconColor: ColorRes.purpleColor,
+                title: "Follow Ups",
+                icon: Icons.follow_the_signs,
+                onTap: () {
+                  final selectedInquiry =
+                      leadPropertyInquiryController?.selectedInquiry.value;
+                  if (selectedInquiry != null) {
+                    // Set visit id
+                    print(
+                      'Setting visit ID for user ${selectedInquiry.userId} and property ${selectedInquiry.propertyId}',
                     );
-                  },
-                  iconBg: ColorRes.purpleColor.withOpacity(0.1),
-              
-                  subtitle: 'View follow ups',
-                ),
+                    leadPropertyNegotiablePriceController
+                        .setLeadNegotiablePriceId(
+                          selectedInquiry.propertyId ?? '',
+                          buyerID: selectedInquiry.userId ?? '',
+                        );
+                    print(
+                      'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
+                    );
+                  }
+                  Get.to(
+                    () => LeadFollowUpScreen(controller: leadVisitController),
+                  );
+                },
+                iconBg: ColorRes.purpleColor.withOpacity(0.1),
+
+                subtitle: 'View follow ups',
+              ),
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -513,7 +511,14 @@ class BuilderLeadOverView extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+        // border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: ColorRes.black.withOpacity(0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Column(
@@ -645,7 +650,14 @@ class BuilderLeadOverView extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+        // border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: ColorRes.black.withOpacity(0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -726,7 +738,14 @@ class BuilderLeadOverView extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+        // border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: ColorRes.black.withOpacity(0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         children: [
@@ -1032,10 +1051,17 @@ class BuilderLeadOverView extends StatelessWidget {
               decoration: BoxDecoration(
                 color: ColorRes.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: ColorRes.leadGreyColor.shade300,
-                  width: 1,
-                ),
+                // border: Border.all(
+                //   color: ColorRes.leadGreyColor.shade300,
+                //   width: 1,
+                // ),
+                boxShadow: [
+                  BoxShadow(
+                    color: ColorRes.black.withOpacity(0.08),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: Column(
                 children: [
@@ -1687,7 +1713,8 @@ class BuilderLeadOverView extends StatelessWidget {
 
   Widget _buildProjectHighlights() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
@@ -1759,10 +1786,15 @@ class BuilderLeadOverView extends StatelessWidget {
               decoration: BoxDecoration(
                 color: ColorRes.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: ColorRes.leadGreyColor.shade300,
-                  width: 1,
-                ),
+
+                // width: 1,
+                boxShadow: [
+                  BoxShadow(
+                    color: ColorRes.black.withOpacity(0.08),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1815,10 +1847,14 @@ class BuilderLeadOverView extends StatelessWidget {
               decoration: BoxDecoration(
                 color: ColorRes.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: ColorRes.leadGreyColor.shade300,
-                  width: 1,
-                ),
+
+                boxShadow: [
+                  BoxShadow(
+                    color: ColorRes.black.withOpacity(0.08),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

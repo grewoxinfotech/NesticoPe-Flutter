@@ -561,7 +561,9 @@ class FinancialInfo {
     final data = <String, dynamic>{};
 
     // --- Base financial fields ---
-    if (propertyPrice != null) data['property_price'] = propertyPrice;
+    if (propertyPrice != null && propertyPrice! > 0) {
+      data['property_price'] = propertyPrice;
+    }
     if (propertyRentPerMonth != null && propertyRentPerMonth! > 0)
       data['property_rent_per_month'] = propertyRentPerMonth;
     if (monthlyRent != null) data['monthlyRent'] = monthlyRent;

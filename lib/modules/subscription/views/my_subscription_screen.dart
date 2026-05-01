@@ -168,9 +168,9 @@ class _SubscriptionCard extends StatelessWidget {
                       onSubmit: (reason) {
                         ticketController.submitTicket(
                           payload: TicketCreateRequest(
-                            title: 'Cancel Subscription',
+                            title: 'Subscription Cancellation Request: ${planName}',
                             description:
-                                'Reason for cancellation: ${reason.trim()}',
+                                'Reason for cancellation: ${reason.trim()}\n\n Subscription Details: \n- Plan ID: ${planId} \n- Plan Name: ${planName} \n- Start Date: ${startDate} \n- End Date: ${endDate} \n- Price: ${price}',
                             category: 'subscription_cancellation',
                             ticketType: "cancellation",
                             relatedId: planId,

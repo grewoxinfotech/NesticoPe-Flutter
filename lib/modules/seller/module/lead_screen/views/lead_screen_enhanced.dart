@@ -1757,7 +1757,7 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorRes.white,
+      // backgroundColor: ColorRes.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading:
@@ -2019,7 +2019,14 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+        // border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: ColorRes.black.withOpacity(0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

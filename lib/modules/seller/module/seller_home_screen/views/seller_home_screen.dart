@@ -1295,13 +1295,15 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: ColorRes.leadGreyColor.withOpacity(0.3),
-          width: 1,
-        ),
+        boxShadow: [
+          BoxShadow(
+            color: ColorRes.black.withOpacity(0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: DropdownButtonHideUnderline(
-
         child: DropdownButton<int>(
           padding: EdgeInsets.zero,
           value: overviewController.selectedGraphYear.value,
@@ -1335,10 +1337,13 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: ColorRes.leadGreyColor.withOpacity(0.3),
-          width: 1,
-        ),
+        boxShadow: [
+          BoxShadow(
+            color: ColorRes.black.withOpacity(0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1423,10 +1428,13 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: ColorRes.leadGreyColor.withOpacity(0.3),
-          width: 1,
-        ),
+        boxShadow: [
+          BoxShadow(
+            color: ColorRes.black.withOpacity(0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1518,10 +1526,13 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: ColorRes.leadGreyColor.withOpacity(0.3),
-          width: 1,
-        ),
+        boxShadow: [
+          BoxShadow(
+            color: ColorRes.black.withOpacity(0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1592,10 +1603,13 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: ColorRes.leadGreyColor.withOpacity(0.3),
-          width: 1,
-        ),
+        boxShadow: [
+          BoxShadow(
+            color: ColorRes.black.withOpacity(0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -2542,10 +2556,13 @@ Widget buildSellerLeadGraph(SellerOverviewController overviewController) {
     decoration: BoxDecoration(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(12),
-      border: Border.all(
-        color: ColorRes.leadGreyColor.withOpacity(0.3),
-        width: 1,
-      ),
+      boxShadow: [
+        BoxShadow(
+          color: ColorRes.black.withOpacity(0.08),
+          blurRadius: 8,
+          offset: const Offset(0, 2),
+        ),
+      ],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2649,10 +2666,13 @@ Widget buildSellerCommissionGraph(
     decoration: BoxDecoration(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(
-        color: ColorRes.leadGreyColor.withOpacity(0.3),
-        width: 1,
-      ),
+      boxShadow: [
+        BoxShadow(
+          color: ColorRes.black.withOpacity(0.08),
+          blurRadius: 8,
+          offset: const Offset(0, 2),
+        ),
+      ],
     ),
     child: Column(
       children: [
@@ -2766,10 +2786,13 @@ Widget buildSellerPropertyCreatedGraph(
     decoration: BoxDecoration(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(
-        color: ColorRes.leadGreyColor.withOpacity(0.3),
-        width: 1,
-      ),
+      boxShadow: [
+        BoxShadow(
+          color: ColorRes.black.withOpacity(0.08),
+          blurRadius: 8,
+          offset: const Offset(0, 2),
+        ),
+      ],
     ),
     child: Column(
       children: [

@@ -58,7 +58,8 @@ class SupportTicketCard extends StatelessWidget {
                       ticket.title ?? '',
                       style: TextStyle(
                         fontSize: AppFontSizes.body,
-                        fontWeight: AppFontWeights.bold,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -67,9 +68,9 @@ class SupportTicketCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: AppFontSizes.bodySmall,
+                        fontSize: AppFontSizes.small,
                         fontWeight: AppFontWeights.medium,
-                        color: ColorRes.leadGreyColor.withOpacity(0.8),
+                        color: ColorRes.textColor,
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -90,8 +91,8 @@ class SupportTicketCard extends StatelessWidget {
                               '',
                           style: TextStyle(
                             fontSize: AppFontSizes.small,
-                            fontWeight: AppFontWeights.regular,
-                            color: ColorRes.leadGreyColor.withOpacity(0.8),
+                            fontWeight: AppFontWeights.medium,
+                            color: ColorRes.leadGreyColor.shade700,
                           ),
                         ),
                       ],

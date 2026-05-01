@@ -2,10 +2,13 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nesticope_app/app/constants/api_constants.dart';
+import 'package:nesticope_app/app/utils/helper_function/contact_helper.dart';
 import 'package:nesticope_app/app/widgets/image/custom_image.dart';
 import 'package:nesticope_app/data/network/builder/model/builder_model.dart';
 import 'package:nesticope_app/modules/reseller/view/listing/property_listing.dart';
 import 'package:nesticope_app/utils/shimmer/reseller/entity_screen/reseller_entity_list_screen_shimmer.dart';
+import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
@@ -279,22 +282,56 @@ class _ProjectListingScreenState extends State<ProjectListingScreen> {
             child: Container(color: ColorRes.leadGreyColor[200], height: 1),
           ),
           actions: [
+            // GestureDetector(
+            //   onTap: () async {
+            //     if (!Get.isRegistered<ProjectController>())
+            //       Get.put(ProjectController());
+            //     // final result = await Get.to(() => ResellerProjectFilter());
+            //     final result = await Get.to(
+            //       () => ResellerProjectFilterScreen(
+
+            //       /*  initialFilters: selectedFilters.value,
+            //         onApply: (filterData) {
+            //           filterData.removeWhere((key, value) => ( value == 'false'),);
+            //           Get.back(result: filterData);
+            //         },*/
+            //       ),
+            //       transition: Transition.downToUp,
+            //       // optional for sheet-like slide-up effect
+            //       duration: const Duration(milliseconds: 300),
+            //     );
+
+            //     if (result != null) {
+            //       final newFilter = convertFiltersToString(result);
+            //       final user = await SecureStorage.getUserData();
+            //       final userId = user?.user?.id;
+
+            //       if (userId != null && userId.isNotEmpty) {
+            //         newFilter["assignedTo"] = userId;
+
+            //         log("Applying filter → $newFilter");
+
+            //         selectedFilters
+            //           ..clear()
+            //           ..addAll(newFilter);
+
+            //         await projectController?.applyFilters(
+            //           Map<String, String>.from(selectedFilters),
+            //         );
+            //       }
+            //     }
+            //   },
+            //   child: const Icon(Icons.filter_list),
+            // ),
             GestureDetector(
               onTap: () async {
-                if (!Get.isRegistered<ProjectController>())
+                if (!Get.isRegistered<ProjectController>()) {
                   Get.put(ProjectController());
-                // final result = await Get.to(() => ResellerProjectFilter());
-                final result = await Get.to(
-                  () => ResellerProjectFilterScreen(
+                }
 
-                  /*  initialFilters: selectedFilters.value,
-                    onApply: (filterData) {
-                      filterData.removeWhere((key, value) => ( value == 'false'),);
-                      Get.back(result: filterData);
-                    },*/
-                  ),
+                final result = await Get.to(
+                  () => ResellerProjectFilterScreen(),
                   transition: Transition.downToUp,
-                  // optional for sheet-like slide-up effect
                   duration: const Duration(milliseconds: 300),
                 );
 
@@ -318,7 +355,17 @@ class _ProjectListingScreenState extends State<ProjectListingScreen> {
                   }
                 }
               },
-              child: const Icon(Icons.filter_list),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Icon(Icons.filter_list, size: 20),
+                  SizedBox(width: 6),
+                  Text(
+                    "Filter",
+                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(width: 8),
           ],
@@ -376,13 +423,15 @@ class _ProjectListingScreenState extends State<ProjectListingScreen> {
                   },
                   child: RefreshIndicator(
                     onRefresh: projectController!.refreshResellerProjects,
-                    child:(!projectController!.isLoading.value &&
-                    projectController!.items.isEmpty)? 
-                    const Center(child: Text("No Listing Yet.")):ProjectsGrid(
-                      isSelectionMode: isSelectionMode,
-                      selectedProjectIds: selectedProjectIds,
-                      resellerProjectController: projectController!,
-                    ),
+                    child:
+                        (!projectController!.isLoading.value &&
+                                projectController!.items.isEmpty)
+                            ? const Center(child: Text("No Listing Yet."))
+                            : ProjectsGrid(
+                              isSelectionMode: isSelectionMode,
+                              selectedProjectIds: selectedProjectIds,
+                              resellerProjectController: projectController!,
+                            ),
                   ),
                 );
               }),
@@ -496,6 +545,7 @@ class ProjectCard extends StatelessWidget {
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(14),
       elevation: isSelected ? 3 : 1,
+      
       shadowColor:
           isSelected
               ? ColorRes.primary.withOpacity(0.3)
@@ -513,10 +563,7 @@ class ProjectCard extends StatelessWidget {
             color: ColorRes.white,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color:
-                  isSelected
-                      ? ColorRes.primary
-                      : Colors.transparent,
+              color: isSelected ? ColorRes.primary : Colors.transparent,
               width: isSelected ? 2 : 1,
             ),
             boxShadow: [
@@ -598,9 +645,33 @@ class ProjectCard extends StatelessWidget {
                           const SizedBox(width: 8),
                           GestureDetector(
                             onTap: () async {
-                              await controller.getPropertyLinkByIdInReseller(
-                                project.id ?? '',
-                              );
+                              // await controller.getPropertyLinkByIdInReseller(
+                              //   project.id ?? '',
+                              // );
+                              // await controller.getPropertyLinkById(
+                              //   project.id ?? '',
+                              // );
+                              // final propertyId =
+                              //     controller
+                              //         .shareProperty
+                              //         .value
+                              //         ?.data
+                              //         ?.propertyId;
+
+                              if (project.id != null &&
+                                  project.id!.isNotEmpty) {
+                                ContactHelper.shareContent(
+                                  link:
+                                      '${ApiConstants.frontendBaseUrl}/project/${project.id}',
+                                );
+                              } else {
+                                NesticoPeSnackBar.showAwesomeSnackbar(
+                                  title: "Error",
+                                  message:
+                                      "Unable to generate share link right now.",
+                                  contentType: ContentType.failure,
+                                );
+                              }
                             },
                             child: const Icon(Icons.share, size: 16),
                           ),
