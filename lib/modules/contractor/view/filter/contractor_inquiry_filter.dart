@@ -305,52 +305,52 @@ class _ContractorInquiryFilterState extends State<ContractorInquiryFilter> {
                         );
                       }),
 
-                      const SizedBox(height: 20),
-                      buildSectionTitle('Conversion Status'),
-                      const SizedBox(height: 8),
-                      Obx(() {
-                        // return Wrap(spacing: 6,
-                        //   runSpacing: 8,
-                        //   children: ['Converted', 'Not Converted']
-                        //       .map((option) => buildChoice(
-                        //     width: 140,
-                        //     title: option,
-                        //     selected: controller
-                        //         .conversionStatus.value ==
-                        //         option,
-                        //     onTap: () {
-                        //       controller.setValue(
-                        //           controller.conversionStatus, option);
-                        //     },
-                        //   ))
-                        //       .toList(),
-                        // );
-                        return NesticoPeDropdownField<String>(
-                          isRequired: true,
-                          value: controller.conversionStatus.value,
-                          hintText: "Select availability",
-                          prefixIcon: Icons.schedule,
-                          items:
-                              ['Converted', 'Not Converted']
-                                  .map(
-                                    (e) => DropdownMenuItem(
-                                      value: e,
-                                      child: Text(e),
-                                    ),
-                                  )
-                                  .toList(),
-                          onChanged: (val) {
-                            controller.setValue(
-                              controller.conversionStatus,
-                              val,
-                            );
-                            log(
-                              "Contractor_stvjbhfjatus ${controller.conversionStatus.value}",
-                            );
-                          },
-                          darkText: true,
-                        );
-                      }),
+                      // const SizedBox(height: 20),
+                      // buildSectionTitle('Conversion Status'),
+                      // const SizedBox(height: 8),
+                      // Obx(() {
+                      //   // return Wrap(spacing: 6,
+                      //   //   runSpacing: 8,
+                      //   //   children: ['Converted', 'Not Converted']
+                      //   //       .map((option) => buildChoice(
+                      //   //     width: 140,
+                      //   //     title: option,
+                      //   //     selected: controller
+                      //   //         .conversionStatus.value ==
+                      //   //         option,
+                      //   //     onTap: () {
+                      //   //       controller.setValue(
+                      //   //           controller.conversionStatus, option);
+                      //   //     },
+                      //   //   ))
+                      //   //       .toList(),
+                      //   // );
+                      //   return NesticoPeDropdownField<String>(
+                      //     isRequired: true,
+                      //     value: controller.conversionStatus.value,
+                      //     hintText: "Select availability",
+                      //     prefixIcon: Icons.schedule,
+                      //     items:
+                      //         ['Converted', 'Not Converted']
+                      //             .map(
+                      //               (e) => DropdownMenuItem(
+                      //                 value: e,
+                      //                 child: Text(e),
+                      //               ),
+                      //             )
+                      //             .toList(),
+                      //     onChanged: (val) {
+                      //       controller.setValue(
+                      //         controller.conversionStatus,
+                      //         val,
+                      //       );
+                      //       log(
+                      //         "Contractor_stvjbhfjatus ${controller.conversionStatus.value}",
+                      //       );
+                      //     },
+                      //     darkText: true,
+                      //   );
+                      // }),
                     ],
                   ),
                 ),

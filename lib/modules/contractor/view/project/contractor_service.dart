@@ -304,7 +304,6 @@ import '../../../../app/constants/color_res.dart';
 import '../../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../../data/network/contractor/model/contractot_service_model/contractor_service_model.dart';
 import '../../../../utils/shimmer/contractor/service/contractor_my_service_list_screen_shimmer.dart';
-import '../../../verification/aadhar_auth/screens/aadhar_auth_screen.dart';
 import '../../controller/contractor_dashboard_controller.dart';
 import '../../controller/contractor_my_service_controller.dart';
 import '../widget/cotractor_active_switch.dart';
@@ -318,9 +317,12 @@ class ContractorService extends StatefulWidget {
 }
 
 class _ContractorServiceState extends State<ContractorService> {
+  final contractorDashboardController = Get.find<ContractorDashboardController>();
+  final controller = Get.find<ContractorMyServiceController>();
+
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<ContractorMyServiceController>();
+   
 
     return Scaffold(
       backgroundColor: ColorRes.background,
@@ -342,21 +344,41 @@ class _ContractorServiceState extends State<ContractorService> {
           ),
         ),
         actions: [
-          IconButton(
-            icon: Icon(
-              Icons.add_circle_outline_rounded,
-              color: ColorRes.primary,
-              size: 28,
-            ),
-            onPressed: () {
-              if (!UserHelper.isAadharVerified) {
-                Get.to(() => AadharAuthScreen());
-              } else {
-                controller.clearForm();
-                Get.to(() => AddServiceScreen());
-              }
-            },
-          ),
+          Obx(() {
+            final bool activePlan = contractorDashboardController.hasActivePlan;
+            final bool limitReached =
+                contractorDashboardController.hasReachedServiceLimit;
+            final bool showDisabledStyle = !activePlan || limitReached;
+
+            return IconButton(
+              icon: Icon(
+                Icons.add_circle_outline_rounded,
+                color: showDisabledStyle ? Colors.grey.shade400 : ColorRes.primary,
+                size: 28,
+              ),
+              onPressed: () async {
+                // If the user can't add service, show the correct upgrade dialog
+                // and keep the button styled as disabled.
+                if (UserHelper.isContractor) {
+                  if (showDisabledStyle) {
+                    await contractorDashboardController.showUpgradePlanDialog(
+                      title: activePlan ? 'Limit Reached' : 'Active plan required',
+                      message:
+                          activePlan
+                              ? 'Limit Reached, please upgrade your plan.'
+                              : 'You do not have an active subscription. Please activate a plan to continue.',
+                    );
+                    return;
+                  }
+                }
+
+                await contractorDashboardController.guardAddServiceAction(() {
+                  controller.clearForm();
+                  Get.to(() => AddServiceScreen());
+                });
+              },
+            );
+          }),
         ],
       ),
       // body: Obx(() {
@@ -618,484 +640,513 @@ class _ServiceCardState extends State<ServiceCard> {
 
     return GestureDetector(
       onTap: () => setState(() => expanded = !expanded),
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: ColorRes.leadGreyColor.shade300, width: 1),
-        ),
-        margin: const EdgeInsets.only(bottom: 16),
-        elevation: 2,
-        color: ColorRes.surface,
-        shadowColor: ColorRes.shadow,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// Header Row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      widget.item.serviceName.capitalize?.replaceAll(
-                            "_",
-                            " ",
-                          ) ??
-                          '',
-
-                      style: TextStyle(
-                        fontSize: AppFontSizes.medium,
-                        fontWeight: AppFontWeights.semiBold,
-                        color: ColorRes.textPrimary,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 5,
-                    ),
-                    margin: const EdgeInsets.only(right: 8),
-                    decoration: BoxDecoration(
-                      color:
-                          widget.item.isActive
-                              ? ColorRes.primary.withOpacity(0.1)
-                              : ColorRes.disabled.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color:
-                            widget.item.isActive
-                                ? ColorRes.primary.withOpacity(0.3)
-                                : ColorRes.border,
-                        width: 1,
-                      ),
-                    ),
-                    child: Text(
-                      widget.item.isActive ? "Active" : "Inactive",
-                      style: TextStyle(
-                        fontSize: AppFontSizes.mini,
-                        color:
-                            widget.item.isActive
-                                ? ColorRes.primary
-                                : ColorRes.textSecondary,
-                        fontWeight: AppFontWeights.semiBold,
-                      ),
-                    ),
-                  ),
-                  _buildStatusBadge(widget.item.isActive, (value) {}),
-                ],
-              ),
-
-              const SizedBox(height: 8),
-
-              if (widget.item.serviceImage != null &&
-                  widget.item.serviceImage!.isNotEmpty)
-                Column(
-                  children: [
-                    SizedBox(
-                      height: 150,
-                      child: PageView.builder(
-                        controller: _pageController,
-                        itemCount: widget.item.serviceImage!.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: ColorRes.border,
-                                  width: 1,
-                                ),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: CachedNetworkImage(
-                                  imageUrl: widget.item.serviceImage![index],
-                                  height: 180,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                  placeholder:
-                                      (context, url) => Container(
-                                        height: 180,
-                                        width: double.infinity,
-                                        color: ColorRes.leadGreyColor.shade200,
-                                        child: const Center(
-                                          child: CircularProgressIndicator(),
-                                        ),
-                                      ),
-                                  errorWidget:
-                                      (context, url, error) => Container(
-                                        height: 180,
-                                        width: double.infinity,
-                                        color: ColorRes.leadGreyColor.shade200,
-                                        child: const Icon(
-                                          Icons.error,
-                                          color: Colors.red,
-                                        ),
-                                      ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    if (widget.item.serviceImage!.length > 1) ...[
-                      const SizedBox(height: 8),
-                      Center(
-                        child: SmoothPageIndicator(
-                          controller: _pageController,
-                          count: widget.item.serviceImage!.length,
-                          effect: ScrollingDotsEffect(
-                            dotHeight: 8,
-                            dotWidth: 8,
-                            activeDotColor: ColorRes.primary,
-                            dotColor: ColorRes.disabled,
-                          ),
-                        ),
-                      ),
-                    ],
-                    const SizedBox(height: 12),
-                  ],
-                ),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "${_getPriceModel(meta.priceModel ?? '')} • ${Formatter.formatPrice(meta.minPriceRange ?? 0)}- ${Formatter.formatPrice(meta.maxPriceRange ?? 0)}",
-                    style: TextStyle(
-                      fontSize: AppFontSizes.small,
-                      color: ColorRes.textSecondary,
-                      fontWeight: AppFontWeights.medium,
-                    ),
-                  ),
-
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: ColorRes.homeAmber.withOpacity(
-                        0.08,
-                      ), // soft amber background
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: ColorRes.homeAmber.withOpacity(0.3),
-                        width: 1,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.star, size: 14, color: ColorRes.homeAmber),
-                        const SizedBox(width: 4),
-                        Text(
-                          "${widget.item.averageRating} ",
-                          style: TextStyle(
-                            fontSize: AppFontSizes.small,
-                            color: ColorRes.textPrimary,
-                            fontWeight: AppFontWeights.medium,
-                          ),
-                        ),
-                        Text(
-                          "(${widget.item.totalReviews})",
-                          style: TextStyle(
-                            fontSize: AppFontSizes.mini,
-                            color: ColorRes.textSecondary.withOpacity(0.9),
-                            fontWeight: AppFontWeights.regular,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Obx(() {
-                final name =
-                    widget.controller.categoryNames[widget.item.category] ??
-                    "Loading...";
-                return Text(
-                  name,
-                  style: TextStyle(
-                    fontSize: AppFontSizes.bodySmall,
-                    color: ColorRes.primary,
-                    fontWeight: AppFontWeights.medium,
-                  ),
-                );
-              }),
-
-              /// Expanded Section
-              if (expanded) ...[
-                const SizedBox(height: 8),
-                Divider(color: ColorRes.leadGreyColor.withOpacity(0.3)),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    _buildTag(
-                      meta.workAvailability?.capitalizeFirst
-                              ?.split("_")
-                              .join(" ") ??
-                          "Immediate",
-                      ColorRes.success.withOpacity(0.1),
-                      ColorRes.success,
-                    ),
-                    Spacer(),
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                            Icons.edit,
-                            color: ColorRes.primary,
-                            size: 22,
-                          ),
-                          onPressed: () {
-                            widget.controller.clearForm();
-                            Get.to(
-                              () =>
-                                  AddServiceScreen(serviceToEdit: widget.item),
-                            );
-                          },
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.delete_outline,
-                            color: ColorRes.error,
-                            size: 22,
-                          ),
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  backgroundColor: ColorRes.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  title: Text(
-                                    "Delete Service",
-                                    style: TextStyle(
-                                      fontSize: AppFontSizes.large,
-                                      fontWeight: AppFontWeights.semiBold,
-                                      color: ColorRes.textColor,
-                                    ),
-                                  ),
-                                  content: const Text(
-                                    "Are you sure you want to delete this service?",
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context); // close dialog
-                                      },
-                                      child: const Text("No"),
-                                    ),
-                                    ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: ColorRes.error,
-                                      ),
-                                      onPressed: () {
-                                        Get.back();
-                                        // close dialog first
-                                        widget.controller.deleteService(
-                                          widget.item.id ?? '',
-                                        );
-                                      },
-                                      child: const Text("Yes"),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-
-                /// Range + Advance
+      child: Padding(
+  padding: const EdgeInsets.only(bottom: 12),
+        child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+         boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+            ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                /// Header Row
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _infoTile(
-                      "Min Price",
-                      Formatter.formatPrice(meta.minPriceRange ?? 0),
-                    ),
-                    _infoTile(
-                      "Max Price",
-                      Formatter.formatPrice(meta.maxPriceRange ?? 0),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _infoTile(
-                      "Billing",
-                      meta.billingType?.toUpperCase().split("_").join(" ") ??
-                          '',
-                    ),
-                    _infoTile("Advance", "${meta.advanceRequiredPercentage}%"),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  "Brands",
-                  style: TextStyle(
-                    fontSize: AppFontSizes.medium,
-                    fontWeight: AppFontWeights.semiBold,
-                    color: ColorRes.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: ColorRes.background,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: ColorRes.border, width: 1),
-                  ),
-                  child: Text(
-                    (meta.brandsUsed?.isEmpty ?? false)
-                        ? "No description provided"
-                        : meta.brandsUsed ?? 'No description provided',
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: AppFontSizes.caption,
-                      color: ColorRes.textPrimary,
-                      fontWeight: AppFontWeights.regular,
-                      height: 1.5,
-                    ),
-                  ),
-                ),
-
-                if (meta.works != null && meta.works!.isNotEmpty)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Text(
-                            "Works Included",
-                            style: TextStyle(
-                              fontSize: AppFontSizes.medium,
-                              fontWeight: AppFontWeights.semiBold,
-                              color: ColorRes.textPrimary,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: ColorRes.background,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: ColorRes.border, width: 1),
-                        ),
-                        child: Text(
-                          meta.works!
-                              .map(
-                                (work) =>
-                                    work.replaceAll('_', ' ').capitalizeFirst ??
-                                    work,
-                              )
-                              .join(', '),
-                          style: TextStyle(
-                            fontSize: AppFontSizes.caption,
-                            color: ColorRes.textPrimary,
-                            fontWeight: AppFontWeights.regular,
-                            height: 1.5,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                const SizedBox(height: 16),
-
-                if (hasAnyMetaData) ...[
-                  ...metaSections
-                      .take(showAllMeta ? metaSections.length : 2)
-                      .toList(),
-
-                  if (metaSections.length > 2)
-                    Center(
-                      child: TextButton.icon(
-                        onPressed: () {
-                          setState(() => showAllMeta = !showAllMeta);
-                        },
-                        icon: Icon(
-                          showAllMeta ? Icons.expand_less : Icons.expand_more,
-                        ),
-                        label: Text(
-                          showAllMeta
-                              ? "Show less details"
-                              : "Show more details",
-                        ),
-                      ),
-                    ),
-                ],
-
-                if ([
-                  meta.threeDDesign,
-                  meta.modularKitchen,
-                  meta.boreAndPump,
-                  meta.securitySystems,
-                  meta.homeAutomation,
-                  meta.solarSolutions,
-                ].any((e) => e != null)) ...[
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.add_box_outlined,
-                        color: ColorRes.primary,
-                        size: 18,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        "Additional Services",
+                    Expanded(
+                      child: Text(
+                        widget.item.serviceName.capitalize?.replaceAll(
+                              "_",
+                              " ",
+                            ) ??
+                            '',
+        
                         style: TextStyle(
                           fontSize: AppFontSizes.medium,
                           fontWeight: AppFontWeights.semiBold,
                           color: ColorRes.textPrimary,
                         ),
                       ),
+                    ),
+                    SizedBox(width: 10),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      margin: const EdgeInsets.only(right: 8),
+                      decoration: BoxDecoration(
+                        color:
+                            widget.item.isActive
+                                ? ColorRes.primary.withOpacity(0.1)
+                                : ColorRes.disabled.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color:
+                              widget.item.isActive
+                                  ? ColorRes.primary.withOpacity(0.3)
+                                  : ColorRes.border,
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        widget.item.isActive ? "Active" : "Inactive",
+                        style: TextStyle(
+                          fontSize: AppFontSizes.mini,
+                          color:
+                              widget.item.isActive
+                                  ? ColorRes.primary
+                                  : ColorRes.textSecondary,
+                          fontWeight: AppFontWeights.semiBold,
+                        ),
+                      ),
+                    ),
+                    _buildStatusBadge(widget.item.isActive, (value) {}),
+                  ],
+                ),
+        
+                const SizedBox(height: 8),
+        
+                if (widget.item.serviceImage != null &&
+                    widget.item.serviceImage!.isNotEmpty)
+                  Column(
+                    children: [
+                      SizedBox(
+                        height: 150,
+                        child: PageView.builder(
+                          controller: _pageController,
+                          itemCount: widget.item.serviceImage!.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: ColorRes.border,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: CachedNetworkImage(
+                                    imageUrl: widget.item.serviceImage![index],
+                                    height: 180,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                    placeholder:
+                                        (context, url) => Container(
+                                          height: 180,
+                                          width: double.infinity,
+                                          color: ColorRes.leadGreyColor.shade200,
+                                          child: const Center(
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        ),
+                                    errorWidget:
+                                        (context, url, error) => Container(
+                                          height: 180,
+                                          width: double.infinity,
+                                          color: ColorRes.leadGreyColor.shade200,
+                                          child: const Icon(
+                                            Icons.error,
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      if (widget.item.serviceImage!.length > 1) ...[
+                        const SizedBox(height: 8),
+                        Center(
+                          child: SmoothPageIndicator(
+                            controller: _pageController,
+                            count: widget.item.serviceImage!.length,
+                            effect: ScrollingDotsEffect(
+                              dotHeight: 8,
+                              dotWidth: 8,
+                              activeDotColor: ColorRes.primary,
+                              dotColor: ColorRes.disabled,
+                            ),
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 12),
+                    ],
+                  ),
+        
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "${_getPriceModel(meta.priceModel ?? '')} • ${Formatter.formatPrice(meta.minPriceRange ?? 0)}- ${Formatter.formatPrice(meta.maxPriceRange ?? 0)}",
+                      style: TextStyle(
+                        fontSize: AppFontSizes.small,
+                        color: ColorRes.textSecondary,
+                        fontWeight: AppFontWeights.medium,
+                      ),
+                    ),
+        
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: ColorRes.homeAmber.withOpacity(
+                          0.08,
+                        ), // soft amber background
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: ColorRes.homeAmber.withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.star, size: 14, color: ColorRes.homeAmber),
+                          const SizedBox(width: 4),
+                          Text(
+                            "${widget.item.averageRating} ",
+                            style: TextStyle(
+                              fontSize: AppFontSizes.small,
+                              color: ColorRes.textPrimary,
+                              fontWeight: AppFontWeights.medium,
+                            ),
+                          ),
+                          Text(
+                            "(${widget.item.totalReviews})",
+                            style: TextStyle(
+                              fontSize: AppFontSizes.mini,
+                              color: ColorRes.textSecondary.withOpacity(0.9),
+                              fontWeight: AppFontWeights.regular,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Obx(() {
+                  final name =
+                      widget.controller.categoryNames[widget.item.category] ??
+                      "Loading...";
+                  return Text(
+                    name,
+                    style: TextStyle(
+                      fontSize: AppFontSizes.bodySmall,
+                      color: ColorRes.primary,
+                      fontWeight: AppFontWeights.medium,
+                    ),
+                  );
+                }),
+        
+                /// Expanded Section
+                if (expanded) ...[
+                  const SizedBox(height: 8),
+                  Divider(color: ColorRes.leadGreyColor.withOpacity(0.3)),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      _buildTag(
+                        meta.workAvailability?.capitalizeFirst
+                                ?.split("_")
+                                .join(" ") ??
+                            "Immediate",
+                        ColorRes.success.withOpacity(0.1),
+                        ColorRes.success,
+                      ),
+                      Spacer(),
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              Icons.edit,
+                              color: ColorRes.primary,
+                              size: 22,
+                            ),
+                            onPressed: () {
+                              widget.controller.clearForm();
+                              Get.to(
+                                () =>
+                                    AddServiceScreen(serviceToEdit: widget.item),
+                              );
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.delete_outline,
+                              color: ColorRes.error,
+                              size: 22,
+                            ),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    backgroundColor: ColorRes.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    title: Text(
+                                      "Delete Service",
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.large,
+                                        fontWeight: AppFontWeights.semiBold,
+                                        color: ColorRes.textColor,
+                                      ),
+                                    ),
+                                    content: const Text(
+                                      "Are you sure you want to delete this service?",
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context); // close dialog
+                                        },
+                                        child: const Text("No"),
+                                      ),
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: ColorRes.error,
+                                        ),
+                                        onPressed: () {
+                                          Get.back();
+                                          // close dialog first
+                                          widget.controller.deleteService(
+                                            widget.item.id ?? '',
+                                          );
+                                        },
+                                        child: const Text("Yes"),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+        
+                  /// Range + Advance
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _infoTile(
+                        "Min Price",
+                        Formatter.formatPrice(meta.minPriceRange ?? 0),
+                      ),
+                      _infoTile(
+                        "Max Price",
+                        Formatter.formatPrice(meta.maxPriceRange ?? 0),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _yesNoChip("3D Design", meta.threeDDesign),
-                      _yesNoChip("Modular Kitchen", meta.modularKitchen),
-                      _yesNoChip("Bore & Pump", meta.boreAndPump),
-                      _yesNoChip("Security", meta.securitySystems),
-                      _yesNoChip("Home Auto.", meta.homeAutomation),
-                      _yesNoChip("Solar", meta.solarSolutions),
+                      _infoTile(
+                        "Billing",
+                        meta.billingType?.toUpperCase().split("_").join(" ") ??
+                            '',
+                      ),
+                      _infoTile("Advance", "${meta.advanceRequiredPercentage}%"),
                     ],
                   ),
-                ],
-
-                if ((meta.provideMaterials ?? false) ||
-                    (meta.equipmentProvided ?? false) ||
-                    (meta.insuranceAvailable ?? false)) ...[
                   const SizedBox(height: 16),
                   Text(
-                    "Service Includes",
+                    "Brands",
+                    style: TextStyle(
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: ColorRes.background,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: ColorRes.border, width: 1),
+                    ),
+                    child: Text(
+                      (meta.brandsUsed?.isEmpty ?? false)
+                          ? "No description provided"
+                          : meta.brandsUsed ?? 'No description provided',
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: AppFontSizes.caption,
+                        color: ColorRes.textPrimary,
+                        fontWeight: AppFontWeights.regular,
+                        height: 1.5,
+                      ),
+                    ),
+                  ),
+        
+                  if (meta.works != null && meta.works!.isNotEmpty)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Text(
+                              "Works Included",
+                              style: TextStyle(
+                                fontSize: AppFontSizes.medium,
+                                fontWeight: AppFontWeights.semiBold,
+                                color: ColorRes.textPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: ColorRes.background,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: ColorRes.border, width: 1),
+                          ),
+                          child: Text(
+                            meta.works!
+                                .map(
+                                  (work) =>
+                                      work.replaceAll('_', ' ').capitalizeFirst ??
+                                      work,
+                                )
+                                .join(', '),
+                            style: TextStyle(
+                              fontSize: AppFontSizes.caption,
+                              color: ColorRes.textPrimary,
+                              fontWeight: AppFontWeights.regular,
+                              height: 1.5,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  const SizedBox(height: 16),
+        
+                  if (hasAnyMetaData) ...[
+                    ...metaSections
+                        .take(showAllMeta ? metaSections.length : 2)
+                        .toList(),
+        
+                    if (metaSections.length > 2)
+                      Center(
+                        child: TextButton.icon(
+                          onPressed: () {
+                            setState(() => showAllMeta = !showAllMeta);
+                          },
+                          icon: Icon(
+                            showAllMeta ? Icons.expand_less : Icons.expand_more,
+                          ),
+                          label: Text(
+                            showAllMeta
+                                ? "Show less details"
+                                : "Show more details",
+                          ),
+                        ),
+                      ),
+                  ],
+        
+                  if ([
+                    meta.threeDDesign,
+                    meta.modularKitchen,
+                    meta.boreAndPump,
+                    meta.securitySystems,
+                    meta.homeAutomation,
+                    meta.solarSolutions,
+                  ].any((e) => e != null)) ...[
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.add_box_outlined,
+                          color: ColorRes.primary,
+                          size: 18,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          "Additional Services",
+                          style: TextStyle(
+                            fontSize: AppFontSizes.medium,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.textPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        _yesNoChip("3D Design", meta.threeDDesign),
+                        _yesNoChip("Modular Kitchen", meta.modularKitchen),
+                        _yesNoChip("Bore & Pump", meta.boreAndPump),
+                        _yesNoChip("Security", meta.securitySystems),
+                        _yesNoChip("Home Auto.", meta.homeAutomation),
+                        _yesNoChip("Solar", meta.solarSolutions),
+                      ],
+                    ),
+                  ],
+        
+                  if ((meta.provideMaterials ?? false) ||
+                      (meta.equipmentProvided ?? false) ||
+                      (meta.insuranceAvailable ?? false)) ...[
+                    const SizedBox(height: 16),
+                    Text(
+                      "Service Includes",
+                      style: TextStyle(
+                        fontSize: AppFontSizes.medium,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        if (meta.provideMaterials ?? false)
+                          _chip("Materials", ColorRes.success),
+                        if (meta.equipmentProvided ?? false)
+                          _chip("Equipment", ColorRes.success),
+                        if (meta.insuranceAvailable ?? false)
+                          _chip("Insurance", ColorRes.success),
+                      ],
+                    ),
+                  ],
+        
+                  const SizedBox(height: 16),
+                  Text(
+                    "Payment Methods",
                     style: TextStyle(
                       fontSize: AppFontSizes.medium,
                       fontWeight: AppFontWeights.semiBold,
@@ -1106,78 +1157,55 @@ class _ServiceCardState extends State<ServiceCard> {
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: [
-                      if (meta.provideMaterials ?? false)
-                        _chip("Materials", ColorRes.success),
-                      if (meta.equipmentProvided ?? false)
-                        _chip("Equipment", ColorRes.success),
-                      if (meta.insuranceAvailable ?? false)
-                        _chip("Insurance", ColorRes.success),
-                    ],
+                    children:
+                        acceptedPayments
+                            ?.map(
+                              (e) => _chip(
+                                e.toUpperCase().split("_").join(" "),
+                                ColorRes.primary,
+                              ),
+                            )
+                            .toList() ??
+                        [],
                   ),
-                ],
-
-                const SizedBox(height: 16),
-                Text(
-                  "Payment Methods",
-                  style: TextStyle(
-                    fontSize: AppFontSizes.medium,
-                    fontWeight: AppFontWeights.semiBold,
-                    color: ColorRes.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children:
-                      acceptedPayments
-                          ?.map(
-                            (e) => _chip(
-                              e.toUpperCase().split("_").join(" "),
-                              ColorRes.primary,
-                            ),
-                          )
-                          .toList() ??
-                      [],
-                ),
-
-                const SizedBox(height: 16),
-                Text(
-                  "Description",
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: AppFontSizes.medium,
-                    fontWeight: AppFontWeights.semiBold,
-                    color: ColorRes.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: ColorRes.background,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: ColorRes.border, width: 1),
-                  ),
-                  child: Text(
-                    widget.item.description.isEmpty
-                        ? "No description provided"
-                        : widget.item.description,
-                    maxLines: 3,
+        
+                  const SizedBox(height: 16),
+                  Text(
+                    "Description",
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: AppFontSizes.caption,
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
                       color: ColorRes.textPrimary,
-                      fontWeight: AppFontWeights.regular,
-                      height: 1.5,
                     ),
                   ),
-                ),
+                  const SizedBox(height: 8),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: ColorRes.background,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: ColorRes.border, width: 1),
+                    ),
+                    child: Text(
+                      widget.item.description.isEmpty
+                          ? "No description provided"
+                          : widget.item.description,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: AppFontSizes.caption,
+                        color: ColorRes.textPrimary,
+                        fontWeight: AppFontWeights.regular,
+                        height: 1.5,
+                      ),
+                    ),
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),

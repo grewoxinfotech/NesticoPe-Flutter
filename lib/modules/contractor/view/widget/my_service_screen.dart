@@ -117,10 +117,13 @@ class MyServiceScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorRes.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: ColorRes.leadGreyColor.shade300,
-          width: 1,
-        ),
+      boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ], 
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -175,7 +178,7 @@ class MyServiceScreen extends StatelessWidget {
               color: ColorRes.textSecondary,
               height: 1.6,
               
-              fontWeight: AppFontWeights.regular,
+              fontWeight: AppFontWeights.medium,
             ),
           ),
 

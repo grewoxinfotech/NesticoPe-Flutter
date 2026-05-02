@@ -541,6 +541,56 @@ class SubscriptionPlanService {
     }
   }
 
+  /// POST — activate a pending subscription immediately (`/subscription/activate/:id`).
+  Future<bool> activateSubscription(String subscriptionId) async {
+    try {
+      final url = ApiConstants.subscriptionActivate(subscriptionId);
+      debugPrint('Activate subscription POST: $url');
+
+      final response = await http.post(
+        Uri.parse(url),
+        headers: await headers(),
+      );
+
+      final dynamic data = jsonDecode(response.body);
+
+      final ok =
+          response.statusCode == 200 &&
+          data is Map &&
+          data['success'] == true;
+
+      if (ok) {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message:
+              data['message']?.toString() ??
+              'Subscription activated successfully',
+          contentType: ContentType.success,
+        );
+        return true;
+      }
+
+      final message =
+          data is Map
+              ? data['message']?.toString()
+              : 'Activation failed';
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: message ?? 'Activation failed',
+        contentType: ContentType.failure,
+      );
+      return false;
+    } catch (e) {
+      debugPrint('Exception in activateSubscription: $e');
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: e.toString(),
+        contentType: ContentType.failure,
+      );
+      return false;
+    }
+  }
+
   Future<PaginationResponse<CurrentUserSubscriptionItem>>
   fetchUserSubscriptionData({
     int page = 1,

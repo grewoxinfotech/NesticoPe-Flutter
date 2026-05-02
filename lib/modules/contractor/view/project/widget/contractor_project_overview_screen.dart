@@ -129,10 +129,13 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
             decoration: BoxDecoration(
               color: ColorRes.surface,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: ColorRes.leadGreyColor.shade300,
-                width: 1,
-              ),
+              boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
             ),
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -144,7 +147,7 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        project.title,
+                        project.title.capitalize?.replaceAll("_", " ")??'',
                         style: const TextStyle(
                           fontSize: AppFontSizes.body,
                           fontWeight: AppFontWeights.semiBold,
@@ -520,7 +523,7 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _infoRow("Name", client.name, "Email", client.email),
+          _infoRow("Name", client.name.capitalize?.replaceAll("_", " "), "Email", client.email),
 
           _infoRow(
             "Phone",

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/modules/subscription/views/widgets/activate_subscription_dialog.dart';
 import 'package:nesticope_app/modules/subscription/views/widgets/cancel_subscription_dialog.dart';
 import 'package:nesticope_app/modules/support_ticket/controllers/support_ticket_controller.dart';
 
@@ -74,7 +75,8 @@ class MySubscriptionScreen extends StatelessWidget {
                   double.tryParse(plan?.amount ?? "0") ?? 0,
                 );
 
-                final bool isActive = DateTime.now().isBefore(item.endDate!);
+                final bool canActivateImmediately =
+                    (item.status ?? '').toLowerCase() == 'pending';
 
                 return _SubscriptionCard(
                   planName: plan?.name ?? "Unknown Plan",
@@ -83,6 +85,8 @@ class MySubscriptionScreen extends StatelessWidget {
                   price: price,
                   status: item.status ?? '',
                   planId: item.id,
+                  canActivateImmediately: canActivateImmediately,
+                  onActivate: () => controller.activateSubscription(item.id),
                 );
               },
             ),
@@ -102,6 +106,8 @@ class _SubscriptionCard extends StatelessWidget {
   final String endDate;
   final String price;
   final String status;
+  final bool canActivateImmediately;
+  final Future<bool> Function() onActivate;
 
   const _SubscriptionCard({
     required this.planName,
@@ -110,6 +116,8 @@ class _SubscriptionCard extends StatelessWidget {
     required this.price,
     required this.status,
     required this.planId,
+    required this.canActivateImmediately,
+    required this.onActivate,
   });
 
   @override
@@ -125,7 +133,13 @@ class _SubscriptionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300, width: 1),
+         boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,6 +204,28 @@ class _SubscriptionCard extends StatelessWidget {
           _row("Start Date", startDate),
           _row("End Date", endDate),
           _row("Price", price),
+          if (canActivateImmediately) ...[
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () {
+                  Get.dialog(
+                    ActivateSubscriptionDialog(
+                      planName: planName,
+                      onConfirm: onActivate,
+                    ),
+                  );
+                },
+                style: FilledButton.styleFrom(
+                  backgroundColor: ColorRes.primary,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+                child: const Text('Activate now'),
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -209,7 +245,7 @@ class _SubscriptionCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          Expanded(child: Text(value, style: const TextStyle(fontSize: 13))),
+          Expanded(child: Text(value, style: const TextStyle(fontSize: 12,fontWeight: FontWeight.w500,color: ColorRes.textPrimary))),
         ],
       ),
     );

@@ -102,7 +102,7 @@ class BuilderLeadOverView extends StatelessWidget {
             /// ================= Interest & Documents =================
             _buildInterestSection(),
             const SizedBox(height: 8),
-            if (!isFromResellerProject) ...[  
+            if (!isFromResellerProject) ...[
               //  ListTile(
               //    tileColor: ColorRes.white,
               //    title: Text(

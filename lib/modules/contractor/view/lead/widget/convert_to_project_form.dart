@@ -657,11 +657,17 @@ class _AddOrEditProjectScreenState extends State<AddOrEditProjectScreen> {
                         Icons.calendar_today,
                         controller.startDate.value,
                         () async {
+                          final now = DateTime.now();
+                          final today =
+                              DateTime(now.year, now.month, now.day);
+                          final stored = controller.startDate.value;
+                          final initialStart = stored == null
+                              ? today
+                              : (stored.isBefore(today) ? today : stored);
                           final picked = await showDatePicker(
                             context: context,
-                            initialDate:
-                                controller.startDate.value ?? DateTime.now(),
-                            firstDate: DateTime.now(),
+                            initialDate: initialStart,
+                            firstDate: today,
                             lastDate: DateTime(2100),
                           );
                           if (picked != null) {

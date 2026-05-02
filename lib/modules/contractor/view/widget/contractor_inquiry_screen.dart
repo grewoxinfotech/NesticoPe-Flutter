@@ -740,7 +740,13 @@ class InquiryCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+       boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
         borderRadius: BorderRadius.circular(12),
       ),
       child: InkWell(
@@ -791,7 +797,7 @@ class InquiryCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Divider(color: ColorRes.leadGreyColor.shade300),
+                      Divider(color: ColorRes.leadGreyColor.shade200),
 
                       /// 🏠 Property Details Section
                       if ((inquiry.meta.propertyType?.isNotEmpty ?? false) ||
@@ -886,11 +892,11 @@ class InquiryCard extends StatelessWidget {
                         ),
                       ],
 
-                      const SizedBox(height: 16),
-                      Divider(color: ColorRes.leadGreyColor.shade300),
+                      const SizedBox(height: 10),
+                      Divider(color: ColorRes.leadGreyColor.shade200),
 
                       /// 🔘 Action Buttons
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 5),
                       Row(
                         children: [
                           if (!inquiry.isConvertedToQuotation) ...[
@@ -1030,14 +1036,16 @@ class InquiryCard extends StatelessWidget {
         style: const TextStyle(
           fontSize: AppFontSizes.caption,
           color: ColorRes.textSecondary,
+          fontWeight: AppFontWeights.medium,
         ),
       ),
       const SizedBox(height: 4),
       Text(
         value,
-        style: const TextStyle(
+        style:  TextStyle(
           fontSize: AppFontSizes.small,
-          fontWeight: AppFontWeights.medium,
+color: ColorRes.textPrimary,
+          fontWeight: AppFontWeights.semiBold,
         ),
       ),
     ],

@@ -10,7 +10,6 @@ import '../../../../utils/shimmer/contractor/employee/contractor_employee_list_s
 import '../../../../widgets/New folder/inputs/text_field.dart';
 import '../../../../widgets/messages/snack_bar.dart';
 // import '../../../data/network/contractor/model/employee/contractor_employee_model.dart';
- 
 
 class ContractorEmployeeScreen extends StatelessWidget {
   const ContractorEmployeeScreen({super.key});
@@ -20,10 +19,10 @@ class ContractorEmployeeScreen extends StatelessWidget {
     final ContractorEmployeeController controller = Get.put(
       ContractorEmployeeController(),
     );
-    final ContractorDashboardController dashboardController = Get.isRegistered<
-            ContractorDashboardController>()
-        ? Get.find<ContractorDashboardController>()
-        : Get.put(ContractorDashboardController());
+    final ContractorDashboardController dashboardController =
+        Get.isRegistered<ContractorDashboardController>()
+            ? Get.find<ContractorDashboardController>()
+            : Get.put(ContractorDashboardController());
 
     return Scaffold(
       backgroundColor: ColorRes.background,
@@ -93,19 +92,20 @@ class ContractorEmployeeScreen extends StatelessWidget {
             dashboardController.hasReachedUserLimit;
 
         return FloatingActionButton(
-          backgroundColor: showDisabledStyle
-              ? Colors.grey.shade400
-              : ColorRes.primary,
+          backgroundColor:
+              showDisabledStyle ? Colors.grey.shade400 : ColorRes.primary,
           foregroundColor: ColorRes.white,
           onPressed: () async {
             if (showDisabledStyle) {
               await dashboardController.showUpgradePlanDialog(
-                title: dashboardController.hasActivePlan
-                    ? 'Limit Reached'
-                    : 'Active plan required',
-                message: dashboardController.hasActivePlan
-                    ? 'Limit Reached, please upgrade your plan.'
-                    : 'You do not have an active subscription. Please activate a plan to continue.',
+                title:
+                    dashboardController.hasActivePlan
+                        ? 'Limit Reached'
+                        : 'Active plan required',
+                message:
+                    dashboardController.hasActivePlan
+                        ? 'Limit Reached, please upgrade your plan.'
+                        : 'You do not have an active subscription. Please activate a plan to continue.',
               );
               return;
             }
@@ -197,7 +197,13 @@ class ContractorEmployeeScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: ColorRes.white,
-        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
         borderRadius: BorderRadius.circular(16),
       ),
       child: Padding(
@@ -242,8 +248,9 @@ class ContractorEmployeeScreen extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: ColorRes.leadGreyColor.shade600,
+                          color: ColorRes.leadGreyColor.shade800,
                           fontSize: AppFontSizes.caption,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
@@ -256,13 +263,18 @@ class ContractorEmployeeScreen extends StatelessWidget {
             // Phone
             Row(
               children: [
-                const Icon(Icons.phone, size: 16, color: Colors.grey),
+                Icon(
+                  Icons.phone,
+                  size: 16,
+                  color: ColorRes.leadGreyColor.shade700,
+                ),
                 const SizedBox(width: 6),
                 Text(
                   employee.phone.isEmpty ? "-" : employee.phone,
                   style: TextStyle(
-                    color: ColorRes.leadGreyColor.shade700,
+                    color: ColorRes.leadGreyColor.shade800,
                     fontSize: AppFontSizes.caption,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
@@ -272,7 +284,11 @@ class ContractorEmployeeScreen extends StatelessWidget {
             // Experience
             Row(
               children: [
-                const Icon(Icons.work_outline, size: 16, color: Colors.grey),
+                Icon(
+                  Icons.work_outline,
+                  size: 16,
+                  color: ColorRes.leadGreyColor.shade700,
+                ),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
@@ -282,8 +298,9 @@ class ContractorEmployeeScreen extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: ColorRes.leadGreyColor.shade700,
+                      color: ColorRes.leadGreyColor.shade800,
                       fontSize: AppFontSizes.caption,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
@@ -352,10 +369,15 @@ class ContractorEmployeeScreen extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      Get.to(() => EmployeeTaskDataScreen(employeeId: employee.id));
+                      Get.to(
+                        () => EmployeeTaskDataScreen(employeeId: employee.id),
+                      );
                     },
-                    icon: const Icon(Icons.assignment_outlined,
-                        color: ColorRes.white, size: 14),
+                    icon: const Icon(
+                      Icons.assignment_outlined,
+                      color: ColorRes.white,
+                      size: 14,
+                    ),
                     label: const Text(
                       "View Tasks",
                       style: TextStyle(
@@ -562,8 +584,10 @@ void showAddEmployeeDialog(
                                     .validate()) {
                                   final dashboardController =
                                       Get.find<ContractorDashboardController>();
-                                  final limitReached = dashboardController
-                                          .activeSubscription.value
+                                  final limitReached =
+                                      dashboardController
+                                          .activeSubscription
+                                          .value
                                           ?.isUserLimitReached ??
                                       true;
 

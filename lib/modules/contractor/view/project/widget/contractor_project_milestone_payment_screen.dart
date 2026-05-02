@@ -163,171 +163,179 @@ class _PaymentCard extends StatelessWidget {
     final formattedAmount = Formatter.formatPrice(
       num.tryParse(payment.amount ?? '') ?? 0,
     );
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: ColorRes.leadGreyColor.shade300),
-      ),
-
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            /// Title + Status + Actions
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    payment.milestone.title,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: ColorRes.textPrimary,
-                    ),
-                  ),
-                ),
-                _StatusChip(
-                  label: payment.paymentStatus ?? '',
-                  color: _paymentStatusColor(payment.paymentStatus ?? ''),
-                ),
-                if (_canModify) ...[
-                  const SizedBox(width: 4),
-                  _IconAction(
-                    icon: Icons.edit,
-                    color: Colors.blue,
-                    onTap: onEdit,
-                  ),
-                  _IconAction(
-                    icon: Icons.delete_outline,
-                    color: Colors.red,
-                    onTap: onDelete,
-                  ),
-                ],
-              ],
-            ),
-
-            const SizedBox(height: 8),
-
-            /// Amount
-            Text(
-              '${Formatter.formatPrice(num.tryParse(payment.amount.toString()) ?? 0)}',
-
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: ColorRes.primary,
-              ),
-            ),
-
-            /// Payment Mode & Reference
-            /*  Row(
-              children: [
-                _InfoTile(
-                  label: 'Mode',
-                  value: _capitalizeFirst(payment.paymentMode??''),
-                ),
-                if (payment.referenceNote != null &&
-                    payment.referenceNote!.isNotEmpty)
-                  _InfoTile(
-                    label: 'Reference',
-                    value: payment.referenceNote!,
-                  ),
-              ],
-            ),
-
-            const SizedBox(height: 10),
-
-            /// Paid On
-            Row(
-              children: [
-                const Icon(Icons.calendar_today, size: 14, color: Colors.grey),
-                const SizedBox(width: 6),
-                Text(
-                  'Paid on: ${_formatDate(payment.paidOn??DateTime.now())}',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.grey.shade700,
-                  ),
-                ),
-              ],
-            ),*/
-            const SizedBox(height: 5),
-            Divider(color: ColorRes.leadGreyColor.shade300),
-            const SizedBox(height: 5),
-            Row(
-              children: [
-                const CircleAvatar(
-                  radius: 14,
-                  backgroundColor: Color(0xFFE7F2FF),
-                  child: Icon(
-                    Icons.account_balance_wallet_outlined,
-                    size: 16,
-                    color: Colors.blue,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "PAYMENT MODE",
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: ColorRes.leadGreyColor.shade600,
-                        letterSpacing: 0.3,
-                      ),
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      _capitalizeFirst(payment.paymentMode ?? ''),
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: ColorRes.textPrimary,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-
-            Row(
-              children: [
-                const CircleAvatar(
-                  radius: 14,
-                  backgroundColor: Color(0xFFE7F2FF),
-                  child: Icon(
-                    Icons.calendar_today_outlined,
-                    size: 15,
-                    color: Colors.blue,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "PAID ON",
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: ColorRes.leadGreyColor.shade600,
-                        letterSpacing: 0.3,
-                      ),
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      Formatter.formatDate(payment.paidOn?.toIso8601String()),
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: ColorRes.textPrimary,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: Colors.white,
+          // border: Border.all(color: ColorRes.leadGreyColor.shade300),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
           ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// Title + Status + Actions
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      payment.milestone.title,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: ColorRes.textPrimary,
+                      ),
+                    ),
+                  ),
+                  _StatusChip(
+                    label: payment.paymentStatus ?? '',
+                    color: _paymentStatusColor(payment.paymentStatus ?? ''),
+                  ),
+                  if (_canModify) ...[
+                    const SizedBox(width: 4),
+                    _IconAction(
+                      icon: Icons.edit,
+                      color: Colors.blue,
+                      onTap: onEdit,
+                    ),
+                    _IconAction(
+                      icon: Icons.delete_outline,
+                      color: Colors.red,
+                      onTap: onDelete,
+                    ),
+                  ],
+                ],
+              ),
+
+              const SizedBox(height: 8),
+
+              /// Amount
+              Text(
+                '${Formatter.formatPrice(num.tryParse(payment.amount.toString()) ?? 0)}',
+
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: ColorRes.primary,
+                ),
+              ),
+
+              /// Payment Mode & Reference
+              /*  Row(
+                children: [
+                  _InfoTile(
+                    label: 'Mode',
+                    value: _capitalizeFirst(payment.paymentMode??''),
+                  ),
+                  if (payment.referenceNote != null &&
+                      payment.referenceNote!.isNotEmpty)
+                    _InfoTile(
+                      label: 'Reference',
+                      value: payment.referenceNote!,
+                    ),
+                ],
+              ),
+      
+              const SizedBox(height: 10),
+      
+              /// Paid On
+              Row(
+                children: [
+                  const Icon(Icons.calendar_today, size: 14, color: Colors.grey),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Paid on: ${_formatDate(payment.paidOn??DateTime.now())}',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: Colors.grey.shade700,
+                    ),
+                  ),
+                ],
+              ),*/
+              const SizedBox(height: 5),
+              Divider(color: ColorRes.leadGreyColor.shade300),
+              const SizedBox(height: 5),
+              Row(
+                children: [
+                  const CircleAvatar(
+                    radius: 14,
+                    backgroundColor: Color(0xFFE7F2FF),
+                    child: Icon(
+                      Icons.account_balance_wallet_outlined,
+                      size: 16,
+                      color: Colors.blue,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "PAYMENT MODE",
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: ColorRes.leadGreyColor.shade600,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        _capitalizeFirst(payment.paymentMode ?? ''),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: ColorRes.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+
+              Row(
+                children: [
+                  const CircleAvatar(
+                    radius: 14,
+                    backgroundColor: Color(0xFFE7F2FF),
+                    child: Icon(
+                      Icons.calendar_today_outlined,
+                      size: 15,
+                      color: Colors.blue,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "PAID ON",
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: ColorRes.leadGreyColor.shade600,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        Formatter.formatDate(payment.paidOn?.toIso8601String()),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: ColorRes.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

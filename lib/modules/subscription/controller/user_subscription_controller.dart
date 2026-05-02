@@ -51,4 +51,12 @@ class CurrentUserPlanController extends PaginatedController<CurrentUserSubscript
 
   ///==================== Get Plan by ID ====================
 
+  Future<bool> activateSubscription(String subscriptionId) async {
+    final ok = await _service.activateSubscription(subscriptionId);
+    if (ok) {
+      await loadInitial();
+    }
+    return ok;
+  }
 }
+

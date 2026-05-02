@@ -638,7 +638,13 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: ColorRes.border, width: 1),
+         boxShadow: [
+          BoxShadow(
+            color: ColorRes.primary.withOpacity(0.06),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
