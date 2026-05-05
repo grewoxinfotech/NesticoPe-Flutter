@@ -105,8 +105,9 @@ class AppReviewCard extends StatelessWidget {
           Text(
             review.content ?? "",
             style: TextStyle(
-              fontSize: AppFontSizes.bodySmall,
+              fontSize: AppFontSizes.caption,
               color: ColorRes.textSecondary,
+              fontWeight: AppFontWeights.medium,
               height: 1.35,
             ),
           ),

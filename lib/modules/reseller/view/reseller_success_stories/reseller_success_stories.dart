@@ -31,10 +31,10 @@ class ContractorSuccessStoryScreen extends StatelessWidget {
     return Scaffold(
       // backgroundColor: ColorRes.white,
       appBar: AppBar(
-        backgroundColor: ColorRes.bgColor,
+        backgroundColor: ColorRes.white,
         title: Text(
           'Contractor Success Stories',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: AppFontWeights.semiBold),
         ),
       ),
       body: Obx(() {
@@ -115,10 +115,13 @@ class ContractorSuccessStoryScreen extends StatelessWidget {
               width: double.infinity,
               decoration: BoxDecoration(
                 color: ColorRes.white,
-                border: Border.all(
-                  color: ColorRes.leadGreyColor.shade300,
-                  width: 1,
-                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: ColorRes.black.withOpacity(0.08),
+                    blurRadius: 4,
+                    offset: Offset(0, 4),
+                  ),
+                ],
                 borderRadius: BorderRadius.circular(20),
               ),
               padding: EdgeInsets.all(40),
@@ -558,15 +561,20 @@ class _ContractorSuccessStoryCardState
       alignment: Alignment.topCenter,
       child: FractionallySizedBox(
         widthFactor: 1,
-        child: Card(
-          color: ColorRes.white,
-          shape: RoundedRectangleBorder(
+        child: Container(
+          clipBehavior: Clip.hardEdge,
+          decoration: BoxDecoration(
+            color: ColorRes.white,
             borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: ColorRes.leadGreyColor.shade300),
+            boxShadow: [
+              BoxShadow(
+                color: ColorRes.black.withOpacity(0.08),
+                blurRadius: 4,
+                offset: Offset(0, 4),
+              ),
+            ],
           ),
           margin: const EdgeInsets.symmetric(vertical: 10),
-          elevation: 3,
-          clipBehavior: Clip.hardEdge,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -584,7 +592,7 @@ class _ContractorSuccessStoryCardState
                       fit: BoxFit.cover,
                     ),
                   ),
-
+          
                   // Published/Draft Badge
                   Positioned(
                     top: 12,
@@ -632,7 +640,7 @@ class _ContractorSuccessStoryCardState
                       ),
                     ),
                   ),
-
+          
                   // Date Badge (bottom-left)
                   Positioned(
                     bottom: 10,
@@ -669,7 +677,7 @@ class _ContractorSuccessStoryCardState
                   ),
                 ],
               ),
-
+          
               // 🔹 Content Section
               Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -743,11 +751,11 @@ class _ContractorSuccessStoryCardState
                       size: AppFontSizes.caption,
                       colorClickableText: ColorRes.primary,
                     ),
-
+          
                     const SizedBox(height: 8),
                     Divider(height: 1, color: ColorRes.border),
                     const SizedBox(height: 8),
-
+          
                     // Achievement Box
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -790,15 +798,15 @@ class _ContractorSuccessStoryCardState
                         ),*/
                       ],
                     ),
-
+          
                     const SizedBox(height: 8),
                     Divider(height: 1, color: ColorRes.border),
                     const SizedBox(height: 8),
-
+          
                     // Performance Section
                     _buildPerformanceSection(widget.story),
                     const SizedBox(height: 8),
-
+          
                     // Action Buttons
                     Row(
                       children: [
@@ -816,7 +824,7 @@ class _ContractorSuccessStoryCardState
                                     monthYear: DateTime.parse(
                                       widget.story.monthYear.toIso8601String(),
                                     ),
-
+          
                                     rating: widget.story.rating,
                                     status: widget.story.status,
                                     image: widget.story.image,

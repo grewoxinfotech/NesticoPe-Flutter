@@ -49,27 +49,29 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
       onRefresh: contractorDashboardController.refreshDashboard,
       floatingButton: Obx(() {
         final bool activePlan = contractorDashboardController.hasActivePlan;
-        final bool limitReached = contractorDashboardController.hasReachedServiceLimit;
+        final bool limitReached =
+            contractorDashboardController.hasReachedServiceLimit;
         final bool showDisabledStyle = !activePlan || limitReached;
 
         return FloatingActionButton.extended(
-          backgroundColor: showDisabledStyle ? Colors.grey.shade400 : ColorRes.primary,
+          backgroundColor:
+              showDisabledStyle ? Colors.grey.shade400 : ColorRes.primary,
           foregroundColor: ColorRes.white,
           onPressed: () async {
             // If the user can't add service, show the correct upgrade dialog
             // and keep the button styled as disabled.
-          if(UserHelper.isContractor)
-          {
-             if (showDisabledStyle ) {
-              await contractorDashboardController.showUpgradePlanDialog(
-                title: activePlan ? 'Limit Reached' : 'Active plan required',
-                message: activePlan
-                    ? 'Limit Reached, please upgrade your plan.'
-                    : 'You do not have an active subscription. Please activate a plan to continue.',
-              );
-              return;
+            if (UserHelper.isContractor) {
+              if (showDisabledStyle) {
+                await contractorDashboardController.showUpgradePlanDialog(
+                  title: activePlan ? 'Limit Reached' : 'Active plan required',
+                  message:
+                      activePlan
+                          ? 'Limit Reached, please upgrade your plan.'
+                          : 'You do not have an active subscription. Please activate a plan to continue.',
+                );
+                return;
+              }
             }
-          }
 
             await contractorDashboardController.guardAddServiceAction(() {
               Get.to(() => AddServiceScreen());
@@ -95,571 +97,547 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
         }
 
         return RefreshIndicator(
-              onRefresh: contractorDashboardController.refreshDashboard,
-              child: SingleChildScrollView(
-                physics: const NeverScrollableScrollPhysics(),
+          onRefresh: contractorDashboardController.refreshDashboard,
+          child: SingleChildScrollView(
+            physics: const NeverScrollableScrollPhysics(),
 
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Overview",
-                          style: TextStyle(
-                            fontSize: AppFontSizes.medium,
-                            fontWeight: AppFontWeights.semiBold,
-                            color: ColorRes.textColor,
-                          ),
-                        ),
-                        Spacer(),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 12),
-                          child: IconButton(
-                            onPressed: () async {
-                              // await exportContractorInsightsToExcel(contractorInsightsJson);
-                              await exportContractorInsightsToExcel(
-                                contractorDashboardController
-                                        .contractorInsights
-                                        .value
-                                        ?.toMap() ??
-                                    {},
-                              );
-                            },
-                            icon: const Icon(Icons.download, size: 18),
-
-                            style: IconButton.styleFrom(
-                              backgroundColor: Colors.green.shade600,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        Obx(() {
-                          final baseYear =
-                              contractorDashboardController
-                                  .createdUserYear
-                                  .value; // starting year of app usage
-                          final currentYear = DateTime.now().year;
-
-                          // Generate dynamic list of years from baseYear up to currentYear
-                          final List<int> years =
-                              (baseYear == currentYear)
-                                  ? [currentYear]
-                                  : List.generate(
-                                    currentYear - baseYear + 1,
-                                    (index) => baseYear + index,
-                                  ).reversed.toList();
-
-                          return Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            decoration: BoxDecoration(
-                              color: ColorRes.white,
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: ColorRes.leadGreyColor.withOpacity(0.3),
-                                width: 1,
-                              ),
-                            ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton<int>(
-                                value:
-                                    contractorDashboardController
-                                        .selectedGraphYear
-                                        .value,
-                                icon: const Icon(
-                                  Icons.keyboard_arrow_down_rounded,
-                                ),
-                                style: TextStyle(
-                                  color: ColorRes.textColor,
-                                  fontSize: AppFontSizes.medium,
-                                  fontWeight: AppFontWeights.medium,
-                                ),
-                                items:
-                                    years.map((year) {
-                                      return DropdownMenuItem<int>(
-                                        value: year,
-                                        child: Text("$year"),
-                                      );
-                                    }).toList(),
-                                onChanged: (value) async {
-                                  if (value != null) {
-                                    contractorDashboardController
-                                        .selectedGraphYear
-                                        .value = value;
-                                    // Refresh dashboard when year changes
-                                    contractorDashboardController
-                                        .updateLeadsYear(value);
-                                  }
-                                },
-                              ),
-                            ),
+                    Text(
+                      "Overview",
+                      style: TextStyle(
+                        fontSize: AppFontSizes.medium,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.textColor,
+                      ),
+                    ),
+                    Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: IconButton(
+                        onPressed: () async {
+                          // await exportContractorInsightsToExcel(contractorInsightsJson);
+                          await exportContractorInsightsToExcel(
+                            contractorDashboardController
+                                    .contractorInsights
+                                    .value
+                                    ?.toMap() ??
+                                {},
                           );
-                        }),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    buildOverviewCards(contractorDashboardController),
+                        },
+                        icon: const Icon(Icons.download, size: 18),
 
-                    const SizedBox(height: 20),
-                    Obx(
-                      () => buildContractorLeadGraph(
-                        contractorDashboardController,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Obx(
-                      () => buildContractorInquiryGraph(
-                        contractorDashboardController,
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.green.shade600,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
                       ),
                     ),
 
-                    const SizedBox(height: 20),
-                    Obx(
-                      () => buildServiceDistributionGraph(
-                        contractorDashboardController,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Obx(
-                      () => contractorLeadFunnel(contractorDashboardController),
-                    ),
-                    const SizedBox(height: 20),
-                    Obx(
-                      () => buildProjectsTrendGraph(
-                        contractorDashboardController,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Obx(
-                      () => buildContractorLeadSourceDistributionGraph(
-                        contractorDashboardController,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Obx(
-                      () => buildContractorLeadStatusDistributionGraph(
-                        contractorDashboardController,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Obx(
-                      () => buildRatingsDistribution(
-                        averageRating:
-                            contractorDashboardController
-                                .contractorInsights
-                                .value
-                                ?.data
-                                ?.reviews
-                                ?.averageRating ??
-                            0.0,
-                        totalRatings:
-                            contractorDashboardController
-                                .contractorInsights
-                                .value
-                                ?.data
-                                ?.reviews
-                                ?.totalReviews ??
-                            0,
-                        ratingCounts:
-                            contractorDashboardController
-                                .contractorInsights
-                                .value
-                                ?.data
-                                ?.services
-                                ?.ratingsDistribution ??
-                            {},
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    // Fixed horizontal scrolling section
-                    // Obx(
-                    //   () => SizedBox(
-                    //     height: 170,
-                    //     child: ListView.builder(
-                    //       scrollDirection: Axis.horizontal,
-                    //       itemCount:
-                    //           contractorDashboardController
-                    //               .contractorInsights
-                    //               .value
-                    //               ?.data
-                    //               ?.services
-                    //               ?.topRatedServices
-                    //               .length ??
-                    //           0,
-                    //       itemBuilder: (context, index) {
-                    //         final data =
-                    //             contractorDashboardController
-                    //                 .contractorInsights
-                    //                 .value
-                    //                 ?.data
-                    //                 ?.services
-                    //                 ?.topRatedServices[index];
-                    //         return buildTopRatedService(
-                    //           title: data?.serviceName ?? '',
-                    //           context: context,
-                    //           totalReview: data?.totalReviews ?? 0,
-                    //           description: data?.description ?? '',
-                    //           rating: data?.averageRating ?? 0,
-                    //           status:
-                    //               data?.isActive ?? false
-                    //                   ? "Active"
-                    //                   : "Not Active",
-                    //         );
-                    //       },
-                    //     ),
-                    //   ),
-                    // ),
                     Obx(() {
-                      final topRatedServices =
+                      final baseYear =
                           contractorDashboardController
-                              .contractorInsights
-                              .value
-                              ?.data
-                              ?.services
-                              ?.topRatedServices
-                              .where((e) => (e.averageRating ?? 0) > 0)
-                              .toList();
+                              .createdUserYear
+                              .value; // starting year of app usage
+                      final currentYear = DateTime.now().year;
 
-                      // if (topRatedServices?.isEmpty ?? false) {
-                      //   return Container(
-                      //     padding: const EdgeInsets.symmetric(vertical: 20),
-                      //     alignment: Alignment.center,
-                      //     child: const Text(
-                      //       "No Data Found",
-                      //       style: TextStyle(fontSize: 14, color: Colors.grey),
-                      //     ),
-                      //   );
-                      // }
+                      // Generate dynamic list of years from baseYear up to currentYear
+                      final List<int> years =
+                          (baseYear == currentYear)
+                              ? [currentYear]
+                              : List.generate(
+                                currentYear - baseYear + 1,
+                                (index) => baseYear + index,
+                              ).reversed.toList();
 
                       return Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 12,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
                         decoration: BoxDecoration(
                           color: ColorRes.white,
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(8),
                           border: Border.all(
                             color: ColorRes.leadGreyColor.withOpacity(0.3),
                             width: 1,
                           ),
                         ),
-
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.star,
-                                  color: ColorRes.deepPurpleColor,
-                                  size: 24,
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  "Top Rated Services",
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                  style: TextStyle(
-                                    color: ColorRes.deepPurpleColor,
-                                    fontSize: AppFontSizes.medium,
-                                    fontWeight: AppFontWeights.semiBold,
-                                  ),
-                                ),
-                              ],
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<int>(
+                            value:
+                                contractorDashboardController
+                                    .selectedGraphYear
+                                    .value,
+                            icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                            style: TextStyle(
+                              color: ColorRes.textColor,
+                              fontSize: AppFontSizes.medium,
+                              fontWeight: AppFontWeights.medium,
                             ),
-                            const SizedBox(height: 12),
-                            if (topRatedServices?.isNotEmpty ?? false) ...[
-                              buildTopRatedServiceList(
-                                context: context,
-                                services: topRatedServices!,
-                              ),
-                            ] else ...[
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 20,
-                                ),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  "No Data Found",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: ColorRes.leadGreyColor.withOpacity(
-                                      0.5,
-                                    ),
-                                    fontWeight: AppFontWeights.medium,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      );
-                    }),
-
-                    const SizedBox(height: 12),
-                    // Obx(
-                    //   () => SizedBox(
-                    //     height: 150,
-                    //     child: ListView.builder(
-                    //       itemCount:
-                    //           contractorDashboardController
-                    //               .contractorInsights
-                    //               .value
-                    //               ?.data
-                    //               ?.reviews
-                    //               ?.recentReviews
-                    //               .length ??
-                    //           0,
-                    //       itemBuilder: (context, index) {
-                    //         final data =
-                    //             contractorDashboardController
-                    //                 .contractorInsights
-                    //                 .value
-                    //                 ?.data
-                    //                 ?.reviews
-                    //                 ?.recentReviews[index];
-                    //         return buildRecentReview(
-                    //           userName: data?.reviewerName ?? '',
-                    //           timeAgo: getTimeAgo(data?.createdAt ?? ''),
-                    //           rating: data?.rating ?? 0.0,
-                    //           review: data?.content ?? '',
-                    //         );
-                    //       },
-                    //     ),
-                    //   ),
-                    // ),
-                    Obx(() {
-                      final reviews =
-                          contractorDashboardController
-                              .contractorInsights
-                              .value
-                              ?.data
-                              ?.reviews
-                              ?.recentReviews ??
-                          [];
-
-                      return Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 12,
-                        ),
-                        decoration: BoxDecoration(
-                          color: ColorRes.white,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: ColorRes.leadGreyColor.withOpacity(0.3),
-                            width: 1,
+                            items:
+                                years.map((year) {
+                                  return DropdownMenuItem<int>(
+                                    value: year,
+                                    child: Text("$year"),
+                                  );
+                                }).toList(),
+                            onChanged: (value) async {
+                              if (value != null) {
+                                contractorDashboardController
+                                    .selectedGraphYear
+                                    .value = value;
+                                // Refresh dashboard when year changes
+                                contractorDashboardController.updateLeadsYear(
+                                  value,
+                                );
+                              }
+                            },
                           ),
-                        ),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.person,
-                                  color: ColorRes.primary,
-                                  size: 24,
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  "Recent Reviews",
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                  style: TextStyle(
-                                    color: ColorRes.primary,
-                                    fontSize: AppFontSizes.medium,
-                                    fontWeight: AppFontWeights.semiBold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-                            SizedBox(
-                              height: 100,
-                              child:
-                                  reviews.isNotEmpty
-                                      ? ListView.separated(
-                                        scrollDirection: Axis.horizontal,
-                                        itemCount: reviews.length,
-                                        separatorBuilder:
-                                            (_, __) =>
-                                                const SizedBox(width: 12),
-                                        itemBuilder: (context, index) {
-                                          final data = reviews[index];
-                                          final userName =
-                                              data?.reviewerName ?? '';
-                                          final timeAgo = getTimeAgo(
-                                            data?.createdAt ?? '',
-                                          );
-                                          final rating = data?.rating ?? 0.0;
-                                          final review = data?.content ?? '';
-
-                                          return SizedBox(
-                                            width: 240,
-                                            child: Card(
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                                side: BorderSide(
-                                                  color: ColorRes.leadGreyColor
-                                                      .withOpacity(0.3),
-                                                  width: 1,
-                                                ),
-                                              ),
-                                              elevation: 1.5,
-                                              margin: EdgeInsets.zero,
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(
-                                                  12,
-                                                ),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    // Header Row (Avatar + Name + Time)
-                                                    Row(
-                                                      children: [
-                                                        const CircleAvatar(
-                                                          radius: 16,
-                                                          backgroundColor:
-                                                              ColorRes.primary,
-                                                          child: Icon(
-                                                            Icons.person,
-                                                            color: Colors.white,
-                                                            size: 16,
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                          width: 8,
-                                                        ),
-                                                        Expanded(
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Text(
-                                                                userName,
-                                                                maxLines: 1,
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                                style: TextStyle(
-                                                                  fontWeight:
-                                                                      AppFontWeights
-                                                                          .semiBold,
-                                                                  fontSize:
-                                                                      AppFontSizes
-                                                                          .small,
-                                                                  color:
-                                                                      ColorRes
-                                                                          .textColor,
-                                                                ),
-                                                              ),
-                                                              Row(
-                                                                children: List.generate(
-                                                                  5,
-                                                                  (
-                                                                    index,
-                                                                  ) => Icon(
-                                                                    index <
-                                                                            rating
-                                                                                .round()
-                                                                        ? Icons
-                                                                            .star
-                                                                        : Icons
-                                                                            .star_border,
-                                                                    color:
-                                                                        Colors
-                                                                            .orange,
-                                                                    size: 13,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                          width: 4,
-                                                        ),
-                                                        Text(
-                                                          "$timeAgo ago",
-                                                          style: TextStyle(
-                                                            color:
-                                                                ColorRes
-                                                                    .leadGreyColor
-                                                                    .shade600,
-                                                            fontSize:
-                                                                AppFontSizes
-                                                                    .extraSmall,
-                                                            fontWeight:
-                                                                AppFontWeights
-                                                                    .medium,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-
-                                                    const SizedBox(height: 8),
-
-                                                    // Review content
-                                                    Expanded(
-                                                      child: Text(
-                                                        review,
-                                                        maxLines: 3,
-                                                        overflow:
-                                                            TextOverflow
-                                                                .ellipsis,
-                                                        style: TextStyle(
-                                                          fontSize:
-                                                              AppFontSizes
-                                                                  .caption,
-                                                          fontWeight:
-                                                              AppFontWeights
-                                                                  .medium,
-                                                          color:
-                                                              ColorRes
-                                                                  .leadGreyColor
-                                                                  .shade600,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      )
-                                      : Center(
-                                        child: Text(
-                                          "No Reviews Found",
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: ColorRes.leadGreyColor
-                                                .withOpacity(0.5),
-                                            fontWeight: AppFontWeights.medium,
-                                          ),
-                                        ),
-                                      ),
-                            ),
-                          ],
                         ),
                       );
                     }),
                   ],
                 ),
-              ),
-            );
+                const SizedBox(height: 16),
+                buildOverviewCards(contractorDashboardController),
+
+                const SizedBox(height: 20),
+                Obx(
+                  () => buildContractorLeadGraph(contractorDashboardController),
+                ),
+                const SizedBox(height: 20),
+                Obx(
+                  () => buildContractorInquiryGraph(
+                    contractorDashboardController,
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+                Obx(
+                  () => buildServiceDistributionGraph(
+                    contractorDashboardController,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Obx(() => contractorLeadFunnel(contractorDashboardController)),
+                const SizedBox(height: 20),
+                Obx(
+                  () => buildProjectsTrendGraph(contractorDashboardController),
+                ),
+                const SizedBox(height: 20),
+                Obx(
+                  () => buildContractorLeadSourceDistributionGraph(
+                    contractorDashboardController,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Obx(
+                  () => buildContractorLeadStatusDistributionGraph(
+                    contractorDashboardController,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Obx(
+                  () => buildRatingsDistribution(
+                    averageRating:
+                        contractorDashboardController
+                            .contractorInsights
+                            .value
+                            ?.data
+                            ?.reviews
+                            ?.averageRating ??
+                        0.0,
+                    totalRatings:
+                        contractorDashboardController
+                            .contractorInsights
+                            .value
+                            ?.data
+                            ?.reviews
+                            ?.totalReviews ??
+                        0,
+                    ratingCounts:
+                        contractorDashboardController
+                            .contractorInsights
+                            .value
+                            ?.data
+                            ?.services
+                            ?.ratingsDistribution ??
+                        {},
+                  ),
+                ),
+                const SizedBox(height: 12),
+                // Fixed horizontal scrolling section
+                // Obx(
+                //   () => SizedBox(
+                //     height: 170,
+                //     child: ListView.builder(
+                //       scrollDirection: Axis.horizontal,
+                //       itemCount:
+                //           contractorDashboardController
+                //               .contractorInsights
+                //               .value
+                //               ?.data
+                //               ?.services
+                //               ?.topRatedServices
+                //               .length ??
+                //           0,
+                //       itemBuilder: (context, index) {
+                //         final data =
+                //             contractorDashboardController
+                //                 .contractorInsights
+                //                 .value
+                //                 ?.data
+                //                 ?.services
+                //                 ?.topRatedServices[index];
+                //         return buildTopRatedService(
+                //           title: data?.serviceName ?? '',
+                //           context: context,
+                //           totalReview: data?.totalReviews ?? 0,
+                //           description: data?.description ?? '',
+                //           rating: data?.averageRating ?? 0,
+                //           status:
+                //               data?.isActive ?? false
+                //                   ? "Active"
+                //                   : "Not Active",
+                //         );
+                //       },
+                //     ),
+                //   ),
+                // ),
+                Obx(() {
+                  final topRatedServices =
+                      contractorDashboardController
+                          .contractorInsights
+                          .value
+                          ?.data
+                          ?.services
+                          ?.topRatedServices
+                          .where((e) => (e.averageRating ?? 0) > 0)
+                          .toList();
+
+                  // if (topRatedServices?.isEmpty ?? false) {
+                  //   return Container(
+                  //     padding: const EdgeInsets.symmetric(vertical: 20),
+                  //     alignment: Alignment.center,
+                  //     child: const Text(
+                  //       "No Data Found",
+                  //       style: TextStyle(fontSize: 14, color: Colors.grey),
+                  //     ),
+                  //   );
+                  // }
+
+                  return Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: ColorRes.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: ColorRes.black.withOpacity(0.08),
+                          blurRadius: 4,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.star,
+                              color: ColorRes.deepPurpleColor,
+                              size: 24,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              "Top Rated Services",
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              style: TextStyle(
+                                color: ColorRes.deepPurpleColor,
+                                fontSize: AppFontSizes.medium,
+                                fontWeight: AppFontWeights.semiBold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        if (topRatedServices?.isNotEmpty ?? false) ...[
+                          buildTopRatedServiceList(
+                            context: context,
+                            services: topRatedServices!,
+                          ),
+                        ] else ...[
+                          Container(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            alignment: Alignment.center,
+                            child: Text(
+                              "No Data Found",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: ColorRes.leadGreyColor.withOpacity(0.5),
+                                fontWeight: AppFontWeights.medium,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  );
+                }),
+
+                const SizedBox(height: 12),
+                // Obx(
+                //   () => SizedBox(
+                //     height: 150,
+                //     child: ListView.builder(
+                //       itemCount:
+                //           contractorDashboardController
+                //               .contractorInsights
+                //               .value
+                //               ?.data
+                //               ?.reviews
+                //               ?.recentReviews
+                //               .length ??
+                //           0,
+                //       itemBuilder: (context, index) {
+                //         final data =
+                //             contractorDashboardController
+                //                 .contractorInsights
+                //                 .value
+                //                 ?.data
+                //                 ?.reviews
+                //                 ?.recentReviews[index];
+                //         return buildRecentReview(
+                //           userName: data?.reviewerName ?? '',
+                //           timeAgo: getTimeAgo(data?.createdAt ?? ''),
+                //           rating: data?.rating ?? 0.0,
+                //           review: data?.content ?? '',
+                //         );
+                //       },
+                //     ),
+                //   ),
+                // ),
+                Obx(() {
+                  final reviews =
+                      contractorDashboardController
+                          .contractorInsights
+                          .value
+                          ?.data
+                          ?.reviews
+                          ?.recentReviews ??
+                      [];
+
+                  return Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: ColorRes.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: ColorRes.black.withOpacity(0.08),
+                          blurRadius: 4,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.person,
+                              color: ColorRes.primary,
+                              size: 24,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              "Recent Reviews",
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              style: TextStyle(
+                                color: ColorRes.primary,
+                                fontSize: AppFontSizes.medium,
+                                fontWeight: AppFontWeights.semiBold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          height: 100,
+                          child:
+                              reviews.isNotEmpty
+                                  ? ListView.separated(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: reviews.length,
+                                    separatorBuilder:
+                                        (_, __) => const SizedBox(width: 12),
+                                    itemBuilder: (context, index) {
+                                      final data = reviews[index];
+                                      final userName = data?.reviewerName ?? '';
+                                      final timeAgo = getTimeAgo(
+                                        data?.createdAt ?? '',
+                                      );
+                                      final rating = data?.rating ?? 0.0;
+                                      final review = data?.content ?? '';
+
+                                      return SizedBox(
+                                        width: 240,
+                                        child: Card(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                            side: BorderSide(
+                                              color: ColorRes.leadGreyColor
+                                                  .withOpacity(0.3),
+                                              width: 1,
+                                            ),
+                                          ),
+                                          elevation: 1.5,
+                                          margin: EdgeInsets.zero,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(12),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                // Header Row (Avatar + Name + Time)
+                                                Row(
+                                                  children: [
+                                                    const CircleAvatar(
+                                                      radius: 16,
+                                                      backgroundColor:
+                                                          ColorRes.primary,
+                                                      child: Icon(
+                                                        Icons.person,
+                                                        color: Colors.white,
+                                                        size: 16,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    Expanded(
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            userName,
+                                                            maxLines: 1,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            style: TextStyle(
+                                                              fontWeight:
+                                                                  AppFontWeights
+                                                                      .semiBold,
+                                                              fontSize:
+                                                                  AppFontSizes
+                                                                      .small,
+                                                              color:
+                                                                  ColorRes
+                                                                      .textColor,
+                                                            ),
+                                                          ),
+                                                          Row(
+                                                            children: List.generate(
+                                                              5,
+                                                              (index) => Icon(
+                                                                index <
+                                                                        rating
+                                                                            .round()
+                                                                    ? Icons.star
+                                                                    : Icons
+                                                                        .star_border,
+                                                                color:
+                                                                    Colors
+                                                                        .orange,
+                                                                size: 13,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 4),
+                                                    Text(
+                                                      "$timeAgo ago",
+                                                      style: TextStyle(
+                                                        color:
+                                                            ColorRes
+                                                                .leadGreyColor
+                                                                .shade600,
+                                                        fontSize:
+                                                            AppFontSizes
+                                                                .extraSmall,
+                                                        fontWeight:
+                                                            AppFontWeights
+                                                                .medium,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+
+                                                const SizedBox(height: 8),
+
+                                                // Review content
+                                                Expanded(
+                                                  child: Text(
+                                                    review,
+                                                    maxLines: 3,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          AppFontSizes.caption,
+                                                      fontWeight:
+                                                          AppFontWeights.medium,
+                                                      color:
+                                                          ColorRes
+                                                              .leadGreyColor
+                                                              .shade600,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                  : Center(
+                                    child: Text(
+                                      "No Reviews Found",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: ColorRes.leadGreyColor
+                                            .withOpacity(0.5),
+                                        fontWeight: AppFontWeights.medium,
+                                      ),
+                                    ),
+                                  ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+              ],
+            ),
+          ),
+        );
       }),
     );
   }
@@ -765,10 +743,13 @@ Widget buildContractorLeadSourceDistributionGraph(
     decoration: BoxDecoration(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(12),
-      border: Border.all(
-        color: ColorRes.leadGreyColor.withOpacity(0.3),
-        width: 1,
-      ),
+      boxShadow: [
+        BoxShadow(
+          color: ColorRes.black.withOpacity(0.08),
+          blurRadius: 4,
+          offset: Offset(0, 4),
+        ),
+      ],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -835,10 +816,13 @@ Widget buildContractorLeadStatusDistributionGraph(
     decoration: BoxDecoration(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(12),
-      border: Border.all(
-        color: ColorRes.leadGreyColor.withOpacity(0.3),
-        width: 1,
-      ),
+      boxShadow: [
+        BoxShadow(
+          color: ColorRes.black.withOpacity(0.08),
+          blurRadius: 4,
+          offset: Offset(0, 4),
+        ),
+      ],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -941,10 +925,13 @@ Widget buildServiceDistributionGraph(
     decoration: BoxDecoration(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(12),
-      border: Border.all(
-        color: ColorRes.leadGreyColor.withOpacity(0.3),
-        width: 1,
-      ),
+      boxShadow: [
+        BoxShadow(
+          color: ColorRes.black.withOpacity(0.08),
+          blurRadius: 4,
+          offset: Offset(0, 4),
+        ),
+      ],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1022,10 +1009,13 @@ Widget contractorLeadFunnel(ContractorDashboardController overviewController) {
     decoration: BoxDecoration(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(12),
-      border: Border.all(
-        color: ColorRes.leadGreyColor.withOpacity(0.3),
-        width: 1,
-      ),
+      boxShadow: [
+        BoxShadow(
+          color: ColorRes.black.withOpacity(0.08),
+          blurRadius: 4,
+          offset: Offset(0, 4),
+        ),
+      ],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1129,10 +1119,17 @@ Widget buildContractorLeadGraph(ContractorDashboardController controller) {
     decoration: BoxDecoration(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(12),
-      border: Border.all(
-        color: ColorRes.leadGreyColor.withOpacity(0.3),
-        width: 1,
-      ),
+      // border: Border.all(
+      //   color: ColorRes.leadGreyColor.withOpacity(0.3),
+      //   width: 1,
+      // ),
+      boxShadow: [
+        BoxShadow(
+          color: ColorRes.black.withOpacity(0.08),
+          blurRadius: 4,
+          offset: Offset(0, 4),
+        ),
+      ],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1232,10 +1229,13 @@ Widget buildContractorInquiryGraph(ContractorDashboardController controller) {
     decoration: BoxDecoration(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(
-        color: ColorRes.leadGreyColor.withOpacity(0.3),
-        width: 1,
-      ),
+      boxShadow: [
+        BoxShadow(
+          color: ColorRes.black.withOpacity(0.08),
+          blurRadius: 4,
+          offset: Offset(0, 4),
+        ),
+      ],
     ),
     child: Column(
       children: [
@@ -1339,10 +1339,13 @@ Widget buildProjectsTrendGraph(ContractorDashboardController controller) {
     decoration: BoxDecoration(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(
-        color: ColorRes.leadGreyColor.withOpacity(0.3),
-        width: 1,
-      ),
+      boxShadow: [
+        BoxShadow(
+          color: ColorRes.black.withOpacity(0.08),
+          blurRadius: 4,
+          offset: Offset(0, 4),
+        ),
+      ],
     ),
     child: Column(
       children: [
@@ -1440,14 +1443,18 @@ Widget buildRatingsDistribution({
   required int totalRatings,
   required Map<String, int> ratingCounts,
 }) {
-  return Card(
-    shape: RoundedRectangleBorder(
+  return Container(
+    decoration: BoxDecoration(
+      color: ColorRes.white,
       borderRadius: BorderRadius.circular(12),
-      side: BorderSide(color: ColorRes.leadGreyColor.shade300, width: 1),
+      boxShadow: [
+        BoxShadow(
+          color: ColorRes.black.withOpacity(0.08),
+          blurRadius: 4,
+          offset: Offset(0, 4),
+        ),
+      ],
     ),
-
-    elevation: 2,
-    margin: const EdgeInsets.symmetric(vertical: 8),
     child: Padding(
       padding: const EdgeInsets.all(16),
       child: Column(

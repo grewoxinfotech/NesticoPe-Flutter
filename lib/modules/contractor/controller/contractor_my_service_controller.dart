@@ -20,8 +20,6 @@ class ContractorMyServiceController
 
   Rxn<ContractorServiceCategoryResponse> contractorServiceCategory =
       Rxn<ContractorServiceCategoryResponse>();
-  ContractorDashboardController contractorDashboardController =
-      ContractorDashboardController();
 
   // Text Fields
   final serviceNameController = TextEditingController();
@@ -340,6 +338,18 @@ class ContractorMyServiceController
     return value.trim().isEmpty ? null : value.toUpperCase();
   }
 
+  /// Updates the dashboard shown under [ContractorDashboard] (Get.put instance),
+  /// not a standalone [ContractorDashboardController] instance.
+  Future<void> _reloadRegisteredContractorDashboard() async {
+    if (!Get.isRegistered<ContractorDashboardController>()) return;
+    try {
+      await Get.find<ContractorDashboardController>().reloadAfterServiceChange();
+    } catch (e, s) {
+      log('Contractor dashboard reload: $e', stackTrace: s);
+    }
+  }
+
+
   Future<void> refreshService() async {
     try {
       isRefreshing.value = true;
@@ -379,9 +389,7 @@ class ContractorMyServiceController
         item.id ?? '',
         value,
       );
-      await contractorDashboardController.getContractorDashboard(
-        leadsYear: contractorDashboardController.selectedGraphYear.value,
-      );
+      await _reloadRegisteredContractorDashboard();
 
       print(
         "Service sdkfjfijdifjdifoj${item.serviceName} status changed to: $value",
@@ -404,6 +412,7 @@ class ContractorMyServiceController
       if (success) {
         items.removeWhere((r) => r.id == id);
         items.refresh();
+        await _reloadRegisteredContractorDashboard();
       }
     } catch (e) {
       print("❌ Error deleting review: $e");
@@ -615,6 +624,7 @@ class ContractorMyServiceController
         //   contentType: ContentType.success,
         // );
         refreshList();
+        await _reloadRegisteredContractorDashboard();
       } else {
         // NesticoPeSnackBar.showAwesomeSnackbar(
         //   title: 'Error',
@@ -2687,6 +2697,7 @@ class ContractorMyServiceController
         Get.back();
         clearForm();
         refreshList();
+        await _reloadRegisteredContractorDashboard();
       }
     } catch (e) {
       print("Error updating service: $e");

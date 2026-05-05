@@ -976,6 +976,24 @@ class _AddOrEditProjectScreenState extends State<AddOrEditProjectScreen> {
                 ),
               ),
               icon: const Icon(Icons.arrow_drop_down),
+              selectedItemBuilder: (context) {
+                // The field (selected value) has tight height constraints.
+                // Render a single-line label there to avoid RenderFlex overflow,
+                // while keeping richer 2-line items inside the dropdown menu.
+                return employees
+                    .map(
+                      (emp) => Text(
+                        emp.name ?? 'Unnamed',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: AppFontSizes.small,
+                          fontWeight: AppFontWeights.medium,
+                        ),
+                      ),
+                    )
+                    .toList();
+              },
               items:
                   employees.map((emp) {
                     final assignedProject = controllerProject.items
@@ -996,6 +1014,8 @@ class _AddOrEditProjectScreenState extends State<AddOrEditProjectScreen> {
                         children: [
                           Text(
                             emp.name ?? 'Unnamed',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontSize: AppFontSizes.small,
                               color:
@@ -1012,6 +1032,7 @@ class _AddOrEditProjectScreenState extends State<AddOrEditProjectScreen> {
                                 fontWeight: AppFontWeights.medium,
                                 overflow: TextOverflow.ellipsis,
                               ),
+                              maxLines: 1,
                             ),
                         ],
                       ),

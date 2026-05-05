@@ -363,7 +363,7 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
       "meta": {
         "employees":
             selectedEmployees
-                .map((e) => {"id": e.id})
+                .map((e) => {"id": e.id, "employeeName": e.name})
                 .toList(), // ✅ matches your backend structure
       },
     };
@@ -397,7 +397,7 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
       "meta": {
         "employees":
             selectedEmployees
-                .map((e) => {"id": e.id})
+                .map((e) => {"id": e.id, "employeeName": e.name})
                 .toList(), // your current logic is fine
         "serviceId": selectedServiceId.value,
         "serviceName": selectedServiceName.value,

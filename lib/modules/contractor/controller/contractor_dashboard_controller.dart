@@ -60,8 +60,11 @@ class ContractorDashboardController extends GetxController {
 
   Future<Rxn<ContractorInsightsModel>> getContractorDashboard({
     int? leadsYear,
+    bool silent = false,
   }) async {
-    isLoading.value = true;
+    if (!silent) {
+      isLoading.value = true;
+    }
     try {
       final user = await SecureStorage.getUserData();
       final userId = user?.user?.id;
@@ -84,7 +87,9 @@ class ContractorDashboardController extends GetxController {
       log("Failed to fetch contractor dashboard: $e", stackTrace: s);
       contractorInsights.value = null;
     } finally {
-      isLoading.value = false;
+      if (!silent) {
+        isLoading.value = false;
+      }
     }
     return contractorInsights;
   }
@@ -93,6 +98,16 @@ class ContractorDashboardController extends GetxController {
   void updateLeadsYear(int year) {
     selectedGraphYear.value = year;
     getContractorDashboard(leadsYear: year);
+  }
+
+  /// Reload metrics without replacing the dashboard with the full shimmer
+  /// (e.g. after creating a service while this controller is registered).
+  Future<void> reloadAfterServiceChange() async {
+    await getContractorDashboard(
+      leadsYear: selectedGraphYear.value,
+      silent: true,
+    );
+    await fetchActiveSubscription(showDialogWhenMissing: false);
   }
 
   Future<void> refreshDashboard() async {
