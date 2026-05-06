@@ -5824,6 +5824,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
           GestureDetector(
             onTap: () {
               if (property.location != null) {
+                
                 ContactHelper.openInGoogleMaps(property.address!);
               }
             },
@@ -5890,7 +5891,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          "${property?.reraId ?? 'N/A'}",
+                          "${property?.reraId?.toLowerCase() ?? 'N/A'}",
 
                           style: TextStyle(
                             fontWeight: AppFontWeights.semiBold,

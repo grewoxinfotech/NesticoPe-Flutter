@@ -1228,6 +1228,8 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
       ),
       body: Obx(() {
         final leads = leadController.items;
+        // Rebuild rows when fetchPropertyById fills [leadPropertiesList] for cards.
+        leadController.leadPropertiesList.length;
         final isLoading = leadController.isLoading.value;
         final isPaging = leadController.isPaging.value;
         final isRefreshing = leadController.isRefreshing.value;
@@ -1322,6 +1324,11 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
                                     showDataMasking: widget.showDataMasking,
                                     isCompact:
                                         MediaQuery.of(context).size.width < 600,
+                                    isProjectLeadContext: widget.isForProject,
+                                    leadPropertiesList:
+                                        widget.isForProject
+                                            ? null
+                                            : leadController.leadPropertiesList,
                                     onTap: () {
                                       if (widget.isForProject) {
                                         _openProjectLead(lead);

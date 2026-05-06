@@ -826,6 +826,7 @@ class _BuilderLeadState extends State<BuilderLeads> {
       ),
       body: Obx(() {
         final leads = leadController.items;
+        leadController.leadPropertiesList.length;
         final isLoading = leadController.isLoading.value;
         final isPaging = leadController.isPaging.value;
         final isRefreshing = leadController.isRefreshing.value;
@@ -925,6 +926,9 @@ class _BuilderLeadState extends State<BuilderLeads> {
                                 isCompact:
                                     MediaQuery.of(context).size.width < 600,
                                 showDataMasking: false,
+                                isProjectLeadContext: false,
+                                leadPropertiesList:
+                                    leadController.leadPropertiesList,
                                 onTap: () => _openLead(lead),
                               );
                             },

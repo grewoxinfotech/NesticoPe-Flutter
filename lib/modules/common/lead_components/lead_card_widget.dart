@@ -1,11 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 import 'package:nesticope_app/app/manager/data_masker.dart';
-import 'package:nesticope_app/app/manager/property/property_pricemanager.dart';
+import 'package:nesticope_app/app/manager/property/property_name_manager.dart';
 import 'package:nesticope_app/app/utils/formater/formater.dart';
 import 'package:nesticope_app/data/network/property/models/property_model.dart';
 import 'package:nesticope_app/modules/reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
@@ -25,6 +23,10 @@ class LeadCardWidget extends StatefulWidget {
   final String? propertyPrice; // Add property price from matching property
   final RxList<Items>? leadPropertiesList; // List of properties to match
 
+  /// When true (default), expanded section shows project-oriented fields.
+  /// Set to false on property lead screens to show listing/property details.
+  final bool isProjectLeadContext;
+
   const LeadCardWidget({
     Key? key,
     required this.lead,
@@ -36,6 +38,7 @@ class LeadCardWidget extends StatefulWidget {
     this.showDataMasking = true,
     this.propertyPrice, // Accept property price
     this.leadPropertiesList, // Accept properties list
+    this.isProjectLeadContext = true,
   }) : super(key: key);
 
   @override
@@ -45,11 +48,31 @@ class LeadCardWidget extends StatefulWidget {
 class _LeadCardWidgetState extends State<LeadCardWidget> {
   var isExpanded = false;
 
+  String _getDisplayListingStatus() {
+    final projectStatus = widget.lead.projectStatus?.trim();
+    if (projectStatus != null && projectStatus.isNotEmpty) {
+      return projectStatus;
+    }
+
+    final propertyStatus = widget.lead.propertyListingStatus?.trim();
+    if (propertyStatus != null && propertyStatus.isNotEmpty) {
+      return propertyStatus;
+    }
+
+    final leadStatus = widget.lead.status?.trim();
+    if (leadStatus != null && leadStatus.isNotEmpty) {
+      return leadStatus;
+    }
+
+    return 'Unknown';
+  }
+
   // /// Method to match lead property ID with leadPropertiesList
   @override
   Widget build(BuildContext context) {
     final cardPadding = widget.isCompact ? 12.0 : 16.0;
 
+    debugPrint("check project leads ${widget.lead.toJson()}");
     // Get financial info and listing type from matching property
     // final matchingFinancialInfo = _getMatchingPropertyFinancialInfo();
     // final matchingListingType = _getMatchingPropertyListingType();
@@ -192,7 +215,7 @@ class _LeadCardWidgetState extends State<LeadCardWidget> {
                         ),
                       ),
                       SizedBox(height: 4),
-                    ]else...[
+                    ] else ...[
                       Text(
                         'Budget',
                         style: TextStyle(
@@ -203,13 +226,13 @@ class _LeadCardWidgetState extends State<LeadCardWidget> {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        '${Formatter.formatPrice(num.tryParse(widget.lead.price.toString()??"0")??0)}',
+                        '${Formatter.formatPrice(num.tryParse(widget.lead.price.toString() ?? "0") ?? 0)}',
 
                         style: TextStyle(
                           fontSize:
-                          widget.isCompact
-                              ? AppFontSizes.medium
-                              : AppFontSizes.body,
+                              widget.isCompact
+                                  ? AppFontSizes.medium
+                                  : AppFontSizes.body,
                           fontWeight: AppFontWeights.semiBold,
                           color: ColorRes.success,
                         ),
@@ -388,14 +411,25 @@ class _LeadCardWidgetState extends State<LeadCardWidget> {
               Divider(color: ColorRes.leadGreyColor.shade300),
               const SizedBox(height: 10),
               // Project Name
-              Text(
-                widget.lead.projectName ?? "-",
-                style: TextStyle(
-                  fontSize: AppFontSizes.bodySmall,
-                  fontWeight: AppFontWeights.semiBold,
-                  color: ColorRes.textPrimary,
+              if (widget.isProjectLeadContext) ...[
+                Text(
+                  widget.lead.projectName ?? "-",
+                  style: TextStyle(
+                    fontSize: AppFontSizes.bodySmall,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.textPrimary,
+                  ),
                 ),
-              ),
+              ] else ...[
+                Text(
+                  '${(widget.lead.bhk.toString() != 'null' && widget.lead.bhk.toString() != "0") ? 'BHK ${widget.lead.bhk}' : ""} ${widget.lead.propertyType?.capitalize} ${widget.lead.listingType?.capitalize ?? ""}',
+                  style: TextStyle(
+                    fontSize: AppFontSizes.bodySmall,
+                    fontWeight: AppFontWeights.semiBold,
+                    color: ColorRes.textPrimary,
+                  ),
+                ),
+              ],
 
               const SizedBox(height: 6),
 
@@ -439,11 +473,30 @@ class _LeadCardWidgetState extends State<LeadCardWidget> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _infoChip(
-                    label:
-                        capitalizeEachWord(widget.lead.projectStatus) ??
-                        "Unknown",
+                    label: capitalizeEachWord(_getDisplayListingStatus()),
                     color: ColorRes.orangeColor,
                   ),
+                  if (widget.lead.priceRange != null &&
+                      widget.lead.priceRange!.isNotEmpty) ...[
+                    _infoChip(
+                      label:
+                          Formatter.formatPriceRangeFromString(
+                            widget.lead.priceRange,
+                          ) ??
+                          "-",
+                      color: ColorRes.success,
+                    ),
+                  ] else ...[
+                    _infoChip(
+                      label:
+                          Formatter.formatPrice(
+                            num.tryParse(widget.lead.price.toString() ?? "0") ??
+                                0,
+                          ) ??
+                          "-",
+                      color: ColorRes.success,
+                    ),
+                  ],
                 ],
               ),
 

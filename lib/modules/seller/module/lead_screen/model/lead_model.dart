@@ -145,10 +145,16 @@
 //   }
 // }
 
-import 'dart:convert';
 import 'dart:developer';
 
 import '../../../../../data/network/property/models/property_model.dart';
+
+int? _leadJsonInt(dynamic value) {
+  if (value == null) return null;
+  if (value is int) return value;
+  if (value is double) return value.round();
+  return int.tryParse(value.toString());
+}
 
 class LeadItem {
   final String? id;
@@ -177,6 +183,11 @@ class LeadItem {
   final String? city;
   final String? propertyType;
   final String? projectStatus;
+  /// Sale/listing state from API key `property_status` (e.g. unsold).
+  final String? propertyListingStatus;
+  final String? listingType;
+  final int? bhk;
+  final int? carpetArea;
   final String? priceRange;
   final int? price;
 
@@ -206,6 +217,10 @@ class LeadItem {
     this.city,
     this.propertyType,
     this.projectStatus,
+    this.propertyListingStatus,
+    this.listingType,
+    this.bhk,
+    this.carpetArea,
     this.priceRange,
     this.price, this.leadResellerData,
   });
@@ -283,8 +298,12 @@ class LeadItem {
     city: json["city"],
     propertyType: json["propertyType"],
     projectStatus: json["projectStatus"],
+    propertyListingStatus: json["property_status"] as String?,
+    listingType: json["listingType"] as String?,
+    bhk: _leadJsonInt(json["bhk"]),
+    carpetArea: _leadJsonInt(json["carpetarea"]),
     priceRange: json["priceRange"],
-    price: json["price"],
+    price: _leadJsonInt(json["price"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -318,6 +337,11 @@ class LeadItem {
     if (city != null) "city": city,
     if (propertyType != null) "propertyType": propertyType,
     if (projectStatus != null) "projectStatus": projectStatus,
+    if (propertyListingStatus != null)
+      "property_status": propertyListingStatus,
+    if (listingType != null) "listingType": listingType,
+    if (bhk != null) "bhk": bhk,
+    if (carpetArea != null) "carpetarea": carpetArea,
     if (priceRange != null) "priceRange": priceRange,
     if (price != null) "price": price,
     if(leadResellerData!=null)"reseller":leadResellerData?.toMap()
@@ -351,7 +375,12 @@ extension LeadItemCopy on LeadItem {
     String? city,
     String? propertyType,
     String? projectStatus,
+    String? propertyListingStatus,
+    String? listingType,
+    int? bhk,
+    int? carpetArea,
     String? priceRange,
+    int? price,
   }) {
     return LeadItem(
       id: id ?? this.id,
@@ -379,6 +408,11 @@ extension LeadItemCopy on LeadItem {
       city: city ?? this.city,
       propertyType: propertyType ?? this.propertyType,
       projectStatus: projectStatus ?? this.projectStatus,
+      propertyListingStatus:
+          propertyListingStatus ?? this.propertyListingStatus,
+      listingType: listingType ?? this.listingType,
+      bhk: bhk ?? this.bhk,
+      carpetArea: carpetArea ?? this.carpetArea,
       priceRange: priceRange ?? this.priceRange,
       price: price ?? this.price,
     );

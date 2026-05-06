@@ -11,6 +11,7 @@ import 'package:nesticope_app/app/utils/helper_function/contact_helper.dart';
 import 'package:nesticope_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
 import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/data/network/share_property/service/share_property-service.dart';
 import 'package:nesticope_app/modules/property/controllers/property_controller.dart';
 import 'package:nesticope_app/modules/property/controllers/share_property_controller.dart';
 import 'package:nesticope_app/modules/reseller/controller/dashborad_controller/dashboard_controller.dart';
@@ -1786,34 +1787,29 @@ class ProductCard extends StatelessWidget {
                                 final resellerId = user?.user?.id ?? '';
                                 final propertyId = product.id ?? '';
 
-                                // if (resellerId.isEmpty || propertyId.isEmpty) {
-                                //   Get.snackbar(
-                                //     "Error",
-                                //     "Missing reseller or property information.",
-                                //   );
-                                //   return;
-                                // }
+                                if (resellerId.isEmpty || propertyId.isEmpty) {
+                                  Get.snackbar(
+                                    "Error",
+                                    "Missing reseller or property information.",
+                                  );
+                                  return;
+                                }
 
                                 // await propertyShareController
                                 //     .handleShareButtonTap(
                                 //       propertyId: propertyId,
                                 //       resellerId: resellerId,
                                 //     );
-                                // await controller.getPropertyLinkById(
-                                //   propertyId,
-                                // );
-                                // final propertyIdShare =
-                                //     controller
-                                //         .shareProperty
-                                //         .value
-                                //         ?.data
-                                //         ?.propertyId;
+                               final shareUrl = await SharePropertyService.service.sharePropertyLink(
+                                  propertyId,
+                                );
+                                final propertyIdShare = shareUrl ?? '';
+
 
                                 if (propertyId != null &&
                                     propertyId.isNotEmpty) {
                                   ContactHelper.shareContent(
-                                    link:
-                                        '${ApiConstants.frontendBaseUrl}/properties/$propertyId',
+                                    link: propertyIdShare ?? '',
                                   );
                                 } else {
                                   NesticoPeSnackBar.showAwesomeSnackbar(
@@ -1824,7 +1820,8 @@ class ProductCard extends StatelessWidget {
                                   );
                                 }
                               },
-                              child: const Icon(Icons.share, size: 16),
+                              child: const Icon(Icons.share, size: 20),
+                              
                             ),
                         ],
                       ),

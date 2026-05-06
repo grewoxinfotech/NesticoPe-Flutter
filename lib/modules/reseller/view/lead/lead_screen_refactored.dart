@@ -100,6 +100,7 @@ import 'package:nesticope_app/modules/reseller/view/lead_overview/lead_detail.da
           return const Center(child: CircularProgressIndicator());
         }
 
+        leadController.leadPropertiesList.length;
         final filteredLeads = leadController.items.value;
 
         return Column(
@@ -160,6 +161,9 @@ import 'package:nesticope_app/modules/reseller/view/lead_overview/lead_detail.da
                               lead: lead,
                               isCompact: MediaQuery.of(context).size.width < 600,
                               showDataMasking: true, // Reseller needs masking
+                              isProjectLeadContext: false,
+                              leadPropertiesList:
+                                  leadController.leadPropertiesList,
                               onTap: () {
                                 Get.to(
                                   () => LeadDetailScreen(

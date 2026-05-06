@@ -566,7 +566,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                             title: "Approval History",
                             icon: Icons.history,
                             onTap: () {
-                              Get.to(
+                              Get.to(   
                                 () => SellerPropertyApprovalHistory(
                                   propertyId: project?.value?.id ?? '',
                                   isProject: true,
@@ -653,6 +653,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                           MediaQuery.of(context).size.width <
                                           600,
                                       showDataMasking: false,
+                                      isProjectLeadContext: true,
                                       onTap: onTap,
                                     );
                                   },
@@ -1456,7 +1457,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
-                      'RERA ID: ${project.reraId}',
+                      'RERA ID: ${project.reraId.toLowerCase()}',
                       style: const TextStyle(
                         color: Color(0xff477914),
                         fontSize: AppFontSizes.caption,

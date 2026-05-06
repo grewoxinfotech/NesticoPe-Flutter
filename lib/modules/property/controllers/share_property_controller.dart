@@ -19,6 +19,7 @@ class SharePropertyController extends GetxController {
         propertyId,
       );
       shareProperty.value = SharePropertyResponse.fromJson(data);
+      debugPrint("shareProperty ${shareProperty.value?.toJson()}");
     } catch (e, stackTrace) {
       debugPrint('❌ Error fetching property link: $e');
       debugPrint(stackTrace.toString());

@@ -95,20 +95,20 @@ dev_dependencies:
 
 flutter_native_splash:
   color: "#426DD4"
-  image: assets/images/NesticoPe_Logo_N_letter.png
+  image: assets/images/Logo_small_letter_nesticope.png
   android: true
   ios: true
   android_12:
     color: "#FFFFFF "
-    image: assets/images/NesticoPe_Logo_N_letter.png
+    image: assets/images/Logo_small_letter_nesticope.png
 
 flutter_launcher_icons:
   android: true
   ios: true
   remove_alpha_ios: true
-  image_path: "assets/images/NesticoPe_Logo_N_letter.png"
+  image_path: "assets/images/Logo_small_letter_nesticope.png"
   adaptive_icon_background: "#426DD4"
-  adaptive_icon_foreground: "assets/images/NesticoPe_Logo_N_letter.png"
+  adaptive_icon_foreground: "assets/images/Logo_small_letter_nesticope.png"
 
 flutter:
   uses-material-design: true

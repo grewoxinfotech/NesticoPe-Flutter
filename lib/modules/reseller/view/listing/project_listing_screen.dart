@@ -6,6 +6,7 @@ import 'package:nesticope_app/app/constants/api_constants.dart';
 import 'package:nesticope_app/app/utils/helper_function/contact_helper.dart';
 import 'package:nesticope_app/app/widgets/image/custom_image.dart';
 import 'package:nesticope_app/data/network/builder/model/builder_model.dart';
+import 'package:nesticope_app/data/network/share_property/service/share_property-service.dart';
 import 'package:nesticope_app/modules/reseller/view/listing/property_listing.dart';
 import 'package:nesticope_app/utils/shimmer/reseller/entity_screen/reseller_entity_list_screen_shimmer.dart';
 import 'package:nesticope_app/widgets/messages/snack_bar.dart';
@@ -545,7 +546,7 @@ class ProjectCard extends StatelessWidget {
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(14),
       elevation: isSelected ? 3 : 1,
-      
+
       shadowColor:
           isSelected
               ? ColorRes.primary.withOpacity(0.3)
@@ -645,35 +646,19 @@ class ProjectCard extends StatelessWidget {
                           const SizedBox(width: 8),
                           GestureDetector(
                             onTap: () async {
-                              // await controller.getPropertyLinkByIdInReseller(
-                              //   project.id ?? '',
-                              // );
-                              // await controller.getPropertyLinkById(
-                              //   project.id ?? '',
-                              // );
-                              // final propertyId =
-                              //     controller
-                              //         .shareProperty
-                              //         .value
-                              //         ?.data
-                              //         ?.propertyId;
+                              final shareUrl = await SharePropertyService
+                                  .service
+                                  .sharePropertyLink(project.id ?? '');
+                              final propertyIdShare = shareUrl ?? '';
 
                               if (project.id != null &&
                                   project.id!.isNotEmpty) {
                                 ContactHelper.shareContent(
-                                  link:
-                                      '${ApiConstants.frontendBaseUrl}/project/${project.id}',
-                                );
-                              } else {
-                                NesticoPeSnackBar.showAwesomeSnackbar(
-                                  title: "Error",
-                                  message:
-                                      "Unable to generate share link right now.",
-                                  contentType: ContentType.failure,
+                                  link: propertyIdShare ?? '',
                                 );
                               }
                             },
-                            child: const Icon(Icons.share, size: 16),
+                            child: const Icon(Icons.share, size: 20),
                           ),
                         ],
                       ),

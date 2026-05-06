@@ -1105,10 +1105,13 @@ Widget leadBuilderLifecycleFunnel(SellerOverviewController overviewController) {
     decoration: BoxDecoration(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(12),
-      border: Border.all(
-        color: ColorRes.leadGreyColor.withOpacity(0.3),
-        width: 1,
-      ),
+       boxShadow: [
+        BoxShadow(
+          color: ColorRes.black.withOpacity(0.08),
+          blurRadius: 8,
+          offset: const Offset(0, 2),
+        ),
+      ],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1179,10 +1182,13 @@ Widget buildProjectLeadSourceDistributionGraph(
     decoration: BoxDecoration(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(12),
-      border: Border.all(
-        color: ColorRes.leadGreyColor.withOpacity(0.3),
-        width: 1,
-      ),
+      boxShadow: [
+        BoxShadow(
+          color: ColorRes.black.withOpacity(0.08),
+          blurRadius: 8,
+          offset: const Offset(0, 2),
+        ),
+      ],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1259,10 +1265,18 @@ Widget buildProjectDistributionGraph(
     decoration: BoxDecoration(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(12),
-      border: Border.all(
-        color: ColorRes.leadGreyColor.withOpacity(0.3),
-        width: 1,
-      ),
+      // border: Border.all(
+      //   color: ColorRes.leadGreyColor.withOpacity(0.3),
+      //   width: 1,
+      // ),
+      // boxShadow: 
+       boxShadow: [
+        BoxShadow(
+          color: ColorRes.black.withOpacity(0.08),
+          blurRadius: 8,
+          offset: const Offset(0, 2),
+        ),
+      ],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,

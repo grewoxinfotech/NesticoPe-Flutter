@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/api_constants.dart';
@@ -147,14 +149,15 @@ class EntityActionButtons extends StatelessWidget {
               onShare ??
               () async {
                 await propertyShareController.getPropertyLinkById(id);
-                final propertyId =
-                    propertyShareController.shareProperty.value?.data?.propertyId;
+              
+              
+
+  final shareUrl = propertyShareController.shareProperty.value?.data?.shareUrl;
+  debugPrint("shareUrl $shareUrl");
 
 
-
-
-                if (propertyId != null && propertyId.isNotEmpty) {
-                  ContactHelper.shareContent(link: '${ApiConstants.frontendBaseUrl}/properties/$propertyId');
+                if (shareUrl != null && shareUrl.isNotEmpty) {
+                  ContactHelper.shareContent(link: shareUrl);
                 } else {
                   NesticoPeSnackBar.showAwesomeSnackbar(
                     title: "Error",

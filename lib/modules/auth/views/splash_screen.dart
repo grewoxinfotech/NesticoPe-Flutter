@@ -4,7 +4,9 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
+import 'package:nesticope_app/modules/hire_contractor/view/widget/category_service_explorer.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:video_player/video_player.dart';
 import '../../../data/database/secure_storage_service.dart';
 import '../../../data/network/user/service/notification_sync_service.dart';
 import '../../../services/notification_service.dart';
@@ -18,6 +20,15 @@ import '../../saved_property/controllers/property_favorite_controller.dart';
 import 'onboarding_screen.dart';
 import '../../home/views/select_city_screen/select_city_screen.dart';
 
+const _kPrimary = Color(0xFF0D5D4A);
+const _kPrimaryLight = Color(0xFF1A8A6A);
+const _kAccent = Color(0xFF3ABFA0);
+const _kAccentSoft = Color(0xFFA8F0DC);
+const _kTextPrimary = Color(0xFFE1F5EE);
+const _kTextSecondary = Color(0xFF9FE1CB);
+const _kTextMuted = Color(0xFF5DCAA5);
+const _kOverlayDark = Color(0xFF0F6E56);
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -25,11 +36,49 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _loadingController;
+  late Animation<double> _loadingAnimation;
+  late final VideoPlayerController _logoVideoController;
+  bool _isLogoVideoReady = false;
+
+  Future<void> _initLogoVideo() async {
+    _logoVideoController = VideoPlayerController.asset('assets/logo/Logo1.mp4');
+    try {
+      await _logoVideoController.initialize();
+      await _logoVideoController.setLooping(false);
+      await _logoVideoController.setVolume(0.0);
+      await _logoVideoController.play();
+      if (!mounted) return;
+      setState(() => _isLogoVideoReady = true);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _isLogoVideoReady = false);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    _loadingController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat();
+
+    _loadingAnimation = CurvedAnimation(
+      parent: _loadingController,
+      curve: Curves.easeInOut,
+    );
+    _initLogoVideo();
     _initialize();
+  }
+
+  @override
+  void dispose() {
+    _loadingController.dispose();
+    _logoVideoController.dispose();
+    super.dispose();
   }
 
   // Future<void> _initialize() async {
@@ -207,7 +256,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xff284FE3),
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -225,24 +274,66 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
             ),
           ),*/
-
-          // 🌫 Full-screen blur overlay (black glassmorphism)
-          BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
-            child: Container(
-              decoration: BoxDecoration(
-                // gradient: LinearGradient(
-                //   begin: Alignment.topLeft,
-                //   end: Alignment.bottomRight,
-                //   colors: [
-                //     Colors.black.withOpacity(0.45),
-                //     Colors.black.withOpacity(0.25),
-                //   ],
-                // ),
-                color: ColorRes.primary,
+          Positioned(
+            top: 100,
+            left: -10,
+            right: -20,
+            bottom: 100,
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.2,
+              child: CustomPaint(
+                painter: CardPatternPainter(
+                  color1: Colors.white.withOpacity(0.05),
+                  color2: Colors.white.withOpacity(0.05),
+                ),
               ),
             ),
           ),
+          Positioned(
+            top: -20,
+            left: -20,
+            child: Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withOpacity(0.1), // adjust opacity
+              ),
+            ),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.5,
+              child: Image.asset(
+                'assets/images/login_background_removebg_preview.png',
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
+              ),
+            ),
+          ),
+          // 🌫 Full-screen blur overlay (black glassmorphism)
+          // Container(
+          //   decoration: BoxDecoration(
+          //     gradient: LinearGradient(
+          //       colors: [
+          //         const Color(0xFF284FE3).withOpacity(0.55),
+          //         Color.lerp(
+          //           const Color(0xFF284FE3),
+          //           const Color(0xFF1B3CC4),
+          //           0.55,
+          //         )!
+          //             .withOpacity(0.85),
+          //         const Color(0xFF1B3CC4).withOpacity(0.55),
+          //         // cardColors[1].withOpacity(0.9),
+          //       ],
+          //       begin: Alignment.topLeft,
+          //       end: Alignment.bottomRight,
+          //     ),
+          //   ),
+          // ),
 
           // ✨ Subtle radial glow (optional, behind logo)
           // Container(
@@ -252,7 +343,7 @@ class _SplashScreenState extends State<SplashScreen> {
           //       radius: 1.0,
           //       colors: [
           //         Colors.white.withOpacity(0.05),
-          //         Colors.transparent,  
+          //         Colors.transparent,
           //       ],
           //     ),
           //   ),
@@ -277,22 +368,87 @@ class _SplashScreenState extends State<SplashScreen> {
           // ),
           ////=======================NEW CODE =======================
           Center(
-            child: Image.asset(
-                  'assets/images/nesticoPe_logo3.png',
-                  width: 400,
-                  height: 400,
-                  fit: BoxFit.contain,
-                )
-                .animate()
-                .fadeIn(duration: 1300.ms)
-                .scale(
-                  begin: const Offset(0.20, 0.20),
-                  end: const Offset(1.0, 1.0),
-                  duration: 1300.ms,
-                  curve: Curves.easeOutBack,
-                ),
+            child:
+                (_isLogoVideoReady
+                    ? SizedBox(
+                      width: double.infinity,
+                      child: AspectRatio(
+                        aspectRatio: _logoVideoController.value.aspectRatio,
+
+                        child: VideoPlayer(_logoVideoController),
+                      ),
+                    )
+                    : const SizedBox.shrink()),
           ),
+
+          Positioned(
+            bottom: 48,
+            left: 0,
+            right: 0,
+            child: Column(
+              children: [
+                _AnimatedLoadingBar(animation: _loadingAnimation),
+                const SizedBox(height: 16),
+                Text(
+                  'v2.1.0',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: ColorRes.white.withOpacity(0.9),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ).animate().fadeIn(duration: 1300.ms),
         ],
+      ),
+    );
+  }
+}
+
+class _AnimatedLoadingBar extends StatelessWidget {
+  final Animation<double> animation;
+  const _AnimatedLoadingBar({required this.animation});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 80),
+      child: AnimatedBuilder(
+        animation: animation,
+        builder: (context, _) {
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: Stack(
+              children: [
+                Container(
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: ColorRes.white.withOpacity(0.25),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                FractionallySizedBox(
+                  widthFactor: animation.value,
+                  child: Container(
+                    height: 4,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          ColorRes.white.withOpacity(0.95),
+                          ColorRes.white.withOpacity(0.55),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
