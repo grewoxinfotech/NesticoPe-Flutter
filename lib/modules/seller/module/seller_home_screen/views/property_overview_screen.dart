@@ -67,7 +67,13 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
             },
             child: const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Icon(Icons.filter_list),
+              child: Row(
+                children: [
+                  Icon(Icons.filter_list, color: ColorRes.primary, size: 20),
+                  SizedBox(width: 6),
+                  Text("Filter", style: TextStyle(color: ColorRes.primary, fontWeight: FontWeight.w600)),
+                ],
+              ),
             ),
           ),
         ],

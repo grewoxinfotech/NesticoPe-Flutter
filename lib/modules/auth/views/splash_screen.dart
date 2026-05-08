@@ -4,8 +4,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
-import 'package:nesticope_app/modules/hire_contractor/view/widget/category_service_explorer.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:video_player/video_player.dart';
 import '../../../data/database/secure_storage_service.dart';
 import '../../../data/network/user/service/notification_sync_service.dart';
@@ -20,15 +20,6 @@ import '../../saved_property/controllers/property_favorite_controller.dart';
 import 'onboarding_screen.dart';
 import '../../home/views/select_city_screen/select_city_screen.dart';
 
-const _kPrimary = Color(0xFF0D5D4A);
-const _kPrimaryLight = Color(0xFF1A8A6A);
-const _kAccent = Color(0xFF3ABFA0);
-const _kAccentSoft = Color(0xFFA8F0DC);
-const _kTextPrimary = Color(0xFFE1F5EE);
-const _kTextSecondary = Color(0xFF9FE1CB);
-const _kTextMuted = Color(0xFF5DCAA5);
-const _kOverlayDark = Color(0xFF0F6E56);
-
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -41,6 +32,7 @@ class _SplashScreenState extends State<SplashScreen>
   late AnimationController _loadingController;
   late Animation<double> _loadingAnimation;
   late final VideoPlayerController _logoVideoController;
+  PackageInfo? packageInfo;
   bool _isLogoVideoReady = false;
 
   Future<void> _initLogoVideo() async {
@@ -118,12 +110,20 @@ class _SplashScreenState extends State<SplashScreen>
   // }
 
   Future<void> _initialize() async {
+    final info = await PackageInfo.fromPlatform();
+    if (mounted) {
+      setState(() => packageInfo = info);
+    } else {
+      packageInfo = info;
+    }
     await Future.delayed(const Duration(seconds: 3));
 
     await NotificationService.instance.init();
     Future.delayed(const Duration(milliseconds: 500), () {
       OneSignal.Notifications.requestPermission(true);
     });
+
+    
 
     await UserHelper.initUserType();
 
@@ -274,46 +274,70 @@ class _SplashScreenState extends State<SplashScreen>
               ),
             ),
           ),*/
-          Positioned(
-            top: 100,
-            left: -10,
-            right: -20,
-            bottom: 100,
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height * 0.2,
-              child: CustomPaint(
-                painter: CardPatternPainter(
-                  color1: Colors.white.withOpacity(0.05),
-                  color2: Colors.white.withOpacity(0.05),
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: -20,
-            left: -20,
-            child: Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.1), // adjust opacity
-              ),
-            ),
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height * 0.5,
-              child: Image.asset(
-                'assets/images/login_background_removebg_preview.png',
-                fit: BoxFit.cover,
-                alignment: Alignment.center,
-              ),
-            ),
-          ),
+          // Positioned(
+          //   top: 100,
+          //   left: -10,
+          //   right: -20,
+          //   bottom: 100,
+          //   child: SizedBox(
+          //     height: MediaQuery.of(context).size.height * 0.2,
+          //     child: CustomPaint(
+          //       painter: CardSplashPatternPainter(
+          //         color1: Colors.white,
+          //         color2: Colors.white,
+          //       ),
+          //     ),
+          //   ),
+          // ),
+          // Positioned(
+          //   top: -20,
+          //   left: -20,
+          //   child: Container(
+          //     width: 120,
+          //     height: 120,
+          //     decoration: BoxDecoration(
+          //       shape: BoxShape.circle,
+          //       color: Colors.white.withOpacity(0.05), // adjust opacity
+          //     ),
+          //   ),
+          // ),
+          // Positioned(
+          //   bottom: -20,
+          //   right: -20,
+          //   child: Container(
+          //     width: 150,
+          //     height: 150,
+          //     decoration: BoxDecoration(
+          //       shape: BoxShape.circle,
+          //       color: Colors.white.withOpacity(0.05), // adjust opacity
+          //     ),
+          //   ),
+          // ),
+          // Positioned(
+          //   top: 50,
+          //   right: -20,
+          //   child: Container(
+          //     width: 80,
+          //     height: 80,
+          //     decoration: BoxDecoration(
+          //       shape: BoxShape.circle,
+          //       color: Colors.white.withOpacity(0.05), // adjust opacity
+          //     ),
+          //   ),
+          // ),
+          // Positioned(
+          //   left: 0,
+          //   right: 0,
+          //   bottom: 0,
+          //   child: SizedBox(
+          //     height: MediaQuery.of(context).size.height * 0.5,
+          //     child: Image.asset(
+          //       'assets/images/login_background_removebg_preview.png',
+          //       fit: BoxFit.cover,
+          //       alignment: Alignment.center,
+          //     ),
+          //   ),
+          // ),
           // 🌫 Full-screen blur overlay (black glassmorphism)
           // Container(
           //   decoration: BoxDecoration(
@@ -390,7 +414,7 @@ class _SplashScreenState extends State<SplashScreen>
                 _AnimatedLoadingBar(animation: _loadingAnimation),
                 const SizedBox(height: 16),
                 Text(
-                  'v2.1.0',
+                  'version ${packageInfo?.version ?? ''}+${packageInfo?.buildNumber ?? ''}',
                   style: TextStyle(
                     fontSize: 14,
                     color: ColorRes.white.withOpacity(0.9),
@@ -404,6 +428,55 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
   }
+}
+
+class CardSplashPatternPainter extends CustomPainter {
+  final Color color1;
+  final Color color2;
+
+  CardSplashPatternPainter({required this.color1, required this.color2});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..style = PaintingStyle.fill;
+
+    /// 🔵 Large circle — top right
+    paint.color = color1.withOpacity(0.1);
+    canvas.drawCircle(Offset(size.width * 0.88, size.height * 0.08), 65, paint);
+
+    /// 🔵 Medium circle — bottom left
+    paint.color = color2.withOpacity(0.1);
+    canvas.drawCircle(Offset(size.width * 0.08, size.height * 0.88), 50, paint);
+
+    /// 🔵 Small circle — center top
+    paint.color = color1.withOpacity(0.1);
+    canvas.drawCircle(Offset(size.width * 0.5, -10), 35, paint);
+
+    /// 🔵 Tiny circle — bottom right
+    paint.color = color2.withOpacity(0.1);
+    canvas.drawCircle(Offset(size.width * 0.75, size.height * 0.9), 28, paint);
+
+    /// ➖ Diagonal lines — bottom right corner
+    /// ✦ Dot grid — top left area
+    final dotPaint =
+        Paint()
+          ..color = Colors.white.withOpacity(0.1)
+          ..style = PaintingStyle.fill;
+
+    for (int row = 0; row < 3; row++) {
+      for (int col = 0; col < 3; col++) {
+        canvas.drawCircle(
+          Offset(16.0 + col * 14, 16.0 + row * 14),
+          2,
+          dotPaint,
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(CardSplashPatternPainter old) =>
+      old.color1 != color1 || old.color2 != color2;
 }
 
 class _AnimatedLoadingBar extends StatelessWidget {

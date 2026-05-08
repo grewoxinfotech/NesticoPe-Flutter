@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:nesticope_app/modules/dashboard/views/seller_dashboard_screen.dart';
 import 'package:nesticope_app/modules/subscription/views/widgets/activate_subscription_dialog.dart';
 import 'package:nesticope_app/modules/subscription/views/widgets/cancel_subscription_dialog.dart';
 import 'package:nesticope_app/modules/support_ticket/controllers/support_ticket_controller.dart';
@@ -14,10 +16,11 @@ import '../controller/user_subscription_controller.dart';
 class MySubscriptionScreen extends StatelessWidget {
   const MySubscriptionScreen({super.key});
 
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(CurrentUserPlanController());
-
+    
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ColorRes.white,
@@ -27,8 +30,60 @@ class MySubscriptionScreen extends StatelessWidget {
         ),
       ),
       body: SafeArea(
-
-        child: Obx(() {
+        child:
+            (  UserHelper.isReseller ||
+        UserHelper.isSellerOwner ||
+        UserHelper.isSellerBuilder)
+                ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.history_toggle_off_rounded,
+                          color: ColorRes.primary,
+                          size: 64,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          "Subscription History is Coming Soon!",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: AppFontSizes.title,
+                            fontWeight: AppFontWeights.medium,
+                            color: ColorRes.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "Subscription management and history features are being developed for ${UserHelper.isReseller ? 'partner' : UserHelper.isSellerOwner ? 'owner' :  'builder'}.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: ColorRes.textSecondary,
+                            fontSize: AppFontSizes.body,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        FilledButton(
+                          style: FilledButton.styleFrom(
+                            backgroundColor: ColorRes.primary,
+                            foregroundColor: ColorRes.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
+                          ),
+                          onPressed: () {
+                            Get.back();
+                          },
+                          child: const Text('Go Back'),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+                : Obx(() {
           /// Initial loading
           if (controller.isLoading.value && controller.items.isEmpty) {
             return MySubscriptionListScreenShimmer();

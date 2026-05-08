@@ -34,6 +34,9 @@ class StepBasicInfo extends GetView<ProjectWizardController> {
                   Icons.apartment_outlined,
                   size: 20,
                   color: ColorRes.primary,
+
+
+                  
                 ),
                 initialValue: p.projectName,
                 validator:
@@ -300,8 +303,18 @@ class StepBasicInfo extends GetView<ProjectWizardController> {
                   color: ColorRes.primary,
                 ),
 
-                validator:
-                    (v) => ProjectValidators.requiredText(v, field: 'RERA ID'),
+                validator: (value) {
+                  final reraId = value?.trim() ?? '';
+                  if (reraId.isEmpty) return null;
+
+                  final isValid = RegExp(r'^RERA\d+$').hasMatch(
+                    reraId.toUpperCase(),
+                  );
+                  if (!isValid) {
+                    return "Enter valid RERA ID (e.g. RERA24563563)";
+                  }
+                  return null;
+                },
                 onSaved:
                     (v) =>
                         controller.project.update((x) => x!.reraId = v!.trim()),

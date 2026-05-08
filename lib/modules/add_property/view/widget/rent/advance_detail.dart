@@ -800,6 +800,18 @@ class RentAdvanceDetail extends StatelessWidget {
                 "Enter RERA id",
                 Icons.description_outlined,
                 controller.sell_Rera_Id,
+                validator: (value) {
+                  final reraId = value?.trim() ?? '';
+                  if (reraId.isEmpty) return null;
+
+                  final isValid = RegExp(r'^RERA\d+$').hasMatch(
+                    reraId.toUpperCase(),
+                  );
+                  if (!isValid) {
+                    return "Enter valid RERA ID (e.g. RERA24563563)";
+                  }
+                  return null;
+                },
               ),
               SizedBox(height: 16),
 

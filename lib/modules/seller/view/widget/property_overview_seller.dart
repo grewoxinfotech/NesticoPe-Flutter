@@ -283,14 +283,20 @@ class _PropertyOverviewSellerScreenState
 
                 _buildStatusSection(context, isCompact),
                 Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-               
+
                 _buildPropertyOverviewSection(context, isCompact),
                 Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-                if (((property.propertyDetails?.subRegistrarOfficeName?.trim().isNotEmpty ??
+                if (((property.propertyDetails?.subRegistrarOfficeName
+                            ?.trim()
+                            .isNotEmpty ??
                         false) ||
-                    (property.propertyDetails?.saleDeedDocumentNumber?.trim().isNotEmpty ??
+                    (property.propertyDetails?.saleDeedDocumentNumber
+                            ?.trim()
+                            .isNotEmpty ??
                         false) ||
-                    ((property.propertyDetails?.yearOfRegistration?.toString() ?? '')
+                    ((property.propertyDetails?.yearOfRegistration
+                                ?.toString() ??
+                            '')
                         .trim()
                         .isNotEmpty))) ...[
                   _buildSubRegistrarSection(property),
@@ -299,7 +305,6 @@ class _PropertyOverviewSellerScreenState
                 if ((property.propertyMedia?.documents?.isNotEmpty ?? false))
                   _buildPropertyDocumentsSection(property),
                 Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
-
 
                 _buildFinancialSection(context, isCompact),
                 Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
@@ -1203,6 +1208,9 @@ class _PropertyOverviewSellerScreenState
 
   Widget _buildStatusSection(BuildContext context, bool isCompact) {
     final property = _property.value!;
+    final reraId = property.reraId;
+    final hasValidReraId =
+        reraId != null && reraId.isNotEmpty && reraId.toLowerCase() != 'null';
 
     return Padding(
       padding: EdgeInsets.all(16),
@@ -1283,6 +1291,65 @@ class _PropertyOverviewSellerScreenState
               ),
             ],
           ),
+          // SizedBox(height: 16),
+          if (hasValidReraId) ...[
+            const SizedBox(height: 16),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: ColorRes.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: ColorRes.success.withOpacity(0.18)),
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 8,
+                    color: Colors.black.withOpacity(0.05),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.shield_moon_outlined,
+                    size: 20,
+                    color: ColorRes.success,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'RERA ID',
+                          style: TextStyle(
+                            fontSize:
+                                isCompact
+                                    ? AppFontSizes.extraSmall
+                                    : AppFontSizes.small,
+                            fontWeight: AppFontWeights.medium,
+                            color: ColorRes.leadGreyColor[700],
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          reraId.toUpperCase(),
+                          style: TextStyle(
+                            fontSize:
+                                isCompact
+                                    ? AppFontSizes.small
+                                    : AppFontSizes.medium,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.textColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -1556,11 +1623,7 @@ class _PropertyOverviewSellerScreenState
           if (property.propertyDetails?.financialInfo?.propertyRentPerMonth !=
               null) ...[
             // Padding(
-            Divider(
-              indent: 18,
-              endIndent: 18,
-              color: ColorRes.leadGreyColor.shade300,
-            ),
+          
 
             const SizedBox(height: 12),
             Column(
@@ -1620,11 +1683,7 @@ class _PropertyOverviewSellerScreenState
               ],
             ),
             const SizedBox(height: 12),
-            Divider(
-              indent: 18,
-              endIndent: 18,
-              color: ColorRes.leadGreyColor.shade300,
-            ),
+            Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
           ],
         ],
         if ((property.propertyDetails?.financialInfo?.is_for_sellorrent ??

@@ -73,7 +73,7 @@ class _ContactorProjectMileStoneScreenState
                   ),
                 );
 
-                if (success) {
+                if (success == true) {
                   controller.loadInitial();
                 }
               },
@@ -118,7 +118,7 @@ class _ContactorProjectMileStoneScreenState
                     ),
                   );
 
-                  if (success) {
+                  if (success == true) {
                     controller.loadInitial();
                   }
                 },

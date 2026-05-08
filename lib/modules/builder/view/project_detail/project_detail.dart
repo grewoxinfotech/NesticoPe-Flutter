@@ -1457,7 +1457,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
-                      'RERA ID: ${project.reraId.toLowerCase()}',
+                      'RERA ID: ${project.reraId.toUpperCase()}',
                       style: const TextStyle(
                         color: Color(0xff477914),
                         fontSize: AppFontSizes.caption,

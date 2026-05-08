@@ -41,6 +41,7 @@ import 'package:nesticope_app/modules/seller/view/widget/seller_list.dart';
 import 'package:nesticope_app/utils/global.dart';
 import 'package:nesticope_app/widgets/New%20folder/inputs/text_field.dart';
 import 'package:intl/intl.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -6180,6 +6181,23 @@ class PromotionBanners extends StatelessWidget {
 class ShareBanner extends StatelessWidget {
   const ShareBanner({super.key});
 
+  Future<void> _openPlayStore() async {
+    final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    final String packageName = packageInfo.packageName;
+    if (packageName.trim().isEmpty) return;
+    final Uri marketUri = Uri.parse('market://details?id=$packageName');
+    final Uri webUri = Uri.parse(
+      'https://play.google.com/store/apps/details?id=$packageName',
+    );
+
+    if (!await launchUrl(
+      marketUri,
+      mode: LaunchMode.externalNonBrowserApplication,
+    )) {
+      await launchUrl(webUri, mode: LaunchMode.externalApplication);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BannerContainer(
@@ -6197,8 +6215,8 @@ class ShareBanner extends StatelessWidget {
               subtitle:
                   "Invite your friends and earn exciting rewards on every successful referral.",
               buttonText: "Share Now",
-              onTap: () {
-                // Get.toNamed(Routes.share)   ;
+              onTap: () async {
+                await _openPlayStore();
               },
             ),
           ),
@@ -6779,6 +6797,7 @@ class BannerContainer extends StatelessWidget {
 
 class SocialBanner extends StatelessWidget {
   const SocialBanner({super.key});
+  
 
   @override
   Widget build(BuildContext context) {

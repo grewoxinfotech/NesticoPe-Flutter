@@ -2107,6 +2107,7 @@ class CreatePropertyController extends GetxController {
       debugPrint(
         "Payload of Residential Rent document:${documentList.map((element) => File(element)).toList()}",
       );
+      debugPrint("Payload of Residential Rent reraId:${payload.reraId}");
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -3085,6 +3086,7 @@ class CreatePropertyController extends GetxController {
               : null,
 
       listingType: lookingTo.value.isNotEmpty ? lookingTo.value : null,
+      reraId: sell_Rera_Id.text.trim().isNotEmpty ? sell_Rera_Id.text.trim() : null,
       propertyType:
           rent_propertyType.value.isNotEmpty
               ? rent_propertyType.value.toLowerCase().replaceAll(" ", "_")

@@ -1036,13 +1036,14 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.filter_list, size: 20),
+                      Icon(Icons.filter_list, size: 20, color: ColorRes.primary),
                       SizedBox(width: 6),
                       Text(
                         "Filter",
                         style: TextStyle(
                           fontSize: 13,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w600,
+                          color: ColorRes.primary,
                         ),
                       ),
                     ],

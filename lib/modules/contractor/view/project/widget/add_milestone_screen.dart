@@ -439,16 +439,22 @@ class AddMilestoneScreen extends StatelessWidget {
       }
     });
 
-    return Scaffold(
-      backgroundColor: ColorRes.white,
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            controller.resetForm();
-            Get.back();
-          },
-          icon: const Icon(Icons.arrow_back),
-        ),
+    return WillPopScope(
+      onWillPop: () async {
+        controller.resetForm();
+        Get.back(result: false);
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: ColorRes.white,
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              controller.resetForm();
+              Get.back(result: false);
+            },
+            icon: const Icon(Icons.arrow_back),
+          ),
         title: Obx(
           () => Text(
             controller.isEditMode.value ? "Edit Milestone" : "Add Milestone",
@@ -739,6 +745,7 @@ class AddMilestoneScreen extends StatelessWidget {
           ),
         ),
       ),
+    ),
     );
   }
 

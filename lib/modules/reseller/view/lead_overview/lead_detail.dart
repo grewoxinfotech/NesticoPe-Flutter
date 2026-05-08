@@ -1345,6 +1345,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
           _buildSectionHeader(
             'Property Overview',
             Icons.home_outlined,
+            
             isCompact,
           ),
           const SizedBox(height: 16),
@@ -1436,7 +1437,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          reraId,
+                          reraId.toUpperCase(),
                           style: TextStyle(
                             fontSize:
                                 isCompact

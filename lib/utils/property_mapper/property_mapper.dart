@@ -13,6 +13,7 @@ extension ItemsMapper on Items.Items {
       updatedBy: updatedBy,
       title: title,
       type: type,
+      
       listingType: listingType,
       propertyType: propertyType,
       propertyDescription: propertyDescription,

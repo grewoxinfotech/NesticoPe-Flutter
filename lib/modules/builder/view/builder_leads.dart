@@ -769,7 +769,6 @@ class _BuilderLeadState extends State<BuilderLeads> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-   
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading:

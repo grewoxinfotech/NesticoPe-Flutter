@@ -166,7 +166,10 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
         children: [
           // ─── Scrollable content ───────────────────────────────────────────
           AbsorbPointer(
-            absorbing: UserHelper.isReseller,
+            absorbing:
+                UserHelper.isReseller ||
+                UserHelper.isSellerOwner ||
+                UserHelper.isSellerBuilder,
             child: SafeArea(
               top: false,
               child: SingleChildScrollView(
@@ -418,7 +421,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
           ],
 
           // ─── Reseller Coming Soon lock overlay ───────────────────────────
-          if (UserHelper.isReseller) _buildResellerComingSoonOverlay(),
+          if (UserHelper.isReseller || UserHelper.isSellerOwner || UserHelper.isSellerBuilder) _buildResellerComingSoonOverlay(),
         ],
       ),
     );
@@ -459,15 +462,23 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                       color: ColorRes.primary.withOpacity(0.12),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
-                      Icons.construction_rounded,
+                    child:  UserHelper.isReseller ? Icon(
+                      Icons.people_outline_rounded,
+                      color: ColorRes.primary,
+                      size: 28,
+                    ) : UserHelper.isSellerOwner ? Icon(
+                      Icons.home_outlined,
+                      color: ColorRes.primary,
+                      size: 28,
+                    ) : Icon(
+                      Icons.domain_outlined,
                       color: ColorRes.primary,
                       size: 28,
                     ),
                   ),
                   const SizedBox(height: 12),
-                  const Text(
-                    'Partner Plan Coming Soon',
+                   Text(
+                    '${UserHelper.isReseller ? 'Partner' : UserHelper.isSellerOwner ? 'Owner' : 'Builder'} Plan Coming Soon',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 18,
@@ -479,7 +490,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Subscription plans for partner will be available soon.',
+                    'Subscription plans for ${UserHelper.isReseller ? 'artner' : UserHelper.isSellerOwner ? 'owner' : 'builder'} will be available soon.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: AppFontSizes.bodySmall,

@@ -1774,16 +1774,8 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
         backgroundColor: ColorRes.white,
         elevation: 0,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.filter_list, color: ColorRes.primary),
-            /* onPressed: () {
-              showFilterBottomSheet(
-                context,
-                leadController,
-                propertyId: widget.propertyId,
-              );
-            },*/
-            onPressed: () {
+          TextButton.icon(
+             onPressed: () {
               Get.to(
                 () => LeadBuildFilterScreen(
                   controller: leadController,
@@ -1791,6 +1783,24 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
                 ),
               );
             },
+            icon: const Icon(Icons.filter_list, color: ColorRes.primary),
+            label: const Text(
+              "Filter",
+
+
+              style: TextStyle(
+                color: ColorRes.primary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            /* onPressed: () {
+              showFilterBottomSheet(
+                context,
+                leadController,
+                propertyId: widget.propertyId,
+              );
+            },*/
+          
           ),
         ],
       ),

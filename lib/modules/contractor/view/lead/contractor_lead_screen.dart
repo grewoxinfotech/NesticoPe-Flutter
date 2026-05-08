@@ -71,7 +71,7 @@ class _ContractorLeadScreenState extends State<ContractorLeadScreen> {
           // IconButton(onPressed: () {
           //   Get.to(()=>ContractorInquiryFilter());
           // }, icon: Icon(Icons.filter_list))
-          IconButton(
+          TextButton.icon(
             onPressed: () async {
               final result = await Get.dialog<Map<String, String>>(
                 const ContractorLeadFilter(),
@@ -88,7 +88,11 @@ class _ContractorLeadScreenState extends State<ContractorLeadScreen> {
                 // controller.fetchFilteredInquiries(result);
               }
             },
-            icon: const Icon(Icons.filter_list),
+            icon: const Icon(Icons.filter_list, color: ColorRes.primary),
+            label: const Text(
+              "Filter",
+              style: TextStyle(color: ColorRes.primary, fontWeight: FontWeight.w600),
+            ),
           ),
         ],
       ),

@@ -168,7 +168,7 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
                                     subtitle: "Upcoming events",
                                     onTap: () => Get.to(() => CalendarScreen()),
                                   ),
-                                  const SizedBox(height: 16),
+                                  const SizedBox(height: 10),
                                   Obx(() {
                                     final controller = Get.put(
                                       ReviewController(),
@@ -194,7 +194,7 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
                                       return _buildReviewSection(review);
                                     }
                                   }),
-                                  const SizedBox(height: 16),
+                                  const SizedBox(height: 10),
                                   _buildActionButton(
                                     icon: Icons.card_giftcard,
                                     iconColor: const Color(0xFF6366F1),
@@ -206,7 +206,7 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
                                           () => ReferralProgramScreen(),
                                         ),
                                   ),
-                                  const SizedBox(height: 16),
+                                  const SizedBox(height: 10),
                                   _buildActionButton(
                                     icon: Icons.notifications_outlined,
                                     iconColor: const Color(0xFF6366F1),
@@ -218,7 +218,7 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
                                             Get.to(() => InAppMessageScreen()),
                                   ),
 
-                                  const SizedBox(height: 16),
+                                  const SizedBox(height: 10),
                                   _buildActionButton(
                                     icon: Icons.local_offer_outlined,
                                     iconColor: const Color(0xFF6366F1),
@@ -236,7 +236,7 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
                                     },
                                   ),
 
-                                  const SizedBox(height: 16),
+                                  const SizedBox(height: 10),
                                   _buildActionButton(
                                     icon: Icons.support_agent_outlined,
                                     label: "Support Ticket",
@@ -248,7 +248,7 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
                                       Get.to(() => SupportTicketScreen());
                                     },
                                   ),
-                                  const SizedBox(height: 16),
+                                  const SizedBox(height: 10),
                                   _buildActionButton(
                                     icon: Icons.workspace_premium,
                                     iconColor: const Color(0xFF6366F1),

@@ -3709,41 +3709,39 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       ),
 
                       // if (!UserHelper.isGuest && !UserHelper.isBuyer) ...[
-                        if ((currentProperty
-                                .propertyMedia
-                                ?.documents
-                                ?.isNotEmpty ??
-                            false))
-                          _buildPropertyDocumentsSection(currentProperty),
-                        if ((currentProperty
-                                .propertyMedia
-                                ?.documents
-                                ?.isNotEmpty ??
-                            false))
-                          Divider(
-                            thickness: 8,
-                            color: ColorRes.leadGreyColor.shade100,
-                          ),
+                      if ((currentProperty
+                              .propertyMedia
+                              ?.documents
+                              ?.isNotEmpty ??
+                          false))
+                        _buildPropertyDocumentsSection(currentProperty),
+                      if ((currentProperty
+                              .propertyMedia
+                              ?.documents
+                              ?.isNotEmpty ??
+                          false))
+                        Divider(
+                          thickness: 8,
+                          color: ColorRes.leadGreyColor.shade100,
+                        ),
                       // ],
                       if (((currentProperty
-                                      .propertyDetails
-                                      ?.subRegistrarOfficeName
-                                      ?.trim()
-                                      .isNotEmpty ??
-                                  false) ||
-                              (currentProperty
-                                      .propertyDetails
-                                      ?.saleDeedDocumentNumber
-                                      ?.trim()
-                                      .isNotEmpty ??
-                                  false) ||
-                              ((currentProperty
-                                          .propertyDetails
-                                          ?.yearOfRegistration
-                                          ?.toString() ??
-                                      '')
-                                  .trim()
-                                  .isNotEmpty))) ...[
+                                  .propertyDetails
+                                  ?.subRegistrarOfficeName
+                                  ?.trim()
+                                  .isNotEmpty ??
+                              false) ||
+                          (currentProperty
+                                  .propertyDetails
+                                  ?.saleDeedDocumentNumber
+                                  ?.trim()
+                                  .isNotEmpty ??
+                              false) ||
+                          ((currentProperty.propertyDetails?.yearOfRegistration
+                                      ?.toString() ??
+                                  '')
+                              .trim()
+                              .isNotEmpty))) ...[
                         _buildSubRegistrarSection(currentProperty),
                         Divider(
                           thickness: 8,
@@ -5824,7 +5822,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
           GestureDetector(
             onTap: () {
               if (property.location != null) {
-                
                 ContactHelper.openInGoogleMaps(property.address!);
               }
             },
@@ -5891,7 +5888,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          "${property?.reraId?.toLowerCase() ?? 'N/A'}",
+                          "${property?.reraId?.toUpperCase() ?? 'N/A'}",
 
                           style: TextStyle(
                             fontWeight: AppFontWeights.semiBold,

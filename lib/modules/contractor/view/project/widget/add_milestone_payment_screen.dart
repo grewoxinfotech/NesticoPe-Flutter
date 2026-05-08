@@ -218,7 +218,8 @@ class AddMilestonePaymentScreen extends StatelessWidget {
                       initialDate: controller.paidOn.value ?? DateTime.now(),
                       firstDate:
                       DateTime.now().subtract(const Duration(days: 365)),
-                      lastDate: DateTime.now(),
+                      // allow selecting upcoming days too
+                      lastDate: DateTime(2100),
                     );
                     if (picked != null) {
                       controller.paidOn.value = picked;

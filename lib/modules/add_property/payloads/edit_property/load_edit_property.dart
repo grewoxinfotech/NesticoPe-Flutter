@@ -18,6 +18,7 @@ class LoadEditPropertyPayload extends GetxController {
 
   void onLoad(CreatePropertyController controller, AddPropertyModel property) {
     AppLogger.structured("property Edit Payload for :  ", property.toJson());
+    controller.sell_Rera_Id.text = property.reraId?.toString() ?? '';
     controller.propertyType.value =
         (property.type != null && property.type!.isNotEmpty)
             ? property.type!.capitalize.toString()
@@ -40,7 +41,6 @@ class LoadEditPropertyPayload extends GetxController {
                     .capitalize
                     .toString()
             : "";
-
     controller.commercial_plotArea.value =
         (((property.propertyDetails?.plotInfo?.plotAreaUnit?.isNotEmpty ??
                     false) &&
@@ -437,6 +437,7 @@ class LoadEditPropertyPayload extends GetxController {
       property.propertyDetails?.plotInfo?.ownership,
     );
 
+    controller.sell_Rera_Id.text = property.reraId?.toString() ?? '';
     controller.plotWidth.text =
         (property.propertyDetails?.plotInfo?.plotWidth != null &&
                 property.propertyDetails!.plotInfo!.plotWidth != 0)
