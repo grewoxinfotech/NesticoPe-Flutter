@@ -117,7 +117,7 @@ class ContractorDashboardController extends GetxController {
       await fetchActiveSubscription(showDialogWhenMissing: false);
       await Future.delayed(const Duration(seconds: 1));
 
-      // Update metrics with new values
+        // Update metrics with new values
     } catch (e) {
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',

@@ -178,7 +178,7 @@ class _SplashScreenState extends State<SplashScreen>
     final isFirstTime = await SecureStorage.isFirstTimeUser();
     if (isFirstTime) {
       await NotificationService.instance.attachGuestUser();
-      Get.offAll(() => const OnboardingScreen());
+      _goToOnboarding();
       return;
     }
 
@@ -197,7 +197,7 @@ class _SplashScreenState extends State<SplashScreen>
       } else {
         // Not skipped and not logged in — send to onboarding
         await NotificationService.instance.attachGuestUser();
-        Get.offAll(() => const OnboardingScreen());
+        _goToOnboarding();
         return;
       }
     }
@@ -235,27 +235,45 @@ class _SplashScreenState extends State<SplashScreen>
     _navigate();
   }
 
+  /// Avoid default GetX horizontal slide; fade matches splash → first-run handoff.
+  void _goToOnboarding() {
+    Get.offAll(
+      () => const OnboardingScreen(),
+      transition: Transition.fadeIn,
+      
+    );
+  }
+
+  /// Use a consistent non-sliding transition for splash exits.
+  void _goTo(Widget page) {
+    Get.offAll(
+      () => page,
+      transition: Transition.fadeIn,
+    );
+  }
+
   void _navigate() {
     if (UserHelper.isBuyer) {
-      Get.offAll(() => const DashboardScreen());
+      _goTo(const DashboardScreen());
     } else if (UserHelper.isSellerOwner) {
-      Get.offAll(() => const SellerDashboardScreen());
+      _goTo(const SellerDashboardScreen());
     } else if (UserHelper.isSellerBuilder) {
-      Get.offAll(() => const BuilderMainScreen());
+      _goTo(const BuilderMainScreen());
     } else if (UserHelper.isReseller) {
-      Get.offAll(() => MainNavigationScreen());
+      _goTo(MainNavigationScreen());
     } else if (UserHelper.isContractor) {
-      Get.offAll(() => const ContractorMainScreen());
+      _goTo(const ContractorMainScreen());
     } else if (UserHelper.isGuest) {
-      Get.offAll(() => DashboardScreen());
+      _goTo(DashboardScreen());
     } else {
-      Get.offAll(() => const OtpLoginScreen());
+      _goTo(const OtpLoginScreen());
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       backgroundColor: Color(0xff284FE3),
       body: Stack(
         fit: StackFit.expand,
@@ -392,17 +410,22 @@ class _SplashScreenState extends State<SplashScreen>
           // ),
           ////=======================NEW CODE =======================
           Center(
-            child:
-                (_isLogoVideoReady
-                    ? SizedBox(
-                      width: double.infinity,
-                      child: AspectRatio(
-                        aspectRatio: _logoVideoController.value.aspectRatio,
-
-                        child: VideoPlayer(_logoVideoController),
+            child: _isLogoVideoReady
+                ? SizedBox(
+                    width: double.infinity,
+                    child: AspectRatio(
+                      aspectRatio: _logoVideoController.value.aspectRatio,
+                      // Clip + slight top-anchored scale: some devices decode MP4
+                      // with a 1px black line at the bottom of the texture.
+                      child: ClipRect(
+                        child: Transform.scale(
+                          scale: 1.02,
+                          alignment: Alignment.topCenter,
+                          child: VideoPlayer(_logoVideoController),
+                        ),
                       ),
-                    )
-                    : const SizedBox.shrink()),
+                    ),
+                  ) : const SizedBox.shrink(),
           ),
 
           Positioned(
@@ -414,7 +437,7 @@ class _SplashScreenState extends State<SplashScreen>
                 _AnimatedLoadingBar(animation: _loadingAnimation),
                 const SizedBox(height: 16),
                 Text(
-                  'version ${packageInfo?.version ?? ''}+${packageInfo?.buildNumber ?? ''}',
+                  'version ${packageInfo?.version ?? ''}',
                   style: TextStyle(
                     fontSize: 14,
                     color: ColorRes.white.withOpacity(0.9),

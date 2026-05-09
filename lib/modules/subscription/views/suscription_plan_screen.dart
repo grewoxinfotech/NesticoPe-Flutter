@@ -96,6 +96,27 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
   late SubscriptionPlanController controller;
   CurrentUserPlanController? currentPlanController;
 
+  String _formatStatus(dynamic status) {
+    final value = (status ?? '').toString().trim();
+    if (value.isEmpty) return '-';
+    final normalized = value.replaceAll('_', ' ').toLowerCase();
+    return normalized[0].toUpperCase() + normalized.substring(1);
+  }
+
+  Color _statusTextColor(dynamic status) {
+    final value = (status ?? '').toString().trim().toLowerCase();
+    if (value == 'active') return Colors.green;
+    if (value == 'expired') return Colors.red;
+    return Colors.blue;
+  }
+
+  Color _statusBgColor(dynamic status) {
+    final value = (status ?? '').toString().trim().toLowerCase();
+    if (value == 'active') return Colors.green.shade50;
+    if (value == 'expired') return Colors.red.shade50;
+    return Colors.blue.shade50;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -175,109 +196,120 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                  // if (!widget.isNotFromBuyerSide) ...[
-                  _buildTopHeader(),
-                  // ],
-                  // Current plan section (seller/builder/reseller/contractor only)
-                  if (widget.isNotFromBuyerSide) ...[
-                    if (currentPlanController != null &&
-                        widget.isShowCurrentPlan) ...[
+                    // if (!widget.isNotFromBuyerSide) ...[
+                    _buildTopHeader(),
+                    // ],
+                    // Current plan section (seller/builder/reseller/contractor only)
+                    if (widget.isNotFromBuyerSide) ...[
+                      if (currentPlanController != null &&
+                          widget.isShowCurrentPlan) ...[
+                        Obx(() {
+                          if (currentPlanController!.isLoading.value) {
+                            return PlanListScreenShimmer(count: 1);
+                          }
+
+                          final item =
+                              (currentPlanController?.items.isNotEmpty ?? false)
+                                  ? currentPlanController?.items.first
+                                  : null;
+
+                          if (item == null) {
+                            return _buildNoSubscriptionState();
+                          }
+
+                          final plan = item.plan;
+                          final int used =
+                              item.usedProperties > 0
+                                  ? item.usedProperties
+                                  : item.usedServices;
+
+                          log(
+                            "Check which plan was selected ${item.toMap()}   ${widget.role}",
+                          );
+
+                          final dynamic rawMax =
+                              item.metadata?['maxProperties'] ??
+                              item.metadata?['maxServices'];
+
+                          final bool isUnlimited =
+                              rawMax == null ||
+                              rawMax == -1 ||
+                              rawMax == "unlimited";
+
+                          final int max =
+                              isUnlimited
+                                  ? 0
+                                  : (rawMax is String
+                                      ? int.tryParse(rawMax) ?? 0
+                                      : rawMax);
+
+                          final double percent =
+                              isUnlimited || max <= 0
+                                  ? 0.0
+                                  : (used / max).clamp(0.0, 1.0);
+
+                          log("Plan Usage $percent | Unlimited: $isUnlimited");
+
+                          return _buildCurrentPlanCard(
+                            item: item,
+                            plan: plan,
+                            used: used,
+                            max: max,
+                            isUnlimited: isUnlimited,
+                            percent: percent,
+                          );
+                        }),
+                      ],
+                    ],
+
+                    // ✅ Compact inline CTA banner (shown after gate is unlocked for buyer/guest)
+                    if (!widget.isNotFromBuyerSide) ...[
                       Obx(() {
-                        if (currentPlanController!.isLoading.value) {
-                          return PlanListScreenShimmer(count: 1);
+                        final unlocked = _unlocked.value;
+                        if (!unlocked) {
+                          return const SizedBox.shrink();
                         }
-
-                        final item =
-                            (currentPlanController?.items.isNotEmpty ?? false)
-                                ? currentPlanController?.items.firstWhereOrNull(
-                                  (element) =>
-                                      element.status?.toLowerCase() == 'active',
-                                )
-                                : null;
-
-                        if (item == null) {
-                          return _buildNoSubscriptionState();
-                        }
-
-                        final plan = item.plan;
-                        final int used =
-                            item.usedProperties > 0
-                                ? item.usedProperties
-                                : item.usedServices;
-
-                        log(
-                          "Check which plan was selected ${plan?.toMap()}   ${widget.role}",
-                        );
-
-                        final dynamic rawMax =
-                            item.metadata?['maxProperties'] ??
-                            item.metadata?['maxServices'];
-
-                        final bool isUnlimited =
-                            rawMax == null ||
-                            rawMax == -1 ||
-                            rawMax == "unlimited";
-
-                        final int max =
-                            isUnlimited
-                                ? 0
-                                : (rawMax is String
-                                    ? int.tryParse(rawMax) ?? 0
-                                    : rawMax);
-
-                        final double percent =
-                            isUnlimited || max <= 0
-                                ? 0.0
-                                : (used / max).clamp(0.0, 1.0);
-
-                        log("Plan Usage $percent | Unlimited: $isUnlimited");
-
-                        return _buildCurrentPlanCard(
-                          item: item,
-                          plan: plan,
-                          used: used,
-                          max: max,
-                          isUnlimited: isUnlimited,
-                          percent: percent,
+                        return Column(
+                          children: [
+                            const SizedBox(height: 8),
+                            SignUpSubscriptionScreen(
+                              title: _mapRoleToTitle(widget.role),
+                              compact: true,
+                              onSubmit: (name, email, phone) {
+                                _saveInquiryToStorage(name, email, phone);
+                                if (UserHelper.isGuest) {
+                                  onGuestTap();
+                                } else {
+                                  onBuyerTap();
+                                }
+                              },
+                            ),
+                          ],
                         );
                       }),
                     ],
-                  ],
 
-                  // ✅ Compact inline CTA banner (shown after gate is unlocked for buyer/guest)
-                  if (!widget.isNotFromBuyerSide) ...[
                     Obx(() {
-                      final unlocked = _unlocked.value;
-                      if (!unlocked) {
-                        return const SizedBox.shrink();
+                      final planStatusByPlanId = <String, String>{};
+                      final currentItem =
+                          (currentPlanController?.items.isNotEmpty ?? false)
+                              ? currentPlanController?.items.first
+                              : null;
+                      if (currentItem != null) {
+                        final planId = (currentItem.planId ?? '').trim();
+                        final status = (currentItem.status ?? '').trim();
+                        planStatusByPlanId[planId] = status;
                       }
-                      return Column(
-                        children: [
-                          const SizedBox(height: 8),
-                          SignUpSubscriptionScreen(
-                            title: _mapRoleToTitle(widget.role),
-                            compact: true,
-                            onSubmit: (name, email, phone) {
-                              _saveInquiryToStorage(name, email, phone);
-                              if (UserHelper.isGuest) {
-                                onGuestTap();
-                              } else {
-                                onBuyerTap();
-                              }
-                            },
-                          ),
-                        ],
+
+                      return KeyedSubtree(
+                        key: _plansListKey,
+                        child: SubscriptionPlansWidget(
+                          controller: controller,
+                          selectedPlanName: _selectedPlanName,
+                          planStatusByPlanId: planStatusByPlanId,
+                        ),
                       );
                     }),
-                  ],
-
-                    KeyedSubtree(
-                      key: _plansListKey,
-                      child: SubscriptionPlansWidget(
-                        controller: controller,
-                        selectedPlanName: _selectedPlanName,
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -421,7 +453,10 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
           ],
 
           // ─── Reseller Coming Soon lock overlay ───────────────────────────
-          if (UserHelper.isReseller || UserHelper.isSellerOwner || UserHelper.isSellerBuilder) _buildResellerComingSoonOverlay(),
+          if (UserHelper.isReseller ||
+              UserHelper.isSellerOwner ||
+              UserHelper.isSellerBuilder)
+            _buildResellerComingSoonOverlay(),
         ],
       ),
     );
@@ -462,35 +497,48 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                       color: ColorRes.primary.withOpacity(0.12),
                       shape: BoxShape.circle,
                     ),
-                    child:  UserHelper.isReseller ? Icon(
-                      Icons.people_outline_rounded,
-                      color: ColorRes.primary,
-                      size: 28,
-                    ) : UserHelper.isSellerOwner ? Icon(
-                      Icons.home_outlined,
-                      color: ColorRes.primary,
-                      size: 28,
-                    ) : Icon(
-                      Icons.domain_outlined,
-                      color: ColorRes.primary,
-                      size: 28,
-                    ),
+                    child:
+                        UserHelper.isReseller
+                            ? Icon(
+                              Icons.people_outline_rounded,
+                              color: ColorRes.primary,
+                              size: 28,
+                            )
+                            : UserHelper.isSellerOwner
+                            ? Icon(
+                              Icons.home_outlined,
+                              color: ColorRes.primary,
+                              size: 28,
+                            )
+                            : Icon(
+                              Icons.domain_outlined,
+                              color: ColorRes.primary,
+                              size: 28,
+                            ),
                   ),
                   const SizedBox(height: 12),
-                   Text(
-                    '${UserHelper.isReseller ? 'Partner' : UserHelper.isSellerOwner ? 'Owner' : 'Builder'} Plan Coming Soon',
+                  Text(
+                    '${UserHelper.isReseller
+                        ? 'Partner'
+                        : UserHelper.isSellerOwner
+                        ? 'Owner'
+                        : 'Builder'} Plan Coming Soon',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 18,
                       height: 1.2,
-                      
+
                       fontWeight: AppFontWeights.bold,
                       color: ColorRes.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Subscription plans for ${UserHelper.isReseller ? 'artner' : UserHelper.isSellerOwner ? 'owner' : 'builder'} will be available soon.',
+                    'Subscription plans for ${UserHelper.isReseller
+                        ? 'artner'
+                        : UserHelper.isSellerOwner
+                        ? 'owner'
+                        : 'builder'} will be available soon.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: AppFontSizes.bodySmall,
@@ -667,13 +715,13 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.green.shade50,
+                  color: _statusBgColor(item.status),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Text(
-                  "ACTIVE",
+                child: Text(
+                  _formatStatus(item.status),
                   style: TextStyle(
-                    color: Colors.green,
+                    color: _statusTextColor(item.status),
                     fontWeight: FontWeight.bold,
                     fontSize: 12,
                   ),
@@ -800,6 +848,8 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
               value: percent,
               backgroundColor: Colors.grey.shade200,
               color: ColorRes.primary.withOpacity(0.4),
+              valueColor: AlwaysStoppedAnimation<Color>(ColorRes.primary),
+
               minHeight: 6,
               borderRadius: BorderRadius.circular(12),
             ),

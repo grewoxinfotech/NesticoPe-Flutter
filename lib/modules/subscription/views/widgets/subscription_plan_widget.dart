@@ -685,6 +685,7 @@ import '../../controller/subscription_controller.dart';
 class SubscriptionPlansWidget extends StatelessWidget {
   final SubscriptionPlanController controller;
   final RxString selectedPlanName;
+  final Map<String, String> planStatusByPlanId;
  
   final PlatformReviewController reviewController =
       Get.isRegistered<PlatformReviewController>(tag: 'subscription_reviews')
@@ -701,6 +702,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
     super.key,
     required this.controller,
     required this.selectedPlanName,
+    this.planStatusByPlanId = const {},
   }) {
     if (reviewController.allReviews.isEmpty &&
         !reviewController.isLoading.value) {
@@ -709,6 +711,8 @@ class SubscriptionPlansWidget extends StatelessWidget {
   }
   @override
   Widget build(BuildContext context) {
+
+    log("planStatusByPlanId: ${planStatusByPlanId}");
     return Obx(() {
       if (controller.isLoading.value && controller.items.isEmpty) {
         return PlanListScreenShimmer();
@@ -750,7 +754,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
                   oldPrice > 0 && newPrice > 0 && oldPrice > newPrice;
 
               return SizedBox(
-                height: hasDiscount ? 396 : 365,
+                height: hasDiscount ? 396 : 375,
                 child: _buildPlanCard(plans[index], index),
               );
             },
@@ -1175,13 +1179,20 @@ class SubscriptionPlansWidget extends StatelessWidget {
         child: Obx(() {
           final isProcessing = controller.isProcessingPayment.value;
           final bool rec = plan.isRecommended == true;
+          final normalizedStatus =
+              (planStatusByPlanId[plan.id] ?? '').trim().toLowerCase();
+          final isActivePlan = normalizedStatus == 'active';
+          final isExpiredPlan = normalizedStatus == 'expired';
+          final showLoader = isProcessing && !isActivePlan;
+          final buttonText =
+              isActivePlan ? 'Active Plan' : (isExpiredPlan ? 'Renew' : 'Buy Now');
           final Color bg = rec ? ColorRes.black : ColorRes.white;
           final Color fg =
               rec ? Colors.black : Colors.white.withValues(alpha: 0.8);
 
           return ElevatedButton(
             onPressed:
-                (!isProcessing)
+                (!isProcessing && !isActivePlan)
                     ? () async {
                       if (UserHelper.isGuest) {
                         // Navigator.of(Get.context!).pop();
@@ -1262,7 +1273,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
                     }
                     : null,
             style: ElevatedButton.styleFrom(
-              backgroundColor: bg,
+              backgroundColor: isActivePlan ? Colors.grey.shade300 : bg,
               foregroundColor: fg,
               elevation: 0,
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -1271,7 +1282,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
               ),
             ),
             child:
-                isProcessing
+                showLoader
                     ? SizedBox(
                       height: 20,
                       width: 20,
@@ -1282,9 +1293,12 @@ class SubscriptionPlansWidget extends StatelessWidget {
                       ),
                     )
                     : Text(
-                      "Buy Now",
+                      buttonText,
                       style: TextStyle(
-                        color: rec ? ColorRes.white : ColorRes.primary,
+                        color:
+                            isActivePlan
+                                ? Colors.grey.shade700
+                                : (rec ? ColorRes.white : ColorRes.primary),
                         fontWeight: AppFontWeights.semiBold,
                         fontSize: AppFontSizes.bodySmall,
                       ),

@@ -6,6 +6,7 @@ import 'package:nesticope_app/app/care/pagination/controller/pagination_controll
 import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
 import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/modules/contractor/controller/contractor_dashboard_controller.dart';
 
 import '../../../data/network/subscription/model/subscription_model.dart';
 import '../../../data/network/subscription/model/user_subscription_model.dart';
@@ -13,6 +14,9 @@ import '../../../data/network/subscription/services/subscription_services.dart';
 
 class CurrentUserPlanController extends PaginatedController<CurrentUserSubscriptionItem> {
   final SubscriptionPlanService _service = SubscriptionPlanService();
+  final ContractorDashboardController dashboardController = Get.isRegistered<ContractorDashboardController>()
+            ? Get.find<ContractorDashboardController>()
+            : Get.put(ContractorDashboardController());
 
   /// User role comes from constructor (ex: "reseller" / "builder")
 
@@ -55,6 +59,7 @@ class CurrentUserPlanController extends PaginatedController<CurrentUserSubscript
     final ok = await _service.activateSubscription(subscriptionId);
     if (ok) {
       await loadInitial();
+      await dashboardController.fetchActiveSubscription(showDialogWhenMissing: false);
     }
     return ok;
   }
