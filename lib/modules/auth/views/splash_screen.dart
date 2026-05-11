@@ -44,6 +44,7 @@ class _SplashScreenState extends State<SplashScreen>
       await _logoVideoController.play();
       if (!mounted) return;
       setState(() => _isLogoVideoReady = true);
+      
     } catch (_) {
       if (!mounted) return;
       setState(() => _isLogoVideoReady = false);
@@ -55,7 +56,7 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
     _loadingController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 3),
     )..repeat();
 
     _loadingAnimation = CurvedAnimation(

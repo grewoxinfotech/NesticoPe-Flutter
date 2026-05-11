@@ -2,7 +2,7 @@ name: nesticope_app
 description: "A Flutter housing application with authentication and API integration."
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.1+1
 
 environment:
   sdk: '>=3.7.0 <4.0.0'
