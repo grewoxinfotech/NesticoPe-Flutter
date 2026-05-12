@@ -19,7 +19,7 @@ import 'package:nesticope_app/app/manager/compare_manager.dart';
 import 'package:nesticope_app/app/manager/project_compare_manager.dart';
 import 'package:nesticope_app/modules/home/controllers/contractor_profile_controller/contractor_compare_manager.dart';
 import 'package:nesticope_app/modules/no_internet/no_internet_screen.dart';
-import 'package:nesticope_app/services/notification_service.dart';
+import 'package:nesticope_app/services/fcm_notification_service.dart';
 import 'app/theme/themes.dart' as AppTheme;
 import 'app/utils/helper_function/user_helper/user_helper.dart';
 import 'confige/helper/api_helper.dart';
@@ -45,6 +45,11 @@ void main() async {
       return true;
     };
 
+
+    // Initialize FCM (foreground display via local notifications).
+    // If you only use OneSignal, this is safe but optional.
+    // Do not request permission here; onboarding will ask at the right time.
+    await FCMNotificationService.instance.init(requestPermission: false);
 
     // 1. Initialize NotificationService FIRST
     // await NotificationService.instance.init();

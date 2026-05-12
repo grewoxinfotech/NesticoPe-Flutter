@@ -62,7 +62,9 @@ dependencies:
   google_maps_flutter:
   fluttertoast:
   firebase_core:
+  firebase_messaging:
   firebase_crashlytics:
+  flutter_local_notifications: ^19.4.2
 
   file_picker:
   pdfx:

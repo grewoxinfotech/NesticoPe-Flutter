@@ -23,23 +23,21 @@ class NotificationSyncService {
     Map<String, dynamic>? metadata,
   }) async {
     try {
-      final packageInfo = await PackageInfo.fromPlatform();
-      final user = await SecureStorage.getUserData();
+      final reqHeaders = await headers();
       final payload = {
-        'userId': user?.user?.id ?? null,
-        'device_token': deviceToken,
-        'device_type': Platform.isAndroid ? 'android' : 'ios',
-        'device_model': Platform.operatingSystemVersion,
-        'os_version': Platform.operatingSystemVersion,
-        'app_version': packageInfo.version,
-        'metadata': metadata ?? {},
+        'deviceToken': deviceToken,
+        'deviceType': Platform.isAndroid ? 'android' : 'ios',
+        // 'metadata': metadata ?? {},
       };
 
       final response = await http.post(
         Uri.parse(syncNotificationUrl),
-        headers: {'Content-Type': 'application/json'},
+        headers: reqHeaders,
         body: jsonEncode(payload),
       );
+
+      debugPrint('📦 Notification sync response: ${syncNotificationUrl}');
+      
 
       final data = jsonDecode(response.body);
 
@@ -57,16 +55,14 @@ class NotificationSyncService {
     }
   }
 
-  Future<void> removeNotificationToken(String playerId) async {
+  Future<void> removeNotificationToken(String deviceToken) async {
     try {
-      final user = await SecureStorage.getUserData();
-      final response = await http.post(
+      final reqHeaders = await headers();
+      final response = await http.delete(
         Uri.parse(ApiConstants.removeNotificationId),
-        // headers: await headers(),
-        headers: {'Content-Type': 'application/json'},
+        headers: reqHeaders,
         body: jsonEncode({
-          'device_token': playerId,
-          'userId': user?.user?.id ?? null,
+          'deviceToken': deviceToken,
         }),
       );
 

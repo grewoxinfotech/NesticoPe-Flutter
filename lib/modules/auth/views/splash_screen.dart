@@ -4,7 +4,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:video_player/video_player.dart';
 import '../../../data/database/secure_storage_service.dart';
@@ -120,11 +119,11 @@ class _SplashScreenState extends State<SplashScreen>
     await Future.delayed(const Duration(seconds: 3));
 
     await NotificationService.instance.init();
-    Future.delayed(const Duration(milliseconds: 500), () {
-      OneSignal.Notifications.requestPermission(true);
-    });
+    // Permission prompt is moved to onboarding for better UX.
 
-    
+    //  Future.delayed(const Duration(milliseconds: 500), () {
+    //   OneSignal.Notifications.requestPermission(true);
+    // });
 
     await UserHelper.initUserType();
 

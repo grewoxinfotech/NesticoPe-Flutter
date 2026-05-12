@@ -875,11 +875,13 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
 
-      final playerId = await SecureStorage.getNotificationToken();
-      if (playerId != null && playerId.isNotEmpty) {
+      final deviceToken =
+          await SecureStorage.getFcmToken() ??
+          await SecureStorage.getNotificationToken();
+      if (deviceToken != null && deviceToken.isNotEmpty) {
         unawaited(
           NotificationSyncService.instance
-              .removeNotificationToken(playerId)
+              .removeNotificationToken(deviceToken)
               .timeout(
                 const Duration(seconds: 2),
                 onTimeout: () {

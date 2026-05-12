@@ -278,6 +278,8 @@ import 'package:nesticope_app/modules/auth/views/login_screen.dart';
 import 'package:nesticope_app/data/network/auth/service/auth_service.dart';
 import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:nesticope_app/widgets/messages/snack_bar.dart';
+import 'package:nesticope_app/services/fcm_notification_service.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 import '../../../data/database/secure_storage_service.dart';
 import '../../history/controller/search_history_controller.dart';
@@ -290,6 +292,7 @@ class OnboardingController extends GetxController {
   final searchHistoryController = Get.put(SearchHistoryController());
   final truecallerService = TruecallerService();
   var isProcessing = false.obs; // ✅ Prevent double-taps
+  bool _askedNotificationPermission = false;
 
   @override
   void onInit() {
@@ -324,6 +327,17 @@ class OnboardingController extends GetxController {
     log("Options of the dashboard $option");
 
     try {
+      // Ask notification permission from onboarding (once per app run).
+      if (!_askedNotificationPermission) {
+        _askedNotificationPermission = true;
+        try {
+          await OneSignal.Notifications.requestPermission(true);
+        } catch (_) {}
+        try {
+          await FCMNotificationService.instance.requestPermissionAndFetchToken();
+        } catch (_) {}
+      }
+
       // Perform different operations based on selection
       switch (option) {
         // Support both older labels and the new UI labels

@@ -20,6 +20,7 @@ class SecureStorage {
   static const String _keyAadharVerified = 'isAadharVerified';
   static const String _keyHasLaunched = 'hasLaunchedApp';
   static const String _keyNotificationToken = 'notificationToken';
+  static const String _keyFcmToken = 'fcmToken';
   static const String _keyIsGuestUserPropertyInquiry =
       'isGuestUserPropertyInquiry';
   static const String _keySubscriptionInquiry = 'subscriptionInquiry';
@@ -372,6 +373,19 @@ class SecureStorage {
 
   static Future<String?> getNotificationToken() async {
     return _storage.read(key: _keyNotificationToken);
+  }
+
+  // FCM Token
+  static Future<void> saveFcmToken(String token) async {
+    await _storage.write(key: _keyFcmToken, value: token);
+  }
+
+  static Future<String?> getFcmToken() async {
+    return _storage.read(key: _keyFcmToken);
+  }
+
+  static Future<void> deleteFcmToken() async {
+    await _storage.delete(key: _keyFcmToken);
   }
 
   /// Mark that the app has been opened once

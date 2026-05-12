@@ -210,12 +210,10 @@
 // }
 
 import 'dart:async';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:nesticope_app/data/database/secure_storage_service.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
-import 'package:nesticope_app/app/constants/api_constants.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
+import 'package:nesticope_app/services/fcm_notification_service.dart';
 
 import '../data/network/user/service/notification_sync_service.dart';
 
@@ -224,47 +222,42 @@ class NotificationService {
   static final NotificationService instance = NotificationService._();
 
   bool _isInitialized = false;
+  StreamSubscription<String>? _tokenRefreshSub;
+  StreamSubscription<RemoteMessage>? _openedAppSub;
 
   /// INIT – call ONCE from main.dart
   Future<void> init() async {
     if (_isInitialized) return;
-
-    OneSignal.Debug.setLogLevel(OSLogLevel.none);
-    final appId = await _fetchOneSignalAppId();
-    OneSignal.initialize(appId ?? "70d48857-661a-4b36-b757-f221c97a1103");
-
-    // await OneSignal.Notifications.requestPermission(true);
-
-    _setupNotificationClickHandler();
-    _setupForegroundNotificationHandler();
+    // OneSignal disabled: use Firebase Messaging only.
+    await FCMNotificationService.instance.init(requestPermission: false);
+    _wireFirebaseMessageHandlers();
 
     _isInitialized = true;
-    debugPrint('✅ OneSignal initialized');
+    debugPrint('✅ Firebase notification service wired');
   }
 
-  Future<String?> _fetchOneSignalAppId() async {
-    try {
-      final uri = Uri.parse(
-        ApiConstants.thirdPartySettings,
-      ).replace(queryParameters: {'page': '1', 'limit': '10'});
-      final res = await http.get(uri, headers: await ApiConstants.getHeaders());
-      if (res.statusCode != 200) return null;
-      final body = json.decode(res.body) as Map<String, dynamic>;
-      final data = body['data'] as Map<String, dynamic>? ?? {};
-      final items = data['items'] as List<dynamic>? ?? [];
-      for (final item in items) {
-        final m = item as Map<String, dynamic>;
-        final type = (m['type'] ?? '').toString().toLowerCase();
-        final name = (m['name'] ?? '').toString().toLowerCase();
-        if (type == 'push notification' || name.contains('onesignal')) {
-          final key = m['apiKey']?.toString();
-          if (key != null && key.isNotEmpty) return key;
-        }
+  void _wireFirebaseMessageHandlers() {
+    _tokenRefreshSub ??= FirebaseMessaging.instance.onTokenRefresh.listen((t) {
+      if (t.isNotEmpty) {
+        unawaited(_syncFcmTokenToBackend(role: 'guest'));
       }
-      return null;
-    } catch (_) {
-      return null;
-    }
+    });
+
+    _openedAppSub ??= FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      _handleNotificationClick(message);
+    });
+  }
+
+  void _handleNotificationClick(RemoteMessage message) {
+    final actionUrl = message.data['action_url']?.toString();
+    final propertyId = message.data['propertyId']?.toString();
+    final templateKey = message.data['templateKey']?.toString();
+
+    debugPrint(
+      '🔗 [FCM] click action_url=$actionUrl propertyId=$propertyId templateKey=$templateKey',
+    );
+
+    // Route mapping can be implemented here as backend action_url paths stabilize.
   }
 
   /// ---------------- GUEST ----------------
@@ -284,45 +277,14 @@ class NotificationService {
   // }
 
   Future<void> attachGuestUser() async {
-    debugPrint('🔔 [OneSignal] Attaching GUEST user');
+    debugPrint('🔔 [FCM] Attaching GUEST user');
     if (!_isInitialized) {
-      debugPrint('⚠️ OneSignal not initialized yet');
-      return;
-    }
-    // 1️⃣ Check existing player
-    final existingId = OneSignal.User.pushSubscription.id;
-    debugPrint('🆔 [OneSignal] Existing playerId: $existingId');
-
-    if (existingId != null) {
-      await NotificationSyncService.instance.syncToBackend(
-        deviceToken: existingId,
-      );
-      debugPrint('ℹ️ [OneSignal] Guest already attached → $existingId');
+      debugPrint('⚠️ NotificationService not initialized yet');
       return;
     }
 
-    // 2️⃣ Generate guest external id
-    final guestId = "guest_${DateTime.now().millisecondsSinceEpoch}";
-    debugPrint('👻 Generated guest externalId: $guestId');
-
-    // 3️⃣ Login guest
-    await OneSignal.login(guestId);
-    debugPrint('✅ [OneSignal] login() called for guest');
-
-    // 4️⃣ Add guest tags
-    await OneSignal.User.addTags({"is_guest": "true", "role": "guest"});
-    debugPrint('🏷️ [Oignal] Tags set → is_gueneSst=true, role=guest');
-
-    // 5️⃣ Confirm playerId
-    final playerId = OneSignal.User.pushSubscription.id;
-    if (playerId != null) {
-      await NotificationSyncService.instance.syncToBackend(
-        deviceToken: playerId,
-      );
-    }
-    debugPrint('🆔 [OneSignal] Guest playerId: $playerId');
-
-    debugPrint('🎉 [OneSignal] Guest user attached successfully');
+    await _syncFcmTokenToBackend(role: 'guest');
+    debugPrint('🎉 [FCM] Guest token synced');
   }
 
   /// ---------------- LOGIN ----------------
@@ -358,90 +320,58 @@ class NotificationService {
     required String role,
     Function(String playerId)? syncToBackend,
   }) async {
-    debugPrint('🔔 [OneSignal] Attaching LOGGED-IN user');
+    debugPrint('🔔 [FCM] Attaching LOGGED-IN user');
     debugPrint('👤 User ID : $userId');
     debugPrint('🎭 Role    : $role');
-
-    // 1️⃣ Login user in OneSignal
-    await OneSignal.login(userId);
-    debugPrint('✅ [OneSignal] login() called');
-
-    // 2️⃣ Add tags
-    await OneSignal.User.addTags({
-      "is_guest": "false",
-      "role": role.toLowerCase(),
-    });
-    debugPrint(
-      '🏷️ [OneSignal] Tags set → is_guest=false, role=${role.toLowerCase()}',
-    );
-
-    // 3️⃣ Get current playerId
-    final playerId = OneSignal.User.pushSubscription.id;
-    debugPrint('🆔 [OneSignal] Current playerId: $playerId');
-
-    if (playerId != null && syncToBackend != null) {
-      debugPrint('📡 [SYNC] Sending playerId to backend (initial)');
-      await syncToBackend(playerId);
-      await SecureStorage.saveNotificationToken(playerId);
+    final token = await _syncFcmTokenToBackend(role: role, userId: userId);
+    if (token != null && token.isNotEmpty && syncToBackend != null) {
+      await syncToBackend(token);
+      await SecureStorage.saveNotificationToken(token);
     }
+    debugPrint('🎉 [FCM] Logged-in user token synced');
+  }
 
-    // 4️⃣ Observe playerId changes (rare but important)
-    OneSignal.User.pushSubscription.addObserver((state) {
-      final id = state.current.id;
-      debugPrint('🔄 [OneSignal] pushSubscription changed → $id');
-
-      if (id != null && syncToBackend != null) {
-        debugPrint('📡 [SYNC] Sending updated playerId to backend');
-        syncToBackend(id);
+  Future<String?> _syncFcmTokenToBackend({
+    required String role,
+    String? userId,
+  }) async {
+    try {
+      // Do NOT request permission here; onboarding controls the prompt.
+      final token =
+          FCMNotificationService.instance.token ??
+          await FirebaseMessaging.instance.getToken();
+      if (token == null || token.isEmpty) return null;
+      final resolvedUserId = userId;
+      final resolvedRole = role.toLowerCase();
+      if (resolvedUserId != null && resolvedUserId.isNotEmpty) {
+        await NotificationSyncService.instance.syncToBackend(
+          deviceToken: token,
+          metadata: {
+            'user_id': resolvedUserId,
+            'role': resolvedRole,
+            'source': 'splash',
+          },
+        );
+      } else {
+        await NotificationSyncService.instance.syncToBackend(
+          deviceToken: token,
+          metadata: {'role': resolvedRole},
+        );
       }
-    });
-
-    debugPrint('🎉 [OneSignal] Logged-in user attached successfully');
+      await SecureStorage.saveFcmToken(token);
+      return token;
+    } catch (e) {
+      debugPrint('❌ [FCM] sync token failed: $e');
+      return null;
+    }
   }
 
   /// ---------------- LOGOUT ----------------
   Future<void> resetToGuest() async {
-    // Some Android builds/devices can hang/crash inside the native SDK during logout.
-    // Never block app navigation on this.
-    try {
-      await OneSignal.logout().timeout(
-        const Duration(seconds: 2),
-        onTimeout: () {
-          debugPrint('⏱️ [OneSignal] logout() timed out (continuing)');
-        },
-      );
-    } catch (e) {
-      debugPrint('❌ [OneSignal] logout() failed: $e');
-    }
-
-    try {
-      await attachGuestUser().timeout(
-        const Duration(seconds: 2),
-        onTimeout: () {
-          debugPrint('⏱️ [OneSignal] attachGuestUser() timed out (continuing)');
-        },
-      );
-    } catch (e) {
-      debugPrint('❌ [OneSignal] attachGuestUser() failed: $e');
-    }
-
-    debugPrint('🔄 Player ID reset after logout (best-effort)');
-  }
-
-  /// ---------------- HANDLERS ----------------
-  void _setupNotificationClickHandler() {
-    OneSignal.Notifications.addClickListener((event) {
-      final data = event.notification.additionalData;
-      debugPrint('🔔 Notification clicked: $data');
-    });
-  }
-
-  void _setupForegroundNotificationHandler() {
-    OneSignal.Notifications.addForegroundWillDisplayListener((event) {
-      event.notification.display();
-    });
+    await attachGuestUser();
+    debugPrint('🔄 Guest token synced after logout');
   }
 
   /// ---------------- GETTERS ----------------
-  String? get playerId => OneSignal.User.pushSubscription.id;
+  String? get playerId => FCMNotificationService.instance.token;
 }
