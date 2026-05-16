@@ -2118,8 +2118,8 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                     ),
                   ],
                 ),
-                if (variant.models.isNotEmpty &&
-                    variant.models.first.toString().trim().isNotEmpty)
+                if (variant.mediaItems?.models.isNotEmpty == true &&
+                    variant.mediaItems?.models.first.toString().trim().isNotEmpty == true)
                   RichText(
                     text: TextSpan(
                       children: [
@@ -2135,8 +2135,8 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                 ..onTap = () {
                                   Get.to(
                                     () => ModelRenderScreen(
-                                      modelUrl: variant.models.first,
-                                      iosModelUrl: variant.models.first,
+                                      modelUrl: variant.mediaItems?.models.first ?? '',
+                                      iosModelUrl: variant.mediaItems?.models.first ?? '',
                                     ),
                                   );
                                 },
@@ -2156,11 +2156,11 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                 SizedBox(
                   height: 125, // fixed height for image list
                   child:
-                      variant.images.isEmpty
+                      variant.mediaItems?.images.isEmpty == true
                           ? _buildPlaceholderImage()
                           : ListView.separated(
                             scrollDirection: Axis.horizontal,
-                            itemCount: variant.images.length,
+                            itemCount: variant.mediaItems?.images.length ?? 0,
                             padding: const EdgeInsets.all(12),
                             separatorBuilder:
                                 (_, __) => const SizedBox(width: 8),
@@ -2170,7 +2170,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
                                     image: NetworkImage(
-                                      variant.images[imgIndex],
+                                      variant.mediaItems?.images[imgIndex] ?? '',
                                     ),
                                     fit: BoxFit.cover,
                                     onError: (exception, stackTrace) {},

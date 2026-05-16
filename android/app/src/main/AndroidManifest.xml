@@ -23,13 +23,15 @@
         android:label="NesticoPe"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
-
+      <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="high_importance_channel" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyB2IH_Qm4eUKOPIN08NgvZ2tDtXKNAEpSs"/>
-                <meta-data
-        android:name="com.truecaller.android.sdk.ClientId"
-        android:value="tjb9zwljvdj2kpntmvqr527wngjj9fqskh9nhh_gz7m"/>
+        <meta-data
+            android:name="com.truecaller.android.sdk.ClientId"
+            android:value="tjb9zwljvdj2kpntmvqr527wngjj9fqskh9nhh_gz7m"/>
 
         <activity
             android:name="com.razorpay.CheckoutActivity"

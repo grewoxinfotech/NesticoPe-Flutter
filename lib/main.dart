@@ -1,7 +1,6 @@
-
-
 import 'dart:ui';
 
+import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +24,6 @@ import 'app/utils/helper_function/user_helper/user_helper.dart';
 import 'confige/helper/api_helper.dart';
 
 void main() async {
-
   // Ensure Flutter is initialized
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -44,7 +42,6 @@ void main() async {
       FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
       return true;
     };
-
 
     // Initialize FCM (foreground display via local notifications).
     // If you only use OneSignal, this is safe but optional.
@@ -88,9 +85,14 @@ void main() async {
   } catch (e) {
     debugPrint('❌ Error during initialization: $e');
   }
-
   // Run the app
-  runApp(const MyApp());
+  runApp(
+    // DevicePreview(
+    // enabled: true,
+    // builder: (context) =>
+    MyApp(),
+    // ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -101,7 +103,6 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => PinnedSearchNotifier(),
       child: GetMaterialApp(
-        
         debugShowCheckedModeBanner: false,
         title: 'NesticoPe',
         theme: AppTheme.lightTheme,
@@ -110,14 +111,12 @@ class MyApp extends StatelessWidget {
         getPages: [
           GetPage(name: '/splash', page: () => const SplashScreen()),
           GetPage(name: '/no-internet', page: () => const NoInternetScreen()),
-          GetPage(name: '/dashboard', page: () => const DashboardScreen(),),
+          GetPage(name: '/dashboard', page: () => const DashboardScreen()),
         ],
         builder: (context, child) {
           final mediaQuery = MediaQuery.of(context);
           return MediaQuery(
-            data: mediaQuery.copyWith(
-              textScaler: const TextScaler.linear(1.0),
-            ),
+            data: mediaQuery.copyWith(textScaler: const TextScaler.linear(1.0)),
             child: child!,
           );
         },

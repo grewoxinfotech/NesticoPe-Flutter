@@ -1219,8 +1219,6 @@
 //   }
 // }
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:nesticope_app/modules/builder/view/property_detail/widget/variant_media_preview.dart';
 import 'package:nesticope_app/widgets/messages/snack_bar.dart';
@@ -1229,11 +1227,13 @@ import 'package:provider/provider.dart';
 import '../../../../../data/network/builder/model/builder_model.dart';
 import '../../../controller/variation_media_controller.dart';
 import 'package:get/get.dart';
-import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 
 class VariantMediaUploadWidget extends StatefulWidget {
   final String projectId;
   final String variantId;
+  /// Row identity within the form so each variant gets its own [VariantMediaController].
+  final int configurationIndex;
+  final int variantIndex;
   final ProjectVariant? variant;
   final VoidCallback? onUploadSuccess;
 
@@ -1241,9 +1241,21 @@ class VariantMediaUploadWidget extends StatefulWidget {
     super.key,
     required this.projectId,
     required this.variantId,
+    required this.configurationIndex,
+    required this.variantIndex,
     this.variant,
     this.onUploadSuccess,
   });
+
+  /// Stable GetX tag: one controller per configuration + variant row (not a global singleton).
+  static String controllerTag({
+    required String projectId,
+    required int configurationIndex,
+    required int variantIndex,
+  }) {
+    final pid = projectId.trim().isEmpty ? 'draft' : projectId.trim();
+    return 'variant_media_${pid}_c${configurationIndex}_v$variantIndex';
+  }
 
   @override
   State<VariantMediaUploadWidget> createState() =>
@@ -1251,20 +1263,37 @@ class VariantMediaUploadWidget extends StatefulWidget {
 }
 
 class _VariantMediaUploadWidgetState extends State<VariantMediaUploadWidget> {
-  late VariantMediaController _controller;
+  late final String _controllerTag;
+  late final VariantMediaController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = Get.put(VariantMediaController());
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _controller.loadExistingMedia(widget.variant);
-    });
+    _controllerTag = VariantMediaUploadWidget.controllerTag(
+      projectId: widget.projectId,
+      configurationIndex: widget.configurationIndex,
+      variantIndex: widget.variantIndex,
+    );
+    final alreadyRegistered =
+        Get.isRegistered<VariantMediaController>(tag: _controllerTag);
+    _controller = Get.put(VariantMediaController(), tag: _controllerTag);
+    // Only hydrate from [widget.variant] the first time this tag is used.
+    // Re-running on every visit replaces lists with server URLs only and
+    // drops gallery picks that are not yet reflected on [ProjectVariant].
+    if (!alreadyRegistered) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _controller.loadExistingMedia(widget.variant);
+        }
+      });
+    }
   }
 
   @override
   void dispose() {
-    // _controller.dispose();
+    // Do not Get.delete the controller: wizard steps tear this widget down
+    // when navigating away, but we must keep the same tagged instance so
+    // returning to this step still shows picked files / in-progress uploads.
     super.dispose();
   }
 
@@ -1329,6 +1358,7 @@ class _VariantMediaUploadWidgetState extends State<VariantMediaUploadWidget> {
                   // Images Section
                   _buildMediaSection(
                     theme: theme,
+                    controller: controller,
                     title: 'Images',
                     icon: Icons.photo_library_outlined,
                     count: controller.imagesCount,
@@ -1343,6 +1373,7 @@ class _VariantMediaUploadWidgetState extends State<VariantMediaUploadWidget> {
                   // Videos Section
                   _buildMediaSection(
                     theme: theme,
+                    controller: controller,
                     title: 'Videos',
                     icon: Icons.video_library_outlined,
                     count: controller.videosCount,
@@ -1358,6 +1389,7 @@ class _VariantMediaUploadWidgetState extends State<VariantMediaUploadWidget> {
                   // 3D Model Section
                   _buildMediaSection(
                     theme: theme,
+                    controller: controller,
                     title: '3D Model',
                     icon: Icons.view_in_ar_outlined,
                     count: controller.model != null ? 1 : 0,
@@ -1401,6 +1433,7 @@ class _VariantMediaUploadWidgetState extends State<VariantMediaUploadWidget> {
 
   Widget _buildMediaSection({
     required ThemeData theme,
+    required VariantMediaController controller,
     required String title,
     required IconData icon,
     required int count,
@@ -1446,6 +1479,7 @@ class _VariantMediaUploadWidgetState extends State<VariantMediaUploadWidget> {
         ),
         const SizedBox(height: 8),
         MediaPreviewList(
+          controller: controller,
           items: items,
           isVideo: isVideo,
           is3DModel: is3DModel,
@@ -1618,6 +1652,7 @@ class _VariantMediaUploadWidgetState extends State<VariantMediaUploadWidget> {
 
 // widgets/media_preview_list.dart
 class MediaPreviewList extends StatelessWidget {
+  final VariantMediaController controller;
   final List<MediaItem> items;
   final String projectId;
   final String variantId;
@@ -1627,6 +1662,7 @@ class MediaPreviewList extends StatelessWidget {
 
   const MediaPreviewList({
     super.key,
+    required this.controller,
     required this.items,
     required this.isVideo,
     this.is3DModel = false,
@@ -1637,8 +1673,6 @@ class MediaPreviewList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<VariantMediaController>();
-
     if (items.isEmpty) {
       return _buildEmptyState();
     }

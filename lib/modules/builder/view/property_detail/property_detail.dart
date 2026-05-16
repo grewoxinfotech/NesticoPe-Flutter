@@ -10,6 +10,7 @@ import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
 import '../../../../widgets/New folder/inputs/dropdown_field.dart';
 import '../../controller/builder_form_controller.dart';
+import '../../controller/variation_media_controller.dart';
 
 // import '../../controllers/project_wizard_controller.dart';
 // import '../../../data/models/project_model.dart';
@@ -579,11 +580,11 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                                   double.tryParse(n ?? '') ?? 0;
                                               final builtUpArea =
                                                   controller
-                                                          .project
-                                                          .value
-                                                          .configurations[ci]
-                                                          .variants[vi]
-                                                          .builtUpArea;
+                                                      .project
+                                                      .value
+                                                      .configurations[ci]
+                                                      .variants[vi]
+                                                      .builtUpArea;
 
                                               if (carpetArea >= builtUpArea) {
                                                 return 'Carpet area must be less than built-up area';
@@ -687,14 +688,11 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                               if (value == null ||
                                                   value.isEmpty) {
                                                 return 'Please enter monthly rent';
-
                                               }
                                               ProjectValidators.positiveNumber(
                                                 num.tryParse(value ?? ''),
-                                                field:
-                                                'Broker Commission',
+                                                field: 'Broker Commission',
                                               );
-
 
                                               /*final rent =
                                                   int.tryParse(value) ?? 0;
@@ -779,25 +777,33 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                                           .toStringAsFixed(2);
                                                     });
                                                 controller.project.update(
-                                                      (x) =>
-                                                  x!
-                                                      .configurations[ci]
-                                                      .variants[vi]
-                                                      .platformFees =
-                                                      double.tryParse(
-                                                        platformFee.toStringAsFixed(2) ?? '',
-                                                      ) ??
+                                                  (x) =>
+                                                      x!
+                                                              .configurations[ci]
+                                                              .variants[vi]
+                                                              .platformFees =
+                                                          double.tryParse(
+                                                            platformFee
+                                                                    .toStringAsFixed(
+                                                                      2,
+                                                                    ) ??
+                                                                '',
+                                                          ) ??
                                                           0,
                                                 );
                                                 controller.project.update(
-                                                      (x) =>
-                                                  x!
-                                                      .configurations[ci]
-                                                      .variants[vi]
-                                                      .brokerCommission =
-                                                      double.tryParse(
-                                                        brokerCommission.toStringAsFixed(2) ?? '',
-                                                      ) ??
+                                                  (x) =>
+                                                      x!
+                                                              .configurations[ci]
+                                                              .variants[vi]
+                                                              .brokerCommission =
+                                                          double.tryParse(
+                                                            brokerCommission
+                                                                    .toStringAsFixed(
+                                                                      2,
+                                                                    ) ??
+                                                                '',
+                                                          ) ??
                                                           0,
                                                 );
 
@@ -807,7 +813,7 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                           ),
                                         ),
                                         // const SizedBox(width: 12),
-                                       /* Expanded(
+                                        /* Expanded(
                                           child: CommonTextField(
                                             hint: 'e.g 2.4 per sq.ft',
                                             label: 'Price / Sq.Ft (optional)',
@@ -837,7 +843,7 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                       ],
                                     ),
                                     const SizedBox(height: 12),
-                                 /*   Row(
+                                    /*   Row(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
@@ -1174,9 +1180,40 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                     const SizedBox(height: 12),
                                     if (isFromEdit) ...[
                                       VariantMediaUploadWidget(
+                                        key: ValueKey(
+                                          'variant_media_${p.id ?? "draft"}_${ci}_$vi',
+                                        ),
                                         projectId: p.id ?? '',
                                         variantId: v.variantId ?? '',
-                                        variant: v,
+                                        configurationIndex: ci,
+                                        variantIndex: vi,
+                                        variant:
+                                            controller
+                                                .project
+                                                .value
+                                                .configurations[ci]
+                                                .variants[vi],
+                                        onUploadSuccess: () {
+                                          final tag =
+                                              VariantMediaUploadWidget.controllerTag(
+                                                projectId: p.id ?? '',
+                                                configurationIndex: ci,
+                                                variantIndex: vi,
+                                              );
+                                          if (!Get.isRegistered<
+                                            VariantMediaController
+                                          >(tag: tag)) {
+                                            return;
+                                          }
+                                          controller.syncVariantMediaFromController(
+                                            configurationIndex: ci,
+                                            variantIndex: vi,
+                                            mediaController:
+                                                Get.find<VariantMediaController>(
+                                                  tag: tag,
+                                                ),
+                                          );
+                                        },
                                       ),
                                     ],
                                     const SizedBox(height: 12),
@@ -2098,4 +2135,3 @@ class StepConfigurations extends GetView<ProjectWizardController> {
 //     );
 //   }
 // }
-

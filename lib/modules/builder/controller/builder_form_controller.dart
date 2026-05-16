@@ -579,6 +579,7 @@ import '../../../app/constants/color_res.dart';
 import '../../../data/network/builder/model/builder_model.dart';
 import '../../../data/network/property/services/property_service.dart';
 import 'builder_listed_project_controller.dart';
+import 'variation_media_controller.dart';
 import '../view/builder_main_screen.dart';
 
 class ProjectWizardController extends PaginatedController<ProjectItem> {
@@ -1563,16 +1564,93 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     }
   }
 
+  /// Same tag as [VariantMediaUploadWidget.controllerTag].
+  static String variantMediaControllerTag({
+    required String projectId,
+    required int configurationIndex,
+    required int variantIndex,
+  }) {
+    final pid = projectId.trim().isEmpty ? 'draft' : projectId.trim();
+    return 'variant_media_${pid}_c${configurationIndex}_v$variantIndex';
+  }
+
+  void syncVariantMediaFromController({
+    required int configurationIndex,
+    required int variantIndex,
+    required VariantMediaController mediaController,
+  }) {
+    project.update((p) {
+      if (p == null) return;
+      p.configurations[configurationIndex].variants[variantIndex].mediaItems =
+          mediaController.toVariantMedia();
+    });
+    project.refresh();
+  }
+
+  /// Variant media uses POST .../:variantId/media — upload pending picks and sync
+  /// URLs into [configurations] before the main project PUT.
+  Future<bool> prepareVariantMediaForUpdate(String projectId) async {
+    if (projectId.trim().isEmpty) return true;
+
+    var allOk = true;
+    for (var ci = 0; ci < project.value.configurations.length; ci++) {
+      final cfg = project.value.configurations[ci];
+      for (var vi = 0; vi < cfg.variants.length; vi++) {
+        final variant = cfg.variants[vi];
+        final variantId = variant.variantId?.trim() ?? '';
+        if (variantId.isEmpty) continue;
+
+        final tag = variantMediaControllerTag(
+          projectId: projectId,
+          configurationIndex: ci,
+          variantIndex: vi,
+        );
+
+        if (!Get.isRegistered<VariantMediaController>(tag: tag)) continue;
+
+        final mediaCtrl = Get.find<VariantMediaController>(tag: tag);
+        if (mediaCtrl.hasNewMedia) {
+          final uploaded = await mediaCtrl.uploadMedia(
+            projectId: projectId,
+            variantId: variantId,
+          );
+          if (!uploaded) allOk = false;
+        }
+
+        syncVariantMediaFromController(
+          configurationIndex: ci,
+          variantIndex: vi,
+          mediaController: mediaCtrl,
+        );
+      }
+    }
+    return allOk;
+  }
+
   Future<void> updateBuilderProject(String projectId) async {
     try {
-    
-      // var data = await _buildProjectPayload();
+      final variantMediaReady = await prepareVariantMediaForUpdate(projectId);
+      if (!variantMediaReady) {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Variant media',
+          message:
+              'Some variant images/videos failed to upload. Project was not updated.',
+          contentType: ContentType.failure,
+        );
+        return;
+      }
+
       final success = await _builderService.updateProject(
         projectId: projectId,
         projectData: await _buildProjectPayload(),
-        images: _extractLocalFiles(project.value.imageList),
-        videos: _extractLocalFiles(project.value.videoList),
-        documents: _extractLocalFile(project.value.brochure),
+        // Pass all paths (remote + local) like property update — service retains
+        // URLs in data.mediaGallery and uploads only new local files as multipart.
+        images: project.value.imageList.map((e) => File(e)).toList(),
+        videos: project.value.videoList.map((e) => File(e)).toList(),
+        documents: project.value.documentList.map((e) => File(e)).toList(),
+        brochures: project.value.pdfPath != null && project.value.pdfPath!.isNotEmpty
+            ? File(project.value.pdfPath!)
+            : null,
       );
 
       if (success) {
@@ -1665,6 +1743,16 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
           : user?.user?.email,
       propertyTypes: p.propertyTypes,
       projectHighlights: p.projectHighlights,
+      id: p.id,
+      mediaGallery: MediaGallery(
+        images: List<String>.from(p.imageList),
+        videos: List<String>.from(p.videoList),
+        documents: List<String>.from(p.documentList),
+      ),
+      imageList: p.imageList,
+      videoList: p.videoList,
+      documentList: p.documentList,
+      pdfPath: p.pdfPath,
     );
   }
 
@@ -1767,15 +1855,24 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     project.update((p) {
       if (p == null) return;
       p.id = updatedData.id;
-      p.pdfPath = updatedData.brochure;
+      p.pdfPath = updatedData.pdfPath;
+      p.brochure = updatedData.brochure;
+      p.mediaGallery = updatedData.mediaGallery;
+      final mg = updatedData.mediaGallery;
       p.imageList =
-          updatedData.mediaGallery!.images.isNotEmpty
-              ? updatedData.mediaGallery!.images
+          (mg != null && mg.images.isNotEmpty)
+              ? List<String>.from(mg.images)
               : p.imageList;
       p.videoList =
-          updatedData.mediaGallery!.videos.isNotEmpty
-              ? updatedData.mediaGallery!.videos
+          (mg != null && mg.videos.isNotEmpty)
+              ? List<String>.from(mg.videos)
               : p.videoList;
+      p.documentList =
+          (mg != null && mg.documents.isNotEmpty)
+              ? List<String>.from(mg.documents)
+              : (updatedData.documentList.isNotEmpty
+                  ? List<String>.from(updatedData.documentList)
+                  : p.documentList);
       p.projectName = updatedData.projectName;
       p.projectArea = updatedData.projectArea;
       p.buildingNames = updatedData.buildingNames;
@@ -1992,6 +2089,11 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
               totalUnits: 1,
               availableUnits: 1,
               specifications: [],
+              platformFees: 0,
+              brokerCommission: 0,
+              threeDModel: null,
+              mediaItems: VariantMedia(images: [], videos: [], models: []),
+              variantId: null,
             ),
           ],
         ),

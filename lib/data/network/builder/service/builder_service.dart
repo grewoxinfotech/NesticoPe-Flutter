@@ -13,6 +13,183 @@ import '../../../../widgets/messages/snack_bar.dart';
 
 // import '../model/builder_projectModel.dart';
 
+/// Only http(s) URLs belong in JSON `mediaGallery`; local paths are sent as multipart files.
+bool _isRemoteGalleryUrl(String raw) {
+  final s = raw.trim();
+  if (s.isEmpty) return false;
+  final u = Uri.tryParse(s);
+  return u != null && u.hasScheme && (u.scheme == 'http' || u.scheme == 'https');
+}
+
+Map<String, dynamic> _mediaGalleryJsonForMultipart(Map<String, dynamic> source) {
+  List<dynamic> remoteOnly(dynamic list) {
+    if (list is! List) return <String>[];
+    return list
+        .map((e) => e.toString())
+        .where(_isRemoteGalleryUrl)
+        .toList();
+  }
+
+  return <String, dynamic>{
+    'images': remoteOnly(source['images']),
+    'videos': remoteOnly(source['videos']),
+    'documents': remoteOnly(source['documents']),
+  };
+}
+
+void _normalizeMediaGalleryInProjectMap(Map<String, dynamic> projectMap) {
+  final g = projectMap['mediaGallery'];
+  if (g != null) {
+    if (g is Map<String, dynamic>) {
+      projectMap['mediaGallery'] = _mediaGalleryJsonForMultipart(g);
+    } else if (g is Map) {
+      projectMap['mediaGallery'] = _mediaGalleryJsonForMultipart(
+        Map<String, dynamic>.from(g),
+      );
+    }
+  }
+
+  for (final key in ['imageList', 'videoList', 'documentList']) {
+    final v = projectMap[key];
+    if (v is List) {
+      projectMap[key] = v
+          .map((e) => e.toString().trim())
+          .where(_isRemoteGalleryUrl)
+          .toList();
+    }
+  }
+}
+
+String _dateOnly(dynamic value) {
+  if (value == null) return '';
+  final s = value.toString().trim();
+  if (s.isEmpty) return '';
+  return s.contains('T') ? s.split('T').first : s;
+}
+
+String _fileNameFromUrl(String url) {
+  final path = Uri.tryParse(url)?.path ?? url;
+  final segments = path.split('/');
+  return segments.isNotEmpty ? segments.last : path;
+}
+
+MediaType _documentMediaType(String path) {
+  final ext = path.split('.').last.toLowerCase();
+  switch (ext) {
+    case 'pdf':
+      return MediaType('application', 'pdf');
+    case 'doc':
+      return MediaType('application', 'msword');
+    case 'docx':
+      return MediaType(
+        'application',
+        'vnd.openxmlformats-officedocument.wordprocessingml.document',
+      );
+    case 'txt':
+      return MediaType('text', 'plain');
+    default:
+      return MediaType('application', 'octet-stream');
+  }
+}
+
+List<String> _retainUrlsFromFiles(List<File>? files) {
+  if (files == null || files.isEmpty) return [];
+  return files
+      .map((f) => f.path.trim())
+      .where((path) => path.isNotEmpty && _isRemoteGalleryUrl(path))
+      .toList();
+}
+
+/// PUT /builderproject/:id expects multipart `data` (JSON) + file parts.
+Map<String, dynamic> _buildUpdateDataPayload(
+  Map<String, dynamic> projectMap, {
+  List<String>? retainImageUrls,
+  List<String>? retainVideoUrls,
+  List<String>? retainDocumentUrls,
+}) {
+  final mediaGalleryRaw = projectMap['mediaGallery'];
+  final fallbackGallery =
+      mediaGalleryRaw is Map<String, dynamic>
+          ? mediaGalleryRaw
+          : mediaGalleryRaw is Map
+          ? Map<String, dynamic>.from(mediaGalleryRaw)
+          : <String, dynamic>{
+            'images': <String>[],
+            'videos': <String>[],
+            'documents': <String>[],
+          };
+
+  final mediaGallery = <String, dynamic>{
+    'images': retainImageUrls ?? fallbackGallery['images'] ?? [],
+    'videos': retainVideoUrls ?? fallbackGallery['videos'] ?? [],
+    'documents': retainDocumentUrls ?? fallbackGallery['documents'] ?? [],
+  };
+
+  final pdfPath = projectMap['pdfPath']?.toString().trim() ?? '';
+  final brochureName = projectMap['brochure']?.toString().trim() ?? '';
+  final brochures = <Map<String, String>>[];
+  if (pdfPath.isNotEmpty && _isRemoteGalleryUrl(pdfPath)) {
+    brochures.add({
+      'name':
+          brochureName.isNotEmpty ? brochureName : _fileNameFromUrl(pdfPath),
+      'url': pdfPath,
+    });
+  }
+
+  final zip = projectMap['zipCode']?.toString() ?? '';
+  final location = projectMap['location']?.toString() ?? '';
+
+  return {
+    'projectName': projectMap['projectName'],
+    'builderName':
+        projectMap['builderName'] ??
+        projectMap['ownerName'] ??
+        'Unknown Builder',
+    'location': location,
+    'city': projectMap['city'],
+    'state': projectMap['state'],
+    'pinCode': zip,
+    'zipCode': zip,
+    'address': projectMap['address'],
+    'locality': projectMap['locality'] ?? location,
+    'propertyTypes': projectMap['propertyTypes'],
+    'status': projectMap['status'],
+    'projectArea': projectMap['projectArea'],
+    'projectSize': projectMap['projectSize'],
+    'launchDate': _dateOnly(projectMap['launchDate']),
+    'possessionDate': _dateOnly(projectMap['possessionDate']),
+    'configurations': projectMap['configurations'],
+    'nearbyLocations': projectMap['nearbyLocations'] ?? [],
+    'amenities': projectMap['amenities'] ?? [],
+    'buildingNames': projectMap['buildingNames'] ?? {},
+    'projectHighlights': projectMap['projectHighlights'] ?? [],
+    'brochures': brochures,
+    'projectContactInfo': projectMap['projectContactInfo'],
+    'ownerName': projectMap['ownerName'],
+    'ownerPhone': projectMap['ownerPhone'],
+    'ownerEmail': projectMap['ownerEmail'],
+    'reraId': projectMap['reraId'],
+    'mediaGallery': mediaGallery,
+  };
+}
+
+Future<void> _attachProjectDocuments(
+  http.MultipartRequest request,
+  List<File> documents,
+) async {
+  for (final document in documents) {
+    if (!_isRemoteGalleryUrl(document.path)) {
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'project_document',
+          document.path,
+          contentType: _documentMediaType(document.path),
+        ),
+      );
+    }
+  }
+}
+
 class BuilderService {
   final String baseUrl = ApiConstants.builderProject; // Adjust endpoint
   final String topProjectUrl = ApiConstants.topProject;
@@ -41,7 +218,7 @@ class BuilderService {
       };
 
       final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
-      print("📡 Fetching Projects fromsdlkjfdsk: $uri");
+      print("📡 Fetching Projects from: $uri");
 
       final response = await http.get(uri, headers: await headers());
 
@@ -147,6 +324,7 @@ class BuilderService {
 
       // Convert model to Map
       final projectMap = projectData.toJson();
+      _normalizeMediaGalleryInProjectMap(projectMap);
 
       if (brochures != null) {
         request.files.add(
@@ -158,16 +336,8 @@ class BuilderService {
         );
       }
 
-      if (documents != null) {
-        for (var document in documents) {
-          request.files.add(
-            await http.MultipartFile.fromPath(
-              'project_document',
-              document.path,
-              contentType: MediaType('application', 'pdf'),
-            ),
-          );
-        }
+      if (documents != null && documents.isNotEmpty) {
+        await _attachProjectDocuments(request, documents);
       }
 
       // ====== Add all other fields ======
@@ -420,65 +590,76 @@ class BuilderService {
     required AddProjectModel projectData,
     List<File>? images,
     List<File>? videos,
-    File? documents,
+    List<File>? documents,
+    File? brochures,
   }) async {
     try {
-      // AppLogger("🧾 Multipart fields1:", projectData.toJson());
       final uri = Uri.parse('$baseUrl/$projectId');
       debugPrint("📤 Updating project at: $uri");
 
-      final headerMap = await headers();
+      final retainImageUrls = _retainUrlsFromFiles(images);
+      final retainVideoUrls = _retainUrlsFromFiles(videos);
+      final retainDocumentUrls = _retainUrlsFromFiles(documents);
 
-      var request = http.MultipartRequest('PUT', uri);
-      request.headers.addAll({
-        ...headerMap,
-        'Content-Type': 'multipart/form-data',
-      });
+      final hasLocalImage =
+          (images ?? []).any((f) => !_isRemoteGalleryUrl(f.path));
+      final hasLocalVideo =
+          (videos ?? []).any((f) => !_isRemoteGalleryUrl(f.path));
+      final hasLocalDocument =
+          (documents ?? []).any((f) => !_isRemoteGalleryUrl(f.path));
+      final hasLocalBrochure =
+          brochures != null && !_isRemoteGalleryUrl(brochures.path);
+      final hasLocalMediaUpload =
+          hasLocalImage || hasLocalVideo || hasLocalDocument || hasLocalBrochure;
 
-      // Convert model to Map
       final projectMap = projectData.toJson();
-    
+      final dataPayload = _buildUpdateDataPayload(
+        projectMap,
+        retainImageUrls: retainImageUrls,
+        retainVideoUrls: retainVideoUrls,
+        retainDocumentUrls: retainDocumentUrls,
+      );
 
-      // ===== Attach brochure if local =====
-      if (documents != null) {
-        final isNetwork = Uri.tryParse(documents.path)?.isAbsolute ?? false;
-        if (!isNetwork) {
+      http.Response response;
+
+      // No new local files → JSON PUT (same idea as property_service).
+      if (!hasLocalMediaUpload) {
+        final headerMap = await headers();
+        headerMap['Content-Type'] = 'application/json';
+        response = await http.put(
+          uri,
+          headers: headerMap,
+          body: jsonEncode(dataPayload),
+        );
+        log(
+          '🧾 Update JSON: images=${retainImageUrls.length}, '
+          'videos=${retainVideoUrls.length}, '
+          'documents=${retainDocumentUrls.length}',
+        );
+      } else {
+        final headerMap = await headers();
+        var request = http.MultipartRequest('PUT', uri);
+        request.headers.addAll({
+          ...headerMap,
+          'Content-Type': 'multipart/form-data',
+        });
+
+        // Existing remote URLs in JSON `data`; new picks as multipart parts.
+        request.fields['data'] = jsonEncode(dataPayload);
+
+        if (hasLocalBrochure) {
           request.files.add(
             await http.MultipartFile.fromPath(
               'brochure',
-              documents.path,
+              brochures!.path,
               contentType: MediaType('application', 'pdf'),
             ),
           );
         }
-      }
 
-      // ===== Attach other fields =====
-      projectMap.forEach((key, value) {
-        if (value == null) return;
-        if (key == 'brochure') return; // already handled
-
-        // 🧩 Special handling for buildingNames
-        if (key == 'buildingNames' && value is Map) {
-          value.forEach((innerKey, innerValue) {
-            request.fields['buildingNames[$innerKey]'] = innerValue.toString();
-          });
-        }
-        // Encode other nested structures normally
-        else if (value is Map || value is List) {
-          request.fields[key] = jsonEncode(value);
-        }
-        // Simple field
-        else {
-          request.fields[key] = value.toString();
-        }
-      });
-
-      // ===== Attach images if local =====
-      if (images != null && images.isNotEmpty) {
-        for (var image in images) {
-          final isNetwork = Uri.tryParse(image.path)?.isAbsolute ?? false;
-          if (!isNetwork) {
+        if (images != null) {
+          for (final image in images) {
+            if (_isRemoteGalleryUrl(image.path)) continue;
             request.files.add(
               await http.MultipartFile.fromPath(
                 'project_images',
@@ -488,13 +669,10 @@ class BuilderService {
             );
           }
         }
-      }
 
-      // ===== Attach videos if local =====
-      if (videos != null && videos.isNotEmpty) {
-        for (var video in videos) {
-          final isNetwork = Uri.tryParse(video.path)?.isAbsolute ?? false;
-          if (!isNetwork) {
+        if (videos != null) {
+          for (final video in videos) {
+            if (_isRemoteGalleryUrl(video.path)) continue;
             request.files.add(
               await http.MultipartFile.fromPath(
                 'project_videos',
@@ -504,22 +682,23 @@ class BuilderService {
             );
           }
         }
+
+        if (documents != null) {
+          await _attachProjectDocuments(request, documents);
+        }
+
+        log(
+          '🧾 Update multipart: retain images=${retainImageUrls.length}, '
+          'videos=${retainVideoUrls.length}, '
+          'documents=${retainDocumentUrls.length}, '
+          'newFiles=${request.files.length}',
+        );
+
+        final streamedResponse = await request.send();
+        response = await http.Response.fromStream(streamedResponse);
       }
 
-      // 🧾 Debug logs
-      log("🧩 Flattened buildingNames fields:");
-      request.fields.forEach((key, value) {
-        if (key.startsWith('buildingNames')) log("  $key = $value");
-      });
-     
-
-      final streamedResponse = await request.send();
-      final response = await http.Response.fromStream(streamedResponse);
-
-
-
-
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: 'Success',

@@ -251,13 +251,17 @@
 // }
 
 
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 
 import '../../../data/network/builder/model/builder_model.dart';
+import '../../../data/network/builder/service/builder_service.dart';
 import '../../../data/network/builder/service/variation_media_service.dart';
 
 class VariantMediaController extends ChangeNotifier {
   final MediaUploadService _mediaService = MediaUploadService();
+  final BuilderService _builderService = BuilderService();
 
   List<MediaItem> _images = [];
   List<MediaItem> _videos = [];
@@ -288,17 +292,111 @@ class VariantMediaController extends ChangeNotifier {
 
   // -------------------- Load Existing Media --------------------
 
+  static bool _isRemotePath(String path) {
+    final p = path.trim();
+    return p.startsWith('http://') || p.startsWith('https://');
+  }
+
   void loadExistingMedia(ProjectVariant? variant) {
-    if (variant != null) {
-      _images = variant.images.map((url) => MediaItem.url(url)).toList();
-      _videos = variant.videos.map((url) => MediaItem.url(url)).toList();
-
-      // Load existing 3D model if available
-      if (variant.models.isNotEmpty) {
-        _model = MediaItem.url(variant.models.first);
-      }
-
+    debugPrint("Loading existing media: ${variant?.toJson()}");
+    if (variant?.mediaItems != null) {
+      _applyVariantMedia(variant!.mediaItems!);
+    } else {
+      _images = [];
+      _videos = [];
+      _model = null;
       notifyListeners();
+    }
+  }
+
+  void _applyVariantMedia(VariantMedia media) {
+    _images =
+        media.images
+            .where((u) => u.trim().isNotEmpty)
+            .map((url) => MediaItem.url(url))
+            .toList();
+    _videos =
+        media.videos
+            .where((u) => u.trim().isNotEmpty)
+            .map((url) => MediaItem.url(url))
+            .toList();
+    if (media.models.isNotEmpty) {
+      _model = MediaItem.url(media.models.first);
+    } else if (media.threeDModel != null && media.threeDModel!.isNotEmpty) {
+      _model = MediaItem.url(media.threeDModel!);
+    } else {
+      _model = null;
+    }
+    notifyListeners();
+  }
+
+  /// Remote URLs only — used when syncing into [ProjectVariant] before project PUT.
+  VariantMedia toVariantMedia() {
+    return VariantMedia(
+      images:
+          _images
+              .map((e) => e.path.trim())
+              .where((p) => p.isNotEmpty && _isRemotePath(p))
+              .toList(),
+      videos:
+          _videos
+              .map((e) => e.path.trim())
+              .where((p) => p.isNotEmpty && _isRemotePath(p))
+              .toList(),
+      models:
+          _model != null &&
+                  _model!.path.trim().isNotEmpty &&
+                  _isRemotePath(_model!.path)
+              ? [_model!.path]
+              : [],
+      threeDModel:
+          _model != null && _isRemotePath(_model!.path) ? _model!.path : null,
+    );
+  }
+
+  bool _applyUploadResponse(dynamic data) {
+    try {
+      Map<String, dynamic>? root;
+      if (data is Map) {
+        root = Map<String, dynamic>.from(data);
+      } else if (data is String && data.isNotEmpty) {
+        root = Map<String, dynamic>.from(jsonDecode(data) as Map);
+      }
+      if (root == null) return false;
+
+      final inner = root['data'];
+      dynamic vmRaw = inner is Map ? inner['variantMedia'] : null;
+      vmRaw ??= root['variantMedia'];
+
+      if (vmRaw is Map) {
+        _applyVariantMedia(
+          VariantMedia.fromJson(Map<String, dynamic>.from(vmRaw)),
+        );
+        return true;
+      }
+    } catch (e) {
+      debugPrint('Could not parse variant upload response: $e');
+    }
+    return false;
+  }
+
+  Future<void> refreshFromProject({
+    required String projectId,
+    required String variantId,
+  }) async {
+    if (projectId.isEmpty || variantId.isEmpty) return;
+    try {
+      final project = await _builderService.getProjectById(projectId);
+      for (final cfg in project.configuration) {
+        for (final v in cfg.variants) {
+          if (v.variantId == variantId) {
+            loadExistingMedia(v);
+            return;
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('refreshFromProject failed: $e');
     }
   }
 
@@ -399,7 +497,7 @@ class VariantMediaController extends ChangeNotifier {
   }
 
   void removeVideo(int index) {
-    if (index >= 0 && index < _videos.length) {
+    if (index >= 0 && index < _videos.length) { 
       _videos.removeAt(index);
       notifyListeners();
     }
@@ -444,29 +542,12 @@ class VariantMediaController extends ChangeNotifier {
       );
 
       if (result['success'] == true) {
-        // Convert uploaded files to URL items after successful upload
-        if (newImages.isNotEmpty) {
-          _images = _images.map((item) {
-            if (item.isFile) {
-              // In a real scenario, you'd get the URL from the server response
-              return item; // Keep as is, or update with server URL if available
-            }
-            return item;
-          }).toList();
-        }
-
-        if (newVideos.isNotEmpty) {
-          _videos = _videos.map((item) {
-            if (item.isFile) {
-              return item; // Keep as is, or update with server URL if available
-            }
-            return item;
-          }).toList();
-        }
-
-        if (newModel != null && _model != null) {
-          // Keep the model as is, or update with server URL if available
-          // _model = MediaItem.url(serverReturnedUrl);
+        final applied = _applyUploadResponse(result['data']);
+        if (!applied) {
+          await refreshFromProject(
+            projectId: projectId,
+            variantId: variantId,
+          );
         }
 
         _isUploading = false;

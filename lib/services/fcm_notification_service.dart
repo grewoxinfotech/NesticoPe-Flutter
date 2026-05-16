@@ -23,7 +23,12 @@ class FCMNotificationService {
     'high_importance_channel',
     'High Importance Notifications',
     description: 'Used for important notifications.',
-    importance: Importance.high,
+    importance: Importance.max,
+    playSound: true,
+    showBadge: true,
+    enableLights: true,
+    enableVibration: true,
+
   );
 
   bool _initialized = false;
@@ -101,8 +106,13 @@ class FCMNotificationService {
           _channel.id,
           _channel.name,
           channelDescription: _channel.description,
-          importance: Importance.high,
+          importance: Importance.max,
           priority: Priority.high,
+          playSound: true,
+          enableVibration: true,
+          fullScreenIntent: true,
+          showProgress: true,
+          showWhen: true,
         ),
       ),
     );

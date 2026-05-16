@@ -1213,7 +1213,7 @@ class BuilderLeadOverView extends StatelessWidget {
                               ],
 
                               // Gallery Images
-                              if (variant.images.isNotEmpty) ...[
+                              if (variant.mediaItems?.images.isNotEmpty == true) ...[
                                 const SizedBox(height: 12),
                                 const Text(
                                   "GALLERY",
@@ -1230,13 +1230,13 @@ class BuilderLeadOverView extends StatelessWidget {
                                   child: ListView.builder(
                                     scrollDirection: Axis.horizontal,
                                     itemCount:
-                                        variant.images.length > 3
+                                        (variant.mediaItems?.images.length ?? 0) > 3
                                             ? 3
-                                            : variant.images.length,
+                                            : variant.mediaItems?.images.length ?? 0,
                                     itemBuilder: (context, imgIndex) {
-                                      final img = variant.images[imgIndex];
+                                      final img = variant.mediaItems?.images[imgIndex];
                                       final remainingCount =
-                                          variant.images.length - 3;
+                                          (variant.mediaItems?.images.length ?? 0) - 3;
 
                                       return Stack(
                                         children: [
@@ -1255,7 +1255,7 @@ class BuilderLeadOverView extends StatelessWidget {
                                               borderRadius:
                                                   BorderRadius.circular(8),
                                               child: Image.network(
-                                                img,
+                                                img ?? '',
                                                 width: 100,
                                                 height: 80,
                                                 fit: BoxFit.cover,

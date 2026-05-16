@@ -2658,9 +2658,9 @@ class _InsightsScreenState extends State<InsightsScreen> {
                                   'Choose from premium plans to maximize your reach and brand visibility.',
                               viewPlansButtonText: 'Explore Plans',
                               stats: const [
-                                StatItemData('₹100Cr+', 'Projects Completed'),
-                                StatItemData('800+', 'Active Projects'),
-                                StatItemData('300+', 'Verified Contractors'),
+                                StatItemData('Massive', 'Projects Completed'),
+                                StatItemData('Growing', 'Active Projects'),
+                                StatItemData('Trusted', 'Verified Contractors'),
                               ],
                               features: const [
                                 FeatureItemData(
@@ -2730,9 +2730,9 @@ class _InsightsScreenState extends State<InsightsScreen> {
                               finalCallout: const FinalCalloutConfig(
                                 headline: "Ready to Build Your Legacy?",
                                 points: [
-                                  '300+ Verified Contractors',
-                                  '₹100Cr+ Projects Value',
-                                  '24/7 Expert Support',
+                                  'Expert Verified Contractors',
+                                  'Massive Projects Value',
+                                  'Roundclock Expert Support',
                                 ],
                                 cta: 'Start Your Journey Now',
                               ),

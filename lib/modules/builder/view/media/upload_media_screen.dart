@@ -17,6 +17,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
 
   @override
   Widget build(BuildContext context) {
+    
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -272,7 +273,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                   Icons.description_outlined,
                   size: 20,
                   color:
-                      (controller.uploadBrocherPath.value.isNotEmpty)
+                      (controller.project.value.brochure?.isNotEmpty ?? false)
                           ? ColorRes.primary
                           : ColorRes.error[700],
                 ),
@@ -300,7 +301,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                         ],
                       ),
                       Spacer(),
-                      (controller.uploadBrocherPath.value.isNotEmpty)
+                      (controller.project.value.brochure?.isNotEmpty ?? false)
                           ? IconButton(
                             onPressed: () {
                               controller.removeBuilderBrocher();
@@ -361,7 +362,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                controller.uploadBrocherName.value,
+                                controller.project.value.brochure ?? '',
                                 style: TextStyle(
                                   fontSize: AppFontSizes.medium,
                                   fontWeight: AppFontWeights.semiBold,
@@ -378,7 +379,7 @@ class UploadMediaScreen extends GetView<ProjectWizardController> {
                         InkWell(
                           onTap: () async {
                             await controller.pdfPreviewByDefaultApp(
-                              controller.project.value.brochure ?? '',
+                              controller.project.value.pdfPath ?? '',
                             );
                           },
 

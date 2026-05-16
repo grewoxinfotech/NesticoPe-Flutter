@@ -753,9 +753,7 @@ class ProjectVariant {
   double? brokerCommission;
 
   List<String> specifications;
-  List<String> images;
-  List<String> videos;
-  List<String> models;
+  VariantMedia? mediaItems;
   String? threeDModel;
   String? variantId;
 
@@ -772,9 +770,7 @@ class ProjectVariant {
     this.platformFees,
     this.brokerCommission,
     this.specifications = const [],
-    this.images = const [],
-    this.videos = const [],
-    this.models = const [],
+    this.mediaItems,
     this.threeDModel,
     this.variantId,
   });
@@ -797,6 +793,7 @@ class ProjectVariant {
           json['platformFees'] != null
               ? (json['platformFees']).toDouble()
               : null,
+      mediaItems: _variantMediaFromJson(json['variantMedia']),
       brokerCommission:
           json['brokerCommission'] != null
               ? (json['brokerCommission']).toDouble()
@@ -809,9 +806,7 @@ class ProjectVariant {
                 ? s.substring(1, s.length - 1)
                 : s;
           }).toList(),
-      images: List<String>.from(json['images'] ?? []),
-      videos: List<String>.from(json['videos'] ?? []),
-      models: List<String>.from(json['models'] ?? []),
+    
       threeDModel: json['threeDModel'],
       variantId: json['variantId'],
     );
@@ -829,13 +824,45 @@ class ProjectVariant {
     'buildingName': buildingName,
     'brokerCommission': brokerCommission,
     'specifications': specifications,
-    'images': images,
-    'videos': videos,
-    'models': models,
+    'variantMedia': mediaItems?.toJson(),
+    
     'threeDModel': threeDModel,
     'variantId': variantId,
   };
 }
+
+
+VariantMedia? _variantMediaFromJson(dynamic raw) {
+  if (raw == null) return null;
+  if (raw is Map<String, dynamic>) {
+    return VariantMedia.fromJson(raw);
+  }
+  if (raw is Map) {
+    return VariantMedia.fromJson(Map<String, dynamic>.from(raw));
+  }
+  return null;
+}
+
+class VariantMedia {
+  List<String> images;
+  List<String> videos;
+  List<String> models;
+  String? threeDModel;
+  VariantMedia({required this.images, required this.videos, required this.models, this.threeDModel});
+  factory VariantMedia.fromJson(Map<String, dynamic> json) => VariantMedia(
+    images: List<String>.from(json['images'] ?? []),
+    videos: List<String>.from(json['videos'] ?? []),
+    models: List<String>.from(json['models'] ?? []),
+    threeDModel: json['threeDModel'],
+  );
+  Map<String, dynamic> toJson() => {
+    'images': images,
+    'videos': videos,
+    'models': models,
+    'threeDModel': threeDModel,
+  };
+}
+
 
 
 
@@ -1180,6 +1207,7 @@ extension ProjectItemMapper on ProjectItem {
     return AddProjectModel(
       id: id,
       projectName: projectName,
+      
       projectArea: double.tryParse(projectArea) ?? 0.0,
       buildingNames: buildingNames??{},
 
@@ -1214,9 +1242,7 @@ extension ProjectItemMapper on ProjectItem {
                       platformFees: v.platformFees,
                       brokerCommission: v.brokerCommission,
                       specifications: v.specifications,
-                      images: v.images,
-                      videos: v.videos,
-                      models: v.models,
+                      mediaItems: v.mediaItems,
                       threeDModel: v.threeDModel,
                       variantId: v.variantId,
                     );
@@ -1253,12 +1279,8 @@ extension ProjectItemMapper on ProjectItem {
       videoList: mediaGallery?.videos ?? [],
       documentList: mediaGallery?.documents ?? [],
 
-      brochure: brochures.isNotEmpty ? brochures.first.url : null,
-      pdfPath:
-          (mediaGallery?.documents != null &&
-                  mediaGallery!.documents.isNotEmpty)
-              ? mediaGallery?.documents.first
-              : null,
+      brochure: brochures.isNotEmpty ? brochures.first.name : null,
+      pdfPath: brochures.isNotEmpty ? brochures.first.url : null,
 
       projectContactInfo: projectContactInfo,
     );

@@ -171,6 +171,7 @@ class FinalCalloutConfig {
 }
 
 class ListingIntroScreen extends StatelessWidget {
+  
   final ListingIntroConfig config;
   final bool isBulletPoint;
   final String planTitle;

@@ -347,6 +347,11 @@ class MediaUploadService {
 
       var request = http.MultipartRequest('POST', uri);
 
+
+      debugPrint("Uploading images: $images");
+      debugPrint("Uploading videos: $videos");
+      debugPrint("Uploading model: $model");
+
       // Add images
       for (var image in images) {
         request.files.add(
@@ -386,10 +391,16 @@ class MediaUploadService {
       final responseBody = await response.stream.bytesToString();
 
       if (response.statusCode == 200 || response.statusCode == 201) {
+        dynamic parsed;
+        try {
+          parsed = jsonDecode(responseBody);
+        } catch (_) {
+          parsed = responseBody;
+        }
         return {
           'success': true,
           'message': 'Upload successful',
-          'data': responseBody,
+          'data': parsed,
         };
       } else {
         return {
