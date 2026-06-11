@@ -9,6 +9,10 @@ class ApiConfig {
   static String razorpayKeyId = '';
   static String get googleMapApi =>
       'https://maps.googleapis.com/maps/api/place/autocomplete/json?key=$mapkey';
+  static bool isAdharActive = false;
+  static String aadharClientId='';
+
+   /// Check if a third-party service is active based on its name
 
 
   static String token = '';
@@ -46,6 +50,7 @@ class ApiConfig {
           final name = (m['name'] ?? '').toString().toLowerCase();
           final status = (m['status'] ?? '').toString().toLowerCase();
           final isActive = status.isEmpty || status == 'active';
+
 
           if (type == 'maps' || name.contains('google maps')) {
             if (!isActive) continue;
@@ -91,6 +96,39 @@ class ApiConfig {
     } catch (_) {}
   }
 
+  
+  static Future<void> fetchAadharSettings() async {
+    try {
+      final uri = Uri.parse(ApiConstants.thirdPartySettings)
+          .replace(queryParameters: {'page': '1', 'limit': '10'});
+      final res = await http.get(uri, headers: await ApiConstants.getHeaders());
+      if (res.statusCode == 200) {
+        final jsonBody = json.decode(res.body) as Map<String, dynamic>;
+        final data = jsonBody['data'] as Map<String, dynamic>? ?? {};
+        final items = data['items'] as List<dynamic>? ?? [];
+        for (final item in items) {
+          final m = item as Map<String, dynamic>;
+          final name = (m['name'] ?? '').toString().toLowerCase();
+          if (name.contains('aadhar verification')) {
+           if(m['status']?.toString().toLowerCase() == 'active'){
+            final token = m['token']?.toString();
+            final apiKey = m['apiKey']?.toString();
+            final clientId =
+                (token != null && token.isNotEmpty) ? token : (apiKey ?? '');
+            if (clientId.isNotEmpty) {
+              truecallerClientId = clientId;
+            }
+           }
+           else{
+             isAdharActive = false;
+             aadharClientId = '';
+           }
+          }
+        }
+      }
+    } catch (_) {}
+  }
+
   /// Ensure map key is present before making Google requests
   static Future<void> ensureMapKey() async {
     if (mapkey.isEmpty) {
@@ -102,6 +140,13 @@ class ApiConfig {
   static Future<void> ensureRazorpayKeyId() async {
     if (razorpayKeyId.isEmpty) {
       await fetchThirdPartySettings();
+    }
+  }
+
+  /// Ensure Aadhar client id is loaded (from ThirdPartySettings)
+  static Future<void> ensureAadharClientId() async {
+    if (aadharClientId.isEmpty) {
+      await fetchAadharSettings();
     }
   }
 

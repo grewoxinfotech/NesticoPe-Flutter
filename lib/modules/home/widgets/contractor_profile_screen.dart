@@ -66,6 +66,8 @@ class _ContractorProfileDetailsScreenState
       Get.isRegistered<TopCategoryController>()
           ? Get.find<TopCategoryController>()
           : Get.put(TopCategoryController());
+  TopContractorsController topContractorsController =
+      Get.find<TopContractorsController>();
   late ContractorServiceController contractorServiceController;
   bool _ownsTopContractorsController = false;
   bool _ownsContractorServiceController = false;
@@ -167,12 +169,16 @@ class _ContractorProfileDetailsScreenState
       canPop: true,
       onPopInvoked: (didPop) {
         // Keep default back behavior so previous Home route is reused.
+        topContractorsController.loadInitial();
       },
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
           leading: IconButton(
-            onPressed: _goToDashboard,
+            onPressed: () {
+              topContractorsController.loadInitial();
+              _goToDashboard();
+            },
             icon: const Icon(Icons.arrow_back),
           ),
           title: Text(
@@ -188,390 +194,415 @@ class _ContractorProfileDetailsScreenState
         body: SafeArea(
           child: Stack(
             children: [
-              SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 12),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(
-                          AppRadius.mediumLarge,
-                        ),
-                        // border: Border.all(color: ColorRes.leadGreyColor.shade300),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
-                            blurRadius: 2,
-                            offset: const Offset(2, 3),
+              RefreshIndicator(
+                onRefresh: () async {
+                  try {
+                    await contractorServiceController.refreshList();
+                  } catch (_) {
+                    // ignore errors during refresh
+                  }
+                },
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 12),
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(
+                            AppRadius.mediumLarge,
                           ),
-                        ],
-                        color: ColorRes.white,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          // ---------------- PROFILE HEADER ----------------
-                          Obx(() {
-                            final displayName = getDisplayName(
-                              contractorFirstName:
-                                  contractorServiceController
-                                      .userData
-                                      .value
-                                      ?.firstName,
-                              contractorLastName:
-                                  contractorServiceController
-                                      .userData
-                                      .value
-                                      ?.lastName,
-                              userName: widget.contractor.username,
-                            );
+                          // border: Border.all(color: ColorRes.leadGreyColor.shade300),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.04),
+                              blurRadius: 2,
+                              offset: const Offset(2, 3),
+                            ),
+                          ],
+                          color: ColorRes.white,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            // ---------------- PROFILE HEADER ----------------
+                            Obx(() {
+                              final displayName = getDisplayName(
+                                contractorFirstName:
+                                    contractorServiceController
+                                        .userData
+                                        .value
+                                        ?.firstName,
+                                contractorLastName:
+                                    contractorServiceController
+                                        .userData
+                                        .value
+                                        ?.lastName,
+                                userName: widget.contractor.username,
+                              );
 
-                            return Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
-                              decoration: BoxDecoration(
-                                color: ColorRes.white,
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: Row(
-                                      children: [
-                                        // Avatar
-                                        // Container(
-                                        //   height: 60,
-                                        //   width: 60,
-                                        //   decoration: BoxDecoration(
-                                        //     color: ColorRes.primary.withOpacity(0.3),
-                                        //     shape: BoxShape.circle,
-                                        //   ),
-                                        //   child: const Icon(
-                                        //     Icons.build,
-                                        //     size: 32,
-                                        //     color: ColorRes.primary,
-                                        //   ),
-                                        // ),
-                                        buildProfileAvatar(
-                                          displayName: displayName,
-                                          radius: 30,
-                                          profilePic:
-                                              _profilePic?.isNotEmpty == true
-                                                  ? _profilePic!
-                                                  : widget.contractor.imageUrl,
-                                        ),
-                                        const SizedBox(width: 16),
+                              return Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: ColorRes.white,
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: Row(
+                                        children: [
+                                          // Avatar
+                                          // Container(
+                                          //   height: 60,
+                                          //   width: 60,
+                                          //   decoration: BoxDecoration(
+                                          //     color: ColorRes.primary.withOpacity(0.3),
+                                          //     shape: BoxShape.circle,
+                                          //   ),
+                                          //   child: const Icon(
+                                          //     Icons.build,
+                                          //     size: 32,
+                                          //     color: ColorRes.primary,
+                                          //   ),
+                                          // ),
+                                          buildProfileAvatar(
+                                            displayName: displayName,
+                                            radius: 30,
+                                            profilePic:
+                                                _profilePic?.isNotEmpty == true
+                                                    ? _profilePic!
+                                                    : widget
+                                                        .contractor
+                                                        .imageUrl,
+                                          ),
+                                          const SizedBox(width: 16),
 
-                                        // Contractor Info
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              // Name (only if available)
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  if (displayName.isNotEmpty)
-                                                    Expanded(
-                                                      child: Text(
-                                                        displayName.capitalize
-                                                                ?.replaceAll(
-                                                                  '_',
-                                                                  ' ',
-                                                                ) ??
-                                                            '',
-                                                        maxLines: 2,
-                                                        overflow:
-                                                            TextOverflow
-                                                                .ellipsis,
-                                                        style: TextStyle(
-                                                          fontSize:
-                                                              AppFontSizes.body,
-                                                          fontWeight:
-                                                              AppFontWeights
-                                                                  .semiBold,
-                                                          color:
-                                                              ColorRes.primary,
+                                          // Contractor Info
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                // Name (only if available)
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    if (displayName.isNotEmpty)
+                                                      Expanded(
+                                                        child: Text(
+                                                          displayName.capitalize
+                                                                  ?.replaceAll(
+                                                                    '_',
+                                                                    ' ',
+                                                                  ) ??
+                                                              '',
+                                                          maxLines: 2,
+                                                          overflow:
+                                                              TextOverflow
+                                                                  .ellipsis,
+                                                          style: TextStyle(
+                                                            fontSize:
+                                                                AppFontSizes
+                                                                    .body,
+                                                            fontWeight:
+                                                                AppFontWeights
+                                                                    .semiBold,
+                                                            color:
+                                                                ColorRes
+                                                                    .primary,
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
-                                                  // Spacer(),
-                                                  SizedBox(width: 12),
-                                                  if (double.tryParse(
+                                                    // Spacer(),
+                                                    SizedBox(width: 12),
+                                                    if (double.tryParse(
+                                                          widget
+                                                              .contractor
+                                                              .overallRating
+                                                              .toString(),
+                                                        ) !=
+                                                        null)
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              top: 4,
+                                                            ),
+                                                        child: Row(
+                                                          children: [
+                                                            const Icon(
+                                                              Icons
+                                                                  .star_rounded,
+                                                              color:
+                                                                  Colors.amber,
+                                                              size: 14,
+                                                            ),
+                                                            // const SizedBox(width: 4),
+                                                            const SizedBox(
+                                                              width: 4,
+                                                            ),
+                                                            Text(
+                                                              (double.tryParse(
+                                                                        widget
+                                                                            .contractor
+                                                                            .overallRating,
+                                                                      ) ??
+                                                                      0)
+                                                                  .toStringAsFixed(
+                                                                    1,
+                                                                  ),
+
+                                                              style: TextStyle(
+                                                                fontSize:
+                                                                    AppFontSizes
+                                                                        .small,
+                                                                fontWeight:
+                                                                    AppFontWeights
+                                                                        .bold,
+                                                                color:
+                                                                    ColorRes
+                                                                        .primary,
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                              width: 4,
+                                                            ),
+                                                            Text(
+                                                              "(${Formatter.formatNumber(widget.contractor.totalReviews)})",
+                                                              style: TextStyle(
+                                                                fontSize:
+                                                                    AppFontSizes
+                                                                        .caption,
+                                                                color:
+                                                                    ColorRes
+                                                                        .leadGreyColor
+                                                                        .shade700,
+                                                                fontWeight:
+                                                                    AppFontWeights
+                                                                        .medium,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+
+                                                    // Rating (only if valid)
+                                                  ],
+                                                ),
+                                                SizedBox(height: 6),
+                                                Row(
+                                                  children: [
+                                                    if (widget
+                                                                .contractor
+                                                                .contractorType !=
+                                                            null &&
                                                         widget
                                                             .contractor
-                                                            .overallRating
-                                                            .toString(),
-                                                      ) !=
-                                                      null)
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                            top: 4,
-                                                          ),
-                                                      child: Row(
-                                                        children: [
-                                                          const Icon(
-                                                            Icons.star_rounded,
-                                                            color: Colors.amber,
-                                                            size: 14,
-                                                          ),
-                                                          // const SizedBox(width: 4),
-                                                          const SizedBox(
-                                                            width: 4,
-                                                          ),
-                                                          Text(
-                                                            (double.tryParse(
-                                                                      widget
-                                                                          .contractor
-                                                                          .overallRating,
-                                                                    ) ??
-                                                                    0)
-                                                                .toStringAsFixed(
-                                                                  1,
-                                                                ),
-
-                                                            style: TextStyle(
-                                                              fontSize:
-                                                                  AppFontSizes
-                                                                      .small,
-                                                              fontWeight:
-                                                                  AppFontWeights
-                                                                      .bold,
-                                                              color:
-                                                                  ColorRes
-                                                                      .primary,
+                                                            .contractorType!
+                                                            .isNotEmpty) ...[
+                                                      Container(
+                                                        padding:
+                                                            const EdgeInsets.symmetric(
+                                                              horizontal: 8,
+                                                              vertical: 4,
                                                             ),
-                                                          ),
-                                                          const SizedBox(
-                                                            width: 4,
-                                                          ),
-                                                          Text(
-                                                            "(${Formatter.formatNumber(widget.contractor.totalReviews)})",
-                                                            style: TextStyle(
-                                                              fontSize:
-                                                                  AppFontSizes
-                                                                      .caption,
-                                                              color:
-                                                                  ColorRes
-                                                                      .leadGreyColor
-                                                                      .shade700,
-                                                              fontWeight:
-                                                                  AppFontWeights
-                                                                      .medium,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-
-                                                  // Rating (only if valid)
-                                                ],
-                                              ),
-                                              SizedBox(height: 6),
-                                              Row(
-                                                children: [
-                                                  if (widget
-                                                              .contractor
-                                                              .contractorType !=
-                                                          null &&
-                                                      widget
-                                                          .contractor
-                                                          .contractorType!
-                                                          .isNotEmpty) ...[
-                                                    Container(
-                                                      padding:
-                                                          const EdgeInsets.symmetric(
-                                                            horizontal: 8,
-                                                            vertical: 4,
-                                                          ),
-                                                      decoration: BoxDecoration(
-                                                        color: ColorRes.primary
-                                                            .withOpacity(0.05),
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              6,
-                                                            ),
-                                                        border: Border.all(
+                                                        decoration: BoxDecoration(
                                                           color: ColorRes
                                                               .primary
-                                                              .withOpacity(0.3),
-                                                        ),
-                                                      ),
-                                                      child: Text(
-                                                        widget
-                                                            .contractor
-                                                            .contractorType!,
-                                                        style: TextStyle(
-                                                          fontSize:
-                                                              AppFontSizes
-                                                                  .caption,
-                                                          fontWeight:
-                                                              AppFontWeights
-                                                                  .medium,
-                                                          color:
-                                                              ColorRes.primary,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-
-                                                  if (widget
-                                                          .contractor
-                                                          .subscription
-                                                          .hasPremiumPlan ||
-                                                      widget.isPremium) ...[
-                                                    SizedBox(width: 6),
-
-                                                    Container(
-                                                      padding:
-                                                          const EdgeInsets.symmetric(
-                                                            horizontal: 8,
-                                                            vertical: 4,
+                                                              .withOpacity(
+                                                                0.05,
+                                                              ),
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                6,
+                                                              ),
+                                                          border: Border.all(
+                                                            color: ColorRes
+                                                                .primary
+                                                                .withOpacity(
+                                                                  0.3,
+                                                                ),
                                                           ),
-                                                      decoration: BoxDecoration(
-                                                        color: ColorRes
-                                                            .orangeColor
-                                                            .withOpacity(0.05),
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              6,
+                                                        ),
+                                                        child: Text(
+                                                          widget
+                                                              .contractor
+                                                              .contractorType!,
+                                                          style: TextStyle(
+                                                            fontSize:
+                                                                AppFontSizes
+                                                                    .caption,
+                                                            fontWeight:
+                                                                AppFontWeights
+                                                                    .medium,
+                                                            color:
+                                                                ColorRes
+                                                                    .primary,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+
+                                                    if (widget
+                                                            .contractor
+                                                            .subscription
+                                                            .hasPremiumPlan ||
+                                                        widget.isPremium) ...[
+                                                      SizedBox(width: 6),
+
+                                                      Container(
+                                                        padding:
+                                                            const EdgeInsets.symmetric(
+                                                              horizontal: 8,
+                                                              vertical: 4,
                                                             ),
-                                                        border: Border.all(
+                                                        decoration: BoxDecoration(
                                                           color: ColorRes
                                                               .orangeColor
-                                                              .withOpacity(0.3),
+                                                              .withOpacity(
+                                                                0.05,
+                                                              ),
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                6,
+                                                              ),
+                                                          border: Border.all(
+                                                            color: ColorRes
+                                                                .orangeColor
+                                                                .withOpacity(
+                                                                  0.3,
+                                                                ),
+                                                          ),
+                                                        ),
+                                                        child: Text(
+                                                          'Premium',
+                                                          style: TextStyle(
+                                                            fontSize:
+                                                                AppFontSizes
+                                                                    .caption,
+                                                            fontWeight:
+                                                                AppFontWeights
+                                                                    .medium,
+                                                            color:
+                                                                ColorRes
+                                                                    .orangeColor,
+                                                          ),
                                                         ),
                                                       ),
-                                                      child: Text(
-                                                        'Premium',
-                                                        style: TextStyle(
-                                                          fontSize:
-                                                              AppFontSizes
-                                                                  .caption,
-                                                          fontWeight:
-                                                              AppFontWeights
-                                                                  .medium,
-                                                          color:
-                                                              ColorRes
-                                                                  .orangeColor,
-                                                        ),
-                                                      ),
-                                                    ),
+                                                    ],
                                                   ],
-                                                ],
-                                              ),
-                                            ],
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }),
-
-                          // Location (only if city exists)
-                          Obx(() {
-                            final city =
-                                contractorServiceController
-                                    .userData
-                                    .value
-                                    ?.city;
-
-                            if (city == null || city.isEmpty) {
-                              return const SizedBox.shrink();
-                            }
-
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 4),
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.location_on_outlined,
-                                    color: ColorRes.primary,
-                                    size: 18,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Expanded(
-                                    child: Text(
-                                      'Provides service in $city',
-                                      style: TextStyle(
-                                        fontSize: AppFontSizes.caption,
-                                        fontWeight: AppFontWeights.medium,
-                                        color: ColorRes.leadGreyColor.shade600,
+                                        ],
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }),
-                          const SizedBox(height: 12),
+                                  ],
+                                ),
+                              );
+                            }),
 
-                          // ---------------- CONTACT BUTTON ----------------
-                          // Obx(
-                          //   () => SizedBox(
-                          //     width: double.infinity,
-                          //     child: ElevatedButton(
-                          //       onPressed: () {
-                          //         if (UserHelper.isGuest) {
-                          //           Get.to(() => LoginScreen());
-                          //         }
-                          //
-                          //         if (isListSelectable.value) {
-                          //           if (contractorServiceController
-                          //               .selectedItems
-                          //               .isEmpty) {
-                          //             Get.snackbar(
-                          //               "No Service Selected",
-                          //               "Please select at least one service to continue",
-                          //               snackPosition: SnackPosition.BOTTOM,
-                          //             );
-                          //             return;
-                          //           }
-                          //           contactContractor();
-                          //           return;
-                          //         }
-                          //
-                          //         isListSelectable.value = true;
-                          //       },
-                          //       style: ElevatedButton.styleFrom(
-                          //         backgroundColor: ColorRes.primary,
-                          //         padding: const EdgeInsets.symmetric(vertical: 14),
-                          //         shape: RoundedRectangleBorder(
-                          //           borderRadius: BorderRadius.circular(10),
-                          //         ),
-                          //       ),
-                          //       child: Text(
-                          //         UserHelper.isGuest
-                          //             ? "Login to Contact"
-                          //             : isListSelectable.value
-                          //             ? "Contact Now"
-                          //             : "Select Services",
-                          //         style: TextStyle(
-                          //           fontSize: AppFontSizes.bodySmall,
-                          //           fontWeight: AppFontWeights.semiBold,
-                          //         ),
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
-                          /*   Obx(() {
+                            // Location (only if city exists)
+                            Obx(() {
+                              final city =
+                                  contractorServiceController
+                                      .userData
+                                      .value
+                                      ?.city;
+
+                              if (city == null || city.isEmpty) {
+                                return const SizedBox.shrink();
+                              }
+
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 4),
+                                child: Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.location_on_outlined,
+                                      color: ColorRes.primary,
+                                      size: 18,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Expanded(
+                                      child: Text(
+                                        'Provides service in $city',
+                                        style: TextStyle(
+                                          fontSize: AppFontSizes.caption,
+                                          fontWeight: AppFontWeights.medium,
+                                          color:
+                                              ColorRes.leadGreyColor.shade600,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }),
+                            const SizedBox(height: 12),
+
+                            // ---------------- CONTACT BUTTON ----------------
+                            // Obx(
+                            //   () => SizedBox(
+                            //     width: double.infinity,
+                            //     child: ElevatedButton(
+                            //       onPressed: () {
+                            //         if (UserHelper.isGuest) {
+                            //           Get.to(() => LoginScreen());
+                            //         }
+                            //
+                            //         if (isListSelectable.value) {
+                            //           if (contractorServiceController
+                            //               .selectedItems
+                            //               .isEmpty) {
+                            //             Get.snackbar(
+                            //               "No Service Selected",
+                            //               "Please select at least one service to continue",
+                            //               snackPosition: SnackPosition.BOTTOM,
+                            //             );
+                            //             return;
+                            //           }
+                            //           contactContractor();
+                            //           return;
+                            //         }
+                            //
+                            //         isListSelectable.value = true;
+                            //       },
+                            //       style: ElevatedButton.styleFrom(
+                            //         backgroundColor: ColorRes.primary,
+                            //         padding: const EdgeInsets.symmetric(vertical: 14),
+                            //         shape: RoundedRectangleBorder(
+                            //           borderRadius: BorderRadius.circular(10),
+                            //         ),
+                            //       ),
+                            //       child: Text(
+                            //         UserHelper.isGuest
+                            //             ? "Login to Contact"
+                            //             : isListSelectable.value
+                            //             ? "Contact Now"
+                            //             : "Select Services",
+                            //         style: TextStyle(
+                            //           fontSize: AppFontSizes.bodySmall,
+                            //           fontWeight: AppFontWeights.semiBold,
+                            //         ),
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
+                            /*   Obx(() {
                       final bool isSelectable = isListSelectable.value;
                       final bool isGuest = UserHelper.isGuest;
         
@@ -640,698 +671,724 @@ class _ContractorProfileDetailsScreenState
                       );
                     }),
         */
-                          Obx(() {
-                            final bool isGuest = UserHelper.isGuest;
-                            final bool isOwnService =
-                                currentUserId.value == widget.contractor.userId;
-                            final bool hasSelection =
-                                contractorServiceController
-                                    .selectedItems
-                                    .isNotEmpty;
-                            final bool enabled =
-                                !isGuest && !isOwnService && hasSelection;
+                            Obx(() {
+                              final bool isGuest = UserHelper.isGuest;
+                              final bool isOwnService =
+                                  currentUserId.value ==
+                                  widget.contractor.userId;
+                              final bool hasSelection =
+                                  contractorServiceController
+                                      .selectedItems
+                                      .isNotEmpty;
+                              final bool enabled =
+                                  !isGuest && !isOwnService && hasSelection;
 
-                            return Column(
-                              children: [
-                                // if (isGuest)
-                                //   SizedBox(
-                                //     width: double.infinity,
-                                //     child: ElevatedButton(
-                                //       onPressed: () {
-                                //         Get.to(() => OtpLoginScreen());
-                                //       },
-                                //       style: ElevatedButton.styleFrom(
-                                //         backgroundColor: ColorRes.primary,
-                                //         padding: const EdgeInsets.symmetric(vertical: 14),
-                                //         shape: RoundedRectangleBorder(
-                                //           borderRadius: BorderRadius.circular(10),
-                                //         ),
-                                //       ),
-                                //       child: const Text(
-                                //         "Login to Contact",
-                                //         style: TextStyle(
-                                //           fontSize: AppFontSizes.bodySmall,
-                                //           fontWeight: AppFontWeights.semiBold,
-                                //         ),
-                                //       ),
-                                //     ),
-                                //   )
-                                // else
-                                Container(
-                                  width: double.infinity,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 10,
-                                    horizontal: 16,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: ColorRes.leadGreyColor.shade100,
-                                    borderRadius: BorderRadius.circular(10),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: ColorRes.leadGreyColor.shade300
-                                            .withOpacity(0.5),
-                                        spreadRadius: 2,
-                                        blurRadius: 4,
-                                        offset: const Offset(0, 3),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () async {
-                                          if (_contactController
-                                              .primaryPhone
-                                              .value
-                                              .isEmpty) {
-                                            await _contactController
-                                                .loadContacts(reset: true);
-                                          }
-                                          final number =
-                                              _contactController
-                                                  .primaryPhone
-                                                  .value;
-                                          if (number.isNotEmpty) {
-                                            await ContactHelper.openDialer(
-                                              number,
-                                            );
-                                          }
-                                        },
-                                        child: Container(
-                                          height: 44,
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 12,
-                                            horizontal: 16,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: ColorRes.primary.withOpacity(
-                                              0.1,
-                                            ),
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                          ),
-                                          child: const Center(
-                                            child: Icon(
-                                              Icons.call,
-                                              color: ColorRes.primary,
-                                              size: 18,
-                                            ),
-                                          ),
+                              return Column(
+                                children: [
+                                  // if (isGuest)
+                                  //   SizedBox(
+                                  //     width: double.infinity,
+                                  //     child: ElevatedButton(
+                                  //       onPressed: () {
+                                  //         Get.to(() => OtpLoginScreen());
+                                  //       },
+                                  //       style: ElevatedButton.styleFrom(
+                                  //         backgroundColor: ColorRes.primary,
+                                  //         padding: const EdgeInsets.symmetric(vertical: 14),
+                                  //         shape: RoundedRectangleBorder(
+                                  //           borderRadius: BorderRadius.circular(10),
+                                  //         ),
+                                  //       ),
+                                  //       child: const Text(
+                                  //         "Login to Contact",
+                                  //         style: TextStyle(
+                                  //           fontSize: AppFontSizes.bodySmall,
+                                  //           fontWeight: AppFontWeights.semiBold,
+                                  //         ),
+                                  //       ),
+                                  //     ),
+                                  //   )
+                                  // else
+                                  Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 10,
+                                      horizontal: 16,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: ColorRes.leadGreyColor.shade100,
+                                      borderRadius: BorderRadius.circular(10),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: ColorRes.leadGreyColor.shade300
+                                              .withOpacity(0.5),
+                                          spreadRadius: 2,
+                                          blurRadius: 4,
+                                          offset: const Offset(0, 3),
                                         ),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      GestureDetector(
-                                        onTap: () async {
-                                          if (_contactController
-                                              .primaryPhone
-                                              .value
-                                              .isEmpty) {
-                                            await _contactController
-                                                .loadContacts(reset: true);
-                                          }
-                                          final number =
-                                              _contactController
-                                                  .primaryPhone
-                                                  .value;
-                                          if (number.isNotEmpty) {
-                                            await ContactHelper.openWhatsApp(
-                                              number,
-                                            );
-                                          }
-                                        },
-                                        child: Container(
-                                          height: 44,
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 12,
-                                            horizontal: 16,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: ColorRes.green.withOpacity(
-                                              0.1,
-                                            ),
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                          ),
-                                          child: Center(
-                                            child: Image.asset(
-                                              'assets/images/whatsapp.png',
-                                              width: 20,
-                                              height: 20,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 25),
-                                      Expanded(
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            if (UserHelper.isGuest) {
-                                              Get.to(() => OtpLoginScreen());
+                                      ],
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () async {
+                                            if (_contactController
+                                                .primaryPhone
+                                                .value
+                                                .isEmpty) {
+                                              await _contactController
+                                                  .loadContacts(reset: true);
                                             }
-                                            if (enabled) {
-                                              contactContractor();
-                                            } else {
-                                              NesticoPeSnackBar.showAwesomeSnackbar(
-                                                title: 'No Service Selected',
-                                                message:
-                                                    "Please select at least one service to continue",
-                                                contentType:
-                                                    ContentType.failure,
+                                            final number =
+                                                _contactController
+                                                    .primaryPhone
+                                                    .value;
+                                            if (number.isNotEmpty) {
+                                              await ContactHelper.openDialer(
+                                                number,
                                               );
                                             }
                                           },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                enabled
-                                                    ? ColorRes.primary
-                                                    : UserHelper.isGuest
-                                                    ? ColorRes.primary
-                                                    : ColorRes
-                                                        .leadGreyColor
-                                                        .shade300,
+                                          child: Container(
+                                            height: 44,
                                             padding: const EdgeInsets.symmetric(
                                               vertical: 12,
+                                              horizontal: 16,
                                             ),
-                                            shape: RoundedRectangleBorder(
+                                            decoration: BoxDecoration(
+                                              color: ColorRes.primary
+                                                  .withOpacity(0.1),
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                             ),
-                                          ),
-                                          child: Text(
-                                            !UserHelper.isGuest
-                                                ? "Contact Contractor"
-                                                : "Login to Contact",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              fontWeight:
-                                                  AppFontWeights.semiBold,
-                                              color: Colors.white,
+                                            child: const Center(
+                                              child: Icon(
+                                                Icons.call,
+                                                color: ColorRes.primary,
+                                                size: 18,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                        const SizedBox(width: 10),
+                                        GestureDetector(
+                                          onTap: () async {
+                                            if (_contactController
+                                                .primaryPhone
+                                                .value
+                                                .isEmpty) {
+                                              await _contactController
+                                                  .loadContacts(reset: true);
+                                            }
+                                            final number =
+                                                _contactController
+                                                    .primaryPhone
+                                                    .value;
+                                            if (number.isNotEmpty) {
+                                              await ContactHelper.openWhatsApp(
+                                                number,
+                                              );
+                                            }
+                                          },
+                                          child: Container(
+                                            height: 44,
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 12,
+                                              horizontal: 16,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: ColorRes.green.withOpacity(
+                                                0.1,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Center(
+                                              child: Image.asset(
+                                                'assets/images/whatsapp.png',
+                                                width: 20,
+                                                height: 20,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 25),
+                                        Expanded(
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              if (UserHelper.isGuest) {
+                                                Get.to(() => OtpLoginScreen());
+                                              }
+                                              if (enabled) {
+                                                contactContractor();
+                                              } else {
+                                                NesticoPeSnackBar.showAwesomeSnackbar(
+                                                  title: 'No Service Selected',
+                                                  message:
+                                                      "Please select at least one service to continue",
+                                                  contentType:
+                                                      ContentType.failure,
+                                                );
+                                              }
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  enabled
+                                                      ? ColorRes.primary
+                                                      : UserHelper.isGuest
+                                                      ? ColorRes.primary
+                                                      : ColorRes
+                                                          .leadGreyColor
+                                                          .shade300,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    vertical: 12,
+                                                  ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                            ),
+                                            child: Text(
+                                              !UserHelper.isGuest
+                                                  ? "Contact Contractor"
+                                                  : "Login to Contact",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontWeight:
+                                                    AppFontWeights.semiBold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                if (isOwnService) ...[
-                                  const SizedBox(height: 8),
-                                  Container(
-                                    width: double.infinity,
-                                    padding: const EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      color: Colors.red.shade50,
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(
-                                        color: Colors.red.shade200,
+                                  if (isOwnService) ...[
+                                    const SizedBox(height: 8),
+                                    Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color: Colors.red.shade50,
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                          color: Colors.red.shade200,
+                                        ),
+                                      ),
+                                      child: Text(
+                                        "Contractors cannot submit inquiries for their own services.",
+                                        style: TextStyle(
+                                          color: Colors.red.shade700,
+                                          fontSize: AppFontSizes.caption,
+                                          fontWeight: AppFontWeights.medium,
+                                        ),
                                       ),
                                     ),
-                                    child: Text(
-                                      "Contractors cannot submit inquiries for their own services.",
-                                      style: TextStyle(
-                                        color: Colors.red.shade700,
-                                        fontSize: AppFontSizes.caption,
-                                        fontWeight: AppFontWeights.medium,
-                                      ),
-                                    ),
-                                  ),
+                                  ],
                                 ],
-                              ],
-                            );
-                          }),
+                              );
+                            }),
 
-                          const SizedBox(height: 12),
+                            const SizedBox(height: 12),
 
-                          Row(
-                            children: [
-                              _statCard(
-                                "Total Services",
-                                Formatter.formatNumber(
-                                  widget.contractor.totalServices,
-                                ),
-                                bgColor: Colors.blue.shade50,
-                                valueColor: Colors.blue,
-                              ),
-                              _statCard(
-                                "Active Services",
-                                Formatter.formatNumber(
-                                  widget.contractor.activeServices,
-                                ),
-                                bgColor: Colors.green.shade50,
-                                valueColor: Colors.green,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-
-                          Row(
-                            children: [
-                              _statCard(
-                                "Projects",
-                                Formatter.formatNumber(
-                                  widget.contractor.projectStats.totalProjects,
-                                ),
-                                bgColor: Colors.orange.shade50,
-                                valueColor: Colors.orange,
-                              ),
-                              _statCard(
-                                "Experience",
-                                "${Formatter.formatNumber(widget.contractor.totalExperience)} years",
-                                // highlight: true,
-                                bgColor: ColorRes.lightPurpleColor.withOpacity(0.1),
-                                valueColor: ColorRes.lightPurpleColor,
-                                titleColor: ColorRes.lightPurpleColor,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    // ---------------- SECTION TITLE ----------------
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "Services Offered (${widget.contractor.totalServices})",
-                              style: TextStyle(
-                                fontSize: AppFontSizes.body,
-                                fontWeight: AppFontWeights.semiBold,
-                                color: ColorRes.textPrimary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    // ---------------- CATEGORY TABS ----------------
-                    Obx(() {
-                      // Observe services so tabs update when list loads.
-                      final allItems = contractorServiceController.items;
-                      final serviceCategoryIds =
-                          allItems.map((s) => s.category).toSet();
-
-                      if (_topCategoryController.isLoading.value &&
-                          _topCategoryController.categories.isEmpty) {
-                        return const SizedBox.shrink();
-                      }
-
-                      final categories =
-                          _topCategoryController.categories
-                              .where((c) => serviceCategoryIds.contains(c.id))
-                              .toList();
-
-                      if (categories.isEmpty) {
-                        return const SizedBox.shrink();
-                      }
-
-                      var selectedId = _selectedServiceCategoryId.value;
-                      if (selectedId.isEmpty ||
-                          !serviceCategoryIds.contains(selectedId)) {
-                        selectedId = categories.first.id;
-                        Future.microtask(() {
-                          if (_selectedServiceCategoryId.value != selectedId) {
-                            _selectedServiceCategoryId.value = selectedId;
-                          }
-                        });
-                      }
-
-                      return SizedBox(
-                        height: 35,
-                        child: ListView.separated(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          scrollDirection: Axis.horizontal,
-                          itemCount: categories.length,
-                          separatorBuilder:
-                              (_, __) => const SizedBox(width: 10),
-                          itemBuilder: (context, index) {
-                            final cat = categories[index];
-                            final id = cat.id;
-                            final label = cat.name;
-                            final isSelected = selectedId == id;
-
-                            return InkWell(
-                              borderRadius: BorderRadius.circular(24),
-                              onTap:
-                                  () => _selectedServiceCategoryId.value = id,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 18,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color:
-                                      isSelected
-                                          ? ColorRes.primary
-                                          : ColorRes.white,
-                                  borderRadius: BorderRadius.circular(24),
-                                  border: Border.all(
-                                    color:
-                                        isSelected
-                                            ? ColorRes.primary
-                                            : ColorRes.primary,
-                                  ),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    label.capitalize?.replaceAll('_', ' ') ??
-                                        label,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontSize: AppFontSizes.small,
-                                      fontWeight: AppFontWeights.semiBold,
-                                      color:
-                                          isSelected
-                                              ? Colors.white
-                                              : ColorRes.textPrimary,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      );
-                    }),
-                    const SizedBox(height: 14),
-                    // ---------------- SELECTED SERVICES COUNT ----------------
-                    Obx(() {
-                      if (contractorServiceController
-                          .selectedItems
-                          .isNotEmpty) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            margin: const EdgeInsets.only(bottom: 14),
-                            decoration: BoxDecoration(
-                              color: ColorRes.primary.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: ColorRes.primary),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            Row(
                               children: [
-                                Text(
-                                  "${contractorServiceController.selectedItems.length} service(s) selected",
-                                  style: TextStyle(
-                                    fontSize: AppFontSizes.bodySmall,
-                                    fontWeight: AppFontWeights.semiBold,
-                                    color: ColorRes.primary,
+                                _statCard(
+                                  "Total Services",
+                                  Formatter.formatNumber(
+                                    widget.contractor.totalServices,
                                   ),
+                                  bgColor: Colors.blue.shade50,
+                                  valueColor: Colors.blue,
                                 ),
-                                TextButton(
-                                  onPressed: () {
-                                    contractorServiceController
-                                        .clearSelection();
-                                  },
-                                  child: Text(
-                                    "Clear All",
-                                    style: TextStyle(
-                                      fontSize: AppFontSizes.bodySmall,
-                                      color: ColorRes.error,
-                                    ),
-                                  ),
-                                ),
+                                Obx(() {
+                                  final activeCount =
+                                      contractorServiceController.items
+                                          .where((s) => s.isActive == true)
+                                          .length;
+                                  return _statCard(
+                                    "Active Services",
+                                    Formatter.formatNumber(activeCount),
+                                    bgColor: Colors.green.shade50,
+                                    valueColor: Colors.green,
+                                  );
+                                }),
                               ],
                             ),
-                          ),
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    }),
-                    // ---------------- LOGIN ALERT ----------------
-                    if (UserHelper.isGuest) ...[
-                      Container(
-                        margin: EdgeInsets.symmetric(horizontal: 16),
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: ColorRes.primary.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: const [
-                            Icon(Icons.info_outline, color: ColorRes.primary),
-                            SizedBox(width: 10),
-                            Expanded(
-                              child: Text(
-                                "Please login to select services and contact the contractor.",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
+                            const SizedBox(height: 12),
+
+                            Row(
+                              children: [
+                                _statCard(
+                                  "Projects",
+                                  Formatter.formatNumber(
+                                    widget
+                                        .contractor
+                                        .projectStats
+                                        .totalProjects,
+                                  ),
+                                  bgColor: Colors.orange.shade50,
+                                  valueColor: Colors.orange,
                                 ),
-                              ),
+                                _statCard(
+                                  "Experience",
+                                  "${Formatter.formatNumber(widget.contractor.totalExperience)} years",
+                                  // highlight: true,
+                                  bgColor: ColorRes.lightPurpleColor
+                                      .withOpacity(0.1),
+                                  valueColor: ColorRes.lightPurpleColor,
+                                  titleColor: ColorRes.lightPurpleColor,
+                                ),
+                              ],
                             ),
                           ],
                         ),
                       ),
                       const SizedBox(height: 20),
-                    ],
-                    // ---------------- SERVICE CARDS ----------------
-                    Obx(() {
-                      final allItems = contractorServiceController.items;
-                      final serviceCategoryIds =
-                          allItems.map((s) => s.category).toSet();
-                      final categories =
-                          _topCategoryController.categories
-                              .where((c) => serviceCategoryIds.contains(c.id))
-                              .toList();
+                      // ---------------- SECTION TITLE ----------------
+                      Obx(() {
+                        final activeCount =
+                            contractorServiceController.items
+                                .where((s) => s.isActive == true)
+                                .length;
 
-                      String? effectiveCategoryId;
-                      if (categories.isNotEmpty) {
-                        var id = _selectedServiceCategoryId.value;
-                        if (id.isEmpty || !serviceCategoryIds.contains(id)) {
-                          id = categories.first.id;
-                          Future.microtask(() {
-                            if (_selectedServiceCategoryId.value != id) {
-                              _selectedServiceCategoryId.value = id;
-                            }
-                          });
-                        }
-                        effectiveCategoryId = id;
-                      }
-
-                      final filteredItems =
-                          effectiveCategoryId != null
-                              ? allItems
-                                  .where(
-                                    (s) => s.category == effectiveCategoryId,
-                                  )
-                                  .toList()
-                              : allItems;
-
-                      if (contractorServiceController.isLoading.value &&
-                          allItems.isEmpty) {
-                        return const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(32.0),
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      }
-                      if (!contractorServiceController.isLoading.value &&
-                          allItems.isEmpty) {
-                        return Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: ColorRes.leadGreyColor.shade100,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              alignment: Alignment.center,
-                              child: Text("No services found."),
-                            ),
-                          ),
-                        );
-                      }
-
-                      if (!contractorServiceController.isLoading.value &&
-                          filteredItems.isEmpty) {
-                        // return Center(
-                        //   child: Padding(
-                        //     padding: const EdgeInsets.all(16.0),
-                        //     child:  Container(child: Text("No services found in category.")),
-                        //   ),
-                        // );
-                        return Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(vertical: 28),
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 5,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade100,
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: Colors.grey.shade300,
-                              style: BorderStyle.solid,
-                              width: 1,
-                            ),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Row(
                             children: [
-                              /// Circle with plus icon
-                              Container(
-                                height: 56,
-                                width: 56,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.grey.shade200,
-                                ),
-                                child: Icon(
-                                  Icons.add,
-                                  size: 24,
-                                  color: Colors.grey.shade500,
-                                ),
-                              ),
-
-                              const SizedBox(height: 12),
-
-                              /// Text
-                              Text(
-                                "No services found in category",
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.grey.shade500,
-                                  fontWeight: FontWeight.w500,
+                              Expanded(
+                                child: Text(
+                                  "Services Offered ($activeCount)",
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.body,
+                                    fontWeight: AppFontWeights.semiBold,
+                                    color: ColorRes.textPrimary,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                         );
-                      }
+                      }),
+                      const SizedBox(height: 14),
+                      // ---------------- CATEGORY TABS ----------------
+                      Obx(() {
+                        // Observe services so tabs update when list loads.
+                        // Use only active services
+                        final allItems =
+                            contractorServiceController.items
+                                .where((s) => s.isActive == true)
+                                .toList();
+                        final serviceCategoryIds =
+                            allItems.map((s) => s.category).toSet();
 
-                      return ListView.separated(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        padding: EdgeInsets.zero,
-                        itemBuilder: (context, index) {
-                          final data = filteredItems[index];
+                        if (_topCategoryController.isLoading.value &&
+                            _topCategoryController.categories.isEmpty) {
+                          return const SizedBox.shrink();
+                        }
 
-                          // print("Contractor Data of Service ${data.toJson()}");
+                        final categories =
+                            _topCategoryController.categories
+                                .where((c) => serviceCategoryIds.contains(c.id))
+                                .toList();
 
-                          return ServiceCard(
-                            service: data,
-                            isSelectable: !UserHelper.isGuest,
-                            tag: widget.contractor.userId,
-                          );
-                        },
-                        separatorBuilder:
-                            (context, index) => SizedBox(height: 16),
-                        itemCount: filteredItems.length,
-                      );
-                    }),
-                    // Loading indicator for pagination
-                    Obx(() {
-                      if (contractorServiceController.isLoading.value &&
-                          contractorServiceController.items.isNotEmpty) {
-                        return const Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Center(child: CircularProgressIndicator()),
+                        if (categories.isEmpty) {
+                          return const SizedBox.shrink();
+                        }
+
+                        var selectedId = _selectedServiceCategoryId.value;
+                        if (selectedId.isEmpty ||
+                            !serviceCategoryIds.contains(selectedId)) {
+                          selectedId = categories.first.id;
+                          Future.microtask(() {
+                            if (_selectedServiceCategoryId.value !=
+                                selectedId) {
+                              _selectedServiceCategoryId.value = selectedId;
+                            }
+                          });
+                        }
+
+                        return SizedBox(
+                          height: 35,
+                          child: ListView.separated(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: categories.length,
+                            separatorBuilder:
+                                (_, __) => const SizedBox(width: 10),
+                            itemBuilder: (context, index) {
+                              final cat = categories[index];
+                              final id = cat.id;
+                              final label = cat.name;
+                              final isSelected = selectedId == id;
+
+                              return InkWell(
+                                borderRadius: BorderRadius.circular(24),
+                                onTap:
+                                    () => _selectedServiceCategoryId.value = id,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 18,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        isSelected
+                                            ? ColorRes.primary
+                                            : ColorRes.white,
+                                    borderRadius: BorderRadius.circular(24),
+                                    border: Border.all(
+                                      color:
+                                          isSelected
+                                              ? ColorRes.primary
+                                              : ColorRes.primary,
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      label.capitalize?.replaceAll('_', ' ') ??
+                                          label,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.small,
+                                        fontWeight: AppFontWeights.semiBold,
+                                        color:
+                                            isSelected
+                                                ? Colors.white
+                                                : ColorRes.textPrimary,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                         );
-                      }
-                      return const SizedBox.shrink();
-                    }),
-                    // const SizedBox(height: 20),
-
-                    // ---------------- OTHER CONTRACTORS (HORIZONTAL) ----------------
-                    Obx(() {
-                      // Hide section when viewing own profile
-                      if (currentUserId.value == widget.contractor.userId) {
-                        return const SizedBox.shrink();
-                      }
-
-                      if (otherCtrl.isLoading.value &&
-                          otherCtrl.items.isEmpty) {
-                        return const SizedBox.shrink();
-                      }
-
-                      final list =
-                          otherCtrl.items
-                              .where(
-                                (c) => c.userId != widget.contractor.userId,
-                              )
-                              .toList();
-
-                      if (list.isEmpty) return const SizedBox.shrink();
-
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 12),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                            ),
-                            child: Text(
-                              'Other Contractors',
-                              style: TextStyle(
-                                fontSize: AppFontSizes.body,
-                                fontWeight: AppFontWeights.semiBold,
-                                color: ColorRes.textPrimary,
+                      }),
+                      const SizedBox(height: 14),
+                      // ---------------- SELECTED SERVICES COUNT ----------------
+                      Obx(() {
+                        if (contractorServiceController
+                            .selectedItems
+                            .isNotEmpty) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              margin: const EdgeInsets.only(bottom: 14),
+                              decoration: BoxDecoration(
+                                color: ColorRes.primary.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: ColorRes.primary),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "${contractorServiceController.selectedItems.length} service(s) selected",
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.bodySmall,
+                                      fontWeight: AppFontWeights.semiBold,
+                                      color: ColorRes.primary,
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      contractorServiceController
+                                          .clearSelection();
+                                    },
+                                    child: Text(
+                                      "Clear All",
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.bodySmall,
+                                        color: ColorRes.error,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      }),
+                      // ---------------- LOGIN ALERT ----------------
+                      if (UserHelper.isGuest) ...[
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 16),
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: ColorRes.primary.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          const SizedBox(height: 8),
-                          SizedBox(
-                            height: 180,
-
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              // padding: const EdgeInsets.symmetric(horizontal: 4),
-                              padding: EdgeInsets.only(left: 16),
-                              itemCount: list.length,
-                              itemBuilder: (context, index) {
-                                final c = list[index];
-                                return Padding(
-                                  padding: const EdgeInsets.only(right: 10),
-                                  child: _ContractorMiniCard(
-                                    contractor: c,
-                                    compare: compare,
+                          child: Row(
+                            children: const [
+                              Icon(Icons.info_outline, color: ColorRes.primary),
+                              SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  "Please login to select services and contact the contractor.",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
                                   ),
-                                );
-                              },
-                            ),
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 20),
-                        ],
-                      );
-                    }),
-                    // const SizedBox(height: 30),
-                    // const SizedBox(height: 84),
-                    Obx(() {
-                      final propertyCount =
-                          Get.isRegistered<CompareManager>()
-                              ? Get.find<CompareManager>().count
-                              : 0;
-                      final projectCount =
-                          Get.isRegistered<ProjectCompareManager>()
-                              ? Get.find<ProjectCompareManager>().count
-                              : 0;
-                      final contractorCount =
-                          Get.isRegistered<ContractorCompareManager>()
-                              ? Get.find<ContractorCompareManager>().count
-                              : 0;
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                      // ---------------- SERVICE CARDS ----------------
+                      Obx(() {
+                        // Only display active services
+                        final allItems =
+                            contractorServiceController.items
+                                .where((s) => s.isActive == true)
+                                .toList();
+                        final serviceCategoryIds =
+                            allItems.map((s) => s.category).toSet();
+                        final categories =
+                            _topCategoryController.categories
+                                .where((c) => serviceCategoryIds.contains(c.id))
+                                .toList();
 
-                      final showUnifiedComparisonFloatingButton =
-                          propertyCount > 0 ||
-                          projectCount > 0 ||
-                          contractorCount > 0;
+                        String? effectiveCategoryId;
+                        if (categories.isNotEmpty) {
+                          var id = _selectedServiceCategoryId.value;
+                          if (id.isEmpty || !serviceCategoryIds.contains(id)) {
+                            id = categories.first.id;
+                            Future.microtask(() {
+                              if (_selectedServiceCategoryId.value != id) {
+                                _selectedServiceCategoryId.value = id;
+                              }
+                            });
+                          }
+                          effectiveCategoryId = id;
+                        }
 
-                      return SizedBox(
-                        height: showUnifiedComparisonFloatingButton ? 84 : 0,
-                      );
-                    }),
-                  ],
+                        final filteredItems =
+                            effectiveCategoryId != null
+                                ? allItems
+                                    .where(
+                                      (s) => s.category == effectiveCategoryId,
+                                    )
+                                    .toList()
+                                : allItems;
+
+                        if (contractorServiceController.isLoading.value &&
+                            allItems.isEmpty) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(32.0),
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
+                        }
+                        if (!contractorServiceController.isLoading.value &&
+                            allItems.isEmpty) {
+                          return Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Container(
+                                padding: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  color: ColorRes.leadGreyColor.shade100,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                alignment: Alignment.center,
+                                child: Text("No services found."),
+                              ),
+                            ),
+                          );
+                        }
+
+                        if (!contractorServiceController.isLoading.value &&
+                            filteredItems.isEmpty) {
+                          // return Center(
+                          //   child: Padding(
+                          //     padding: const EdgeInsets.all(16.0),
+                          //     child:  Container(child: Text("No services found in category.")),
+                          //   ),
+                          // );
+                          return Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 28),
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: Colors.grey.shade300,
+                                style: BorderStyle.solid,
+                                width: 1,
+                              ),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                /// Circle with plus icon
+                                Container(
+                                  height: 56,
+                                  width: 56,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.grey.shade200,
+                                  ),
+                                  child: Icon(
+                                    Icons.add,
+                                    size: 24,
+                                    color: Colors.grey.shade500,
+                                  ),
+                                ),
+
+                                const SizedBox(height: 12),
+
+                                /// Text
+                                Text(
+                                  "No services found in category",
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.grey.shade500,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+
+                        return ListView.separated(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          padding: EdgeInsets.zero,
+                          itemBuilder: (context, index) {
+                            final data = filteredItems[index];
+
+                            // print("Contractor Data of Service ${data.toJson()}");
+
+                            return ServiceCard(
+                              service: data,
+                              isSelectable: !UserHelper.isGuest,
+                              tag: widget.contractor.userId,
+                            );
+                          },
+                          separatorBuilder:
+                              (context, index) => SizedBox(height: 16),
+                          itemCount: filteredItems.length,
+                        );
+                      }),
+                      // Loading indicator for pagination
+                      Obx(() {
+                        if (contractorServiceController.isLoading.value &&
+                            contractorServiceController.items.isNotEmpty) {
+                          return const Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      }),
+                      // const SizedBox(height: 20),
+
+                      // ---------------- OTHER CONTRACTORS (HORIZONTAL) ----------------
+                      Obx(() {
+                        // Hide section when viewing own profile
+                        if (currentUserId.value == widget.contractor.userId) {
+                          return const SizedBox.shrink();
+                        }
+
+                        if (otherCtrl.isLoading.value &&
+                            otherCtrl.items.isEmpty) {
+                          return const SizedBox.shrink();
+                        }
+
+                        final list =
+                            otherCtrl.items
+                                .where(
+                                  (c) => c.userId != widget.contractor.userId,
+                                )
+                                .toList();
+
+                        if (list.isEmpty) return const SizedBox.shrink();
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 12),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                              ),
+                              child: Text(
+                                'Other Contractors',
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.body,
+                                  fontWeight: AppFontWeights.semiBold,
+                                  color: ColorRes.textPrimary,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            SizedBox(
+                              height: 180,
+
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                // padding: const EdgeInsets.symmetric(horizontal: 4),
+                                padding: EdgeInsets.only(left: 16),
+                                itemCount: list.length,
+                                itemBuilder: (context, index) {
+                                  final c = list[index];
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 10),
+                                    child: _ContractorMiniCard(
+                                      contractor: c,
+                                      compare: compare,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                          ],
+                        );
+                      }),
+                      // const SizedBox(height: 30),
+                      // const SizedBox(height: 84),
+                      Obx(() {
+                        final propertyCount =
+                            Get.isRegistered<CompareManager>()
+                                ? Get.find<CompareManager>().count
+                                : 0;
+                        final projectCount =
+                            Get.isRegistered<ProjectCompareManager>()
+                                ? Get.find<ProjectCompareManager>().count
+                                : 0;
+                        final contractorCount =
+                            Get.isRegistered<ContractorCompareManager>()
+                                ? Get.find<ContractorCompareManager>().count
+                                : 0;
+
+                        final showUnifiedComparisonFloatingButton =
+                            propertyCount > 0 ||
+                            projectCount > 0 ||
+                            contractorCount > 0;
+
+                        return SizedBox(
+                          height: showUnifiedComparisonFloatingButton ? 84 : 0,
+                        );
+                      }),
+                      SizedBox(height: 20),
+                    ],
+                  ),
                 ),
               ),
               const UnifiedComparisonFloatingButton(bottom: 16),

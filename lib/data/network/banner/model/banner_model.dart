@@ -11,6 +11,7 @@ class BannerItem {
   final int order;
   final String type;
   final bool isAdvertisement;
+  final bool isShowOnMobile;
  
 
   final DateTime? createdAt;
@@ -20,6 +21,7 @@ class BannerItem {
     required this.id,
     required this.title,
     required this.image,
+    required this.isShowOnMobile,
     required this.url,
     required this.status,
     required this.order,
@@ -48,6 +50,7 @@ class BannerItem {
       title: clean(json['title']),
       image: clean(json['image']),
       url: clean(json['url']),
+      isShowOnMobile: json['showOnMobile'] ?? false,
       status: clean(json['status']),
       isAdvertisement: json['advertisement'] ?? false,
       order: json['order'] ?? 0,
@@ -73,6 +76,7 @@ class BannerItem {
       'advertisement': isAdvertisement,
       'created_by': createdBy,
       'updated_by': updatedBy,
+      'showOnMobile': isShowOnMobile,
       'createdAt': formatDate(createdAt),
       'updatedAt': formatDate(updatedAt),
     };

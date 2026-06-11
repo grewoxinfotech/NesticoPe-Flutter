@@ -3552,28 +3552,31 @@ class _ContractorInquiryQuotationScreenState
                 const SizedBox(height: 32),
 
                 // Save Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _submitQuotation,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ColorRes.primary,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                SafeArea(
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _submitQuotation,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ColorRes.primary,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 0,
                       ),
-                      elevation: 0,
-                    ),
-                    child: Text(
-                      widget.isEditMode ? 'Update Quotation' : 'Save Quotation',
-                      style: const TextStyle(
-                        fontSize: AppFontSizes.medium,
-                        fontWeight: AppFontWeights.semiBold,
-                        color: ColorRes.white,
+                      child: Text(
+                        widget.isEditMode ? 'Update Quotation' : 'Save Quotation',
+                        style: const TextStyle(
+                          fontSize: AppFontSizes.medium,
+                          fontWeight: AppFontWeights.semiBold,
+                          color: ColorRes.white,
+                        ),
                       ),
                     ),
                   ),
                 ),
+                //  const SizedBox(height: ),
               ],
             ),
           ),

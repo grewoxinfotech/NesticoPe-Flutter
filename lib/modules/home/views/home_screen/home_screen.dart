@@ -1801,7 +1801,7 @@ class _HomeScreenState extends State<HomeScreen>
         const SizedBox(height: 10),
 
         /// 🔵 Indicator
-        Row(
+       (bannerController.items.length > 1)? Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(
             bannerController.items.length,
@@ -1819,7 +1819,7 @@ class _HomeScreenState extends State<HomeScreen>
               ),
             ),
           ),
-        ),
+        ):SizedBox.shrink()
       ],
     );
   }
@@ -1837,35 +1837,33 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Widget _buildHorizontalPropertyList(List<dynamic> properties) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 12),
-      child: SizedBox(
-        height: 310,
-
-        child: NotificationListener<ScrollNotification>(
-          onNotification: (scrollEnd) {
-            final metrics = scrollEnd.metrics;
-            if (metrics.atEdge && metrics.pixels != 0) {
-              propertyController.loadMore();
-            }
-            return false;
+    return SizedBox(
+      height: 310,
+    
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (scrollEnd) {
+          final metrics = scrollEnd.metrics;
+          if (metrics.atEdge && metrics.pixels != 0) {
+            propertyController.loadMore();
+          }
+          return false;
+        },
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: properties.length,
+          padding: EdgeInsets.symmetric(horizontal: 12),
+          // padding: const EdgeInsets.,
+          
+          separatorBuilder: (_, __) => const SizedBox(width: 12),
+          itemBuilder: (context, index) {
+            final data = properties[index];
+            return MediaQuery(
+              data: MediaQuery.of(
+                context,
+              ).copyWith(textScaler: const TextScaler.linear(1.0)),
+              child: PropertyCard(property: data),
+            );
           },
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: properties.length,
-
-            // padding: const EdgeInsets.,
-            separatorBuilder: (_, __) => const SizedBox(width: 12),
-            itemBuilder: (context, index) {
-              final data = properties[index];
-              return MediaQuery(
-                data: MediaQuery.of(
-                  context,
-                ).copyWith(textScaler: const TextScaler.linear(1.0)),
-                child: PropertyCard(property: data),
-              );
-            },
-          ),
         ),
       ),
     );
@@ -1965,8 +1963,9 @@ class _HomeScreenState extends State<HomeScreen>
               onViewAll: () {
                 if (projectController.selectedCity == null) {
                   Get.to(
-                    () => AllProjectListScreen(),
+                    () => AllProjectListScreen(isbuilder: false,),
                     transition: Transition.fadeIn,
+                  
                     duration: Duration(milliseconds: 250),
                   );
                 } else {
@@ -2008,6 +2007,7 @@ class _HomeScreenState extends State<HomeScreen>
             child: BuilderProjectCard(
               forHome: true,
               project: data,
+            
               width: MediaQuery.of(context).size.width * 0.85,
 
               height: 150,
@@ -2211,24 +2211,22 @@ class _HomeScreenState extends State<HomeScreen>
                   ),
             ),
             const SizedBox(height: 12),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: SizedBox(
-                height: 310,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: activeTopProperties.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: 12),
-                  itemBuilder: (context, index) {
-                    final data = activeTopProperties[index];
-                    return MediaQuery(
-                      data: MediaQuery.of(
-                        context,
-                      ).copyWith(textScaler: const TextScaler.linear(1.0)),
-                      child: TopPropertyCard(property: data),
-                    );
-                  },
-                ),
+            SizedBox(
+              height: 310,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: activeTopProperties.length,
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                separatorBuilder: (_, __) => const SizedBox(width: 12),
+                itemBuilder: (context, index) {
+                  final data = activeTopProperties[index];
+                  return MediaQuery(
+                    data: MediaQuery.of(
+                      context,
+                    ).copyWith(textScaler: const TextScaler.linear(1.0)),
+                    child: TopPropertyCard(property: data),
+                  );
+                },
               ),
             ),
             SizedBox(height: 12),
@@ -2472,6 +2470,10 @@ class _HomeScreenState extends State<HomeScreen>
                 itemCount: contractorServiceController.items.length,
                 itemBuilder: (context, index) {
                   final data = contractorServiceController.items[index];
+
+                  debugPrint(
+                    "[HomeScreen] Contractor Data: ${data.toJson()}",
+                  );
                   return SizedBox(
                     width: MediaQuery.of(context).size.width * 0.85,
                     child: ContractorCard(contractor: data),

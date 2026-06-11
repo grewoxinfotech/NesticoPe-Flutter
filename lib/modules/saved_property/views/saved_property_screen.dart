@@ -188,8 +188,8 @@
 //     ];
 //
 //     return ListView.separated(
-//       padding: const EdgeInsets.all(12),  hdbksiunmnb nchdun 
-//       itemCount: seenProperties.length,   ncjsnjdunajdn nbvhjb 
+//       padding: const EdgeInsets.all(12),  hdbksiunmnb nchdun
+//       itemCount: seenProperties.length,   ncjsnjdunajdn nbvhjb
 //       separatorBuilder: (context, index) => const Divider(),
 //       itemBuilder: (context, index) {
 //         final property = dummyItems[index];
@@ -343,7 +343,7 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
               child: Obx(() {
                 // Reactive counts from GetX observables
                 final savedCount = favoriteManager.favorites.length;
-                final seenCount = viewController.viewedProperties.length;
+                final seenCount = viewController.viewedProperties.where((element) => element.details != null && element.details?.id != null && element.details!.id!.isNotEmpty).length;
                 final contactedCount =
                     contactedController.contactedPropertyIds.length;
                 final recentCount =
@@ -566,6 +566,15 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
               itemBuilder: (context, index) {
                 if (index < controller.viewedProperties.length) {
                   final property = controller.viewedProperties[index];
+                  final details = property.details;
+                  final propertyId = details?.id;
+
+                  // ✅ SAFE GUARD: skip invalid data
+                  if (details == null ||
+                      propertyId == null ||
+                      propertyId.toString().isEmpty) {
+                    return const SizedBox.shrink();
+                  }
                   log("Most View ${property.details?.toJson()}");
                   return Obx(() {
                     final PropertyFavoriteController favoriteController =
@@ -838,6 +847,15 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
             itemBuilder: (context, index) {
               final property =
                   manager.favoriteResponse.value!.data!.favorite[index];
+              final details = property.details;
+              final propertyId = details?.id;
+
+              // ✅ SAFE GUARD: skip invalid data
+              if (details == null ||
+                  propertyId == null ||
+                  propertyId.toString().isEmpty) {
+                return const SizedBox.shrink();
+              }
 
               return GestureDetector(
                 onTap: () async {
@@ -1142,6 +1160,15 @@ class _ContactedPropertiesTabState extends State<ContactedPropertiesTab> {
               itemBuilder: (context, index) {
                 if (index < controller.inquiries.length) {
                   final property = controller.inquiries[index];
+                  final details = property.details;
+                  final propertyId = details?.id;
+
+                  // ✅ SAFE GUARD: skip invalid data
+                  if (details == null ||
+                      propertyId == null ||
+                      propertyId.toString().isEmpty) {
+                    return const SizedBox.shrink();
+                  }
                   log("Most View ${property.toJson()}");
                   return Obx(() {
                     final PropertyFavoriteController favoriteController =

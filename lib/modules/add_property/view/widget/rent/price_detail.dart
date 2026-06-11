@@ -137,6 +137,9 @@ class RentPriceDetail extends StatelessWidget {
               ),
 
               // -------------------- PAST 5 YEARS PRICES --------------------
+
+
+              
               // -------------------- PAST 5 YEARS PRICES ------------------
               const SizedBox(height: 24),
               buildSectionTitle('Rent Negotiable'),
@@ -285,16 +288,16 @@ class RentPriceDetail extends StatelessWidget {
                 isPhoneKey: true,
               ),
 
-              // const SizedBox(height: 16),
-              // const Text("Platform Fees (5%)"),
-              // const SizedBox(height: 8),
-              // buildTextField(
-              //   "Platform Fees",
-              //   Icons.currency_rupee_outlined,
-              //   controller.platformFees,
-              //   isPhoneKey: true,
-              //   isEnable: false,
-              // ),
+              const SizedBox(height: 16),
+              const Text("Platform Fees (5%)"),
+              const SizedBox(height: 8),
+              buildTextField(
+                "Platform Fees",
+                Icons.currency_rupee_outlined,
+                controller.platformFees,
+                isPhoneKey: true,
+                isEnable: false,
+              ),
 
               // const SizedBox(height: 16),
               // const Text("Broker Commission (2%) of Platform Fees"),

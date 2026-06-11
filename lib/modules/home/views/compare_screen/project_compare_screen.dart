@@ -9,6 +9,7 @@ import 'package:nesticope_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
 import 'package:nesticope_app/app/manager/project_compare_manager.dart';
 import 'package:nesticope_app/data/network/builder/model/builder_model.dart';
+import 'package:nesticope_app/modules/builder/view/all_project_list_screen.dart';
 import 'package:nesticope_app/modules/builder/view/project_detail/project_detail.dart';
 import 'package:nesticope_app/modules/new_project/view/latest_project.dart';
 
@@ -145,7 +146,13 @@ class _ProjectCompareScreenState extends State<ProjectCompareScreen> {
         actions: [
           if (ProjectCompareManager.to.selectedList.length < 5)
             TextButton(
-              onPressed: () => Get.back(),
+              onPressed:
+                  () => Get.to(
+                    () => AllProjectListScreen(isbuilder: false),
+                    transition: Transition.fadeIn,
+
+                    duration: Duration(milliseconds: 250),
+                  ),
               child: Text(
                 '+ Add',
                 style: TextStyle(
@@ -431,7 +438,7 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
                     // Image Section
                     ClipRRect(
                       borderRadius: const BorderRadius.horizontal(
-                        left: Radius.circular(11),
+                        left: Radius.circular(10),
                       ),
                       child:
                           (_firstImage(widget.item).isNotEmpty)
@@ -568,41 +575,42 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
                                   GestureDetector(
                                     onTap:
                                         (UserHelper.isGuest)
-                                            ? () async {
-                                              try {
-                                                if (Get.context == null) {
-                                                  NesticoPeSnackBar.showAwesomeSnackbar(
-                                                    title: 'Error',
-                                                    message:
-                                                        'UI not ready to show dialog.',
-                                                    contentType:
-                                                        ContentType.failure,
-                                                  );
-                                                  return;
-                                                }
+                                            ? () {
+                                              // try {
+                                              //   if (Get.context == null) {
+                                              //     NesticoPeSnackBar.showAwesomeSnackbar(
+                                              //       title: 'Error',
+                                              //       message:
+                                              //           'UI not ready to show dialog.',
+                                              //       contentType:
+                                              //           ContentType.failure,
+                                              //     );
+                                              //     return;
+                                              //   }
 
-                                                addInquiryFromProject(
-                                                  '',
-                                                  '',
-                                                  '',
-                                                  widget.item.id,
-                                                  'sell',
-                                                  "project",
-                                                );
-                                              } catch (e, s) {
-                                                debugPrint(
-                                                  '❌ Error in Get Offer button: $e',
-                                                );
-                                                debugPrint('$s');
+                                              //   addInquiryFromProject(
+                                              //     '',
+                                              //     '',
+                                              //     '',
+                                              //     widget.item.id,
+                                              //     'sell',
+                                              //     "project",
+                                              //   );
+                                              // } catch (e, s) {
+                                              //   debugPrint(
+                                              //     '❌ Error in Get Offer button: $e',
+                                              //   );
+                                              //   debugPrint('$s');
 
-                                                NesticoPeSnackBar.showAwesomeSnackbar(
-                                                  title: 'Error',
-                                                  message:
-                                                      'Something went wrong. Please try again.',
-                                                  contentType:
-                                                      ContentType.failure,
-                                                );
-                                              }
+                                              //   NesticoPeSnackBar.showAwesomeSnackbar(
+                                              //     title: 'Error',
+                                              //     message:
+                                              //         'Something went wrong. Please try again.',
+                                              //     contentType:
+                                              //         ContentType.failure,
+                                              //   );
+                                              // }
+                                              Get.to(() => LoginScreen());
                                             }
                                             : () async {
                                               try {

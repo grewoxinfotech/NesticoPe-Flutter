@@ -78,7 +78,7 @@ dependencies:
   device_info_plus:
   model_viewer_plus:
   excel:
-  onesignal_flutter:
+  # onesignal_flutter:
   package_info_plus:
   dio:
   signature:

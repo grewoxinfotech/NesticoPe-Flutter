@@ -68,6 +68,7 @@ class EmployeeTaskController extends PaginatedController<EmployeeTaskItem> {
       };
       final ok = await EmployeeTaskService.instance.createTask(payload);
       if (ok) {
+        Get.back();
         clearForm();
         await refreshtask();
       }

@@ -200,19 +200,19 @@ class _PropertyCardForCompareState extends State<PropertyCardForCompare> {
     return '';
   }
 
-String _title(Items i) {
-  if ((i.type ?? '').toLowerCase() == 'residential') {
-    final bhk = i.propertyDetails?.bhk ?? 0;
+  String _title(Items i) {
+    if ((i.type ?? '').toLowerCase() == 'residential') {
+      final bhk = i.propertyDetails?.bhk ?? 0;
 
-    if (bhk > 0) {
-      return '${bhk} BHK ${i.propertyType?.capitalizeFirst ?? ''}';
-    } else {
-      return i.propertyType?.capitalizeFirst ?? '';
+      if (bhk > 0) {
+        return '${bhk} BHK ${i.propertyType?.capitalizeFirst ?? ''}';
+      } else {
+        return i.propertyType?.capitalizeFirst ?? '';
+      }
     }
-  }
 
-  return i.propertyType?.capitalizeFirst ?? (i.title ?? '');
-}
+    return i.propertyType?.capitalizeFirst ?? (i.title ?? '');
+  }
 
   String _price(Items i) {
     final pm = PropertyPriceManager(
@@ -340,17 +340,17 @@ String _title(Items i) {
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                if((widget.item.propertyDetails?.bhk ?? 0) > 0)
-                                Icon(
-                                  Icons.bed_outlined,
-                                  size: 12,
-                                  color: const Color(0xFF2563EB),
-                                ),
+                                if ((widget.item.propertyDetails?.bhk ?? 0) > 0)
+                                  Icon(
+                                    Icons.bed_outlined,
+                                    size: 12,
+                                    color: const Color(0xFF2563EB),
+                                  ),
                                 const SizedBox(width: 4),
-                             Text(
-  (widget.item.propertyDetails?.bhk ?? 0) > 0
-      ? '${widget.item.propertyDetails!.bhk} BHK'
-      : '',
+                                Text(
+                                  (widget.item.propertyDetails?.bhk ?? 0) > 0
+                                      ? '${widget.item.propertyDetails!.bhk} BHK'
+                                      : '',
                                   style: TextStyle(
                                     fontSize: AppFontSizes.extraSmall,
                                     fontWeight: AppFontWeights.medium,
@@ -444,44 +444,45 @@ String _title(Items i) {
                                     GestureDetector(
                                       onTap:
                                           (UserHelper.isGuest)
-                                              ? () async {
-                                                try {
-                                                  if (Get.context == null) {
-                                                    NesticoPeSnackBar.showAwesomeSnackbar(
-                                                      title: 'Error',
-                                                      message:
-                                                          'UI not ready to show dialog.',
-                                                      contentType:
-                                                          ContentType.failure,
-                                                    );
-                                                    return;
-                                                  }
+                                              ? ()  {
+                                                // try {
+                                                //   if (Get.context == null) {
+                                                //     NesticoPeSnackBar.showAwesomeSnackbar(
+                                                //       title: 'Error',
+                                                //       message:
+                                                //           'UI not ready to show dialog.',
+                                                //       contentType:
+                                                //           ContentType.failure,
+                                                //     );
+                                                //     return;
+                                                //   }
 
-                                                  addInquiryFromApp(
-                                                    '',
-                                                    '',
-                                                    '',
-                                                    widget.item.id ?? '',
-                                                    widget.item.listingType ??
-                                                        '',
-                                                    'property' ?? '',
+                                                //   addInquiryFromApp(
+                                                //     '',
+                                                //     '',
+                                                //     '',
+                                                //     widget.item.id ?? '',
+                                                //     widget.item.listingType ??
+                                                //         '',
+                                                //     'property' ?? '',
 
-                                                    controller,
-                                                  );
-                                                } catch (e, s) {
-                                                  debugPrint(
-                                                    '❌ Error in Get Offer button: $e',
-                                                  );
-                                                  debugPrint('$s');
+                                                //     controller,
+                                                //   );
+                                                // } catch (e, s) {
+                                                //   debugPrint(
+                                                //     '❌ Error in Get Offer button: $e',
+                                                //   );
+                                                //   debugPrint('$s');
 
-                                                  NesticoPeSnackBar.showAwesomeSnackbar(
-                                                    title: 'Error',
-                                                    message:
-                                                        'Something went wrong. Please try again.',
-                                                    contentType:
-                                                        ContentType.failure,
-                                                  );
-                                                }
+                                                //   NesticoPeSnackBar.showAwesomeSnackbar(
+                                                //     title: 'Error',
+                                                //     message:
+                                                //         'Something went wrong. Please try again.',
+                                                //     contentType:
+                                                //         ContentType.failure,
+                                                //   );
+                                                // }
+                                                Get.to(() => LoginScreen());
                                               }
                                               : () async {
                                                 try {
@@ -1000,10 +1001,9 @@ class _CompareScreenState extends State<CompareScreen> {
           ),
         ),
         actions: [
-         if (CompareManager.to.selectedList.length < 5)
-                  TextButton(
+          if (CompareManager.to.selectedList.length < 5)
+            TextButton(
               onPressed: () {
-
                 Get.to(PropertyDetail());
               },
               child: Text(
@@ -1124,7 +1124,7 @@ class _CompareScreenState extends State<CompareScreen> {
                     ),
                   ),
                 ],
-                
+
                 SizedBox(height: 16),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: AppPadding.medium),
@@ -1747,7 +1747,7 @@ class _PropertyDetailsCard extends StatelessWidget {
             ),
           ),
           Column(
-                   spacing: 5,
+            spacing: 5,
             children: [
               _basicRow('Property Type', item.propertyType ?? '-'),
               Divider(color: ColorRes.leadGreyColor.shade300),

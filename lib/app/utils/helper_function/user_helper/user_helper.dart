@@ -1,3 +1,6 @@
+import 'package:nesticope_app/app/constants/api_constants.dart';
+import 'package:nesticope_app/confige/helper/api_helper.dart';
+
 import '../../../../data/database/secure_storage_service.dart';
 
 enum UserType { reseller, seller, buyer, contractor }
@@ -10,10 +13,12 @@ class UserHelper {
 
   /// Aadhar verification cache
   static bool _cachedIsAadharVerified = false;
+  static bool _cachedIsAadharActive = false;
 
   /// Initialize once at app start (guest by default)
   static Future<void> initUserType() async {
     try {
+      await ApiConfig.ensureAadharClientId();
       final user = await SecureStorage.getUserData();
       final roleString = user?.user?.userType;
       final sellerTypeString = user?.user?.sellerType; // new backend field
@@ -31,6 +36,7 @@ class UserHelper {
       _cachedUserType = null;
       _cachedSellerType = null;
       _cachedIsAadharVerified = false;
+      _cachedIsAadharActive = false;
     }
   }
 
@@ -40,6 +46,7 @@ class UserHelper {
     String? sellerType,
     bool? isAadharVerified,
   }) async {
+    _cachedIsAadharActive=ApiConfig.isAdharActive;
     _cachedUserType = _mapRoleStringToEnum(roleString);
     _cachedSellerType = _mapSellerStringToEnum(sellerType);
 
@@ -109,6 +116,7 @@ class UserHelper {
     _cachedUserType = null;
     _cachedSellerType = null;
     _cachedIsAadharVerified = false;
+    _cachedIsAadharActive = false;
   }
 
   static Future<void> setAadharVerified(bool isVerified) async {
@@ -165,6 +173,8 @@ class UserHelper {
 
   static bool get isContractor => _cachedUserType == UserType.contractor;
 
+  static bool get isAadharActive => _cachedIsAadharActive;
+
   static bool get isSellerOwner =>
       _cachedUserType == UserType.seller &&
       _cachedSellerType == SellerType.owner;
@@ -172,4 +182,5 @@ class UserHelper {
   static bool get isSellerBuilder =>
       _cachedUserType == UserType.seller &&
       _cachedSellerType == SellerType.builder;
+
 }

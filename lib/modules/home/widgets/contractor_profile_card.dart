@@ -237,6 +237,7 @@ class ContractorCard extends StatelessWidget {
     final stats = contractor.projectStats;
     return GestureDetector(
       onTap: () {
+        // contractorServiceController.loadServices();
         Get.to(() => ContractorProfileDetailsScreen(contractor: contractor));
       },
       child: Container(

@@ -18,7 +18,9 @@ class PropertyContactedService {
 
   Future<List<Inquiry>> fetchContactedInquiries(String userId) async {
     try {
-      final uri = Uri.parse('$baseUrl/$userId/inquiry');
+
+      final uri =(userId.isNotEmpty && userId != null) ? Uri.parse('$baseUrl/$userId/inquiry') : Uri.parse('$baseUrl/inquiry');
+      [print("URI os Contacted Inquiries : ${uri}   ${userId}")];
       final response = await http.get(uri, headers: await headers());
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -49,7 +51,7 @@ class PropertyContactedService {
       // Build the path dynamically
       final idData =
           (itemId != null && itemId.isNotEmpty) ? '$userId/$itemId' : userId;
-      final uri = Uri.parse('$baseUrl/$idData/has-inquired');
+      final uri =(userId.isNotEmpty && userId != null) ? Uri.parse('$baseUrl/$idData/has-inquired') : Uri.parse('$baseUrl/has-inquired');
       print("URI os Inquiry Check : ${uri}");
 
       final response = await http.get(uri, headers: await headers());
@@ -133,8 +135,9 @@ class PropertyContactedService {
   /// Get inquiries for a specific property
   Future<List<Inquiry>> fetchInquiriesByPropertyId(String userId) async {
     try {
-      final uri = Uri.parse('$baseUrl/$userId/inquiry');
+      final uri =(userId.isNotEmpty) ? Uri.parse('$baseUrl/$userId/inquiry') : Uri.parse('$baseUrl/inquiry');
       print("URI os Inquiry Check for Negotiable : ${uri}");
+      
 
       final response = await http.get(uri, headers: await headers());
       if (response.statusCode == 200 || response.statusCode == 201) {

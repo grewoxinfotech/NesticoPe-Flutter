@@ -21,8 +21,11 @@ class BannerHomeController extends GetxController {
   Future<void> _loadActiveBanners() async {
     try {
       final list = await _service.fetchActiveBanners();
-      list.sort((a, b) => (a.order ?? 999).compareTo(b.order ?? 999));
-      items.value = list;
+      final filteredList =
+          list.where((banner) => banner.isShowOnMobile == true).toList()
+            ..sort((a, b) => (a.order ?? 999).compareTo(b.order ?? 999));
+
+      items.value = filteredList;
     } catch (_) {}
   }
 }

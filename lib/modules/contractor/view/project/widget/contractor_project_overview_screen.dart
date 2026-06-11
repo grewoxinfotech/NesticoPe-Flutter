@@ -555,7 +555,7 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
         children: [
           _infoRow(
             "Service Name",
-            meta.serviceName,
+            meta.serviceName.capitalize?.replaceAll("_", " "),
             "Service ID",
             meta.serviceId,
           ),

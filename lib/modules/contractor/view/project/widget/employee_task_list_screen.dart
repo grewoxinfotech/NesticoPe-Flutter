@@ -69,17 +69,22 @@ class _EmployeeTaskListScreenState extends State<EmployeeTaskListScreen> {
           return _buildShimmerList();
         }
 
+        final tasks =
+            controller.items
+                .where((t) => t.employeeId == widget.employeeId)
+                .toList();
         return RefreshIndicator(
           onRefresh: () => controller.refreshtask(),
           child:
-              (controller.items.isNotEmpty)
+              (tasks.isNotEmpty)
                   ? ListView.separated(
                     padding: const EdgeInsets.all(16),
-                    itemCount: controller.items.length,
+                    itemCount: tasks.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
-                      final task = controller.items[index];
-                      return _taskTile(task);
+                      final task = tasks[index];
+
+                      return _taskTile(task); 
                     },
                   )
                   : Center(
@@ -102,7 +107,7 @@ class _EmployeeTaskListScreenState extends State<EmployeeTaskListScreen> {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: ColorRes.leadGreyColor.shade300),
+        // border: Border.all(color: ColorRes.leadGreyColor.shade300),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -207,7 +212,7 @@ class _EmployeeTaskListScreenState extends State<EmployeeTaskListScreen> {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: ColorRes.leadGreyColor.shade300),
+        // border: Border.all(color: ColorRes.leadGreyColor.shade300),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -447,8 +452,8 @@ class _EmployeeTaskListScreenState extends State<EmployeeTaskListScreen> {
           projectId: widget.projectId,
         );
         if (ok) {
+          //  Get.back();
           await controller.refreshList();
-          Get.back();
         }
       },
     );
@@ -466,8 +471,9 @@ class _EmployeeTaskListScreenState extends State<EmployeeTaskListScreen> {
       onSubmit: () async {
         final ok = await controller.updateTask(task.id);
         if (ok) {
-          await controller.refreshList();
           Get.back();
+          await controller.refreshList();
+          // Get.back();
         }
       },
     );

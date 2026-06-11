@@ -704,7 +704,9 @@ class _BuilderDashboardState extends State<BuilderDashboard> {
     }
 
     if (mounted) {
-      setState(() {});
+      setState(() {
+        
+      });
     }
   }
 
@@ -726,9 +728,11 @@ class _BuilderDashboardState extends State<BuilderDashboard> {
       floatingButton: FloatingActionButton.extended(
         onPressed: () async {
           /// 1️⃣ Check Aadhar first
-          if (!UserHelper.isAadharVerified) {
-            Get.to(() => AadharAuthScreen());
-            return;
+          if (UserHelper.isAadharActive) {
+            if (!UserHelper.isAadharVerified) {
+              Get.to(() => AadharAuthScreen());
+              return;
+            }
           }
 
           /// 2️⃣ Ensure signatures are loaded
@@ -1105,7 +1109,7 @@ Widget leadBuilderLifecycleFunnel(SellerOverviewController overviewController) {
     decoration: BoxDecoration(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(12),
-       boxShadow: [
+      boxShadow: [
         BoxShadow(
           color: ColorRes.black.withOpacity(0.08),
           blurRadius: 8,
@@ -1269,8 +1273,8 @@ Widget buildProjectDistributionGraph(
       //   color: ColorRes.leadGreyColor.withOpacity(0.3),
       //   width: 1,
       // ),
-      // boxShadow: 
-       boxShadow: [
+      // boxShadow:
+      boxShadow: [
         BoxShadow(
           color: ColorRes.black.withOpacity(0.08),
           blurRadius: 8,

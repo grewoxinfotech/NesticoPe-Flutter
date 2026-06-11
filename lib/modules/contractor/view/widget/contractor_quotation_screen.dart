@@ -42,6 +42,8 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
   int advancePercentage = 0;
 
   final List<String> _statusOptions = ['Pending', 'Accepted', 'Rejected'];
+   ContractorQuotationController _quotationController =
+      Get.find<ContractorQuotationController>();
 
   @override
   void initState() {
@@ -422,7 +424,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
               const SizedBox(height: 24),
 
               // Action Buttons
-              _buildActionButtons(),
+              _buildActionButtons(_quotationController),
             ],
           ),
         ),
@@ -820,7 +822,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
     );
   }
 
-  Widget _buildActionButtons() {
+  Widget _buildActionButtons(ContractorQuotationController _quotationController) {
     return Column(
       children: [
         // Edit Button
@@ -882,7 +884,10 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
             child: SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed: _downloadQuotationPDF,
+                // onPressed: _downloadQuotationPDF,
+                  onPressed: () {
+                _quotationController.getQuotation(widget.quotation.id);
+                  },
                 icon: const Icon(
                   Icons.picture_as_pdf_outlined,
                   color: ColorRes.primary,
@@ -909,7 +914,9 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
-              onPressed: _downloadQuotationPDF,
+              onPressed: (){
+                 _quotationController.getQuotation(widget.quotation.id);
+              },
               icon: const Icon(
                 Icons.picture_as_pdf_outlined,
                 color: ColorRes.primary,

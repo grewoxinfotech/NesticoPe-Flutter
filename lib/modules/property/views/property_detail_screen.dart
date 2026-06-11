@@ -3646,6 +3646,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
           // Show error if property not found
           if (currentProperty == null) {
             return Center(
+
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -3656,7 +3657,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Property not found',
+                    'Property not found',// StringManager.propertyNotFound, property not found string added in string manager
                     style: TextStyle(
                       fontSize: AppFontSizes.body,
                       color: ColorRes.leadGreyColor,
@@ -3708,7 +3709,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                         color: ColorRes.leadGreyColor.shade100,
                       ),
 
-                      // if (!UserHelper.isGuest && !UserHelper.isBuyer) ...[
+                      // if (!UserHelper.isGuest && !UserHelper.isBuyer) ...[ This is undefined 
                       if ((currentProperty
                               .propertyMedia
                               ?.documents
@@ -3742,7 +3743,26 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                   '')
                               .trim()
                               .isNotEmpty))) ...[
+                                
                         _buildSubRegistrarSection(currentProperty),
+                        Divider(
+                          thickness: 8,
+                          color: ColorRes.leadGreyColor.shade100,
+                        ),
+                      ],
+                      if (((currentProperty.propertyDetails?.khataNumberPlot
+                                  ?.trim()
+                                  .isNotEmpty ??
+                              false) ||
+                          (currentProperty.propertyDetails?.surveyNumber
+                                  ?.trim()
+                                  .isNotEmpty ??
+                              false))) ...[
+
+                        _buildLandRecordSection(currentProperty),
+
+
+
                         Divider(
                           thickness: 8,
                           color: ColorRes.leadGreyColor.shade100,
@@ -3978,6 +3998,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                 },
                               ),
                               const SizedBox(height: 12),
+                              
                               // Divider(
                               //   indent: 18,
                               //   endIndent: 18,
@@ -6108,6 +6129,57 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
     );
   }
 
+  Widget _buildLandRecordSection(Items? currentProperty) {
+    final khataNumber =
+        currentProperty?.propertyDetails?.khataNumberPlot?.trim() ?? '';
+
+    final surveyNumber =
+        currentProperty?.propertyDetails?.surveyNumber?.trim() ?? '';
+
+    // Hide section if both are empty
+    if (khataNumber.isEmpty && surveyNumber.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 8),
+          const TitleWithViewAll(title: 'Registration Details'),
+          const SizedBox(height: 8),
+
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.symmetric(horizontal: 12),
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: ColorRes.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: ColorRes.leadGreyColor.shade200),
+            ),
+            child: Column(
+              children: [
+                _SubRegistrarRow(
+                  label: 'Khata Number',
+                  value: khataNumber.isNotEmpty ? khataNumber : 'Not defined',
+                ),
+
+                const SizedBox(height: 10),
+
+                _SubRegistrarRow(
+                  label: 'Survey Number',
+                  value: surveyNumber.isNotEmpty ? surveyNumber : 'Not defined',
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   /// Inline video player builder
   Widget _buildVideoPlayer(String url) {
     final VideoPlayerController videoController = VideoPlayerController.network(
@@ -6722,7 +6794,8 @@ class Details extends StatelessWidget {
                                 Text(
                                   value,
                                   overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
+                                   maxLines: 1,
+
                                   style: const TextStyle(
                                     fontSize: AppFontSizes.small,
                                     fontWeight: AppFontWeights.semiBold,

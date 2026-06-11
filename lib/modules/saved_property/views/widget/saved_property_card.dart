@@ -1125,11 +1125,11 @@ class HorizontalPropertyCard extends StatelessWidget {
   //     ),
   //   );
   // }
-   @override
+  @override
   Widget build(BuildContext context) {
     final PropertyFavoriteController favoriteController =
         Get.find<PropertyFavoriteController>();
- 
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -1191,11 +1191,14 @@ class HorizontalPropertyCard extends StatelessWidget {
                         left: 8,
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
-                            color: isForRent
-                                ? const Color(0xFF14B8A6)
-                                : ColorRes.primary,
+                            color:
+                                isForRent
+                                    ? const Color(0xFF14B8A6)
+                                    : ColorRes.primary,
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
@@ -1217,7 +1220,9 @@ class HorizontalPropertyCard extends StatelessWidget {
                           right: 8,
                           child: Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 4),
+                              horizontal: 6,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.92),
                               borderRadius: BorderRadius.circular(6),
@@ -1238,9 +1243,9 @@ class HorizontalPropertyCard extends StatelessWidget {
                         ),
                     ],
                   ),
- 
+
                   const SizedBox(width: 14),
- 
+
                   // ── Text content ─────────────────────────────────
                   Expanded(
                     child: Column(
@@ -1272,17 +1277,18 @@ class HorizontalPropertyCard extends StatelessWidget {
                                 isFavorite
                                     ? Icons.favorite
                                     : Icons.favorite_border,
-                                color: isFavorite
-                                    ? ColorRes.error
-                                    : ColorRes.primary,
+                                color:
+                                    isFavorite
+                                        ? ColorRes.error
+                                        : ColorRes.primary,
                                 size: 20,
                               ),
                             ),
                           ],
                         ),
- 
+
                         const SizedBox(height: 6),
- 
+
                         // Location row
                         Row(
                           children: [
@@ -1296,8 +1302,9 @@ class HorizontalPropertyCard extends StatelessWidget {
                               child: Text(
                                 city ?? location,
                                 style: TextStyle(
-                                  color: ColorRes.textSecondary
-                                      .withOpacity(0.85),
+                                  color: ColorRes.textSecondary.withOpacity(
+                                    0.85,
+                                  ),
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
                                   height: 1.3,
@@ -1308,9 +1315,9 @@ class HorizontalPropertyCard extends StatelessWidget {
                             ),
                           ],
                         ),
- 
+
                         const SizedBox(height: 8),
- 
+
                         // Price
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
@@ -1331,8 +1338,9 @@ class HorizontalPropertyCard extends StatelessWidget {
                                 child: Text(
                                   '/mo',
                                   style: TextStyle(
-                                    color: ColorRes.textSecondary
-                                        .withOpacity(0.8),
+                                    color: ColorRes.textSecondary.withOpacity(
+                                      0.8,
+                                    ),
                                     fontSize: 11,
                                     fontWeight: FontWeight.w500,
                                     height: 1,
@@ -1341,9 +1349,9 @@ class HorizontalPropertyCard extends StatelessWidget {
                               ),
                           ],
                         ),
- 
+
                         const SizedBox(height: 8),
- 
+
                         // "Xd ago" chip
                         // if (postedDaysAgo != null)
                         //   Container(
@@ -1369,7 +1377,7 @@ class HorizontalPropertyCard extends StatelessWidget {
                 ],
               ),
             ),
- 
+
             // ── Bottom action buttons ──────────────────────────────
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
@@ -1388,8 +1396,7 @@ class HorizontalPropertyCard extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          padding:
-                              const EdgeInsets.symmetric(horizontal: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -1408,69 +1415,79 @@ class HorizontalPropertyCard extends StatelessWidget {
                         ),
                       ),
                     ),
- 
+
                     const SizedBox(height: 8),
- 
-                  Obx(() {
-                    final hasOffer =
-                        favoriteController.hasNegotiableOfferMap[propertyId] ??
-                            false;
-                    final priceStr =
-                        favoriteController.negotiableOfferPriceMap[propertyId];
-                    num parsed = 0;
-                    if (priceStr != null) {
-                      parsed =
-                          double.tryParse(priceStr) ?? int.tryParse(priceStr) ?? 0;
-                    }
-                    final offerText = hasOffer && priceStr != null
-                        ? '${Formatter.formatPrice(parsed)} (YOUR OFFER)'
-                        : 'Ask for Your Negotiable Price';
-                    return SizedBox(
-                      width: double.infinity,
-                      height: 40,
-                      child: ElevatedButton(
-                        onPressed: hasOffer
-                            ? () {
-                                NesticoPeSnackBar.showAwesomeSnackbar(
-                                  title: 'Already Submitted',
-                                  message:
-                                      'You have already submitted your offer for this property',
-                                  contentType: ContentType.warning,
-                                );
-                              }
-                            : () => _openNegotiablePriceDialog(context),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: hasOffer
-                              ? const Color(0xFFDCFCE7)
-                              : const Color(0xFFF1F5F9),
-                          foregroundColor:
-                              hasOffer ? Colors.black87 : ColorRes.textSecondary,
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+
+                    Obx(() {
+                      final hasOffer =
+                          favoriteController
+                              .hasNegotiableOfferMap[propertyId] ??
+                          false;
+                      final priceStr =
+                          favoriteController
+                              .negotiableOfferPriceMap[propertyId];
+                      num parsed = 0;
+                      if (priceStr != null) {
+                        parsed =
+                            double.tryParse(priceStr) ??
+                            int.tryParse(priceStr) ??
+                            0;
+                      }
+                      final offerText =
+                          hasOffer && priceStr != null
+                              ? '${Formatter.formatPrice(parsed)} (YOUR OFFER)'
+                              : 'Ask for Your Negotiable Price';
+                      return SizedBox(
+                        width: double.infinity,
+                        height: 40,
+                        child: ElevatedButton(
+                          onPressed:
+                              hasOffer
+                                  ? () {
+                                    NesticoPeSnackBar.showAwesomeSnackbar(
+                                      title: 'Already Submitted',
+                                      message:
+                                          'You have already submitted your offer for this property',
+                                      contentType: ContentType.warning,
+                                    );
+                                  }
+                                  : () => _openNegotiablePriceDialog(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                hasOffer
+                                    ? const Color(0xFFDCFCE7)
+                                    : const Color(0xFFF1F5F9),
+                            foregroundColor:
+                                hasOffer
+                                    ? Colors.black87
+                                    : ColorRes.textSecondary,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: Text(
+                            offerText,
+                            maxLines: 1,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.1,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        child: Text(
-                          offerText,
-                          maxLines: 1,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.1,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    );
-                  }),
+                      );
+                    }),
                   ] else ...[
                     // Contact Agent — full-width solid blue
                     Obx(() {
-                      final isInquirySubmitted = favoriteController
+                      final isInquirySubmitted =
+                          favoriteController
                               .hasSubmittedInquiryMap[propertyId] ??
                           false;
- 
+
                       return SizedBox(
                         width: double.infinity,
                         height: 44,
@@ -1488,41 +1505,42 @@ class HorizontalPropertyCard extends StatelessWidget {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: isInquirySubmitted
-                                ? Colors.grey.shade400
-                                : ColorRes.primary,
+                            backgroundColor:
+                                isInquirySubmitted
+                                    ? Colors.grey.shade400
+                                    : ColorRes.primary,
                             foregroundColor: Colors.white,
                             elevation: 0,
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 12),
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          child: isInquirySubmitted
-                              ? const Text(
-                                  'Already Contacted',
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 0.1,
-                                  ),
-                                )
-                              : Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
-                                    Icon(Icons.phone_outlined, size: 16),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      'Contact Agent',
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 0.2,
-                                      ),
+                          child:
+                              isInquirySubmitted
+                                  ? const Text(
+                                    'Already Contacted',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.1,
                                     ),
-                                  ],
-                                ),
+                                  )
+                                  : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: const [
+                                      Icon(Icons.phone_outlined, size: 16),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        'Contact Agent',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: 0.2,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                         ),
                       );
                     }),
@@ -1549,13 +1567,15 @@ class HorizontalPropertyCard extends StatelessWidget {
     String listing = listingType?.toLowerCase() ?? 'sell';
     ProjectItem? project;
     List<ProjectVariant> variantOptions = [];
+    List<PgRoomInfo> pgRoomOptions = [];
+    PgRoomInfo? selectedPgRoomOption;
     Map<String, int> variantBhkMap = {};
     ProjectVariant? selectedVariant;
 
     if (isProject) {
       final builderService = BuilderService();
       project = await builderService.getProjectById(propertyId);
-      for (final cfg in project?.configuration ?? []) {
+      for (ProjectConfiguration cfg in project?.configuration ?? []) {
         for (final v in cfg.variants) {
           variantOptions.add(v);
           if (v.variantId != null) {
@@ -1571,16 +1591,43 @@ class HorizontalPropertyCard extends StatelessWidget {
       }
     } else {
       final Items? prop = await propertyService.getPropertyById(propertyId);
-      log("Property Details  for inquiry deatial ${prop?.toJson()}");
       final fetchedListingType = prop?.listingType ?? listingType ?? '';
-      final priceManager = PropertyPriceManager(
-        listingType: fetchedListingType,
-        financialInfo: prop?.propertyDetails?.financialInfo ?? FinancialInfo(),
-        pgInfo: prop?.propertyDetails?.pgInfo,
+      log(
+        "Property Details  for inquiry deatial ${fetchedListingType.toLowerCase() == 'pg'} and",
       );
-      originalPrice = priceManager.actualPrice;
-      listing = fetchedListingType.toLowerCase();
-      minPrice = (originalPrice * 0.98);
+      // final fetchedListingType = prop?.listingType ?? listingType ?? '';
+      if (fetchedListingType.toLowerCase() == 'pg') {
+        final fetchedListingType = prop?.listingType ?? listingType ?? '';
+        pgRoomOptions = prop?.propertyDetails?.pgInfo?.pgRoomInfo ?? [];
+        log(
+          "Property Details  for inquiry deatial ${pgRoomOptions.length} and",
+        );
+        // final priceManager = PropertyPriceManager(
+        //   listingType: fetchedListingType,
+        //   financialInfo:
+        //       prop?.propertyDetails?.financialInfo ?? FinancialInfo(),
+        //   pgInfo: prop?.propertyDetails?.pgInfo,
+        // );
+
+        if (pgRoomOptions.isNotEmpty) {
+          selectedPgRoomOption = pgRoomOptions.first;
+          originalPrice =
+              double.tryParse(selectedPgRoomOption.rent.toString() ?? '0') ?? 0;
+        }
+        listing = fetchedListingType.toLowerCase();
+        minPrice = (originalPrice * 0.98);
+      } else {
+        final fetchedListingType = prop?.listingType ?? listingType ?? '';
+        final priceManager = PropertyPriceManager(
+          listingType: fetchedListingType,
+          financialInfo:
+              prop?.propertyDetails?.financialInfo ?? FinancialInfo(),
+          pgInfo: prop?.propertyDetails?.pgInfo,
+        );
+        originalPrice = priceManager.actualPrice;
+        listing = fetchedListingType.toLowerCase();
+        minPrice = (originalPrice * 0.98);
+      }
     }
 
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -1592,7 +1639,11 @@ class HorizontalPropertyCard extends StatelessWidget {
     String visitTime = 'No time selected';
 
     final today = DateTime.now();
-    final start = DateTime(today.year, today.month, today.day).add(Duration(days: 3));
+    final start = DateTime(
+      today.year,
+      today.month,
+      today.day,
+    ).add(Duration(days: 3));
     final dateOptions = <String>[
       'No visit planned',
       ...List.generate(
@@ -1630,7 +1681,10 @@ class HorizontalPropertyCard extends StatelessWidget {
               children: [
                 // Header
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     color: ColorRes.primary,
                     borderRadius: const BorderRadius.only(
@@ -1652,7 +1706,6 @@ class HorizontalPropertyCard extends StatelessWidget {
                       ),
                       GestureDetector(
                         onTap: () {
-                          
                           timePeriod = 'Less than 3 months';
                           visitDate = 'No visit planned';
                           visitTime = 'No time selected';
@@ -1668,184 +1721,205 @@ class HorizontalPropertyCard extends StatelessWidget {
                   child: StatefulBuilder(
                     builder: (context, setState) {
                       return SingleChildScrollView(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Property quick header
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF8FAFC),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: CustomImage(
-                                  type: CustomImageType.network,
-                                  src: imageUrl,
-                                  height: 48,
-                                  width: 48,
-                                  fit: BoxFit.cover,
-                                ),
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Property quick header
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF8FAFC),
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      city ?? location,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      originalPrice > 0
-                                          ? 'Original Price: ${Formatter.formatPrice(originalPrice)}'
-                                          : 'Original Price: N/A',
-                                      style: const TextStyle(
-                                        color: ColorRes.primary,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 14),
-                        // if (isProject && variantOptions.isNotEmpty)
-                        //   NesticoPeDropdownField<ProjectVariant>(
-                        //     title: 'Select Variant',
-                        //     value: selectedVariant,
-                        //     isRequired: true,
-                        //     items: variantOptions
-                        //         .map(
-                        //           (v) => DropdownMenuItem<ProjectVariant>(
-                        //             value: v,
-                        //             child: Text(
-                        //               '${v.name} • ${Formatter.formatPrice(v.price)}',
-                        //             ),
-                        //           ),
-                        //         )
-                        //         .toList(),
-                        //     onChanged: (v) {
-                        //       if (v != null) {
-                        //         selectedVariant = v;
-                        //         originalPrice = v.price;
-                        //         minPrice = (originalPrice * 0.98);
-                        //         priceCtrl.text =
-                        //             originalPrice.toStringAsFixed(0);
-                        //       }
-                        //     },
-                        //   ),
-                        // const SizedBox(height: 14),
-                        if (isProject && variantOptions.isNotEmpty)
-                          NesticoPeDropdownField<ProjectVariant>(
-                            title: 'Select Variant',
-                            value: selectedVariant,
-                            isRequired: true,
-                            items: variantOptions
-                                .map(
-                                  (v) => DropdownMenuItem<ProjectVariant>(
-                                    value: v,
-                                    child: Text(
-                                      '${v.name} • ${Formatter.formatPrice(v.price)}',
+                              child: Row(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: CustomImage(
+                                      type: CustomImageType.network,
+                                      src: imageUrl,
+                                      height: 48,
+                                      width: 48,
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
-                                )
-                                .toList(),
-                            onChanged: (v) {
-                              if (v != null) {
-                                setState(() {
-                                  selectedVariant = v;
-                                  originalPrice = v.price;
-                                  minPrice = (originalPrice * 0.98);
-                                  priceCtrl.text =
-                                      originalPrice.toStringAsFixed(0);
-                                });
-                              }
-                            },
-                          ),
-                        const SizedBox(height: 10),
-                        NesticoPeTextField(
-                          controller: priceCtrl,
-                          title: 'Your Offer Price (₹)',
-                          hintText: 'Enter your offer price',
-                          keyboardType: TextInputType.number,
-                          prefixIcon: Icons.currency_rupee,
-                          isRequired: true,
-                          validator: (v) {
-                            final str = (v ?? '').replaceAll(',', '').trim();
-                            final val = double.tryParse(str);
-                            if (val == null) return 'Enter a valid number';
-                            if (originalPrice > 0) {
-                              if (val > originalPrice ||
-                                  val < minPrice.floorToDouble()) {
-                                return 'Enter a price between ₹${NumberFormat.decimalPattern().format(minPrice)} and ₹${NumberFormat.decimalPattern().format(originalPrice)}';
-                              }
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 6),
-                        if (originalPrice > 0)
-                          Text(
-                            'Enter a price between ₹${NumberFormat.decimalPattern().format(minPrice)} and ₹${NumberFormat.decimalPattern().format(originalPrice)}',
-                            style: const TextStyle(
-                              fontSize: 11,
-                              color: Colors.black54,
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          city ?? location,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          originalPrice > 0
+                                              ? 'Original Price: ${Formatter.formatPrice(originalPrice)}'
+                                              : 'Original Price: N/A',
+                                          style: const TextStyle(
+                                            color: ColorRes.primary,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        const SizedBox(height: 16),
-                        NesticoPeDropdownField<String>(
-                          title: 'Planning to Buy?',
-                          value: timePeriod,
-                          isRequired: true,
-                          items: planningOptions
-                              .map((e) => DropdownMenuItem(
-                                    value: e,
-                                    child: Text(e),
-                                  ))
-                              .toList(),
-                          onChanged: (v) => timePeriod = v ?? timePeriod,
+                            const SizedBox(height: 14),
+                            if (pgRoomOptions.isNotEmpty)
+                              NesticoPeDropdownField<PgRoomInfo>(
+                                title: 'Select Room Type',
+                                value: selectedPgRoomOption,
+                                isRequired: true,
+                                items:
+                                    pgRoomOptions
+                                        .map(
+                                          (v) => DropdownMenuItem<PgRoomInfo>(
+                                            value: v,
+                                            child: Text(
+                                              '${v.roomType} • ${Formatter.formatPrice(v.rent ?? 0)}',
+                                            ),
+                                          ),
+                                        )
+                                        .toList(),
+                                onChanged: (v) {
+                                  if (v != null) {
+                                    setState(() {
+                                      selectedPgRoomOption = v;
+                                      originalPrice =
+                                          double.tryParse(
+                                            v.rent.toString() ?? '0',
+                                          ) ??
+                                          0;
+                                      minPrice = (originalPrice * 0.98);
+                                      priceCtrl.text = originalPrice
+                                          .toStringAsFixed(0);
+                                    });
+                                  }
+                                },
+                              ),
+                            const SizedBox(height: 14),
+                            if (isProject && variantOptions.isNotEmpty)
+                              NesticoPeDropdownField<ProjectVariant>(
+                                title: 'Select Variant',
+                                value: selectedVariant,
+                                isRequired: true,
+                                items:
+                                    variantOptions
+                                        .map(
+                                          (
+                                            v,
+                                          ) => DropdownMenuItem<ProjectVariant>(
+                                            value: v,
+                                            child: Text(
+                                              '${v.name} • ${Formatter.formatPrice(v.price)}',
+                                            ),
+                                          ),
+                                        )
+                                        .toList(),
+                                onChanged: (v) {
+                                  if (v != null) {
+                                    setState(() {
+                                      selectedVariant = v;
+                                      originalPrice = v.price;
+                                      minPrice = (originalPrice * 0.98);
+                                      priceCtrl.text = originalPrice
+                                          .toStringAsFixed(0);
+                                    });
+                                  }
+                                },
+                              ),
+                            const SizedBox(height: 10),
+                            NesticoPeTextField(
+                              controller: priceCtrl,
+                              title: 'Your Offer Price (₹)',
+                              hintText: 'Enter your offer price',
+                              keyboardType: TextInputType.number,
+                              prefixIcon: Icons.currency_rupee,
+                              isRequired: true,
+                              validator: (v) {
+                                final str =
+                                    (v ?? '').replaceAll(',', '').trim();
+                                final val = double.tryParse(str);
+                                if (val == null) return 'Enter a valid number';
+                                if (originalPrice > 0) {
+                                  if (val > originalPrice ||
+                                      val < minPrice.floorToDouble()) {
+                                    return 'Enter a price between ₹${NumberFormat.decimalPattern().format(minPrice)} and ₹${NumberFormat.decimalPattern().format(originalPrice)}';
+                                  }
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 6),
+                            if (originalPrice > 0)
+                              Text(
+                                'Enter a price between ₹${NumberFormat.decimalPattern().format(minPrice)} and ₹${NumberFormat.decimalPattern().format(originalPrice)}',
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            const SizedBox(height: 16),
+                            NesticoPeDropdownField<String>(
+                              title: 'Planning to Buy?',
+                              value: timePeriod,
+                              isRequired: true,
+                              items:
+                                  planningOptions
+                                      .map(
+                                        (e) => DropdownMenuItem(
+                                          value: e,
+                                          child: Text(e),
+                                        ),
+                                      )
+                                      .toList(),
+                              onChanged: (v) => timePeriod = v ?? timePeriod,
+                            ),
+                            const SizedBox(height: 16),
+                            NesticoPeDropdownField<String>(
+                              title: 'Preferred Visit Date (Optional)',
+                              value: visitDate,
+                              items:
+                                  dateOptions
+                                      .map(
+                                        (e) => DropdownMenuItem(
+                                          value: e,
+                                          child: Text(e),
+                                        ),
+                                      )
+                                      .toList(),
+                              onChanged: (v) => visitDate = v ?? visitDate,
+                            ),
+                            const SizedBox(height: 16),
+                            NesticoPeDropdownField<String>(
+                              title: 'Preferred Visit Time (Optional)',
+                              value: visitTime,
+                              items:
+                                  timeOptions
+                                      .map(
+                                        (e) => DropdownMenuItem(
+                                          value: e,
+                                          child: Text(e),
+                                        ),
+                                      )
+                                      .toList(),
+                              onChanged: (v) => visitTime = v ?? visitTime,
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 16),
-                        NesticoPeDropdownField<String>(
-                          title: 'Preferred Visit Date (Optional)',
-                          value: visitDate,
-                          items: dateOptions
-                              .map((e) => DropdownMenuItem(
-                                    value: e,
-                                    child: Text(e),
-                                  ))
-                              .toList(),
-                          onChanged: (v) => visitDate = v ?? visitDate,
-                        ),
-                        const SizedBox(height: 16),
-                        NesticoPeDropdownField<String>(
-                          title: 'Preferred Visit Time (Optional)',
-                          value: visitTime,
-                          items: timeOptions
-                              .map((e) => DropdownMenuItem(
-                                    value: e,
-                                    child: Text(e),
-                                  ))
-                              .toList(),
-                          onChanged: (v) => visitTime = v ?? visitTime,
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+                      );
+                    },
+                  ),
                 ),
                 Container(
                   padding: const EdgeInsets.all(16),
@@ -1854,7 +1928,6 @@ class HorizontalPropertyCard extends StatelessWidget {
                       Expanded(
                         child: GestureDetector(
                           onTap: () {
-                          
                             timePeriod = 'Less than 3 months';
                             visitDate = 'No visit planned';
                             visitTime = 'No time selected';
@@ -1883,41 +1956,80 @@ class HorizontalPropertyCard extends StatelessWidget {
                         child: ElevatedButton(
                           onPressed: () async {
                             if (!formKey.currentState!.validate()) return;
-                            final entered = priceCtrl.text.replaceAll(',', '').trim();
+                            final entered =
+                                priceCtrl.text.replaceAll(',', '').trim();
 
                             // Find existing inquiry for this property -> this user
-                            final inquiries =
-                                await contactedService.fetchUserInquiries(
-                              userId,
-                            );
+                            final inquiries = await contactedService
+                                .fetchUserInquiries(userId);
                             final mine = inquiries.firstWhere(
                               (i) => (i.userId ?? '').toString() == userId,
-                              orElse: () => inquiries.isNotEmpty ? inquiries.first : inquiries.firstWhere((_) => false, orElse: () => inquiries.isEmpty ? Inquiry(id: '', propertyId: '', userId: '', name: '', email: '', phone: '', inquiredAt: DateTime.now(), status: '', isConvertedToLead: false, createdAt: DateTime.now(), updatedAt: DateTime.now(), entityType: '', details: null) : inquiries.first),
+                              orElse:
+                                  () =>
+                                      inquiries.isNotEmpty
+                                          ? inquiries.first
+                                          : inquiries.firstWhere(
+                                            (_) => false,
+                                            orElse:
+                                                () =>
+                                                    inquiries.isEmpty
+                                                        ? Inquiry(
+                                                          id: '',
+                                                          propertyId: '',
+                                                          userId: '',
+                                                          name: '',
+                                                          email: '',
+                                                          phone: '',
+                                                          inquiredAt:
+                                                              DateTime.now(),
+                                                          status: '',
+                                                          isConvertedToLead:
+                                                              false,
+                                                          createdAt:
+                                                              DateTime.now(),
+                                                          updatedAt:
+                                                              DateTime.now(),
+                                                          entityType: '',
+                                                          details: null,
+                                                        )
+                                                        : inquiries.first,
+                                          ),
                             );
 
                             bool success = false;
                             if ((mine.id).isNotEmpty) {
-                              success = await contactedService.updateInquiryNegotiable(
-                                inquiryId: mine.id,
-                                propertyId: propertyId,
-                                meta: {
-                                  "isNegotiable": true,
-                                  "negotiablePrice": entered,
-                                  "timePeriod": timePeriod,
-                                  "visitDate": visitDate == 'No visit planned' ? null : visitDate,
-                                  "visitTime": visitTime == 'No time selected' ? null : visitTime,
-                                  "inquiryType": listing,
-                                  if (isProject && selectedVariant != null)
-                                    "selectedVariant": {
-                                      "id": selectedVariant!.variantId ?? '',
-                                      "name": selectedVariant!.name,
-                                      "bhk": selectedVariant!.variantId != null
-                                          ? (variantBhkMap[selectedVariant!.variantId!] ?? 0)
-                                          : 0,
-                                      "price": selectedVariant!.price,
+                              success = await contactedService
+                                  .updateInquiryNegotiable(
+                                    inquiryId: mine.id,
+                                    propertyId: propertyId,
+                                    meta: {
+                                      "isNegotiable": true,
+                                      "negotiablePrice": entered,
+                                      "timePeriod": timePeriod,
+                                      "visitDate":
+                                          visitDate == 'No visit planned'
+                                              ? null
+                                              : visitDate,
+                                      "visitTime":
+                                          visitTime == 'No time selected'
+                                              ? null
+                                              : visitTime,
+                                      "inquiryType": listing,
+                                      if (isProject && selectedVariant != null)
+                                        "selectedVariant": {
+                                          "id":
+                                              selectedVariant!.variantId ?? '',
+                                          "name": selectedVariant!.name,
+                                          "bhk":
+                                              selectedVariant!.variantId != null
+                                                  ? (variantBhkMap[selectedVariant!
+                                                          .variantId!] ??
+                                                      0)
+                                                  : 0,
+                                          "price": selectedVariant!.price,
+                                        },
                                     },
-                                },
-                              );
+                                  );
                             } else {
                               // Fallback: create new inquiry with negotiable meta
                               final inquiry = {
@@ -1929,26 +2041,38 @@ class HorizontalPropertyCard extends StatelessWidget {
                                   "isNegotiable": true,
                                   "negotiablePrice": entered,
                                   "timePeriod": timePeriod,
-                                  "visitDate": visitDate == 'No visit planned' ? null : visitDate,
-                                  "visitTime": visitTime == 'No time selected' ? null : visitTime,
+                                  "visitDate":
+                                      visitDate == 'No visit planned'
+                                          ? null
+                                          : visitDate,
+                                  "visitTime":
+                                      visitTime == 'No time selected'
+                                          ? null
+                                          : visitTime,
                                   "inquiryType": listing,
                                   if (isProject && selectedVariant != null)
                                     "selectedVariant": {
                                       "id": selectedVariant!.variantId ?? '',
                                       "name": selectedVariant!.name,
-                                      "bhk": selectedVariant!.variantId != null
-                                          ? (variantBhkMap[selectedVariant!.variantId!] ?? 0)
-                                          : 0,
+                                      "bhk":
+                                          selectedVariant!.variantId != null
+                                              ? (variantBhkMap[selectedVariant!
+                                                      .variantId!] ??
+                                                  0)
+                                              : 0,
                                       "price": selectedVariant!.price,
                                     },
                                 },
                               };
-                              success = await contactedService.addInquiry(inquiry, propertyId);
+                              success = await contactedService.addInquiry(
+                                inquiry,
+                                propertyId,
+                              );
                             }
 
                             if (success) {
-                          
-                              await favoriteController.loadNegotiableMetaForProperty(propertyId);
+                              await favoriteController
+                                  .loadNegotiableMetaForProperty(propertyId);
                               NesticoPeSnackBar.showAwesomeSnackbar(
                                 title: 'Success',
                                 message: 'Offer submitted successfully',
@@ -1983,6 +2107,7 @@ class HorizontalPropertyCard extends StatelessWidget {
       ),
     );
   }
+
   Color _getStatusColor(String status) {
     switch (status.toLowerCase()) {
       case 'approved':

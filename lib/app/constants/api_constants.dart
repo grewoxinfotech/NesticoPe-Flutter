@@ -76,6 +76,8 @@ class ApiConstants {
 
   static String get getSellerProfile => "$baseURL/insight/seller";
 
+  static String get getPlatformFeeSetting  => "$baseURL/platformFeeSetting";
+
   static String get getProfile => "$baseURL/user/profile";
 
   static String get recommmendedPorperties =>

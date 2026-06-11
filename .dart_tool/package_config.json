@@ -1010,12 +1010,6 @@
       "languageVersion": "3.0"
     },
     {
-      "name": "onesignal_flutter",
-      "rootUri": "file:///C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/onesignal_flutter-5.5.1",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    },
-    {
       "name": "open_filex",
       "rootUri": "file:///C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/open_filex-4.7.0",
       "packageUri": "lib/",

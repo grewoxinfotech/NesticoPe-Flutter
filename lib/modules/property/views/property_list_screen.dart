@@ -15,7 +15,7 @@ class PropertyListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const PreferredSize(
+      appBar: PreferredSize(
         preferredSize: Size.fromHeight(120),
         child: CustomSearchAppBar(),
       ),

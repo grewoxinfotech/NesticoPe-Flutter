@@ -455,297 +455,320 @@ class AddMilestoneScreen extends StatelessWidget {
             },
             icon: const Icon(Icons.arrow_back),
           ),
-        title: Obx(
-          () => Text(
-            controller.isEditMode.value ? "Edit Milestone" : "Add Milestone",
-            style: const TextStyle(
-              color: ColorRes.textPrimary,
-              fontWeight: AppFontWeights.semiBold,
+          title: Obx(
+            () => Text(
+              controller.isEditMode.value ? "Edit Milestone" : "Add Milestone",
+              style: const TextStyle(
+                color: ColorRes.textPrimary,
+                fontWeight: AppFontWeights.semiBold,
+              ),
+            ),
+          ),
+          backgroundColor: ColorRes.white,
+          elevation: 0.5,
+          iconTheme: const IconThemeData(color: ColorRes.textPrimary),
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Form(
+            key: controller.formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                buildSectionTitle("Title *"),
+                const SizedBox(height: 8),
+                buildTextField(
+                  "Enter milestone title",
+                  Icons.title,
+                  controller.titleController,
+                  validator:
+                      (v) =>
+                          v == null || v.trim().isEmpty
+                              ? "Please enter title"
+                              : null,
+                ),
+
+                const SizedBox(height: 16),
+                buildSectionTitle("Description"),
+                const SizedBox(height: 8),
+                buildTextField(
+                  "Enter milestone description (optional)",
+                  Icons.description_outlined,
+                  controller.descriptionController,
+                  maxLines: 3,
+                  minLines: 3,
+                ),
+
+                const SizedBox(height: 16),
+
+                /// Dates
+                Row(
+                  children: [
+                    Expanded(
+                      child: Obx(
+                        () => _buildDateField(
+                          "Start Date *",
+                          Icons.calendar_today,
+                          controller.startDate.value,
+                          () async {
+                            final picked = await showDatePicker(
+                              context: context,
+                              initialDate:
+                                  controller.startDate.value ?? DateTime.now(),
+                              firstDate: DateTime.now().subtract(
+                                const Duration(days: 365),
+                              ),
+                              lastDate: DateTime(2100),
+                            );
+                            if (picked != null) {
+                              controller.startDate.value = picked;
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Obx(
+                        () => _buildDateField(
+                          "End Date",
+                          Icons.date_range,
+                          controller.endDate.value,
+                          () async {
+                            final picked = await showDatePicker(
+                              context: context,
+                              initialDate:
+                                  controller.endDate.value ??
+                                  controller.startDate.value ??
+                                  DateTime.now(),
+                              firstDate:
+                                  controller.startDate.value ?? DateTime.now(),
+                              lastDate: DateTime(2100),
+                            );
+                            if (picked != null) {
+                              controller.endDate.value = picked;
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Obx(
+                  () => _buildDateField(
+                    "Completion Date",
+                    Icons.date_range,
+                    controller.completionDate.value,
+                    () async {
+                      final picked = await showDatePicker(
+                        context: context,
+                        initialDate:
+                            controller.completionDate.value ??
+                            controller.startDate.value ??
+                            DateTime.now(),
+                        firstDate: controller.startDate.value ?? DateTime.now(),
+                        lastDate: DateTime(2100),
+                      );
+                      if (picked != null) {
+                        controller.completionDate.value = picked;
+                      }
+                    },
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+                buildSectionTitle("Milestone Type *"),
+                const SizedBox(height: 8),
+
+                Obx(
+                  () => NesticoPeDropdownField<String>(
+                    isRequired: true,
+                    enabled: !controller.isEditMode.value,
+                    value: controller.selectedMileStoneType.value,
+                    hintText: "Select milestone type",
+                    prefixIcon: Icons.work,
+                    items:
+                        controller.milestoneType
+                            .map(
+                              (e) => DropdownMenuItem(value: e, child: Text(e)),
+                            )
+                            .toList(),
+                    onChanged: (val) {
+                      if (val == null) return;
+                      controller.selectedMileStoneType.value = val;
+                      val == 'Percentage'
+                          ? controller.fixedController.clear()
+                          : controller.percentageController.clear();
+                    },
+                    darkText: true,
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                /// Conditional Fields
+                Obx(() {
+                  return controller.selectedMileStoneType.value == 'Percentage'
+                      ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          buildSectionTitle("Percentage *"),
+                          const SizedBox(height: 8),
+                          buildTextField(
+                            "Enter percentage (0-100)",
+                            Icons.percent,
+                            controller.percentageController,
+                            inputType: const TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
+                            formatter: [
+                              FilteringTextInputFormatter.allow(
+                                RegExp(r'^\d+\.?\d{0,2}'),
+                              ),
+                            ],
+                            validator: (v) {
+                              final value = double.tryParse(v ?? '');
+                              if (value == null) return "Invalid number";
+                              if (value < 0 || value > 100) {
+                                return "Must be between 0-100";
+                              }
+                              return null;
+                            },
+
+                            // onChanged: (val) {
+                            //   final percent = double.tryParse(val) ?? 0.0;
+                            //   if (percent <= 0) {
+                            //     controller.milestoneAmount.value = 0.0;
+                            //     return;
+                            //   }
+                            //
+                            //   // Calculate total of previous milestones
+                            //   final existingTotal = controller.items.fold<double>(
+                            //     0.0,
+                            //         (sum, m) => sum + (double.tryParse(m.milestoneAmount ?? '0') ?? 0.0),
+                            //   );
+                            //
+                            //   // Remaining before adding current milestone
+                            //   final remainingBefore = projectPrice - existingTotal;
+                            //
+                            //   // Calculate milestone amount
+                            //   final currentAmount = (existingTotal == 0)
+                            //       ? projectPrice * (percent / 100) // Case 1: no previous
+                            //       : remainingBefore * (percent / 100); // Case 2: has previous
+                            //
+                            //   controller.milestoneAmount.value = currentAmount;
+                            // },
+                            onChanged: (val) {
+                              if (val.isEmpty) {
+                                controller.milestoneAmount.value = 0.0;
+                              }
+                              final remainingAmount = controller
+                                  .calculateRemainingAmount(projectPrice);
+                              controller.milestoneAmount.value =
+                                  remainingAmount *
+                                  ((double.tryParse(val) ?? 0.0) / 100);
+                            },
+                          ),
+                        ],
+                      )
+                      : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          buildSectionTitle("Milestone Amount *"),
+                          const SizedBox(height: 8),
+                          buildTextField(
+                            "Enter milestone amount",
+                            Icons.currency_rupee,
+                            controller.fixedController,
+                            inputType: TextInputType.number,
+                            formatter: [FilteringTextInputFormatter.digitsOnly],
+                            validator:
+                                (v) =>
+                                    double.tryParse(v ?? '') == null
+                                        ? "Invalid amount"
+                                        : null,
+                            onChanged: (val) {
+                              if (val.isEmpty) {
+                                controller.milestoneAmount.value = 0.0;
+                              }
+                              // final remainingAmount =  controller.calculateRemainingAmount(projectPrice);
+                              controller.milestoneAmount.value =
+                                  double.tryParse(val) ?? 0.0;
+                            },
+                          ),
+                        ],
+                      );
+                }),
+
+                const SizedBox(height: 16),
+                buildSectionTitle("Work Status *"),
+                const SizedBox(height: 8),
+
+                Obx(
+                  () => NesticoPeDropdownField<String>(
+                    isRequired: true,
+                    value: controller.selectedWorkStatus.value,
+                    hintText: "Select work status",
+                    prefixIcon: Icons.work_outline,
+                    items:
+                        controller.workStatus
+                            .map(
+                              (e) => DropdownMenuItem(value: e, child: Text(e)),
+                            )
+                            .toList(),
+                    onChanged:
+                        (val) =>
+                            controller.selectedWorkStatus.value = val ?? '',
+                    darkText: true,
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                /// ✅ FIXED BUDGET SUMMARY
+                Obx(() {
+                  final milestones = controller.items.toList();
+                  final current = controller.currentMilestone.value;
+
+                  return buildBudgetSummary(milestones, current, projectPrice);
+                }),
+
+                const SizedBox(height: 24),
+
+                /// Button
+                Obx(
+                  () => SafeArea(
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed:
+                            controller.isLoading.value
+                                ? null
+                                : () {
+                                  if (controller.formKey.currentState
+                                          ?.validate() ??
+                                      false) {
+                                    controller.saveMilestone(projectPrice);
+                                  }
+                                },
+                        child:
+                            controller.isLoading.value
+                                ? const CircularProgressIndicator()
+                                : Text(
+                                  controller.isEditMode.value
+                                      ? "Update Milestone"
+                                      : "Add Milestone",
+                                ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
-        backgroundColor: ColorRes.white,
-        elevation: 0.5,
-        iconTheme: const IconThemeData(color: ColorRes.textPrimary),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Form(
-          key: controller.formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              buildSectionTitle("Title *"),
-              const SizedBox(height: 8),
-              buildTextField(
-                "Enter milestone title",
-                Icons.title,
-                controller.titleController,
-                validator:
-                    (v) =>
-                        v == null || v.trim().isEmpty
-                            ? "Please enter title"
-                            : null,
-              ),
-
-              const SizedBox(height: 16),
-              buildSectionTitle("Description"),
-              const SizedBox(height: 8),
-              buildTextField(
-                "Enter milestone description (optional)",
-                Icons.description_outlined,
-                controller.descriptionController,
-                maxLines: 3,
-                minLines: 3,
-              ),
-
-              const SizedBox(height: 16),
-
-              /// Dates
-              Row(
-                children: [
-                  Expanded(
-                    child: Obx(
-                      () => _buildDateField(
-                        "Start Date *",
-                        Icons.calendar_today,
-                        controller.startDate.value,
-                        () async {
-                          final picked = await showDatePicker(
-                            context: context,
-                            initialDate:
-                                controller.startDate.value ?? DateTime.now(),
-                            firstDate: DateTime.now().subtract(
-                              const Duration(days: 365),
-                            ),
-                            lastDate: DateTime(2100),
-                          );
-                          if (picked != null) {
-                            controller.startDate.value = picked;
-                          }
-                        },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Obx(
-                      () => _buildDateField(
-                        "End Date",
-                        Icons.date_range,
-                        controller.endDate.value,
-                        () async {
-                          final picked = await showDatePicker(
-                            context: context,
-                            initialDate:
-                                controller.endDate.value ??
-                                controller.startDate.value ??
-                                DateTime.now(),
-                            firstDate:
-                                controller.startDate.value ?? DateTime.now(),
-                            lastDate: DateTime(2100),
-                          );
-                          if (picked != null) {
-                            controller.endDate.value = picked;
-                          }
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 16),
-              buildSectionTitle("Milestone Type *"),
-              const SizedBox(height: 8),
-
-              Obx(
-                () => NesticoPeDropdownField<String>(
-                  isRequired: true,
-                  enabled: !controller.isEditMode.value,
-                  value: controller.selectedMileStoneType.value,
-                  hintText: "Select milestone type",
-                  prefixIcon: Icons.work,
-                  items:
-                      controller.milestoneType
-                          .map(
-                            (e) => DropdownMenuItem(value: e, child: Text(e)),
-                          )
-                          .toList(),
-                  onChanged: (val) {
-                    if (val == null) return;
-                    controller.selectedMileStoneType.value = val;
-                    val == 'Percentage'
-                        ? controller.fixedController.clear()
-                        : controller.percentageController.clear();
-                  },
-                  darkText: true,
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              /// Conditional Fields
-              Obx(() {
-                return controller.selectedMileStoneType.value == 'Percentage'
-                    ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        buildSectionTitle("Percentage *"),
-                        const SizedBox(height: 8),
-                        buildTextField(
-                          "Enter percentage (0-100)",
-                          Icons.percent,
-                          controller.percentageController,
-                          inputType: const TextInputType.numberWithOptions(
-                            decimal: true,
-                          ),
-                          formatter: [
-                            FilteringTextInputFormatter.allow(
-                              RegExp(r'^\d+\.?\d{0,2}'),
-                            ),
-                          ],
-                          validator: (v) {
-                            final value = double.tryParse(v ?? '');
-                            if (value == null) return "Invalid number";
-                            if (value < 0 || value > 100) {
-                              return "Must be between 0-100";
-                            }
-                            return null;
-                          },
-
-                          // onChanged: (val) {
-                          //   final percent = double.tryParse(val) ?? 0.0;
-                          //   if (percent <= 0) {
-                          //     controller.milestoneAmount.value = 0.0;
-                          //     return;
-                          //   }
-                          //
-                          //   // Calculate total of previous milestones
-                          //   final existingTotal = controller.items.fold<double>(
-                          //     0.0,
-                          //         (sum, m) => sum + (double.tryParse(m.milestoneAmount ?? '0') ?? 0.0),
-                          //   );
-                          //
-                          //   // Remaining before adding current milestone
-                          //   final remainingBefore = projectPrice - existingTotal;
-                          //
-                          //   // Calculate milestone amount
-                          //   final currentAmount = (existingTotal == 0)
-                          //       ? projectPrice * (percent / 100) // Case 1: no previous
-                          //       : remainingBefore * (percent / 100); // Case 2: has previous
-                          //
-                          //   controller.milestoneAmount.value = currentAmount;
-                          // },
-                          onChanged: (val) {
-                            if (val.isEmpty) {
-                              controller.milestoneAmount.value = 0.0;
-                            }
-                            final remainingAmount = controller
-                                .calculateRemainingAmount(projectPrice);
-                            controller.milestoneAmount.value =
-                                remainingAmount *
-                                ((double.tryParse(val) ?? 0.0) / 100);
-                          },
-                        ),
-                      ],
-                    )
-                    : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        buildSectionTitle("Milestone Amount *"),
-                        const SizedBox(height: 8),
-                        buildTextField(
-                          "Enter milestone amount",
-                          Icons.currency_rupee,
-                          controller.fixedController,
-                          inputType: TextInputType.number,
-                          formatter: [FilteringTextInputFormatter.digitsOnly],
-                          validator:
-                              (v) =>
-                                  double.tryParse(v ?? '') == null
-                                      ? "Invalid amount"
-                                      : null,
-                          onChanged: (val) {
-                            if (val.isEmpty) {
-                              controller.milestoneAmount.value = 0.0;
-                            }
-                            // final remainingAmount =  controller.calculateRemainingAmount(projectPrice);
-                            controller.milestoneAmount.value =
-                                double.tryParse(val) ?? 0.0;
-                          },
-                        ),
-                      ],
-                    );
-              }),
-
-              const SizedBox(height: 16),
-              buildSectionTitle("Work Status *"),
-              const SizedBox(height: 8),
-
-              Obx(
-                () => NesticoPeDropdownField<String>(
-                  isRequired: true,
-                  value: controller.selectedWorkStatus.value,
-                  hintText: "Select work status",
-                  prefixIcon: Icons.work_outline,
-                  items:
-                      controller.workStatus
-                          .map(
-                            (e) => DropdownMenuItem(value: e, child: Text(e)),
-                          )
-                          .toList(),
-                  onChanged:
-                      (val) => controller.selectedWorkStatus.value = val ?? '',
-                  darkText: true,
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              /// ✅ FIXED BUDGET SUMMARY
-              Obx(() {
-                final milestones = controller.items.toList();
-                final current = controller.currentMilestone.value;
-
-                return buildBudgetSummary(milestones, current, projectPrice);
-              }),
-
-              const SizedBox(height: 24),
-
-              /// Button
-              Obx(
-                () => SafeArea(
-
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed:
-                          controller.isLoading.value
-                              ? null
-                              : () {
-                                if (controller.formKey.currentState?.validate() ??
-                                    false) {
-                                  controller.saveMilestone(projectPrice);
-                                }
-                              },
-                      child:
-                          controller.isLoading.value
-                              ? const CircularProgressIndicator()
-                              : Text(
-                                controller.isEditMode.value
-                                    ? "Update Milestone"
-                                    : "Add Milestone",
-                              ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    ),
     );
   }
 

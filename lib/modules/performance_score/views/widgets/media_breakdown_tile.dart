@@ -103,19 +103,17 @@ class BreakdownColumnChart extends StatelessWidget {
     return Container(
       color: color,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12,vertical: 12),
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// Title
-            
             Text(
               title,
               style: TextStyle(
                 fontSize: AppFontSizes.body,
                 fontWeight: AppFontWeights.semiBold,
                 color: ColorRes.textPrimary,
-
               ),
             ),
 
@@ -131,15 +129,41 @@ class BreakdownColumnChart extends StatelessWidget {
                   /// Draw left and bottom axis lines
                   borderData: FlBorderData(
                     show: true,
-                    border: const Border(
-                      left: BorderSide(color: Colors.black, width: 1),
-                      bottom: BorderSide(color: Colors.black, width: 1),
+                    border: Border(
+                      left: BorderSide(
+                        color: Colors.black.withValues(alpha: 0.5),
+                        width: 1,
+                      ),
+                      bottom: BorderSide(
+                        color: Colors.black.withValues(alpha: 0.5),
+                        width: 1,
+                      ),
                       right: BorderSide(color: Colors.transparent),
                       top: BorderSide(color: Colors.transparent),
                     ),
                   ),
 
                   gridData: FlGridData(show: false),
+                  barTouchData: BarTouchData(
+                    enabled: true,
+                    touchTooltipData: BarTouchTooltipData(
+                      tooltipPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                        final month = items[group.x.toInt()].key;
+                        return BarTooltipItem(
+                          '$month\n${rod.toY.toInt()}',
+                          const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
 
                   /// Bottom (X-axis)
                   titlesData: FlTitlesData(
@@ -221,7 +245,10 @@ class BreakdownColumnChart extends StatelessWidget {
             toY: data.count.toDouble(),
             width: 22,
             color: ColorRes.primary,
-            borderRadius: BorderRadius.circular(0),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(4),
+              topRight: Radius.circular(4),
+            ),
           ),
         ],
       );
@@ -238,6 +265,6 @@ class BreakdownColumnChart extends StatelessWidget {
   String _short(String text) {
     // if (text.length <= 7) return text;
     // return text.substring(0, 7); // keeping clean on small screens
-    return text.capitalize??'';
+    return text.capitalize ?? '';
   }
 }

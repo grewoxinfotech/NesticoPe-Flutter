@@ -753,10 +753,12 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     stateController = TextEditingController(text: project.value.state);
     zipCodeController = TextEditingController(text: project.value.zipCode);
     locationController = TextEditingController(text: project.value.location);
-    final propertyType = (project.value.propertyTypes ?? 'apartment')
-        .toLowerCase();
+    final propertyType =
+        (project.value.propertyTypes ?? 'apartment').toLowerCase();
     if (propertyType == 'apartment') {
-      generateBuildingFields(project.value.projectSize.totalBuildings.toString());
+      generateBuildingFields(
+        project.value.projectSize.totalBuildings.toString(),
+      );
       for (int i = 0; i < project.value.projectSize.totalBuildings; i++) {
         buildingNameControllers[i].text =
             project.value.buildingNames?["buildingName#${i + 1}"] ?? '';
@@ -774,8 +776,8 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
               .toString(),
     );
     selectedListOfAmenities.value = List<String>.from(project.value.amenities);
-    builderPropertyType.value = (project.value.propertyTypes ?? 'apartment')
-        .toLowerCase();
+    builderPropertyType.value =
+        (project.value.propertyTypes ?? 'apartment').toLowerCase();
     selectedBuilding.value =
         project.value.configurations.first.variants.first.buildingName ?? '';
     selectedBuilding.refresh();
@@ -1380,9 +1382,10 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       }
     });
     if (index == 'apartment') {
-      final totalBuildings = project.value.projectSize.totalBuildings <= 0
-          ? 1
-          : project.value.projectSize.totalBuildings;
+      final totalBuildings =
+          project.value.projectSize.totalBuildings <= 0
+              ? 1
+              : project.value.projectSize.totalBuildings;
       totalBuildingsController.text = totalBuildings.toString();
       generateBuildingFields(totalBuildings.toString());
     } else {
@@ -1519,7 +1522,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       AppLogger.structured("📦 Final dsjcdjhdjhdsd :\n", data.toJson());
 
       final success = await _builderService.createProject(
-        
         projectData: data,
         images: _extractLocalFiles(project.value.imageList),
         videos: _extractLocalFiles(project.value.videoList),
@@ -1642,15 +1644,16 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
 
       final success = await _builderService.updateProject(
         projectId: projectId,
-        projectData: await _buildProjectPayload(),
+        projectData: await _buildUpdateProjectPayload(),
         // Pass all paths (remote + local) like property update — service retains
         // URLs in data.mediaGallery and uploads only new local files as multipart.
         images: project.value.imageList.map((e) => File(e)).toList(),
         videos: project.value.videoList.map((e) => File(e)).toList(),
         documents: project.value.documentList.map((e) => File(e)).toList(),
-        brochures: project.value.pdfPath != null && project.value.pdfPath!.isNotEmpty
-            ? File(project.value.pdfPath!)
-            : null,
+        brochures:
+            project.value.pdfPath != null && project.value.pdfPath!.isNotEmpty
+                ? File(project.value.pdfPath!)
+                : null,
       );
 
       if (success) {
@@ -1702,6 +1705,63 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     return file.existsSync() ? file : null;
   }
 
+  Future<AddProjectModel> _buildUpdateProjectPayload() async {
+    final AddProjectModel p = project.value;
+    print('Building payload ---- > ${p.projectContactInfo?.toJson()}');
+    final user = await SecureStorage.getUserData();
+    return AddProjectModel(
+      projectName: p.projectName,
+      projectArea: p.projectArea,
+      buildingNames: p.buildingNames,
+      projectSize: ProjectSize(
+        totalBuildings: p.projectSize.totalBuildings,
+        totalUnits: p.projectSize.totalUnits,
+      ),
+      launchDate: p.launchDate,
+      possessionDate: p.possessionDate,
+      configurations: p.configurations,
+      reraId: p.reraId,
+      address: p.address,
+      status: p.status,
+      city: p.city,
+      state: p.state,
+      zipCode: p.zipCode,
+      location: p.location,
+      amenities: p.amenities,
+      brochure: p.brochure,
+      nearbyLocations: p.nearbyLocations,
+      projectContactInfo: ProjectContactInfo(
+        name: p.projectContactInfo?.name ?? '',
+        phone: p.projectContactInfo?.phone ?? '',
+        email: p.projectContactInfo?.email ?? '',
+      ),
+      ownerName:
+          (p.ownerName ?? '').trim().isNotEmpty
+              ? p.ownerName
+              : user?.user?.username,
+      ownerPhone:
+          (p.ownerPhone ?? '').trim().isNotEmpty
+              ? p.ownerPhone
+              : user?.user?.phone,
+      ownerEmail:
+          (p.ownerEmail ?? '').trim().isNotEmpty
+              ? p.ownerEmail
+              : user?.user?.email,
+      propertyTypes: p.propertyTypes,
+      projectHighlights: p.projectHighlights,
+      id: p.id,
+      mediaGallery: MediaGallery(
+        images: List<String>.from(p.imageList),
+        videos: List<String>.from(p.videoList),
+        documents: List<String>.from(p.documentList),
+      ),
+      imageList: p.imageList,
+      videoList: p.videoList,
+      documentList: p.documentList,
+      pdfPath: p.pdfPath,
+    );
+  }
+
   Future<AddProjectModel> _buildProjectPayload() async {
     final AddProjectModel p = project.value;
     print('Building payload ---- > ${p.projectContactInfo?.toJson()}');
@@ -1732,15 +1792,18 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
         phone: p.projectContactInfo?.phone ?? '',
         email: p.projectContactInfo?.email ?? '',
       ),
-      ownerName: (p.ownerName ?? '').trim().isNotEmpty
-          ? p.ownerName
-          : user?.user?.username,
-      ownerPhone: (p.ownerPhone ?? '').trim().isNotEmpty
-          ? p.ownerPhone
-          : user?.user?.phone,
-      ownerEmail: (p.ownerEmail ?? '').trim().isNotEmpty
-          ? p.ownerEmail
-          : user?.user?.email,
+      ownerName:
+          (p.ownerName ?? '').trim().isNotEmpty
+              ? p.ownerName
+              : user?.user?.username,
+      ownerPhone:
+          (p.ownerPhone ?? '').trim().isNotEmpty
+              ? p.ownerPhone
+              : user?.user?.phone,
+      ownerEmail:
+          (p.ownerEmail ?? '').trim().isNotEmpty
+              ? p.ownerEmail
+              : user?.user?.email,
       propertyTypes: p.propertyTypes,
       projectHighlights: p.projectHighlights,
       id: p.id,

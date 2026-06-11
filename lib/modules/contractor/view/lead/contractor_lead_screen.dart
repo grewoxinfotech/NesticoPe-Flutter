@@ -296,7 +296,13 @@ class ContractorLeadCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+       boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
         borderRadius: BorderRadius.circular(12),
       ),
       child: InkWell(
@@ -313,7 +319,7 @@ class ContractorLeadCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      item.name ?? "Unknown Lead",
+                      item.name?.trim()?.replaceAll('_', ' ')?.capitalize ?? "Unknown Lead",
                       style: const TextStyle(
                         fontSize: AppFontSizes.medium,
                         color: ColorRes.textColor,
@@ -426,7 +432,7 @@ class ContractorLeadCard extends StatelessWidget {
                 const Divider(height: 1, color: ColorRes.divider),
                 const SizedBox(height: 12),
 
-                _infoRow("Source", item.source ?? "-"),
+                _infoRow("Source", item.source?.capitalize ?? "-"),
 
                 _infoRow(
                   "Created Date",
@@ -436,7 +442,7 @@ class ContractorLeadCard extends StatelessWidget {
                 ),
                 _infoRow(
                   "Contractor Username",
-                  "@${item.customFields?.contractorUsername ?? '-'}",
+                  "${item.customFields?.contractorUsername?.replaceAll('_', ' ').capitalize ?? '-'}",
                 ),
                 // _infoRow(
                 //     "Service Name", item.customFields?.serviceName ?? "-"),
@@ -451,7 +457,7 @@ class ContractorLeadCard extends StatelessWidget {
                 _buildSectionTitle('Service Description'),
                 const SizedBox(height: 8),
                 Text(
-                  item.customFields?.serviceName ?? '',
+                  item.customFields?.serviceName?.capitalize?.replaceAll('_', ' ') ?? '',
                   style: const TextStyle(
                     fontSize: AppFontSizes.caption,
                     color: ColorRes.textSecondary,

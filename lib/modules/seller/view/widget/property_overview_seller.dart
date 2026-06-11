@@ -302,6 +302,19 @@ class _PropertyOverviewSellerScreenState
                   _buildSubRegistrarSection(property),
                   Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
                 ],
+
+                if (((property.propertyDetails?.khataNumberPlot
+                            ?.trim()
+                            .isNotEmpty ??
+                        false) ||
+                    (property.propertyDetails?.surveyNumber
+                            ?.trim()
+                            .isNotEmpty ??
+                        false))) ...[
+                  _buildLandRecordSection(property),
+                  Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+                ],
+
                 if ((property.propertyMedia?.documents?.isNotEmpty ?? false))
                   _buildPropertyDocumentsSection(property),
                 Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
@@ -1206,6 +1219,57 @@ class _PropertyOverviewSellerScreenState
     );
   }
 
+  Widget _buildLandRecordSection(Items? currentProperty) {
+    final khataNumber =
+        currentProperty?.propertyDetails?.khataNumberPlot?.trim() ?? '';
+
+    final surveyNumber =
+        currentProperty?.propertyDetails?.surveyNumber?.trim() ?? '';
+
+    // Hide section if both are empty
+    if (khataNumber.isEmpty && surveyNumber.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 8),
+          const TitleWithViewAll(title: 'Registration Details'),
+          const SizedBox(height: 8),
+
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.symmetric(horizontal: 12),
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: ColorRes.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: ColorRes.leadGreyColor.shade200),
+            ),
+            child: Column(
+              children: [
+                _SubRegistrarRow(
+                  label: 'Khata Number',
+                  value: khataNumber.isNotEmpty ? khataNumber : 'Not defined',
+                ),
+
+                const SizedBox(height: 10),
+
+                _SubRegistrarRow(
+                  label: 'Survey Number',
+                  value: surveyNumber.isNotEmpty ? surveyNumber : 'Not defined',
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildStatusSection(BuildContext context, bool isCompact) {
     final property = _property.value!;
     final reraId = property.reraId;
@@ -1623,8 +1687,6 @@ class _PropertyOverviewSellerScreenState
           if (property.propertyDetails?.financialInfo?.propertyRentPerMonth !=
               null) ...[
             // Padding(
-          
-
             const SizedBox(height: 12),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -2042,6 +2104,7 @@ class _PropertyOverviewSellerScreenState
               border: Border.all(color: Color.fromARGB(255, 199, 210, 245)),
             ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
@@ -2060,11 +2123,9 @@ class _PropertyOverviewSellerScreenState
 
                 if (property.potentialEarnings != null) ...[
                   SizedBox(height: 12),
-                  Expanded(
-                    child: _buildDetailRow(
-                      'Potential Earnings',
-                      '₹${_formatPrice(double.tryParse(property.potentialEarnings!) ?? 0)}',
-                    ),
+                  _buildDetailRow(
+                    'Potential Earnings',
+                    '₹${_formatPrice(double.tryParse(property.potentialEarnings!) ?? 0)}',
                   ),
                 ],
               ],

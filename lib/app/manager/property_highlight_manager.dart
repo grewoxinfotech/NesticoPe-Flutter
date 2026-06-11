@@ -129,6 +129,8 @@
 // //       "${this[0].toUpperCase()}${substring(1).replaceAll('_', ' ')}";
 // // }
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:nesticope_app/app/utils/formater/formater.dart';
 import '../../data/network/property/models/property_model.dart';
@@ -147,8 +149,9 @@ class PropertyHighlightManager {
     "Carpet Area": Icons.square_foot,
     "Floor": Icons.layers_outlined,
     "Age of Property": Icons.date_range,
-    "Rent": Icons.currency_rupee,
-    "Price": Icons.currency_rupee,
+    "Rent": Icons.real_estate_agent_outlined,
+    "Price": Icons.sell_outlined,
+
     "Possession": Icons.home_work,
     "Amenities": Icons.checklist_rtl,
     "Parking": Icons.local_parking,
@@ -191,14 +194,28 @@ class PropertyHighlightManager {
           ),
         );
       }
-      if (pd.pgInfo?.pgRoomInfo != null && pd.pgInfo!.pgRoomInfo!.isNotEmpty) {
-        highlights.add(
-          PropertyHighlightItem(
-            title: "Room Type",
-            value: "${pd.pgInfo?.pgRoomInfo?.first.roomType} Room",
-            icon: _iconMap["Room Type"],
-          ),
-        );
+      final roomList = pd.pgInfo?.pgRoomInfo;
+
+      if (roomList != null && roomList.isNotEmpty) {
+        if (roomList.length > 1) {
+          for (final room in roomList) {
+            highlights.add(
+              PropertyHighlightItem(
+                title: "Room Type",
+                value: "${room.roomType ?? 'N/A'} Room",
+                icon: _iconMap["Room Type"],
+              ),
+            );
+          }
+        } else {
+          highlights.add(
+            PropertyHighlightItem(
+              title: "Room Type",
+              value: "${pd.pgInfo?.pgRoomInfo?.first.roomType} Room",
+              icon: _iconMap["Room Type"],
+            ),
+          );
+        }
       }
 
       // Listing type specific
@@ -241,68 +258,74 @@ class PropertyHighlightManager {
       //     break;
       // }
       switch (property.listingType?.toLowerCase()) {
-  case 'rent':
-    final fi = pd.financialInfo;
+        case 'rent':
+          final fi = pd.financialInfo;
 
-    num? rentValue;
+          debugPrint("Check the Financial numbetr ${fi?.toJson()}");
 
-    if (fi?.propertyRentPerMonth != null && fi!.propertyRentPerMonth! > 0) {
-      rentValue = fi.propertyRentPerMonth;
-    } else if (fi?.monthlyRent != null) {
-      rentValue = num.tryParse(fi!.monthlyRent.toString());
-    } else if (fi?.price != null) {
-      rentValue = num.tryParse(fi!.price.toString());
-    }
+          num? rentValue;
 
-    if (rentValue != null && rentValue > 0) {
-      highlights.add(
-        PropertyHighlightItem(
-          title: "Rent",
-          value: "${Formatter.formatPrice(rentValue)} / month",
-          icon: _iconMap["Rent"],
-        ),
-      );
-    }
-    break;
+          if (fi?.propertyRentPerMonth != null &&
+              fi!.propertyRentPerMonth! > 0) {
+            rentValue = fi.propertyRentPerMonth;
+            debugPrint("===========skdsja ${rentValue}");
+          } else if (fi?.monthlyRent != null) {
+            rentValue = num.tryParse(fi!.monthlyRent.toString());
+            debugPrint("===========skdsjadd ${rentValue}");
+          }
 
-  case 'sell':
-    final price = pd.financialInfo?.price;
+          if (rentValue != null && rentValue > 0) {
+            highlights.add(
+              PropertyHighlightItem(
+                title: "Rent",
+                value: "${Formatter.formatPrice(rentValue)} / month",
+                icon: _iconMap["Rent"],
+              ),
+            );
+          }
 
-    if (price != null && price > 0) {
-      highlights.add(
-        PropertyHighlightItem(
-          title: "Price",
-          value: Formatter.formatPrice(price),
-          icon: _iconMap["Price"],
-        ),
-      );
-    }
-    break;
+          break;
 
-  case 'pg':
-    final pg = pd.pgInfo;
+        case 'sell':
+          final price = pd.financialInfo?.price;
 
-    if (pg != null && pg.pgRoomInfo != null && pg.pgRoomInfo!.isNotEmpty) {
-      final rents = pg.pgRoomInfo!.map((r) => r.rent ?? 0).toList();
+          if (price != null && price > 0) {
+            highlights.add(
+              PropertyHighlightItem(
+                title: "Price",
+                value: Formatter.formatPrice(price),
+                icon: _iconMap["Price"],
+              ),
+            );
+          }
+          break;
 
-      final minRent = rents.reduce((a, b) => a < b ? a : b);
-      final maxRent = rents.reduce((a, b) => a > b ? a : b);
+        case 'pg':
+          final pg = pd.pgInfo;
 
-      final rentText = (minRent == maxRent)
-          ? "${Formatter.formatPrice(minRent)} / month"
-          : "${Formatter.formatPrice(minRent)} - ${Formatter.formatPrice(maxRent)} / month";
+          if (pg != null &&
+              pg.pgRoomInfo != null &&
+              pg.pgRoomInfo!.isNotEmpty) {
+            final rents = pg.pgRoomInfo!.map((r) => r.rent ?? 0).toList();
 
-      highlights.add(
-        PropertyHighlightItem(
-          title: "Rent",
-          value: rentText,
-          icon: _iconMap["Rent"],
-        ),
-      );
-    }
-    break;
-}
+            final minRent = rents.reduce((a, b) => a < b ? a : b);
+            final maxRent = rents.reduce((a, b) => a > b ? a : b);
 
+            final rentText =
+                (minRent == maxRent)
+                    ? "${Formatter.formatPrice(minRent)} / month"
+                    : "${Formatter.formatPrice(minRent)} - ${Formatter.formatPrice(maxRent)} / month";
+
+            highlights.add(
+              PropertyHighlightItem(
+                title: "Rent",
+                value: rentText,
+                icon: _iconMap["Rent"],
+              ),
+            );
+          }
+          break;
+      }
     }
 
     // ----- COMMERCIAL -----
@@ -334,7 +357,7 @@ class PropertyHighlightManager {
               PropertyHighlightItem(
                 title: "Rent",
                 value:
-                    "${Formatter.formatPrice(pd.financialInfo!.price)} / month",
+                    "${Formatter.formatPrice(pd.financialInfo!.propertyRentPerMonth)} / month",
                 icon: _iconMap["Rent"],
               ),
             );
@@ -381,6 +404,93 @@ class PropertyHighlightManager {
   String get highlightsString => getHighlights().map((e) => e.value).join(', ');
 
   /// Returns property furnishing information as a list of items with counts/availability
+  // List<FurnishingItem> getFurnishingInfo() {
+  //   final furnishingItems = <FurnishingItem>[];
+
+  //   if (property.propertyDetails?.furnishInfo?.furnishDetails == null) {
+  //     return furnishingItems;
+  //   }
+
+  //   final details = property.propertyDetails!.furnishInfo!.furnishDetails!;
+
+  //   // Add count-based items (integer values)
+  //   if (details.ac != null && details.ac! > 0) {
+  //     furnishingItems.add(
+  //       FurnishingItem(name: "AC", count: details.ac, icon: Icons.ac_unit),
+  //     );
+  //   }
+
+  //   if (details.bed != null && details.bed! > 0) {
+  //     furnishingItems.add(
+  //       FurnishingItem(name: "Bed", count: details.bed, icon: Icons.bed),
+  //     );
+  //   }
+
+  //   if (details.geyser != null && details.geyser! > 0) {
+  //     furnishingItems.add(
+  //       FurnishingItem(
+  //         name: "Geyser",
+  //         count: details.geyser,
+  //         icon: Icons.water_drop,
+  //       ),
+  //     );
+  //   }
+
+  //   // Add boolean-based items (available/not available)
+  //   if (details.washingMachine == true) {
+  //     furnishingItems.add(
+  //       FurnishingItem(
+  //         name: "Washing Machine",
+  //         isAvailable: true,
+  //         icon: Icons.local_laundry_service,
+  //       ),
+  //     );
+  //   }
+
+  //   if (details.cupboard == true) {
+  //     furnishingItems.add(
+  //       FurnishingItem(
+  //         name: "Cupboard",
+  //         isAvailable: true,
+  //         icon: Icons.door_sliding,
+  //       ),
+  //     );
+  //   }
+
+  //   if (details.stove == true) {
+  //     furnishingItems.add(
+  //       FurnishingItem(name: "Stove", isAvailable: true, icon: Icons.whatshot),
+  //     );
+  //   }
+
+  //   if (details.fridge == true) {
+  //     furnishingItems.add(
+  //       FurnishingItem(name: "Fridge", isAvailable: true, icon: Icons.kitchen),
+  //     );
+  //   }
+
+  //   if (details.waterPurifier == true) {
+  //     furnishingItems.add(
+  //       FurnishingItem(
+  //         name: "Water Purifier",
+  //         isAvailable: true,
+  //         icon: Icons.water,
+  //       ),
+  //     );
+  //   }
+
+  //   if (details.modularKitchen == true) {
+  //     furnishingItems.add(
+  //       FurnishingItem(
+  //         name: "Modular Kitchen",
+  //         isAvailable: true,
+  //         icon: Icons.countertops,
+  //       ),
+  //     );
+  //   }
+
+  //   return furnishingItems;
+  // }
   List<FurnishingItem> getFurnishingInfo() {
     final furnishingItems = <FurnishingItem>[];
 
@@ -390,7 +500,7 @@ class PropertyHighlightManager {
 
     final details = property.propertyDetails!.furnishInfo!.furnishDetails!;
 
-    // Add count-based items (integer values)
+    // ---------- Count-based items ----------
     if (details.ac != null && details.ac! > 0) {
       furnishingItems.add(
         FurnishingItem(name: "AC", count: details.ac, icon: Icons.ac_unit),
@@ -413,7 +523,43 @@ class PropertyHighlightManager {
       );
     }
 
-    // Add boolean-based items (available/not available)
+    if (details.fan != null && details.fan! > 0) {
+      furnishingItems.add(
+        FurnishingItem(
+          name: "Fan",
+          count: details.fan,
+          icon: Icons.center_focus_weak_outlined,
+        ),
+      );
+    }
+
+    if (details.light != null && details.light! > 0) {
+      furnishingItems.add(
+        FurnishingItem(
+          name: "Light",
+          count: details.light,
+          icon: Icons.lightbulb,
+        ),
+      );
+    }
+
+    if (details.tv != null && details.tv! > 0) {
+      furnishingItems.add(
+        FurnishingItem(name: "TV", count: details.tv, icon: Icons.tv),
+      );
+    }
+
+    if (details.wardrobe != null && details.wardrobe! > 0) {
+      furnishingItems.add(
+        FurnishingItem(
+          name: "Wardrobe",
+          count: details.wardrobe,
+          icon: Icons.chair,
+        ),
+      );
+    }
+
+    // ---------- Boolean-based items ----------
     if (details.washingMachine == true) {
       furnishingItems.add(
         FurnishingItem(
@@ -430,6 +576,22 @@ class PropertyHighlightManager {
           name: "Cupboard",
           isAvailable: true,
           icon: Icons.door_sliding,
+        ),
+      );
+    }
+
+    if (details.sofa == true) {
+      furnishingItems.add(
+        FurnishingItem(name: "Sofa", isAvailable: true, icon: Icons.weekend),
+      );
+    }
+
+    if (details.microwave == true) {
+      furnishingItems.add(
+        FurnishingItem(
+          name: "Microwave",
+          isAvailable: true,
+          icon: Icons.microwave,
         ),
       );
     }
@@ -456,6 +618,22 @@ class PropertyHighlightManager {
       );
     }
 
+    if (details.gasPipeline == true) {
+      furnishingItems.add(
+        FurnishingItem(
+          name: "Gas Pipeline",
+          isAvailable: true,
+          icon: Icons.local_gas_station,
+        ),
+      );
+    }
+
+    if (details.chimney == true) {
+      furnishingItems.add(
+        FurnishingItem(name: "Chimney", isAvailable: true, icon: Icons.air),
+      );
+    }
+
     if (details.modularKitchen == true) {
       furnishingItems.add(
         FurnishingItem(
@@ -464,6 +642,15 @@ class PropertyHighlightManager {
           icon: Icons.countertops,
         ),
       );
+      if (details.diningTable == true) {
+        furnishingItems.add(
+          FurnishingItem(
+            name: "Dining Table",
+            isAvailable: true,
+            icon: Icons.table_restaurant,
+          ),
+        );
+      }
     }
 
     return furnishingItems;

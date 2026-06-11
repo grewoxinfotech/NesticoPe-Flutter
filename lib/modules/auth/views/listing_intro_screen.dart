@@ -2466,7 +2466,13 @@ class _PartnerProgramSection extends StatelessWidget {
               decoration: BoxDecoration(
                 color: ColorRes.white,
                 borderRadius: BorderRadius.circular(AppRadius.large),
-                border: Border.all(color: ColorRes.leadGreyColor.shade300),
+                 boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -2669,7 +2675,7 @@ class _PremiumProjectCarouselState extends State<_PremiumProjectCarousel> {
                 return GestureDetector(
                   onTap:
                       () =>
-                          Get.to(() => ProjectDetailsScreen(projectItem: data)),
+                          Get.to(() => ProjectDetailsScreen(projectItem: data, )),
                   child: BuilderProjectCard(
                     forHome: true,
                     project: data,

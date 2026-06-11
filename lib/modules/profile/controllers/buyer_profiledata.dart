@@ -34,6 +34,7 @@ class BuyerProfileDataController extends GetxController {
 
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
+  final usernameController = TextEditingController();
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
   final cityController = TextEditingController();
@@ -101,6 +102,7 @@ class BuyerProfileDataController extends GetxController {
     final user = userProfile.value;
     firstNameController.text = user?.firstName ?? '';
     lastNameController.text = user?.lastName ?? '';
+    usernameController.text = user?.username ?? '';
     emailController.text = user?.email ?? '';
     phoneController.text = user?.phone ?? '';
     cityController.text = user?.city ?? '';
@@ -137,7 +139,7 @@ class BuyerProfileDataController extends GetxController {
       email: emailController.text.trim(),
       phone: phoneController.text.trim(),
       city: cityController.text.trim(),
-      username: existing.username,
+      username: usernameController.text.trim(),
       userType: existing.userType ?? 'buyer',
       roleId: existing.roleId,
       isVerified: existing.isVerified,
@@ -517,7 +519,9 @@ void removeProfileImage() {
     final otpController = TextEditingController();
 
     Get.dialog(
+    
       AlertDialog(
+        backgroundColor: Colors.white,
         title: const Text('Verify Phone Number'),
         content: SingleChildScrollView(
           child: Column(
@@ -607,6 +611,7 @@ void removeProfileImage() {
     firstNameController.dispose();
     lastNameController.dispose();
     emailController.dispose();
+    usernameController.dispose();
     phoneController.dispose();
     cityController.dispose();
     cityPlaceIdController.dispose();

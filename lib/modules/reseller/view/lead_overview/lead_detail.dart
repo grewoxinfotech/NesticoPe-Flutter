@@ -166,13 +166,17 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
           : widget.property!.propertyDetails;
 
   Items get property =>
-      widget.isFromLead ? leadProperty?.value ?? Items() : widget.property ?? Items();
+      widget.isFromLead
+          ? leadProperty?.value ?? Items()
+          : widget.property ?? Items();
 
   @override
   Widget build(BuildContext context) {
     final isCompact = MediaQuery.of(context).size.width < 600;
 
-    log("Building Name in Reseller ${property.propertyDetails?.furnishInfo?.furnishDetails?.toJson()}");
+    log(
+      "Building Name in Reseller ${property.propertyDetails?.furnishInfo?.furnishDetails?.toJson()}",
+    );
 
     return Scaffold(
       backgroundColor: ColorRes.white,
@@ -279,8 +283,6 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                                 thickness: 8,
                                 color: ColorRes.leadGreyColor[100],
                               ),
-                            
-                             
                             ],
 
                             Obx(() => _buildExpandButton(context)),
@@ -1345,7 +1347,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
           _buildSectionHeader(
             'Property Overview',
             Icons.home_outlined,
-            
+
             isCompact,
           ),
           const SizedBox(height: 16),
@@ -1592,25 +1594,23 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
     final floorInfo = details.floorInfo;
     final possessionInfo = details.possessionInfo;
 
-    return Padding(
-      padding: EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if ((propertyDetails?.financialInfo?.is_for_sellorrent ?? false) &&
-              (listingType?.toLowerCase() == 'sell')) ...[
-            if (propertyDetails?.financialInfo?.propertyRentPerMonth !=
-                null) ...[
-              // Padding(
-             
-              Divider(
-                indent: 18,
-                endIndent: 18,
-                color: ColorRes.leadGreyColor.shade300,
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if ((propertyDetails?.financialInfo?.is_for_sellorrent ?? false) &&
+            (listingType?.toLowerCase() == 'sell')) ...[
+          if (propertyDetails?.financialInfo?.propertyRentPerMonth != null) ...[
+            // Padding(
 
-              const SizedBox(height: 12),
-              Column(
+            // Divider(
+            //   indent: 18,
+            //   endIndent: 18,
+            //   color: ColorRes.leadGreyColor.shade300,
+            // ),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildSectionHeader(
@@ -1660,25 +1660,23 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
-              Divider(
-                indent: 18,
-                endIndent: 18,
-                color: ColorRes.leadGreyColor.shade300,
-              ),
-            ] 
+            ),
+            const SizedBox(height: 12),
           ],
-          if ((propertyDetails?.financialInfo?.is_for_sellorrent ?? false) &&
-              (listingType?.toLowerCase() == 'rent')) ...[
-            if (propertyDetails?.financialInfo?.price != null) ...[
-              const SizedBox(height: 12),
-              Divider(
-                indent: 18,
-                endIndent: 18,
-                color: ColorRes.leadGreyColor.shade300,
-              ),
-              const SizedBox(height: 12),
-              Column(
+        ],
+        if ((propertyDetails?.financialInfo?.is_for_sellorrent ?? false) &&
+            (listingType?.toLowerCase() == 'rent')) ...[
+          if (propertyDetails?.financialInfo?.price != null) ...[
+            const SizedBox(height: 12),
+
+            // Divider(
+            //   indent: 18,
+            //   endIndent: 18,
+            //   color: ColorRes.leadGreyColor.shade300,
+            // ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildSectionHeader(
@@ -1729,75 +1727,80 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                   ),
                 ],
               ),
+            ),
 
-              const SizedBox(height: 12),
-              Divider(
-                indent: 18,
-                endIndent: 18,
-                color: ColorRes.leadGreyColor.shade300,
-              ),
-            ] 
+            const SizedBox(height: 12),
+            Divider(thickness: 8, color: ColorRes.leadGreyColor[100]),
+            const SizedBox(height: 12),
           ],
-
-          _buildSectionHeader('Property Details', Icons.info_outline, true),
-          SizedBox(height: 16),
-
-          if (builderName.isNotEmpty &&
-              (!builderName.contains("null")) &&
-              builderName != null)
-            _buildDetailRow('Builder', builderName),
-          if (projectName.isNotEmpty) _buildDetailRow('Project', projectName),
-          _buildDetailRow('Property Type', propertyType.toUpperCase()),
-          if (details.zoneType != null)
-            _buildDetailRow('Zone Type', details.zoneType!),
-          if (details.propertyFacing != null)
-            _buildDetailRow('Facing', details.propertyFacing!),
-          if (floorInfo != null)
-            _buildDetailRow(
-              'Floor',
-              '${floorInfo.floorNumber ?? 0} of ${floorInfo.totalFloors ?? 0}',
-            ),
-          if (details.propertyBuiltUpArea != null)
-            _buildDetailRow(
-              'Built-up Area',
-              '${details.propertyBuiltUpArea} sq.ft',
-            ),
-          if (details.propertyCarpetArea != null)
-            _buildDetailRow(
-              'Carpet Area',
-              '${details.propertyCarpetArea} sq.ft',
-            ),
-          if (furnishInfo?.furnishType != null)
-            _buildDetailRow(
-              'Furnishing',
-              furnishInfo!.furnishType!.toUpperCase(),
-            ),
-          if (furnishInfo?.furnishDetails?.ac != null)
-            _buildDetailRow(
-              'AC Installed',
-              furnishInfo!.furnishDetails!.ac! > 0
-                  ? furnishInfo!.furnishDetails!.ac!.toString()
-                  : 'No',
-            ),
-          if (details.parkingInfo != null)
-            _buildDetailRow(
-              'Parking',
-              '${details.parkingInfo!.open == true ? "Open" : ""}${details.parkingInfo!.open == true && details.parkingInfo!.covered == true ? " & " : ""}${details.parkingInfo!.covered == true ? "Covered" : ""}',
-            ),
-          if (possessionInfo?.possessionStatus != null)
-            _buildDetailRow(
-              'Possession',
-              possessionInfo!.possessionStatus!.capitalize
-                  .toString()
-                  .replaceAll("_", " "),
-            ),
-          if (possessionInfo?.propertyAgeInYear != null)
-            _buildDetailRow(
-              'Property Age',
-              '${possessionInfo?.propertyAgeInYear != null && possessionInfo?.propertyAgeInYear != "null" ? possessionInfo?.propertyAgeInYear : "Not define"} years',
-            ),
         ],
-      ),
+
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              _buildSectionHeader('Property Details', Icons.info_outline, true),
+              SizedBox(height: 12),
+
+              if (builderName.isNotEmpty &&
+                  (!builderName.contains("null")) &&
+                  builderName != null)
+                _buildDetailRow('Builder', builderName),
+              if (projectName.isNotEmpty)
+                _buildDetailRow('Project', projectName),
+              _buildDetailRow('Property Type', propertyType.toUpperCase()),
+              if (details.zoneType != null)
+                _buildDetailRow('Zone Type', details.zoneType!),
+              if (details.propertyFacing != null)
+                _buildDetailRow('Facing', details.propertyFacing!),
+              if (floorInfo != null)
+                _buildDetailRow(
+                  'Floor',
+                  '${floorInfo.floorNumber ?? 0} of ${floorInfo.totalFloors ?? 0}',
+                ),
+              if (details.propertyBuiltUpArea != null)
+                _buildDetailRow(
+                  'Built-up Area',
+                  '${details.propertyBuiltUpArea} sq.ft',
+                ),
+              if (details.propertyCarpetArea != null)
+                _buildDetailRow(
+                  'Carpet Area',
+                  '${details.propertyCarpetArea} sq.ft',
+                ),
+              if (furnishInfo?.furnishType != null)
+                _buildDetailRow(
+                  'Furnishing',
+                  furnishInfo!.furnishType!.toUpperCase(),
+                ),
+              if (furnishInfo?.furnishDetails?.ac != null)
+                _buildDetailRow(
+                  'AC Installed',
+                  furnishInfo!.furnishDetails!.ac! > 0
+                      ? furnishInfo!.furnishDetails!.ac!.toString()
+                      : 'No',
+                ),
+              if (details.parkingInfo != null)
+                _buildDetailRow(
+                  'Parking',
+                  '${details.parkingInfo!.open == true ? "Open" : ""}${details.parkingInfo!.open == true && details.parkingInfo!.covered == true ? " & " : ""}${details.parkingInfo!.covered == true ? "Covered" : ""}',
+                ),
+              if (possessionInfo?.possessionStatus != null)
+                _buildDetailRow(
+                  'Possession',
+                  possessionInfo!.possessionStatus!.capitalize
+                      .toString()
+                      .replaceAll("_", " "),
+                ),
+              if (possessionInfo?.propertyAgeInYear != null)
+                _buildDetailRow(
+                  'Property Age',
+                  '${possessionInfo?.propertyAgeInYear != null && possessionInfo?.propertyAgeInYear != "null" ? possessionInfo?.propertyAgeInYear : "Not define"} years',
+                ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -1838,7 +1841,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
     if (amenities.isEmpty) return SizedBox.shrink();
 
     return Padding(
-      padding: EdgeInsets.all(12),
+      padding: EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -2062,7 +2065,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
   //                         decoration: BoxDecoration(
   //                           borderRadius: BorderRadius.circular(12),
   //                           border: Border.all(
-  //                             color: ColorRes.leadGreyColor.shade300,
+  //                             color: ColorRes.leadGreyColor.shade300, bchdbbnsdiun cnjsn 
   //                             width: 1,
   //                           ),
   //                         ),
@@ -2153,7 +2156,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
   //                                   ),
   //                                 ],
   //                               ),
-  //                             ),
+  //                             ),,
   //                           ],
   //                         ),
   //                       ),

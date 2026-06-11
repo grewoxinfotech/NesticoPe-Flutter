@@ -1,8 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../../../app/care/pagination/models/pagination_models.dart';
 import '../../../../app/constants/api_constants.dart';
@@ -264,12 +268,95 @@ class ContractorInquiryService {
     }
   }
 
+  Future<bool> getQuotation(String id) async {
+    try {
+      final uri = Uri.parse('$_baseUrlQutation/$id/download-pdf');
+      final response = await http.get(
+        uri,
+        headers: await headers(),
+      );
+
+      debugPrint("Get Quotation Response: $uri - status:${response.statusCode}");
+
+      final bytes = response.bodyBytes;
+      final contentType = response.headers['content-type'] ?? '';
+
+      if (response.statusCode == 200) {
+        // Check if the response is a PDF (content-type or PDF magic header)
+        final isPdf = contentType.contains('application/pdf') ||
+            (bytes.length >= 4 && bytes[0] == 0x25 && bytes[1] == 0x50 && bytes[2] == 0x44 && bytes[3] == 0x46);
+        if (isPdf) {
+          final dir = await getTemporaryDirectory();
+          final file = File('${dir.path}/quotation_$id.pdf');
+          await file.writeAsBytes(bytes, flush: true);
+          // Try to open the file (optional)
+          try {
+            await OpenFilex.open(file.path);
+          } catch (e) {
+            print('Could not open PDF: $e');
+          }
+          NesticoPeSnackBar.showAwesomeSnackbar(   
+            title: 'Success',
+            message: 'PDF downloaded',
+            contentType: ContentType.success,
+          );
+          return true;
+        }
+
+        // If not a PDF, try to parse as JSON and show message
+        final bodyString = utf8.decode(bytes);
+        final data = jsonDecode(bodyString);
+        print('Contractor Quotation Response : $data');
+        final jsonData = json.decode(bodyString);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Success',
+          message: jsonData['message'] ?? 'Success',
+          contentType: ContentType.success,
+        );
+        return data['success'] ?? true;
+      } else {
+        print("Failed to get Quotation: ${response.statusCode}");
+        final bodyString = utf8.decode(bytes);
+        print("Response body: $bodyString");
+        try {
+          final jsonData = json.decode(bodyString);
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Failed',
+            message: jsonData['message'],
+            contentType: ContentType.failure,
+          );
+        } catch (_) {
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Failed',
+            message: 'Failed to download quotation',
+            contentType: ContentType.failure,
+          );
+        }
+        throw Exception('Failed to get Quotation');
+      }
+    } catch (e) {
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Error',
+        message: 'Something went wrong',
+        contentType: ContentType.failure,
+      );
+      print("Exception in getQuotation: $e");
+      return false;
+    }
+  }
+
   Future<bool> convertInquiryIntoLead(Map<String, dynamic> lead) async {
     try {
+      debugPrint("Lead Data to Convert: $lead");
+      debugPrint("Lead Data JSON: ${jsonEncode(lead)}");
       final response = await http.post(
         Uri.parse(ApiConstants.leads),
         headers: await headers(),
         body: jsonEncode(lead),
+      );
+      debugPrint("Checj skjdsjjd dfsdgsfd ${ApiConstants.leads} ");
+      debugPrint(
+        "Convert Inquiry Into Lead Response: ${response.statusCode} - ${response.body} ",
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
@@ -283,8 +370,9 @@ class ContractorInquiryService {
         );
         return data['success'];
       } else {
-        final handled =
-            await SubscriptionLimitGuard.handlePlanLimitResponse(response);
+        final handled = await SubscriptionLimitGuard.handlePlanLimitResponse(
+          response,
+        );
         if (handled) return false;
 
         final jsonData = json.decode(response.body);
@@ -329,8 +417,9 @@ class ContractorInquiryService {
         print("Contractor Inquiry Send Quotation : $data");
         return data['success'];
       } else {
-        final handled =
-            await SubscriptionLimitGuard.handlePlanLimitResponse(response);
+        final handled = await SubscriptionLimitGuard.handlePlanLimitResponse(
+          response,
+        );
         if (handled) return false;
 
         final jsonData = json.decode(response.body);
@@ -375,8 +464,9 @@ class ContractorInquiryService {
         print("Contractor Inquiry Send Quotation : $data");
         return data['success'];
       } else {
-        final handled =
-            await SubscriptionLimitGuard.handlePlanLimitResponse(response);
+        final handled = await SubscriptionLimitGuard.handlePlanLimitResponse(
+          response,
+        );
         if (handled) return false;
 
         final jsonData = json.decode(response.body);

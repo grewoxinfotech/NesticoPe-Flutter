@@ -502,20 +502,20 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                         ],
 
                         // if (!UserHelper.isGuest && !UserHelper.isBuyer) ...[
-                          if (project?.value?.brochures.isNotEmpty ?? false)
-                            _buildBrochuresSection(controller, project.value!),
+                        if (project?.value?.brochures.isNotEmpty ?? false)
+                          _buildBrochuresSection(controller, project.value!),
                         // ],
                         // if (!UserHelper.isGuest && !UserHelper.isBuyer) ...[
-                          if ((project
-                                  ?.value
-                                  ?.mediaGallery
-                                  ?.documents
-                                  .isNotEmpty ??
-                              false))
-                            _buildProjectDocumentsSection(
-                              controller,
-                              project.value!,
-                            ),
+                        if ((project
+                                ?.value
+                                ?.mediaGallery
+                                ?.documents
+                                .isNotEmpty ??
+                            false))
+                          _buildProjectDocumentsSection(
+                            controller,
+                            project.value!,
+                          ),
                         // ],
 
                         // Other projects by the same builder (exclude current project)
@@ -566,7 +566,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                             title: "Approval History",
                             icon: Icons.history,
                             onTap: () {
-                              Get.to(   
+                              Get.to(
                                 () => SellerPropertyApprovalHistory(
                                   propertyId: project?.value?.id ?? '',
                                   isProject: true,
@@ -1377,7 +1377,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         //     child: const Icon(Icons.share, color: ColorRes.black),
         //   ),
         // ),
-        if (!isFromPanel) ...[
+        if (!UserHelper.isSellerBuilder) ...[
           Padding(
             padding: const EdgeInsets.only(right: 12.0),
             child: EntityActionButtons(
@@ -2038,7 +2038,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
           // Horizontal Variants List
           SizedBox(
-            height: 300,
+            height: 370,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               padding: EdgeInsets.symmetric(horizontal: 16),
@@ -2067,6 +2067,9 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     int variantIndex,
     ProjectController controller,
   ) {
+    debugPrint(
+      "Building card for variant: ${variant.mediaItems?.toJson()}, Price: ${variant.price}, Available Units: ${variant.availableUnits}",
+    );
     return Container(
       // // elevation: 2,
       // shape: RoundedRectangleBorder(
@@ -2118,32 +2121,14 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                     ),
                   ],
                 ),
-                if (variant.mediaItems?.models.isNotEmpty == true &&
-                    variant.mediaItems?.models.first.toString().trim().isNotEmpty == true)
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'View 3D',
-                          style: TextStyle(
-                            fontSize: AppFontSizes.small,
-                            fontWeight: AppFontWeights.semiBold,
-                            color: ColorRes.white,
-                          ),
-                          recognizer:
-                              TapGestureRecognizer()
-                                ..onTap = () {
-                                  Get.to(
-                                    () => ModelRenderScreen(
-                                      modelUrl: variant.mediaItems?.models.first ?? '',
-                                      iosModelUrl: variant.mediaItems?.models.first ?? '',
-                                    ),
-                                  );
-                                },
-                        ),
-                      ],
-                    ),
+                Text(
+                  '${Formatter.formatPrice(variant.price)}',
+                  style: const TextStyle(
+                    fontSize: AppFontSizes.small,
+                    fontWeight: AppFontWeights.bold,
+                    color: ColorRes.white,
                   ),
+                ),
               ],
             ),
           ),
@@ -2153,34 +2138,192 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Variant Images (Horizontal ListView)
-                SizedBox(
-                  height: 125, // fixed height for image list
-                  child:
-                      variant.mediaItems?.images.isEmpty == true
-                          ? _buildPlaceholderImage()
-                          : ListView.separated(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: variant.mediaItems?.images.length ?? 0,
-                            padding: const EdgeInsets.all(12),
-                            separatorBuilder:
-                                (_, __) => const SizedBox(width: 8),
-                            itemBuilder: (context, imgIndex) {
-                              return Container(
-                                width: 200,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: NetworkImage(
-                                      variant.mediaItems?.images[imgIndex] ?? '',
-                                    ),
-                                    fit: BoxFit.cover,
-                                    onError: (exception, stackTrace) {},
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                ),
+                
 
+                // SizedBox(
+                //   height: 125, // fixed height for image list
+                //   child:
+                //       variant.mediaItems?.images.isEmpty == true
+                //           ? _buildPlaceholderImage()
+                //           : ListView.separated(
+                //             scrollDirection: Axis.horizontal,
+                //             itemCount: variant.mediaItems?.images.length ?? 0,
+                //             padding: const EdgeInsets.all(12),
+                //             separatorBuilder:
+                //                 (_, __) => const SizedBox(width: 8),
+                //             itemBuilder: (context, imgIndex) {
+                //               return Container(
+                //                 width: 200,
+                //                 decoration: BoxDecoration(
+                //                   image: DecorationImage(
+                //                     image: NetworkImage(
+                //                       variant.mediaItems?.images[imgIndex] ?? '',
+                //                     ),
+                //                     fit: BoxFit.cover,
+                //                     onError: (exception, stackTrace) {},
+                //                   ),
+                //                 ),
+                //               );
+                //             },
+                //           ),
+                // ),
+                Obx(() {
+                  final type = controller.selectedMediaTypeMap[variantIndex] ?? 0;
+
+                  // ================= IMAGES =================
+                  if (type == 0) {
+                    return SizedBox(
+                      height: 140,
+                      child:
+                          (variant.mediaItems?.images.isEmpty ?? true)
+                              ? _buildPlaceholderImage()
+                              : ListView.separated(
+                                scrollDirection: Axis.horizontal,
+                                itemCount:
+                                    variant.mediaItems?.images.length ?? 0,
+                                padding: const EdgeInsets.all(12),
+                                separatorBuilder:
+                                    (_, __) => const SizedBox(width: 8),
+                                itemBuilder: (context, imgIndex) {
+                                  return Container(
+                                    width: 200,
+                                    // height: ,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      image: DecorationImage(
+                                        image: NetworkImage(
+                                          variant
+                                                  .mediaItems
+                                                  ?.images[imgIndex] ??
+                                              '',
+                                        ),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                    );
+                  }
+
+                  // ================= VIDEOS (LIST LIKE IMAGES) =================
+                  if (type == 1) {
+                    return SizedBox(
+                      height: 140,
+                      child:
+                          (variant.mediaItems?.videos.isEmpty ?? true)
+                              ? Center(child: Text("No Videos Available"))
+                              : ListView.separated(
+                                scrollDirection: Axis.horizontal,
+                                itemCount:
+                                    variant.mediaItems?.videos.length ?? 0,
+                                padding: const EdgeInsets.all(12),
+                                separatorBuilder:
+                                    (_, __) => const SizedBox(width: 8),
+                                itemBuilder: (context, index) {
+                                  final videoUrl =
+                                      variant.mediaItems?.videos[index] ?? '';
+
+                                  return GestureDetector(
+                                    onTap: () {
+                                      if (videoUrl.trim().isNotEmpty) {
+                                        Get.to(
+                                          () =>
+                                              MediaPreviewScreen(url: videoUrl),
+                                        );
+                                      } else {
+                                        Get.snackbar(
+                                          "No Video",
+                                          "Invalid video URL",
+                                          backgroundColor: Colors.redAccent,
+                                          colorText: Colors.white,
+                                        );
+                                      }
+                                    },
+                                    child: Container(
+                                      width: 200,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Colors.black12,
+                                      ),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.play_circle_fill,
+                                          size: 40,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                    );
+                  }
+
+                  // ================= 3D MODELS (LIST LIKE IMAGES) =================
+                  return SizedBox(
+                    height: 140,
+                    child:
+                        (variant.mediaItems?.models.isEmpty ?? true)
+                            ? Center(child: Text("No 3D Models Available"))
+                            : ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: variant.mediaItems?.models.length ?? 0,
+                              padding: const EdgeInsets.all(12),
+                              separatorBuilder:
+                                  (_, __) => const SizedBox(width: 8),
+                              itemBuilder: (context, index) {
+                                final modelUrl =
+                                    variant.mediaItems?.models[index] ?? '';
+
+                                return GestureDetector(
+                                  onTap: () {
+                                    if (modelUrl.trim().isNotEmpty) {
+                                      Get.to(
+                                        () => ModelRenderScreen(
+                                          modelUrl: modelUrl,
+                                          iosModelUrl: modelUrl,
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  child: Container(
+                                    width: 200,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.blueGrey.shade100,
+                                    ),
+                                    child: const Center(
+                                      child: Icon(
+                                        Icons.view_in_ar,
+                                        size: 40,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                  );
+                }),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  child: Obx(() {
+                    return Row(
+                      children: [
+                        _mediaButton("Images", 0, controller, variantIndex),
+                        const SizedBox(width: 8),
+                        _mediaButton("Video", 1, controller, variantIndex),
+                        const SizedBox(width: 8),
+                        _mediaButton("3D Model", 2, controller, variantIndex),
+                      ],
+                    );
+                  }),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(12),
                   child: Column(
@@ -2257,6 +2400,50 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _mediaButton(String title, int index, ProjectController controller, int variantIndex) {
+    final isSelected = (controller.selectedMediaTypeMap[variantIndex] ?? 0) == index;
+
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => controller.selectedMediaTypeMap[variantIndex] = index,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected ? ColorRes.primary : ColorRes.white,
+            border: Border.all(color: ColorRes.leadGreyColor[300]!, width: 1),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  index == 0
+                      ? Icons.image
+                      : index == 1
+                          ? Icons.videocam
+                          : Icons.view_in_ar,
+                  size: 12,
+                  color: isSelected ? ColorRes.white : ColorRes.black,
+                ),
+                SizedBox(width: 2),
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : ColorRes.black,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 10,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

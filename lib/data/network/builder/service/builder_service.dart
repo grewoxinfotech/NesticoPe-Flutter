@@ -60,6 +60,28 @@ void _normalizeMediaGalleryInProjectMap(Map<String, dynamic> projectMap) {
   }
 }
 
+/// Ensure every variant has a map for `variantMedia` so server-side
+/// validation expecting an object does not fail when client has `null`.
+void _ensureVariantMediaObject(Map<String, dynamic> projectMap) {
+  final configs = projectMap['configurations'];
+  if (configs is List) {
+    for (var cfg in configs) {
+      if (cfg is Map) {
+        final variants = cfg['variants'];
+        if (variants is List) {
+          for (var v in variants) {
+            if (v is Map) {
+              if (!v.containsKey('variantMedia') || v['variantMedia'] == null || v['variantMedia'] is! Map) {
+                v['variantMedia'] = <String, dynamic>{};
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 String _dateOnly(dynamic value) {
   if (value == null) return '';
   final s = value.toString().trim();
@@ -325,6 +347,7 @@ class BuilderService {
       // Convert model to Map
       final projectMap = projectData.toJson();
       _normalizeMediaGalleryInProjectMap(projectMap);
+      _ensureVariantMediaObject(projectMap);
 
       if (brochures != null) {
         request.files.add(
@@ -613,6 +636,7 @@ class BuilderService {
           hasLocalImage || hasLocalVideo || hasLocalDocument || hasLocalBrochure;
 
       final projectMap = projectData.toJson();
+      _ensureVariantMediaObject(projectMap);
       final dataPayload = _buildUpdateDataPayload(
         projectMap,
         retainImageUrls: retainImageUrls,

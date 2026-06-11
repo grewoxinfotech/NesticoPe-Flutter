@@ -80,10 +80,12 @@ class BuyerProfileScreen extends StatelessWidget {
         if (profileController.isLoading.value) {
           return BuyerProfileScreenShimmer();
         }
-
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
+        return RefreshIndicator(
+          onRefresh: () => profileController.getUserProfile(force: true),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(16),
+            child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Profile Header
@@ -102,7 +104,7 @@ class BuyerProfileScreen extends StatelessWidget {
               // Profile Options
             ],
           ),
-        );
+        ));
       }),
     );
   }
@@ -124,10 +126,13 @@ class BuyerProfileScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: ColorRes.leadGreyColor.withOpacity(0.3),
-          width: 1,
-        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -245,7 +250,8 @@ class BuyerProfileScreen extends StatelessWidget {
                   right: 0,
                   bottom: 0,
                   child: GestureDetector(
-                    onTap: () => controller.showImagePickerOptions(Get.context!),
+                    onTap:
+                        () => controller.showImagePickerOptions(Get.context!),
                     child: Container(
                       width: 28,
                       height: 28,
@@ -274,7 +280,7 @@ class BuyerProfileScreen extends StatelessWidget {
                 SizedBox(
                   width: 140,
                   child: Text(
-                    '${controller.userProfile.value?.firstName ?? ''} ${controller.userProfile.value?.lastName ?? ''}'
+                    '${controller.userProfile.value?.username?.replaceAll("_", " ").capitalize ?? ''} '
                         .trim(),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -673,6 +679,12 @@ class BuyerProfileScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       _buildFormField(
+                        controller: controller.usernameController,
+                        label: 'User Name',
+                        icon: Icons.person_outline,
+                      ),
+                      const SizedBox(height: 12),
+                      _buildFormField(
                         controller: controller.firstNameController,
                         label: 'First Name',
                         icon: Icons.person_outline,
@@ -721,7 +733,9 @@ class BuyerProfileScreen extends StatelessWidget {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: ColorRes.blueColor,
                                 foregroundColor: ColorRes.white,
-                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
                                 elevation: 0,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -749,9 +763,13 @@ class BuyerProfileScreen extends StatelessWidget {
                                       : controller.cancelEdit,
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: ColorRes.leadGreyColor[700],
-                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
                                 side: BorderSide(
-                                  color: ColorRes.leadGreyColor.withOpacity(0.3),
+                                  color: ColorRes.leadGreyColor.withOpacity(
+                                    0.3,
+                                  ),
                                 ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -772,9 +790,18 @@ class BuyerProfileScreen extends StatelessWidget {
                     icon: Icons.person_outline,
                     iconColor: const Color(0xFF6366F1),
                     iconBg: const Color(0xFFEEF2FF),
+                    label: 'User Name',
+                    value: '${user?.username?.trim().replaceAll("_", " ").capitalize ?? ''}',
+                  ),
+                  _divider(),
+                  _infoRow(
+                    icon: Icons.person_outline,
+                    iconColor: const Color(0xFF6366F1),
+                    iconBg: const Color(0xFFEEF2FF),
                     label: 'Full Name',
                     value:
-                        '${user?.firstName ?? ''} ${user?.lastName ?? ''}'.trim(),
+                        '${user?.firstName ?? ''} ${user?.lastName ?? ''}'
+                            .trim(),
                   ),
                   _divider(),
                   _infoRow(

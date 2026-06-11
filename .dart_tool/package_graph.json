@@ -53,7 +53,6 @@
         "model_viewer_plus",
         "month_year_picker",
         "multi_image_picker_view",
-        "onesignal_flutter",
         "open_filex",
         "package_info_plus",
         "path_provider",
@@ -236,13 +235,6 @@
         "path",
         "web",
         "win32"
-      ]
-    },
-    {
-      "name": "onesignal_flutter",
-      "version": "5.5.1",
-      "dependencies": [
-        "flutter"
       ]
     },
     {

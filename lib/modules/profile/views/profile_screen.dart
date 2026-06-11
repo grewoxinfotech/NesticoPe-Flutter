@@ -900,7 +900,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+            padding: const EdgeInsets.only(left: 16, right: 16, top: 16,),
             child:
                 UserHelper.isGuest
                     ? Column(
@@ -985,6 +985,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         const SizedBox(height: 10),
                         _buildDeleteAccountButton(),
+                        const SizedBox(height: 10),
                       ],
                     ),
           ),

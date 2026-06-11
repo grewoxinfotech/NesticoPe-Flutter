@@ -21,7 +21,9 @@ class ProjectController extends GetxController {
   final PropertyService _propertyService = PropertyService();
   RxBool isCompareProjectFirst=false.obs;
   RxBool isCompareProjectSecond=false.obs;
-
+  // Per-variant selected media type. Key = variant index, Value = media type
+  // media type: 0 = Images, 1 = Video, 2 = 3D
+  RxMap<int, int> selectedMediaTypeMap = <int, int>{}.obs;
 
   final RxInt selectedConfigIndex = 0.obs;
   final RxInt selectedImageIndex = 0.obs;
@@ -78,6 +80,16 @@ class ProjectController extends GetxController {
 
   void selectImage(int index) {
     selectedImageIndex.value = index;
+  }
+
+  /// Get selected media type for a variant (defaults to 0 = Images).
+  int getSelectedMediaType(int variantIndex) {
+    return selectedMediaTypeMap[variantIndex] ?? 0;
+  }
+
+  /// Set selected media type for a variant.
+  void setSelectedMediaType(int variantIndex, int type) {
+    selectedMediaTypeMap[variantIndex] = type;
   }
 
   String formatCurrency(double amount) {

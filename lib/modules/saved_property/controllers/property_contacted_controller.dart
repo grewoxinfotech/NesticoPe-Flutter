@@ -46,7 +46,8 @@ class PropertyContactedController extends GetxController {
 
       // Extract only property IDs
       final ids = inquiryList.map((e) => e.propertyId).toList();
-      contactedPropertyIds.assignAll(ids);
+      final uniqueIds = inquiryList.where((e) => e.details != null && e.details!.id != null && e.details!.id!.isNotEmpty).toList(); // Remove duplicates
+      contactedPropertyIds.assignAll(uniqueIds.map((e) => e.propertyId).toSet().toList());
 
       // Reset and load first batch of property details
       // properties.clear();

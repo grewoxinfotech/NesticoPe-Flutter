@@ -194,6 +194,28 @@ class ContractorQuotationController
     }
   }
 
+  Future<void> getQuotation(String quotationId) async {
+    try {
+  
+
+      final success = await ContractorInquiryService.contractorInquiryService
+          .getQuotation(quotationId);
+
+      // refreshList();
+      // items.refresh();
+      // Navigator.of(Get.context!).pop();
+
+  
+    } catch (e) {
+    
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Error",
+        message: 'An error occurred: ${e.toString()}',
+        contentType: ContentType.failure,
+      );
+    }
+  }
+
   Future<void> refreshQuotation() async {
     try {
       isRefreshing.value = true;
@@ -404,11 +426,11 @@ class ContractorQuotationController
       "source": "website",
       "status": "new",
       "stage": "new_lead",
-      "reseller_id": item.user.id,
+      "reseller_id": user.user?.id,
       "customFields": {
         "serviceId": item.meta.inquiryServices?.first.serviceId,
         "serviceName": item.meta.inquiryServices?.first.serviceName,
-        "contractorId": item.user.id,
+        "contractorId": user.user?.id,
         "contractorUsername": user.user?.username,
         "serviceDescription": item.meta.propertyDetails?.serviceDescription,
         "quotationId": item.id,
@@ -417,6 +439,7 @@ class ContractorQuotationController
     };
 
     print("Lead Payload: $payload");
+
     final response = await ContractorInquiryService.contractorInquiryService
         .convertInquiryIntoLead(payload);
     if (response) {

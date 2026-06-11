@@ -292,6 +292,7 @@ class MediaUploadService {
         // Optional: Check file size (e.g., max 50MB)
         final fileSize = await file.length();
         const maxSize = 50 * 1024 * 1024; // 50MB in bytes
+         // bcjhb 
 
         if (fileSize > maxSize) {
           throw Exception(
@@ -389,6 +390,8 @@ class MediaUploadService {
 
       final response = await request.send();
       final responseBody = await response.stream.bytesToString();
+      print("Upload response status: ${response.statusCode}");
+      print("Upload response body: $responseBody");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         dynamic parsed;
@@ -423,7 +426,8 @@ class MediaUploadService {
     required String projectId,
     required String variantId,
     required String mediaType, // "image", "video", or "model"
-    required String mediaUrl, // exact URL from variant list
+    required String mediaUrl, // exact URL from variant list this node and this is api that helps me
+    // thsiu is for that 
   }) async {
     try {
       final uri = Uri.parse(

@@ -872,7 +872,7 @@ class InquiryCard extends StatelessWidget {
                                 .contains(service.serviceId);
 
                             return _chip(
-                              service.serviceName,
+                              service.serviceName.capitalize?.replaceAll("_", ' ') ?? service.serviceName,
                               isConverted
                                   ? ColorRes.success
                                   : ColorRes.leadGreyColor.shade400,

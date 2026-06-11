@@ -1087,9 +1087,11 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
 
         onPressed: () async {
           /// 1️⃣ Check Aadhar
-          if (!UserHelper.isAadharVerified) {
-            Get.to(() => AadharAuthScreen());
-            return;
+          if (UserHelper.isAadharActive) {
+            if (!UserHelper.isAadharVerified) {
+              Get.to(() => AadharAuthScreen());
+              return;
+            }
           }
 
           /// 2️⃣ Load signatures
@@ -1134,6 +1136,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
               onRefresh: overviewController.refreshSellerDashboard,
               color: ColorRes.primary,
               child: SingleChildScrollView(
+                
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: SizedBox(
                   height: MediaQuery.of(context).size.height * 0.7,
@@ -1153,7 +1156,9 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                         ElevatedButton(
                           onPressed: () {
                             overviewController.getFetchSellerApi(
+
                               overviewController.selectedGraphYear.value,
+
                             );
                           },
                           child: const Text('Retry'),

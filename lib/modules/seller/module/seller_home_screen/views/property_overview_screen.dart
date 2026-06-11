@@ -158,7 +158,7 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
           //           },
           //         ),
           //       ),
-          //     );
+          //     ); th======= Flutter Developer ==============================
           //   }),
           // ),
           Expanded(
@@ -224,14 +224,19 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
   }
 
   Widget _buildPropertyCard(Items property, Function() onDelete) {
-    final bool isSold = property.propertyStatus == 'Sold';
+    final statusLower = property.propertyStatus?.toLowerCase() ?? '';
+    final bool isSold = statusLower == 'sold';
+    final bool isRented = statusLower == 'rented';
     final priceManager = PropertyPriceManager(
       listingType: property.listingType ?? "",
       financialInfo: property.propertyDetails?.financialInfo ?? FinancialInfo(),
       pgInfo: property.propertyDetails?.pgInfo ?? PgInfo(),
     );
 
-    // final bool isFeatured = property['featured'] ?? false;
+    // final bool isFeatured = property['featured'] ?? false this seller builder overview screen e property model a featured field nai tai isFeatured remove kore disi
+    // final bool isFeatured = false and then if you want to add featured badge then you can use this isFeatured variable and show badge in ui
+    // log("Building card for property ID: ${property.id}, Status: ${property.propertyStatus}, Listing Type: ${property.listingType}, Price: ${priceManager.displayPrice}")
+    // Most If the Ui ;
 
     return Stack(
       children: [
@@ -283,7 +288,7 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
                             fit: BoxFit.cover,
                           ),
                         ),
-                        if (property.propertyStatus?.toLowerCase() == 'sold')
+                        if (isSold || isRented)
                           Positioned.fill(
                             child: Container(
                               decoration: BoxDecoration(
@@ -295,7 +300,6 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
                               alignment: Alignment.center,
                               child: Transform.rotate(
                                 angle: 24.85,
-
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 2,
@@ -311,11 +315,11 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
                                       vertical: 8,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Colors.red,
+                                      color: isSold ? Colors.red : Colors.amber,
                                       borderRadius: BorderRadius.circular(4),
                                     ),
-                                    child: const Text(
-                                      "SOLD",
+                                    child: Text(
+                                      isSold ? "SOLD" : "RENTED",
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.w700,
@@ -333,25 +337,28 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
                           top: 12,
                           left: 12,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: isSold ? ColorRes.error : ColorRes.white,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              property.propertyStatus?.capitalize ??
-                                  'Available',
-                              style: TextStyle(
-                                color:
-                                    isSold ? ColorRes.white : ColorRes.primary,
-                                fontSize: AppFontSizes.small,
-                                fontWeight: AppFontWeights.semiBold,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isSold
+                                    ? ColorRes.error
+                                    : (isRented ? Colors.amber : ColorRes.white),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                property.propertyStatus?.capitalize ??
+                                    'Available',
+                                style: TextStyle(
+                                  color: (isSold || isRented)
+                                      ? ColorRes.white
+                                      : ColorRes.primary,
+                                  fontSize: AppFontSizes.small,
+                                  fontWeight: AppFontWeights.semiBold,
+                                ),
                               ),
                             ),
-                          ),
                         ),
 
                         if (property.listingType != null)

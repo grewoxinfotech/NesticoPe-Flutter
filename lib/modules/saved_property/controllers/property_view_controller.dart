@@ -9,7 +9,8 @@ import '../../property/controllers/property_controller.dart';
 class PropertyViewController extends GetxController {
   final PropertyViewService _service = PropertyViewService();
   final PropertyController _propertyController = Get.find<PropertyController>();
-  final PropertyFavoriteController favouriteController=Get.find<PropertyFavoriteController>();
+  final PropertyFavoriteController favouriteController =
+      Get.find<PropertyFavoriteController>();
 
   /// Reactive list of viewed property IDs
   RxList<PropertyView> viewedProperties = <PropertyView>[].obs;
@@ -41,12 +42,16 @@ class PropertyViewController extends GetxController {
       final data = await _service.fetchViewedPropertyIds(userId);
       if (data?.data?.property != null && data!.data!.property.isNotEmpty) {
         viewedProperties.assignAll(
-          data.data!.property.where((element) => element.details != null),
+          data.data!.property
+              .where(
+                (element) =>
+                    element.details != null &&
+                    element.details?.id != null &&
+                    element.details!.id!.isNotEmpty,
+              )
+              .toList(),
         );
         await favouriteController.loadViews(viewedProperties);
-
-        
-
       }
 
       properties.clear();

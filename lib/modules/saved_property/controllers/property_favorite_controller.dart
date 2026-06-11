@@ -56,7 +56,7 @@ class PropertyFavoriteController extends GetxController {
 
   Future<void> loadFavorite() async {
     if (isClosed) return;
-    final favorites = favoriteResponse.value?.data?.favorite ?? [];
+    final favorites = favoriteResponse.value?.data?.favorite.where((element) => element.details != null && element.details.id!.isNotEmpty ) ?? [];
 
     for (final item in favorites) {
       if (isClosed) return;
@@ -77,7 +77,7 @@ class PropertyFavoriteController extends GetxController {
 
   Future<void> loadViews(List<PropertyView> viewedProperties) async {
     if (isClosed) return;
-    List<PropertyView> favorites = viewedProperties;
+    List<PropertyView> favorites = viewedProperties.where((element) => element.details != null && element.details?.id != null && element.details!.id!.isNotEmpty).toList();
 
     for (final item in favorites) {
       if (isClosed) return;
@@ -117,10 +117,11 @@ class PropertyFavoriteController extends GetxController {
 
         final ids =
             response.data?.favorite.map((e) => e.propertyId).toList() ?? [];
+            final validFavorites = response.data?.favorite.where((element) => element.details != null && element.details.id != null && element.details.id!.isNotEmpty).toList() ?? [];
 
         favorites
           ..clear()
-          ..addAll(ids);
+          ..addAll(validFavorites.map((e) => e.propertyId).toSet().toList());
 
         print("✅ Favorites loaded: ${favorites.length}");
       } else {

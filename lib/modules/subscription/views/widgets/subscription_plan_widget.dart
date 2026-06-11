@@ -704,10 +704,9 @@ class SubscriptionPlansWidget extends StatelessWidget {
     required this.selectedPlanName,
     this.planStatusByPlanId = const {},
   }) {
-    if (reviewController.allReviews.isEmpty &&
-        !reviewController.isLoading.value) {
-      reviewController.fetchAllReviews(refresh: true);
-    }
+    // Note: fetching reviews is handled in `PlatformReviewController.onInit()`
+    // Avoid calling `fetchAllReviews()` here to prevent duplicate requests
+    // when this widget is reconstructed frequently.
   }
   @override
   Widget build(BuildContext context) {

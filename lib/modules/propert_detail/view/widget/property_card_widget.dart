@@ -118,6 +118,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                             property != null
                                 ? ClipRRect(
                                   borderRadius: BorderRadius.circular(12),
+                                  // clipBehavior: Clip.,
                                   //   child: Image.network(
                                   //     property,
                                   //     fit: BoxFit.cover,
@@ -137,6 +138,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                                   child: CustomImage(
                                     type: CustomImageType.network,
                                     src: property,
+                                    // fit: BoxFit.cover,
                                   ),
                                 )
                                 : Center(
@@ -521,6 +523,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
           ],
         ),
       ),
+
     );
   }
 }
@@ -533,6 +536,7 @@ class Facilities extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final highlights = PropertyHighlightManager(property).getHighlights();
+    
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,

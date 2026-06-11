@@ -176,7 +176,14 @@ Widget _buildEmployeeCard(
     margin: const EdgeInsets.only(bottom: 16),
     decoration: BoxDecoration(
       color: ColorRes.white,
-      border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
+       boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      // border: Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
       borderRadius: BorderRadius.circular(16),
     ),
     child: Padding(
@@ -299,6 +306,7 @@ Widget _buildEmployeeCard(
               onPressed: () {
                 final taskController = Get.put(EmployeeTaskController());
                 taskController.setProjectId(projectId);
+                debugPrint("Navigating to EmployeeTaskListScreen with projectId: $projectId, employeeId: ${employee.id}");
                 Get.to(
                   () => EmployeeTaskListScreen(
                     projectId: projectId,
