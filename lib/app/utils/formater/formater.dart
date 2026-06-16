@@ -22,6 +22,7 @@ class Formatter {
     }
     return '₹$value';
   }
+
   /// Converts an ISO date string (e.g., "2025-12-30T07:07:57.000Z")
   /// into a readable format like "30 Dec 2025".
   static String formatDate(String? dateString) {
@@ -54,11 +55,23 @@ class Formatter {
       return '-';
     }
   }
+
   static String formatPriceRangeFromString(String? range) {
-    if (range == null || range.isEmpty || !range.contains('-')) {
+    if (range == null || range.trim().isEmpty) {
       return '—';
     }
 
+    range = range.trim();
+
+    // Single price
+    if (!range.contains('-')) {
+      final price = num.tryParse(range);
+      if (price == null) return '—';
+
+      return formatPrice(price);
+    }
+
+    // Price range
     final parts = range.split('-');
     if (parts.length != 2) return '—';
 
@@ -69,7 +82,6 @@ class Formatter {
 
     return formatPriceRange(min, max);
   }
-
 
   static String formatPriceRange(num min, num max) {
     if (min == max) {
@@ -144,37 +156,35 @@ class Formatter {
     return '$prefix $formatted$suffix';
   }
 
+  static String formatDecimalPrice(num price) {
+    const String prefix = '₹';
+    String suffix = '';
+    num value = price;
 
+    if (price.abs() >= 10000000) {
+      value = price / 10000000;
+      suffix = 'Cr';
+    } else if (price.abs() >= 100000) {
+      value = price / 100000;
+      suffix = 'L';
+    } else if (price.abs() >= 1000) {
+      value = price / 1000;
+      suffix = 'K';
+    } else {
+      // ✅ Fix here
+      return '$prefix ${price.toStringAsFixed(2)}';
+    }
 
-static String formatDecimalPrice(num price) {
-  const String prefix = '₹';
-  String suffix = '';
-  num value = price;
+    String formatted = value.toStringAsFixed(2);
 
-  if (price.abs() >= 10000000) {
-    value = price / 10000000;
-    suffix = 'Cr';
-  } else if (price.abs() >= 100000) {
-    value = price / 100000;
-    suffix = 'L';
-  } else if (price.abs() >= 1000) {
-    value = price / 1000;
-    suffix = 'K';
-  } else {
-    // ✅ Fix here
-    return '$prefix ${price.toStringAsFixed(2)}';
+    // remove trailing zeros
+    formatted = formatted.replaceAll(RegExp(r'0+$'), '');
+    if (formatted.endsWith('.')) {
+      formatted = formatted.substring(0, formatted.length - 1);
+    }
+
+    return '$prefix $formatted$suffix';
   }
-
-  String formatted = value.toStringAsFixed(2);
-
-  // remove trailing zeros
-  formatted = formatted.replaceAll(RegExp(r'0+$'), '');
-  if (formatted.endsWith('.')) {
-    formatted = formatted.substring(0, formatted.length - 1);
-  }
-
-  return '$prefix $formatted$suffix';
-}
 
   static String formatNumber(num price) {
     String suffix = '';
@@ -206,7 +216,6 @@ static String formatDecimalPrice(num price) {
 
     return '$formatted$suffix';
   }
-
 
   static String formatGraphPrice(num price) {
     const String prefix = '₹';
@@ -273,7 +282,6 @@ static String formatDecimalPrice(num price) {
     return '$prefix $formatted$suffix';
   }
 
-
   static String formatGraphNumber(num price) {
     String suffix = '';
     num value = price;
@@ -304,7 +312,6 @@ static String formatDecimalPrice(num price) {
 
     return '$formatted$suffix';
   }
-
 
   static String formatPriceInternational(double value) {
     final formatter = NumberFormat.currency(

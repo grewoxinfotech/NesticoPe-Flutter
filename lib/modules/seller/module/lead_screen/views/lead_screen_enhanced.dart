@@ -1775,7 +1775,7 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
         elevation: 0,
         actions: [
           TextButton.icon(
-             onPressed: () {
+            onPressed: () {
               Get.to(
                 () => LeadBuildFilterScreen(
                   controller: leadController,
@@ -1787,12 +1787,12 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
             label: const Text(
               "Filter",
 
-
               style: TextStyle(
                 color: ColorRes.primary,
                 fontWeight: FontWeight.w600,
               ),
             ),
+
             /* onPressed: () {
               showFilterBottomSheet(
                 context,
@@ -1800,7 +1800,6 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
                 propertyId: widget.propertyId,
               );
             },*/
-          
           ),
         ],
       ),
@@ -1822,119 +1821,141 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
               await _loadData();
             }),
             Expanded(
-              child:
-                  leads.isEmpty
-                      ? buildEmptyState(context)
-                      : NotificationListener<ScrollEndNotification>(
-                        onNotification: (notification) {
-                          final metrics = notification.metrics;
-
-                          if (metrics.pixels >= metrics.maxScrollExtent - 100 &&
-                              !isLoading &&
-                              !isPaging &&
-                              leadController.hasMore.value) {
-                            if (widget.propertyId != null &&
-                                widget.propertyId!.isNotEmpty) {
-                              leadController.loadMorePropertyLeads(
-                                widget.propertyId!,
-                              );
-                            } else {
-                              leadController.loadMore();
-                            }
-                          }
-                          return false;
-                        },
-                        child: RefreshIndicator(
-                          onRefresh: () async {
-                            if (!isRefreshing && !isLoading) {
-                              await leadController.refreshList();
-                            }
-                          },
-                          child: ListView.separated(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            padding: EdgeInsets.all(
-                              getResponsivePadding(context),
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  if (!isRefreshing && !isLoading) {
+                    await leadController.refreshList();
+                  }
+                },
+                child:
+                    leads.isEmpty
+                        ? ListView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: EdgeInsets.all(
+                            getResponsivePadding(context),
+                          ),
+                          children: [
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height - 200,
+                              child: buildEmptyState(context),
                             ),
-                            itemCount: leads.length + 1,
-                            separatorBuilder:
-                                (_, __) => SizedBox(
-                                  height: getResponsiveSpacing(context),
-                                ),
-                            itemBuilder: (context, index) {
-                              // 🔹 PAGINATION FOOTER
-                              if (index == leads.length) {
-                                if (isPaging && leadController.hasMore.value) {
-                                  return const Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 16),
-                                    child: Center(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                      ),
-                                    ),
-                                  );
-                                }
+                          ],
+                        )
+                        : NotificationListener<ScrollEndNotification>(
+                          onNotification: (notification) {
+                            final metrics = notification.metrics;
 
-                                if (!leadController.hasMore.value &&
-                                    leads.isNotEmpty) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 16,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        'No more leads to display',
-                                        style: TextStyle(
-                                          fontSize: AppFontSizes.small,
-                                          color: ColorRes.leadGreyColor[600],
-                                          fontWeight: AppFontWeights.medium,
+                            if (metrics.pixels >=
+                                    metrics.maxScrollExtent - 100 &&
+                                !isLoading &&
+                                !isPaging &&
+                                leadController.hasMore.value) {
+                              if (widget.propertyId != null &&
+                                  widget.propertyId!.isNotEmpty) {
+                                leadController.loadMorePropertyLeads(
+                                  widget.propertyId!,
+                                );
+                              } else {
+                                leadController.loadMore();
+                              }
+                            }
+                            return false;
+                          },
+                          child: RefreshIndicator(
+                            onRefresh: () async {
+                              if (!isRefreshing && !isLoading) {
+                                await leadController.refreshList();
+                              }
+                            },
+                            child: ListView.separated(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              padding: EdgeInsets.all(
+                                getResponsivePadding(context),
+                              ),
+                              itemCount: leads.length + 1,
+                              separatorBuilder:
+                                  (_, __) => SizedBox(
+                                    height: getResponsiveSpacing(context),
+                                  ),
+                              itemBuilder: (context, index) {
+                                // 🔹 PAGINATION FOOTER
+                                if (index == leads.length) {
+                                  if (isPaging &&
+                                      leadController.hasMore.value) {
+                                    return const Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 16,
+                                      ),
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
                                         ),
                                       ),
-                                    ),
-                                  );
-                                }
-
-                                return const SizedBox.shrink();
-                              }
-
-                              final lead = leads[index];
-
-                              String propertyPrice = '';
-                              if (lead.propertyId != null) {
-                                final property = leadController
-                                    .leadPropertiesList
-                                    .firstWhereOrNull(
-                                      (p) => p.id == lead.propertyId,
                                     );
+                                  }
 
-                                if (property
-                                        ?.propertyDetails
-                                        ?.financialInfo
-                                        ?.price !=
-                                    null) {
-                                  propertyPrice =
-                                      PropertyPriceManager(
-                                        listingType:
-                                            property?.listingType ?? '',
-                                        financialInfo:
-                                            property
-                                                ?.propertyDetails
-                                                ?.financialInfo,
-                                      ).displayPrice;
+                                  if (!leadController.hasMore.value &&
+                                      leads.isNotEmpty) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 16,
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          'No more leads to display',
+                                          style: TextStyle(
+                                            fontSize: AppFontSizes.small,
+                                            color: ColorRes.leadGreyColor[600],
+                                            fontWeight: AppFontWeights.medium,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+
+                                  return const SizedBox.shrink();
                                 }
-                              }
 
-                              return GestureDetector(
-                                onTap: () => _openLead(lead),
-                                child: buildLeadCard(
-                                  context,
-                                  lead,
-                                  propertyPrice,
-                                ),
-                              );
-                            },
+                                final lead = leads[index];
+
+                                String propertyPrice = '';
+                                if (lead.propertyId != null) {
+                                  final property = leadController
+                                      .leadPropertiesList
+                                      .firstWhereOrNull(
+                                        (p) => p.id == lead.propertyId,
+                                      );
+
+                                  if (property
+                                          ?.propertyDetails
+                                          ?.financialInfo
+                                          ?.price !=
+                                      null) {
+                                    propertyPrice =
+                                        PropertyPriceManager(
+                                          listingType:
+                                              property?.listingType ?? '',
+                                          financialInfo:
+                                              property
+                                                  ?.propertyDetails
+                                                  ?.financialInfo,
+                                        ).displayPrice;
+                                  }
+                                }
+
+                                return GestureDetector(
+                                  onTap: () => _openLead(lead),
+                                  child: buildLeadCard(
+                                    context,
+                                    lead,
+                                    propertyPrice,
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                         ),
-                      ),
+              ),
             ),
           ],
         );

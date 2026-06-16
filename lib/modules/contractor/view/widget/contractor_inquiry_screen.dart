@@ -430,7 +430,10 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
             icon: const Icon(Icons.filter_list, color: ColorRes.primary),
             label: const Text(
               "Filter",
-              style: TextStyle(color: ColorRes.primary, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                color: ColorRes.primary,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],
@@ -462,12 +465,44 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
                 }
 
                 if (controller.items.isEmpty) {
-                  return Center(
-                    child: Text(
-                      "No inquiries available",
-                      style: TextStyle(
-                        fontSize: AppFontSizes.body,
-                        color: ColorRes.textSecondary,
+                  return RefreshIndicator(
+                    onRefresh: controller.refreshInquiry,
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.7,
+                        width: double.infinity,
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "No inquiries available",
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.body,
+                                  color: ColorRes.textSecondary,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              ElevatedButton(
+                                onPressed: controller.refreshInquiry,
+                                // icon: const Icon(Icons.refresh, size: 16),
+                                
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: ColorRes.primary,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                child:  Text('Refresh'),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   );
@@ -744,7 +779,7 @@ class InquiryCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-       boxShadow: [
+        boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.06),
             blurRadius: 10,
@@ -766,7 +801,7 @@ class InquiryCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      inquiry.name.capitalize?.replaceAll("_", " ")??" ",
+                      inquiry.name.capitalize?.replaceAll("_", " ") ?? " ",
                       style: const TextStyle(
                         fontSize: AppFontSizes.medium,
                         color: ColorRes.textColor,
@@ -872,7 +907,11 @@ class InquiryCard extends StatelessWidget {
                                 .contains(service.serviceId);
 
                             return _chip(
-                              service.serviceName.capitalize?.replaceAll("_", ' ') ?? service.serviceName,
+                              service.serviceName.capitalize?.replaceAll(
+                                    "_",
+                                    ' ',
+                                  ) ??
+                                  service.serviceName,
                               isConverted
                                   ? ColorRes.success
                                   : ColorRes.leadGreyColor.shade400,
@@ -960,8 +999,10 @@ class InquiryCard extends StatelessWidget {
                             onPressed: () {
                               final dashboardController =
                                   Get.find<ContractorDashboardController>();
-                              final limitReached = dashboardController
-                                      .activeSubscription.value
+                              final limitReached =
+                                  dashboardController
+                                      .activeSubscription
+                                      .value
                                       ?.isServiceLimitReached ??
                                   true;
 
@@ -1046,9 +1087,9 @@ class InquiryCard extends StatelessWidget {
       const SizedBox(height: 4),
       Text(
         value,
-        style:  TextStyle(
+        style: TextStyle(
           fontSize: AppFontSizes.small,
-color: ColorRes.textPrimary,
+          color: ColorRes.textPrimary,
           fontWeight: AppFontWeights.semiBold,
         ),
       ),

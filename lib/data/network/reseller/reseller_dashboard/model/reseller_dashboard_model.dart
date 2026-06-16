@@ -1126,6 +1126,10 @@ class Earnings {
   final num monthlyBonus;
   final num currentMonthCommission;
   final num previousMonthCommission;
+    final num propertyCommission;
+  final num projectCommission;
+  final num potentialCommission;
+
 
   Earnings({
     required this.totalCommission,
@@ -1134,6 +1138,9 @@ class Earnings {
     required this.monthlyBonus,
     required this.currentMonthCommission,
     required this.previousMonthCommission,
+    required this.projectCommission,
+    required this.propertyCommission,
+    required this.potentialCommission
   });
 
   factory Earnings.fromJson(Map<String, dynamic> json) {
@@ -1142,8 +1149,11 @@ class Earnings {
       paidCommission: (json['paidCommission'] is String)
           ? num.tryParse(json['paidCommission']) ?? 0
           : json['paidCommission'] ?? 0,
-      unpaidCommission: json['unpaidCommission'] ?? 0,
+          projectCommission:json['projectCommission'] ?? 0 ,
+          propertyCommission:json['propertyCommission'] ?? 0 ,
+      unpaidCommission:(json['unpaidCommission'] is String)? num.tryParse(json['unpaidCommission']) ?? 0: json['unpaidCommission'] ?? 0,
       monthlyBonus: json['monthlyBonus'] ?? 0,
+potentialCommission: json['potentialCommission']??0,
       currentMonthCommission: json['currentMonthCommission'] ?? 0,
       previousMonthCommission: json['previousMonthCommission'] ?? 0,
     );
@@ -1154,7 +1164,10 @@ class Earnings {
     'paidCommission': paidCommission,
     'unpaidCommission': unpaidCommission,
     'monthlyBonus': monthlyBonus,
+    'propertyCommission':propertyCommission,
+    'projectCommission':projectCommission,
     'currentMonthCommission': currentMonthCommission,
+    'potentialCommission':potentialCommission,
     'previousMonthCommission': previousMonthCommission,
   };
 }

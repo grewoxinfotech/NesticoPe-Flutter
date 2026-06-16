@@ -1003,60 +1003,60 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
               //   ),
               //   const SizedBox(width: 8),
               // ] else ...[
-                GestureDetector(
-                  onTap: () async {
-                    if (!Get.isRegistered<PropertyController>()) {
-                      Get.put(PropertyController());
+              GestureDetector(
+                onTap: () async {
+                  if (!Get.isRegistered<PropertyController>()) {
+                    Get.put(PropertyController());
+                  }
+
+                  final result = await Get.to(
+                    () => ResellerPropertyFilterScreen(),
+                  );
+
+                  if (result != null) {
+                    final newFilter = convertFiltersToString(result);
+                    final user = await SecureStorage.getUserData();
+                    final userId = user?.user?.id;
+
+                    if (userId != null && userId.isNotEmpty) {
+                      newFilter["assignedTo"] = userId;
+
+                      log("Applying filter → $newFilter");
+
+                      selectedFilters
+                        ..clear()
+                        ..addAll(newFilter);
+
+                      await propertyController?.applyFilters(
+                        Map<String, String>.from(selectedFilters),
+                      );
                     }
-
-                    final result = await Get.to(
-                      () => ResellerPropertyFilterScreen(),
-                    );
-
-                    if (result != null) {
-                      final newFilter = convertFiltersToString(result);
-                      final user = await SecureStorage.getUserData();
-                      final userId = user?.user?.id;
-
-                      if (userId != null && userId.isNotEmpty) {
-                        newFilter["assignedTo"] = userId;
-
-                        log("Applying filter → $newFilter");
-
-                        selectedFilters
-                          ..clear()
-                          ..addAll(newFilter);
-
-                        await propertyController?.applyFilters(
-                          Map<String, String>.from(selectedFilters),
-                        );
-                      }
-                    }
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.filter_list, size: 20, color: ColorRes.primary),
-                      SizedBox(width: 6),
-                      Text(
-                        "Filter",
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: ColorRes.primary,
-                        ),
+                  }
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.filter_list, size: 20, color: ColorRes.primary),
+                    SizedBox(width: 6),
+                    Text(
+                      "Filter",
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: ColorRes.primary,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                // IconButton(
-                //   onPressed: toggleSelectionMode,
-                //   icon: const Icon(Icons.share_outlined),
-                //   color: ColorRes.primary,
-                //   iconSize: 22,
-                // ),
-              ],
+              ),
+              const SizedBox(width: 8),
+              // IconButton(
+              //   onPressed: toggleSelectionMode,
+              //   icon: const Icon(Icons.share_outlined),
+              //   color: ColorRes.primary,
+              //   iconSize: 22,
+              // ),
+            ],
             // ],
           ),
         ),
@@ -1116,7 +1116,46 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
                   onRefresh: controller.refreshResellerProperties,
                   child:
                       (controller.isLoading.value && controller.items.isEmpty)
-                          ? const Center(child: Text("No Listing Yet."))
+                          ? SingleChildScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            child: SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.7,
+                              width: double.infinity,
+                              child: Center(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      "No Property found.",
+                                      style: TextStyle(
+                                        color: ColorRes.textSecondary,
+                                        fontSize: AppFontSizes.body,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    ElevatedButton(
+                                      onPressed:
+                                          controller.refreshResellerProperties,
+                                      // icon: const Icon(Icons.refresh, size: 16),
+                                      child: const Text('Refresh'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: ColorRes.primary,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                          vertical: 12,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          )
                           : ProductsGrid(
                             isSelectionMode: isSelectionMode,
                             selectedPropertyIds: selectedPropertyIds,
@@ -1748,6 +1787,50 @@ class ProductCard extends StatelessWidget {
                         ),
                       ),
                     ),
+                  if (product.propertyStatus?.toLowerCase() == 'rented')
+                    Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.3),
+                          borderRadius: const BorderRadius.horizontal(
+                            left: Radius.circular(11),
+                          ),
+                        ),
+                        alignment: Alignment.center,
+                        child: Transform.rotate(
+                          angle: 24.6,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 2,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: ColorRes.white,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.amber,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Text(
+                                "RENTED",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  letterSpacing: 1.5,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
 
@@ -1801,11 +1884,10 @@ class ProductCard extends StatelessWidget {
                                 //       propertyId: propertyId,
                                 //       resellerId: resellerId,
                                 //     );
-                               final shareUrl = await SharePropertyService.service.sharePropertyLink(
-                                  propertyId,
-                                );
+                                final shareUrl = await SharePropertyService
+                                    .service
+                                    .sharePropertyLink(propertyId);
                                 final propertyIdShare = shareUrl ?? '';
-
 
                                 if (propertyId != null &&
                                     propertyId.isNotEmpty) {
@@ -1822,7 +1904,6 @@ class ProductCard extends StatelessWidget {
                                 }
                               },
                               child: const Icon(Icons.share, size: 20),
-                              
                             ),
                         ],
                       ),

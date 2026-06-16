@@ -274,6 +274,7 @@ class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
       ),
       body: SafeArea(
         child: Column(
+          // crossAxisAlignment: cen,
           children: [
             /// -------- FILTER BAR --------
             Obx(() {
@@ -464,6 +465,7 @@ class BuilderProjectCard extends StatelessWidget {
     bool isFavorite = false;
     final double cardWidth =
         width.isFinite ? width : MediaQuery.of(context).size.width;
+    final stats = project.getInventoryStats();
 
     return Container(
       width: width,
@@ -560,6 +562,52 @@ class BuilderProjectCard extends StatelessWidget {
                   ),
                 ),
 
+                // Overlay SOLD when entire project inventory is sold
+                if (stats.totalUnits > 0 && stats.remainingUnits == 0)
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.3),
+                        borderRadius: const BorderRadius.horizontal(
+                          left: Radius.circular(11),
+                        ),
+                      ),
+                      alignment: Alignment.center,
+                      child: Transform.rotate(
+                        angle: 24.6,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 2,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: ColorRes.white,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const Text(
+                              "SOLD OUT",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                letterSpacing: 1.5,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
                 // Status Badge
                 Positioned(
                   top: 10,
@@ -622,8 +670,7 @@ class BuilderProjectCard extends StatelessWidget {
                           child: Obx(() {
                             final inFavorites = favoriteController.favorites
                                 .contains(project.id);
-                            isFavorite =
-                                !UserHelper.isGuest && inFavorites;
+                            isFavorite = !UserHelper.isGuest && inFavorites;
                             return CircleAvatar(
                               backgroundColor: ColorRes.white,
                               radius: 20,
@@ -651,7 +698,7 @@ class BuilderProjectCard extends StatelessWidget {
                   if (project.reraId.isNotEmpty)
                     Positioned(
                       top: 10,
-                      right: forHome ? 8 : 52,
+                      right: forHome ? 8 : 86,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 7,
@@ -724,6 +771,78 @@ class BuilderProjectCard extends StatelessWidget {
                             Icons.edit_outlined,
                             size: 16,
                             color: ColorRes.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+                // Delete button for builder projects
+                if (!forHome) ...[
+                  Positioned(
+                    top: 8,
+                    right: 45,
+                    child: Material(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      elevation: 3,
+                      child: InkWell(
+                        onTap: () async {
+                          final confirm = await Get.dialog<bool>(
+                            AlertDialog(
+                              backgroundColor: Colors.white,
+                              title: Text(
+                                'Delete Project',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: ColorRes.textPrimary,
+                                ),
+                              ),
+                              content: const Text(
+                                'Are you sure you want to delete this project? This action cannot be undone.',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Get.back(result: false),
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () => Get.back(result: true),
+                                  child: Text(
+                                    'Delete',
+                                    style: TextStyle(color: ColorRes.error),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            barrierDismissible: false,
+                          );
+
+                          if (confirm == true) {
+                            if (Get.isRegistered<
+                              BuilderProjectListController
+                            >()) {
+                              final ctrl =
+                                  Get.find<BuilderProjectListController>();
+                              await ctrl.deleteProject(project.id);
+                            } else {
+                              final ctrl = Get.put(
+                                BuilderProjectListController(),
+                              );
+                              await ctrl.deleteProject(project.id);
+                            }
+
+                            // Optionally refresh parent
+                            onUpdated?.call();
+                          }
+                        },
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          padding: const EdgeInsets.all(7),
+                          child: Icon(
+                            Icons.delete_outline,
+                            size: 16,
+                            color: ColorRes.error,
                           ),
                         ),
                       ),
@@ -866,9 +985,9 @@ class BuilderProjectCard extends StatelessWidget {
                                               ?.name
                                               ?.capitalize
                                               ?.replaceAll("_", " ") ??
-                                          '',
+                                          'No Name',
                                       style: TextStyle(
-                                        fontSize: AppFontSizes.small,
+                                        fontSize: AppFontSizes.caption,
                                         color: ColorRes.primary,
                                         fontWeight: AppFontWeights.semiBold,
                                       ),
@@ -958,7 +1077,7 @@ class BuilderProjectCard extends StatelessWidget {
                                           size: 14,
                                           color: ColorRes.blueColor[700],
                                         ),
-                                        const SizedBox(width: 4),
+                                        const SizedBox(width: 6),
                                         SizedBox(
                                           width: 50,
                                           child: Text(
@@ -1044,12 +1163,98 @@ class BuilderProjectCard extends StatelessWidget {
                                             fontWeight: AppFontWeights.semiBold,
                                           ),
                                         ),
+
+                                        const SizedBox(width: 6),
+
+                                        // Inventory summary (Sold / Available)
                                       ],
                                     ),
                                   ),
                                 ),
                             ],
                           ),
+                        const SizedBox(height: 6),
+                        Row(
+                          children: [
+                            if (stats?.remainingUnits != null)
+                              Expanded(
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 7,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: ColorRes.deepPurpleColor.withOpacity(
+                                      0.12,
+                                    ),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.apartment_outlined,
+                                        size: 14,
+                                        color: ColorRes.deepPurpleColor[700],
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        'Available: ${stats?.remainingUnits ?? 0} Units',
+                                        style: TextStyle(
+                                          fontSize: AppFontSizes.extraSmall,
+                                          color: ColorRes.deepPurpleColor[700],
+                                          fontWeight: AppFontWeights.semiBold,
+                                        ),
+                                      ),
+
+                                      const SizedBox(width: 6),
+
+                                      // Inventory summary (Sold / Available)
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            SizedBox(width: 10),
+                            if (stats?.soldUnits != null)
+                              Expanded(
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 7,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red.withOpacity(0.12),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.apartment_outlined,
+                                        size: 14,
+                                        color: ColorRes.error[700],
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        'Sold: ${stats?.soldUnits ?? 0} Units',
+                                        style: TextStyle(
+                                          fontSize: AppFontSizes.extraSmall,
+                                          color: ColorRes.error[700],
+                                          fontWeight: AppFontWeights.semiBold,
+                                        ),
+                                      ),
+
+                                      const SizedBox(width: 6),
+
+                                      // Inventory summary (Sold / Available)
+                                    ],
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
                       ] else ...[
                         SizedBox.shrink(),
                       ],

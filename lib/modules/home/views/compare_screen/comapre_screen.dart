@@ -567,7 +567,7 @@ class _PropertyCardForCompareState extends State<PropertyCardForCompare> {
                                           ),
                                         ),
                                         child: Text(
-                                          '${controller.hasSubmittedInquiry.value ? 'Submitted' : 'Get Offer'}',
+                                          '${controller.hasSubmittedInquiry.value ? 'Submitted' : 'Contact Now'}',
                                           style: TextStyle(
                                             fontWeight: AppFontWeights.semiBold,
                                             fontSize: AppFontSizes.small,

@@ -2038,7 +2038,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
           // Horizontal Variants List
           SizedBox(
-            height: 370,
+            height: 420,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               padding: EdgeInsets.symmetric(horizontal: 16),
@@ -2100,37 +2100,56 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                 topRight: Radius.circular(AppRadius.medium),
               ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Icon(
-                      Icons.apartment,
-                      color: ColorRes.white,
-                      size: 16,
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.apartment,
+                          color: ColorRes.white,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          '${variant.buildingName}',
+                          style: const TextStyle(
+                            fontSize: AppFontSizes.small,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.white,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 6),
+                    Spacer(),
+                    // Price + Sold badge (if fully sold)
                     Text(
-                      '${variant.buildingName}',
+                      '${Formatter.formatPrice(variant.price)}',
                       style: const TextStyle(
                         fontSize: AppFontSizes.small,
-                        fontWeight: AppFontWeights.semiBold,
+                        fontWeight: AppFontWeights.bold,
                         color: ColorRes.white,
                       ),
                     ),
+                     const SizedBox(width: 6),
+                        if (variant.availableUnits == 0)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.redAccent,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              'SOLD',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: AppFontSizes.extraSmall,
+                                fontWeight: AppFontWeights.semiBold,
+                              ),
+                            ),
+                          ),
                   ],
                 ),
-                Text(
-                  '${Formatter.formatPrice(variant.price)}',
-                  style: const TextStyle(
-                    fontSize: AppFontSizes.small,
-                    fontWeight: AppFontWeights.bold,
-                    color: ColorRes.white,
-                  ),
-                ),
-              ],
-            ),
           ),
 
           Expanded(
@@ -2361,10 +2380,20 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                             ),
                             const SizedBox(height: 8),
                             _buildDetailRow(
-                              'Available Units',
-
-                              "${variant.totalUnits}/${variant.availableUnits}",
+                              'Total Units',
+                              '${variant.totalUnits}',
                             ),
+                            const SizedBox(height: 8),
+                            _buildDetailRow(
+                              'Available Units',
+                              '${variant.availableUnits}',
+                            ),
+                              const SizedBox(height: 8),
+                            _buildDetailRow(
+                              'Sold Units',
+                              '${variant.soldUnits}',
+                            ),
+
                           ],
                         ),
                       ),

@@ -10,6 +10,7 @@ import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/app/utils/svg_widget.dart';
 import 'package:nesticope_app/app/widgets/image/custom_image.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
 import 'package:nesticope_app/data/network/reseller/reseller_success_stories/reseller_success_stories_model.dart';
 import 'package:nesticope_app/modules/dashboard/views/widget/dashboard_layout.dart';
 import 'package:nesticope_app/modules/profile/controllers/buyer_profiledata.dart';
@@ -51,6 +52,9 @@ import '../widget/dashboard_widget/partner_milestone_reward_screen.dart';
 import 'lead/lead_screen.dart';
 import 'lead_overview/lead_detail.dart';
 import 'listing/property_listing.dart';
+import '../widget/reseller_commission_modal.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:nesticope_app/modules/verification/mou_verification/controllers/mou_controller.dart';
 
 // Dashboard Screen
 class ResellerDashboardScreen extends StatefulWidget {
@@ -735,6 +739,30 @@ class ResellerDashboardScreen extends StatefulWidget {
 // }
 
 class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkAndShowCommissionModal();
+    });
+  }
+
+  Future<void> _checkAndShowCommissionModal() async {
+    try {
+      final val = await SecureStorage.getPlatformResellerFees();
+
+      if (val == 'true') return;
+
+      // Show modal and store acceptance if user confirms
+      final accepted = await showResellerCommissionModal(context);
+      if (accepted == true) {
+        await SecureStorage.savePlatformResellerFees('true');
+      }
+    } catch (e) {
+      // ignore storage errors silently
+    }
+  }
+
   // @override
   final controller = Get.put(DashboardController());
 
@@ -889,6 +917,8 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
                               ],
                             ),
                             const SizedBox(height: 16),
+                            buildPlatformFeeOverview(),
+                            const SizedBox(height: 12),
                             buildOverviewCards(controller),
                             const SizedBox(height: 20),
 
@@ -1308,6 +1338,69 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
                             buildLeadGraph(controller),
                             const SizedBox(height: 20),
                             buildCommissionGraph(controller),
+                            const SizedBox(height: 20),
+                            Obx(() {
+                              final commissionData =
+                                  controller.getCommissionSourceData();
+
+                              return CommissionSourceBarChart(
+                                propertyCommission:
+                                    commissionData.propertyCommission,
+                                projectCommission:
+                                    commissionData.projectCommission,
+                              );
+                            }),
+                            const SizedBox(height: 20),
+                            Obx(() {
+                              final commissionData =
+                                  controller.getCommissionSourceData();
+
+                              return CommissionSourcePieChart(
+                                propertyCommission:
+                                    commissionData.propertyCommission,
+                                projectCommission:
+                                    commissionData.projectCommission,
+                              );
+                            }),
+                            const SizedBox(height: 20),
+                            Obx(() {
+                              return (controller
+                                          .resellerInsightsModel
+                                          .value
+                                          ?.data
+                                          .earnings !=
+                                      null)
+                                  ? RevenueSourcesWidget(
+                                    earnings:
+                                        controller
+                                            .resellerInsightsModel
+                                            .value
+                                            ?.data
+                                            .earnings ??
+                                        Earnings.fromJson({}),
+                                  )
+                                  : SizedBox.shrink();
+                            }),
+                                 const SizedBox(height: 20),
+                            Obx(() {
+                              final commissionData =
+                                  controller.getCommissionSourceData();
+
+                              return RevenueSourcesSourcePieChart(
+                                propertyCommission:
+                                    double.tryParse(controller
+                                            .resellerInsightsModel
+                                            .value
+                                            ?.data
+                                            .earnings.totalCommission.toString()??'0')??0.0,
+                                projectCommission:
+                                     double.tryParse(controller
+                                            .resellerInsightsModel
+                                            .value
+                                            ?.data
+                                            .earnings.potentialCommission.toString()??'0')??0.0,
+                              );
+                            }),
                             // const SizedBox(height: 20),
                             // _buildRecentLeads(controller),
                             /*   const SizedBox(height: 15),
@@ -1462,7 +1555,6 @@ class SuccessStoryCard extends StatelessWidget {
       child: FractionallySizedBox(
         widthFactor: 1,
         child: Container(
-          
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             color: ColorRes.white,
@@ -2008,13 +2100,13 @@ Widget buildTopPropertyForGoodCommission(
     decoration: BoxDecoration(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(16),
-     boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.05),
+          blurRadius: 12,
+          offset: const Offset(0, 4),
+        ),
+      ],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2034,7 +2126,7 @@ Widget buildTopPropertyForGoodCommission(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Best Commission',
+                    'High Commission Properties',
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     style: TextStyle(
@@ -2855,17 +2947,17 @@ Widget buildReferralProgram({
     decoration: BoxDecoration(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(12),
-        // border: Border.all(
-        //   color: ColorRes.leadGreyColor.withOpacity(0.3),
-        //   width: 1,
-        // ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
+      // border: Border.all(
+      //   color: ColorRes.leadGreyColor.withOpacity(0.3),
+      //   width: 1,
+      // ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.05),
+          blurRadius: 12,
+          offset: const Offset(0, 4),
+        ),
+      ],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -3176,13 +3268,13 @@ Widget buildLeaderBoardRanking({
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(16),
       // borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.05),
+          blurRadius: 12,
+          offset: const Offset(0, 4),
+        ),
+      ],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -4144,14 +4236,14 @@ Widget buildBestResellerOnTheMonth({
     decoration: BoxDecoration(
       borderRadius: const BorderRadius.all(Radius.circular(16)),
       color: ColorRes.white,
-    // borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
+      // borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.05),
+          blurRadius: 12,
+          offset: const Offset(0, 4),
+        ),
+      ],
     ),
     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     child: Column(
@@ -4848,6 +4940,131 @@ Widget buildStatItem({
             fontSize: AppFontSizes.mini,
             fontWeight: AppFontWeights.medium,
             color: ColorRes.textPrimary.withOpacity(0.7),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget buildPlatformFeeOverview() {
+  final platformFeeController = Get.put(PlatformFeeController());
+
+  return Obx(() {
+    final propertyPercent = getPlatformFeeForPropertyCommissionPercentage(
+      platformFeeController,
+    );
+    final projectPercent = getPlatformFeeForProjectCommissionPercentage(
+      platformFeeController,
+    );
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: ColorRes.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10),
+        ],
+      ),
+      child: Column(
+        children: [
+          const SizedBox(width: 4),
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: ColorRes.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(Icons.campaign_rounded, color: ColorRes.primary),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Commission & Platform Fee Rates Policy',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: AppFontSizes.medium,
+                        fontWeight: AppFontWeights.semiBold,
+                        color: ColorRes.textColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Here are your current active commission payout percentages and platform listing fees.',
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: AppFontSizes.caption,
+              color: ColorRes.textSecondary,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            // crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: _feePill(
+                  'PROPERTY COMMISSION',
+                  propertyPercent,
+                  ColorRes.primary,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _feePill(
+                  'PROJECT COMMISSION',
+                  projectPercent,
+                  ColorRes.deepPurpleColor,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  });
+}
+
+Widget _feePill(String label, double percent, Color color) {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    decoration: BoxDecoration(
+      color: color.withOpacity(0.06),
+      borderRadius: BorderRadius.circular(10),
+      border: Border.all(color: color.withOpacity(0.12)),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(
+          label.toUpperCase(),
+          style: TextStyle(
+            fontSize: AppFontSizes.mini,
+            color: color.withOpacity(0.9),
+            fontWeight: AppFontWeights.medium,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          '${percent.toStringAsFixed(0)}%',
+          style: TextStyle(
+            fontSize: AppFontSizes.large,
+            fontWeight: AppFontWeights.semiBold,
+            color: color,
           ),
         ),
       ],
@@ -5600,14 +5817,14 @@ Widget buildMonthlyPerformance({
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
       color: ColorRes.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.05),
+          blurRadius: 12,
+          offset: const Offset(0, 4),
+        ),
+      ],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,

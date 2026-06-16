@@ -8,6 +8,7 @@ import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 import 'package:nesticope_app/app/utils/formater/formater.dart';
 import 'package:nesticope_app/app/widgets/image/custom_image.dart';
 import 'package:nesticope_app/app/widgets/shimmer/shimmer_widget.dart';
+import 'package:nesticope_app/app/widgets/texts/headline_text.dart';
 import 'package:nesticope_app/data/database/secure_storage_service.dart';
 import 'package:nesticope_app/data/network/builder/model/builder_model.dart';
 import 'package:nesticope_app/data/network/top_seller_profile/model/top_builder_profile_model.dart';
@@ -43,6 +44,8 @@ class _TopDeveloperProfileScreenState extends State<TopDeveloperProfileScreen> {
   bool _initialStatusApplied = false;
   final RxString selectedStatus = ''.obs;
   final RxString selectedCity = ''.obs;
+  final ScrollController _developerController = ScrollController();
+  double _scrollOffset = 0;
   final RxList<ProjectItem> allItemsCache = <ProjectItem>[].obs;
 
   @override
@@ -50,6 +53,7 @@ class _TopDeveloperProfileScreenState extends State<TopDeveloperProfileScreen> {
     super.initState();
     _tag = 'top_dev_profile_${widget.userId}';
     print('tag: ${widget.userId}======== ${widget.createdBy}');
+
     profileController =
         Get.isRegistered<TopBuilderController>(tag: _tag)
             ? Get.find<TopBuilderController>(tag: _tag)
@@ -186,291 +190,300 @@ class _TopDeveloperProfileScreenState extends State<TopDeveloperProfileScreen> {
                         if (developers.isEmpty) return const SizedBox.shrink();
 
                         final featured = developers.first;
-                        final rest =
-                            developers.length > 1
-                                ? developers.sublist(1)
-                                : <BuilderItem>[];
+                        final rest = developers;
 
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(height: 8),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 0.0,
-                              ),
-                              child: GestureDetector(
-                                onTap: () async {
-                                  
-                                  Get.to(
-                                    () => TopDeveloperProfileScreen(
-                                      userId: featured.id ?? '',
-                                      createdBy:
-                                          featured.id ??
-                                          featured.id ??
-                                          '',
-                                    ),
+                            // const SizedBox(height: 8),
+                            // Padding(
+                            //   padding: const EdgeInsets.symmetric(
+                            //     horizontal: 0.0,
+                            //   ),
+                            //   child: GestureDetector(
+                            //     onTap: () async {
+                            //       Get.to(
+                            //         () => TopDeveloperProfileScreen(
+                            //           userId: featured.id ?? '',
+                            //           createdBy:
+                            //               featured.id ?? featured.id ?? '',
+                            //         ),
 
-                                    routeName: '/developer/${featured.id}',
-                                  );
-                                },
-                                child: Container(
-                                  width: 320,
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(
-                                      color: Colors.grey.shade100,
-                                    ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.04),
-                                        blurRadius: 12,
-                                        offset: const Offset(0, 4),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      /// Top Row
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          /// Avatar
-                                          ClipRRect(
-                                            borderRadius: BorderRadius.circular(
-                                              48,
-                                            ),
-                                            child:
-                                                featured.profilePic != null &&
-                                                        featured
-                                                            .profilePic!
-                                                            .isNotEmpty
-                                                    ? CachedNetworkImage(
-                                                      imageUrl:
-                                                          featured.profilePic!,
-                                                      width: 48,
-                                                      height: 48,
-                                                      fit: BoxFit.cover,
-                                                    )
-                                                    : Container(
-                                                      width: 48,
-                                                      height: 48,
-                                                      decoration: BoxDecoration(
-                                                        color: ColorRes.primary
-                                                            .withOpacity(0.1),
-                                                        shape: BoxShape.circle,
-                                                      ),
-                                                      alignment:
-                                                          Alignment.center,
-                                                      child: Text(
-                                                        (featured.firstName ??
-                                                                'D')[0]
-                                                            .toUpperCase(),
-                                                        style: const TextStyle(
-                                                          fontSize: 15,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color:
-                                                              ColorRes.primary,
-                                                        ),
-                                                      ),
-                                                    ),
-                                          ),
+                            //         routeName: '/developer/${featured.id}',
+                            //       );
+                            //     },
+                            //     child: Container(
+                            //       width: 320,
+                            //       padding: const EdgeInsets.all(16),
+                            //       decoration: BoxDecoration(
+                            //         color: Colors.white,
+                            //         borderRadius: BorderRadius.circular(16),
+                            //         border: Border.all(
+                            //           color: Colors.grey.shade100,
+                            //         ),
+                            //         boxShadow: [
+                            //           BoxShadow(
+                            //             color: Colors.black.withOpacity(0.04),
+                            //             blurRadius: 12,
+                            //             offset: const Offset(0, 4),
+                            //           ),
+                            //         ],
+                            //       ),
+                            //       child: Column(
+                            //         mainAxisSize: MainAxisSize.min,
+                            //         children: [
+                            //           /// Top Row
+                            //           Row(
+                            //             crossAxisAlignment:
+                            //                 CrossAxisAlignment.center,
+                            //             children: [
+                            //               /// Avatar
+                            //               ClipRRect(
+                            //                 borderRadius: BorderRadius.circular(
+                            //                   48,
+                            //                 ),
+                            //                 child:
+                            //                     featured.profilePic != null &&
+                            //                             featured
+                            //                                 .profilePic!
+                            //                                 .isNotEmpty
+                            //                         ? CachedNetworkImage(
+                            //                           imageUrl:
+                            //                               featured.profilePic!,
+                            //                           width: 48,
+                            //                           height: 48,
+                            //                           fit: BoxFit.cover,
+                            //                         )
+                            //                         : Container(
+                            //                           width: 48,
+                            //                           height: 48,
+                            //                           decoration: BoxDecoration(
+                            //                             color: ColorRes.primary
+                            //                                 .withOpacity(0.1),
+                            //                             shape: BoxShape.circle,
+                            //                           ),
+                            //                           alignment:
+                            //                               Alignment.center,
+                            //                           child: Text(
+                            //                             (featured.firstName ??
+                            //                                     'D')[0]
+                            //                                 .toUpperCase(),
+                            //                             style: const TextStyle(
+                            //                               fontSize: 15,
+                            //                               fontWeight:
+                            //                                   FontWeight.w600,
+                            //                               color:
+                            //                                   ColorRes.primary,
+                            //                             ),
+                            //                           ),
+                            //                         ),
+                            //               ),
 
-                                          const SizedBox(width: 14),
+                            //               const SizedBox(width: 14),
 
-                                          /// Name + Info
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  featured.firstName?.capitalize
-                                                          ?.replaceAll(
-                                                            '_',
-                                                            ' ',
-                                                          ) ??
-                                                      featured
-                                                          .username
-                                                          ?.capitalize
-                                                          ?.replaceAll(
-                                                            '_',
-                                                            ' ',
-                                                          ) ??
-                                                      'Developer',
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: Color(0xFF1A1A1A),
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 5),
+                            //               /// Name + Info
+                            //               Expanded(
+                            //                 child: Column(
+                            //                   crossAxisAlignment:
+                            //                       CrossAxisAlignment.start,
+                            //                   children: [
+                            //                     Text(
+                            //                       featured.firstName?.capitalize
+                            //                               ?.replaceAll(
+                            //                                 '_',
+                            //                                 ' ',
+                            //                               ) ??
+                            //                           featured
+                            //                               .username
+                            //                               ?.capitalize
+                            //                               ?.replaceAll(
+                            //                                 '_',
+                            //                                 ' ',
+                            //                               ) ??
+                            //                           'Developer',
+                            //                       maxLines: 1,
+                            //                       overflow:
+                            //                           TextOverflow.ellipsis,
+                            //                       style: const TextStyle(
+                            //                         fontSize: 14,
+                            //                         fontWeight: FontWeight.w600,
+                            //                         color: Color(0xFF1A1A1A),
+                            //                       ),
+                            //                     ),
+                            //                     const SizedBox(height: 5),
 
-                                                /// City Tag
-                                                Container(
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 3,
-                                                      ),
-                                                  decoration: BoxDecoration(
-                                                    color: ColorRes.primary
-                                                        .withOpacity(0.1),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          99,
-                                                        ),
-                                                  ),
-                                                  child: Text(
-                                                    featured.city ?? 'N/A',
-                                                    style: TextStyle(
-                                                      fontSize: 11,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: ColorRes.primary,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                            //                     /// City Tag
+                            //                     Container(
+                            //                       padding:
+                            //                           const EdgeInsets.symmetric(
+                            //                             horizontal: 8,
+                            //                             vertical: 3,
+                            //                           ),
+                            //                       decoration: BoxDecoration(
+                            //                         color: ColorRes.primary
+                            //                             .withOpacity(0.1),
+                            //                         borderRadius:
+                            //                             BorderRadius.circular(
+                            //                               99,
+                            //                             ),
+                            //                       ),
+                            //                       child: Text(
+                            //                         featured.city ?? 'N/A',
+                            //                         style: TextStyle(
+                            //                           fontSize: 11,
+                            //                           fontWeight:
+                            //                               FontWeight.w500,
+                            //                           color: ColorRes.primary,
+                            //                         ),
+                            //                       ),
+                            //                     ),
+                            //                   ],
+                            //                 ),
+                            //               ),
+                            //             ],
+                            //           ),
 
-                                      const SizedBox(height: 14),
+                            //           const SizedBox(height: 14),
 
-                                      Divider(
-                                        height: 1,
-                                        thickness: 0.5,
-                                        color: ColorRes.leadGreyColor
-                                            .withOpacity(0.3),
-                                      ),
+                            //           Divider(
+                            //             height: 1,
+                            //             thickness: 0.5,
+                            //             color: ColorRes.leadGreyColor
+                            //                 .withOpacity(0.3),
+                            //           ),
 
-                                      const SizedBox(height: 12),
+                            //           const SizedBox(height: 12),
 
-                                      /// Bottom Row
-                                      Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.work_outline_rounded,
-                                            size: 13,
-                                            color: Colors.grey,
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            "${featured.totalExperience ?? 0}+ yrs exp.",
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.grey.shade700,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 10),
-                                          const Icon(
-                                            Icons.location_on_outlined,
-                                            size: 13,
-                                            color: Colors.grey,
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Expanded(
-                                            child: Text(
-                                              featured.city ?? 'N/A',
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.grey.shade700,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(width: 8),
+                            //           /// Bottom Row
+                            //           Row(
+                            //             children: [
+                            //               const Icon(
+                            //                 Icons.work_outline_rounded,
+                            //                 size: 13,
+                            //                 color: Colors.grey,
+                            //               ),
+                            //               const SizedBox(width: 4),
+                            //               Text(
+                            //                 "${featured.totalExperience ?? 0}+ yrs exp.",
+                            //                 style: TextStyle(
+                            //                   fontSize: 12,
+                            //                   color: Colors.grey.shade700,
+                            //                   fontWeight: FontWeight.w500,
+                            //                 ),
+                            //               ),
+                            //               const SizedBox(width: 10),
+                            //               const Icon(
+                            //                 Icons.location_on_outlined,
+                            //                 size: 13,
+                            //                 color: Colors.grey,
+                            //               ),
+                            //               const SizedBox(width: 4),
+                            //               Expanded(
+                            //                 child: Text(
+                            //                   featured.city ?? 'N/A',
+                            //                   maxLines: 1,
+                            //                   overflow: TextOverflow.ellipsis,
+                            //                   style: TextStyle(
+                            //                     fontSize: 12,
+                            //                     color: Colors.grey.shade700,
+                            //                     fontWeight: FontWeight.w500,
+                            //                   ),
+                            //                 ),
+                            //               ),
+                            //               const SizedBox(width: 8),
 
-                                          /// CTA Button
-                                          TextButton(
-                                            onPressed: () async {
-                                              Get.to(
-                                                () => TopDeveloperProfileScreen(
-                                                  userId: featured.id ?? '',
-                                                  createdBy:
-                                                      featured.id ??
-                                                      featured.id ??
-                                                      '',
-                                                ),
+                            //               /// CTA Button
+                            //               TextButton(
+                            //                 onPressed: () async {
+                            //                   Get.to(
+                            //                     () => TopDeveloperProfileScreen(
+                            //                       userId: featured.id ?? '',
+                            //                       createdBy:
+                            //                           featured.id ??
+                            //                           featured.id ??
+                            //                           '',
+                            //                     ),
 
-                                                routeName:
-                                                    '/developer/${featured.id}',
-                                              );
-                                            },
-                                            style: TextButton.styleFrom(
-                                              backgroundColor: ColorRes.primary,
-                                              foregroundColor: Colors.white,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 14,
-                                                    vertical: 6,
-                                                  ),
-                                              minimumSize: Size.zero,
-                                              tapTargetSize:
-                                                  MaterialTapTargetSize
-                                                      .shrinkWrap,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                            ),
-                                            child: const Text(
-                                              "View profile",
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                            //                     routeName:
+                            //                         '/developer/${featured.id}',
+                            //                   );
+                            //                 },
+                            //                 style: TextButton.styleFrom(
+                            //                   backgroundColor: ColorRes.primary,
+                            //                   foregroundColor: Colors.white,
+                            //                   padding:
+                            //                       const EdgeInsets.symmetric(
+                            //                         horizontal: 14,
+                            //                         vertical: 6,
+                            //                       ),
+                            //                   minimumSize: Size.zero,
+                            //                   tapTargetSize:
+                            //                       MaterialTapTargetSize
+                            //                           .shrinkWrap,
+                            //                   shape: RoundedRectangleBorder(
+                            //                     borderRadius:
+                            //                         BorderRadius.circular(8),
+                            //                   ),
+                            //                 ),
+                            //                 child: const Text(
+                            //                   "View profile",
+                            //                   style: TextStyle(
+                            //                     fontSize: 12,
+                            //                     fontWeight: FontWeight.w500,
+                            //                   ),
+                            //                 ),
+                            //               ),
+                            //             ],
+                            //           ),
+                            //         ],
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
+                            // const SizedBox(height: 12),
+                            if (rest.isNotEmpty) ...[
+                              Text(
+                                "Developers",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: ColorRes.textPrimary,
+                                  fontSize: 16,
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 12),
-                            if (rest.isNotEmpty)
+                              const SizedBox(height: 12),
                               SizedBox(
-                                height: 120,
-                                child: ListView.builder(
+                                height: 140,
+                                child: ListView.separated(
                                   scrollDirection: Axis.horizontal,
+                                  physics: AlwaysScrollableScrollPhysics(),
+                                  separatorBuilder:
+                                      (context, index) => SizedBox(width: 12),
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 0,
                                   ),
                                   itemCount: rest.length,
                                   itemBuilder: (context, i) {
                                     final d = rest[i];
-                                    return Padding(
-                                      padding: const EdgeInsets.only(
-                                        right: 12,
-                                        left: 8,
-                                      ),
-                                      child: _DeveloperMiniCard(builder: d),
-                                    );
+                                    return _DeveloperMiniCard(featured: d);
                                   },
                                 ),
                               ),
-                            const SizedBox(height: 12),
+                              const SizedBox(height: 12),
+                            ],
                           ],
                         );
                       }),
 
+                      // const SizedBox(height: 8),
+                      Text(
+                        "Developer Projects",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: ColorRes.textPrimary,
+                          fontSize: 16,
+                        ),
+                      ),
                       const SizedBox(height: 8),
-
                       _StatusTabs(
                         selectedStatus: selectedStatus.value,
                         all: allCount,
@@ -1039,9 +1052,10 @@ class BuilderProjectListShimmer extends StatelessWidget {
 }
 
 class _DeveloperMiniCard extends StatelessWidget {
-  final BuilderItem builder;
+  final BuilderItem featured;
 
-  const _DeveloperMiniCard({Key? key, required this.builder}) : super(key: key);
+  const _DeveloperMiniCard({Key? key, required this.featured})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1050,83 +1064,193 @@ class _DeveloperMiniCard extends StatelessWidget {
       onTap: () async {
         Get.to(
           () => TopDeveloperProfileScreen(
-            userId: builder.id ?? '',
-            createdBy: builder.id ?? builder.id ?? '',
+            userId: featured.id ?? '',
+            createdBy: featured.id ?? featured.id ?? '',
           ),
-          routeName: '/developer/${builder.id}',
+          routeName: '/developer/${featured.id}',
         );
       },
       child: Container(
-        width: 260,
-        padding: const EdgeInsets.all(12),
+        width: 300,
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: ColorRes.leadGreyColor.shade100),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey.shade100),
           boxShadow: [
-
             BoxShadow(
-              color: Colors.black.withOpacity(0.03),
-              blurRadius: 6,
-              offset: const Offset(0, 3),
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
-        child: Row(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: CachedNetworkImage(
-                imageUrl: builder.profilePic ?? '',
-                width: 64,
-                height: 64,
-                fit: BoxFit.cover,
-                placeholder: (c, u) => ShimmerShapes.circle(size: 64),
-                errorWidget:
-                    (c, u, e) => Container(
-                      width: 64,
-                      height: 64,
-                      color: ColorRes.primary.withOpacity(0.1),
-                      alignment: Alignment.center,
-                      child: Text(
-                        (builder.firstName ?? builder.username ?? 'U')
-                            .trim()
-                            .split(' ')
-                            .map((e) => e.isNotEmpty ? e[0].toUpperCase() : '')
-                            .take(2)
-                            .join(),
+            /// Top Row
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                /// Avatar
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(48),
+                  child:
+                      featured.profilePic != null &&
+                              featured.profilePic!.isNotEmpty
+                          ? CachedNetworkImage(
+                            imageUrl: featured.profilePic!,
+                            width: 48,
+                            height: 48,
+                            fit: BoxFit.cover,
+                          )
+                          : Container(
+                            width: 48,
+                            height: 48,
+                            decoration: BoxDecoration(
+                              color: ColorRes.primary.withOpacity(0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              (featured.firstName ?? 'D')[0].toUpperCase(),
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: ColorRes.primary,
+                              ),
+                            ),
+                          ),
+                ),
+
+                const SizedBox(width: 14),
+
+                /// Name + Info
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        featured.firstName?.capitalize?.replaceAll('_', ' ') ??
+                            featured.username?.capitalize?.replaceAll(
+                              '_',
+                              ' ',
+                            ) ??
+                            'Developer',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
+                          fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: ColorRes.primary,
+                          color: Color(0xFF1A1A1A),
                         ),
                       ),
-                    ),
-              ),
+                      const SizedBox(height: 5),
+
+                      /// City Tag
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: ColorRes.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(99),
+                        ),
+                        child: Text(
+                          featured.city ?? 'N/A',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                            color: ColorRes.primary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    builder.firstName ?? builder.username ?? 'Developer',
+
+            const SizedBox(height: 14),
+
+            Divider(
+              height: 1,
+              thickness: 0.5,
+              color: ColorRes.leadGreyColor.withOpacity(0.3),
+            ),
+
+            const SizedBox(height: 12),
+
+            /// Bottom Row
+            Row(
+              children: [
+                const Icon(
+                  Icons.work_outline_rounded,
+                  size: 13,
+                  color: Colors.grey,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  "${featured.totalExperience ?? 0}+ yrs exp.",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey.shade700,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                const Icon(
+                  Icons.location_on_outlined,
+                  size: 13,
+                  color: Colors.grey,
+                ),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    featured.city ?? 'N/A',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey.shade700,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    "${Formatter.formatNumber(num.tryParse(builder.totalExperience.toString() ?? '') ?? 0) ?? '0'}+ yrs • ${builder.city ?? 'N/A'}",
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(width: 8),
+
+                /// CTA Button
+                TextButton(
+                  onPressed: () async {
+                    Get.to(
+                      () => TopDeveloperProfileScreen(
+                        userId: featured.id ?? '',
+                        createdBy: featured.id ?? featured.id ?? '',
+                      ),
+
+                      routeName: '/developer/${featured.id}',
+                    );
+                  },
+                  style: TextButton.styleFrom(
+                    backgroundColor: ColorRes.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 6,
+                    ),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
-                ],
-              ),
+                  child: const Text(
+                    "View profile",
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

@@ -21,6 +21,7 @@ class SecureStorage {
   static const String _keyHasLaunched = 'hasLaunchedApp';
   static const String _keyNotificationToken = 'notificationToken';
   static const String _keyFcmToken = 'fcmToken';
+  static const String _commissionAcceptedKey = 'reseller_commission_accepted';
   static const String _keyIsGuestUserPropertyInquiry =
       'isGuestUserPropertyInquiry';
   static const String _keySubscriptionInquiry = 'subscriptionInquiry';
@@ -29,6 +30,7 @@ class SecureStorage {
   static const String _keyLoginWithOtpToken = 'loginWithOtpToken';
   static const String _keySupportTicketId = 'supportTicketId';
   static const String _keyHomeCategory = 'homeCategory';
+
   /// User finished login/skip on onboarding but has not chosen a city yet.
   static const String _keyPendingOnboardingCity = 'pendingOnboardingCity';
   static const String _keyPlatformServiceInquiry = 'platformServiceInquiry';
@@ -40,6 +42,14 @@ class SecureStorage {
 
   static Future<String?> getPlatformServiceInquiryData() async {
     return _storage.read(key: _keyPlatformServiceInquiry);
+  }
+
+  static Future<void> savePlatformResellerFees(String value) async {
+    await _storage.write(key: _commissionAcceptedKey, value: value);
+  }
+
+  static Future<String?> getPlatformResellerFees() async {
+    return _storage.read(key: _commissionAcceptedKey);
   }
 
   static Future<bool> hasPlatformServiceInquiry(String serviceId) async {
@@ -284,7 +294,8 @@ class SecureStorage {
         final p = (item['phone'] ?? '').toString();
         final typeMatch = t == type;
         final idMatch = userId == null || userId.isEmpty ? true : u == userId;
-        final contactMatch = ((email == null || email.isEmpty) ? true : e == email) &&
+        final contactMatch =
+            ((email == null || email.isEmpty) ? true : e == email) &&
             ((phone == null || phone.isEmpty) ? true : p == phone);
         return typeMatch && idMatch && contactMatch;
       });
@@ -294,7 +305,9 @@ class SecureStorage {
     }
   }
 
-  static Future<void> addGeneralInquirySubmission(Map<String, dynamic> newInquiry) async {
+  static Future<void> addGeneralInquirySubmission(
+    Map<String, dynamic> newInquiry,
+  ) async {
     try {
       final data = await getGeneralInquiryData();
       List<dynamic> list = [];
@@ -469,11 +482,13 @@ class SecureStorage {
 
   // isLoggedIn
   static Future<void> saveLoggedIn(bool value) async {
+    print("Check user login or not ${value}");
     await _storage.write(key: _keyLoggedIn, value: value.toString());
   }
 
   static Future<bool> getLoggedIn() async {
     final value = await _storage.read(key: _keyLoggedIn);
+      print("Check user login or not fddf${value}");
     return value?.toLowerCase() == "true";
   }
 
@@ -574,20 +589,38 @@ class SecureStorage {
 
   // Clear everything
   static Future<void> clearAll() async {
+    // Preserve a few values before clearing so we can re-save device-level flags
     final city = await SecureStorage.getSelectedCity();
     final offerInquiry = await getOfferInquiryData();
     final subscriptionInquiry = await getSubscriptionInquiryData();
     final loginSkipped = await getLoginSkipped();
     final storedTicketId = await getSupportTicketId();
     final isFirstTismeUser = await isFirstTimeUser();
+    final platfromResellerfees = await getPlatformResellerFees();
+
+    // Debug: show current auth/storage state before wiping
+    final tokenBefore = await getToken();
+    final userBefore = await getUserData();
+    final isLoginBefore = await getLoggedIn();
+    log('SecureStorage.clearAll - BEFORE deleteAll -> token:${tokenBefore ?? "<null>"}, isLogin:$isLoginBefore, user:${userBefore != null ? jsonEncode(userBefore.toJson()) : "<null>"}');
 
     await _storage.deleteAll();
 
+    // Debug: verify cleared
+    final tokenAfter = await getToken();
+    final userAfter = await getUserData();
+    final isLoginAfter = await getLoggedIn();
+    log('SecureStorage.clearAll - AFTER deleteAll -> token:${tokenAfter ?? "<null>"}, isLogin:$isLoginAfter, user:${userAfter != null ? jsonEncode(userAfter.toJson()) : "<null>"}');
+
+    // Re-save preserved values that should survive a clearAll
     if (city != null && city.isNotEmpty) {
       await SecureStorage.saveSelectedCity(city);
     }
     if (isFirstTismeUser) {
       await setAppLaunched();
+    }
+    if (platfromResellerfees == 'true') {
+      await savePlatformResellerFees(platfromResellerfees ?? '');
     }
     if (offerInquiry != null && offerInquiry.isNotEmpty) {
       await saveOfferInquiryData(offerInquiry);
@@ -603,6 +636,12 @@ class SecureStorage {
     if (loginSkipped) {
       await saveLoginSkipped(true);
     }
+
+    // Debug: final state after re-saving preserved values
+    final tokenFinal = await getToken();
+    final userFinal = await getUserData();
+    final isLoginFinal = await getLoggedIn();
+    log('SecureStorage.clearAll - FINAL state -> token:${tokenFinal ?? "<null>"}, isLogin:$isLoginFinal, user:${userFinal != null ? jsonEncode(userFinal.toJson()) : "<null>"}');
   }
 
   static Future<void> updateAadharVerified({required bool value}) async {

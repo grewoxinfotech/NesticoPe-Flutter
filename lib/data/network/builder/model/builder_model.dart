@@ -553,9 +553,8 @@ class AddProjectModel {
       'location': location,
       'configurations': configurations.map((c) => c.toJson()).toList(),
       'nearbyLocations': nearbyLocations,
-      'amenities': amenities
-          .map((e) => e.toLowerCase().replaceAll(" ", "_"))
-          .toList(),
+      'amenities':
+          amenities.map((e) => e.toLowerCase().replaceAll(" ", "_")).toList(),
       'projectHighlights': projectHighlights,
       'mediaGallery': mediaGallery?.toJson(),
       'imageList': imageList,
@@ -570,9 +569,6 @@ class AddProjectModel {
     };
   }
 }
-
-
-
 
 /// ===============================
 /// 🔹 COMMON MODELS
@@ -738,8 +734,6 @@ class ScoreDetails {
   };
 }
 
-
-
 class ProjectVariant {
   String name;
   double builtUpArea;
@@ -785,8 +779,8 @@ class ProjectVariant {
       price: (json['price'] ?? 0).toDouble(),
       pricePerSqFt:
           json['pricePerSqFt'] != null
-              ? (json['pricePerSqFt']??0.0).toDouble()
-              :0.0,
+              ? (json['pricePerSqFt'] ?? 0.0).toDouble()
+              : 0.0,
       totalUnits: json['totalUnits'] ?? 0,
       availableUnits: json['availableUnits'] ?? 0,
       platformFees:
@@ -806,7 +800,7 @@ class ProjectVariant {
                 ? s.substring(1, s.length - 1)
                 : s;
           }).toList(),
-    
+
       threeDModel: json['threeDModel'],
       variantId: json['variantId'],
     );
@@ -825,12 +819,12 @@ class ProjectVariant {
     'brokerCommission': brokerCommission,
     'specifications': specifications,
     'variantMedia': mediaItems?.toJson(),
-    
+
     'threeDModel': threeDModel,
     'variantId': variantId,
   };
+  int get soldUnits => totalUnits - availableUnits;
 }
-
 
 VariantMedia? _variantMediaFromJson(dynamic raw) {
   if (raw == null) return null;
@@ -848,7 +842,12 @@ class VariantMedia {
   List<String> videos;
   List<String> models;
   String? threeDModel;
-  VariantMedia({required this.images, required this.videos, required this.models, this.threeDModel});
+  VariantMedia({
+    required this.images,
+    required this.videos,
+    required this.models,
+    this.threeDModel,
+  });
   factory VariantMedia.fromJson(Map<String, dynamic> json) => VariantMedia(
     images: List<String>.from(json['images'] ?? []),
     videos: List<String>.from(json['videos'] ?? []),
@@ -862,9 +861,6 @@ class VariantMedia {
     'threeDModel': threeDModel,
   };
 }
-
-
-
 
 class ProjectConfiguration {
   int bhk;
@@ -888,8 +884,6 @@ class ProjectConfiguration {
   };
 }
 
-
-
 class ProjectItem {
   final String id;
   final String projectId;
@@ -897,7 +891,6 @@ class ProjectItem {
   final String projectArea;
   final Map<String, dynamic>? buildingNames;
   final ProjectSize? projectSize;
-
 
   final double? performanceScorePercent;
 
@@ -909,7 +902,7 @@ class ProjectItem {
   final String propertyTypes;
   final ProjectContactInfo? projectContactInfo;
   final String status;
-  
+
   final String address;
   final String city;
   final String state;
@@ -1027,7 +1020,8 @@ class ProjectItem {
             .map((v) => ProjectConfiguration.fromJson(v))
             .toList(),
     reraId: json['reraId'] ?? '',
-    propertyTypes: (json['propertyTypes'] ?? 'apartment').toString().toLowerCase(),
+    propertyTypes:
+        (json['propertyTypes'] ?? 'apartment').toString().toLowerCase(),
     projectContactInfo:
         json['projectContactInfo'] != null
             ? ProjectContactInfo.fromJson(json['projectContactInfo'])
@@ -1147,6 +1141,7 @@ class ProjectItem {
     'scoreBreakdown': scoreBreakdown?.toJson(),
   };
 }
+
 Map<String, String>? parseBuildingNames(dynamic value) {
   if (value == null) return {};
   if (value is Map) {
@@ -1202,14 +1197,48 @@ extension ProjectItemPriceRange on ProjectItem {
   }
 }
 
+/// Simple holder for inventory stats
+class ProjectInventoryStats {
+  final int totalUnits;
+  final int remainingUnits;
+  final int soldUnits;
+
+  ProjectInventoryStats({
+    required this.totalUnits,
+    required this.remainingUnits,
+    required this.soldUnits,
+  });
+}
+
+extension ProjectInventory on ProjectItem {
+  ProjectInventoryStats getInventoryStats() {
+    int total = 0;
+    int remaining = 0;
+
+    for (final cfg in configuration) {
+      for (final v in cfg.variants) {
+        total += v.totalUnits;
+        remaining += v.availableUnits; // availableUnits represents remaining
+      }
+    }
+
+    final sold = total - remaining;
+    return ProjectInventoryStats(
+      totalUnits: total,
+      remainingUnits: remaining,
+      soldUnits: sold < 0 ? 0 : sold,
+    );
+  }
+}
+
 extension ProjectItemMapper on ProjectItem {
   AddProjectModel toAddProjectModel() {
     return AddProjectModel(
       id: id,
       projectName: projectName,
-      
+
       projectArea: double.tryParse(projectArea) ?? 0.0,
-      buildingNames: buildingNames??{},
+      buildingNames: buildingNames ?? {},
 
       projectSize: projectSize ?? ProjectSize(totalBuildings: 0, totalUnits: 0),
 
@@ -1272,7 +1301,6 @@ extension ProjectItemMapper on ProjectItem {
       ownerName: ownerName,
 
       mediaGallery: mediaGallery,
-      
 
       /// Extract only URLs from brochures list
       imageList: mediaGallery?.images ?? [],

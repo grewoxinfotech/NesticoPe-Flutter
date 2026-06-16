@@ -55,6 +55,8 @@ class ApiConstants {
 
   static String get digitalSignature => "$baseURL/digitalsignature";
 
+  static String get mouVerification => "$baseURL/mou";
+
   static String get sendNotificationId => "$baseURL/user/notification/token";
 
   static String get removeNotificationId => "$baseURL/user/notification/token";

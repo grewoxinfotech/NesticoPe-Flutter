@@ -994,6 +994,8 @@ class StepAdditional extends GetView<ProjectWizardController> {
                       label: 'Contact Name',
                       hint: 'e.g John Mark',
                       initialValue: p.projectContactInfo?.name ?? '',
+                      
+                      
                       prefixIcon: Icon(
                         Icons.person_outline,
                         size: 20,
@@ -1001,6 +1003,7 @@ class StepAdditional extends GetView<ProjectWizardController> {
                       ),
                       onSaved: (v) {
                         controller.project.update((x) {
+                          
                           x!.projectContactInfo ??= ProjectContactInfo();
                           x.projectContactInfo!.name = v?.trim();
                         });

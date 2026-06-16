@@ -940,6 +940,12 @@ class ReviewPropertyScreen extends StatelessWidget {
           // Pricing Details
           _buildSectionTitle('Pricing Details'),
           const SizedBox(height: 10),
+            _buildDetailRow(
+              'PlatForm Fees',
+              Formatter.formatPrice(
+                int.tryParse(controller.platformFees.text) ?? 0,
+              ),
+            ),
           if (controller.lookingTo.value == 'Rent') ...[
             _buildDetailRow(
               'Monthly Rent',

@@ -138,7 +138,7 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
       buyerId: buyer_Id.value,
       propertyId: property_Id.value,
     );
-    log("Response received: ${response.toString()}");
+    log("Response received Visit: ${response.items.map((e) => e.toMap(),)}");
     return response;
   }
 

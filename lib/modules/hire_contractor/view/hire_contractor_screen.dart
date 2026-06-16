@@ -418,7 +418,7 @@ class _HireContractorScreenState extends State<HireContractorScreen> {
               ),
             );
           }),
-          const UnifiedComparisonFloatingButton(bottom: 16),
+          const UnifiedComparisonFloatingButton(bottom: 120),
         ],
       ),
     );

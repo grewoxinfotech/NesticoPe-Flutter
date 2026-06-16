@@ -420,7 +420,7 @@
 //       }
 //
 //       await _resetAndReload();
-//     } finally {mgmk kdiem 
+//     } finally {mgmk kdiem
 //       isFilterLoading.value = false;
 //     }
 //   }
@@ -666,6 +666,38 @@ class BuilderProjectListController extends PaginatedController<ProjectItem> {
     } catch (e) {
       log("❌ Get project error: $e");
       return null;
+    }
+  }
+
+  /// Delete a project (builder) and remove from list
+  Future<void> deleteProject(String id) async {
+    try {
+      loadingState.value = BuilderProjectLoadingState.filterLoading;
+      final ok = await _builderService.deleteProject(id);
+      if (ok) {
+        items.removeWhere((p) => p.id == id);
+        await refreshList();
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Deleted',
+          message: 'Project deleted successfully',
+          contentType: ContentType.success,
+        );
+      } else {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Delete Failed',
+          message: 'Unable to delete project',
+          contentType: ContentType.failure,
+        );
+      }
+    } catch (e) {
+      log('❌ Delete project error: $e');
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Delete Failed',
+        message: 'Unable to delete project',
+        contentType: ContentType.failure,
+      );
+    } finally {
+      loadingState.value = BuilderProjectLoadingState.normal;
     }
   }
 

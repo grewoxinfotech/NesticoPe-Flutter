@@ -538,6 +538,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
     LeadPropertyNegotiablePriceController leadPropertyNegotiablePriceController,
     bool isFromLead,
     bool isLeadIsempty,
+    
   ) {
     return Column(
       children: [
@@ -701,6 +702,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
               Get.to(
                 () => LeadVisit(
                   leadVisitController: leadVisitController,
+                  // leadItem: ,
                   propertyInquiryController:
                       propertyInquiryController ??
                       LeadPropertyInquiryController(),
@@ -1344,11 +1346,32 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionHeader(
-            'Property Overview',
-            Icons.home_outlined,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildSectionHeader(
+                'Property Overview',
+                Icons.home_outlined,
+              
+                isCompact,
+              ),
 
-            isCompact,
+            if(property.propertyStatus?.toLowerCase()=='sold' || property.propertyStatus?.toLowerCase()=='rented')...[
+                _buildOverviewChip(
+                property.propertyStatus?.toUpperCase()??'',
+                Icons.sell_outlined,
+                (property.propertyStatus?.toLowerCase()=='sold')?ColorRes.error:ColorRes.homeAmber,
+                isCompact,
+              ),
+            ]else...[
+                _buildOverviewChip(
+                property.propertyStatus??'',
+                Icons.sell_outlined,
+                ColorRes.deepPurpleColor,
+                isCompact,
+              ),
+            ]
+            ],
           ),
           const SizedBox(height: 16),
           Text(
@@ -1385,7 +1408,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                 ),
               ],
               _buildOverviewChip(
-                propertyType.toUpperCase(),
+                propertyType.toUpperCase().replaceAll("_", " "),
                 Icons.apartment_outlined,
                 ColorRes.purpleColor,
                 isCompact,

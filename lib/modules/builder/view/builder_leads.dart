@@ -845,95 +845,117 @@ class _BuilderLeadState extends State<BuilderLeads> {
 
             /// 🔹 LIST
             Expanded(
-              child:
-                  leads.isEmpty
-                      ? buildEmptyState(context)
-                      : NotificationListener<ScrollEndNotification>(
-                        onNotification: (notification) {
-                          final metrics = notification.metrics;
-
-                          if (metrics.pixels >= metrics.maxScrollExtent - 100 &&
-                              !isLoading &&
-                              !isPaging &&
-                              leadController.hasMore.value) {
-                            if (widget.projectId != null &&
-                                widget.projectId!.isNotEmpty) {
-                              leadController.loadMorePropertyLeads(
-                                widget.projectId!,
-                              );
-                            } else {
-                              leadController.loadMore();
-                            }
-                          }
-                          return false;
-                        },
-                        child: RefreshIndicator(
-                          onRefresh: () async {
-                            if (!isRefreshing && !isLoading) {
-                              await leadController.refreshList();
-                            }
-                          },
-                          child: ListView.separated(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            padding: EdgeInsets.all(
-                              getResponsivePadding(context),
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  if (!isRefreshing && !isLoading) {
+                    await leadController.refreshList();
+                  }
+                },
+                child:
+                    leads.isEmpty
+                        ? ListView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: EdgeInsets.all(
+                            getResponsivePadding(context),
+                          ),
+                          children: [
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height - 200,
+                              child: buildEmptyState(context),
                             ),
-                            itemCount: leads.length + 1,
-                            separatorBuilder:
-                                (_, __) => SizedBox(
-                                  height: getResponsiveSpacing(context),
-                                ),
-                            itemBuilder: (context, index) {
-                              /// 🔹 FOOTER
-                              if (index == leads.length) {
-                                if (isPaging && leadController.hasMore.value) {
-                                  return const Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 16),
-                                    child: Center(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                      ),
-                                    ),
-                                  );
-                                }
+                          ],
+                        )
+                        : NotificationListener<ScrollEndNotification>(
+                          onNotification: (notification) {
+                            final metrics = notification.metrics;
 
-                                if (!leadController.hasMore.value &&
-                                    leads.isNotEmpty) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 16,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        'No more leads',
-                                        style: TextStyle(
-                                          color: ColorRes.leadGreyColor[400],
-                                          fontSize: AppFontSizes.small,
+                            if (metrics.pixels >=
+                                    metrics.maxScrollExtent - 100 &&
+                                !isLoading &&
+                                !isPaging &&
+                                leadController.hasMore.value) {
+                              if (widget.projectId != null &&
+                                  widget.projectId!.isNotEmpty) {
+                                leadController.loadMorePropertyLeads(
+                                  widget.projectId!,
+                                );
+                              } else {
+                                leadController.loadMore();
+                              }
+                            }
+                            return false;
+                          },
+                          child: RefreshIndicator(
+                            onRefresh: () async {
+                              if (!isRefreshing && !isLoading) {
+                                await leadController.refreshList();
+                              }
+                            },
+                            child: ListView.separated(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              padding: EdgeInsets.all(
+                                getResponsivePadding(context),
+                              ),
+                              itemCount: leads.length + 1,
+                              separatorBuilder:
+                                  (_, __) => SizedBox(
+                                    height: getResponsiveSpacing(context),
+                                  ),
+                              itemBuilder: (context, index) {
+                                /// 🔹 FOOTER
+                                if (index == leads.length) {
+                                  if (isPaging &&
+                                      leadController.hasMore.value) {
+                                    return const Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 16,
+                                      ),
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
                                         ),
                                       ),
-                                    ),
-                                  );
+                                    );
+                                  }
+
+                                  if (!leadController.hasMore.value &&
+                                      leads.isNotEmpty) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 16,
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          'No more leads',
+                                          style: TextStyle(
+                                            color: ColorRes.leadGreyColor[400],
+                                            fontSize: AppFontSizes.small,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+
+                                  return const SizedBox.shrink();
                                 }
 
-                                return const SizedBox.shrink();
-                              }
+                                final lead = leads[index];
 
-                              final lead = leads[index];
-
-                              return LeadCardWidget(
-                                lead: lead,
-                                isCompact:
-                                    MediaQuery.of(context).size.width < 600,
-                                showDataMasking: false,
-                                isProjectLeadContext: false,
-                                leadPropertiesList:
-                                    leadController.leadPropertiesList,
-                                onTap: () => _openLead(lead),
-                              );
-                            },
+                                return LeadCardWidget(
+                                  lead: lead,
+                                  isCompact:
+                                      MediaQuery.of(context).size.width < 600,
+                                  showDataMasking: false,
+                                  isProjectLeadContext: false,
+                                  leadPropertiesList:
+                                      leadController.leadPropertiesList,
+                                  onTap: () => _openLead(lead),
+                                );
+                              },
+                            ),
                           ),
                         ),
-                      ),
+              ),
             ),
           ],
         );

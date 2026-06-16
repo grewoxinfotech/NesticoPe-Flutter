@@ -14,6 +14,8 @@ class ResellerDashboardService {
   static ResellerDashboardService resellerDashboardService =
       ResellerDashboardService._();
   final String _baseUrl = ApiConstants.resellerDashboard;
+  final assignPoperty=ApiConstants.property;
+  final assignProject=ApiConstants.builderProject;
   final String _userId = '';
   final String cityWiseLeaderBoard = ApiConstants.resellerCityWiseReseller;
   final String getCityWise = ApiConstants.resellerGetAllCity;
@@ -54,6 +56,116 @@ class ResellerDashboardService {
       return null;
     }
   }
+
+
+
+
+  Future<Map<String, dynamic>?> fetchResellerAndYearDashboard(
+    String userId, {
+    int? leadsYear,
+  }) async {
+    try {
+      final queryParams = <String, String>{};
+      if (leadsYear != null) {
+        
+        queryParams['resellerId']=userId;
+        queryParams['year'] = leadsYear.toString();
+      }
+      final response = await http.get(
+        Uri.parse('$_baseUrl').replace(queryParameters: queryParams),
+        headers: await header(),
+      );
+      print(
+        "Reseller fetchResellerAndYearDashboard Url from api : ${Uri.parse('$_baseUrl').replace(queryParameters: queryParams)}",
+      );
+
+      final decoded = jsonDecode(response.body);
+      print('📦 Reseller fetchResellerAndYearDashboard Raw Response: $decoded  ${response.statusCode}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return decoded;
+      } else {
+        print('⚠️ Reseller fetchResellerAndYearDashboard Error Response: $decoded');
+        return decoded;
+      }
+    } catch (e, stack) {
+      print('❌ Exception in fetchResellerAndYearDashboard: $e');
+      print(stack);
+      return null;
+    }
+  }
+
+
+    Future<Map<String, dynamic>?> fetchResellerAssignProperty(
+    String userId, {
+    bool isExpired=false,
+  }) async {
+    try {
+      final queryParams = <String, String>{};
+      if (isExpired != null) {
+        queryParams['isExpired'] = isExpired.toString();
+        queryParams['assignedTo']=userId;
+      }
+      final response = await http.get(
+        Uri.parse('$assignPoperty').replace(queryParameters: queryParams),
+        headers: await header(),
+      );
+      print(
+        "Reseller fetchResellerAssignProperty Url from api : ${Uri.parse('$assignPoperty').replace(queryParameters: queryParams)}",
+      );
+
+      final decoded = jsonDecode(response.body);
+      print('📦 Reseller fetchResellerAssignProperty Raw Response: $decoded   ${response.statusCode}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return decoded;
+      } else {
+        print('⚠️ Reseller fetchResellerAssignProperty Error Response: $decoded');
+        return decoded;
+      }
+    } catch (e, stack) {
+      print('❌ Exception in fetchResellerAssignProperty: $e');
+      print(stack);
+      return null;
+    }
+  }
+
+
+
+   Future<Map<String, dynamic>?> fetchResellerAssignProject(
+    String userId, {
+    bool isExpired=false,
+  }) async {
+    try {
+      final queryParams = <String, String>{};
+      if (isExpired != null) {
+        queryParams['isExpired'] = isExpired.toString();
+        queryParams['assignedTo']=userId;
+      }
+      final response = await http.get(
+        Uri.parse('$assignProject').replace(queryParameters: queryParams),
+        headers: await header(),
+      );
+      print(
+        "Reseller fetchResellerAssignProject Url from api : ${Uri.parse('$assignProject').replace(queryParameters: queryParams)}",
+      );
+
+      final decoded = jsonDecode(response.body);
+      print('📦 Reseller fetchResellerAssignProject Raw Response: $decoded   ${response.statusCode}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return decoded;
+      } else {
+        print('⚠️ Reseller fetchResellerAssignProject Error Response: $decoded');
+        return decoded;
+      }
+    } catch (e, stack) {
+      print('❌ Exception in fetchResellerAssignProject: $e');
+      print(stack);
+      return null;
+    }
+  }
+
 
   Future<Map<String, dynamic>> fetchCityWiseLeaderBoard({
     String? period,

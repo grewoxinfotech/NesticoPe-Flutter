@@ -34,9 +34,15 @@ import '../../controller/hire_contractor_filter_controller.dart';
 import '../../controller/hire_contractor_list_of_profile_controller.dart';
 import '../../controller/hire_contractor_new_controller.dart';
 
-class HireContractorProfileList extends StatelessWidget {
+class HireContractorProfileList extends StatefulWidget {
+
   const HireContractorProfileList({super.key});
 
+  @override
+  State<HireContractorProfileList> createState() => _HireContractorProfileListState();
+}
+
+class _HireContractorProfileListState extends State<HireContractorProfileList> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<HireContractorController>();
@@ -187,7 +193,7 @@ class HireContractorProfileList extends StatelessWidget {
                   children: [
                     Obx(() {
                       final displayFilters = Map<String, String>.from(
-                        selectedFilters.value,
+                        selectedFilters,
                       );
                       if (controllerFilter
                           .selectedCategoryName
@@ -247,10 +253,21 @@ class HireContractorProfileList extends StatelessWidget {
                           controllerFilter.applyFilters(<String, String>{});
                         },
                         onRemoveFilter: (key) {
-                          selectedFilters.remove(key);
+                          debugPrint('Check anu defds ${key}');
+                          setState(() {
+                               selectedFilters.value.remove(key);
+
                           controllerFilter.applyFilters(
                             Map<String, String>.from(selectedFilters),
                           );
+                           debugPrint('Check anu defds ${selectedFilters}');
+                          });
+                          // selectedFilters.value.remove(key);
+
+                          // controllerFilter.applyFilters(
+                          //   Map<String, String>.from(selectedFilters),
+                          // );
+                          //  debugPrint('Check anu defds ${selectedFilters}');
                         },
                       );
                     }),

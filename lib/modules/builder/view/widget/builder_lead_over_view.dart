@@ -157,6 +157,7 @@ class BuilderLeadOverView extends StatelessWidget {
                     () => LeadVisit(
                       leadVisitController: leadVisitController,
                       propertyInquiryController: leadPropertyInquiryController,
+                      leadItem: lead,
                       buyerID:
                           leadPropertyInquiryController
                               ?.selectedInquiry

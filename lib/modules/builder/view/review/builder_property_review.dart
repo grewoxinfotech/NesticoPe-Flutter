@@ -2062,6 +2062,28 @@ class StepReview extends GetView<ProjectWizardController> {
                                   ),
                                 ],
                               ),
+                               const SizedBox(height: 14),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: _buildVariantInfoCard(
+                                      Icons.currency_rupee_outlined,
+                                      'Platfrom Fees',
+                                      '${variant.platformFees}',
+                                      ColorRes.builderGridPurple,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: _buildVariantInfoCard(
+                                      Icons.space_dashboard_rounded,
+                                      'Per Sqft Price',
+                                      '${variant.pricePerSqFt}',
+                                      ColorRes.builderGridLightPurple,
+                                    ),
+                                  ),
+                                ],
+                              ),
                               const SizedBox(height: 10),
 
                               // Units Info

@@ -100,6 +100,10 @@ class LeadVisitItem {
   final String? interestedLevel;
   final String? createdAt;
   final String? updatedAt;
+  final String? entity;
+final BuilderProject? builderProject;
+final dynamic property;
+final dynamic user;
 
   LeadVisitItem({
     this.id,
@@ -111,6 +115,13 @@ class LeadVisitItem {
     this.visitDate,
     this.timeSlot,
     this.status,
+  
+  // ...
+  this.entity,
+  this.builderProject,
+  this.property,
+  this.user,
+
     this.notes,
     this.buyerFeedback,
     this.sellerFeedback,
@@ -143,6 +154,12 @@ class LeadVisitItem {
       buyerAttended: map['buyerAttended'],
       sellerAttended: map['sellerAttended'],
       followUpDate: map['followUpDate'],
+        entity: map['entity'],
+    property: map['property'],
+    user: map['user'],
+    builderProject: map['builderProject'] != null
+        ? BuilderProject.fromMap(map['builderProject'])
+        : null,
       interestedLevel: map['interestedLevel'],
       createdAt: map['createdAt'],
       updatedAt: map['updatedAt'],
@@ -159,6 +176,10 @@ class LeadVisitItem {
       'seller_id': sellerId,
       'visitDate': visitDate,
       'timeSlot': timeSlot,
+      'entity': entity,
+'property': property,
+'user': user,
+'builderProject': builderProject?.toMap(),
       'status': status,
       'notes': notes,
       'buyerFeedback': buyerFeedback,
@@ -175,3 +196,40 @@ class LeadVisitItem {
   }
 }
 
+
+
+class BuilderProject {
+  final String? id;
+  final String? projectName;
+  final String? propertyTypes;
+  final String? location;
+  final String? city;
+
+  BuilderProject({
+    this.id,
+    this.projectName,
+    this.propertyTypes,
+    this.location,
+    this.city,
+  });
+
+  factory BuilderProject.fromMap(Map<String, dynamic> map) {
+    return BuilderProject(
+      id: map['id'],
+      projectName: map['projectName'],
+      propertyTypes: map['propertyTypes'],
+      location: map['location'],
+      city: map['city'],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'projectName': projectName,
+      'propertyTypes': propertyTypes,
+      'location': location,
+      'city': city,
+    };
+  }
+}

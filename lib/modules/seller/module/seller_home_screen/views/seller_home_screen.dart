@@ -996,7 +996,11 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
 
   @override
   void initState() {
+
     super.initState();
+    setState(() {
+      
+    });
     overviewController = Get.put(SellerOverviewController());
 
     // Initialize data and controllers

@@ -169,11 +169,23 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
                   return const PropertyListScreenShimmer();
 
                 case PropertyListState.empty:
-                  return _EmptyState(
-                    onClear: () {
-                      selectedFilters.clear();
-                      propertyController.clearAllFilters();
-                    },
+                  return RefreshIndicator(
+                    onRefresh: propertyController.loadInitial,
+                    child: ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(16),
+                      children: [
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height - 200,
+                          child: _EmptyState(
+                            onClear: () {
+                              selectedFilters.clear();
+                              propertyController.clearAllFilters();
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
                   );
 
                 case PropertyListState.error:

@@ -363,7 +363,11 @@ class _ProjectListingScreenState extends State<ProjectListingScreen> {
                   SizedBox(width: 6),
                   Text(
                     "Filter",
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: ColorRes.primary),
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: ColorRes.primary,
+                    ),
                   ),
                 ],
               ),
@@ -427,7 +431,48 @@ class _ProjectListingScreenState extends State<ProjectListingScreen> {
                     child:
                         (!projectController!.isLoading.value &&
                                 projectController!.items.isEmpty)
-                            ? const Center(child: Text("No Listing Yet."))
+                            ? SingleChildScrollView(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              child: SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.7,
+                                width: double.infinity,
+                                child: Center(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        "No project found.",
+                                        style: TextStyle(
+                                          color: ColorRes.textSecondary,
+                                          fontSize: AppFontSizes.body,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      ElevatedButton(
+                                        onPressed:
+                                            projectController!
+                                                .refreshResellerProjects,
+                                        // icon: const Icon(Icons.refresh, size: 16),
+                                        child: const Text('Refresh'),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: ColorRes.primary,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                            vertical: 12,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            )
                             : ProjectsGrid(
                               isSelectionMode: isSelectionMode,
                               selectedProjectIds: selectedProjectIds,
@@ -465,6 +510,8 @@ class ProjectsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       // Loading state
+
+      // final state =resellerProjectController.items.
       if (resellerProjectController.isLoading.value &&
           resellerProjectController.items.isEmpty) {
         return ResellerEntityListScreenShimmer();
@@ -542,6 +589,7 @@ class ProjectCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final SharePropertyController controller =
         Get.find<SharePropertyController>();
+    final stats = project.getInventoryStats();
     return Material(
       color: ColorRes.white,
       borderRadius: BorderRadius.circular(14),
@@ -614,6 +662,52 @@ class ProjectCard extends StatelessWidget {
                                   color: Colors.white,
                                 )
                                 : null,
+                      ),
+                    ),
+
+                  // Show SOLD overlay when project appears sold out. Check several common fields defensively.
+                  if (stats.totalUnits > 0 && stats.remainingUnits == 0)
+                    Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.3),
+                          borderRadius: const BorderRadius.horizontal(
+                            left: Radius.circular(11),
+                          ),
+                        ),
+                        alignment: Alignment.center,
+                        child: Transform.rotate(
+                          angle: 24.6,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 2,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: ColorRes.white,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Text(
+                                "SOLD OUT",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  letterSpacing: 1.5,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                 ],

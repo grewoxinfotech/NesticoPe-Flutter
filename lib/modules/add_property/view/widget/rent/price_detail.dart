@@ -8,12 +8,17 @@ import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/modules/add_property/controller/create_property_controller.dart';
 import 'package:nesticope_app/modules/add_property/view/create_property.dart';
 import 'package:intl/intl.dart';
+import 'package:nesticope_app/modules/verification/mou_verification/controllers/mou_controller.dart';
 
 class RentPriceDetail extends StatelessWidget {
   final CreatePropertyController controller;
   final GlobalKey<FormState>? formKey;
 
-  const RentPriceDetail({super.key, required this.controller, this.formKey});
+  RentPriceDetail({super.key, required this.controller, this.formKey});
+
+  PlatformFeeController platformFeeController = Get.put(
+    PlatformFeeController(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -44,19 +49,15 @@ class RentPriceDetail extends StatelessWidget {
 
                   if (rent > 0) {
                     // Calculate 5% of rent as Platform Fees
-                    var platformFee;
-                    if (rent < 10000000) {
-                      // Below 1 Cr → 2%
-                      platformFee = rent * 0.02;
-                    } else {
-                      // 1 Cr & Above → 1%
-                      platformFee = rent * 0.01;
-                    }
+
+                    final feePercentage = getPlatformFeePercentage(
+                      platformFeeController,
+                    );
+                    final platformFee = rent * (feePercentage / 100);
                     controller.platformFees.text = platformFee.toStringAsFixed(
                       1,
                     );
-
-                    // Calculate 2% of platform fees as Broker Commission
+                    // C0alculate  of platform fees as Broker Commission
 
                     final brokerCommission = platformFee * 0.02;
                     controller.brokerRageCommission.text = brokerCommission
@@ -70,16 +71,16 @@ class RentPriceDetail extends StatelessWidget {
                 },
               ),
 
-              // const SizedBox(height: 16),
-              // const Text("Platform Fees (5%)"),
-              // const SizedBox(height: 8),
-              // buildTextField(
-              //   "Platform Fees",
-              //   Icons.currency_rupee_outlined,
-              //   controller.platformFees,
-              //   isPhoneKey: true,
-              //   isEnable: false,
-              // ),
+              const SizedBox(height: 16),
+              const Text("Platform Fees (5%)"),
+              const SizedBox(height: 8),
+              buildTextField(
+                "Platform Fees",
+                Icons.currency_rupee_outlined,
+                controller.platformFees,
+                isPhoneKey: true,
+                isEnable: false,
+              ),
 
               // const SizedBox(height: 16),
               // const Text("Broker Commission (2%) of Platform Fees"),
@@ -138,8 +139,6 @@ class RentPriceDetail extends StatelessWidget {
 
               // -------------------- PAST 5 YEARS PRICES --------------------
 
-
-              
               // -------------------- PAST 5 YEARS PRICES ------------------
               const SizedBox(height: 24),
               buildSectionTitle('Rent Negotiable'),
@@ -261,14 +260,11 @@ class RentPriceDetail extends StatelessWidget {
 
                   if (rent > 0) {
                     // Calculate 5% of rent as Platform Fees
-                   var platformFee;
-                      if (rent < 10000000) {
-                        // Below 1 Cr → 2%
-                        platformFee = rent * 0.02;
-                      } else {
-                        // 1 Cr & Above → 1%
-                        platformFee = rent * 0.01;
-                      }
+
+                    final feePercentage = getPlatformFeePercentage(
+                      platformFeeController,
+                    );
+                    final platformFee = rent * (feePercentage / 100);
                     controller.platformFees.text = platformFee.toStringAsFixed(
                       1,
                     );
@@ -693,14 +689,11 @@ class RentPriceDetail extends StatelessWidget {
 
                     if (rent > 0) {
                       // Calculate 5% of rent as Platform Fees
-                      var platformFee;
-                      if (rent < 10000000) {
-                        // Below 1 Cr → 2%
-                        platformFee = rent * 0.02;
-                      } else {
-                        // 1 Cr & Above → 1%
-                        platformFee = rent * 0.01;
-                      }
+
+                      final feePercentage = getPlatformFeePercentage(
+                        platformFeeController,
+                      );
+                      final platformFee = rent * (feePercentage / 100);
                       controller.platformFees.text = platformFee
                           .toStringAsFixed(1);
 
@@ -852,14 +845,11 @@ class RentPriceDetail extends StatelessWidget {
                     }
                     if (rent > 0) {
                       // Calculate 5% of rent as Platform Fees
-                      var platformFee;
-                      if (rent < 10000000) {
-                        // Below 1 Cr → 2%
-                        platformFee = rent * 0.02;
-                      } else {
-                        // 1 Cr & Above → 1%
-                        platformFee = rent * 0.01;
-                      }
+
+                      final feePercentage = getPlatformFeePercentage(
+                        platformFeeController,
+                      );
+                      final platformFee = rent * (feePercentage / 100);
                       controller.platformFees.text = platformFee
                           .toStringAsFixed(1);
 
@@ -879,16 +869,16 @@ class RentPriceDetail extends StatelessWidget {
 
                   isPhoneKey: true,
                 ),
-                // const SizedBox(height: 16),
-                // const Text("Platform Fees (5%)"),
-                // const SizedBox(height: 8),
-                // buildTextField(
-                //   "Platform Fees",
-                //   Icons.currency_rupee_outlined,
-                //   controller.platformFees,
-                //   isPhoneKey: true,
-                //   isEnable: false,
-                // ),
+                const SizedBox(height: 16),
+                const Text("Platform Fees (5%)"),
+                const SizedBox(height: 8),
+                buildTextField(
+                  "Platform Fees",
+                  Icons.currency_rupee_outlined,
+                  controller.platformFees,
+                  isPhoneKey: true,
+                  isEnable: false,
+                ),
 
                 // const SizedBox(height: 16),
                 // const Text("Broker Commission (2%) of Platform Fees"),
@@ -1141,17 +1131,13 @@ class RentPriceDetail extends StatelessWidget {
 
                     if (rent > 0) {
                       // Calculate 5% of rent as Platform Fees
-                      var platformFee;
-                      if (rent < 10000000) {
-                        // Below 1 Cr → 2%
-                        platformFee = rent * 0.02;
-                      } else {
-                        // 1 Cr & Above → 1%
-                        platformFee = rent * 0.01;
-                      }
+
+                      final feePercentage = getPlatformFeePercentage(
+                        platformFeeController,
+                      );
+                      final platformFee = rent * (feePercentage / 100);
                       controller.platformFees.text = platformFee
                           .toStringAsFixed(1);
-
                       // Calculate 2% of platform fees as Broker Commission
 
                       final brokerCommission = platformFee * 0.02;
@@ -1169,16 +1155,16 @@ class RentPriceDetail extends StatelessWidget {
 
                   isPhoneKey: true,
                 ),
-                // const SizedBox(height: 16),
-                // const Text("Platform Fees (5%)"),
-                // const SizedBox(height: 8),
-                // buildTextField(
-                //   "Platform Fees",
-                //   Icons.currency_rupee_outlined,
-                //   controller.platformFees,
-                //   isPhoneKey: true,
-                //   isEnable: false,
-                // ),
+                const SizedBox(height: 16),
+                const Text("Platform Fees (5%)"),
+                const SizedBox(height: 8),
+                buildTextField(
+                  "Platform Fees",
+                  Icons.currency_rupee_outlined,
+                  controller.platformFees,
+                  isPhoneKey: true,
+                  isEnable: false,
+                ),
 
                 // const SizedBox(height: 16),
                 // const Text("Broker Commission (2%) of Platform Fees"),
@@ -1374,14 +1360,11 @@ class RentPriceDetail extends StatelessWidget {
                     final rent = int.tryParse(value) ?? 0; // parse once
                     if (rent > 0) {
                       // Calculate 5% of rent as Platform Fees
-                      var platformFee;
-                      if (rent < 10000000) {
-                        // Below 1 Cr → 2%
-                        platformFee = rent * 0.02;
-                      } else {
-                        // 1 Cr & Above → 1%
-                        platformFee = rent * 0.01;
-                      }
+
+                      final feePercentage = getPlatformFeePercentage(
+                        platformFeeController,
+                      );
+                      final platformFee = rent * (feePercentage / 100);
                       controller.platformFees.text = platformFee
                           .toStringAsFixed(1);
 
@@ -1402,16 +1385,16 @@ class RentPriceDetail extends StatelessWidget {
 
                   isPhoneKey: true,
                 ),
-                // const SizedBox(height: 16),
-                // const Text("Platform Fees (5%)"),
-                // const SizedBox(height: 8),
-                // buildTextField(
-                //   "Platform Fees",
-                //   Icons.currency_rupee_outlined,
-                //   controller.platformFees,
-                //   isPhoneKey: true,
-                //   isEnable: false,
-                // ),
+                const SizedBox(height: 16),
+                const Text("Platform Fees (5%)"),
+                const SizedBox(height: 8),
+                buildTextField(
+                  "Platform Fees",
+                  Icons.currency_rupee_outlined,
+                  controller.platformFees,
+                  isPhoneKey: true,
+                  isEnable: false,
+                ),
 
                 // const SizedBox(height: 16),
                 // const Text("Broker Commission (2%) of Platform Fees"),
@@ -1680,5 +1663,17 @@ class RentPriceDetail extends StatelessWidget {
         return SizedBox();
       }
     });
+  }
+}
+
+double getPlatformFeePercentage(PlatformFeeController platformFeeController) {
+  try {
+    final fee = platformFeeController.items.firstWhere(
+      (e) => e.category == 'client_property' && e.isActive == true,
+    );
+
+    return double.tryParse(fee.percentage ?? '0') ?? 0;
+  } catch (_) {
+    return 0;
   }
 }

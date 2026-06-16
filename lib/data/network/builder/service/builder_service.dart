@@ -323,6 +323,27 @@ class BuilderService {
     }
   }
 
+  /// Delete a project by id
+  Future<bool> deleteProject(String projectId) async {
+    try {
+      final uri = Uri.parse('$baseUrl/$projectId');
+      debugPrint('🗑️ Deleting project at: $uri');
+      final response = await http.delete(uri, headers: await headers());
+
+      debugPrint('🗑️ Delete response: ${response.statusCode}');
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return true;
+      }
+
+      // attempt to log body
+      debugPrint('🗑️ Delete failed body: ${response.body}');
+      return false;
+    } catch (e) {
+      debugPrint('⚠️ Exception while deleting project: $e');
+      return false;
+    }
+  }
+
   ///==================== Create Project under a Builder ====================
   Future<bool> createProject({
     required AddProjectModel projectData,

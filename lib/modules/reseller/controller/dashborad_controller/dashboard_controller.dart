@@ -680,7 +680,6 @@ class DashboardController extends GetxController {
   final RxBool isResellerDetailExpanded = false.obs;
   final isGenerated = false.obs;
   final Rx<DashboardMetrics> metrics =
-
       DashboardMetrics(
         totalSales: 0,
         totalLeads: 0,
@@ -688,9 +687,9 @@ class DashboardController extends GetxController {
         growthPercentage: 0,
       ).obs;
 
-TextEditingController cityController = TextEditingController();
-TextEditingController locationController = TextEditingController();
-// TextEditingController addressController = TextEditingController();
+  TextEditingController cityController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
+  // TextEditingController addressController = TextEditingController();
   final RxList<Lead> recentLeads = <Lead>[].obs;
   final RxList<Product> topProducts = <Product>[].obs;
   final RxList<ResellerLeadOverview> _allProducts =
@@ -835,14 +834,37 @@ TextEditingController locationController = TextEditingController();
         final monthName = DateFormat('MMMM yyyy').format(monthDate);
         monthlyRanges.add(monthName);
       }
-    }else{
+    } else {
       final currentMonth = DateFormat('MMMM yyyy').format(now);
       monthlyRanges.add(currentMonth);
     }
 
-
     // Default selection
     selectedPeriod.value = weeklyRanges.first;
+  }
+
+  CommissionSourceData getCommissionSourceData() {
+    final earnings = resellerInsightsModel.value?.data.earnings;
+
+    double propertyComm =
+        double.tryParse(earnings?.propertyCommission?.toString() ?? '0') ?? 0;
+
+    double projectComm =
+        double.tryParse(earnings?.projectCommission?.toString() ?? '0') ?? 0;
+
+    double earnedRevenue =
+        double.tryParse(earnings?.totalCommission?.toString() ?? '0') ?? 0;
+
+    // Fallback
+    if (propertyComm == 0 && projectComm == 0 && earnedRevenue > 0) {
+      propertyComm = earnedRevenue * 0.6;
+      projectComm = earnedRevenue * 0.4;
+    }
+
+    return CommissionSourceData(
+      propertyCommission: propertyComm,
+      projectCommission: projectComm,
+    );
   }
 
   /// 🧩 Builds the correct payload for API based on user selection
@@ -1013,7 +1035,9 @@ TextEditingController locationController = TextEditingController();
     // 🧩 Log for debugging
     if (kDebugMode) {
       debugPrint('📊 buyerPriceRange called');
-      debugPrint('   ▶ Original values: start=${value.start}, end=${value.end}');
+      debugPrint(
+        '   ▶ Original values: start=${value.start}, end=${value.end}',
+      );
       debugPrint('   ▶ Clamped with bounds: lower=$lower, upper=$upper');
       debugPrint('   ▶ Result: start=$clampedStart, end=$clampedEnd');
       debugPrint('   ▶ priceRangeSeller: ${priceRangeSeller.value}');
@@ -1044,6 +1068,17 @@ TextEditingController locationController = TextEditingController();
         .fetchResellerDashboard(
           userId ?? '',
           leadsYear: leadsYear ?? selectedGraphYear.value,
+        );
+
+    final assignData = await ResellerDashboardService.resellerDashboardService
+        .fetchResellerAssignProperty(userId ?? '');
+    final assignProjectData = await ResellerDashboardService
+        .resellerDashboardService
+        .fetchResellerAssignProject(userId ?? '');
+    final reveneusre = await ResellerDashboardService.resellerDashboardService
+        .fetchResellerAndYearDashboard(
+          leadsYear: leadsYear ?? selectedGraphYear.value,
+          userId ?? '',
         );
     fetchCityWiseLeaderboardColor();
     fetchCityFromApi();
@@ -2494,4 +2529,14 @@ TextEditingController locationController = TextEditingController();
     totalValueController.dispose();
     super.onClose();
   }
+}
+
+class CommissionSourceData {
+  final double propertyCommission;
+  final double projectCommission;
+
+  const CommissionSourceData({
+    required this.propertyCommission,
+    required this.projectCommission,
+  });
 }

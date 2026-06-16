@@ -3107,6 +3107,7 @@ class _HomeScreenState extends State<HomeScreen>
         color: Color.fromARGB(255, 252, 253, 241),
 
         child: Column(
+          crossAxisAlignment:CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 5),
             TitleWithViewAll(

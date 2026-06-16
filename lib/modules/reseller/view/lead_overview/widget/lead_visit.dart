@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/data/network/auth/model/user_model.dart';
 import 'package:nesticope_app/modules/contractor/controller/contractor_lead_controller.dart';
+import 'package:nesticope_app/modules/seller/module/lead_screen/model/lead_model.dart';
 import 'package:nesticope_app/utils/shimmer/common_screen/visit_screen/visit_list_screen_shimmer.dart';
 import 'package:intl/intl.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
@@ -17,6 +18,7 @@ import 'lead_follow_up_screen.dart';
 class LeadVisit extends StatefulWidget {
   final LeadVisitController leadVisitController;
   final LeadPropertyInquiryController propertyInquiryController;
+  final LeadItem? leadItem;
   final String? propertyId;
   final String? buyerID;
 
@@ -25,6 +27,7 @@ class LeadVisit extends StatefulWidget {
     required this.leadVisitController,
     required this.propertyInquiryController,
     this.propertyId,
+    this.leadItem,
     this.buyerID,
   });
 
@@ -156,67 +159,72 @@ class _LeadVisitState extends State<LeadVisit> {
           ),
         ),
       ),
-      body: Obx(() {
-        if (leadVisitController.isLoading.value) {
-          return VisitListScreenShimmer();
-        } else if (leadVisitController.items.isEmpty) {
-          return Center(
-            child: Text(
-              'No Visit Requests Found',
-              style: TextStyle(
-                fontSize: AppFontSizes.large,
-                fontWeight: AppFontWeights.semiBold,
-                color: ColorRes.leadGreyColor[600],
+      body: SafeArea(
+        child: Obx(() {
+          if (leadVisitController.isLoading.value) {
+            return VisitListScreenShimmer();
+          } else if (leadVisitController.items.isEmpty) {
+            return Center(
+              child: Text(
+                'No Visit Requests Found',
+                style: TextStyle(
+                  fontSize: AppFontSizes.large,
+                  fontWeight: AppFontWeights.semiBold,
+                  color: ColorRes.leadGreyColor[600],
+                ),
               ),
-            ),
-          );
-        } else {
-          // Convert all visit items to a list of buyerIds (non-null, non-empty)
-          final buyerIds =
-              leadVisitController.items
-                  .map((element) => element.buyerId)
-                  .where((id) => id != null && id!.isNotEmpty)
-                  .cast<String>()
-                  .toList();
-
-          // Fetch visitors’ profiles using the collected buyerIds
-          // if (buyerIds.isNotEmpty) {
-          //   leadVisitController.getTheVisitersProfile(buyerIds);
-          // }
-          for (var visit in buyerIds) {
-            log("Selected Data From Visit ${visit}");
-            leadVisitController.getTheVisitersProfile(visit);
+            );
+          } else {
+            // Convert all visit items to a list of buyerIds (non-null, non-empty)
+            final buyerIds =
+                leadVisitController.items
+                    .map((element) => element.buyerId)
+                    .where((id) => id != null && id!.isNotEmpty)
+                    .cast<String>()
+                    .toList();
+        
+            // Fetch visitors’ profiles using the collected buyerIds
+            // if (buyerIds.isNotEmpty) {
+            //   leadVisitController.getTheVisitersProfile(buyerIds);
+            // }
+            for (var visit in buyerIds) {
+              log("Selected Data From Visit ${visit}");
+              leadVisitController.getTheVisitersProfile(visit);
+            }
+        
+            log(
+              "Selected Visit: ${leadVisitController.selectedVisit.value?.toJson()}",
+            );
+        
+            return RefreshIndicator(
+              onRefresh: leadVisitController.refreshLead,
+              color: ColorRes.primary,
+              child: ListView.separated(
+                padding: const EdgeInsets.all(16),
+                itemCount: leadVisitController.items.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 16),
+                itemBuilder: (context, index) {
+                  final visit = leadVisitController.items[index];
+        
+                  // Retrieve the user profile based on buyerId
+                  final User? user =
+                      visit.buyerId != null
+                          ? leadVisitController.userProfiles[visit.buyerId]
+                          : User(username: widget.leadItem?.name,email: widget.leadItem?.email);
+                  // log("USrtr Data From Visit ${user?.toJson()}");
+        
+                  return _buildVisitCard(
+                    context,
+                    visit,
+                    leadVisitController,
+                    user
+                  );
+                },
+              ),
+            );
           }
-
-          log(
-            "Selected Visit: ${leadVisitController.selectedVisit.value?.toJson()}",
-          );
-
-          return RefreshIndicator(
-            onRefresh: leadVisitController.refreshLead,
-            color: ColorRes.primary,
-            child: ListView.separated(
-              padding: const EdgeInsets.all(16),
-              itemCount: leadVisitController.items.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 16),
-              itemBuilder: (context, index) {
-                final visit = leadVisitController.items[index];
-
-                // Retrieve the user profile based on buyerId
-                final user = leadVisitController.userProfiles[visit.buyerId];
-                log("USrtr Data From Visit ${user?.toJson()}");
-
-                return _buildVisitCard(
-                  context,
-                  visit,
-                  leadVisitController,
-                  user,
-                );
-              },
-            ),
-          );
-        }
-      }),
+        }),
+      ),
     );
   }
 
@@ -453,7 +461,10 @@ class _LeadVisitState extends State<LeadVisit> {
                       controller.deleteLead();
                       controller.populatePayloadData(visit);
                     },
-                    icon: const Icon(Icons.cancel_outlined, color: Colors.white),
+                    icon: const Icon(
+                      Icons.cancel_outlined,
+                      color: Colors.white,
+                    ),
                     label: const Text("Reject"),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorRes.error,

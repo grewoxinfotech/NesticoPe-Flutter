@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/modules/builder/view/property_detail/widget/variation_media_upload_widget.dart';
+import 'package:nesticope_app/modules/verification/mou_verification/controllers/mou_controller.dart';
 import 'package:nesticope_app/utils/logger/app_logger.dart';
 
 // import '../../../data/validators/project_validators.dart';
@@ -21,12 +22,15 @@ class StepConfigurations extends GetView<ProjectWizardController> {
   final GlobalKey<FormState> formKey;
   final bool isFromEdit;
 
-  const StepConfigurations({
+  StepConfigurations({
     super.key,
     required this.formKey,
     this.isFromEdit = false,
   });
 
+  PlatformFeeController platformFeeController = Get.put(
+    PlatformFeeController(),
+  );
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -749,7 +753,14 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                                   int.tryParse(n ?? "0") ?? 0;
 
                                               if (rent > 0) {
-                                                final platformFee = rent * 0.05;
+                                                final feePercentage =
+                                                    getPlatformFeeForProjectPercentage(
+                                                      platformFeeController,
+                                                    );
+                                                final platformFee =
+                                                    rent *
+                                                    (feePercentage / 100);
+
                                                 final brokerCommission =
                                                     platformFee * 0.02;
 
@@ -1205,14 +1216,14 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                           >(tag: tag)) {
                                             return;
                                           }
-                                          controller.syncVariantMediaFromController(
-                                            configurationIndex: ci,
-                                            variantIndex: vi,
-                                            mediaController:
-                                                Get.find<VariantMediaController>(
-                                                  tag: tag,
-                                                ),
-                                          );
+                                          controller
+                                              .syncVariantMediaFromController(
+                                                configurationIndex: ci,
+                                                variantIndex: vi,
+                                                mediaController: Get.find<
+                                                  VariantMediaController
+                                                >(tag: tag),
+                                              );
                                         },
                                       ),
                                     ],
@@ -2135,3 +2146,14 @@ class StepConfigurations extends GetView<ProjectWizardController> {
 //     );
 //   }
 // }
+double getPlatformFeeForProjectPercentage(PlatformFeeController platformFeeController) {
+  try {
+    final fee = platformFeeController.items.firstWhere(
+      (e) => e.category == 'project' && e.isActive == true,
+    );
+
+    return double.tryParse(fee.percentage ?? '0') ?? 0;
+  } catch (_) {
+    return 0;
+  }
+}

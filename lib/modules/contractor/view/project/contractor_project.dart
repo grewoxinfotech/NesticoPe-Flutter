@@ -122,15 +122,37 @@ class _ContractorProjectScreenState extends State<ContractorProjectScreen> {
                 if (controller.items.isEmpty) {
                   return RefreshIndicator(
                     onRefresh: controller.refreshProject,
-                    child: SizedBox(
-                      height: double.infinity,
-                      width: double.infinity,
-                      child: Center(
-                        child: Text(
-                          "No project found.",
-                          style: TextStyle(
-                            color: ColorRes.textSecondary,
-                            fontSize: AppFontSizes.body,
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.7,
+                        width: double.infinity,
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "No project found.",
+                                style: TextStyle(
+                                  color: ColorRes.textSecondary,
+                                  fontSize: AppFontSizes.body,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              ElevatedButton(
+                                onPressed: controller.refreshProject,
+                                // icon: const Icon(Icons.refresh, size: 16),
+                                child: const Text('Refresh'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: ColorRes.primary,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 12),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
