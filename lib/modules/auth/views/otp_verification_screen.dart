@@ -350,7 +350,6 @@
 //   }
 // }
 
-
 //===================================================================OLD CODE=============
 
 // import 'dart:async';
@@ -555,9 +554,6 @@
 
 //     await authController.verifyOtp(_otpController.text, token);
 
-
-
-
 //     NesticoPeSnackBar.showAwesomeSnackbar(
 //       title: 'Success',
 //       message: 'Account verified successfully!',
@@ -732,9 +728,6 @@
 //   }
 // }
 
-
-
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -761,7 +754,7 @@ class OtpVerificationScreen extends StatefulWidget {
   final VerifyOTPFor verifyOTPFor;
   final Widget? redirectAfterOtp;
   final Map<String, dynamic>? data;
-  
+
   const OtpVerificationScreen({
     Key? key,
     required this.phone,
@@ -784,8 +777,10 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   int _resendTimeout = 60;
   Timer? _resendTimer;
   String? _token;
-  final List<TextEditingController> _otpControllers =
-      List.generate(4, (_) => TextEditingController());
+  final List<TextEditingController> _otpControllers = List.generate(
+    4,
+    (_) => TextEditingController(),
+  );
   final List<FocusNode> _otpFocusNodes = List.generate(4, (_) => FocusNode());
 
   String get _otpValue => _otpControllers.map((c) => c.text).join();
@@ -834,7 +829,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           break;
 
         case VerifyOTPFor.registration:
-          await _handleRegistrationFlow(tokenToUse,);
+          await _handleRegistrationFlow(tokenToUse);
           break;
       }
     } catch (e) {
@@ -917,14 +912,10 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   }
 
   /// ✅ Normal Registration Flow
-  Future<void> _handleRegistrationFlow(
-    String token) async {
+  Future<void> _handleRegistrationFlow(String token) async {
     final authController = Get.find<AuthController>();
 
     await authController.verifyOtp(_otpValue, token);
-
-
-
 
     NesticoPeSnackBar.showAwesomeSnackbar(
       title: 'Success',
@@ -1000,21 +991,21 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
-            elevation: 0,
+          elevation: 0,
 
-        leading: GestureDetector(
-          onTap: () => Navigator.of(context).pop(),
-          child: Icon(Icons.arrow_back, color: ColorRes.primary),
-        ),
-        // centerTitle: true,
-        titleSpacing: 0,
-        title: Image.asset(
-          'assets/images/Nestico-Pe_Logo-svg.png',
-          height: 48,
-          width: 150,
-          alignment: Alignment.centerLeft,
-          fit: BoxFit.cover,
-        ),
+          leading: GestureDetector(
+            onTap: () => Navigator.of(context).pop(),
+            child: Icon(Icons.arrow_back, color: ColorRes.primary),
+          ),
+          // centerTitle: true,
+          titleSpacing: 0,
+          title: Image.asset(
+            'assets/images/Nestico-Pe_Logo-svg.png',
+            height: 48,
+            width: 150,
+            alignment: Alignment.centerLeft,
+            fit: BoxFit.cover,
+          ),
           // actions: [
           //   IconButton(
           //     icon: const Icon(Icons.more_vert, color: ColorRes.primary, size: 20),
@@ -1026,15 +1017,16 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           // centerTitle: true,
         ),
         body: Container(
-            decoration: const BoxDecoration(
-          color: ColorRes.white, // dark navy background
-          image: DecorationImage(
-            image: AssetImage('assets/images/apartment1.png'),
-            fit: BoxFit.cover,
-            repeat: ImageRepeat.repeat,
-            opacity: 0.08,
+          height: double.infinity,
+          decoration: const BoxDecoration(
+            color: ColorRes.white, // dark navy background
+            image: DecorationImage(
+              image: AssetImage('assets/images/apartment1.png'),
+              fit: BoxFit.cover,
+              // repeat: ImageRepeat.repeat,
+              opacity: 0.08,
+            ),
           ),
-        ),
           child: SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -1043,7 +1035,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const SizedBox(height: 24),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.12),
                     Center(
                       child: Container(
                         width: 72,
@@ -1065,9 +1057,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                         'Verify OTP',
                         style: TextStyle(
                           fontSize: 24,
-                fontWeight: FontWeight.w800,
-                color: ColorRes.textPrimary,
-                letterSpacing: -0.3,
+                          fontWeight: FontWeight.w800,
+                          color: ColorRes.textPrimary,
+                          letterSpacing: -0.3,
                         ),
                       ),
                     ),
@@ -1121,9 +1113,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                             "DIDN'T RECEIVE THE CODE?  ",
                             style: TextStyle(
                               fontSize: 11,
-                             color: Colors.grey.shade700,
-                    letterSpacing: 0.5,
-                    fontWeight: FontWeight.w600,
+                              color: Colors.grey.shade700,
+                              letterSpacing: 0.5,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                           GestureDetector(
@@ -1155,7 +1147,10 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                     ),
                     const SizedBox(height: 20),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.grey.shade100,
                         borderRadius: BorderRadius.circular(14),
@@ -1185,7 +1180,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                                   style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w700,
-                                  color: ColorRes.textPrimary,
+                                    color: ColorRes.textPrimary,
                                   ),
                                 ),
                                 const SizedBox(height: 3),
@@ -1195,7 +1190,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                                     fontSize: 11,
                                     color: Colors.grey.shade600,
                                     height: 1.4,
-                                       fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ],
@@ -1219,13 +1214,13 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                     //     ),
                     //   ),
                     // ),
-                     SizedBox(height: 10),
+                    SizedBox(height: 10),
                     _altButton(
                       icon: Icons.phone,
                       label: 'Change Phone Number',
                       onTap: () => Navigator.of(context).pop(),
                     ),
-                    
+
                     const SizedBox(height: 16),
                   ],
                 ),
@@ -1236,7 +1231,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       ),
     );
   }
- Widget _altButton({
+
+  Widget _altButton({
     required IconData icon,
     required String label,
     required VoidCallback onTap,
@@ -1276,6 +1272,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       ),
     );
   }
+
   String _maskedPhone() {
     final s = widget.phone;
     if (s.isEmpty) return '+(91)••• ••• ••XX';
@@ -1301,9 +1298,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         width: 46,
         child: Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-                  surface: const Color(0xFFE0E3E5),
-                ),
+            colorScheme: Theme.of(
+              context,
+            ).colorScheme.copyWith(surface: const Color(0xFFE0E3E5)),
           ),
           child: NesticoPeTextField(
             controller: _otpControllers[index],

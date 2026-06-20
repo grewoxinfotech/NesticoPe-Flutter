@@ -1926,7 +1926,9 @@ class _InsightsScreenState extends State<InsightsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const SizedBox(height: 60), // space for the image
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.12,
+                    ), // space for the image
 
                     Text(
                       'Choose your role\nto continue',
@@ -2133,7 +2135,6 @@ class _InsightsScreenState extends State<InsightsScreen> {
                               );
                             }, // Unlock Owner Plans
 
-                
                             onFinalCta: () async {
                               if (UserHelper.isGuest) {
                                 Navigator.of(context).pop();
@@ -2758,7 +2759,6 @@ class _InsightsScreenState extends State<InsightsScreen> {
                               if (UserHelper.isGuest) {
                                 Navigator.of(context).pop();
                                 await Get.to(
-
                                   () =>
                                       RegisterScreen(role: UserRole.contractor),
                                 );
@@ -2807,7 +2807,8 @@ class _InsightsScreenState extends State<InsightsScreen> {
                               final data =
                                   await SecureStorage.hasSubscriptionInquiryForUser(
                                     Roles.contractor.name,
-                                    userId:(await SecureStorage.getClientId()) ??
+                                    userId:
+                                        (await SecureStorage.getClientId()) ??
                                         '',
                                     role: Roles.contractor.name,
                                   );

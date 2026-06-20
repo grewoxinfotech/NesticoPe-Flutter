@@ -262,14 +262,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           icon: const Icon(Icons.arrow_back, color: ColorRes.primary),
           onPressed: () => Get.back(),
         ),
-        title: const Text(
-             'NesticoPe',
-          style: TextStyle(
-        
-            fontWeight: FontWeight.w700,
-            color: ColorRes.primary,
+         titleSpacing: 0,
+          title: Image.asset(
+            'assets/images/Nestico-Pe_Logo-svg.png',
+            height: 48,
+            width: 150,
+            alignment: Alignment.centerLeft,
+            fit: BoxFit.cover,
           ),
-        ),
       ),
 
       // Bottom nav bar
@@ -296,12 +296,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       // ),
 
       body: Container(
+        height: double.infinity,
         decoration: const BoxDecoration(
           color: ColorRes.white, // dark navy background
           image: DecorationImage(
             image: AssetImage('assets/images/apartment1.png'),
             fit: BoxFit.cover,
-            repeat: ImageRepeat.repeat,
+            // repeat: ImageRepeat.repeat,
             opacity: 0.08,
           ),
         ),
@@ -316,7 +317,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   // mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Left-aligned title
+        // Left-aligned title
                     Center(
                       child: Container(
                         width: 72,

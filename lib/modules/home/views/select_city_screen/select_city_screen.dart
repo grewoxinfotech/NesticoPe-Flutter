@@ -1478,6 +1478,7 @@ class _SelectCityScreenState extends State<SelectCityScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        
                         Obx(() {
                           final cities = popularController.allTrendingCities;
                           if (cities.isEmpty) {
@@ -1609,6 +1610,9 @@ class _HeroBanner extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // "PREMIUM CURATOR" badge
+                SizedBox(
+  height: MediaQuery.of(context).size.height * 0.06,
+),
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,

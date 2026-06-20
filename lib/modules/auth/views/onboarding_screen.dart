@@ -577,6 +577,7 @@ class OnboardingController extends GetxController {
                       children: [
                         
                         /// Drag Handle
+                    
                         ///
                         Stack(
                           alignment: Alignment.center,
@@ -1612,7 +1613,9 @@ class OnboardingScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 100), // space for the image
+                  SizedBox(
+  height: MediaQuery.of(context).size.height * 0.20,
+),
                   // Heading
                   const Text(
                     'What are you\nlooking for?',

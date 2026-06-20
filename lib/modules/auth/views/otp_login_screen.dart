@@ -614,6 +614,7 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // House image
+                
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   // mainAxisAlignment: MainAxisAlignment.center,
@@ -635,7 +636,7 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
                     const SizedBox(height: 20),
 
                     // Welcome heading
-                    const Text(
+                    const Text( 
                       'Welcome Back.',
                       style: TextStyle(
                         fontSize: 24,

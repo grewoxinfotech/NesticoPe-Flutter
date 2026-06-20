@@ -600,7 +600,7 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        
+
         leading: GestureDetector(
           onTap: () => Navigator.of(context).pop(),
           child: Icon(Icons.arrow_back, color: ColorRes.primary),
@@ -617,15 +617,16 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       // appBar: CommonNesticoPeAppBar(title: "Login", showBackArrow: true),
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: const BoxDecoration(
           color: ColorRes.white, // dark navy background
           image: DecorationImage(
-            image: AssetImage('assets/images/apartment1.png'),
+            
+            image: AssetImage('assets/images/apartment1.png',),
             fit: BoxFit.cover,
 
-          
-
-            repeat: ImageRepeat.repeat,
+            // repeat: ImageRepeat.repeat,
             opacity: 0.08,
           ),
         ),
@@ -636,8 +637,12 @@ class _LoginScreenState extends State<LoginScreen> {
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
+                
+                
                 children: [
-                  const SizedBox(height: 20),
+                SizedBox(
+  height: MediaQuery.of(context).size.height * 0.12,
+),
 
                   // ── App Icon ────────────────────────────────────────────
                   Center(
@@ -871,7 +876,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   //     // Navigate to mobile number login
                   //   },
                   // ),
-
                   const SizedBox(height: 28),
 
                   // ── Sign Up Link ────────────────────────────────────────

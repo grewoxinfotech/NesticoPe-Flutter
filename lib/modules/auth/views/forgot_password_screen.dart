@@ -256,14 +256,13 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         // centerTitle: true,
-        title: const Text(
-          'NesticoPe',
-          style: TextStyle(
-            // fontSize: 17,
-            fontWeight: FontWeight.w700,
-            color: ColorRes.primary,
+         title: Image.asset(
+            'assets/images/Nestico-Pe_Logo-svg.png',
+            height: 48,
+            width: 150,
+            alignment: Alignment.centerLeft,
+            fit: BoxFit.cover,
           ),
-        ),
       ),
       body: Container(
          decoration: const BoxDecoration(
@@ -283,6 +282,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  
                   // Restore icon in rounded square
                   Center(
                     child: Container(
