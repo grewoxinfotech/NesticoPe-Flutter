@@ -5,6 +5,7 @@ import '../../constants/enum.dart';
 import '../../utils/formater/formater.dart';
 
 class PropertyPriceManager {
+  
   final String listingType; // "rent" or "sale" or "PG"
   final FinancialInfo? financialInfo;
   final PgInfo? pgInfo; // Added for PG properties

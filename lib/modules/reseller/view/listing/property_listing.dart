@@ -1660,6 +1660,7 @@ class ProductCard extends StatelessWidget {
     final priceManager = PropertyPriceManager(
       listingType: product.listingType ?? 'sale',
       financialInfo: product.propertyDetails?.financialInfo,
+      pgInfo: product.propertyDetails?.pgInfo
     );
 
     return Material(

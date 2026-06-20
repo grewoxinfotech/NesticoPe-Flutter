@@ -135,6 +135,8 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
           ? leadProperty.value?.propertyType ?? ''
           : widget.property!.propertyType ?? '';
 
+
+
   String get listingType =>
       widget.isFromLead
           ? leadProperty.value?.listingType ?? ''
@@ -164,6 +166,11 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
       widget.isFromLead
           ? leadProperty.value?.propertyDetails
           : widget.property!.propertyDetails;
+
+    PgInfo ? get pgInfo=>widget.isFromLead
+          ? leadProperty.value?.propertyDetails!.pgInfo??PgInfo.fromJson({})
+          : widget.property!.propertyDetails!.pgInfo  ?? PgInfo.fromJson({});
+  
 
   Items get property =>
       widget.isFromLead
@@ -2485,6 +2492,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
     final priceManager = PropertyPriceManager(
       listingType: propertyType,
       financialInfo: financialInfo,
+      pgInfo:pgInfo
     );
 
     return Padding(

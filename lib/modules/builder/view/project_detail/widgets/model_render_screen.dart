@@ -55,7 +55,7 @@ class _ModelRenderScreenState extends State<ModelRenderScreen> {
         widget.modelUrl,
         'property_model.glb',
       );
-
+      print("Check The 3D model ${widget.modelUrl}");
       String? usdz;
       if (Platform.isIOS) {
         usdz = await ModelCacheService.downloadAndCache(

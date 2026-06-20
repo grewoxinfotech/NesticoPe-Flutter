@@ -36,16 +36,21 @@ class TruecallerResponse {
 
 class TruecallerService {
   StreamSubscription? _streamSubscription;
-    final currentUser = Rxn<UserModel>();
-final authState = AuthState.initial.obs;
+  final currentUser = Rxn<UserModel>();
+  final authState = AuthState.initial.obs;
+
   /// Initializes the Truecaller SDK
   Future<void> initialize() async {
     try {
       await ApiConfig.ensureTruecallerClientId();
       if (ApiConfig.truecallerClientId.isNotEmpty) {
-        print("🔑 Truecaller ClientId (from server): ${ApiConfig.truecallerClientId}");
+        print(
+          "🔑 Truecaller ClientId (from server): ${ApiConfig.truecallerClientId}",
+        );
       } else {
-        print("ℹ️ Truecaller ClientId not found in ThirdPartySettings; using manifest value");
+        print(
+          "ℹ️ Truecaller ClientId not found in ThirdPartySettings; using manifest value",
+        );
       }
       await TcSdk.initializeSDK(
         sdkOption: TcSdkOptions.OPTION_VERIFY_ONLY_TC_USERS,
@@ -82,13 +87,17 @@ final authState = AuthState.initial.obs;
       return null;
     }
 
-    final Completer<TruecallerResponse?> completer = Completer<TruecallerResponse?>();
+    final Completer<TruecallerResponse?> completer =
+        Completer<TruecallerResponse?>();
 
     String? savedCodeVerifier;
     String? savedCodeChallenge;
 
     _streamSubscription = TcSdk.streamCallbackData.listen((callback) {
       print("📲 Truecaller callback result: ${callback.result}");
+      print("CALLBACK RECEIVED");
+      print("RESULT = ${callback.result}");
+      print("ERROR = ${callback.error}");
       switch (callback.result) {
         case TcSdkCallbackResult.success:
           final data = callback.tcOAuthData;
@@ -107,22 +116,24 @@ final authState = AuthState.initial.obs;
             message: 'Authorization received successfully',
             contentType: ContentType.success,
           );
-          completer.complete(TruecallerResponse(
-            authorizationCode: data?.authorizationCode,
-            state: data?.state,
-            codeVerifier: savedCodeVerifier,
-            codeChallenge: savedCodeChallenge,
-            firstName: profile?.firstName,
-            lastName: profile?.lastName,
-            phoneNumber: profile?.phoneNumber,
-          ));
+          completer.complete(
+            TruecallerResponse(
+              authorizationCode: data?.authorizationCode,
+              state: data?.state,
+              codeVerifier: savedCodeVerifier,
+              codeChallenge: savedCodeChallenge,
+              firstName: profile?.firstName,
+              lastName: profile?.lastName,
+              phoneNumber: profile?.phoneNumber,
+            ),
+          );
           break;
         case TcSdkCallbackResult.failure:
           print(
             "❌ Truecaller Login Failed: code=${callback.error} "
             "message=${callback.error?.message}",
           );
-           NesticoPeSnackBar.showAwesomeSnackbar(
+          NesticoPeSnackBar.showAwesomeSnackbar(
             title: 'Login Failed',
             message: '${callback.error?.message ?? 'Truecaller login failed'}',
             contentType: ContentType.failure,
@@ -152,18 +163,22 @@ final authState = AuthState.initial.obs;
       final codeChallenge = await TcSdk.generateCodeChallenge(codeVerifier);
       savedCodeVerifier = codeVerifier;
       savedCodeChallenge = codeChallenge;
-      
+
       if (codeChallenge != null) {
         TcSdk.setCodeChallenge(codeChallenge);
-        print("🔐 Truecaller OAuth prepared:\n"
-            "  • state: random_state\n"
-            "  • scopes: [profile, phone, openid]\n"
-            "  • codeChallenge: $codeChallenge");
+        print(
+          "🔐 Truecaller OAuth prepared:\n"
+          "  • state: random_state\n"
+          "  • scopes: [profile, phone, openid]\n"
+          "  • codeChallenge: $codeChallenge",
+        );
 
-            log("🔐 Truecaller OAuth prepared:\n"
-            "  • state: random_state\n"
-            "  • scopes: [profile, phone, openid]\n"
-            "  • codeVerifier: $codeVerifier");
+        log(
+          "🔐 Truecaller OAuth prepared:\n"
+          "  • state: random_state\n"
+          "  • scopes: [profile, phone, openid]\n"
+          "  • codeVerifier: $codeVerifier",
+        );
 
         TcSdk.getAuthorizationCode;
       } else {
@@ -214,7 +229,7 @@ final authState = AuthState.initial.obs;
     }
     final authorizationCode = result.authorizationCode;
     final codeVerifier = result.codeVerifier;
-   
+
     if (authorizationCode == null || authorizationCode.isEmpty) {
       print("Missing authorizationCode; cannot proceed with backend exchange.");
       NesticoPeSnackBar.showAwesomeSnackbar(
@@ -236,7 +251,6 @@ final authState = AuthState.initial.obs;
     final payload = {
       'authorizationCode': authorizationCode,
       'codeVerifier': codeVerifier,
-   
     };
     print("Posting Truecaller OAuth payload to backend: $payload");
     final user = await AuthService().loginWithTrueCaller(payload);
@@ -252,13 +266,13 @@ final authState = AuthState.initial.obs;
       );
 
       // 3️⃣ Set user role/type
-    if (user.user != null) {
-      await UserHelper.setUserType(
-        user.user?.userType,
-        sellerType: user.user?.sellerType,
-        isAadharVerified: user.user?.isAadharVerified,
-      );
-    }
+      if (user.user != null) {
+        await UserHelper.setUserType(
+          user.user?.userType,
+          sellerType: user.user?.sellerType,
+          isAadharVerified: user.user?.isAadharVerified,
+        );
+      }
 
       currentUser.value = user;
       authState.value = AuthState.authenticated;

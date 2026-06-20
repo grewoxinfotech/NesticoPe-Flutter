@@ -623,6 +623,8 @@ class _LoginScreenState extends State<LoginScreen> {
             image: AssetImage('assets/images/apartment1.png'),
             fit: BoxFit.cover,
 
+          
+
             repeat: ImageRepeat.repeat,
             opacity: 0.08,
           ),
