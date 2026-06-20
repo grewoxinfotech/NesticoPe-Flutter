@@ -1180,6 +1180,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
           final bool rec = plan.isRecommended == true;
           final normalizedStatus =
               (planStatusByPlanId[plan.id] ?? '').trim().toLowerCase();
+              
           final isActivePlan = normalizedStatus == 'active';
           final isExpiredPlan = normalizedStatus == 'expired';
           final showLoader = isProcessing && !isActivePlan;

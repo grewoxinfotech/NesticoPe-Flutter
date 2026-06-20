@@ -17,7 +17,6 @@ import '../controller/contractor_dashboard_controller.dart';
 import 'dashboard/contractor_dashboard.dart';
 
 class ContractorMainScreen extends StatefulWidget {
-
   const ContractorMainScreen({Key? key}) : super(key: key);
 
   @override
@@ -25,14 +24,11 @@ class ContractorMainScreen extends StatefulWidget {
 }
 
 class _ContractorMainScreenState extends State<ContractorMainScreen> {
-
-  
-   final navigationController =
-      Get.put(ContractorNavigationController());
+  final navigationController = Get.put(ContractorNavigationController());
   final dashboardController = Get.put(ContractorDashboardController());
 
   late final BuyerProfileDataController profile;
-   late final List<Widget> screens;
+  late final List<Widget> screens;
 
   @override
   void initState() {
@@ -47,16 +43,17 @@ class _ContractorMainScreenState extends State<ContractorMainScreen> {
     }
     screens = [
       ContractorDashboard(),
-      ContractorProjectScreen(),
-      ContractorLeadScreen(),
+
       ContractorInquiryScreen(),
+      ContractorLeadScreen(),
+      ContractorProjectScreen(),
+
       ContractorProfileScreen(),
     ];
   }
+
   @override
   // Widget build(BuildContext context) {
-   
-
   //   double iconSize = 18;
   //   return Scaffold(
   //     body: Obx(
@@ -65,7 +62,6 @@ class _ContractorMainScreenState extends State<ContractorMainScreen> {
   //         children: screens,
   //       ),
   //     ),
-
   //     bottomNavigationBar: Obx(() {
   //       final TextStyle style = TextStyle(
   //         fontSize: AppFontSizes.small,
@@ -166,7 +162,7 @@ class _ContractorMainScreenState extends State<ContractorMainScreen> {
   //     }),
   //   );
   // }
-   Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     return Obx(() {
       final index = navigationController.currentIndex.value;
 
@@ -178,10 +174,7 @@ class _ContractorMainScreenState extends State<ContractorMainScreen> {
           }
         },
         child: Scaffold(
-          body: IndexedStack(
-            index: index,
-            children: screens,
-          ),
+          body: IndexedStack(index: index, children: screens),
 
           /// ✅ Bottom Navigation (same UI as seller)
           bottomNavigationBar: SafeArea(
@@ -205,31 +198,28 @@ class _ContractorMainScreenState extends State<ContractorMainScreen> {
                     bottom: AppMargin.small,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(AppRadius.large),
+                    borderRadius: BorderRadius.circular(AppRadius.large),
                   ),
                   child: Container(
                     height: kToolbarHeight,
                     alignment: Alignment.center,
                     child: SalomonBottomBar(
                       duration: const Duration(milliseconds: 200),
-                      margin:
-                          const EdgeInsets.all(AppPadding.small),
-                      itemPadding:
-                          const EdgeInsets.symmetric(
+                      margin: const EdgeInsets.all(AppPadding.small),
+                      itemPadding: const EdgeInsets.symmetric(
                         horizontal: 14,
                         vertical: 8,
                       ),
                       itemShape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(AppRadius.large),
+                        borderRadius: BorderRadius.circular(AppRadius.large),
                       ),
                       currentIndex: index,
                       onTap: (tabIndex) async {
                         final bool restrictedTab =
                             tabIndex != 0 && tabIndex != 4;
                         final bool hasActivePlan =
-                            dashboardController.activeSubscription.value != null;
+                            dashboardController.activeSubscription.value !=
+                            null;
 
                         if (restrictedTab && !hasActivePlan) {
                           await dashboardController.showUpgradePlanDialog(
@@ -242,9 +232,8 @@ class _ContractorMainScreenState extends State<ContractorMainScreen> {
 
                         navigationController.changeTabIndex(tabIndex);
                       },
-                      unselectedItemColor:
-                          Get.theme.colorScheme.onSurface
-                              .withOpacity(0.6),
+                      unselectedItemColor: Get.theme.colorScheme.onSurface
+                          .withOpacity(0.6),
 
                       items: [
                         /// ✅ Dashboard
@@ -257,22 +246,6 @@ class _ContractorMainScreenState extends State<ContractorMainScreen> {
                         ),
 
                         /// ✅ Project
-                        SalomonBottomBarItem(
-                          icon: Icon(
-                            Icons.location_city_outlined,
-                            size: iconSize * 1.2,
-                          ),
-                          title: Text("Project", style: style),
-                        ),
-
-                        /// ✅ Leads
-                        SalomonBottomBarItem(
-                          icon: Icon(
-                            Icons.groups_outlined,
-                            size: iconSize * 1.2,
-                          ),
-                          title: Text("Leads", style: style),
-                        ),
 
                         /// ✅ Inquiry
                         SalomonBottomBarItem(
@@ -283,13 +256,27 @@ class _ContractorMainScreenState extends State<ContractorMainScreen> {
                           title: Text("Inquiry", style: style),
                         ),
 
+                        /// ✅ Leads
+                        SalomonBottomBarItem(
+                          icon: Icon(
+                            Icons.groups_outlined,
+                            size: iconSize * 1.2,
+                          ),
+                          title: Text("Leads", style: style),
+                        ),
+                        SalomonBottomBarItem(
+                          icon: Icon(
+                            Icons.location_city_outlined,
+                            size: iconSize * 1.2,
+                          ),
+                          title: Text("Project", style: style),
+                        ),
+
                         /// ✅ Profile
                         SalomonBottomBarItem(
                           icon: Obx(() {
                             final selected =
-                                navigationController
-                                        .currentIndex.value ==
-                                    4;
+                                navigationController.currentIndex.value == 4;
 
                             return Container(
                               height: 26,
@@ -297,19 +284,16 @@ class _ContractorMainScreenState extends State<ContractorMainScreen> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: selected
-                                      ? Get.theme.colorScheme
-                                          .primary
-                                      : Colors.grey.shade400,
-                                  width:
-                                      selected ? 1.5 : 1,
+                                  color:
+                                      selected
+                                          ? Get.theme.colorScheme.primary
+                                          : Colors.grey.shade400,
+                                  width: selected ? 1.5 : 1,
                                 ),
                               ),
                               child: CircleAvatar(
                                 radius: 14,
-                                backgroundColor:
-                                    Get.theme.colorScheme
-                                        .primary,
+                                backgroundColor: Get.theme.colorScheme.primary,
                                 child: const Icon(
                                   Icons.person,
                                   color: Colors.white,
