@@ -236,7 +236,9 @@ class ContractorDashboardController extends GetxController {
         content: Text(message,style: TextStyle(fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium),),
         actions: [
           TextButton(
-            onPressed: () => Get.back(),
+            onPressed: (){
+              
+            },
             child: const Text('Later'),
           ),
           ElevatedButton(

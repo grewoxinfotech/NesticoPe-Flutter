@@ -1171,6 +1171,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
   // Select Button - UPDATED WITH RAZORPAY INTEGRATION
   // ------------------------------------------------------
   Widget _buildSelectButton(SubscriptionPlan plan) {
+    debugPrint("Check plan data ${planStatusByPlanId}");
     return Padding(
       padding: const EdgeInsets.all(16),
       child: SizedBox(
@@ -1178,9 +1179,10 @@ class SubscriptionPlansWidget extends StatelessWidget {
         child: Obx(() {
           final isProcessing = controller.isProcessingPayment.value;
           final bool rec = plan.isRecommended == true;
+
           final normalizedStatus =
               (planStatusByPlanId[plan.id] ?? '').trim().toLowerCase();
-              
+
           final isActivePlan = normalizedStatus == 'active';
           final isExpiredPlan = normalizedStatus == 'expired';
           final showLoader = isProcessing && !isActivePlan;

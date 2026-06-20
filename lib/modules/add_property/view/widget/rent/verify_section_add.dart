@@ -940,12 +940,12 @@ class ReviewPropertyScreen extends StatelessWidget {
           // Pricing Details
           _buildSectionTitle('Pricing Details'),
           const SizedBox(height: 10),
-            _buildDetailRow(
-              'PlatForm Fees',
-              Formatter.formatPrice(
-                int.tryParse(controller.platformFees.text) ?? 0,
-              ),
+          _buildDetailRow(
+            'PlatForm Fees',
+            Formatter.formatPrice(
+              int.tryParse(controller.platformFees.text) ?? 0,
             ),
+          ),
           if (controller.lookingTo.value == 'Rent') ...[
             _buildDetailRow(
               'Monthly Rent',
@@ -1060,7 +1060,8 @@ class ReviewPropertyScreen extends StatelessWidget {
               'Available From',
               controller.rent_AvailableFrom.text,
             ),
-          if (controller.ageOfPropertyController.text.isNotEmpty)
+          if (controller.ageOfPropertyController.text.isNotEmpty &&
+              controller.ageOfPropertyController.text != 'null')
             _buildDetailRow(
               'Age of Property',
               '${controller.ageOfPropertyController.text} years',

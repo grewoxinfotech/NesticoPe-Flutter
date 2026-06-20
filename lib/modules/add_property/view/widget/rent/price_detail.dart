@@ -40,6 +40,7 @@ class RentPriceDetail extends StatelessWidget {
                 Icons.currency_rupee_outlined,
                 controller.rent_MonthilyRent,
                 isPhoneKey: true,
+
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter monthly rent';
@@ -50,6 +51,8 @@ class RentPriceDetail extends StatelessWidget {
                   if (rent > 0) {
                     // Calculate 5% of rent as Platform Fees
 
+                    print("Check anud swdsjdns ${rent}");
+
                     final feePercentage = getPlatformFeePercentage(
                       platformFeeController,
                     );
@@ -57,6 +60,9 @@ class RentPriceDetail extends StatelessWidget {
                     controller.platformFees.text = platformFee.toStringAsFixed(
                       1,
                     );
+
+                    print("Check anud swdsjdnscfsscs ${platformFee}");
+
                     // C0alculate  of platform fees as Broker Commission
 
                     final brokerCommission = platformFee * 0.02;
@@ -72,7 +78,9 @@ class RentPriceDetail extends StatelessWidget {
               ),
 
               const SizedBox(height: 16),
-              const Text("Platform Fees (5%)"),
+              Text(
+                "Platform Fees ${getPlatformFeePercentage(platformFeeController)}",
+              ),
               const SizedBox(height: 8),
               buildTextField(
                 "Platform Fees",
@@ -1386,7 +1394,7 @@ class RentPriceDetail extends StatelessWidget {
                   isPhoneKey: true,
                 ),
                 const SizedBox(height: 16),
-                const Text("Platform Fees (5%)"),
+                const Text("Platform Fees "),
                 const SizedBox(height: 8),
                 buildTextField(
                   "Platform Fees",
@@ -1670,6 +1678,10 @@ double getPlatformFeePercentage(PlatformFeeController platformFeeController) {
   try {
     final fee = platformFeeController.items.firstWhere(
       (e) => e.category == 'client_property' && e.isActive == true,
+    );
+
+    print(
+      "Check ksdjfcsaidc dsvcsd${platformFeeController.items.firstWhere((e) => e.category == 'client_property' && e.isActive == true)} ",
     );
 
     return double.tryParse(fee.percentage ?? '0') ?? 0;

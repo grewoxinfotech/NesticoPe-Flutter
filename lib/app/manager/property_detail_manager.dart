@@ -481,7 +481,7 @@ class PropertyDetailManager {
                 .toString(),
       });
     }
-       if (pd.possessionInfo?.propertyAgeInYear != null) {
+       if (pd.possessionInfo?.propertyAgeInYear != null && pd.possessionInfo?.propertyAgeInYear != 'null') {
       details.add({
         "Age of Property":
             pd.possessionInfo!.propertyAgeInYear!

@@ -387,7 +387,7 @@ class PropertyHighlightManager {
         ),
       );
     }
-    if (pd.possessionInfo?.propertyAgeInYear != null) {
+    if (pd.possessionInfo?.propertyAgeInYear != null && pd.possessionInfo?.propertyAgeInYear!='null') {
       highlights.add(
         PropertyHighlightItem(
           title: "Age of Property",
