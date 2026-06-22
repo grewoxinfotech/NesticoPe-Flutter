@@ -300,7 +300,7 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
 
             // Title
             Text(
-              "Inquiry Already Submitted!",
+              "Enquiry Already Submitted!",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: AppFontSizes.large,

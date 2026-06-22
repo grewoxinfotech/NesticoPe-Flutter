@@ -36,6 +36,85 @@ class SecureStorage {
   static const String _keyPlatformServiceInquiry = 'platformServiceInquiry';
   static const String _keyGeneralInquiry = 'generalInquirySubmissions';
 
+
+  //===================================================================================
+  static const String _keySellerLeadCount = 'sellerLeadCount';
+static const String _keyResellerLeadCount = 'resellerLeadCount';
+static const String _keyContractorLeadCount = 'contractorLeadCount';
+static const String _keyBuilderLeadCount = 'builderLeadCount';
+
+
+static Future<void> saveSellerLeadCount(int count) async {
+  await _storage.write(
+    key: _keySellerLeadCount,
+    value: count.toString(),
+  );
+}
+
+static Future<void> saveResellerLeadCount(int count) async {
+  await _storage.write(
+    key: _keyResellerLeadCount,
+    value: count.toString(),
+  );
+}
+
+static Future<void> saveContractorLeadCount(int count) async {
+  await _storage.write(
+    key: _keyContractorLeadCount,
+    value: count.toString(),
+  );
+}
+
+static Future<void> saveBuilderLeadCount(int count) async {
+  await _storage.write(
+    key: _keyBuilderLeadCount,
+    value: count.toString(),
+  );
+}
+
+
+static Future<int> getSellerLeadCount() async {
+  final value = await _storage.read(key: _keySellerLeadCount);
+  return int.tryParse(value ?? '0') ?? 0;
+}
+
+static Future<int> getResellerLeadCount() async {
+  final value = await _storage.read(key: _keyResellerLeadCount);
+  return int.tryParse(value ?? '0') ?? 0;
+}
+
+static Future<int> getContractorLeadCount() async {
+  final value = await _storage.read(key: _keyContractorLeadCount);
+  return int.tryParse(value ?? '0') ?? 0;
+}
+
+static Future<int> getBuilderLeadCount() async {
+  final value = await _storage.read(key: _keyBuilderLeadCount);
+  return int.tryParse(value ?? '0') ?? 0;
+}
+
+
+static Future<bool> hasNewSellerLead(int currentLeadCount) async {
+  final storedCount = await getSellerLeadCount();
+  return currentLeadCount > storedCount;
+}
+
+static Future<bool> hasNewResellerLead(int currentLeadCount) async {
+  final storedCount = await getResellerLeadCount();
+  return currentLeadCount > storedCount;
+}
+
+static Future<bool> hasNewContractorLead(int currentLeadCount) async {
+  final storedCount = await getContractorLeadCount();
+  return currentLeadCount > storedCount;
+}
+
+static Future<bool> hasNewBuilderLead(int currentLeadCount) async {
+  final storedCount = await getBuilderLeadCount();
+  return currentLeadCount > storedCount;
+}
+//=======================================================================================
+
   static Future<void> savePlatformServiceInquiryData(String value) async {
     await _storage.write(key: _keyPlatformServiceInquiry, value: value);
   }
@@ -598,6 +677,12 @@ class SecureStorage {
     final isFirstTismeUser = await isFirstTimeUser();
     final platfromResellerfees = await getPlatformResellerFees();
 
+
+    final sellerLeadCount = await getSellerLeadCount();
+  final resellerLeadCount = await getResellerLeadCount();
+  final contractorLeadCount = await getContractorLeadCount();
+  final builderLeadCount = await getBuilderLeadCount();
+    
     // Debug: show current auth/storage state before wiping
     final tokenBefore = await getToken();
     final userBefore = await getUserData();
@@ -631,6 +716,11 @@ class SecureStorage {
     if (storedTicketId != null && storedTicketId.isNotEmpty) {
       await saveSupportTicketId(storedTicketId);
     }
+
+  await saveSellerLeadCount(sellerLeadCount);
+  await saveResellerLeadCount(resellerLeadCount);
+  await saveContractorLeadCount(contractorLeadCount);
+  await saveBuilderLeadCount(builderLeadCount);
 
     await _storage.write(key: _keyHasLaunched, value: 'true');
     if (loginSkipped) {

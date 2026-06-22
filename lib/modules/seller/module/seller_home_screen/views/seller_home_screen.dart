@@ -996,12 +996,13 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
 
   @override
   void initState() {
-
     super.initState();
-    setState(() {
-      
-    });
-    overviewController = Get.put(SellerOverviewController());
+    setState(() {});
+    if (Get.isRegistered<SellerOverviewController>()) {
+      overviewController = Get.find<SellerOverviewController>();
+    } else {
+      overviewController = Get.put(SellerOverviewController());
+    }
 
     // Initialize data and controllers
     _initDataAndControllers();
@@ -1140,7 +1141,6 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
               onRefresh: overviewController.refreshSellerDashboard,
               color: ColorRes.primary,
               child: SingleChildScrollView(
-                
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: SizedBox(
                   height: MediaQuery.of(context).size.height * 0.7,
@@ -1160,9 +1160,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                         ElevatedButton(
                           onPressed: () {
                             overviewController.getFetchSellerApi(
-
                               overviewController.selectedGraphYear.value,
-
                             );
                           },
                           child: const Text('Retry'),

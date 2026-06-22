@@ -121,6 +121,7 @@ import 'package:nesticope_app/modules/dashboard/views/dashboard_screen.dart';
 import 'package:nesticope_app/modules/dashboard/views/widget/seller_property_screen.dart';
 import 'package:nesticope_app/modules/profile/controllers/seller_profile_controller.dart';
 import 'package:nesticope_app/modules/profile/views/profile_screen.dart';
+import 'package:nesticope_app/modules/seller/controllers/seller_overview_controller.dart';
 import 'package:nesticope_app/modules/seller/module/seller_home_screen/views/property_overview_screen.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
@@ -150,6 +151,11 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
   final controller = Get.put(PropertyController());
   final navigationController = Get.put(NavigationController());
   final profileController = Get.put(SellerProfileController());
+
+  final sellerOverviewController = Get.put(
+    SellerOverviewController(),
+    permanent: true,
+  );
   late final List<Widget> screens;
 
   @override
@@ -252,10 +258,31 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
 
                         /// ✅ Leads
                         SalomonBottomBarItem(
-                          icon: Icon(
-                            Icons.groups_outlined,
-                            size: iconSize * 1.2,
-                          ),
+                          icon: Obx(() {
+                            return Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                Icon(
+                                  Icons.groups_outlined,
+                                  size: iconSize * 1.2,
+                                ),
+
+                                if (sellerOverviewController.showRedDot.value)
+                                  Positioned(
+                                    top: -2,
+                                    right: -2,
+                                    child: Container(
+                                      width: 10,
+                                      height: 10,
+                                      decoration: const BoxDecoration(
+                                        color: Colors.red,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            );
+                          }),
 
                           title: Text("Leads", style: style),
                         ),
@@ -271,10 +298,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
 
                         /// ✅ Plans
                         SalomonBottomBarItem(
-                          icon: Icon(
-                            Icons.credit_card,
-                            size: iconSize * 1.2,
-                          ),
+                          icon: Icon(Icons.credit_card, size: iconSize * 1.2),
                           title: Text("Plans", style: style),
                         ),
 

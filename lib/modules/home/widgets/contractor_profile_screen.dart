@@ -1357,7 +1357,7 @@ class _ContractorProfileDetailsScreenState
                                 },
                               ),
                             ),
-                            const SizedBox(height: 20),
+                             SizedBox(height: 20),
                           ],
                         );
                       }),
@@ -2951,6 +2951,7 @@ class _ContractorMiniCardState extends State<_ContractorMiniCard> {
                                 ),
                               ),
                             ),
+                            SizedBox(width: 8,),
                           if (widget.contractor.subscription.hasPremiumPlan)
                             Container(
                               padding: const EdgeInsets.symmetric(

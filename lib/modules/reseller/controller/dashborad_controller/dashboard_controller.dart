@@ -728,7 +728,7 @@ class DashboardController extends GetxController {
   RxString resellerListingType = "".obs;
   final RxString resellerSelectedState = ''.obs;
   final RxString resellerSelectedCity = ''.obs;
-
+  final hasUnreadLead = false.obs;
   RxString resellerPropertyType = "".obs;
   RxString resellerBHKType = "".obs;
   RxString resellerVerified = "".obs;
@@ -746,6 +746,8 @@ class DashboardController extends GetxController {
   RxString builderProjectStatus = "".obs;
   final txtBuilderProjectName = TextEditingController();
   final txtBuilderRERAID = TextEditingController();
+
+  RxBool showRedDot = false.obs;
 
   /////////////====================================================
 
@@ -1083,6 +1085,11 @@ class DashboardController extends GetxController {
     fetchCityWiseLeaderboardColor();
     fetchCityFromApi();
     resellerInsightsModel.value = ResellerInsightsModel.fromJson(data ?? {});
+    // final storedLeadCount = await SecureStorage.getSellerLeadCount();
+
+    final currentLeadCount =
+        resellerInsightsModel.value?.data.performance.totalLeads ?? 0;
+    showRedDot.value = await SecureStorage.hasNewResellerLead(currentLeadCount);
     if (kDebugMode) {
       debugPrint(
         "Reseller Dashboard: assigned=${resellerInsightsModel.value?.data.totalAssignedProperties ?? 0}, "

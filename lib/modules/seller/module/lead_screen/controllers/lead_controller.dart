@@ -623,14 +623,11 @@ class LeadController extends PaginatedController<LeadItem> {
 
   RxMap<String, String> filters = <String, String>{}.obs;
 
-
-
   @override
   void onInit() {
     super.onInit();
     if (UserHelper.isReseller) {
       fromReseller = true;
-
     }
 
     if (UserHelper.isSeller) {
@@ -684,6 +681,7 @@ class LeadController extends PaginatedController<LeadItem> {
     );
     await exportLeadsToExcel(items);
   }
+
   Future<void> exportProjectToPdf(List<LeadItem> item) async {
     AppLogger.structured(
       "Lead Data Export in excel form : ",
@@ -695,7 +693,6 @@ class LeadController extends PaginatedController<LeadItem> {
   Future<void> importFromPdf() async {
     await pickAndImportCsv();
   }
-
 
   Future<void> pickAndImportCsv() async {
     final result = await FilePicker.pickFiles(
@@ -780,11 +777,17 @@ class LeadController extends PaginatedController<LeadItem> {
         );
 
         // Fetch using the specific property service method
+
         response = await _service.getLeadsByProperty(
           page: page,
           propertyId: currentPropertyFilterId.value!,
           filters: filters.value,
         );
+        if (UserHelper.isSellerOwner) {
+          await SecureStorage.saveSellerLeadCount(response.items.length);
+        } else if (UserHelper.isSellerBuilder) {
+          await SecureStorage.saveBuilderLeadCount(response.items.length);
+        }
       }
       // 2. Fallback to Original Logic (Global Leads)
       else if (fromReseller) {

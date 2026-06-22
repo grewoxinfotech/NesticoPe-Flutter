@@ -2061,7 +2061,7 @@ class _ContractorComparisonTable extends StatelessWidget {
     return Column(
       children: [
         SizedBox(
-          height: 440,
+        height: MediaQuery.of(context).size.height * 0.65,
           child: PageView.builder(
             controller: pageController,
             itemCount: contractors.length,
@@ -2203,7 +2203,7 @@ class _ContractorServicesCard extends StatelessWidget {
 
           // Services List in Slider
           SizedBox(
-            height: 370,
+           height: MediaQuery.of(context).size.height * 0.55,
             child: ListView(
               padding: const EdgeInsets.all(0),
               children: [

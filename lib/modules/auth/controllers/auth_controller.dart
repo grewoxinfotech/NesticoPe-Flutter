@@ -927,7 +927,6 @@ class AuthController extends GetxController {
       isLoading.value = false;
     }
 
-    // Navigate last (fresh boot path avoids stale controllers doing work).
     Get.offAll(() => SplashScreen());
   }
 }

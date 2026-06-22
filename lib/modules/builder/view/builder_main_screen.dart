@@ -450,6 +450,9 @@ class BuilderMainScreen extends StatefulWidget {
 
 class _BuilderMainScreenState extends State<BuilderMainScreen> {
   final navigationController = Get.put(BuilderNavigationController());
+  SellerOverviewController sellerOverviewController = Get.put(
+    SellerOverviewController(),
+  );
 
   late final BuyerProfileDataController profile;
   late final List<Widget> screens;
@@ -461,9 +464,9 @@ class _BuilderMainScreenState extends State<BuilderMainScreen> {
     Get.put(ProjectWizardController(isBuilderView: true), tag: "builder");
     Get.lazyPut(() => PropertyController());
 
-    if (!Get.isRegistered<SellerOverviewController>()) {
-      Get.lazyPut(() => SellerOverviewController());
-    }
+    // if (!Get.isRegistered<SellerOverviewController>()) {
+    //   Get.Put(() => SellerOverviewController());
+    // }
     if (!Get.isRegistered<LeadController>()) {
       Get.lazyPut(() => LeadController());
     }
@@ -475,8 +478,9 @@ class _BuilderMainScreenState extends State<BuilderMainScreen> {
 
     screens = [
       const BuilderDashboard(),
-      const BuilderPropertyListing(),
+
       BuilderLeads(isViewAll: true),
+      const BuilderPropertyListing(),
       BuilderSubscriptionPlanScreen(),
       SellerProfileScreen(),
     ];
@@ -553,19 +557,42 @@ class _BuilderMainScreenState extends State<BuilderMainScreen> {
                           title: Text("Dashboard", style: style),
                         ),
                         SalomonBottomBarItem(
+                          icon: Obx(() {
+                            return Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                Icon(
+                                  Icons.groups_outlined,
+                                  size: iconSize * 1.2,
+                                ),
+
+                                if (sellerOverviewController.showRedDot.value)
+                                  Positioned(
+                                    top: -2,
+                                    right: -2,
+                                    child: Container(
+                                      width: 10,
+                                      height: 10,
+                                      decoration: const BoxDecoration(
+                                        color: Colors.red,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            );
+                          }),
+
+                          title: Text("Leads", style: style),
+                        ),
+                        SalomonBottomBarItem(
                           icon: Icon(
                             Icons.location_city_outlined,
                             size: iconSize * 1.2,
                           ),
                           title: Text("Projects", style: style),
                         ),
-                        SalomonBottomBarItem(
-                          icon: Icon(
-                            Icons.groups_outlined,
-                            size: iconSize * 1.2,
-                          ),
-                          title: Text("Leads", style: style),
-                        ),
+
                         SalomonBottomBarItem(
                           icon: Icon(Icons.credit_card, size: iconSize * 1.2),
                           title: Text("Plans", style: style),

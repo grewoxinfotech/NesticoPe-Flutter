@@ -79,7 +79,7 @@ class RentPriceDetail extends StatelessWidget {
 
               const SizedBox(height: 16),
               Text(
-                "Platform Fees ${getPlatformFeePercentage(platformFeeController)}",
+                "Platform Fees (${getPlatformFeePercentage(platformFeeController).toStringAsFixed(0)}%)",
               ),
               const SizedBox(height: 8),
               buildTextField(
@@ -293,7 +293,9 @@ class RentPriceDetail extends StatelessWidget {
               ),
 
               const SizedBox(height: 16),
-              const Text("Platform Fees (5%)"),
+              Text(
+                "Platform Fees (${getPlatformFeePercentage(platformFeeController).toStringAsFixed(0)}%)",
+              ),
               const SizedBox(height: 8),
               buildTextField(
                 "Platform Fees",
@@ -878,7 +880,9 @@ class RentPriceDetail extends StatelessWidget {
                   isPhoneKey: true,
                 ),
                 const SizedBox(height: 16),
-                const Text("Platform Fees (5%)"),
+                Text(
+                  "Platform Fees (${getPlatformFeePercentage(platformFeeController).toStringAsFixed(0)}%)",
+                ),
                 const SizedBox(height: 8),
                 buildTextField(
                   "Platform Fees",
@@ -1164,7 +1168,9 @@ class RentPriceDetail extends StatelessWidget {
                   isPhoneKey: true,
                 ),
                 const SizedBox(height: 16),
-                const Text("Platform Fees (5%)"),
+                Text(
+                  "Platform Fees (${getPlatformFeePercentage(platformFeeController).toStringAsFixed(0)}%)",
+                ),
                 const SizedBox(height: 8),
                 buildTextField(
                   "Platform Fees",
@@ -1394,7 +1400,9 @@ class RentPriceDetail extends StatelessWidget {
                   isPhoneKey: true,
                 ),
                 const SizedBox(height: 16),
-                const Text("Platform Fees "),
+                Text(
+                  "Platform Fees (${getPlatformFeePercentage(platformFeeController).toStringAsFixed(0)}%)",
+                ),
                 const SizedBox(height: 8),
                 buildTextField(
                   "Platform Fees",

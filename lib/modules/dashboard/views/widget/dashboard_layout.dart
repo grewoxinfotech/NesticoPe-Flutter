@@ -76,6 +76,7 @@ class _DashboardLayoutState extends State<DashboardLayout> {
                       : Get.put(AuthController(), permanent: true);
               auth.logout();
               // Get.offAll(()=>DashboardScreen());
+              
             },
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 12),

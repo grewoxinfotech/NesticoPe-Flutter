@@ -28,9 +28,10 @@ class ContractorDashboard extends StatefulWidget {
 }
 
 class _ContractorDashboardState extends State<ContractorDashboard> {
-  final contractorDashboardController = Get.put(
-    ContractorDashboardController(),
-  );
+  final contractorDashboardController =
+    Get.isRegistered<ContractorDashboardController>()
+        ? Get.find<ContractorDashboardController>()
+        : Get.put(ContractorDashboardController());
   final controller = Get.put(ContractorMyServiceController());
   @override
   void initState() {

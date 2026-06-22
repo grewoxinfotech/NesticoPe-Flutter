@@ -538,6 +538,8 @@ class ContractorInquiryController
       print("Fetched items: ${response.items.length}");
       final filteredItems =
           response.items.where((item) => item.contractorId == userId).toList();
+
+      await SecureStorage.saveContractorLeadCount(response.items.length);
       print("Filtered items: ${filteredItems.length}");
       getFilterData();
       return response;

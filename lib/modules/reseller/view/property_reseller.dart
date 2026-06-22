@@ -1381,24 +1381,36 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
                                   )
                                   : SizedBox.shrink();
                             }),
-                                 const SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             Obx(() {
                               final commissionData =
                                   controller.getCommissionSourceData();
 
                               return RevenueSourcesSourcePieChart(
                                 propertyCommission:
-                                    double.tryParse(controller
-                                            .resellerInsightsModel
-                                            .value
-                                            ?.data
-                                            .earnings.totalCommission.toString()??'0')??0.0,
+                                    double.tryParse(
+                                      controller
+                                              .resellerInsightsModel
+                                              .value
+                                              ?.data
+                                              .earnings
+                                              .totalCommission
+                                              .toString() ??
+                                          '0',
+                                    ) ??
+                                    0.0,
                                 projectCommission:
-                                     double.tryParse(controller
-                                            .resellerInsightsModel
-                                            .value
-                                            ?.data
-                                            .earnings.potentialCommission.toString()??'0')??0.0,
+                                    double.tryParse(
+                                      controller
+                                              .resellerInsightsModel
+                                              .value
+                                              ?.data
+                                              .earnings
+                                              .potentialCommission
+                                              .toString() ??
+                                          '0',
+                                    ) ??
+                                    0.0,
                               );
                             }),
                             // const SizedBox(height: 20),
@@ -5076,6 +5088,7 @@ Widget buildOverviewCards(DashboardController controller) {
   return Obx(() {
     final metrics = controller.metrics.value;
     final data = controller.resellerInsightsModel.value?.data;
+
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),

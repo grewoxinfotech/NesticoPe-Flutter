@@ -69,6 +69,7 @@ class LoginAsPartnerOptionsScreen extends StatelessWidget {
                     StatItemData('Rapidly Growing', 'Property Sales'),
                     StatItemData('Expanding', 'Partner Network'),
                   ],
+
                   features: const [
                     FeatureItemData(
                       Icons.person_add_outlined,
@@ -145,6 +146,17 @@ class LoginAsPartnerOptionsScreen extends StatelessWidget {
                     cta: 'Start Your Journey Now',
                   ),
                 ),
+                onBecomeType: () async {
+                  if (UserHelper.isGuest) {
+                    Navigator.of(context).pop();
+                    await Get.to(() => RegisterScreen(role: UserRole.reseller));
+                  } else if (UserHelper.isBuyer) {
+                    // Get.to(() => ManageListingsScreen());
+                    Get.to(() => ResellerConversionScreen());
+                  } else if (UserHelper.isReseller) {
+                    Get.to(() => MainNavigationScreen());
+                  }
+                }, // Manage List
                 onPrimaryCta: () async {
                   if (UserHelper.isGuest) {
                     Navigator.of(Get.context!).pop();
@@ -356,6 +368,18 @@ class LoginAsPartnerOptionsScreen extends StatelessWidget {
                     ),
                   );
                 }, // Unlock Owner Plans
+                onBecomeType: () async {
+                  if (UserHelper.isGuest) {
+                    Navigator.of(context).pop();
+                    await Get.to(() => RegisterScreen(role: UserRole.seller));
+                  } else if (UserHelper.isBuyer) {
+                    // Get.to(() => ManageListingsScreen());
+                    Get.to(() => SellerConversionScreen());
+                  } else if (UserHelper.isSellerOwner) {
+                    // Get.to(() => ManageListingsScreen());
+                    Get.to(() => SellerDashboardScreen());
+                  }
+                },
                 onFinalCta: () async {
                   if (UserHelper.isGuest) {
                     Navigator.of(Get.context!).pop();
@@ -494,6 +518,7 @@ class LoginAsPartnerOptionsScreen extends StatelessWidget {
                     //   'Dedicated support for project management and updates.',
                     // ),
                   ],
+
                   premiumListings: const [
                     PremiumListingItem(
                       imageAsset: IMGRes.home2,
@@ -546,6 +571,19 @@ class LoginAsPartnerOptionsScreen extends StatelessWidget {
                     cta: 'Start Your Journey Now',
                   ),
                 ),
+                onBecomeType: () async {
+                  if (UserHelper.isGuest) {
+                    Navigator.of(context).pop();
+                    await Get.to(
+                      () => RegisterScreen(role: UserRole.contractor),
+                    );
+                  } else if (UserHelper.isBuyer) {
+                    // Get.to(() => ManageListingsScreen());
+                    Get.to(() => ConvertToContractorConversionScreen());
+                  } else if (UserHelper.isContractor) {
+                    Get.to(() => ContractorMainScreen());
+                  }
+                },
                 onPrimaryCta: () async {
                   if (UserHelper.isGuest) {
                     Navigator.of(Get.context!).pop();
@@ -739,6 +777,18 @@ class LoginAsPartnerOptionsScreen extends StatelessWidget {
                 onPrimaryCta: () async {
                   if (UserHelper.isGuest) {
                     Navigator.of(Get.context!).pop();
+                    await Get.to(() => RegisterScreen(role: UserRole.seller));
+                  } else if (UserHelper.isBuyer) {
+                    // Get.to(() => ManageListingsScreen());
+                    Get.to(() => SellerConversionScreen());
+                  } else if (UserHelper.isSellerBuilder) {
+                    Get.to(() => BuilderMainScreen());
+                    // return;
+                  }
+                },
+                onBecomeType: () async {
+                  if (UserHelper.isGuest) {
+                    Navigator.of(context).pop();
                     await Get.to(() => RegisterScreen(role: UserRole.seller));
                   } else if (UserHelper.isBuyer) {
                     // Get.to(() => ManageListingsScreen());

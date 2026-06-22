@@ -1167,23 +1167,23 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
           ),
         ],
       ),
-      floatingActionButton: Obx(
-        () =>
-            isSelectionMode.value && selectedPropertyIds.isNotEmpty
-                ? FloatingActionButton.extended(
-                  onPressed: shareSelectedProperties,
-                  backgroundColor: ColorRes.primary,
-                  icon: Icon(Icons.share, color: ColorRes.white),
-                  label: Text(
-                    'Share (${selectedPropertyIds.length})',
-                    style: TextStyle(
-                      color: ColorRes.white,
-                      fontWeight: AppFontWeights.semiBold,
-                    ),
-                  ),
-                )
-                : SizedBox.shrink(),
-      ),
+      // floatingActionButton: Obx(
+      //   () =>
+      //       isSelectionMode.value && selectedPropertyIds.isNotEmpty
+      //           ? FloatingActionButton.extended(
+      //             onPressed: shareSelectedProperties,
+      //             backgroundColor: ColorRes.primary,
+      //             icon: Icon(Icons.share, color: ColorRes.white),
+      //             label: Text(
+      //               'Share (${selectedPropertyIds.length})',
+      //               style: TextStyle(
+      //                 color: ColorRes.white,
+      //                 fontWeight: AppFontWeights.semiBold,
+      //               ),
+      //             ),
+      //           )
+      //           : SizedBox.shrink(),
+      // ),
     );
   }
 

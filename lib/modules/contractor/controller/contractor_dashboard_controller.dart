@@ -19,6 +19,7 @@ class ContractorDashboardController extends GetxController {
       Rxn<ContractorInsightsModel>();
   final RxBool isLoading = false.obs;
   final RxBool isRefreshing = false.obs;
+  RxBool showRedDot=false.obs;
   final RxInt createdUserYear = DateTime.now().year.obs;
   final Rxn<ContractorActiveSubscriptionData> activeSubscription =
       Rxn<ContractorActiveSubscriptionData>();
@@ -82,6 +83,11 @@ class ContractorDashboardController extends GetxController {
           );
 
       contractorInsights.value = ContractorInsightsModel.fromJson(data);
+        final currentLeadCount =
+            contractorInsights.value?.data?.performance?.totalInquiries ?? 0;
+        showRedDot.value = await SecureStorage.hasNewContractorLead(
+          currentLeadCount,
+        );
       log("Contractor dashboard fetched successfully");
     } catch (e, s) {
       log("Failed to fetch contractor dashboard: $e", stackTrace: s);

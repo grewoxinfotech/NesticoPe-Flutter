@@ -249,11 +249,33 @@ class _ContractorMainScreenState extends State<ContractorMainScreen> {
 
                         /// ✅ Inquiry
                         SalomonBottomBarItem(
-                          icon: Icon(
-                            Icons.support_agent_outlined,
-                            size: iconSize * 1.2,
-                          ),
-                          title: Text("Inquiry", style: style),
+                          icon: Obx(() {
+                            return Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                Icon(
+                                  Icons.groups_outlined,
+                                  size: iconSize * 1.2,
+                                ),
+
+                                if (dashboardController.showRedDot.value)
+                                  Positioned(
+                                    top: -2,
+                                    right: -2,
+                                    child: Container(
+                                      width: 10,
+                                      height: 10,
+                                      decoration: const BoxDecoration(
+                                        color: Colors.red,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            );
+                          }),
+
+                          title: Text("Enquiry", style: style),
                         ),
 
                         /// ✅ Leads

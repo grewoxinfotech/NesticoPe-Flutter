@@ -92,6 +92,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../app/constants/color_res.dart';
 import '../../../data/database/secure_storage_service.dart';
 import '../../../data/network/seller/seller_overview_service.dart';
@@ -105,6 +106,7 @@ class SellerOverviewController extends GetxController {
   var isLoading = false.obs;
   var overviewData = Rxn<SellerInsightsModel>();
   final RxInt selectedGraphYear = DateTime.now().year.obs;
+  RxBool showRedDot = false.obs;
   final RxInt createdUserYear = DateTime.now().year.obs;
 
   @override
@@ -201,6 +203,19 @@ class SellerOverviewController extends GetxController {
         log(
           'overviewData.value is now: ${overviewData.value != null ? "NOT NULL" : "NULL"}',
         );
+        if (UserHelper.isSellerOwner) {
+          final currentLeadCount =
+              overviewData.value?.data?.leadAnalytics?.totalLeads ?? 0;
+          showRedDot.value = await SecureStorage.hasNewSellerLead(
+            currentLeadCount,
+          );
+        } else if (UserHelper.isSellerBuilder) {
+          final currentLeadCount =
+              overviewData.value?.data?.leadAnalytics?.totalLeads ?? 0;
+          showRedDot.value = await SecureStorage.hasNewBuilderLead(
+            currentLeadCount,
+          );
+        }
       } else {
         overviewData.value = null;
         log('No data received from API');
