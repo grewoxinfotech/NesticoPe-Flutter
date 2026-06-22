@@ -22,6 +22,8 @@ import 'package:nesticope_app/services/fcm_notification_service.dart';
 import 'app/theme/themes.dart' as AppTheme;
 import 'app/utils/helper_function/user_helper/user_helper.dart';
 import 'confige/helper/api_helper.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 // import 'firebase_options.dart';
 
 void main() async {
@@ -32,10 +34,11 @@ void main() async {
   debugProfileBuildsEnabled = true;
 
   try {
-    await Firebase.initializeApp();
-    // await Firebase.initializeApp(
-    //   options: DefaultFirebaseOptions.currentPlatform,
-    // );
+   // await Firebase.initializeApp();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
     debugPrint('✅ Firebase initialized');
