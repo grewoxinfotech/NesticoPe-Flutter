@@ -22,6 +22,7 @@ import 'package:nesticope_app/services/fcm_notification_service.dart';
 import 'app/theme/themes.dart' as AppTheme;
 import 'app/utils/helper_function/user_helper/user_helper.dart';
 import 'confige/helper/api_helper.dart';
+// import 'firebase_options.dart';
 
 void main() async {
   // Ensure Flutter is initialized
@@ -32,6 +33,11 @@ void main() async {
 
   try {
     await Firebase.initializeApp();
+    // await Firebase.initializeApp(
+    //   options: DefaultFirebaseOptions.currentPlatform,
+    // );
+    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
     debugPrint('✅ Firebase initialized');
     // 3. Catch all Flutter-level crashes
     FlutterError.onError = (errorDetails) {
