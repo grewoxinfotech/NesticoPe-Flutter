@@ -78,6 +78,7 @@ dependencies:
   syncfusion_flutter_pdfviewer:
   device_info_plus:
   model_viewer_plus:
+  webview_flutter:
   excel: 
   # onesignal_flutter:
   package_info_plus:

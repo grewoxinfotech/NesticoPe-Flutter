@@ -25,13 +25,15 @@ class OnboardingCityCompletionHelper {
 
     // Avoid creating SearchHistoryController here (its onInit triggers network
     // calls and can freeze on selection). Just call the service best-effort.
-    try {
-      await SearchHistoryService.service.addSearchHistory({
-        'keywords': [trimmed],
-      });
-    } catch (e) {
-      log('Search history add failed: $e');
-    }
+    
+      try {
+        await SearchHistoryService.service.addSearchHistory({
+          'keywords': [trimmed],
+        });
+      } catch (e) {
+        log('Search history add failed: $e');
+      }
+    
     await SecureStorage.saveSelectedCity(trimmed);
     await SecureStorage.setAppLaunched();
     await SecureStorage.saveHomeCategory(hc);
@@ -49,18 +51,21 @@ class OnboardingCityCompletionHelper {
             ];
 
     // await Get.offAll(() => DashboardScreen(propertyFilter: filter));
-     if (UserHelper.userType == UserType.buyer) {
-        await Get.offAll(() => DashboardScreen(propertyFilter: filter));
-      } else if (UserHelper.userType == UserType.seller &&
-          UserHelper.sellerType == SellerType.owner) {
-        Get.offAll(() => const SellerDashboardScreen());
-      } else if (UserHelper.userType == UserType.reseller) {
-        Get.offAll(() => const MainNavigationScreen());
-      } else if (UserHelper.userType == UserType.contractor) {
-        Get.offAll(() => ContractorMainScreen());
-      } else if (UserHelper.userType == UserType.seller &&
-          UserHelper.sellerType == SellerType.builder) {
-        Get.offAll(() => const BuilderMainScreen());
-      }
+    if (UserHelper.userType == UserType.buyer) {
+      await Get.offAll(() => DashboardScreen(propertyFilter: filter));
+    } else if (UserHelper.userType == UserType.seller &&
+        UserHelper.sellerType == SellerType.owner) {
+      Get.offAll(() => const SellerDashboardScreen());
+    } else if (UserHelper.userType == UserType.reseller) {
+      Get.offAll(() => const MainNavigationScreen());
+    } else if (UserHelper.userType == UserType.contractor) {
+      Get.offAll(() => ContractorMainScreen());
+    } else if (UserHelper.userType == UserType.seller &&
+        UserHelper.sellerType == SellerType.builder) {
+      Get.offAll(() => const BuilderMainScreen());
+    }
+    else{
+       await Get.offAll(() => DashboardScreen(propertyFilter: filter));
+    }
   }
 }

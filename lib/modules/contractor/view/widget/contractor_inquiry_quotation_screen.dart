@@ -3802,6 +3802,7 @@ class _ContractorInquiryQuotationScreenState
         dashboardController.showUpgradePlanDialog(
           title: 'Limit Reached',
           message: 'Limit Reached, please upgrade your plan.',
+          buttonText: 'Upgrade Plan'
         );
         return;
       }

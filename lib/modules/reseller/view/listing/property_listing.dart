@@ -1602,15 +1602,15 @@ class ProductsGrid extends StatelessWidget {
                 isSelectionMode: isSelectionMode.value,
                 isSelected: selectedPropertyIds.contains(property.id ?? ''),
                 onTap: () {
-                  if (isSelectionMode.value) {
-                    _togglePropertySelection(property.id ?? '');
-                  }
-                },
-                onLongPress: () {
-                  if (!isSelectionMode.value) {
-                    isSelectionMode.value = true;
-                    _togglePropertySelection(property.id ?? '');
-                  }
+                //   if (isSelectionMode.value) {
+                //     _togglePropertySelection(property.id ?? '');
+                //   }
+                // },
+                // onLongPress: () {
+                //   if (!isSelectionMode.value) {
+                //     isSelectionMode.value = true;
+                //     _togglePropertySelection(property.id ?? '');
+                //   }
                 },
               ),
             );

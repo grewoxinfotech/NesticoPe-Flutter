@@ -4,6 +4,7 @@ import 'package:model_viewer_plus/model_viewer_plus.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class ModelCacheService {
   static Future<String> downloadAndCache(String url, String fileName) async {
@@ -71,6 +72,9 @@ class _ModelRenderScreenState extends State<ModelRenderScreen> {
       });
     } catch (e) {
       debugPrint('Model download error: $e');
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -81,16 +85,44 @@ class _ModelRenderScreenState extends State<ModelRenderScreen> {
       body:
           isLoading
               ? const Center(child: CircularProgressIndicator())
+              // : ModelViewer(
+              //   src: 'file://$localGlbPath',
+              //   iosSrc: localUsdzPath != null ? 'file://$localUsdzPath' : null,
+              //   alt: "3D property model",
+              //   ar: true,
+              //   autoRotate: true,
+              //   cameraControls: true,
+              //   backgroundColor: Color.fromARGB(0xFF, 0xEE, 0xEE, 0xEE),
+              //   autoPlay: true,
+              //   loading: Loading.eager,
+              //   onWebViewCreated: (controller) {
+              //     final src = 'file://$localGlbPath';
+              //     print("Model URL: $src");
+              //     print("Model URL: $localGlbPath");
+              //     debugPrint("WebView Created ${controller.platform}");
+              //   },
+              // ),
               : ModelViewer(
                 src: 'file://$localGlbPath',
                 iosSrc: localUsdzPath != null ? 'file://$localUsdzPath' : null,
-                alt: "3D property model",
+                alt: 'Astronaut',
                 ar: true,
                 autoRotate: true,
                 cameraControls: true,
                 backgroundColor: Color.fromARGB(0xFF, 0xEE, 0xEE, 0xEE),
                 autoPlay: true,
                 loading: Loading.eager,
+                onWebViewCreated: (controller) async {
+                  debugPrint('WebView Created');
+
+                  controller.setNavigationDelegate(
+                    NavigationDelegate(
+                      onWebResourceError: (error) {
+                        debugPrint('WEB ERROR: ${error.description}');
+                      },
+                    ),
+                  );
+                },
               ),
     );
   }

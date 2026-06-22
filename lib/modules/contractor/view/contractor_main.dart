@@ -226,6 +226,7 @@ class _ContractorMainScreenState extends State<ContractorMainScreen> {
                             title: 'Active plan required',
                             message:
                                 'Please activate or upgrade your subscription to access this section.',
+                            buttonText: 'Buy Plan',
                           );
                           return;
                         }
@@ -253,10 +254,7 @@ class _ContractorMainScreenState extends State<ContractorMainScreen> {
                             return Stack(
                               clipBehavior: Clip.none,
                               children: [
-                                Icon(
-                                  Icons.groups_outlined,
-                                  size: iconSize * 1.2,
-                                ),
+                                Icon(Icons.support_agent, size: iconSize * 1.2),
 
                                 if (dashboardController.showRedDot.value)
                                   Positioned(

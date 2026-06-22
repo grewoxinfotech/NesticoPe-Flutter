@@ -1011,6 +1011,7 @@ class InquiryCard extends StatelessWidget {
                                   title: 'Limit Reached',
                                   message:
                                       'Limit Reached, please upgrade your plan.',
+                                      buttonText: 'Upgrade Plan'
                                 );
                                 return;
                               }

@@ -19,7 +19,7 @@ class ContractorDashboardController extends GetxController {
       Rxn<ContractorInsightsModel>();
   final RxBool isLoading = false.obs;
   final RxBool isRefreshing = false.obs;
-  RxBool showRedDot=false.obs;
+  RxBool showRedDot = false.obs;
   final RxInt createdUserYear = DateTime.now().year.obs;
   final Rxn<ContractorActiveSubscriptionData> activeSubscription =
       Rxn<ContractorActiveSubscriptionData>();
@@ -83,11 +83,11 @@ class ContractorDashboardController extends GetxController {
           );
 
       contractorInsights.value = ContractorInsightsModel.fromJson(data);
-        final currentLeadCount =
-            contractorInsights.value?.data?.performance?.totalInquiries ?? 0;
-        showRedDot.value = await SecureStorage.hasNewContractorLead(
-          currentLeadCount,
-        );
+      final currentLeadCount =
+          contractorInsights.value?.data?.performance?.totalInquiries ?? 0;
+      showRedDot.value = await SecureStorage.hasNewContractorLead(
+        currentLeadCount,
+      );
       log("Contractor dashboard fetched successfully");
     } catch (e, s) {
       log("Failed to fetch contractor dashboard: $e", stackTrace: s);
@@ -123,7 +123,7 @@ class ContractorDashboardController extends GetxController {
       await fetchActiveSubscription(showDialogWhenMissing: false);
       await Future.delayed(const Duration(seconds: 1));
 
-        // Update metrics with new values
+      // Update metrics with new values
     } catch (e) {
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
@@ -135,7 +135,9 @@ class ContractorDashboardController extends GetxController {
     }
   }
 
-  Future<void> fetchActiveSubscription({bool showDialogWhenMissing = true}) async {
+  Future<void> fetchActiveSubscription({
+    bool showDialogWhenMissing = true,
+  }) async {
     final user = await SecureStorage.getUserData();
     final userId = user?.user?.id;
 
@@ -149,12 +151,12 @@ class ContractorDashboardController extends GetxController {
     if (showDialogWhenMissing &&
         plan == null &&
         (Get.isDialogOpen ?? false) == false) {
-      if(UserHelper.isContractor)
-      {
+      if (UserHelper.isContractor) {
         await showUpgradePlanDialog(
           title: 'Active plan required',
           message:
               'You do not have an active subscription. Please activate a plan to continue.',
+          buttonText: 'Active Plan',
         );
       }
     }
@@ -185,11 +187,11 @@ class ContractorDashboardController extends GetxController {
 
     if (!hasActivePlan) return;
     if (hasReachedServiceLimit) {
-      if(UserHelper.isContractor)
-      {
+      if (UserHelper.isContractor) {
         await showUpgradePlanDialog(
           title: 'Limit Reached',
           message: 'Limit Reached, please upgrade your plan.',
+          buttonText: 'Upgrade Plan',
         );
         return;
       }
@@ -205,6 +207,7 @@ class ContractorDashboardController extends GetxController {
       await showUpgradePlanDialog(
         title: 'Limit Reached',
         message: 'Limit Reached, please upgrade your plan.',
+        buttonText: 'Upgrade Plan',
       );
       return;
     }
@@ -216,11 +219,11 @@ class ContractorDashboardController extends GetxController {
 
     if (!hasActivePlan) return;
     if (hasReachedUserLimit) {
-      if(UserHelper.isContractor)
-      { 
+      if (UserHelper.isContractor) {
         await showUpgradePlanDialog(
           title: 'Limit Reached',
           message: 'Limit Reached, please upgrade your plan.',
+          buttonText: 'Upgrade Plan',
         );
         return;
       }
@@ -232,21 +235,37 @@ class ContractorDashboardController extends GetxController {
   Future<void> showUpgradePlanDialog({
     required String title,
     required String message,
+    required String buttonText,
   }) async {
     if (Get.isDialogOpen ?? false) return;
 
     await Get.dialog<void>(
       AlertDialog(
         backgroundColor: ColorRes.white,
-        title: Text(title,style: TextStyle(fontSize: AppFontSizes.title,fontWeight: AppFontWeights.semiBold,color: ColorRes.textPrimary),),
-        content: Text(message,style: TextStyle(fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium),),
-        actions: [
-          TextButton(
-            onPressed: (){
-              
-            },
-            child: const Text('Later'),
+        title: Text(
+          title,
+          style: TextStyle(
+            fontSize: AppFontSizes.title,
+            fontWeight: AppFontWeights.semiBold,
+            color: ColorRes.textPrimary,
           ),
+        ),
+        content: Text(
+          message,
+          style: TextStyle(
+            fontSize: AppFontSizes.small,
+            fontWeight: AppFontWeights.medium,
+          ),
+        ),
+        actions: [
+          (buttonText.toLowerCase() == 'upgrade plan')
+              ? TextButton(
+                onPressed: () {
+                  Get.back();
+                },
+                child: const Text('Later'),
+              )
+              : SizedBox.shrink(),
           ElevatedButton(
             onPressed: () {
               Get.back();
@@ -257,7 +276,7 @@ class ContractorDashboardController extends GetxController {
                 ),
               );
             },
-            child: const Text('Upgrade Plan'),
+            child: Text('$buttonText'),
           ),
         ],
       ),
