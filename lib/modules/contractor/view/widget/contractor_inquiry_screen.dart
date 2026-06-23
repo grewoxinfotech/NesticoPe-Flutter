@@ -362,9 +362,11 @@
 // }
 
 import 'dart:developer';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nesticope_app/modules/subscription/views/suscription_plan_screen.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../app/constants/color_res.dart';
@@ -399,7 +401,7 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
         automaticallyImplyLeading: false,
         elevation: 0,
         title: const Text(
-          'Contractor Inquiries',
+          'Contractor Enquiries',
           style: TextStyle(
             // fontSize: AppFontSizes.title,
             fontWeight: AppFontWeights.semiBold,
@@ -486,8 +488,8 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
                               const SizedBox(height: 12),
                               ElevatedButton(
                                 onPressed: controller.refreshInquiry,
+
                                 // icon: const Icon(Icons.refresh, size: 16),
-                                
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: ColorRes.primary,
                                   padding: const EdgeInsets.symmetric(
@@ -498,7 +500,7 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
-                                child:  Text('Refresh'),
+                                child: Text('Refresh'),
                               ),
                             ],
                           ),
@@ -535,38 +537,299 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
                             itemBuilder: (context, index) {
                               final inquiry = controller.itemInquiryList[index];
                               return Obx(
-                                () => InquiryCard(
-                                  inquiry: inquiry,
-                                  isExpanded: controller.isExpanded(inquiry.id),
-                                  onToggle:
-                                      () => controller.toggleCard(inquiry.id),
-                                  onChangeStatus:
-                                      () => _showStatusDialog(
-                                        context,
-                                        controller,
-                                        inquiry,
-                                      ),
-                                  onLeadConvert:
-                                  // () => controller.convertToLead(inquiry, inquiry.services,inquiry.convertedServices),
-                                  () {
-                                    // final controller = Get.put(
-                                    //   ContractorReferralController(
-                                    //     userId: inquiry.userId,
-                                    //   ),
-                                    // );
-                                    // controller.resetAllData();
-                                    Get.to(
-                                      () => ContractorInquiryQuotationScreen(
-                                        inquiry: inquiry,
-                                      ),
-                                    );
-                                  },
-                                  onDelete:
-                                      () => controller.deleteInquiry(
-                                        inquiry.id,
-                                        inquiry.name,
-                                      ),
-                                ),
+                                () =>
+                                    (inquiry.isLocked)
+                                        ? Stack(
+                                          children: [
+                                            /// Main Card
+                                            AnimatedContainer(
+                                              duration: const Duration(
+                                                milliseconds: 250,
+                                              ),
+                                              curve: Curves.easeInOut,
+                                              margin: const EdgeInsets.only(
+                                                bottom: 12,
+                                              ),
+                                              padding: const EdgeInsets.all(16),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(16),
+                                                border: Border.all(
+                                                  color: Colors.orange.shade100,
+                                                ),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.black
+                                                        .withOpacity(0.06),
+                                                    blurRadius: 10,
+                                                    offset: const Offset(0, 4),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Container(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                          12,
+                                                        ),
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          Colors.orange.shade50,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            12,
+                                                          ),
+                                                    ),
+                                                    child: Icon(
+                                                      Icons
+                                                          .workspace_premium_rounded,
+                                                      color:
+                                                          Colors
+                                                              .orange
+                                                              .shade700,
+                                                      size: 28,
+                                                    ),
+                                                  ),
+
+                                                  const SizedBox(width: 14),
+
+                                                  Expanded(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        const Text(
+                                                          "Service Inquiry",
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.w700,
+                                                          ),
+                                                        ),
+
+                                                        const SizedBox(
+                                                          height: 6,
+                                                        ),
+
+                                                        Text(
+                                                          "Interested in 3 BHK Apartment at Ahmedabad.",
+                                                          style: TextStyle(
+                                                            fontSize: 13,
+                                                            color:
+                                                                Colors
+                                                                    .grey
+                                                                    .shade700,
+                                                          ),
+                                                        ),
+
+                                                        const SizedBox(
+                                                          height: 8,
+                                                        ),
+
+                                                        Text(
+                                                          "Contact: +91 XXXXX XXXXX",
+                                                          style: TextStyle(
+                                                            fontSize: 13,
+                                                            color:
+                                                                Colors
+                                                                    .grey
+                                                                    .shade600,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+
+                                            /// Lock Overlay
+                                            if (inquiry.isLocked)
+                                              Positioned.fill(
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(16),
+                                                  child: BackdropFilter(
+                                                    filter: ImageFilter.blur(
+                                                      sigmaX: 6,
+                                                      sigmaY: 6,
+                                                    ),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white
+                                                            .withOpacity(0.65),
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              16,
+                                                            ),
+                                                      ),
+                                                      child: Center(
+                                                        child: Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: [
+                                                            Container(
+                                                              padding:
+                                                                  const EdgeInsets.all(
+                                                                    14,
+                                                                  ),
+                                                              decoration: BoxDecoration(
+                                                                color:
+                                                                    Colors
+                                                                        .orange
+                                                                        .shade50,
+                                                                shape:
+                                                                    BoxShape
+                                                                        .circle,
+                                                              ),
+                                                              child: Icon(
+                                                                Icons
+                                                                    .lock_rounded,
+                                                                color:
+                                                                    Colors
+                                                                        .orange
+                                                                        .shade700,
+                                                                size: 34,
+                                                              ),
+                                                            ),
+
+                                                            const SizedBox(
+                                                              height: 12,
+                                                            ),
+
+                                                            const Text(
+                                                              "Plan Limit Reached",
+                                                              style: TextStyle(
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                              ),
+                                                            ),
+
+                                                            const SizedBox(
+                                                              height: 6,
+                                                            ),
+
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets.symmetric(
+                                                                    horizontal:
+                                                                        24,
+                                                                  ),
+                                                              child: Text(
+                                                                "Upgrade your plan to view inquiry details and contact information.",
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                style: TextStyle(
+                                                                  color:
+                                                                      Colors
+                                                                          .grey
+                                                                          .shade700,
+                                                                  fontSize: 13,
+                                                                ),
+                                                              ),
+                                                            ),
+
+                                                            const SizedBox(
+                                                              height: 14,
+                                                            ),
+
+                                                            ElevatedButton.icon(
+                                                              onPressed: () {
+                                                                // Navigate to Plan Screen
+                                                                Get.to(
+                                                                  () => SubscriptionPlansScreen(
+                                                                    role:
+                                                                        'contractor',
+                                                                    isShowCurrentPlan:
+                                                                        true,
+                                                                  ),
+                                                                );
+                                                              },
+                                                              icon: const Icon(
+                                                                Icons
+                                                                    .upgrade_rounded,
+                                                                size: 18,
+                                                              ),
+                                                              label: const Text(
+                                                                "Upgrade Plan",
+                                                              ),
+                                                              style: ElevatedButton.styleFrom(
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .orange,
+                                                                foregroundColor:
+                                                                    Colors
+                                                                        .white,
+                                                                elevation: 0,
+                                                                padding:
+                                                                    const EdgeInsets.symmetric(
+                                                                      horizontal:
+                                                                          20,
+                                                                      vertical:
+                                                                          12,
+                                                                    ),
+                                                                shape: RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                        12,
+                                                                      ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                          ],
+                                        )
+                                        : InquiryCard(
+                                          inquiry: inquiry,
+                                          isExpanded: controller.isExpanded(
+                                            inquiry.id,
+                                          ),
+                                          onToggle:
+                                              () => controller.toggleCard(
+                                                inquiry.id,
+                                              ),
+                                          onChangeStatus:
+                                              () => _showStatusDialog(
+                                                context,
+                                                controller,
+                                                inquiry,
+                                              ),
+                                          onLeadConvert:
+                                          // () => controller.convertToLead(inquiry, inquiry.services,inquiry.convertedServices),
+                                          () {
+                                            // final controller = Get.put(
+                                            //   ContractorReferralController(
+                                            //     userId: inquiry.userId,
+                                            //   ),
+                                            // );
+                                            // controller.resetAllData();
+                                            Get.to(
+                                              () =>
+                                                  ContractorInquiryQuotationScreen(
+                                                    inquiry: inquiry,
+                                                  ),
+                                            );
+                                          },
+                                          onDelete:
+                                              () => controller.deleteInquiry(
+                                                inquiry.id,
+                                                inquiry.name,
+                                              ),
+                                        ),
                               );
                             },
                           ),
@@ -1011,7 +1274,7 @@ class InquiryCard extends StatelessWidget {
                                   title: 'Limit Reached',
                                   message:
                                       'Limit Reached, please upgrade your plan.',
-                                      buttonText: 'Upgrade Plan'
+                                  buttonText: 'Upgrade Plan',
                                 );
                                 return;
                               }

@@ -964,7 +964,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
                         message: dashboardController.hasActivePlan
                             ? 'Limit Reached, please upgrade your plan.'
                             : 'You do not have an active subscription. Please activate a plan to continue.',
-                            buttonText: dashboardController.hasActivePlan?'Active Plan':'Upgrade Plan'
+                            buttonText: dashboardController.hasActivePlan?'Upgrade Plan':'Buy Plan'
                       );
                       return;
                     }
@@ -1135,7 +1135,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
                   message: dashboardController.hasActivePlan
                       ? 'Limit Reached, please upgrade your plan.'
                       : 'You do not have an active subscription. Please activate a plan to continue.',
-                      buttonText: dashboardController.hasActivePlan?'Active Plan':'Upgrade Plan'
+                      buttonText: dashboardController.hasActivePlan?'Upgrade Plan':'Buy Plan'
                 );
                 return;
               }

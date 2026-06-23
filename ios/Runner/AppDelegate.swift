@@ -10,11 +10,27 @@ import Firebase
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    if let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist") {
-    print("FOUND: \(path)")
-} else {
-    print("PLIST NOT FOUND")
-}
+//     if let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist") {
+//     print("FOUND: \(path)")
+// } else {
+//     print("PLIST NOT FOUND")
+// }
+ if let filePath = Bundle.main.path(
+      forResource: "GoogleService-Info",
+      ofType: "plist"
+    ) {
+
+      print("FOUND: \(filePath)")
+
+      if let options = FirebaseOptions(contentsOfFile: filePath) {
+        FirebaseApp.configure(options: options)
+      }
+
+    } else {
+
+      print("PLIST NOT FOUND")
+    }
+
 
     //  FirebaseApp.configure()
 

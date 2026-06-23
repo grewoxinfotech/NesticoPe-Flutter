@@ -69,7 +69,7 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
                       activePlan
                           ? 'Limit Reached, please upgrade your plan.'
                           : 'You do not have an active subscription. Please activate a plan to continue.',
-                          buttonText: activePlan?'Active Plan':'Upgrade Plan'
+                          buttonText: activePlan?'Upgrade Plan':'Buy Plan'
                 );
                 return;
               }

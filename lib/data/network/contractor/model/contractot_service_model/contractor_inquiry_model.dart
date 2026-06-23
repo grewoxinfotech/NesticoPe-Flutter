@@ -88,11 +88,13 @@ class ContractorInquiryItem {
   final InquiryMeta meta;
   final String createdAt;
   final String updatedAt;
+  final bool isLocked;
 
   ContractorInquiryItem({
     required this.id,
     required this.createdBy,
     this.updatedBy,
+    required this.isLocked,
     required this.contractorId,
     required this.userId,
     required this.name,
@@ -117,6 +119,7 @@ class ContractorInquiryItem {
       createdBy: map['created_by'] ?? '',
       updatedBy: map['updated_by'],
       contractorId: map['contractorId'] ?? '',
+      isLocked: map['isLocked'],
       userId: map['userId'] ?? '',
       name: map['name'] ?? '',
       email: map['email'] ?? '',
@@ -147,6 +150,7 @@ class ContractorInquiryItem {
       'name': name,
       'email': email,
       'phone': phone,
+      'isLocked':isLocked,
       'services': services.map((x) => x.toMap()).toList(),
       'inquiredAt': inquiredAt,
       'status': status,

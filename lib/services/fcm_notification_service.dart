@@ -28,7 +28,6 @@ class FCMNotificationService {
     showBadge: true,
     enableLights: true,
     enableVibration: true,
-
   );
 
   bool _initialized = false;
@@ -54,13 +53,25 @@ class FCMNotificationService {
 
     // 2) Local notifications init
     const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const initSettings = InitializationSettings(android: androidInit);
+    // const initSettings = InitializationSettings(android: androidInit);
+
+    const iosInit = DarwinInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
+
+    const initSettings = InitializationSettings(
+      android: androidInit,
+      iOS: iosInit,
+    );
     await _local.initialize(initSettings);
 
     // 3) Android channel
     await _local
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(_channel);
 
     // 4) Foreground messages -> show local notification
@@ -86,9 +97,8 @@ class FCMNotificationService {
       await SecureStorage.saveFcmToken(_token!);
       await NotificationSyncService.instance.syncToBackend(
         deviceToken: _token!,
-      
-        // metadata: {'role': 'guest'},
 
+        // metadata: {'role': 'guest'},
       );
     }
   }
@@ -114,8 +124,12 @@ class FCMNotificationService {
           showProgress: true,
           showWhen: true,
         ),
+        iOS: const DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ),
       ),
     );
   }
 }
-

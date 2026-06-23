@@ -991,7 +991,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
             : "Taxes may apply";
 
     final int months = plan.durationMonths;
-    final String durationText = months == 1 ? " /month" : " /$months months";
+   final durationText = getDurationText(months);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start, // 👈 IMPORTANT
@@ -1075,6 +1075,16 @@ class SubscriptionPlansWidget extends StatelessWidget {
     );
   }
 
+String getDurationText(int months) {
+  if (months == 1) return "/month";
+
+  if (months % 12 == 0) {
+    final years = months ~/ 12;
+    return years == 1 ? "/year" : "/$years years";
+  }
+
+  return "/$months months";
+}
   // ------------------------------------------------------
   // Feature preview (first 3)
   // ------------------------------------------------------

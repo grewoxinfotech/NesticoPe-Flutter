@@ -156,7 +156,7 @@ class ContractorDashboardController extends GetxController {
           title: 'Active plan required',
           message:
               'You do not have an active subscription. Please activate a plan to continue.',
-          buttonText: 'Active Plan',
+          buttonText: 'Buy Plan',
         );
       }
     }
