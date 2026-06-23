@@ -85,21 +85,46 @@ class FCMNotificationService {
   }
 
   Future<void> requestPermissionAndFetchToken() async {
-    await FirebaseMessaging.instance.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+    final settings = await FirebaseMessaging.instance.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+
+  debugPrint('🔔 Notification permission: ${settings.authorizationStatus}');
+
+  if (defaultTargetPlatform == TargetPlatform.iOS) {
+    String? apnsToken;
+
+    for (int i = 0; i < 10; i++) {
+      apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+
+      if (apnsToken != null) {
+        break;
+      }
+
+      await Future.delayed(const Duration(seconds: 1));
+    }
+
+    debugPrint('🍎 APNS Token: $apnsToken');
+
+    if (apnsToken == null) {
+      debugPrint('❌ APNS token not available yet');
+      return;
+    }
+  }
 
     _token = await FirebaseMessaging.instance.getToken();
     debugPrint('🪪 [FCM] token: $_token');
     if (_token != null && _token!.isNotEmpty) {
       await SecureStorage.saveFcmToken(_token!);
+        try {
       await NotificationSyncService.instance.syncToBackend(
         deviceToken: _token!,
-
-        // metadata: {'role': 'guest'},
       );
+    } catch (e) {
+      debugPrint('❌ [FCM] sync token failed: $e');
+    }
     }
   }
 

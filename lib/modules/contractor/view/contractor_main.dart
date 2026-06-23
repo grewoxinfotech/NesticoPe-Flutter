@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nesticope_app/app/constants/size_manager.dart';
+import 'package:nesticope_app/data/database/secure_storage_service.dart';
 import 'package:nesticope_app/modules/contractor/view/lead/contractor_lead_screen.dart';
 
 import 'package:nesticope_app/modules/contractor/view/profile/contractot_profile.dart';
@@ -229,6 +230,18 @@ class _ContractorMainScreenState extends State<ContractorMainScreen> {
                             buttonText: 'Buy Plan',
                           );
                           return;
+                        } else {
+                          if (tabIndex == 1) {
+                            await SecureStorage.saveContractorLeadCount(
+                              dashboardController
+                                      .contractorInsights
+                                      .value
+                                      ?.data
+                                      ?.performance
+                                      ?.totalInquiries ??
+                                  0,
+                            );
+                          }
                         }
 
                         navigationController.changeTabIndex(tabIndex);

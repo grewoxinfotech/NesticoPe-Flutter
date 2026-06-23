@@ -38,6 +38,7 @@ class TruecallerService {
   StreamSubscription? _streamSubscription;
   final currentUser = Rxn<UserModel>();
   final authState = AuthState.initial.obs;
+  final RxBool isTruecallerLoading = false.obs;
 
   /// Initializes the Truecaller SDK
   Future<void> initialize() async {
@@ -94,10 +95,6 @@ class TruecallerService {
     String? savedCodeChallenge;
 
     _streamSubscription = TcSdk.streamCallbackData.listen((callback) {
-      print("📲 Truecaller callback result: ${callback.result}");
-      print("CALLBACK RECEIVED");
-      print("RESULT = ${callback.result}");
-      print("ERROR = ${callback.error}");
       switch (callback.result) {
         case TcSdkCallbackResult.success:
           final data = callback.tcOAuthData;
@@ -166,19 +163,6 @@ class TruecallerService {
 
       if (codeChallenge != null) {
         TcSdk.setCodeChallenge(codeChallenge);
-        print(
-          "🔐 Truecaller OAuth prepared:\n"
-          "  • state: random_state\n"
-          "  • scopes: [profile, phone, openid]\n"
-          "  • codeChallenge: $codeChallenge",
-        );
-
-        log(
-          "🔐 Truecaller OAuth prepared:\n"
-          "  • state: random_state\n"
-          "  • scopes: [profile, phone, openid]\n"
-          "  • codeVerifier: $codeVerifier",
-        );
 
         TcSdk.getAuthorizationCode;
       } else {
@@ -202,15 +186,6 @@ class TruecallerService {
 
     final result = await completer.future;
     if (result != null) {
-      print(
-        "🎉 Truecaller final result:\n"
-        "  • authorizationCode: ${result.authorizationCode}\n"
-        "  • state: ${result.state}\n"
-        "  • codeVerifier: ${result.codeVerifier}\n"
-        "  • codeChallenge: ${result.codeChallenge}\n"
-        "  • phone: ${result.phoneNumber}\n"
-        "  • name: ${result.firstName} ${result.lastName}",
-      );
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Login Ready',
         message: 'Proceeding with backend authentication',
@@ -222,87 +197,95 @@ class TruecallerService {
   }
 
   Future<bool> loginWithTrueCaller() async {
-    final result = await login();
-    if (result == null) {
-      print("Truecaller login aborted or failed; skipping backend exchange.");
-      return false;
-    }
-    final authorizationCode = result.authorizationCode;
-    final codeVerifier = result.codeVerifier;
+    if (isTruecallerLoading.value) return false;
+    try {
+      isTruecallerLoading.value = true;
+      final result = await login();
+      if (result == null) {
+        authState.value = AuthState.unauthenticated;
+        return false;
+      }
+      final authorizationCode = result.authorizationCode;
+      final codeVerifier = result.codeVerifier;
 
-    if (authorizationCode == null || authorizationCode.isEmpty) {
-      print("Missing authorizationCode; cannot proceed with backend exchange.");
+      if (authorizationCode == null || authorizationCode.isEmpty) {
+        print(
+          "Missing authorizationCode; cannot proceed with backend exchange.",
+        );
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Missing Code',
+          message: 'Authorization code not available',
+          contentType: ContentType.failure,
+        );
+        return false;
+      }
+      if (codeVerifier == null || codeVerifier.isEmpty) {
+        print("Missing codeVerifier; cannot proceed with backend exchange.");
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Missing Verifier',
+          message: 'Code verifier not available',
+          contentType: ContentType.failure,
+        );
+        return false;
+      }
+      final payload = {
+        'authorizationCode': authorizationCode,
+        'codeVerifier': codeVerifier,
+      };
+      print("Posting Truecaller OAuth payload to backend: $payload");
+      final user = await AuthService().loginWithTrueCaller(payload);
+      if (user != null) {
+        await SecureStorage.saveToken(user.token ?? '');
+        await SecureStorage.saveUserData(user);
+        await SecureStorage.saveLoggedIn(true);
+        await SecureStorage.saveTermAndConditionValue(false.toString());
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Login Successful',
+          message: 'Welcome to NesticoPe',
+          contentType: ContentType.success,
+        );
+
+        // 3️⃣ Set user role/type
+        if (user.user != null) {
+          await UserHelper.setUserType(
+            user.user?.userType,
+            sellerType: user.user?.sellerType,
+            isAadharVerified: user.user?.isAadharVerified,
+          );
+        }
+
+        currentUser.value = user;
+        authState.value = AuthState.authenticated;
+
+        // 4️⃣ 🔔 NOTIFICATION SYNC
+        final userId = user.user?.id?.toString();
+        final role = UserHelper.userType?.name ?? 'buyer';
+
+        if (userId != null && userId.isNotEmpty) {
+          await app_notif.NotificationService.instance.attachLoggedInUser(
+            userId: userId,
+            role: role,
+            syncToBackend: (playerId) async {
+              // ✅ THIS IS THE SYNC POINT
+              await NotificationSyncService.instance.syncToBackend(
+                deviceToken: playerId,
+                metadata: {'user_id': userId, 'role': role},
+              );
+            },
+          );
+        }
+        return true;
+      }
+      print("Truecaller login failed; cannot proceed with backend exchange.");
       NesticoPeSnackBar.showAwesomeSnackbar(
-        title: 'Missing Code',
-        message: 'Authorization code not available',
+        title: 'Backend Login Failed',
+        message: 'Could not complete Truecaller login',
         contentType: ContentType.failure,
       );
       return false;
+    } finally {
+      isTruecallerLoading.value = false;
     }
-    if (codeVerifier == null || codeVerifier.isEmpty) {
-      print("Missing codeVerifier; cannot proceed with backend exchange.");
-      NesticoPeSnackBar.showAwesomeSnackbar(
-        title: 'Missing Verifier',
-        message: 'Code verifier not available',
-        contentType: ContentType.failure,
-      );
-      return false;
-    }
-    final payload = {
-      'authorizationCode': authorizationCode,
-      'codeVerifier': codeVerifier,
-    };
-    print("Posting Truecaller OAuth payload to backend: $payload");
-    final user = await AuthService().loginWithTrueCaller(payload);
-    if (user != null) {
-      await SecureStorage.saveToken(user.token ?? '');
-      await SecureStorage.saveUserData(user);
-      await SecureStorage.saveLoggedIn(true);
-      await SecureStorage.saveTermAndConditionValue(false.toString());
-      NesticoPeSnackBar.showAwesomeSnackbar(
-        title: 'Login Successful',
-        message: 'Welcome to NesticoPe',
-        contentType: ContentType.success,
-      );
-
-      // 3️⃣ Set user role/type
-      if (user.user != null) {
-        await UserHelper.setUserType(
-          user.user?.userType,
-          sellerType: user.user?.sellerType,
-          isAadharVerified: user.user?.isAadharVerified,
-        );
-      }
-
-      currentUser.value = user;
-      authState.value = AuthState.authenticated;
-
-      // 4️⃣ 🔔 NOTIFICATION SYNC
-      final userId = user.user?.id?.toString();
-      final role = UserHelper.userType?.name ?? 'buyer';
-
-      if (userId != null && userId.isNotEmpty) {
-        await app_notif.NotificationService.instance.attachLoggedInUser(
-          userId: userId,
-          role: role,
-          syncToBackend: (playerId) async {
-            // ✅ THIS IS THE SYNC POINT
-            await NotificationSyncService.instance.syncToBackend(
-              deviceToken: playerId,
-              metadata: {'user_id': userId, 'role': role},
-            );
-          },
-        );
-      }
-      return true;
-    }
-    print("Truecaller login failed; cannot proceed with backend exchange.");
-    NesticoPeSnackBar.showAwesomeSnackbar(
-      title: 'Backend Login Failed',
-      message: 'Could not complete Truecaller login',
-      contentType: ContentType.failure,
-    );
-    return false;
   }
 
   /// Properly disposes StreamSubscription

@@ -91,21 +91,24 @@ class _HomeHeaderState extends State<HomeHeader> {
             : Get.put(SearchHistoryController());
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final initial = await SecureStorage.getHomeCategory();
-      selectedCategory = initial ?? 'Buy';
+      if (!mounted) return;
+      setState(() {
+        selectedCategory = initial ?? 'Buy';
+      });
       // widget.onCategoryChanged(selectedCategory!);
       if (!Get.isRegistered<BuyerProfileDataController>()) {
         Get.put(BuyerProfileDataController());
       }
-      setState(() {});
     });
   }
+
   final BuyerProfileDataController profileController =
-        Get.isRegistered<BuyerProfileDataController>()
-            ? Get.find<BuyerProfileDataController>()
-            : Get.put(BuyerProfileDataController());
+      Get.isRegistered<BuyerProfileDataController>()
+          ? Get.find<BuyerProfileDataController>()
+          : Get.put(BuyerProfileDataController());
+
   @override
   Widget build(BuildContext context) {
-  
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -521,7 +524,7 @@ class _HomeHeaderState extends State<HomeHeader> {
                         ),
                         // const SizedBox(width: 6),
                         // Text(    i have app idea for fit ness tarker app that on base of solo leveling anime that contain the workout plan for honme and gym alltype so exercise with diet plan with ai intergartion chat white other use progress tarcker leaderbpard
- 
+
                         //   selectedCategory ?? 'Buy',
                         //   style: const TextStyle(
                         //     fontSize: AppFontSizes.small,
@@ -552,7 +555,6 @@ class _HomeHeaderState extends State<HomeHeader> {
     final isSelected = selectedCategory == value;
     final isServiceItem = value == 'Service';
 
-
     return PopupMenuItem<String>(
       value: value,
       child: Stack(
@@ -561,7 +563,9 @@ class _HomeHeaderState extends State<HomeHeader> {
           Row(
             children: [
               Icon(
-                isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
+                isSelected
+                    ? Icons.radio_button_checked
+                    : Icons.radio_button_off,
                 color: isSelected ? ColorRes.primary : Colors.grey,
                 size: 18,
               ),
@@ -578,13 +582,9 @@ class _HomeHeaderState extends State<HomeHeader> {
           ),
           if (isServiceItem)
             Positioned(
-          
               right: 18,
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 6,
-                  vertical: 2,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
                   color: ColorRes.error,
                   borderRadius: BorderRadius.circular(4),
