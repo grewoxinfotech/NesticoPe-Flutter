@@ -309,11 +309,12 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
               ),
             ),
 
+
             const SizedBox(height: 12),
 
             // Subtitle / message
             Text(
-              "You've already submitted an inquiry for this property. The owner will contact you soon.",
+              "You've already submitted an Enquiry for this property. The owner will contact you soon.",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: AppFontSizes.bodySmall,

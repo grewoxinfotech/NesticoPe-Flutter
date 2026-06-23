@@ -117,6 +117,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:nesticope_app/modules/dashboard/views/dashboard_screen.dart';
 import 'package:nesticope_app/modules/dashboard/views/widget/seller_property_screen.dart';
 import 'package:nesticope_app/modules/profile/controllers/seller_profile_controller.dart';
@@ -242,7 +243,33 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
                         borderRadius: BorderRadius.circular(AppRadius.large),
                       ),
                       currentIndex: index,
-                      onTap: navigationController.changeIndex,
+                      onTap: (index) async {
+                        if (index == 1) {
+                          if (UserHelper.isSellerOwner) {
+                            await SecureStorage.saveSellerLeadCount(
+                              sellerOverviewController
+                                      .overviewData
+                                      .value
+                                      ?.data
+                                      ?.leadAnalytics
+                                      ?.totalLeads ??
+                                  0,
+                            );
+                          } else if (UserHelper.isSellerBuilder) {
+                            await SecureStorage.saveBuilderLeadCount(
+                              sellerOverviewController
+                                      .overviewData
+                                      .value
+                                      ?.data
+                                      ?.leadAnalytics
+                                      ?.totalLeads ??
+                                  0,
+                            );
+                          }
+                          setState(() {});
+                        }
+                        navigationController.changeIndex(index);
+                      },
                       unselectedItemColor: Get.theme.colorScheme.onSurface
                           .withOpacity(0.6),
 

@@ -783,11 +783,7 @@ class LeadController extends PaginatedController<LeadItem> {
           propertyId: currentPropertyFilterId.value!,
           filters: filters.value,
         );
-        if (UserHelper.isSellerOwner) {
-          await SecureStorage.saveSellerLeadCount(response.items.length);
-        } else if (UserHelper.isSellerBuilder) {
-          await SecureStorage.saveBuilderLeadCount(response.items.length);
-        }
+      
       }
       // 2. Fallback to Original Logic (Global Leads)
       else if (fromReseller) {

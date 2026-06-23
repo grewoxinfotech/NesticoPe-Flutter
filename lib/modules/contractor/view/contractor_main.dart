@@ -48,7 +48,6 @@ class _ContractorMainScreenState extends State<ContractorMainScreen> {
       ContractorInquiryScreen(),
       ContractorLeadScreen(),
       ContractorProjectScreen(),
-
       ContractorProfileScreen(),
     ];
   }
@@ -166,7 +165,7 @@ class _ContractorMainScreenState extends State<ContractorMainScreen> {
   Widget build(BuildContext context) {
     return Obx(() {
       final index = navigationController.currentIndex.value;
-
+      // final contractorLeadCount = 0.obs;
       return PopScope(
         canPop: index == 0,
         onPopInvokedWithResult: (didPop, result) {
@@ -241,6 +240,11 @@ class _ContractorMainScreenState extends State<ContractorMainScreen> {
                                       ?.totalInquiries ??
                                   0,
                             );
+
+                            setState(() {
+                              
+                            });
+                            // await dashboardController.refreshDashboard();
                           }
                         }
 

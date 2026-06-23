@@ -233,7 +233,7 @@ class PropertyDetailManager {
               "Rent":
                   "${Formatter.formatPrice(num.tryParse(pd.financialInfo!.monthlyRent.toString()) ?? 0)}/ month",
             });
-          } 
+          }
           break;
 
         case 'sell':
@@ -241,7 +241,7 @@ class PropertyDetailManager {
             details.add({
               "Price": "${Formatter.formatPrice(pd.financialInfo!.price)}",
             });
-          } 
+          }
           break;
 
         case 'pg':
@@ -360,10 +360,12 @@ class PropertyDetailManager {
                 plot.possessionStatus!.replaceAll("_", " ").capitalize,
               );
             }
-              if (plot.possessionDate != null) {
+            if (plot.possessionDate != null) {
               add(
                 "Possession Date",
-                plot.possessionDate!.replaceAll("_", " ").capitalize,
+                Formatter.formatDateFromDateTime(
+                  DateTime.tryParse(plot.possessionDate ?? ''),
+                ),
               );
             }
 
@@ -431,13 +433,14 @@ class PropertyDetailManager {
               plot.possessionStatus!.replaceAll("_", " ").capitalize.toString(),
         });
       }
-        if (plot.possessionDate != null) {
+      if (plot.possessionDate != null) {
         details.add({
-          "Possession Date":
-              plot.possessionDate!.replaceAll("_", " ").capitalize.toString(),
+          "Possession Date": Formatter.formatDateFromDateTime(
+            DateTime.tryParse(plot.possessionDate ?? ''),
+          ),
         });
       }
-       
+
       if (property.propertyType != null) {
         details.add({
           "Property Type":
@@ -472,16 +475,15 @@ class PropertyDetailManager {
                 .toString(),
       });
     }
-       if (pd.possessionInfo?.possessionDate != null) {
+    if (pd.possessionInfo?.possessionDate != null) {
       details.add({
-        "Possession Date":
-            pd.possessionInfo!.possessionDate!
-                .replaceAll("_", " ")
-                .capitalize
-                .toString(),
+        "Possession Date": Formatter.formatDateFromDateTime(
+          DateTime.tryParse(pd.possessionInfo?.possessionDate ?? ''),
+        ),
       });
     }
-       if (pd.possessionInfo?.propertyAgeInYear != null && pd.possessionInfo?.propertyAgeInYear != 'null') {
+    if (pd.possessionInfo?.propertyAgeInYear != null &&
+        pd.possessionInfo?.propertyAgeInYear != 'null') {
       details.add({
         "Age of Property":
             pd.possessionInfo!.propertyAgeInYear!
@@ -526,10 +528,8 @@ bool isValidField(dynamic value) {
 }
 
 IconData getpropertyIcon(String title) {
-   debugPrint("Getting icon for title: ${title.toLowerCase()}");
+  debugPrint("Getting icon for title: ${title.toLowerCase()}");
   switch (title.toLowerCase()) {
-   
-
     case 'bhk':
       return Icons.bed_outlined;
     case 'bathrooms':
@@ -573,7 +573,7 @@ IconData getpropertyIcon(String title) {
       return Icons.verified_user_outlined;
     case 'property type':
       return Icons.home_outlined;
-       case 'common areas':
+    case 'common areas':
     case 'pg_common_areas':
       return Icons.weekend_outlined; // sofa/living area
 

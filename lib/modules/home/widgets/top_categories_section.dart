@@ -435,6 +435,7 @@ class _CategoryCardState extends State<_CategoryCard>
   Widget build(BuildContext context) {
     Get.put(HireContractorController());
     Get.put(HireContractorNewController());
+    final screenWidth = MediaQuery.of(context).size.width;
     Get.put(HireContractorListOfProfileController());
     Get.put(HireContractorFilterProfileController());
 
@@ -675,42 +676,44 @@ class _CategoryCardState extends State<_CategoryCard>
             //                   ),
 
             /// 🎯 ICON
-            Positioned(
-              right: -8,
-              bottom: -8,
-              child: SvgPicture.asset(
-                (svgMap[key] ??
-                    [
-                      'assets/svg/service/build-svgrepo-com.svg',
-                      'assets/svg/service/bricks-svgrepo-com.svg',
-                    ])[0],
-                width: 72,
-                height: 72,
-                colorFilter: ColorFilter.mode(
-                  Colors.white.withOpacity(0.22),
-                  BlendMode.srcIn,
-                ),
-              ),
-            ),
+        // final screenWidth = MediaQuery.of(context).size.width;
 
-            /// 🖼️ SVG IMAGE 2 — top-right (smaller, slightly more visible)
-            Positioned(
-              left: 10,
-              top: 30,
-              child: SvgPicture.asset(
-                (svgMap[key] ??
-                    [
-                      'assets/svg/service/build-svgrepo-com.svg',
-                      'assets/svg/service/bricks-svgrepo-com.svg',
-                    ])[1],
-                width: 50,
-                height: 50,
-                colorFilter: ColorFilter.mode(
-                  Colors.white.withOpacity(0.45),
-                  BlendMode.srcIn,
-                ),
-              ),
-            ),
+Positioned(
+  right: -screenWidth * 0.02,
+  bottom: -screenWidth * 0.02,
+  child: SvgPicture.asset(
+    (svgMap[key] ??
+        [
+          'assets/svg/service/build-svgrepo-com.svg',
+          'assets/svg/service/bricks-svgrepo-com.svg',
+        ])[0],
+    width: screenWidth * 0.18,
+    height: screenWidth * 0.18,
+    colorFilter: ColorFilter.mode(
+      Colors.white.withOpacity(0.22),
+      BlendMode.srcIn,
+    ),
+  ),
+),
+
+/// 🖼️ SVG IMAGE 2
+Positioned(
+  left: screenWidth * 0.025,
+  top: screenWidth * 0.075,
+  child: SvgPicture.asset(
+    (svgMap[key] ??
+        [
+          'assets/svg/service/build-svgrepo-com.svg',
+          'assets/svg/service/bricks-svgrepo-com.svg',
+        ])[1],
+    width: screenWidth * 0.12,
+    height: screenWidth * 0.12,
+    colorFilter: ColorFilter.mode(
+      Colors.white.withOpacity(0.45),
+      BlendMode.srcIn,
+    ),
+  ),
+),
 
             /// ⭐ BADGE (FIXED POSITION)
             if (isPopular)

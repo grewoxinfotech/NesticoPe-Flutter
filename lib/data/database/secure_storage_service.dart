@@ -59,6 +59,7 @@ static Future<void> saveResellerLeadCount(int count) async {
 }
 
 static Future<void> saveContractorLeadCount(int count) async {
+  print("Check the lead number store or not${count}");
   await _storage.write(
     key: _keyContractorLeadCount,
     value: count.toString(),

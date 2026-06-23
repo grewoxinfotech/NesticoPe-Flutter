@@ -479,7 +479,7 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                "No inquiries available",
+                                "No Enquiries available",
                                 style: TextStyle(
                                   fontSize: AppFontSizes.body,
                                   color: ColorRes.textSecondary,
@@ -536,300 +536,37 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
                             itemCount: controller.itemInquiryList.length,
                             itemBuilder: (context, index) {
                               final inquiry = controller.itemInquiryList[index];
-                              return Obx(
-                                () =>
-                                    (inquiry.isLocked)
-                                        ? Stack(
-                                          children: [
-                                            /// Main Card
-                                            AnimatedContainer(
-                                              duration: const Duration(
-                                                milliseconds: 250,
-                                              ),
-                                              curve: Curves.easeInOut,
-                                              margin: const EdgeInsets.only(
-                                                bottom: 12,
-                                              ),
-                                              padding: const EdgeInsets.all(16),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(16),
-                                                border: Border.all(
-                                                  color: Colors.orange.shade100,
-                                                ),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.black
-                                                        .withOpacity(0.06),
-                                                    blurRadius: 10,
-                                                    offset: const Offset(0, 4),
-                                                  ),
-                                                ],
-                                              ),
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Container(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                          12,
-                                                        ),
-                                                    decoration: BoxDecoration(
-                                                      color:
-                                                          Colors.orange.shade50,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            12,
-                                                          ),
-                                                    ),
-                                                    child: Icon(
-                                                      Icons
-                                                          .workspace_premium_rounded,
-                                                      color:
-                                                          Colors
-                                                              .orange
-                                                              .shade700,
-                                                      size: 28,
-                                                    ),
-                                                  ),
-
-                                                  const SizedBox(width: 14),
-
-                                                  Expanded(
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        const Text(
-                                                          "Service Inquiry",
-                                                          style: TextStyle(
-                                                            fontSize: 16,
-                                                            fontWeight:
-                                                                FontWeight.w700,
-                                                          ),
-                                                        ),
-
-                                                        const SizedBox(
-                                                          height: 6,
-                                                        ),
-
-                                                        Text(
-                                                          "Interested in 3 BHK Apartment at Ahmedabad.",
-                                                          style: TextStyle(
-                                                            fontSize: 13,
-                                                            color:
-                                                                Colors
-                                                                    .grey
-                                                                    .shade700,
-                                                          ),
-                                                        ),
-
-                                                        const SizedBox(
-                                                          height: 8,
-                                                        ),
-
-                                                        Text(
-                                                          "Contact: +91 XXXXX XXXXX",
-                                                          style: TextStyle(
-                                                            fontSize: 13,
-                                                            color:
-                                                                Colors
-                                                                    .grey
-                                                                    .shade600,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-
-                                            /// Lock Overlay
-                                            if (inquiry.isLocked)
-                                              Positioned.fill(
-                                                child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(16),
-                                                  child: BackdropFilter(
-                                                    filter: ImageFilter.blur(
-                                                      sigmaX: 6,
-                                                      sigmaY: 6,
-                                                    ),
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        color: Colors.white
-                                                            .withOpacity(0.65),
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              16,
-                                                            ),
-                                                      ),
-                                                      child: Center(
-                                                        child: Column(
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          children: [
-                                                            Container(
-                                                              padding:
-                                                                  const EdgeInsets.all(
-                                                                    14,
-                                                                  ),
-                                                              decoration: BoxDecoration(
-                                                                color:
-                                                                    Colors
-                                                                        .orange
-                                                                        .shade50,
-                                                                shape:
-                                                                    BoxShape
-                                                                        .circle,
-                                                              ),
-                                                              child: Icon(
-                                                                Icons
-                                                                    .lock_rounded,
-                                                                color:
-                                                                    Colors
-                                                                        .orange
-                                                                        .shade700,
-                                                                size: 34,
-                                                              ),
-                                                            ),
-
-                                                            const SizedBox(
-                                                              height: 12,
-                                                            ),
-
-                                                            const Text(
-                                                              "Plan Limit Reached",
-                                                              style: TextStyle(
-                                                                fontSize: 16,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w700,
-                                                              ),
-                                                            ),
-
-                                                            const SizedBox(
-                                                              height: 6,
-                                                            ),
-
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets.symmetric(
-                                                                    horizontal:
-                                                                        24,
-                                                                  ),
-                                                              child: Text(
-                                                                "Upgrade your plan to view inquiry details and contact information.",
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                                style: TextStyle(
-                                                                  color:
-                                                                      Colors
-                                                                          .grey
-                                                                          .shade700,
-                                                                  fontSize: 13,
-                                                                ),
-                                                              ),
-                                                            ),
-
-                                                            const SizedBox(
-                                                              height: 14,
-                                                            ),
-
-                                                            ElevatedButton.icon(
-                                                              onPressed: () {
-                                                                // Navigate to Plan Screen
-                                                                Get.to(
-                                                                  () => SubscriptionPlansScreen(
-                                                                    role:
-                                                                        'contractor',
-                                                                    isShowCurrentPlan:
-                                                                        true,
-                                                                  ),
-                                                                );
-                                                              },
-                                                              icon: const Icon(
-                                                                Icons
-                                                                    .upgrade_rounded,
-                                                                size: 18,
-                                                              ),
-                                                              label: const Text(
-                                                                "Upgrade Plan",
-                                                              ),
-                                                              style: ElevatedButton.styleFrom(
-                                                                backgroundColor:
-                                                                    Colors
-                                                                        .orange,
-                                                                foregroundColor:
-                                                                    Colors
-                                                                        .white,
-                                                                elevation: 0,
-                                                                padding:
-                                                                    const EdgeInsets.symmetric(
-                                                                      horizontal:
-                                                                          20,
-                                                                      vertical:
-                                                                          12,
-                                                                    ),
-                                                                shape: RoundedRectangleBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius.circular(
-                                                                        12,
-                                                                      ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                          ],
-                                        )
-                                        : InquiryCard(
-                                          inquiry: inquiry,
-                                          isExpanded: controller.isExpanded(
-                                            inquiry.id,
-                                          ),
-                                          onToggle:
-                                              () => controller.toggleCard(
-                                                inquiry.id,
-                                              ),
-                                          onChangeStatus:
-                                              () => _showStatusDialog(
-                                                context,
-                                                controller,
-                                                inquiry,
-                                              ),
-                                          onLeadConvert:
-                                          // () => controller.convertToLead(inquiry, inquiry.services,inquiry.convertedServices),
-                                          () {
-                                            // final controller = Get.put(
-                                            //   ContractorReferralController(
-                                            //     userId: inquiry.userId,
-                                            //   ),
-                                            // );
-                                            // controller.resetAllData();
-                                            Get.to(
-                                              () =>
-                                                  ContractorInquiryQuotationScreen(
-                                                    inquiry: inquiry,
-                                                  ),
-                                            );
-                                          },
-                                          onDelete:
-                                              () => controller.deleteInquiry(
-                                                inquiry.id,
-                                                inquiry.name,
-                                              ),
-                                        ),
+                              return InquiryCard(
+                                inquiry: inquiry,
+                                isExpanded: controller.isExpanded(inquiry.id),
+                                onToggle:
+                                    () => controller.toggleCard(inquiry.id),
+                                onChangeStatus:
+                                    () => _showStatusDialog(
+                                      context,
+                                      controller,
+                                      inquiry,
+                                    ),
+                                onLeadConvert:
+                                // () => controller.convertToLead(inquiry, inquiry.services,inquiry.convertedServices),
+                                () {
+                                  // final controller = Get.put(
+                                  //   ContractorReferralController(
+                                  //     userId: inquiry.userId,
+                                  //   ),
+                                  // );
+                                  // controller.resetAllData();
+                                  Get.to(
+                                    () => ContractorInquiryQuotationScreen(
+                                      inquiry: inquiry,
+                                    ),
+                                  );
+                                },
+                                onDelete:
+                                    () => controller.deleteInquiry(
+                                      inquiry.id,
+                                      inquiry.name,
+                                    ),
                               );
                             },
                           ),
@@ -1036,278 +773,388 @@ class InquiryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     ContractorInquiryController controller =
         Get.find<ContractorInquiryController>();
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 250),
-      curve: Curves.easeInOut,
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: InkWell(
-        onTap: onToggle,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      inquiry.name.capitalize?.replaceAll("_", " ") ?? " ",
-                      style: const TextStyle(
-                        fontSize: AppFontSizes.medium,
-                        color: ColorRes.textColor,
-                        fontWeight: AppFontWeights.semiBold,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  _buildStatusBadge(inquiry.status),
-                  const SizedBox(width: 12),
-                  Icon(
-                    isExpanded
-                        ? Icons.keyboard_arrow_up
-                        : Icons.keyboard_arrow_down,
-                    color: ColorRes.textSecondary,
-                  ),
-                ],
+    return Stack(
+      children: [
+        AnimatedContainer(
+          // height: 120,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeInOut,
+          margin: const EdgeInsets.only(top: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.06),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
-              const SizedBox(height: 12),
-
-              // Basic Info
-              _buildInfoRow(Icons.phone, inquiry.phone),
-              const SizedBox(height: 8),
-              _buildInfoRow(Icons.email, inquiry.email),
-              // const SizedBox(height: 8),
-              // _buildInfoRow(Icons.build, inquiry.services.first.serviceName),
-
-              // Expanded Section
-              if (isExpanded)
-                Padding(
-                  padding: const EdgeInsets.only(top: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            ],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: InkWell(
+            onTap: onToggle,
+            borderRadius: BorderRadius.circular(12),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header
+                  Row(
                     children: [
-                      Divider(color: ColorRes.leadGreyColor.shade200),
-
-                      /// 🏠 Property Details Section
-                      if ((inquiry.meta.propertyType?.isNotEmpty ?? false) ||
-                          (inquiry.meta.bhk != null &&
-                              inquiry.meta.bhk != null) ||
-                          (inquiry.meta.carpetArea != null ?? false) ||
-                          (inquiry.meta.state?.isNotEmpty ?? false) ||
-                          (inquiry.meta.location?.isNotEmpty ?? false)) ...[
-                        const SizedBox(height: 12),
-                        _buildSectionTitle('Property Details'),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            if (inquiry.meta.propertyType?.isNotEmpty ?? false)
-                              Expanded(
-                                child: _buildDetailItem(
-                                  'Property Type',
-                                  inquiry.meta.propertyType!,
-                                ),
-                              ),
-                            if (inquiry.meta.bhk != null)
-                              Expanded(
-                                child: _buildDetailItem(
-                                  'BHK',
-                                  '${inquiry.meta.bhk} BHK',
-                                ),
-                              ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            if (inquiry.meta.carpetArea != null ?? false)
-                              Expanded(
-                                child: _buildDetailItem(
-                                  'Carpet Area',
-                                  '${inquiry.meta.carpetArea} sq. ft.',
-                                ),
-                              ),
-                            if (inquiry.meta.state?.isNotEmpty ?? false)
-                              Expanded(
-                                child: _buildDetailItem(
-                                  'State',
-                                  inquiry.meta.state!,
-                                ),
-                              ),
-                          ],
-                        ),
-                        if (inquiry.meta.location?.isNotEmpty ?? false) ...[
-                          const SizedBox(height: 8),
-                          _buildDetailItem('Location', inquiry.meta.location!),
-                        ],
-                      ],
-
-                      /// 🛠 Required Services Section
-                      if (inquiry.services.isNotEmpty) ...[
-                        const SizedBox(height: 12),
-                        _buildSectionTitle('Required Services'),
-                        const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: List.generate(inquiry.services.length, (
-                            index,
-                          ) {
-                            final service = inquiry.services[index];
-                            final bool isConverted = inquiry.convertedServices
-                                .contains(service.serviceId);
-
-                            return _chip(
-                              service.serviceName.capitalize?.replaceAll(
-                                    "_",
-                                    ' ',
-                                  ) ??
-                                  service.serviceName,
-                              isConverted
-                                  ? ColorRes.success
-                                  : ColorRes.leadGreyColor.shade400,
-                            );
-                          }),
-                        ),
-                      ],
-
-                      /// 📝 Service Description Section
-                      if (inquiry.meta.serviceDescription?.trim().isNotEmpty ??
-                          false) ...[
-                        const SizedBox(height: 12),
-                        _buildSectionTitle('Service Description'),
-                        const SizedBox(height: 8),
-                        Text(
-                          inquiry.meta.serviceDescription!,
+                      Expanded(
+                        child: Text(
+                          inquiry.name.capitalize?.replaceAll("_", " ") ?? " ",
                           style: const TextStyle(
-                            fontSize: AppFontSizes.caption,
-                            color: ColorRes.textSecondary,
+                            fontSize: AppFontSizes.medium,
+                            color: ColorRes.textColor,
+                            fontWeight: AppFontWeights.semiBold,
                           ),
                         ),
-                      ],
-
-                      const SizedBox(height: 10),
-                      Divider(color: ColorRes.leadGreyColor.shade200),
-
-                      /// 🔘 Action Buttons
-                      const SizedBox(height: 5),
-                      Row(
-                        children: [
-                          if (!inquiry.isConvertedToQuotation) ...[
-                            Expanded(
-                              child: _buildActionButton(
-                                icon: Icons.swap_horiz,
-                                label: 'Change Status',
-                                color: ColorRes.primary,
-                                onPressed: onChangeStatus,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: _buildActionButton(
-                                icon: Icons.delete_outline,
-                                label: 'Delete',
-                                color: ColorRes.error,
-                                onPressed: onDelete,
-                              ),
-                            ),
-                          ],
-                        ],
                       ),
-                      const SizedBox(height: 12),
-                      (inquiry.isConvertedToQuotation)
-                          ? GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 12,
-                              ),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: ColorRes.green.withOpacity(0.3),
-                                  width: 1,
-                                ),
-                                color: ColorRes.green.withOpacity(0.08),
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                'Converted',
-                                style: TextStyle(
-                                  color: ColorRes.green,
-                                  fontSize: AppFontSizes.bodySmall,
-                                  fontWeight: AppFontWeights.semiBold,
-                                ),
-                              ),
-                            ),
-                          )
-                          : _buildActionButton(
-                            icon: Icons.transform,
-                            label: 'Convert to Quotation',
-                            color: ColorRes.success,
-                            onPressed: () {
-                              final dashboardController =
-                                  Get.find<ContractorDashboardController>();
-                              final limitReached =
-                                  dashboardController
-                                      .activeSubscription
-                                      .value
-                                      ?.isServiceLimitReached ??
-                                  true;
-
-                              if (limitReached) {
-                                dashboardController.showUpgradePlanDialog(
-                                  title: 'Limit Reached',
-                                  message:
-                                      'Limit Reached, please upgrade your plan.',
-                                  buttonText: 'Upgrade Plan',
-                                );
-                                return;
-                              }
-
-                              onLeadConvert();
-                            },
-                          ),
-                      // const SizedBox(height: 8),
-                      //
-                      // // Submit Quotation Button
-                      // SizedBox(
-                      //   width: double.infinity,
-                      //   child: _buildActionButton(
-                      //     icon: Icons.request_quote_outlined,
-                      //     label: 'Submit Quotation',
-                      //     color: ColorRes.blueColor,
-                      //     onPressed: () {
-                      //       Get.to(
-                      //         () => ContractorInquiryQuotationScreen(
-                      //           inquiry: inquiry,
-                      //         ),
-                      //       );
-                      //     },
-                      //   ),
-                      // ),
-                      const SizedBox(height: 8),
+                      SizedBox(width: 10),
+                      _buildStatusBadge(inquiry.status),
+                      const SizedBox(width: 12),
+                      Icon(
+                        isExpanded
+                            ? Icons.keyboard_arrow_up
+                            : Icons.keyboard_arrow_down,
+                        color: ColorRes.textSecondary,
+                      ),
                     ],
                   ),
-                ),
-            ],
+                  const SizedBox(height: 12),
+
+                  // Basic Info
+                  _buildInfoRow(Icons.phone, inquiry.phone),
+                  const SizedBox(height: 8),
+                  _buildInfoRow(Icons.email, inquiry.email),
+                  // const SizedBox(height: 8),
+                  // _buildInfoRow(Icons.build, inquiry.services.first.serviceName),
+
+                  // Expanded Section
+                  if (isExpanded)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Divider(color: ColorRes.leadGreyColor.shade200),
+
+                          /// 🏠 Property Details Section
+                          if ((inquiry.meta.propertyType?.isNotEmpty ??
+                                  false) ||
+                              (inquiry.meta.bhk != null &&
+                                  inquiry.meta.bhk != null) ||
+                              (inquiry.meta.carpetArea != null ?? false) ||
+                              (inquiry.meta.state?.isNotEmpty ?? false) ||
+                              (inquiry.meta.location?.isNotEmpty ?? false)) ...[
+                            const SizedBox(height: 12),
+                            _buildSectionTitle('Property Details'),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                if (inquiry.meta.propertyType?.isNotEmpty ??
+                                    false)
+                                  Expanded(
+                                    child: _buildDetailItem(
+                                      'Property Type',
+                                      inquiry.meta.propertyType!,
+                                    ),
+                                  ),
+                                if (inquiry.meta.bhk != null)
+                                  Expanded(
+                                    child: _buildDetailItem(
+                                      'BHK',
+                                      '${inquiry.meta.bhk} BHK',
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                if (inquiry.meta.carpetArea != null ?? false)
+                                  Expanded(
+                                    child: _buildDetailItem(
+                                      'Carpet Area',
+                                      '${inquiry.meta.carpetArea} sq. ft.',
+                                    ),
+                                  ),
+                                if (inquiry.meta.state?.isNotEmpty ?? false)
+                                  Expanded(
+                                    child: _buildDetailItem(
+                                      'State',
+                                      inquiry.meta.state!,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            if (inquiry.meta.location?.isNotEmpty ?? false) ...[
+                              const SizedBox(height: 8),
+                              _buildDetailItem(
+                                'Location',
+                                inquiry.meta.location!,
+                              ),
+                            ],
+                          ],
+
+                          /// 🛠 Required Services Section
+                          if (inquiry.services.isNotEmpty) ...[
+                            const SizedBox(height: 12),
+                            _buildSectionTitle('Required Services'),
+                            const SizedBox(height: 8),
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: List.generate(inquiry.services.length, (
+                                index,
+                              ) {
+                                final service = inquiry.services[index];
+                                final bool isConverted = inquiry
+                                    .convertedServices
+                                    .contains(service.serviceId);
+
+                                return _chip(
+                                  service.serviceName.capitalize?.replaceAll(
+                                        "_",
+                                        ' ',
+                                      ) ??
+                                      service.serviceName,
+                                  isConverted
+                                      ? ColorRes.success
+                                      : ColorRes.leadGreyColor.shade400,
+                                );
+                              }),
+                            ),
+                          ],
+
+                          /// 📝 Service Description Section
+                          if (inquiry.meta.serviceDescription
+                                  ?.trim()
+                                  .isNotEmpty ??
+                              false) ...[
+                            const SizedBox(height: 12),
+                            _buildSectionTitle('Service Description'),
+                            const SizedBox(height: 8),
+                            Text(
+                              inquiry.meta.serviceDescription!,
+                              style: const TextStyle(
+                                fontSize: AppFontSizes.caption,
+                                color: ColorRes.textSecondary,
+                              ),
+                            ),
+                          ],
+
+                          const SizedBox(height: 10),
+                          Divider(color: ColorRes.leadGreyColor.shade200),
+
+                          /// 🔘 Action Buttons
+                          const SizedBox(height: 5),
+                          Row(
+                            children: [
+                              if (!inquiry.isConvertedToQuotation) ...[
+                                Expanded(
+                                  child: _buildActionButton(
+                                    icon: Icons.swap_horiz,
+                                    label: 'Change Status',
+                                    color: ColorRes.primary,
+                                    onPressed: onChangeStatus,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: _buildActionButton(
+                                    icon: Icons.delete_outline,
+                                    label: 'Delete',
+                                    color: ColorRes.error,
+                                    onPressed: onDelete,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          (inquiry.isConvertedToQuotation)
+                              ? GestureDetector(
+                                onTap: () {},
+                                child: Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: ColorRes.green.withOpacity(0.3),
+                                      width: 1,
+                                    ),
+                                    color: ColorRes.green.withOpacity(0.08),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    'Converted',
+                                    style: TextStyle(
+                                      color: ColorRes.green,
+                                      fontSize: AppFontSizes.bodySmall,
+                                      fontWeight: AppFontWeights.semiBold,
+                                    ),
+                                  ),
+                                ),
+                              )
+                              : _buildActionButton(
+                                icon: Icons.transform,
+                                label: 'Convert to Quotation',
+                                color: ColorRes.success,
+                                onPressed: () {
+                                  final dashboardController =
+                                      Get.find<ContractorDashboardController>();
+                                  final limitReached =
+                                      dashboardController
+                                          .activeSubscription
+                                          .value
+                                          ?.isServiceLimitReached ??
+                                      true;
+
+                                  if (limitReached) {
+                                    dashboardController.showUpgradePlanDialog(
+                                      title: 'Limit Reached',
+                                      message:
+                                          'Limit Reached, please upgrade your plan.',
+                                      buttonText: 'Upgrade Plan',
+                                    );
+                                    return;
+                                  }
+
+                                  onLeadConvert();
+                                },
+                              ),
+                          // const SizedBox(height: 8),
+                          //
+                          // // Submit Quotation Button
+                          // SizedBox(
+                          //   width: double.infinity,
+                          //   child: _buildActionButton(
+                          //     icon: Icons.request_quote_outlined,
+                          //     label: 'Submit Quotation',
+                          //     color: ColorRes.blueColor,
+                          //     onPressed: () {
+                          //       Get.to(
+                          //         () => ContractorInquiryQuotationScreen(
+                          //           inquiry: inquiry,
+                          //         ),
+                          //       );
+                          //     },
+                          //   ),
+                          // ),
+                          const SizedBox(height: 8),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
         ),
-      ),
+
+        if (inquiry.isLocked)
+          Positioned.fill(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+                child: Container(
+                  // height: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.65),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Center(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding:  EdgeInsets.all(8.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Container(
+                                //   padding: const EdgeInsets.all(10),
+                                //   decoration: BoxDecoration(
+                                //     color: Colors.orange.shade50,
+                                //     shape: BoxShape.circle,
+                                //   ),
+                                //   child: Icon(
+                                //     Icons.lock_rounded,
+                                //     color: Colors.orange.shade700,
+                                //     size: 20,
+                                //   ),
+                                // ),
+                            
+                                // const SizedBox(height: 12),
+                            
+                                const Text(
+                                  "Plan Limit Reached",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                            
+                                const SizedBox(height: 6),
+                            
+                                Text(
+                                  "Upgrade your plan to view Enquiry details and contact information.",
+                            
+                                                            
+                                  style: TextStyle(
+                                    color: Colors.grey.shade700,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                            
+                                const SizedBox(height: 14),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            // Navigate to Plan Screen
+                            Get.to(
+                              () => SubscriptionPlansScreen(
+                                role: 'contractor',
+                                isShowCurrentPlan: true,
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.lock, size: 18),
+                          label:  Text("Upgrade Plan",style: TextStyle(fontSize: 12),),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 10,)
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 
