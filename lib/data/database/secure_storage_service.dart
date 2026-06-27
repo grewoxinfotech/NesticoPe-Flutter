@@ -107,6 +107,9 @@ static Future<bool> hasNewResellerLead(int currentLeadCount) async {
 
 static Future<bool> hasNewContractorLead(int currentLeadCount) async {
   final storedCount = await getContractorLeadCount();
+      print("Check the lead number store or not${currentLeadCount}");
+    print("Check the lead number store or not${storedCount}");
+      print("Check the lead number store or not${currentLeadCount > storedCount}");
   return currentLeadCount > storedCount;
 }
 

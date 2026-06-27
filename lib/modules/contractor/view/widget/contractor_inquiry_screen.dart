@@ -536,37 +536,39 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
                             itemCount: controller.itemInquiryList.length,
                             itemBuilder: (context, index) {
                               final inquiry = controller.itemInquiryList[index];
-                              return InquiryCard(
-                                inquiry: inquiry,
-                                isExpanded: controller.isExpanded(inquiry.id),
-                                onToggle:
-                                    () => controller.toggleCard(inquiry.id),
-                                onChangeStatus:
-                                    () => _showStatusDialog(
-                                      context,
-                                      controller,
-                                      inquiry,
-                                    ),
-                                onLeadConvert:
-                                // () => controller.convertToLead(inquiry, inquiry.services,inquiry.convertedServices),
-                                () {
-                                  // final controller = Get.put(
-                                  //   ContractorReferralController(
-                                  //     userId: inquiry.userId,
-                                  //   ),
-                                  // );
-                                  // controller.resetAllData();
-                                  Get.to(
-                                    () => ContractorInquiryQuotationScreen(
-                                      inquiry: inquiry,
-                                    ),
-                                  );
-                                },
-                                onDelete:
-                                    () => controller.deleteInquiry(
-                                      inquiry.id,
-                                      inquiry.name,
-                                    ),
+                              return Obx(
+                                () => InquiryCard(
+                                  inquiry: inquiry,
+                                  isExpanded: controller.isExpanded(inquiry.id),
+                                  onToggle:
+                                      () => controller.toggleCard(inquiry.id),
+                                  onChangeStatus:
+                                      () => _showStatusDialog(
+                                        context,
+                                        controller,
+                                        inquiry,
+                                      ),
+                                  onLeadConvert:
+                                  // () => controller.convertToLead(inquiry, inquiry.services,inquiry.convertedServices),
+                                  () {
+                                    // final controller = Get.put(
+                                    //   ContractorReferralController(
+                                    //     userId: inquiry.userId,
+                                    //   ),
+                                    // );
+                                    // controller.resetAllData();
+                                    Get.to(
+                                      () => ContractorInquiryQuotationScreen(
+                                        inquiry: inquiry,
+                                      ),
+                                    );
+                                  },
+                                  onDelete:
+                                      () => controller.deleteInquiry(
+                                        inquiry.id,
+                                        inquiry.name,
+                                      ),
+                                ),
                               );
                             },
                           ),
@@ -1075,7 +1077,7 @@ class InquiryCard extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Padding(
-                            padding:  EdgeInsets.all(8.0),
+                            padding: EdgeInsets.all(8.0),
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1092,9 +1094,8 @@ class InquiryCard extends StatelessWidget {
                                 //     size: 20,
                                 //   ),
                                 // ),
-                            
+
                                 // const SizedBox(height: 12),
-                            
                                 const Text(
                                   "Plan Limit Reached",
                                   style: TextStyle(
@@ -1102,19 +1103,18 @@ class InquiryCard extends StatelessWidget {
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
-                            
+
                                 const SizedBox(height: 6),
-                            
+
                                 Text(
                                   "Upgrade your plan to view Enquiry details and contact information.",
-                            
-                                                            
+
                                   style: TextStyle(
                                     color: Colors.grey.shade700,
                                     fontSize: 11,
                                   ),
                                 ),
-                            
+
                                 const SizedBox(height: 14),
                               ],
                             ),
@@ -1132,7 +1132,10 @@ class InquiryCard extends StatelessWidget {
                             );
                           },
                           icon: const Icon(Icons.lock, size: 18),
-                          label:  Text("Upgrade Plan",style: TextStyle(fontSize: 12),),
+                          label: Text(
+                            "Upgrade Plan",
+                            style: TextStyle(fontSize: 12),
+                          ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.orange,
                             foregroundColor: Colors.white,
@@ -1146,7 +1149,7 @@ class InquiryCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(width: 10,)
+                        SizedBox(width: 10),
                       ],
                     ),
                   ),

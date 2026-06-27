@@ -88,7 +88,8 @@ class ContractorDashboardController extends GetxController {
       showRedDot.value = await SecureStorage.hasNewContractorLead(
         currentLeadCount,
       );
-      log("Contractor dashboard fetched successfully");
+
+      log("Contractor dashboard fetched successfully ${showRedDot.value}");
     } catch (e, s) {
       log("Failed to fetch contractor dashboard: $e", stackTrace: s);
       contractorInsights.value = null;

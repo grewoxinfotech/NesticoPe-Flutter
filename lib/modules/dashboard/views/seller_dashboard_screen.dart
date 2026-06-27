@@ -255,6 +255,21 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
                                       ?.totalLeads ??
                                   0,
                             );
+
+                            final currentLeadCount =
+                                sellerOverviewController
+                                    .overviewData
+                                    .value
+                                    ?.data
+                                    ?.leadAnalytics
+                                    ?.totalLeads ??
+                                0;
+                            sellerOverviewController
+                                .showRedDot
+                                .value = await SecureStorage.hasNewSellerLead(
+                              currentLeadCount,
+                            );
+        
                           } else if (UserHelper.isSellerBuilder) {
                             await SecureStorage.saveBuilderLeadCount(
                               sellerOverviewController
@@ -264,6 +279,20 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
                                       ?.leadAnalytics
                                       ?.totalLeads ??
                                   0,
+                            );
+
+                            final currentLeadCount =
+                                sellerOverviewController
+                                    .overviewData
+                                    .value
+                                    ?.data
+                                    ?.leadAnalytics
+                                    ?.totalLeads ??
+                                0;
+                            sellerOverviewController
+                                .showRedDot
+                                .value = await SecureStorage.hasNewBuilderLead(
+                              currentLeadCount,
                             );
                           }
                           setState(() {});

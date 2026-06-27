@@ -200,6 +200,7 @@
 // }
 
 import 'dart:developer';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -322,134 +323,184 @@ class _SavedPropertyScreenState extends State<SavedPropertyScreen> {
           style: TextStyle(fontWeight: AppFontWeights.semiBold),
         ),
       ),
-      body: Column(
+      body: Stack(
         children: [
-          /// Header Tabs
-          Card(
-            elevation: 5,
-            child: Container(
-              padding: const EdgeInsets.only(
-                top: 0,
-                left: 10,
-                right: 10,
-                bottom: 16,
-              ),
-              decoration: const BoxDecoration(
-                color: ColorRes.white,
-                borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(20),
-                ),
-              ),
-              child: Obx(() {
-                // Reactive counts from GetX observables
-                final savedCount = favoriteManager.favorites.length;
-                final seenCount = viewController.viewedProperties.where((element) => element.details != null && element.details?.id != null && element.details!.id!.isNotEmpty).length;
-                final contactedCount =
-                    contactedController.contactedPropertyIds.length;
-                final recentCount =
-                    searchHistoryController
-                        .searchHistoryResponse
-                        .value
-                        ?.data
-                        .item
-                        .length; // TODO: link with recent searches
+          Column(
+            children: [
+              /// Header Tabs
+              Card(
+                elevation: 5,
+                child: Container(
+                  padding: const EdgeInsets.only(
+                    top: 0,
+                    left: 10,
+                    right: 10,
+                    bottom: 16,
+                  ),
+                  decoration: const BoxDecoration(
+                    color: ColorRes.white,
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.circular(20),
+                    ),
+                  ),
+                  child: Obx(() {
+                    // Reactive counts from GetX observables
+                    final savedCount = favoriteManager.favorites.length;
+                    final seenCount =
+                        viewController.viewedProperties
+                            .where(
+                              (element) =>
+                                  element.details != null &&
+                                  element.details?.id != null &&
+                                  element.details!.id!.isNotEmpty,
+                            )
+                            .length;
+                    final contactedCount =
+                        contactedController.contactedPropertyIds.length;
+                    final recentCount =
+                        searchHistoryController
+                            .searchHistoryResponse
+                            .value
+                            ?.data
+                            .item
+                            .length; // TODO: link with recent searches
 
-                final List<int> tabsCount = [
-                  savedCount,
-                  seenCount,
-                  contactedCount,
-                  recentCount ?? 0,
-                ];
+                    final List<int> tabsCount = [
+                      savedCount,
+                      seenCount,
+                      contactedCount,
+                      recentCount ?? 0,
+                    ];
 
-                return Row(
-                  children: List.generate(tabs.length, (index) {
-                    final bool isSelected = selectedIndex == index;
-                    return Expanded(
-                      child: GestureDetector(
-                        onTap: () async {
-                          // if (UserHelper.isGuest) return;
-                          setState(() => selectedIndex = index);
-                          await _syncTabData(index);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                              AppRadius.mediumLarge,
-                            ),
-                            color:
-                                isSelected
-                                    ? ColorRes.primary.withOpacity(0.15)
-                                    : ColorRes.white,
-                            border: Border.all(
-                              color:
-                                  isSelected
-                                      ? ColorRes.primary
-                                      : ColorRes.leadGreyColor[300]!,
-                              width: 1.5,
-                            ),
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                tabsIcon[index],
-                                size: 20,
+                    return Row(
+                      children: List.generate(tabs.length, (index) {
+                        final bool isSelected = selectedIndex == index;
+                        return Expanded(
+                          child: GestureDetector(
+                            onTap: () async {
+                              // if (UserHelper.isGuest) return;
+                              setState(() => selectedIndex = index);
+                              await _syncTabData(index);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(
+                                  AppRadius.mediumLarge,
+                                ),
                                 color:
                                     isSelected
-                                        ? ColorRes.primary
-                                        : ColorRes.blackShade54,
-                              ),
-                              Text(
-                                tabs[index],
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: AppFontSizes.small,
+                                        ? ColorRes.primary.withOpacity(0.15)
+                                        : ColorRes.white,
+                                border: Border.all(
                                   color:
                                       isSelected
                                           ? ColorRes.primary
-                                          : ColorRes.blackShade87,
+                                          : ColorRes.leadGreyColor[300]!,
+                                  width: 1.5,
                                 ),
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                "(${tabsCount[index]})",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: AppFontSizes.small,
-                                  color:
-                                      isSelected
-                                          ? ColorRes.primary
-                                          : ColorRes.blackShade87,
-                                ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    tabsIcon[index],
+                                    size: 20,
+                                    color:
+                                        isSelected
+                                            ? ColorRes.primary
+                                            : ColorRes.blackShade54,
+                                  ),
+                                  Text(
+                                    tabs[index],
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.small,
+                                      color:
+                                          isSelected
+                                              ? ColorRes.primary
+                                              : ColorRes.blackShade87,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "(${tabsCount[index]})",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: AppFontSizes.small,
+                                      color:
+                                          isSelected
+                                              ? ColorRes.primary
+                                              : ColorRes.blackShade87,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
-                        ),
-                      ),
+                        );
+                      }),
                     );
                   }),
-                );
-              }),
-            ),
-          ),
+                ),
+              ),
 
-          /// Tab Content
-          Expanded(
-            child:
-                UserHelper.isGuest
-                    ? const _GuestStaticActivityView()
-                    : IndexedStack(
-                      index: selectedIndex,
-                      children: const [
-                        SavedPropertiesTab(),
-                        SeenPropertiesTab(),
-                        ContactedPropertiesTab(),
-                        RecentSearchesTab(),
+              /// Tab Content
+              Expanded(
+                child:
+                    UserHelper.isGuest
+                        ? const _GuestStaticActivityView()
+                        : IndexedStack(
+                          index: selectedIndex,
+                          children: const [
+                            SavedPropertiesTab(),
+                            SeenPropertiesTab(),
+                            ContactedPropertiesTab(),
+                            RecentSearchesTab(),
+                          ],
+                        ),
+              ),
+            ],
+          ),
+          if (UserHelper.isGuest)
+            Positioned.fill(
+              child: ClipRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+                  child: Container(
+                    color: Colors.black.withOpacity(0.15),
+                    alignment: Alignment.center,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // const Icon(
+                        //   Icons.lock_outline,
+                        //   size: 60,
+                        //   color: Colors.white,
+                        // ),
+                        // const SizedBox(height: 12),
+                        // const Text(
+                        //   "Login to access this feature",
+                        //   style: TextStyle(
+                        //     color: Colors.white,
+                        //     fontSize: 18,
+                        //     fontWeight: FontWeight.bold,
+                        //   ),
+                        // ),
+                        // const SizedBox(height: 20),
+                        // ElevatedButton(
+                        //   onPressed: () {
+                        //     // Navigate to Login Screen
+                        //   },
+                        //   child: const Text("Login"),
+                        // ),
                       ],
                     ),
-          ),
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );

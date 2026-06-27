@@ -240,10 +240,18 @@ class _ContractorMainScreenState extends State<ContractorMainScreen> {
                                       ?.totalInquiries ??
                                   0,
                             );
+                            dashboardController.showRedDot.value =
+                                await SecureStorage.hasNewContractorLead(
+                                  dashboardController
+                                          .contractorInsights
+                                          .value
+                                          ?.data
+                                          ?.performance
+                                          ?.totalInquiries ??
+                                      0,
+                                );
 
-                            setState(() {
-                              
-                            });
+                            setState(() {});
                             // await dashboardController.refreshDashboard();
                           }
                         }
