@@ -367,7 +367,7 @@ class _SellWithForm extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text('Send Enquiry', style: TextStyle(fontWeight: AppFontWeights.semiBold, fontSize: AppFontSizes.body)),
+                  Text('Send Inquiry', style: TextStyle(fontWeight: AppFontWeights.semiBold, fontSize: AppFontSizes.body)),
                   const SizedBox(height: 12),
                   _Input(hint: 'Full Name'),
                   const SizedBox(height: 10),

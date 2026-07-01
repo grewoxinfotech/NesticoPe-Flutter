@@ -1136,342 +1136,390 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
     final controller = Get.find<ContractorMyServiceController>();
 
     final materialRows = [
+      if (controller.isService('renovation_and_remodeling') ||
+          controller.isService('turnkey_construction') ||
+          controller.isService('commercial_construction_contractors') ||
+          controller.isService('specialized_service')) ...[
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Cement Brand",
+                options: controller.cementOptions,
+                selectedValues: controller.selectedCement,
+                context: context,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Steel Brand",
+                options: controller.steelOptions,
+                selectedValues: controller.selectedSteel,
+                context: context,
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Bricks/Blocks Type",
+                options: controller.brickOptions,
+                selectedValues: controller.selectedBrick,
+                context: context,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Sand/Aggregate Source",
+                options: controller.sandOptions,
+                selectedValues: controller.selectedSand,
+                context: context,
+              ),
+            ),
+          ],
+        ),
+      ],
+      if (controller.isService('turnkey_construction') ||
+          controller.isService('commercial_construction_contractors')) ...[
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Electrical Wires Brand",
+                options: controller.wireOptions,
+                selectedValues: controller.selectedWire,
+                context: context,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Switches Brand",
+                options: controller.switchOptions,
+                selectedValues: controller.selectedSwitch,
+                context: context,
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Plumbing Pipes Brand",
+                options: controller.pipeOptions,
+                selectedValues: controller.selectedPipe,
+                context: context,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Sanitary/WC Brand",
+                options: controller.sanitaryOptions,
+                selectedValues: controller.selectedSanitary,
+                context: context,
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Water Tank Brand",
+                options: controller.tankOptions,
+                selectedValues: controller.selectedTank,
+                context: context,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Flooring Tiles Brand",
+                options: controller.tileOptions,
+                selectedValues: controller.selectedTile,
+                context: context,
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Interior Paint Brand",
+                options: controller.interiorPaintOptions,
+                selectedValues: controller.selectedInteriorPaint,
+                context: context,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Exterior Paint Brand",
+                options: controller.exteriorPaintOptions,
+                selectedValues: controller.selectedExteriorPaint,
+                context: context,
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Doors Type/Brand",
+                options: controller.doorOptions,
+                selectedValues: controller.selectedDoor,
+                context: context,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Windows Type/Brand",
+                options: controller.windowOptions,
+                selectedValues: controller.selectedWindow,
+                context: context,
+              ),
+            ),
+          ],
+        ),
+      ],
+      if (controller.isService("rooftop_solar_panel_solutions") ||
+          controller.isService('turnkey_construction') ||
+          controller.isService('commercial_construction_contractors')) ...[
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Solar Panel Brand",
+                options: controller.solarPanelOptions,
+                selectedValues: controller.selectedSolarPanel,
+                context: context,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Solar Inverter Brand",
+                options: controller.solarInverterOptions,
+                selectedValues: controller.selectedSolarInverter,
+                context: context,
+              ),
+            ),
+          ],
+        ),
+      ],
+
+      if (controller.isService('home_security_solutions') ||
+          controller.isService('turnkey_construction') ||
+          controller.isService('commercial_construction_contractors')) ...[
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Security Brand",
+                options: controller.securityOptions,
+                selectedValues: controller.selectedSecurity,
+                context: context,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableNormalDropdown(
+                title: "Security Systems",
+                options: ['Yes', "No"].obs,
+                selectedValue: controller.selectedSecuritySystems,
+              ),
+            ),
+          ],
+        ),
+      ],
       Row(
         children: [
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Cement Brand",
-              options: controller.cementOptions,
-              selectedValues: controller.selectedCement,
-              context: context,
+          if (controller.isService(
+                'construction_site_machine_rent_yantrarent',
+              ) ||
+              controller.isService('turnkey_construction') ||
+              controller.isService('commercial_construction_contractors')) ...[
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Machine Brand",
+                options: controller.machineOptions,
+                selectedValues: controller.selectedMachine,
+                context: context,
+              ),
             ),
-          ),
+          ],
           SizedBox(width: 8),
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Steel Brand",
-              options: controller.steelOptions,
-              selectedValues: controller.selectedSteel,
-              context: context,
+          if (controller.isService('exterior_cladding_facade_contractors') ||
+              controller.isService('turnkey_construction') ||
+              controller.isService('commercial_construction_contractors')) ...[
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Cladding Brand",
+                options: controller.claddingOptions,
+                selectedValues: controller.selectedCladding,
+                context: context,
+              ),
             ),
-          ),
+          ],
         ],
       ),
+      if (controller.isService('turnkey_construction') ||
+          controller.isService('commercial_construction_contractors')) ...[
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Structure",
+                options: controller.structureOptions,
+                selectedValues: controller.selectedStructure,
+                context: context,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Plaster",
+                options: controller.plasterOptions,
+                selectedValues: controller.selectedPlaster,
+                context: context,
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Waterproofing",
+                options: controller.waterproofingOptions,
+                selectedValues: controller.selectedWaterproofing,
+                context: context,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Chokhat",
+                options: controller.chokhatOptions,
+                selectedValues: controller.selectedChokhat,
+                context: context,
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Railing",
+                options: controller.railingOptions,
+                selectedValues: controller.selectedRailing,
+                context: context,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "False Ceiling",
+                options: controller.ceilingOptions,
+                selectedValues: controller.selectedCeiling,
+                context: context,
+              ),
+            ),
+          ],
+        ),
+      ],
       Row(
         children: [
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Bricks",
-              options: controller.brickOptions,
-              selectedValues: controller.selectedBrick,
-              context: context,
+          if (controller.isService('turnkey_construction') ||
+              controller.isService('commercial_construction_contractors')) ...[
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Fabrication Work",
+                options: controller.fabricationOptions,
+                selectedValues: controller.selectedFabrication,
+                context: context,
+              ),
             ),
-          ),
+          ],
           SizedBox(width: 8),
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Sand",
-              options: controller.sandOptions,
-              selectedValues: controller.selectedSand,
-              context: context,
+          if (controller.isService('structure_planning_and_design') ||
+              controller.isService('turnkey_construction') ||
+              controller.isService('commercial_construction_contractors')) ...[
+            Expanded(
+              child: buildSelectableNormalDropdown(
+                title: "3D Design",
+                options: ['Yes', "No"].obs,
+                selectedValue: controller.selected3D,
+              ),
             ),
-          ),
+          ],
         ],
       ),
-      Row(
-        children: [
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Electrical Wires Brand",
-              options: controller.wireOptions,
-              selectedValues: controller.selectedWire,
-              context: context,
+      if (controller.isService('turnkey_construction') ||
+          controller.isService('commercial_construction_contractors')) ...[
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableNormalDropdown(
+                title: "Modular Kitchen",
+                options: ['Yes', "No"].obs,
+                selectedValue: controller.selectedModularKitchen,
+              ),
             ),
-          ),
-          SizedBox(width: 8),
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Switches Brand",
-              options: controller.switchOptions,
-              selectedValues: controller.selectedSwitch,
-              context: context,
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableNormalDropdown(
+                title: "Bore and Pump",
+                options: ['Yes', "No"].obs,
+                selectedValue: controller.selectedBoreAndPump,
+              ),
             ),
-          ),
-        ],
-      ),
-      Row(
-        children: [
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Plumbing Pipes Brand",
-              options: controller.pipeOptions,
-              selectedValues: controller.selectedPipe,
-              context: context,
+          ],
+        ),
+      ],
+      if (controller.isService('smart_home_solutions') ||
+          controller.isService('turnkey_construction') ||
+          controller.isService('commercial_construction_contractors')) ...[
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Smart Home Brands",
+                options: controller.smartHomeOptions,
+                selectedValues: controller.selectedSmartHome,
+                context: context,
+              ),
             ),
-          ),
-          SizedBox(width: 8),
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Sanitary/WC Brand",
-              options: controller.sanitaryOptions,
-              selectedValues: controller.selectedSanitary,
-              context: context,
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableNormalDropdown(
+                title: "Home Automation",
+                options: ['Yes', "No"].obs,
+                selectedValue: controller.selectedHomeAutomation,
+              ),
             ),
-          ),
-        ],
-      ),
-      Row(
-        children: [
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Water Tank Brand",
-              options: controller.tankOptions,
-              selectedValues: controller.selectedTank,
-              context: context,
-            ),
-          ),
-          SizedBox(width: 8),
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Flooring Tiles Brand",
-              options: controller.tileOptions,
-              selectedValues: controller.selectedTile,
-              context: context,
-            ),
-          ),
-        ],
-      ),
-      Row(
-        children: [
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Interior Paint Brand",
-              options: controller.interiorPaintOptions,
-              selectedValues: controller.selectedInteriorPaint,
-              context: context,
-            ),
-          ),
-          SizedBox(width: 8),
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Exterior Paint Brand",
-              options: controller.exteriorPaintOptions,
-              selectedValues: controller.selectedExteriorPaint,
-              context: context,
-            ),
-          ),
-        ],
-      ),
-      Row(
-        children: [
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Doors Type/Brand",
-              options: controller.doorOptions,
-              selectedValues: controller.selectedDoor,
-              context: context,
-            ),
-          ),
-          SizedBox(width: 8),
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Windows Type/Brand",
-              options: controller.windowOptions,
-              selectedValues: controller.selectedWindow,
-              context: context,
-            ),
-          ),
-        ],
-      ),
-      Row(
-        children: [
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Solar Panel Brand",
-              options: controller.solarPanelOptions,
-              selectedValues: controller.selectedSolarPanel,
-              context: context,
-            ),
-          ),
-          SizedBox(width: 8),
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Solar Inverter Brand",
-              options: controller.solarInverterOptions,
-              selectedValues: controller.selectedSolarInverter,
-              context: context,
-            ),
-          ),
-        ],
-      ),
-      Row(
-        children: [
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Security Brand",
-              options: controller.securityOptions,
-              selectedValues: controller.selectedSecurity,
-              context: context,
-            ),
-          ),
-          SizedBox(width: 8),
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Smart Home Brand",
-              options: controller.smartHomeOptions,
-              selectedValues: controller.selectedSmartHome,
-              context: context,
-            ),
-          ),
-        ],
-      ),
-      Row(
-        children: [
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Machine Brand",
-              options: controller.machineOptions,
-              selectedValues: controller.selectedMachine,
-              context: context,
-            ),
-          ),
-          SizedBox(width: 8),
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Cladding Brand",
-              options: controller.claddingOptions,
-              selectedValues: controller.selectedCladding,
-              context: context,
-            ),
-          ),
-        ],
-      ),
-      Row(
-        children: [
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Structure",
-              options: controller.structureOptions,
-              selectedValues: controller.selectedStructure,
-              context: context,
-            ),
-          ),
-          SizedBox(width: 8),
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Plaster",
-              options: controller.plasterOptions,
-              selectedValues: controller.selectedPlaster,
-              context: context,
-            ),
-          ),
-        ],
-      ),
-      Row(
-        children: [
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Waterproofing",
-              options: controller.waterproofingOptions,
-              selectedValues: controller.selectedWaterproofing,
-              context: context,
-            ),
-          ),
-          SizedBox(width: 8),
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Chokhat",
-              options: controller.chokhatOptions,
-              selectedValues: controller.selectedChokhat,
-              context: context,
-            ),
-          ),
-        ],
-      ),
-      Row(
-        children: [
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Railing",
-              options: controller.railingOptions,
-              selectedValues: controller.selectedRailing,
-              context: context,
-            ),
-          ),
-          SizedBox(width: 8),
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "False Ceiling",
-              options: controller.ceilingOptions,
-              selectedValues: controller.selectedCeiling,
-              context: context,
-            ),
-          ),
-        ],
-      ),
-      Row(
-        children: [
-          Expanded(
-            child: buildSelectableDropdown(
-              title: "Fabrication Work",
-              options: controller.fabricationOptions,
-              selectedValues: controller.selectedFabrication,
-              context: context,
-            ),
-          ),
-          SizedBox(width: 8),
-          Expanded(
-            child: buildSelectableNormalDropdown(
-              title: "3D Design",
-              options: ['Yes', "No"].obs,
-              selectedValue: controller.selected3D,
-            ),
-          ),
-        ],
-      ),
-      Row(
-        children: [
-          Expanded(
-            child: buildSelectableNormalDropdown(
-              title: "Modular Kitchen",
-              options: ['Yes', "No"].obs,
-              selectedValue: controller.selectedModularKitchen,
-            ),
-          ),
-          SizedBox(width: 8),
-          Expanded(
-            child: buildSelectableNormalDropdown(
-              title: "Bore and Pump",
-              options: ['Yes', "No"].obs,
-              selectedValue: controller.selectedBoreAndPump,
-            ),
-          ),
-        ],
-      ),
-      Row(
-        children: [
-          Expanded(
-            child: buildSelectableNormalDropdown(
-              title: "Security Systems",
-              options: ['Yes', "No"].obs,
-              selectedValue: controller.selectedSecuritySystems,
-            ),
-          ),
-          SizedBox(width: 8),
-          Expanded(
-            child: buildSelectableNormalDropdown(
-              title: "Home Automation",
-              options: ['Yes', "No"].obs,
-              selectedValue: controller.selectedHomeAutomation,
-            ),
-          ),
-        ],
-      ),
-      buildSelectableNormalDropdown(
-        title: "Solar Solutions",
-        options: ['Yes', "No"].obs,
-        selectedValue: controller.selectedSolarSolutions,
-      ),
+          ],
+        ),
+      ],
+      if (controller.isService("rooftop_solar_panel_solutions") ||
+          controller.isService('turnkey_construction') ||
+          controller.isService('commercial_construction_contractors')) ...[
+        buildSelectableNormalDropdown(
+          title: "Solar Solutions",
+          options: ['Yes', "No"].obs,
+          selectedValue: controller.selectedSolarSolutions,
+        ),
+      ],
     ];
 
     return Scaffold(
@@ -1504,7 +1552,8 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                 Obx(() {
                   final selectedPaths = controller.selectedImagePaths;
                   final existingUrls = controller.existingImageUrls;
-                  final int totalCount = selectedPaths.length + existingUrls.length;
+                  final int totalCount =
+                      selectedPaths.length + existingUrls.length;
 
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1515,14 +1564,17 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                           child: ListView.separated(
                             scrollDirection: Axis.horizontal,
                             itemCount: totalCount,
-                            separatorBuilder: (context, index) =>
-                                const SizedBox(width: 12),
+                            separatorBuilder:
+                                (context, index) => const SizedBox(width: 12),
                             itemBuilder: (context, index) {
                               // Show existing URLs first, then selected local paths
-                              final bool isExisting = index < existingUrls.length;
-                              final String content = isExisting
-                                  ? existingUrls[index]
-                                  : selectedPaths[index - existingUrls.length];
+                              final bool isExisting =
+                                  index < existingUrls.length;
+                              final String content =
+                                  isExisting
+                                      ? existingUrls[index]
+                                      : selectedPaths[index -
+                                          existingUrls.length];
 
                               return Stack(
                                 children: [
@@ -1531,27 +1583,33 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                                     height: 120,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(color: ColorRes.border),
+                                      border: Border.all(
+                                        color: ColorRes.border,
+                                      ),
                                     ),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(12),
-                                      child: isExisting
-                                          ? CachedNetworkImage(
-                                              imageUrl: content,
-                                              fit: BoxFit.cover,
-                                              placeholder: (context, url) =>
-                                                  const Center(
-                                                child:
-                                                    CircularProgressIndicator(),
+                                      child:
+                                          isExisting
+                                              ? CachedNetworkImage(
+                                                imageUrl: content,
+                                                fit: BoxFit.cover,
+                                                placeholder:
+                                                    (
+                                                      context,
+                                                      url,
+                                                    ) => const Center(
+                                                      child:
+                                                          CircularProgressIndicator(),
+                                                    ),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        const Icon(Icons.error),
+                                              )
+                                              : Image.file(
+                                                File(content),
+                                                fit: BoxFit.cover,
                                               ),
-                                              errorWidget:
-                                                  (context, url, error) =>
-                                                      const Icon(Icons.error),
-                                            )
-                                          : Image.file(
-                                              File(content),
-                                              fit: BoxFit.cover,
-                                            ),
                                     ),
                                   ),
                                   Positioned(
@@ -1563,7 +1621,8 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                                           controller.removeExistingImage(index);
                                         } else {
                                           controller.removeSelectedImage(
-                                              index - existingUrls.length);
+                                            index - existingUrls.length,
+                                          );
                                         }
                                       },
                                       child: Container(
@@ -1587,7 +1646,9 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                         ),
                       if (totalCount < 5)
                         Padding(
-                          padding: EdgeInsets.only(top: totalCount > 0 ? 12 : 0),
+                          padding: EdgeInsets.only(
+                            top: totalCount > 0 ? 12 : 0,
+                          ),
                           child: GestureDetector(
                             onTap: () => controller.pickImages(),
                             child: Container(
@@ -1706,6 +1767,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                       log(
                         "Checkfehfhuewh ${val}   ${controller.selectedServiceNameDropdown.value}",
                       );
+
                       if (val == controller.selectedServiceNameDropdown.value)
                         return;
                       controller.onServiceNameSelected(val);
@@ -1818,11 +1880,51 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                   controller.selectedCategoryName.value,
                 )) ...[
                   SizedBox(height: 16),
+                  // Obx(() {
+                  //   final visibleCount =
+                  //       controller.showAllMaterials.value
+                  //           ? materialRows.length
+                  //           : 2;
+                  //   return Column(
+                  //     children: [
+                  //       ...materialRows
+                  //           .take(visibleCount)
+                  //           .map(
+                  //             (e) => Padding(
+                  //               padding: const EdgeInsets.only(bottom: 16),
+                  //               child: e,
+                  //             ),
+                  //           )
+                  //           .toList(),
+                  //       if (materialRows.length > 2)
+                  //         GestureDetector(
+                  //           onTap: () {
+                  //             controller.showAllMaterials.toggle();
+                  //           },
+                  //           child: Padding(
+                  //             padding: const EdgeInsets.symmetric(vertical: 8),
+                  //             child: Text(
+                  //               controller.showAllMaterials.value
+                  //                   ? "Show less ▲"
+                  //                   : "Show more ▼",
+                  //               style: TextStyle(
+                  //                 color: ColorRes.primary,
+                  //                 fontWeight: AppFontWeights.semiBold,
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //     ],
+                  //   );
+                  // }),
                   Obx(() {
+                    final materialRows = buildMaterialRows(context, controller);
+
                     final visibleCount =
                         controller.showAllMaterials.value
                             ? materialRows.length
                             : 2;
+
                     return Column(
                       children: [
                         ...materialRows
@@ -1832,23 +1934,18 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                                 padding: const EdgeInsets.only(bottom: 16),
                                 child: e,
                               ),
-                            )
-                            .toList(),
+                            ),
+
                         if (materialRows.length > 2)
                           GestureDetector(
-                            onTap: () {
-                              controller.showAllMaterials.toggle();
-                            },
+                            onTap: controller.showAllMaterials.toggle,
                             child: Padding(
                               padding: const EdgeInsets.symmetric(vertical: 8),
                               child: Text(
                                 controller.showAllMaterials.value
                                     ? "Show less ▲"
                                     : "Show more ▼",
-                                style: TextStyle(
-                                  color: ColorRes.primary,
-                                  fontWeight: AppFontWeights.semiBold,
-                                ),
+                                    style: TextStyle(color: ColorRes.primary,fontWeight: FontWeight.w500),
                               ),
                             ),
                           ),
@@ -2110,6 +2207,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         buildSectionTitle(title),
+        SizedBox(height: 4,),
         Obx(() {
           return NesticoPeDropdownField<String>(
             isRequired: true,
@@ -2137,6 +2235,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      
       children: [
         buildSectionTitle(title),
         Obx(
@@ -2165,29 +2264,29 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
             key: ValueKey(selectedValues.length),
             items: [
               ...options.map((e) => DropdownMenuItem(value: e, child: Text(e))),
-              const DropdownMenuItem(
-                value: "__add_new__",
-                child: Text(
-                  "+ Add custom",
-                  style: TextStyle(
-                    color: ColorRes.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
+              // const DropdownMenuItem(
+              //   value: "__add_new__",
+              //   child: Text(
+              //     "+ Add custom",
+              //     style: TextStyle(
+              //       color: ColorRes.primary,
+              //       fontWeight: FontWeight.w600,
+              //     ),
+              //   ),
+              // ),
             ],
             onChanged: (val) async {
               if (val == null) return;
-              if (val == "__add_new__") {
-                final customValue = await showCustomInputDialog(context);
-                if (customValue != null && customValue.trim().isNotEmpty) {
-                  if (!options.contains(customValue)) options.add(customValue);
-                  if (!selectedValues.contains(customValue))
-                    selectedValues.add(customValue);
-                }
-              } else {
+              // if (val == "__add_new__") {
+              //   final customValue = await showCustomInputDialog(context);
+              //   if (customValue != null && customValue.trim().isNotEmpty) {
+              //     if (!options.contains(customValue)) options.add(customValue);
+              //     if (!selectedValues.contains(customValue))
+              //       selectedValues.add(customValue);
+              //   }
+              // } else {
                 if (!selectedValues.contains(val)) selectedValues.add(val);
-              }
+              // }
             },
           );
         }),
@@ -2293,5 +2392,400 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
             }).toList(),
       ),
     );
+  }
+
+  List<Widget> buildMaterialRows(
+    BuildContext context,
+    ContractorMyServiceController controller,
+  ) {
+    return [
+      if (controller.isService('renovation_and_remodeling') ||
+          controller.isService('turnkey_construction') ||
+          controller.isService('commercial_construction_contractors') ||
+          controller.isService('specialized_service')) ...[
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Cement Brand",
+                options: controller.cementOptions,
+                selectedValues: controller.selectedCement,
+                context: context,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Steel Brand",
+                options: controller.steelOptions,
+                selectedValues: controller.selectedSteel,
+                context: context,
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Bricks/Blocks Type",
+                options: controller.brickOptions,
+                selectedValues: controller.selectedBrick,
+                context: context,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Sand/Aggregate Source",
+                options: controller.sandOptions,
+                selectedValues: controller.selectedSand,
+                context: context,
+              ),
+            ),
+          ],
+        ),
+      ],
+      if (controller.isService('turnkey_construction') ||
+          controller.isService('commercial_construction_contractors')) ...[
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Electrical Wires Brand",
+                options: controller.wireOptions,
+                selectedValues: controller.selectedWire,
+                context: context,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Switches Brand",
+                options: controller.switchOptions,
+                selectedValues: controller.selectedSwitch,
+                context: context,
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Plumbing Pipes Brand",
+                options: controller.pipeOptions,
+                selectedValues: controller.selectedPipe,
+                context: context,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Sanitary/WC Brand",
+                options: controller.sanitaryOptions,
+                selectedValues: controller.selectedSanitary,
+                context: context,
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Water Tank Brand",
+                options: controller.tankOptions,
+                selectedValues: controller.selectedTank,
+                context: context,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Flooring Tiles Brand",
+                options: controller.tileOptions,
+                selectedValues: controller.selectedTile,
+                context: context,
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Interior Paint Brand",
+                options: controller.interiorPaintOptions,
+                selectedValues: controller.selectedInteriorPaint,
+                context: context,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Exterior Paint Brand",
+                options: controller.exteriorPaintOptions,
+                selectedValues: controller.selectedExteriorPaint,
+                context: context,
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Doors Type/Brand",
+                options: controller.doorOptions,
+                selectedValues: controller.selectedDoor,
+                context: context,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Windows Type/Brand",
+                options: controller.windowOptions,
+                selectedValues: controller.selectedWindow,
+                context: context,
+              ),
+            ),
+          ],
+        ),
+      ],
+      if (controller.isService("rooftop_solar_panel_solutions") ||
+          controller.isService('turnkey_construction') ||
+          controller.isService('commercial_construction_contractors')) ...[
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Solar Panel Brand",
+                options: controller.solarPanelOptions,
+                selectedValues: controller.selectedSolarPanel,
+                context: context,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Solar Inverter Brand",
+                options: controller.solarInverterOptions,
+                selectedValues: controller.selectedSolarInverter,
+                context: context,
+              ),
+            ),
+          ],
+        ),
+      ],
+
+      if (controller.isService('home_security_solutions') ||
+          controller.isService('turnkey_construction') ||
+          controller.isService('commercial_construction_contractors')) ...[
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Security Brand",
+                options: controller.securityOptions,
+                selectedValues: controller.selectedSecurity,
+                context: context,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableNormalDropdown(
+                title: "Security Systems",
+                options: ['Yes', "No"].obs,
+                selectedValue: controller.selectedSecuritySystems,
+              ),
+            ),
+          ],
+        ),
+      ],
+      Row(
+        children: [
+          if (controller.isService(
+                'construction_site_machine_rent_yantrarent',
+              ) ||
+              controller.isService('turnkey_construction') ||
+              controller.isService('commercial_construction_contractors')) ...[
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Machine Brand",
+                options: controller.machineOptions,
+                selectedValues: controller.selectedMachine,
+                context: context,
+              ),
+            ),
+          ],
+          SizedBox(width: 8),
+          if (controller.isService('exterior_cladding_facade_contractors') ||
+              controller.isService('turnkey_construction') ||
+              controller.isService('commercial_construction_contractors')) ...[
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Cladding Brand",
+                options: controller.claddingOptions,
+                selectedValues: controller.selectedCladding,
+                context: context,
+              ),
+            ),
+          ],
+        ],
+      ),
+      if (controller.isService('turnkey_construction') ||
+          controller.isService('commercial_construction_contractors')) ...[
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Structure",
+                options: controller.structureOptions,
+                selectedValues: controller.selectedStructure,
+                context: context,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Plaster",
+                options: controller.plasterOptions,
+                selectedValues: controller.selectedPlaster,
+                context: context,
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Waterproofing",
+                options: controller.waterproofingOptions,
+                selectedValues: controller.selectedWaterproofing,
+                context: context,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Chokhat",
+                options: controller.chokhatOptions,
+                selectedValues: controller.selectedChokhat,
+                context: context,
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Railing",
+                options: controller.railingOptions,
+                selectedValues: controller.selectedRailing,
+                context: context,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "False Ceiling",
+                options: controller.ceilingOptions,
+                selectedValues: controller.selectedCeiling,
+                context: context,
+              ),
+            ),
+          ],
+        ),
+      ],
+      Row(
+        children: [
+          if (controller.isService('turnkey_construction') ||
+              controller.isService('commercial_construction_contractors')) ...[
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Fabrication Work",
+                options: controller.fabricationOptions,
+                selectedValues: controller.selectedFabrication,
+                context: context,
+              ),
+            ),
+          ],
+          if(!controller.isService('structure_planning_and_design'))...[
+              SizedBox(width: 8),
+          ],
+        
+          if (controller.isService('structure_planning_and_design') ||
+              controller.isService('turnkey_construction') ||
+              controller.isService('commercial_construction_contractors')) ...[
+            Expanded(
+              child: buildSelectableNormalDropdown(
+                title: "3D Design",
+                options: ['Yes', "No"].obs,
+                selectedValue: controller.selected3D,
+              ),
+            ),
+          ],
+        ],
+      ),
+      if (controller.isService('turnkey_construction') ||
+          controller.isService('commercial_construction_contractors')) ...[
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableNormalDropdown(
+                title: "Modular Kitchen",
+                options: ['Yes', "No"].obs,
+                selectedValue: controller.selectedModularKitchen,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableNormalDropdown(
+                title: "Bore and Pump",
+                options: ['Yes', "No"].obs,
+                selectedValue: controller.selectedBoreAndPump,
+              ),
+            ),
+          ],
+        ),
+      ],
+      if (controller.isService('smart_home_solutions') ||
+          controller.isService('turnkey_construction') ||
+          controller.isService('commercial_construction_contractors')) ...[
+        Row(
+          children: [
+            Expanded(
+              child: buildSelectableDropdown(
+                title: "Smart Home Brands",
+                options: controller.smartHomeOptions,
+                selectedValues: controller.selectedSmartHome,
+                context: context,
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: buildSelectableNormalDropdown(
+                title: "Home Automation",
+                options: ['Yes', "No"].obs,
+                selectedValue: controller.selectedHomeAutomation,
+              ),
+            ),
+          ],
+        ),
+      ],
+      if (controller.isService("rooftop_solar_panel_solutions") ||
+          controller.isService('turnkey_construction') ||
+          controller.isService('commercial_construction_contractors')) ...[
+        buildSelectableNormalDropdown(
+          title: "Solar Solutions",
+          options: ['Yes', "No"].obs,
+          selectedValue: controller.selectedSolarSolutions,
+        ),
+      ],
+    ];
   }
 }

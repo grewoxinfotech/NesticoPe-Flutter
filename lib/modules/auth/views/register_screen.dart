@@ -844,12 +844,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 if (_selectedRole == UserRole.contractor)
                   CommonRadioGroup<String>(
                     title: "Contractor Type",
-                    options: const ["Company", "Labour"],
+                    options: const ["Company", "Worker"],
                     groupValue: _contractorType,
                     labelBuilder: (v) => v,
                     onChanged: (value) {
                       setState(() {
-                        _contractorType = value;
+                        _contractorType = value=="Worker"?"Labour":value;
+                        
+                        print("Contractor choice ${_contractorType}");
                       });
                     },
                   ),

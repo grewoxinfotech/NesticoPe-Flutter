@@ -25,7 +25,7 @@ class OffersDiscountsScreen extends StatefulWidget {
       'userType': 'buyer',
       'image':
           'https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      'features': ['First Purchase', 'Verified Profiles', 'Limited Time']
+      'features': ['First Purchase', 'Verified Profiles', 'Limited Time'],
     },
     {
       'id': 2,
@@ -36,7 +36,7 @@ class OffersDiscountsScreen extends StatefulWidget {
       'userType': 'seller-owner',
       'image':
           'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      'features': ['Premium Badge', 'Top Placement', 'Advanced Analytics']
+      'features': ['Premium Badge', 'Top Placement', 'Advanced Analytics'],
     },
     {
       'id': 3,
@@ -47,7 +47,7 @@ class OffersDiscountsScreen extends StatefulWidget {
       'userType': 'seller-builder',
       'image':
           'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      'features': ['Project Branding', 'Lead Generation', 'Social Media Ads']
+      'features': ['Project Branding', 'Lead Generation', 'Social Media Ads'],
     },
     {
       'id': 4,
@@ -58,7 +58,7 @@ class OffersDiscountsScreen extends StatefulWidget {
       'userType': 'contractor',
       'image':
           'https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      'features': ['Service Listing', 'Verified Badge', 'Portfolio Support']
+      'features': ['Service Listing', 'Verified Badge', 'Portfolio Support'],
     },
     {
       'id': 5,
@@ -69,8 +69,8 @@ class OffersDiscountsScreen extends StatefulWidget {
       'userType': 'partner',
       'image':
           'https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      'features': ['Bonus Earnings', 'Partner Dashboard', 'Direct Support']
-    }
+      'features': ['Bonus Earnings', 'Partner Dashboard', 'Direct Support'],
+    },
   ];
 
   @override
@@ -84,10 +84,8 @@ class _OffersDiscountsScreenState extends State<OffersDiscountsScreen> {
   @override
   void initState() {
     super.initState();
-   
-    _loadSubmittedInquiries();    
-    
-  
+
+    _loadSubmittedInquiries();
   }
 
   Future<void> _loadSubmittedInquiries() async {
@@ -98,7 +96,11 @@ class _OffersDiscountsScreenState extends State<OffersDiscountsScreen> {
       final phone = userData?.user?.phone;
 
       for (var offer in OffersDiscountsScreen.allOffers) {
-        final exists = await SecureStorage.hasOfferInquiry(offer['id'], email: email, phone: phone);
+        final exists = await SecureStorage.hasOfferInquiry(
+          offer['id'],
+          email: email,
+          phone: phone,
+        );
         if (exists) {
           submittedOfferIds.add(offer['id']);
         }
@@ -108,11 +110,11 @@ class _OffersDiscountsScreenState extends State<OffersDiscountsScreen> {
     }
   }
 
-  
-
   void _showInquiryDialog(Map<String, dynamic> offer) async {
     final userData = await SecureStorage.getUserData();
-    String name = "${userData?.user?.firstName ?? ''} ${userData?.user?.lastName ?? ''}".trim();
+    String name =
+        "${userData?.user?.firstName ?? ''} ${userData?.user?.lastName ?? ''}"
+            .trim();
     if (name.isEmpty) {
       name = userData?.user?.username ?? "";
     }
@@ -143,7 +145,10 @@ class _OffersDiscountsScreenState extends State<OffersDiscountsScreen> {
               children: [
                 // Header
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
                     color: ColorRes.primary,
                     borderRadius: const BorderRadius.only(
@@ -166,7 +171,11 @@ class _OffersDiscountsScreenState extends State<OffersDiscountsScreen> {
                       InkWell(
                         onTap: () => Get.back(),
                         borderRadius: BorderRadius.circular(50),
-                        child: const Icon(Icons.close_rounded, color: ColorRes.white, size: 20),
+                        child: const Icon(
+                          Icons.close_rounded,
+                          color: ColorRes.white,
+                          size: 20,
+                        ),
                       ),
                     ],
                   ),
@@ -185,7 +194,11 @@ class _OffersDiscountsScreenState extends State<OffersDiscountsScreen> {
                           hintText: 'Enter your name',
                           prefixIcon: Icons.person_outline,
                           isRequired: true,
-                          validator: (value) => value == null || value.trim().isEmpty ? 'Name is required' : null,
+                          validator:
+                              (value) =>
+                                  value == null || value.trim().isEmpty
+                                      ? 'Name is required'
+                                      : null,
                         ),
                         const SizedBox(height: 16),
                         NesticoPeTextField(
@@ -196,8 +209,10 @@ class _OffersDiscountsScreenState extends State<OffersDiscountsScreen> {
                           keyboardType: TextInputType.emailAddress,
                           isRequired: true,
                           validator: (value) {
-                            if (value == null || value.trim().isEmpty) return 'Email is required';
-                            if (!GetUtils.isEmail(value.trim())) return 'Enter a valid email';
+                            if (value == null || value.trim().isEmpty)
+                              return 'Email is required';
+                            if (!GetUtils.isEmail(value.trim()))
+                              return 'Enter a valid email';
                             return null;
                           },
                         ),
@@ -211,8 +226,10 @@ class _OffersDiscountsScreenState extends State<OffersDiscountsScreen> {
                           isRequired: true,
                           maxLength: 10,
                           validator: (value) {
-                            if (value == null || value.trim().isEmpty) return 'Phone is required';
-                            if (!GetUtils.isPhoneNumber(value.trim())) return 'Enter a valid phone number';
+                            if (value == null || value.trim().isEmpty)
+                              return 'Phone is required';
+                            if (!GetUtils.isPhoneNumber(value.trim()))
+                              return 'Enter a valid phone number';
                             return null;
                           },
                         ),
@@ -226,7 +243,12 @@ class _OffersDiscountsScreenState extends State<OffersDiscountsScreen> {
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: ColorRes.white,
-                    border: Border(top: BorderSide(color: ColorRes.grey.withOpacity(0.2), width: 1)),
+                    border: Border(
+                      top: BorderSide(
+                        color: ColorRes.grey.withOpacity(0.2),
+                        width: 1,
+                      ),
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -236,7 +258,9 @@ class _OffersDiscountsScreenState extends State<OffersDiscountsScreen> {
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             side: const BorderSide(color: ColorRes.primary),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
                           child: const Text(
                             'Cancel',
@@ -251,77 +275,108 @@ class _OffersDiscountsScreenState extends State<OffersDiscountsScreen> {
                       const SizedBox(width: 12),
                       Expanded(
                         flex: 2,
-                        child: Obx(() => ElevatedButton(
-                          onPressed: isSubmitting.value ? null : () async {
-                            if (_formKey.currentState!.validate()) {
-                              isSubmitting.value = true;
-                              
-                              final meta = {
-                                "offerTitle": offer['title'],
-                                "offerDiscount": offer['discount'],
-                                "userType": offer['userType'],
-                                "notes": "General Inquiry: Offer - ${offer['title']} (${offer['discount']}) for User Type: ${offer['userType']}."
-                              };
+                        child: Obx(
+                          () => ElevatedButton(
+                            onPressed:
+                                isSubmitting.value
+                                    ? null
+                                    : () async {
+                                      if (_formKey.currentState!.validate()) {
+                                        isSubmitting.value = true;
 
-                              final response = await OfferInquiryService.submitOfferInquiry(
-                                name: nameController.text.trim(),
-                                email: emailController.text.trim(),
-                                phone: phoneController.text.trim(),
-                                meta: meta,
-                              );
+                                        final meta = {
+                                          "offerTitle": offer['title'],
+                                          "offerDiscount": offer['discount'],
+                                          "userType": offer['userType'],
+                                          "notes":
+                                              "General Inquiry: Offer - ${offer['title']} (${offer['discount']}) for User Type: ${offer['userType']}.",
+                                        };
 
-                              if (response['success'] == true) {
-                                  final inquiryData = {
-                                    'offerId': offer['id'],
-                                    'email': emailController.text.trim(),
-                                    'phone': phoneController.text.trim(),
-                                    'date': DateTime.now().toIso8601String(),
-                                  };
-                                  await SecureStorage.addOfferInquiry(inquiryData);
-                                  submittedOfferIds.add(offer['id']);
-                                
-                                Get.back();
-                                Get.snackbar(
-                                  'Success',
-                                  response['message'] ?? 'Inquiry submitted successfully!',
-                                  backgroundColor: Colors.green,
-                                  colorText: Colors.white,
-                                  snackPosition: SnackPosition.BOTTOM,
-                                );
-                              } else {
-                                isSubmitting.value = false;
-                                Get.snackbar(
-                                  'Error',
-                                  response['message'] ?? 'Failed to submit inquiry',
-                                  backgroundColor: Colors.red,
-                                  colorText: Colors.white,
-                                  snackPosition: SnackPosition.BOTTOM,
-                                );
-                              }
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: ColorRes.primary,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          ),
-                          child: isSubmitting.value 
-                            ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                            : const Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.send, size: 20),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    'Submit Inquiry',
-                                    style: TextStyle(
-                                      fontSize: AppFontSizes.medium,
-                                      fontWeight: AppFontWeights.semiBold,
-                                    ),
-                                  ),
-                                ],
+                                        final response =
+                                            await OfferInquiryService.submitOfferInquiry(
+                                              name: nameController.text.trim(),
+                                              email:
+                                                  emailController.text.trim(),
+                                              phone:
+                                                  phoneController.text.trim(),
+                                              meta: meta,
+                                            );
+
+                                        if (response['success'] == true) {
+                                          final inquiryData = {
+                                            'offerId': offer['id'],
+                                            'email':
+                                                emailController.text.trim(),
+                                            'phone':
+                                                phoneController.text.trim(),
+                                            'date':
+                                                DateTime.now()
+                                                    .toIso8601String(),
+                                          };
+                                          await SecureStorage.addOfferInquiry(
+                                            inquiryData,
+                                          );
+                                          submittedOfferIds.add(offer['id']);
+
+                                          Get.back();
+                                          Get.snackbar(
+                                            'Success',
+                                            response['message'] ??
+                                                ((UserHelper.isBuyer ||
+                                                        UserHelper.isGuest)
+                                                    ? 'enquiry submitted successfully!'
+                                                    : 'Inquiry submitted successfully!'),
+                                            backgroundColor: Colors.green,
+                                            colorText: Colors.white,
+                                            snackPosition: SnackPosition.BOTTOM,
+                                          );
+                                        } else {
+                                          isSubmitting.value = false;
+                                          Get.snackbar(
+                                            'Error',
+                                            response['message'] ??
+                                                'Failed to submit inquiry',
+                                            backgroundColor: Colors.red,
+                                            colorText: Colors.white,
+                                            snackPosition: SnackPosition.BOTTOM,
+                                          );
+                                        }
+                                      }
+                                    },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: ColorRes.primary,
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                        )),
+                            ),
+                            child:
+                                isSubmitting.value
+                                    ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                    : const Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.send, size: 20),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          'Submit Inquiry',
+                                          style: TextStyle(
+                                            fontSize: AppFontSizes.medium,
+                                            fontWeight: AppFontWeights.semiBold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -339,20 +394,22 @@ class _OffersDiscountsScreenState extends State<OffersDiscountsScreen> {
   Widget build(BuildContext context) {
     log('userType Frm Which Panel: ${widget.userType}');
 
-    final filteredOffers = widget.userType == null
-        ? OffersDiscountsScreen.allOffers
-        : OffersDiscountsScreen.allOffers.where((offer) {
-            final type = offer['userType'].toString().toLowerCase();
-            final searchType = widget.userType!.toLowerCase();
+    final filteredOffers =
+        widget.userType == null
+            ? OffersDiscountsScreen.allOffers
+            : OffersDiscountsScreen.allOffers.where((offer) {
+              final type = offer['userType'].toString().toLowerCase();
+              final searchType = widget.userType!.toLowerCase();
 
-            if (searchType == 'reseller') return type == 'partner';
-            if (searchType == 'seller-owner') return type == 'seller-owner';
-            if (searchType == 'seller-builder') return type == 'seller-builder';
-            if (searchType == 'buyer') return type == 'buyer';
-            if (searchType == 'contractor') return type == 'contractor';
+              if (searchType == 'reseller') return type == 'partner';
+              if (searchType == 'seller-owner') return type == 'seller-owner';
+              if (searchType == 'seller-builder')
+                return type == 'seller-builder';
+              if (searchType == 'buyer') return type == 'buyer';
+              if (searchType == 'contractor') return type == 'contractor';
 
-            return false;
-          }).toList();
+              return false;
+            }).toList();
 
     return Scaffold(
       backgroundColor: ColorRes.background,
@@ -385,7 +442,11 @@ class _OffersDiscountsScreenState extends State<OffersDiscountsScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.local_offer_outlined, size: 64, color: ColorRes.leadGreyColor[300]),
+                Icon(
+                  Icons.local_offer_outlined,
+                  size: 64,
+                  color: ColorRes.leadGreyColor[300],
+                ),
                 const SizedBox(height: 16),
                 Text(
                   'No offers available for your profile',
@@ -430,20 +491,43 @@ class _OffersDiscountsScreenState extends State<OffersDiscountsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ShimmerWidget(height: 20, width: 200, borderRadius: BorderRadius.circular(4)),
+                ShimmerWidget(
+                  height: 20,
+                  width: 200,
+                  borderRadius: BorderRadius.circular(4),
+                ),
                 const SizedBox(height: 12),
-                ShimmerWidget(height: 15, width: double.infinity, borderRadius: BorderRadius.circular(4)),
+                ShimmerWidget(
+                  height: 15,
+                  width: double.infinity,
+                  borderRadius: BorderRadius.circular(4),
+                ),
                 const SizedBox(height: 8),
-                ShimmerWidget(height: 15, width: double.infinity, borderRadius: BorderRadius.circular(4)),
+                ShimmerWidget(
+                  height: 15,
+                  width: double.infinity,
+                  borderRadius: BorderRadius.circular(4),
+                ),
                 const SizedBox(height: 20),
                 Row(
-                  children: List.generate(3, (index) => Container(
-                    margin: const EdgeInsets.only(right: 8),
-                    child: ShimmerWidget(height: 30, width: 80, borderRadius: BorderRadius.circular(8)),
-                  )),
+                  children: List.generate(
+                    3,
+                    (index) => Container(
+                      margin: const EdgeInsets.only(right: 8),
+                      child: ShimmerWidget(
+                        height: 30,
+                        width: 80,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 24),
-                ShimmerWidget(height: 50, width: double.infinity, borderRadius: BorderRadius.circular(12)),
+                ShimmerWidget(
+                  height: 50,
+                  width: double.infinity,
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ],
             ),
           ),
@@ -473,7 +557,9 @@ class _OffersDiscountsScreenState extends State<OffersDiscountsScreen> {
           Stack(
             children: [
               ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20),
+                ),
                 child: Image.network(
                   offer['image'],
                   height: 200,
@@ -486,7 +572,10 @@ class _OffersDiscountsScreenState extends State<OffersDiscountsScreen> {
                 top: 15,
                 right: 15,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.9),
                     borderRadius: BorderRadius.circular(12),
@@ -506,7 +595,10 @@ class _OffersDiscountsScreenState extends State<OffersDiscountsScreen> {
                 bottom: 15,
                 left: 15,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFF7C4DFF).withOpacity(0.9),
                     borderRadius: BorderRadius.circular(12),
@@ -514,7 +606,11 @@ class _OffersDiscountsScreenState extends State<OffersDiscountsScreen> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.favorite_border, color: Colors.white, size: 14),
+                      const Icon(
+                        Icons.favorite_border,
+                        color: Colors.white,
+                        size: 14,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         offer['userType'].toString().toUpperCase(),
@@ -530,7 +626,7 @@ class _OffersDiscountsScreenState extends State<OffersDiscountsScreen> {
               ),
             ],
           ),
-          
+
           Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -546,7 +642,7 @@ class _OffersDiscountsScreenState extends State<OffersDiscountsScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                
+
                 // Description
                 Text(
                   offer['description'],
@@ -557,43 +653,58 @@ class _OffersDiscountsScreenState extends State<OffersDiscountsScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                
+
                 // Features
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: (offer['features'] as List<String>).map((feature) {
-                    return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: ColorRes.leadGreyColor[50],
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: ColorRes.leadGreyColor[200]!),
-                      ),
-                      child: Text(
-                        feature,
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: ColorRes.leadGreyColor[700],
-                          fontWeight: AppFontWeights.medium,
-                        ),
-                      ),
-                    );
-                  }).toList(),
+                  children:
+                      (offer['features'] as List<String>).map((feature) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: ColorRes.leadGreyColor[50],
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: ColorRes.leadGreyColor[200]!,
+                            ),
+                          ),
+                          child: Text(
+                            feature,
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: ColorRes.leadGreyColor[700],
+                              fontWeight: AppFontWeights.medium,
+                            ),
+                          ),
+                        );
+                      }).toList(),
                 ),
                 const SizedBox(height: 24),
-                
+
                 // Inquire Now Button
                 Obx(() {
                   final isSubmitted = submittedOfferIds.contains(offer['id']);
                   return SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed: isSubmitted ? null : () => _showInquiryDialog(offer),
-                      icon: Icon(isSubmitted ? Icons.check_circle : Icons.mail_outline, size: 20),
-                      label: Text(isSubmitted ? 'Inquiry Submitted' : 'Inquire Now'),
+                      onPressed:
+                          isSubmitted ? null : () => _showInquiryDialog(offer),
+                      icon: Icon(
+                        isSubmitted ? Icons.check_circle : Icons.mail_outline,
+                        size: 20,
+                      ),
+                      label: Text(
+                       (UserHelper.isBuyer|| UserHelper.isGuest)?isSubmitted ? 'Enquiry Submitted' : 'Enquire Now' :isSubmitted ? 'Inquiry Submitted' : 'Inquire Now',
+                      ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: isSubmitted ? Colors.green : const Color(0xFF4873D3),
+                        backgroundColor:
+                            isSubmitted
+                                ? Colors.green
+                                : const Color(0xFF4873D3),
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(

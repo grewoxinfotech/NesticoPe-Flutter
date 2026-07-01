@@ -401,7 +401,7 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
         automaticallyImplyLeading: false,
         elevation: 0,
         title: const Text(
-          'Contractor Enquiries',
+          'Contractor Inquiries',
           style: TextStyle(
             // fontSize: AppFontSizes.title,
             fontWeight: AppFontWeights.semiBold,
@@ -479,7 +479,7 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                "No Enquiries available",
+                                "No Inquiries available",
                                 style: TextStyle(
                                   fontSize: AppFontSizes.body,
                                   color: ColorRes.textSecondary,
@@ -1019,15 +1019,15 @@ class InquiryCard extends StatelessWidget {
                                           ?.isServiceLimitReached ??
                                       true;
 
-                                  if (limitReached) {
-                                    dashboardController.showUpgradePlanDialog(
-                                      title: 'Limit Reached',
-                                      message:
-                                          'Limit Reached, please upgrade your plan.',
-                                      buttonText: 'Upgrade Plan',
-                                    );
-                                    return;
-                                  }
+                                  // if (limitReached) {
+                                  //   dashboardController.showUpgradePlanDialog(
+                                  //     title: 'Limit Reached',
+                                  //     message:
+                                  //         'Limit Reached, please upgrade your plan.',
+                                  //     buttonText: 'Upgrade Plan',
+                                  //   );
+                                  //   return;
+                                  // }
 
                                   onLeadConvert();
                                 },
@@ -1107,7 +1107,7 @@ class InquiryCard extends StatelessWidget {
                                 const SizedBox(height: 6),
 
                                 Text(
-                                  "Upgrade your plan to view Enquiry details and contact information.",
+                                  "Upgrade your plan to view Inquiry details and contact information.",
 
                                   style: TextStyle(
                                     color: Colors.grey.shade700,

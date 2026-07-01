@@ -452,7 +452,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                                   NesticoPeSnackBar.showAwesomeSnackbar(
                                                     title: 'Success',
                                                     message:
-                                                        'Inquiry Added Successfully',
+                                                        'Enquiry Added Successfully',
                                                     contentType:
                                                         ContentType.success,
                                                   );
@@ -470,7 +470,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                                   NesticoPeSnackBar.showAwesomeSnackbar(
                                                     title: 'Error',
                                                     message:
-                                                        'Failed to Submit Inquiry',
+                                                        'Failed to Submit Enquiry',
                                                     contentType:
                                                         ContentType.failure,
                                                   );
@@ -803,7 +803,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
                                         NesticoPeSnackBar.showAwesomeSnackbar(
                                           title: 'Success',
-                                          message: "Inquiry Added Successfully",
+                                          message: "Enquiry Added Successfully",
                                           contentType: ContentType.success,
                                         );
 
@@ -817,7 +817,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                       } else {
                                         NesticoPeSnackBar.showAwesomeSnackbar(
                                           title: 'Error',
-                                          message: "Failed to Submit Inquiry",
+                                          message: "Failed to Submit Enquiry",
                                           contentType: ContentType.failure,
                                         );
                                       }
@@ -1117,7 +1117,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                     ),
                   ),
                   child: Row(
-                    children: [
+                    children: [                             
                       const Expanded(
                         child: Text(
                           "Get Offer Price",

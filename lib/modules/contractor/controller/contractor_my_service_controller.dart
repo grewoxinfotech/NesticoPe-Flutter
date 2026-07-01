@@ -271,8 +271,7 @@ class ContractorMyServiceController
       final List<XFile>? images = await _picker.pickMultiImage();
       if (images != null && images.isNotEmpty) {
         final int remainingSlots = 5 - totalCount;
-        final List<XFile> imagesToAdd =
-            images.take(remainingSlots).toList();
+        final List<XFile> imagesToAdd = images.take(remainingSlots).toList();
 
         for (var image in imagesToAdd) {
           selectedImagePaths.add(image.path);
@@ -343,12 +342,12 @@ class ContractorMyServiceController
   Future<void> _reloadRegisteredContractorDashboard() async {
     if (!Get.isRegistered<ContractorDashboardController>()) return;
     try {
-      await Get.find<ContractorDashboardController>().reloadAfterServiceChange();
+      await Get.find<ContractorDashboardController>()
+          .reloadAfterServiceChange();
     } catch (e, s) {
       log('Contractor dashboard reload: $e', stackTrace: s);
     }
   }
-
 
   Future<void> refreshService() async {
     try {
@@ -511,7 +510,7 @@ class ContractorMyServiceController
       final contractorServiceItem = ContractorServiceItem(
         category: selectedCategory.value,
         contractorId: userId,
-        
+
         serviceName: serviceNameController.text
             .trim()
             .toLowerCase()
@@ -1512,6 +1511,15 @@ class ContractorMyServiceController
       },
     ],
   };*/
+
+  bool isService(String service) {
+    debugPrint(
+      "Selected Service NBame : ${selectedServiceNameDropdown.value}, Checking: $service",
+    );
+
+    return selectedServiceNameDropdown.value == service;
+  }
+
   Map<String, List<Map<String, dynamic>>> kServiceCategoryData = {
     // ── Home Services ──────────────────────────────────────────
     'home_services': [
@@ -2111,6 +2119,7 @@ class ContractorMyServiceController
           'Bitumen',
           'Terrace Tile',
           'Heat Proof Coating',
+          'Mr Interiio',
         ],
       },
       {
@@ -2688,10 +2697,10 @@ class ContractorMyServiceController
 
       final response = await ContractorMyService.contractorMyService
           .updateContractorService(
-        payload,
-        editingService.value!.id ?? '',
-        imagePaths: selectedImagePaths,
-      );
+            payload,
+            editingService.value!.id ?? '',
+            imagePaths: selectedImagePaths,
+          );
 
       if (response) {
         Get.back();

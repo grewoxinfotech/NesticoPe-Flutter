@@ -956,18 +956,18 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
 
                 return ElevatedButton.icon(
                   onPressed: () async {
-                    if (showDisabledStyle) {
-                      await dashboardController.showUpgradePlanDialog(
-                        title: dashboardController.hasActivePlan
-                            ? 'Limit Reached'
-                            : 'Active plan required',
-                        message: dashboardController.hasActivePlan
-                            ? 'Limit Reached, please upgrade your plan.'
-                            : 'You do not have an active subscription. Please activate a plan to continue.',
-                            buttonText: dashboardController.hasActivePlan?'Upgrade Plan':'Buy Plan'
-                      );
-                      return;
-                    }
+                    // if (showDisabledStyle) {
+                    //   await dashboardController.showUpgradePlanDialog(
+                    //     title: dashboardController.hasActivePlan
+                    //         ? 'Limit Reached'
+                    //         : 'Active plan required',
+                    //     message: dashboardController.hasActivePlan
+                    //         ? 'Limit Reached, please upgrade your plan.'
+                    //         : 'You do not have an active subscription. Please activate a plan to continue.',
+                    //         buttonText: dashboardController.hasActivePlan?'Upgrade Plan':'Buy Plan'
+                    //   );
+                    //   return;
+                    // }
 
                     _convertToLead();
                   },
@@ -1127,18 +1127,18 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
             onPressed: () async {
               Navigator.pop(context);
 
-              if (showDisabledStyle) {
-                await dashboardController.showUpgradePlanDialog(
-                  title: dashboardController.hasActivePlan
-                      ? 'Limit Reached'
-                      : 'Active plan required',
-                  message: dashboardController.hasActivePlan
-                      ? 'Limit Reached, please upgrade your plan.'
-                      : 'You do not have an active subscription. Please activate a plan to continue.',
-                      buttonText: dashboardController.hasActivePlan?'Upgrade Plan':'Buy Plan'
-                );
-                return;
-              }
+              // if (showDisabledStyle) {
+              //   await dashboardController.showUpgradePlanDialog(
+              //     title: dashboardController.hasActivePlan
+              //         ? 'Limit Reached'
+              //         : 'Active plan required',
+              //     message: dashboardController.hasActivePlan
+              //         ? 'Limit Reached, please upgrade your plan.'
+              //         : 'You do not have an active subscription. Please activate a plan to continue.',
+              //         buttonText: dashboardController.hasActivePlan?'Upgrade Plan':'Buy Plan'
+              //   );
+              //   return;
+              // }
 
               final controller = Get.find<ContractorQuotationController>();
               controller.convertIntoLead(widget.quotation);

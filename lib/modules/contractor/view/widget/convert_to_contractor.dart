@@ -408,7 +408,7 @@ Widget buildContractorTypeSelector(AuthController controller) {
                 activeColor: ColorRes.primary,
                 contentPadding: EdgeInsets.zero,
                 title: const Text(
-                  "Labour",
+                  "Worker",
                   style: TextStyle(
                     fontSize: AppFontSizes.small,
                     fontWeight: FontWeight.w500,

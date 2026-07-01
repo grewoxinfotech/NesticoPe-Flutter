@@ -859,7 +859,7 @@ void addInquiryFromApp(
                             Icon(Icons.send, size: 20),
                             SizedBox(width: 8),
                             Text(
-                              'Send Inquiry',
+                              'Send Enquiry',
 
                               style: TextStyle(
                                 fontSize: AppFontSizes.medium,

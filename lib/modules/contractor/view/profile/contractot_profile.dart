@@ -1682,14 +1682,13 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
   @override
   void initState() {
     super.initState();
-    dashboardController = Get.isRegistered<ContractorDashboardController>()
-        ? Get.find<ContractorDashboardController>()
-        : Get.put(ContractorDashboardController());
+    dashboardController =
+        Get.isRegistered<ContractorDashboardController>()
+            ? Get.find<ContractorDashboardController>()
+            : Get.put(ContractorDashboardController());
     WidgetsBinding.instance.addPostFrameCallback((_) {
       profileController.refreshFollowUp();
-      dashboardController.fetchActiveSubscription(
-        showDialogWhenMissing: false,
-      );
+      dashboardController.fetchActiveSubscription(showDialogWhenMissing: false);
     });
   }
 
@@ -1794,13 +1793,17 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                                     label: 'Offers & Discounts',
                                     subtitle:
                                         'View and manage your active promos',
-                                    enabled: dashboardController
-                                        .activeSubscription.value != null,
-                                    onTap: () => Get.to(
-                                      () => const OffersDiscountsScreen(
-                                        userType: 'contractor',
-                                      ),
-                                    ),
+                                    enabled:
+                                        dashboardController
+                                            .activeSubscription
+                                            .value !=
+                                        null,
+                                    onTap:
+                                        () => Get.to(
+                                          () => const OffersDiscountsScreen(
+                                            userType: 'contractor',
+                                          ),
+                                        ),
                                   ),
                                 ),
                                 const SizedBox(height: 10),
@@ -1823,25 +1826,31 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                                     label: 'Service Categories',
                                     subtitle:
                                         'View and manage your service categories',
-                                    enabled: dashboardController
-                                        .activeSubscription.value != null,
-                                    onTap: () => Get.to(
-                                      () => MyServiceScreen(),
-                                    ),
+                                    enabled:
+                                        dashboardController
+                                            .activeSubscription
+                                            .value !=
+                                        null,
+                                    onTap:
+                                        () => Get.to(() => MyServiceScreen()),
                                   ),
                                 ),
                                 const SizedBox(height: 10),
                                 Obx(
                                   () => _buildActionTile(
-                                  icon: Icons.notifications_outlined,
-                                  iconColor: const Color(0xFF6366F1),
-                                  iconBg: const Color(0xFFEEF2FF),
-                                  label: "Notifications",
-                                  subtitle: "Notifications and messages",
-                                  enabled: dashboardController
-                                      .activeSubscription.value != null,
-                                  onTap:
-                                      () => Get.to(() => InAppMessageScreen()),
+                                    icon: Icons.notifications_outlined,
+                                    iconColor: const Color(0xFF6366F1),
+                                    iconBg: const Color(0xFFEEF2FF),
+                                    label: "Notifications",
+                                    subtitle: "Notifications and messages",
+                                    enabled:
+                                        dashboardController
+                                            .activeSubscription
+                                            .value !=
+                                        null,
+                                    onTap:
+                                        () =>
+                                            Get.to(() => InAppMessageScreen()),
                                   ),
                                 ),
                                 const SizedBox(height: 10),
@@ -1871,14 +1880,17 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                                 const SizedBox(height: 10),
                                 Obx(
                                   () => _buildActionTile(
-                                  icon: Icons.event_available,
-                                  iconColor: const Color(0xFF6366F1),
-                                  iconBg: const Color(0xFFEEF2FF),
-                                  label: "Events",
-                                  subtitle: "Upcoming events",
-                                  enabled: dashboardController
-                                      .activeSubscription.value != null,
-                                  onTap: () => Get.to(() => CalendarScreen()),
+                                    icon: Icons.event_available,
+                                    iconColor: const Color(0xFF6366F1),
+                                    iconBg: const Color(0xFFEEF2FF),
+                                    label: "Events",
+                                    subtitle: "Upcoming events",
+                                    enabled:
+                                        dashboardController
+                                            .activeSubscription
+                                            .value !=
+                                        null,
+                                    onTap: () => Get.to(() => CalendarScreen()),
                                   ),
                                 ),
 
@@ -1886,16 +1898,20 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                                 const SizedBox(height: 10),
                                 Obx(
                                   () => _buildActionTile(
-                                  icon: Icons.card_giftcard,
-                                  iconColor: const Color(0xFF6366F1),
-                                  iconBg: const Color(0xFFEEF2FF),
-                                  label: "Referral",
-                                  subtitle: "Refer And Earn",
-                                  enabled: dashboardController
-                                      .activeSubscription.value != null,
-                                  onTap:
-                                      () =>
-                                          Get.to(() => ReferralProgramScreen()),
+                                    icon: Icons.card_giftcard,
+                                    iconColor: const Color(0xFF6366F1),
+                                    iconBg: const Color(0xFFEEF2FF),
+                                    label: "Referral",
+                                    subtitle: "Refer And Earn",
+                                    enabled:
+                                        dashboardController
+                                            .activeSubscription
+                                            .value !=
+                                        null,
+                                    onTap:
+                                        () => Get.to(
+                                          () => ReferralProgramScreen(),
+                                        ),
                                   ),
                                 ),
                                 const SizedBox(height: 10),
@@ -1904,8 +1920,11 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                                     ReviewController(),
                                   );
                                   final review = controller.appReview.value;
-                                final hasActivePlan = dashboardController
-                                    .activeSubscription.value != null;
+                                  final hasActivePlan =
+                                      dashboardController
+                                          .activeSubscription
+                                          .value !=
+                                      null;
 
                                   if (review == null) {
                                     return _buildActionTile(
@@ -1914,7 +1933,7 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                                       iconColor: const Color(0xFFEC4899),
                                       iconBg: const Color(0xFFFCE7F3),
                                       subtitle: "Add your review",
-                                    enabled: hasActivePlan,
+                                      enabled: hasActivePlan,
                                       onTap: () {
                                         Get.dialog(AddAppReviewDialog()).then((
                                           _,
@@ -1924,78 +1943,90 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                                       },
                                     );
                                   } else {
-                                  final widget = _buildReviewSection(review);
-                                  return AbsorbPointer(
-                                    absorbing: !hasActivePlan,
-                                    child: Opacity(
-                                      opacity: hasActivePlan ? 1 : 0.45,
-                                      child: widget,
-                                    ),
-                                  );
+                                    final widget = _buildReviewSection(review);
+                                    return AbsorbPointer(
+                                      absorbing: !hasActivePlan,
+                                      child: Opacity(
+                                        opacity: hasActivePlan ? 1 : 0.45,
+                                        child: widget,
+                                      ),
+                                    );
                                   }
                                 }),
 
                                 const SizedBox(height: 10),
                                 Obx(
                                   () => _buildActionTile(
-                                  icon: Icons.miscellaneous_services_outlined,
-                                  iconColor: const Color(0xFFF59E0B),
-                                  iconBg: const Color(0xFFFEF3C7),
-                                  label: 'My Service',
-                                  subtitle: 'View and manage your services',
-                                  enabled: dashboardController
-                                      .activeSubscription.value != null,
-                                  onTap:
-                                      () => Get.to(() => ContractorService()),
+                                    icon: Icons.miscellaneous_services_outlined,
+                                    iconColor: const Color(0xFFF59E0B),
+                                    iconBg: const Color(0xFFFEF3C7),
+                                    label: 'My Service',
+                                    subtitle: 'View and manage your services',
+                                    enabled:
+                                        dashboardController
+                                            .activeSubscription
+                                            .value !=
+                                        null,
+                                    onTap:
+                                        () => Get.to(() => ContractorService()),
                                   ),
                                 ),
                                 const SizedBox(height: 10),
                                 Obx(
                                   () => _buildActionTile(
-                                  icon: Icons.person_outline,
-                                  iconColor: const Color(0xFF8B5CF6),
-                                  iconBg: const Color(0xFFEDE9FE),
-                                  label: 'Employees',
-                                  subtitle: 'View and manage your employees',
-                                  enabled: dashboardController
-                                      .activeSubscription.value != null,
-                                  onTap:
-                                      () => Get.to(
-                                        () => ContractorEmployeeScreen(),
-                                      ),
+                                    icon: Icons.person_outline,
+                                    iconColor: const Color(0xFF8B5CF6),
+                                    iconBg: const Color(0xFFEDE9FE),
+                                    label: 'Employees',
+                                    subtitle: 'View and manage your employees',
+                                    enabled:
+                                        dashboardController
+                                            .activeSubscription
+                                            .value !=
+                                        null,
+                                    onTap:
+                                        () => Get.to(
+                                          () => ContractorEmployeeScreen(),
+                                        ),
                                   ),
                                 ),
                                 const SizedBox(height: 10),
                                 Obx(
                                   () => _buildActionTile(
-                                  icon: Icons.dashboard_outlined,
-                                  iconColor: const Color(0xFFEC4899),
-                                  iconBg: const Color(0xFFFCE7F3),
-                                  label: 'Success Story',
-                                  subtitle:
-                                      'View and manage your success stories',
-                                  enabled: dashboardController
-                                      .activeSubscription.value != null,
-                                  onTap:
-                                      () => Get.to(
-                                        () => ContractorSuccessStoryScreen(),
-                                      ),
+                                    icon: Icons.dashboard_outlined,
+                                    iconColor: const Color(0xFFEC4899),
+                                    iconBg: const Color(0xFFFCE7F3),
+                                    label: 'Success Story',
+                                    subtitle:
+                                        'View and manage your success stories',
+                                    enabled:
+                                        dashboardController
+                                            .activeSubscription
+                                            .value !=
+                                        null,
+                                    onTap:
+                                        () => Get.to(
+                                          () => ContractorSuccessStoryScreen(),
+                                        ),
                                   ),
                                 ),
                                 const SizedBox(height: 10),
                                 Obx(
                                   () => _buildActionTile(
-                                  icon: Icons.receipt_long_outlined,
-                                  iconColor: const Color(0xFF14B8A6),
-                                  iconBg: const Color(0xFFCCFBF1),
-                                  label: 'My Quotations',
-                                  subtitle: 'View and manage your quotations',
-                                  enabled: dashboardController
-                                      .activeSubscription.value != null,
-                                  onTap:
-                                      () => Get.to(
-                                        () => ContractorQuotationListScreen(),
-                                      ),
+                                    icon: Icons.receipt_long_outlined,
+                                    iconColor: const Color(0xFF14B8A6),
+                                    iconBg: const Color(0xFFCCFBF1),
+                                    label: 'My Quotations',
+                                    subtitle: 'View and manage your quotations',
+                                    enabled:
+                                        dashboardController
+                                            .activeSubscription
+                                            .value !=
+                                        null,
+                                    onTap:
+                                        () => Get.to(
+                                          () => ContractorQuotationListScreen(),
+                                        ),
                                   ),
                                 ),
                                 // const SizedBox(height: 24),
@@ -2031,7 +2062,7 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
             (!profileController.isEditing.value)
                 ? SafeArea(
                   child: Container(
-                     decoration: BoxDecoration(
+                    decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -2757,7 +2788,9 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    profile?.contractorType ?? 'Not Provided',
+                    profile?.contractorType?.toLowerCase() == 'labour'
+                        ? 'Worker'
+                        : profile?.contractorType ?? 'Not Provided',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: AppFontWeights.semiBold,
@@ -2974,56 +3007,60 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
       child: GestureDetector(
         onTap: enabled ? onTap : null,
         child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
-          color: enabled ? Colors.white : Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: iconBg,
-                borderRadius: BorderRadius.circular(12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            color: enabled ? Colors.white : Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
               ),
-              child: Icon(icon, size: 22, color: iconColor),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF1A1A2E),
-                    ),
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Color(0xFF9CA3AF),
-                      fontWeight: AppFontWeights.medium,
-                    ),
-                  ),
-                ],
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: iconBg,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, size: 22, color: iconColor),
               ),
-            ),
-            const Icon(Icons.chevron_right, color: Color(0xFFD1D5DB), size: 20),
-          ],
-        ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF1A1A2E),
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Color(0xFF9CA3AF),
+                        fontWeight: AppFontWeights.medium,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(
+                Icons.chevron_right,
+                color: Color(0xFFD1D5DB),
+                size: 20,
+              ),
+            ],
+          ),
         ),
       ),
     );

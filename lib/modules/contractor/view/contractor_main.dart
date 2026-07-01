@@ -298,7 +298,7 @@ class _ContractorMainScreenState extends State<ContractorMainScreen> {
                             );
                           }),
 
-                          title: Text("Enquiry", style: style),
+                          title: Text("Inquiry", style: style),
                         ),
 
                         /// ✅ Leads

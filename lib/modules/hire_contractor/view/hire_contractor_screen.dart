@@ -95,7 +95,7 @@ class _HireContractorScreenState extends State<HireContractorScreen> {
     },
     {
       'step': '4',
-      'title': 'Add Inquiry',
+      'title': 'Add Enquiry',
       'subtitle': 'Submit Your Requirement',
       'desc': 'Share your project details, budget, and preferred timeline.',
       'icon': Icons.edit_note,

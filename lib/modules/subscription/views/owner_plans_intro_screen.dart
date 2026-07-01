@@ -102,9 +102,9 @@ class OwnerPlansIntroScreen extends StatelessWidget {
                   ),
                   _FeatureCard(
                     icon: Icons.group_outlined,
-                    title: 'Serious Enquiries',
+                    title: 'Serious Inquiries',
                     subtitle:
-                        'Build trust and receive enquiries from verified buyers.',
+                        'Build trust and receive inquiries from verified buyers.',
                   ),
                 ],
               ),

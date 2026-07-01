@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/app/constants/img_res.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:nesticope_app/data/database/secure_storage_service.dart';
 import 'package:nesticope_app/data/network/property/models/property_model.dart';
 import 'package:nesticope_app/modules/contractor/controller/contractor_lead_controller.dart';
@@ -300,7 +301,7 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
 
             // Title
             Text(
-              "Enquiry Already Submitted!",
+              "${(UserHelper.isBuyer||UserHelper.isGuest)?'Enquiry Already Submitted!':'Inquiry Already Submitted!'}",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: AppFontSizes.large,

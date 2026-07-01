@@ -453,7 +453,7 @@ class _PlatformServiceHorizontalListState
                                       ),
                                       const SizedBox(height: 8),
                                        Text(
-                                        'Your inquiry has been submitted successfully. Our support team will contact you shortly to discuss your needs.',
+                                        'Your Enquiry has been submitted successfully. Our support team will contact you shortly to discuss your needs.',
                                         style: TextStyle(
                                           fontSize: AppFontSizes.small,
                                           color: ColorRes.leadGreyColor[700],
@@ -516,7 +516,7 @@ class _PlatformServiceHorizontalListState
                                                           .openWhatsApp(
                                                         number,
                                                         message:
-                                                            'Hi, I already submitted an inquiry. I want to chat about ${service.title ?? 'service'}.',
+                                                            'Hi, I already submitted an Enquiry. I want to chat about ${service.title ?? 'service'}.',
                                                       );
                                                     }
                                                   : null,
@@ -731,7 +731,7 @@ void addInquiryFromProject(
                   children: [
                     const Expanded(
                       child: Text(
-                        "Inquiry for Project Promotion & Marketing",
+                        "Enquiry for Project Promotion & Marketing",
                         style: TextStyle(
                           fontSize: AppFontSizes.body,
                           fontWeight: AppFontWeights.semiBold,
@@ -923,13 +923,13 @@ void addInquiryFromProject(
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Row(
+                        child:  Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(Icons.send, size: 20),
                             SizedBox(width: 8),
                             Text(
-                              'Submit Inquiry',
+                              '${(UserHelper.isBuyer|| UserHelper.isGuest)?'Submit Enquiry':'Submit Inquiry'}',
 
                               style: TextStyle(
                                 fontSize: AppFontSizes.medium,

@@ -214,7 +214,7 @@ class ContractorInquiryService {
           message: jsonData['message'],
           contentType: ContentType.failure,
         );
-        throw Exception("Failed to Delete Enquiry");
+        throw Exception("Failed to Delete Inquiry");
       }
     } catch (e) {
       NesticoPeSnackBar.showAwesomeSnackbar(

@@ -2009,8 +2009,8 @@ class _InsightsScreenState extends State<InsightsScreen> {
                                 ),
                                 FeatureItemData(
                                   Icons.verified_outlined,
-                                  'Serious Enquiries',
-                                  'Build trust with buyers and receive enquiries from verified, serious buyers.',
+                                  'Serious Inquiries',
+                                  'Build trust with buyers and receive inquiries from verified, serious buyers.',
                                 ),
                               ],
                               premiumListings: const [

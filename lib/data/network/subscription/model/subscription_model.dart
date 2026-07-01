@@ -337,7 +337,7 @@ extension PlanFeaturesMapper on PlanFeatures {
       }
 
       // Numeric / String / unlimited features
-      return FeatureItem(name: "$label: $value", isIncluded: true);
+      return FeatureItem(name: "$label: ${value==0?"Unlimited":'$value'}", isIncluded: true);
     }).toList();
   }
 }

@@ -4851,9 +4851,9 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                           child: ElevatedButton(
                                             onPressed: () {
                                               NesticoPeSnackBar.showAwesomeSnackbar(
-                                                title: 'Already Inquired',
+                                                title: 'Already Enquired',
                                                 message:
-                                                    'You have already submitted inquiry',
+                                                    'You have already submitted enquiry',
                                                 contentType:
                                                     ContentType.warning,
                                               );
@@ -4872,7 +4872,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                                   ),
                                             ),
                                             child: const Text(
-                                              'Already Inquired',
+                                              'Already Enquired',
                                               style: TextStyle(
                                                 fontSize: AppFontSizes.medium,
                                                 fontWeight:
@@ -4955,7 +4955,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                                 NesticoPeSnackBar.showAwesomeSnackbar(
                                                   title: 'Success',
                                                   message:
-                                                      'Inquiry Added Successfully',
+                                                      'Enquiry Added Successfully',
                                                   contentType:
                                                       ContentType.success,
                                                 );
@@ -4972,7 +4972,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                                 NesticoPeSnackBar.showAwesomeSnackbar(
                                                   title: 'Error',
                                                   message:
-                                                      'Failed to Submit Inquiry',
+                                                      'Failed to Submit Enquiry',
                                                   contentType:
                                                       ContentType.failure,
                                                 );
@@ -5208,7 +5208,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
                                       NesticoPeSnackBar.showAwesomeSnackbar(
                                         title: "Success",
-                                        message: "Inquiry Added Successfully",
+                                        message: "Enquiry Added Successfully",
                                         contentType: ContentType.success,
                                       );
                                       await controller.getAllInQuireData(
@@ -5222,7 +5222,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                     } else {
                                       NesticoPeSnackBar.showAwesomeSnackbar(
                                         title: "Error",
-                                        message: "Failed to Submit Inquiry",
+                                        message: "Failed to Submit Enquiry",
                                         contentType: ContentType.failure,
                                       );
                                     }

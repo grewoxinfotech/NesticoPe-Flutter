@@ -134,6 +134,7 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/modules/contractor/controller/contractor_dashboard_controller.dart';
+import 'package:nesticope_app/modules/subscription/controller/google_play_billing_service.dart';
 import 'package:nesticope_app/modules/subscription/controller/user_subscription_controller.dart';
 import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -161,6 +162,9 @@ class SubscriptionPlanController extends PaginatedController<SubscriptionPlan> {
   /// Razorpay instance
   late Razorpay _razorpay;
 
+  /// Google Play Billing service
+  // late final GooglePlayBillingService googlePlayBillingService;
+
   /// Loading state for payment
   final RxBool isProcessingPayment = false.obs;
   final RxBool inquirySubmitted = false.obs;
@@ -182,11 +186,18 @@ class SubscriptionPlanController extends PaginatedController<SubscriptionPlan> {
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
 
+    // googlePlayBillingService = GooglePlayBillingService(
+    //   onPurchaseVerified: _handleGooglePlayPurchaseVerified,
+    //   onPurchaseFailed: _handleGooglePlayPurchaseFailed,
+    //   onPurchasePending: _handleGooglePlayPurchasePending,
+    // );
+
     loadInitial();
   }
 
   @override
   void onClose() {
+    // googlePlayBillingService.dispose();
     _razorpay.clear();
     super.onClose();
   }
@@ -313,6 +324,66 @@ class SubscriptionPlanController extends PaginatedController<SubscriptionPlan> {
       debugPrint("Exception in openRazorpayCheckout: $e");
       isProcessingPayment.value = false;
     }
+  }
+
+  ///==================== Google Play Billing Integration ====================
+
+  // Future<void> openGooglePlayCheckout(String planId) async {
+  //   try {
+  //     isProcessingPayment.value = true;
+  //     await googlePlayBillingService.startPurchase(planId);
+  //   } catch (e) {
+  //     debugPrint('Exception in openGooglePlayCheckout: $e');
+  //     isProcessingPayment.value = false;
+  //   }
+  // }
+
+  Future<void> _handleGooglePlayPurchaseVerified() async {
+    await dashboardController.fetchActiveSubscription(
+      showDialogWhenMissing: false,
+    );
+
+    final hasCurrentPlanController = Get.isRegistered<CurrentUserPlanController>();
+    final currentPlanCtrl = hasCurrentPlanController
+        ? Get.find<CurrentUserPlanController>()
+        : null;
+
+    if (currentPlanCtrl != null) {
+      const int attempts = 5;
+      for (int i = 0; i < attempts; i++) {
+        await currentPlanCtrl.refreshList();
+        final hasActive = currentPlanCtrl.items.any(
+          (e) => (e.status ?? '').toLowerCase() == 'active',
+        );
+        if (hasActive) break;
+        await Future.delayed(const Duration(seconds: 2));
+      }
+      await currentPlanCtrl.refreshList();
+    }
+
+    NesticoPeSnackBar.showAwesomeSnackbar(
+      title: 'Success',
+      message: 'Subscription activated successfully!',
+      contentType: ContentType.success,
+    );
+    isProcessingPayment.value = false;
+  }
+
+  void _handleGooglePlayPurchaseFailed(String message) {
+    NesticoPeSnackBar.showAwesomeSnackbar(
+      title: 'Payment Failed',
+      message: message,
+      contentType: ContentType.failure,
+    );
+    isProcessingPayment.value = false;
+  }
+
+  void _handleGooglePlayPurchasePending(String message) {
+    NesticoPeSnackBar.showAwesomeSnackbar(
+      title: 'Payment Pending',
+      message: message,
+      contentType: ContentType.warning,
+    );
   }
 
   /// Handle successful payment

@@ -672,6 +672,7 @@ import 'package:nesticope_app/data/network/platform_review/model/platform_review
 import 'package:nesticope_app/modules/auth/views/register_screen.dart';
 import 'package:nesticope_app/modules/contractor/view/widget/convert_to_contractor.dart';
 import 'package:nesticope_app/modules/home/controllers/home_controller/platform_review-controller.dart';
+import 'package:nesticope_app/modules/subscription/controller/google_play_billing_service.dart';
 import 'package:nesticope_app/modules/subscription/views/widgets/contractor_all_review_screen.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
@@ -686,7 +687,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
   final SubscriptionPlanController controller;
   final RxString selectedPlanName;
   final Map<String, String> planStatusByPlanId;
- 
+
   final PlatformReviewController reviewController =
       Get.isRegistered<PlatformReviewController>(tag: 'subscription_reviews')
           ? Get.find<PlatformReviewController>(tag: 'subscription_reviews')
@@ -710,7 +711,6 @@ class SubscriptionPlansWidget extends StatelessWidget {
   }
   @override
   Widget build(BuildContext context) {
-
     log("planStatusByPlanId: ${planStatusByPlanId}");
     return Obx(() {
       if (controller.isLoading.value && controller.items.isEmpty) {
@@ -991,7 +991,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
             : "Taxes may apply";
 
     final int months = plan.durationMonths;
-   final durationText = getDurationText(months);
+    final durationText = getDurationText(months);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start, // 👈 IMPORTANT
@@ -1075,16 +1075,17 @@ class SubscriptionPlansWidget extends StatelessWidget {
     );
   }
 
-String getDurationText(int months) {
-  if (months == 1) return "/month";
+  String getDurationText(int months) {
+    if (months == 1) return "/month";
 
-  if (months % 12 == 0) {
-    final years = months ~/ 12;
-    return years == 1 ? "/year" : "/$years years";
+    if (months % 12 == 0) {
+      final years = months ~/ 12;
+      return years == 1 ? "/year" : "/$years years";
+    }
+
+    return "/$months months";
   }
 
-  return "/$months months";
-}
   // ------------------------------------------------------
   // Feature preview (first 3)
   // ------------------------------------------------------
@@ -1123,7 +1124,9 @@ String getDurationText(int months) {
                     /// Text
                     Expanded(
                       child: Text(
-                        f.name,
+                        (UserHelper.isContractor)
+                            ? f.name.replaceAll("Max Leads", "Max Inquiries")
+                            : f.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -1197,7 +1200,9 @@ String getDurationText(int months) {
           final isExpiredPlan = normalizedStatus == 'expired';
           final showLoader = isProcessing && !isActivePlan;
           final buttonText =
-              isActivePlan ? 'Active Plan' : (isExpiredPlan ? 'Renew' : 'Buy Now');
+              isActivePlan
+                  ? 'Active Plan'
+                  : (isExpiredPlan ? 'Renew' : 'Buy Now');
           final Color bg = rec ? ColorRes.black : ColorRes.white;
           final Color fg =
               rec ? Colors.black : Colors.white.withValues(alpha: 0.8);
@@ -1219,10 +1224,15 @@ String getDurationText(int months) {
                         );
                         return;
                       } else if (UserHelper.isContractor) {
+                         NesticoPeSnackBar.showAwesomeSnackbar(
+                            title: "Info",
+                            message: 'Payment Integration Pending',
+                            contentType: ContentType.help,
+                          );
                         log(
-                          "Contractor user - opening Razorpay checkout for plan: ${plan.id}",
+                          "Contractor user - opening Google Play checkout for plan: ${plan.id}",
                         );
-                        await controller.openRazorpayCheckout(plan.id);
+                        // await controller.openGooglePlayCheckout(plan.id);
                         return;
                       } else if (UserHelper.isSellerBuilder) {
                         // For seller builders, show inquiry dialog
@@ -1277,10 +1287,17 @@ String getDurationText(int months) {
                         }
                         return;
                       } else {
-                        // For other users, open Razorpay checkout
-                        log("Opening Razorpay checkout for plan: ${plan.id}");
-                        await controller.openRazorpayCheckout(plan.id);
-                        return;
+                        NesticoPeSnackBar.showAwesomeSnackbar(
+                            title: "Info",
+                            message: 'Payment Integration Pending',
+                            contentType: ContentType.help,
+                          );
+                        // For other users, open Google Play checkout
+                        // log("Opening Google Play checkout for plan: ${plan.id}");
+                        // await controller.openGooglePlayCheckout(plan.id);
+                        // await purchaseSubscription(planId: plan.id);
+                        
+                        // return;
                       }
                     }
                     : null,
@@ -1423,7 +1440,9 @@ String getDurationText(int months) {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          f.name,
+                          (UserHelper.isContractor)
+                              ? f.name.replaceAll("Max Leads", "Max Inquiries")
+                              : f.name,
                           style: TextStyle(
                             fontSize: AppFontSizes.bodySmall,
                             fontWeight: AppFontWeights.medium,
@@ -1971,7 +1990,7 @@ void addInquiryForPlanBuy(
                               // );
                               NesticoPeSnackBar.showAwesomeSnackbar(
                                 title: 'Successfully',
-                                message: " Inquiry submitted Successfully",
+                                message: "Inquiry submitted Successfully",
                                 contentType: ContentType.success,
                               );
                               Get.back();

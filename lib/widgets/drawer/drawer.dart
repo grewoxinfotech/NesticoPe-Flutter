@@ -181,7 +181,7 @@ class NesticoPeDrawer extends StatelessWidget {
     DrawerModel(title: "My Properties", icon: Icons.apartment_outlined),
     DrawerModel(title: "Post Property", icon: Icons.add_home_work_outlined),
     DrawerModel(title: "Saved Properties", icon: Icons.favorite_border),
-    DrawerModel(title: "Leads & Enquiries", icon: Icons.people_alt_outlined),
+    DrawerModel(title: "Leads & Inquiries", icon: Icons.people_alt_outlined),
     DrawerModel(title: "Subscription Plans", icon: Icons.workspace_premium),
     DrawerModel(title: "Support", icon: Icons.support_agent),
     DrawerModel(title: "Settings", icon: Icons.settings_outlined),
