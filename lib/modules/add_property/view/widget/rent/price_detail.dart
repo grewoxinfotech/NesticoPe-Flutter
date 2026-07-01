@@ -40,12 +40,14 @@ class RentPriceDetail extends StatelessWidget {
                 Icons.currency_rupee_outlined,
                 controller.rent_MonthilyRent,
                 isPhoneKey: true,
-
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter monthly rent';
                   }
+                  return null;
+                },
 
+                onChanged: (value) {
                   final rent = int.tryParse(value) ?? 0;
 
                   if (rent > 0) {
@@ -259,8 +261,11 @@ class RentPriceDetail extends StatelessWidget {
                 controller.sell_ExpectedPrice,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter expected price';
+                    return 'Please enter Expected price';
                   }
+                  return null;
+                },
+                onChanged: (value) {
                   final rent = int.tryParse(value); // parse once
                   if (rent == null) {
                     return 'Please enter a valid amount';
@@ -692,6 +697,9 @@ class RentPriceDetail extends StatelessWidget {
                     if (value == null || value.isEmpty) {
                       return 'Please enter Excepted rent';
                     }
+                    return null;
+                  },
+                  onChanged: (value) {
                     final rent = int.tryParse(value); // parse once
                     if (rent == null) {
                       return 'Please enter a valid amount';
@@ -846,6 +854,12 @@ class RentPriceDetail extends StatelessWidget {
 
                   Icons.currency_rupee_outlined,
                   validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter Excepted rent';
+                    }
+                    return null;
+                  },
+                  onChanged: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter Excepted rent';
                     }
@@ -1139,6 +1153,9 @@ class RentPriceDetail extends StatelessWidget {
                     if (value == null || value.isEmpty) {
                       return 'Please enter Excepted price';
                     }
+                    return null;
+                  },
+                  onChanged: (value) {
                     final rent = int.tryParse(value) ?? 0;
 
                     if (rent > 0) {
@@ -1367,10 +1384,7 @@ class RentPriceDetail extends StatelessWidget {
                   'Enter price',
 
                   Icons.currency_rupee_outlined,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter Excepted price';
-                    }
+                  onChanged: (value) {
                     final rent = int.tryParse(value) ?? 0; // parse once
                     if (rent > 0) {
                       // Calculate 5% of rent as Platform Fees
@@ -1392,6 +1406,12 @@ class RentPriceDetail extends StatelessWidget {
                       controller.brokerRageCommission.text = "0";
                     }
 
+                    return null;
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter monthly rent';
+                    }
                     return null;
                   },
 

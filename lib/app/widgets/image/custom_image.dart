@@ -208,8 +208,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:nesticope_app/utils/global.dart';
 import 'package:shimmer/shimmer.dart'; // Import added
 
-
-
 class ColorResImg {
   static const Color leadGreyColor = Colors.grey;
   static final Color shimmerBase = Colors.grey[300]!;
@@ -330,10 +328,12 @@ class CustomImage extends StatelessWidget {
           memCacheHeight: cacheH,
           placeholder:
               networkPlaceholder ?? (context, url) => _shimmerPlaceholder(),
-    errorWidget: networkError ?? (context, url, error) {
-  debugPrint("❌ Image failed: $url | Error: $error");
-  return fallback();
-},
+          errorWidget:
+              networkError ??
+              (context, url, error) {
+                debugPrint("❌ Image failed: $url | Error: $error");
+                return fallback();
+              },
         );
 
       case CustomImageType.file:

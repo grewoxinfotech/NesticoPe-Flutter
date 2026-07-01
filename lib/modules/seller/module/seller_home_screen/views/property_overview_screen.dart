@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/app/constants/img_res.dart';
+import 'package:nesticope_app/app/manager/property/property_name_manager.dart';
 import 'package:nesticope_app/app/widgets/image/custom_image.dart'
     hide ColorRes;
 import 'package:nesticope_app/modules/property_price_trend/view/widget/price_formate.dart'
@@ -71,7 +72,13 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
                 children: [
                   Icon(Icons.filter_list, color: ColorRes.primary, size: 20),
                   SizedBox(width: 6),
-                  Text("Filter", style: TextStyle(color: ColorRes.primary, fontWeight: FontWeight.w600)),
+                  Text(
+                    "Filter",
+                    style: TextStyle(
+                      color: ColorRes.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -349,28 +356,32 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
                           top: 12,
                           left: 12,
                           child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: isSold
-                                    ? ColorRes.error
-                                    : (isRented ? Colors.amber : ColorRes.white),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                property.propertyStatus?.capitalize ??
-                                    'Available',
-                                style: TextStyle(
-                                  color: (isSold || isRented)
-                                      ? ColorRes.white
-                                      : ColorRes.primary,
-                                  fontSize: AppFontSizes.small,
-                                  fontWeight: AppFontWeights.semiBold,
-                                ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color:
+                                  isSold
+                                      ? ColorRes.error
+                                      : (isRented
+                                          ? Colors.amber
+                                          : ColorRes.white),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              property.propertyStatus?.capitalize ??
+                                  'Available',
+                              style: TextStyle(
+                                color:
+                                    (isSold || isRented)
+                                        ? ColorRes.white
+                                        : ColorRes.primary,
+                                fontSize: AppFontSizes.small,
+                                fontWeight: AppFontWeights.semiBold,
                               ),
                             ),
+                          ),
                         ),
 
                         if (property.listingType != null)
@@ -419,9 +430,10 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   Text(
-                                    property.propertyType?.capitalize
-                                            ?.replaceAll('_', ' ') ??
-                                        'Property Title',
+                                    // property.propertyType?.capitalize
+                                    //         ?.replaceAll('_', ' ') ??
+                                    //     'Property Title',
+                                    PropertyNameManager(property).displayName,
                                     style: TextStyle(
                                       fontSize: AppFontSizes.body,
                                       fontWeight: AppFontWeights.semiBold,
@@ -460,7 +472,7 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
                                   const SizedBox(width: 4),
                                   Expanded(
                                     child: Text(
-                                      property.location ?? 'Location',
+                                      '${property.city} , ${property.state}' ?? 'Location',
                                       style: TextStyle(
                                         fontSize: AppFontSizes.caption,
                                         color: ColorRes.leadGreyColor[600],

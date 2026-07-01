@@ -1255,10 +1255,11 @@ Widget buildChoice({
   required VoidCallback onTap,
   double? width = 155,
 }) {
+   final widthMedia = (MediaQuery.of(Get.context!).size.width - 45) / 2;
   return GestureDetector(
     onTap: onTap,
     child: Container(
-      width: width,
+      width: widthMedia,
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
       decoration: BoxDecoration(
         color: selected ? ColorRes.primary.withOpacity(0.1) : ColorRes.white,

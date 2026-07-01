@@ -121,40 +121,141 @@ class RentAdvanceDetail extends StatelessWidget {
                   controller.rent_propertyType.value.toLowerCase() !=
                       "agricultural land") ...[
                 SizedBox(height: 16),
+                // buildSectionTitle("Bathrooms"),
+                // SizedBox(height: 8),
+                // Obx(() {
+                //   int bhkCount = 1;
+                //   if (controller.bhkType.value.isNotEmpty) {
+                //     bhkCount =
+                //         int.tryParse(controller.bhkType.value.split(' ')[0]) ??
+                //         1;
+                //   }
+                //   final bathroomOptions = List<int>.generate(
+                //     bhkCount,
+                //     (i) => i + 1, // Generates [1, 2, ..., bhkCount]
+                //   );
+                //   return Column(
+                //     children: [
+                //       SingleChildScrollView(
+                //         scrollDirection: Axis.horizontal,
+                //         child: Row(
+                //           spacing: 12,
+                //           children:
+                //               bathroomOptions
+                //                   .map(
+                //                     (option) => buildChoice(
+                //                       title: option.toString(),
+                //                       selected:
+                //                           controller.rent_Bathroom.value == option,
+                //                       onTap: () {
+                //                         controller.isCustomBhathroom.value = false;
+                //                         controller.customBhathroomController.clear();
+                //                         controller.setValue(
+                //                           controller.rent_Bathroom,
+                //                           option,
+                //                         );
+                //                       },
+                //                     ),
+                //                   )
+                //                   .toList(),
+                //         ),
+                //       ),
+                //     ],
+                //   );
+                // }),
                 buildSectionTitle("Bathrooms"),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
+
                 Obx(() {
                   int bhkCount = 1;
+
                   if (controller.bhkType.value.isNotEmpty) {
                     bhkCount =
                         int.tryParse(controller.bhkType.value.split(' ')[0]) ??
                         1;
                   }
-                  final bathroomOptions = List<int>.generate(
-                    bhkCount,
-                    (i) => i + 1, // Generates [1, 2, ..., bhkCount]
+
+                  final bathroomOptions = List.generate(
+                    4,
+                    (index) => index + 1,
                   );
-                  return SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      spacing: 12,
-                      children:
-                          bathroomOptions
-                              .map(
-                                (option) => buildChoice(
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            ...bathroomOptions.map(
+                              (option) => Padding(
+                                padding: const EdgeInsets.only(right: 12),
+                                child: buildChoice(
                                   title: option.toString(),
                                   selected:
                                       controller.rent_Bathroom.value == option,
                                   onTap: () {
+                                    controller.isCustomBhathroom.value = false;
+                                    controller.customBhathroomController
+                                        .clear();
                                     controller.setValue(
                                       controller.rent_Bathroom,
                                       option,
                                     );
                                   },
                                 ),
-                              )
-                              .toList(),
-                    ),
+                              ),
+                            ),
+
+                            buildChoice(
+                              title: "Custom",
+                              width: 90,
+                              selected: controller.isCustomBhathroom.value,
+                              onTap: () {
+                                controller.isCustomBhathroom.value = true;
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      if (controller.isCustomBhathroom.value) ...[
+                        const SizedBox(height: 12),
+
+                        buildTextField(
+                          'Bathrooms',
+                          // keyboardType: TextInputType.number,
+                          Icons.bathroom_outlined,
+
+                          onChanged: (value) {
+                            final number = int.tryParse(value);
+                            print(
+                              'Auto- selecting chip for $number ===== $bhkCount',
+                            );
+                            if (number == null || number <= 0) {
+                              controller.rent_Bathroom.value = 0;
+                              return;
+                            }
+
+                            // If within generated options, auto select chip
+                            if (number <= 4) {
+                              // controller.isCustomBhathroom.value = false;
+                              // controller.customBhathroomController.clear();
+                              controller.rent_Bathroom.value = number;
+
+                              print('Auto- selecting chip for $number');
+                            } else {
+                              print('Auto- sdfcsselecting chip for $number');
+                              // Keep custom value
+                              controller.rent_Bathroom.value = number;
+                            }
+                          },
+                          controller.customBhathroomController,
+                          inputType: TextInputType.number,
+                          isPhoneKey: true,
+                        ),
+                      ],
+                    ],
                   );
                 }),
                 // SizedBox(height: 16),
@@ -804,9 +905,9 @@ class RentAdvanceDetail extends StatelessWidget {
                   final reraId = value?.trim() ?? '';
                   if (reraId.isEmpty) return null;
 
-                  final isValid = RegExp(r'^RERA\d+$').hasMatch(
-                    reraId.toUpperCase(),
-                  );
+                  final isValid = RegExp(
+                    r'^RERA\d+$',
+                  ).hasMatch(reraId.toUpperCase());
                   if (!isValid) {
                     return "Enter valid RERA ID (e.g. RERA24563563)";
                   }

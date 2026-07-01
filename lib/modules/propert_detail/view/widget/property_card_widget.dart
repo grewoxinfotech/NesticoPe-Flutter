@@ -19,6 +19,7 @@ import 'package:nesticope_app/modules/home/views/compare_screen/comapre_screen.d
 import 'package:nesticope_app/modules/property/views/property_detail_screen.dart';
 import 'package:nesticope_app/modules/saved_property/controllers/property_favorite_controller.dart';
 import 'package:nesticope_app/utils/common_widget/rera_widget.dart';
+import 'package:nesticope_app/utils/global.dart';
 
 import '../../../../app/manager/property/proiperty_feature_manager.dart';
 import '../../../../app/manager/property_highlight_manager.dart';
@@ -61,6 +62,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
     final controller = Get.find<PropertyController>();
     final PropertyFavoriteController favoriteController =
         Get.find<PropertyFavoriteController>();
+        final images = widget.property.propertyMedia?.images ?? [];
     // print('Building PropertyCardWidget for ${widget.role}');
     return GestureDetector(
       onTap: () {
@@ -95,13 +97,12 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                       vertical: AppPadding.small,
                     ),
                     itemCount:
-                        widget.property.propertyMedia?.images?.length ?? 0,
+                        images.isEmpty ? 1 : images.length,
                     separatorBuilder:
                         (context, index) =>
                             const SizedBox(width: 6), // gap between images
                     itemBuilder: (context, index) {
-                      final property =
-                          widget.property.propertyMedia?.images?[index];
+                       final property = images.isEmpty ? null : images[index];
                       return Container(
                         width:
                             MediaQuery.of(context).size.width / 2 -
@@ -115,7 +116,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                           // ),
                         ),
                         child:
-                            property != null
+                            property != null && property.isNotEmpty
                                 ? ClipRRect(
                                   borderRadius: BorderRadius.circular(12),
                                   // clipBehavior: Clip.,
@@ -135,22 +136,70 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                                   //     },
                                   //   ),
                                   // )
-                                  child: CustomImage(
-                                    type: CustomImageType.network,
-                                    src: property,
-                                    // fit: BoxFit.cover,
-                                  ),
+                                  child:
+                                      (property.isNotEmpty)
+                                          ? CustomImage(
+                                            type: CustomImageType.network,
+                                            src: property,
+                                            errorBuilder:
+                                                (context, error, stackTrace) =>
+                                                    CustomImage(
+                                                      type:
+                                                          CustomImageType.asset,
+                                                      src: imageOfNotAvailable,
+                                                    ),
+                                            // fit: BoxFit.cover,
+                                          )
+                                          : CustomImage(
+                                            type: CustomImageType.asset,
+                                            src: imageOfNotAvailable,
+                                          ),
                                 )
-                                : Center(
-                                  child: Icon(
-                                    Icons.broken_image,
-                                    size: 40,
-                                    color: ColorRes.leadGreyColor,
+                                : Container(
+                                  width:
+                                      MediaQuery.of(context).size.width / 2 -
+                                      2, // show 2 images
+                                  decoration: BoxDecoration(
+                                    color: ColorRes.leadGreyColor.shade200,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: ClipRRect(
+                                  
+                                  borderRadius: BorderRadius.circular(12),
+                                    child: CustomImage(
+                                      type: CustomImageType.asset,
+                                      src: imageOfNotAvailable,
+                                    ),
                                   ),
                                 ),
                       );
                     },
                   ),
+                  // : Container(
+                  //   margin: const EdgeInsets.symmetric(
+                  //     horizontal: AppPadding.small,
+                  //     vertical: AppPadding.small,
+                  //   ),
+                  //   width:
+                  //       MediaQuery.of(context).size.width / 2 -
+                  //       2, // show 2 images
+                  //   decoration: BoxDecoration(
+                  //     color: ColorRes.leadGreyColor.shade200,
+                  //     borderRadius: BorderRadius.circular(12),
+                  //     // image: DecorationImage(
+                  //     //   image: NetworkImage(property),
+                  //     //   fit: BoxFit.cover,
+                  //     // ),
+                  //   ),
+                  //   child: ClipRRect(
+                  //     borderRadius: BorderRadius.circular(12),
+                  //     child: CustomImage(
+                  //       type: CustomImageType.asset,
+                  //       src: imageOfNotAvailable,
+                  //       fit: BoxFit.cover,
+                  //     ),
+                  //   ),
+                  // ),
                 ),
 
                 // TODO: fetch by role
@@ -523,7 +572,6 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
           ],
         ),
       ),
-
     );
   }
 }
@@ -536,7 +584,6 @@ class Facilities extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final highlights = PropertyHighlightManager(property).getHighlights();
-    
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,

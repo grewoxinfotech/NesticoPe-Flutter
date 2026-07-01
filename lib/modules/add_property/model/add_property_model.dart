@@ -568,7 +568,7 @@ class FinancialInfo {
       data['property_rent_per_month'] = propertyRentPerMonth;
     if (monthlyRent != null) data['monthlyRent'] = monthlyRent;
     if (pricePerSqft != null) data['price_per_sqft'] = pricePerSqft;
-    if (brokerCommission != null) data['broker_commission'] = brokerCommission;
+    if (brokerCommission != null && brokerCommission! > 0.0) data['broker_commission'] = brokerCommission;
     if (platformFees != null) data['platform_fees'] = platformFees;
     if (brokerNegotiable != null) data['broker_negotiable'] = brokerNegotiable;
     if (is_for_sellorrent != null)
@@ -631,6 +631,8 @@ class PgInfo {
   final bool? pgOwnerStaysAtPg;
   final int? mealChargesPerMonth;
   final int? electricityChargesPerMonth;
+  final String? electricityChargesType;
+  final int? electricityChargesUnit;
   final PgRules? pgRules;
   final List<PgRoomInfo>? pgRoomInfo;
 
@@ -645,6 +647,9 @@ class PgInfo {
     this.pgOwnerStaysAtPg,
     this.mealChargesPerMonth,
     this.electricityChargesPerMonth,
+    this.electricityChargesType,
+    this.electricityChargesUnit,
+
     this.pgRules,
     this.pgRoomInfo,
   });
@@ -660,6 +665,8 @@ class PgInfo {
       pgManageBy: json['pg_manage_by'],
       pgOwnerStaysAtPg: json['pg_owner_stays_at_pg'],
       mealChargesPerMonth: json['meal_charges_per_month'],
+      electricityChargesType: json['electricity_charges_type'],
+      electricityChargesUnit: json['electricity_charges_per_unit'],
       electricityChargesPerMonth: json['electricity_charges_per_month'],
       pgRules:
           json['pg_rules'] != null ? PgRules.fromJson(json['pg_rules']) : null,
@@ -686,6 +693,10 @@ class PgInfo {
         'meal_charges_per_month': mealChargesPerMonth,
       if (electricityChargesPerMonth != null)
         'electricity_charges_per_month': electricityChargesPerMonth,
+      if (electricityChargesType != null)
+        'electricity_charges_type': electricityChargesType,
+      if (electricityChargesUnit != null)
+        'electricity_charges_per_unit': electricityChargesUnit,
       if (pgRules != null) 'pg_rules': pgRules!.toJson(),
       if (pgRoomInfo != null)
         'pg_room_info': pgRoomInfo!.map((x) => x.toJson()).toList(),

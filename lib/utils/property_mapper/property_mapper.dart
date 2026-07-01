@@ -95,6 +95,9 @@ extension ItemsMapper on Items.Items {
   }
 
   AddPropertyModel.PgInfo _mapPgInfo(Items.PgInfo source) {
+
+print("Mapping PgInfo: ${source.toJson()}");
+
     return AddPropertyModel.PgInfo(
       pgName: source.pgName,
       pgFor: source.pgFor,
@@ -104,6 +107,8 @@ extension ItemsMapper on Items.Items {
       pgCommonArea: source.pgCommonArea,
       pgManageBy: source.pgManageBy,
       pgOwnerStaysAtPg: source.pgOwnerStaysAtPg,
+      electricityChargesType: source.electricityChargesType,
+      electricityChargesUnit: source.electricityChargesUnit,
       mealChargesPerMonth: source.mealChargesPerMonth,
       electricityChargesPerMonth: source.electricityChargesPerMonth,
       pgRules: source.pgRules != null ? _mapPgRules(source.pgRules!) : null,

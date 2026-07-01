@@ -3646,7 +3646,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
           // Show error if property not found
           if (currentProperty == null) {
             return Center(
-
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -3657,7 +3656,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Property not found',// StringManager.propertyNotFound, property not found string added in string manager
+                    'Property not found', // StringManager.propertyNotFound, property not found string added in string manager
                     style: TextStyle(
                       fontSize: AppFontSizes.body,
                       color: ColorRes.leadGreyColor,
@@ -3709,23 +3708,23 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                         color: ColorRes.leadGreyColor.shade100,
                       ),
 
-                      // if (!UserHelper.isGuest && !UserHelper.isBuyer) ...[ This is undefined 
-                      if ((currentProperty
-                              .propertyMedia
-                              ?.documents
-                              ?.isNotEmpty ??
-                          false))
-                        _buildPropertyDocumentsSection(currentProperty),
-                      if ((currentProperty
-                              .propertyMedia
-                              ?.documents
-                              ?.isNotEmpty ??
-                          false))
-                        Divider(
-                          thickness: 8,
-                          color: ColorRes.leadGreyColor.shade100,
-                        ),
-                      // ],
+                      if (!UserHelper.isGuest && !UserHelper.isBuyer) ...[
+                        if ((currentProperty
+                                .propertyMedia
+                                ?.documents
+                                ?.isNotEmpty ??
+                            false))
+                          _buildPropertyDocumentsSection(currentProperty),
+                        if ((currentProperty
+                                .propertyMedia
+                                ?.documents
+                                ?.isNotEmpty ??
+                            false))
+                          Divider(
+                            thickness: 8,
+                            color: ColorRes.leadGreyColor.shade100,
+                          ),
+                      ],
                       if (((currentProperty
                                   .propertyDetails
                                   ?.subRegistrarOfficeName
@@ -3743,7 +3742,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                   '')
                               .trim()
                               .isNotEmpty))) ...[
-                                
                         _buildSubRegistrarSection(currentProperty),
                         Divider(
                           thickness: 8,
@@ -3758,10 +3756,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                   ?.trim()
                                   .isNotEmpty ??
                               false))) ...[
-
                         _buildLandRecordSection(currentProperty),
-
-
 
                         Divider(
                           thickness: 8,
@@ -3998,7 +3993,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                 },
                               ),
                               const SizedBox(height: 12),
-                              
+
                               // Divider(
                               //   indent: 18,
                               //   endIndent: 18,
@@ -4471,6 +4466,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           color: ColorRes.homeYellowDark.withOpacity(0.06),
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const SizedBox(height: 12),
                               const TitleWithViewAll(
@@ -5546,7 +5542,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   ) {
     final PageController pageController = PageController();
     String _sanitize(String s) => s.replaceAll('`', '').trim();
-
+    print("Current property media: ${media.toJson()}");
     List<String> images =
         (media.images ?? []).map(_sanitize).where((e) => e.isNotEmpty).toList();
     if (images.isEmpty &&
@@ -5564,6 +5560,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
       ...images.map((e) => {"type": "image", "url": e}),
       ...videos.map((e) => {"type": "video", "url": e}),
     ];
+    print("Media list for property $id: $mediaList");
 
     int currentPage = 0;
 
@@ -5607,47 +5604,71 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                   },
                 ),
               ),*/
-              SizedBox(
-                height: 300,
-                width: double.infinity,
-                child: PageView.builder(
-                  controller: pageController,
-                  itemCount: mediaList.length,
-                  onPageChanged: (index) {
-                    setState(() {
-                      currentPage = index;
-                    });
-                  },
-                  itemBuilder: (context, index) {
-                    final item = mediaList[index];
-                    final url = _sanitize(item["url"] ?? '');
-                    const imageOfNotAvailable =
-                        "assets/images/not_available_image.png";
-
-                    if (item["type"] == "image") {
-                      return CachedNetworkImage(
-                        imageUrl: url,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        placeholder:
-                            (context, _) => const Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                        errorWidget:
-                            (context, _, __) => Image.asset(
-                              imageOfNotAvailable,
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                            ),
+              if (mediaList.isNotEmpty) ...[
+                SizedBox(
+                  height: 300,
+                  width: double.infinity,
+                  child: PageView.builder(
+                    controller: pageController,
+                    itemCount: mediaList.length,
+                    onPageChanged: (index) {
+                      setState(() {
+                        currentPage = index;
+                      });
+                    },
+                    itemBuilder: (context, index) {
+                      print(
+                        "Building media item at index: ${mediaList[index]}",
                       );
-                    } else if (item["type"] == "video") {
-                      return CustomVideoPlayer(url: url);
-                    }
+                      final item = mediaList[index];
+                      final url = _sanitize(item["url"] ?? '');
+                      const imageOfNotAvailable =
+                          "assets/images/not_available_image.png";
 
-                    return const SizedBox.shrink();
-                  },
+                      if (item["type"] == "image") {
+                        print(
+                          "Loading image: $url  ============ ${item["type"]}",
+                        );
+                        return CachedNetworkImage(
+                          imageUrl: url,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          placeholder:
+                              (context, _) => const Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                          errorWidget:
+                              (context, _, __) => Image.asset(
+                                imageOfNotAvailable,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                              ),
+                        );
+                      } else if (item["type"] == "video") {
+                        return CustomVideoPlayer(url: url);
+                      } else if (url.isEmpty) {
+                        print("Image URL is empty, showing placeholder.");
+                        return Image.asset(
+                          imageOfNotAvailable,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                        );
+                      }
+
+                      return const SizedBox.shrink();
+                    },
+                  ),
                 ),
-              ),
+              ] else ...[
+                SizedBox(
+                  height: 300,
+                  child: Image.asset(
+                    'assets/images/not_available_image.png',
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                  ),
+                ),
+              ],
 
               /// Back button
               Positioned(
@@ -5671,7 +5692,8 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
               ),
 
               /// Page indicator
-              Positioned(
+              if(mediaList.isNotEmpty)...[
+                Positioned(
                 bottom: 16,
                 right: 16,
                 child: Container(
@@ -5693,6 +5715,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                   ),
                 ),
               ),
+              ],
 
               if ((currentProperty.reraId?.isNotEmpty ?? false) &&
                   currentProperty.reraId != null) ...[
@@ -6794,7 +6817,7 @@ class Details extends StatelessWidget {
                                 Text(
                                   value,
                                   overflow: TextOverflow.ellipsis,
-                                   maxLines: 1,
+                                  maxLines: 1,
 
                                   style: const TextStyle(
                                     fontSize: AppFontSizes.small,

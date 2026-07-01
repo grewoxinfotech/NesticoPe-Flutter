@@ -33,7 +33,7 @@ class MultiSelectChip extends StatelessWidget {
               return GestureDetector(
                 onTap: () => onTap(option),
                 child: Container(
-                  width: 158,
+                  width: (MediaQuery.of(Get.context!).size.width - 45) / 2,
                   padding: padding,
                   decoration: BoxDecoration(
                     color:

@@ -103,9 +103,22 @@ class LoadEditPropertyPayload extends GetxController {
 
     controller.bhkType.value =
         (property.propertyDetails?.bhk != null &&
-                property.propertyDetails!.bhk! != 0)
+                property.propertyDetails!.bhk! != 0 &&
+                property.propertyDetails!.bhk! <= 10)
             ? "${property.propertyDetails!.bhk!} BHK"
             : "";
+    controller.customBhkController.text =
+        (property.propertyDetails?.bhk != null &&
+                property.propertyDetails!.bhk! != 0 &&
+                property.propertyDetails!.bhk! > 10)
+            ? "${property.propertyDetails!.bhk!} BHK"
+            : "";
+    controller.isCustomBhk.value =
+        (property.propertyDetails?.bhk != null &&
+                property.propertyDetails!.bhk! != 0 &&
+                property.propertyDetails!.bhk! > 10)
+            ? true
+            : false;
     controller.tenantType.value =
         capitalizeEachWord(property.propertyDetails?.tenantType) ?? '';
     controller.rent_AvailableFrom.text =
@@ -117,9 +130,22 @@ class LoadEditPropertyPayload extends GetxController {
 
     controller.rent_Bathroom.value =
         (property.propertyDetails?.bathroom != null &&
-                property.propertyDetails!.bathroom != 0)
+                property.propertyDetails!.bathroom != 0 &&
+                property.propertyDetails!.bathroom! <= 4)
             ? property.propertyDetails!.bathroom!
             : 0;
+    controller.customBhathroomController.text =
+        (property.propertyDetails?.bathroom != null &&
+                property.propertyDetails!.bathroom != 0 &&
+                property.propertyDetails!.bathroom! > 4)
+            ? property.propertyDetails!.bathroom!.toString()
+            : '';
+    controller.isCustomBhathroom.value =
+        (property.propertyDetails?.bathroom != null &&
+                property.propertyDetails!.bathroom != 0 &&
+                property.propertyDetails!.bathroom! > 4)
+            ? true
+            : false;
     controller.rent_Balcony.value =
         (property.propertyDetails?.balcony != null &&
                 property.propertyDetails!.balcony != 0)
@@ -313,6 +339,7 @@ class LoadEditPropertyPayload extends GetxController {
             ? property.address!
             : '';
   }
+
   void loadPropertyCondition(
     CreatePropertyController controller,
     AddPropertyModel property,
@@ -996,6 +1023,8 @@ class LoadEditPropertyPayload extends GetxController {
     CreatePropertyController controller,
     AddPropertyModel property,
   ) {
+    print('Loading PG Info: ${property.propertyDetails?.pgInfo?.toJson()}');
+
     /// pg name
     controller.pgNameController.text =
         (property.propertyDetails?.pgInfo?.pgName != null &&
@@ -1066,15 +1095,24 @@ class LoadEditPropertyPayload extends GetxController {
     /// electricity charge
     if ((property.propertyDetails?.pgInfo?.electricityChargesPerMonth != null &&
         property.propertyDetails!.pgInfo!.electricityChargesPerMonth != 0)) {
-      controller.electricityCharges.value = 'Separate';
+      controller.electricityChargesType.value = 'Separate';
 
       controller.electricityChargesTextFiled.text = property
           .propertyDetails!
           .pgInfo!
           .electricityChargesPerMonth!
           .toStringAsFixed(0);
+    } else if (property.propertyDetails?.pgInfo?.electricityChargesUnit !=
+            null &&
+        property.propertyDetails!.pgInfo!.electricityChargesUnit != 0) {
+      controller.electricityChargesType.value = 'Based on Unit';
+      controller.electricityChargesPerUnitController.text = property
+          .propertyDetails!
+          .pgInfo!
+          .electricityChargesUnit!
+          .toStringAsFixed(0);
     } else {
-      controller.electricityCharges.value = 'Included in rent';
+      controller.electricityChargesType.value = 'Included in rent';
     }
 
     /// PG Rules

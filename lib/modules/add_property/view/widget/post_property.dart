@@ -508,6 +508,9 @@ class PostProperty extends StatelessWidget {
                       }),
 
                       Obx(() {
+                        print(
+                          "Electricity Charges Type: ${controller.electricityChargesType.value}",
+                        );
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -515,35 +518,54 @@ class PostProperty extends StatelessWidget {
                             buildSectionTitle("Electricity Charges"),
                             const SizedBox(height: 8),
                             Obx(
-                              () => Row(
+                              () => Wrap(
+                                spacing: 10,
+                                runSpacing: 10,
                                 children: [
                                   buildChoice(
                                     title: 'Included in Rent',
                                     selected:
-                                        controller.electricityCharges.value ==
+                                        controller
+                                            .electricityChargesType
+                                            .value ==
                                         'Included in Rent',
                                     onTap:
                                         () => controller.setValue(
-                                          controller.electricityCharges,
+                                          controller.electricityChargesType,
                                           'Included in Rent',
                                         ),
                                   ),
-                                  const SizedBox(width: 10),
+                                  // const SizedBox(width: 10),
                                   buildChoice(
                                     title: 'Separate',
                                     selected:
-                                        controller.electricityCharges.value ==
+                                        controller
+                                            .electricityChargesType
+                                            .value ==
                                         'Separate',
                                     onTap:
                                         () => controller.setValue(
-                                          controller.electricityCharges,
+                                          controller.electricityChargesType,
                                           'Separate',
+                                        ),
+                                  ),
+                                  buildChoice(
+                                    title: 'Based on Unit',
+                                    selected:
+                                        controller
+                                            .electricityChargesType
+                                            .value ==
+                                        'Based on Unit',
+                                    onTap:
+                                        () => controller.setValue(
+                                          controller.electricityChargesType,
+                                          'Based on Unit',
                                         ),
                                   ),
                                 ],
                               ),
                             ),
-                            if (controller.electricityCharges.value ==
+                            if (controller.electricityChargesType.value ==
                                 "Separate") ...[
                               const SizedBox(height: 16),
                               buildSectionTitle(
@@ -561,6 +583,26 @@ class PostProperty extends StatelessWidget {
                                   }
                                   return null;
                                 },
+                              ),
+                            ] else if (controller
+                                    .electricityChargesType
+                                    .value ==
+                                "Based on Unit") ...[
+                              const SizedBox(height: 16),
+                              buildSectionTitle("Electricity Charges per Unit"),
+                              const SizedBox(height: 12),
+                              buildTextField(
+                                "Enter electricity Charges per Unit",
+                                isPhoneKey: true,
+                                Icons.currency_rupee_outlined,
+
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter electricity charges per unit';
+                                  }
+                                  return null;
+                                },
+                                controller.electricityChargesPerUnitController,
                               ),
                             ],
                           ],
@@ -1039,17 +1081,18 @@ class PostProperty extends StatelessWidget {
                     Prediction selectedCity = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CommonSearchField(
-                          onCitySelected: (city) {
-                            Navigator.pop(context, city);
-                          },
-                          isFromAddProperty: true,
-                          isSearchForBuilding: true,
-                          selectedCity: controller.cityController.text,
-                          initialSearchText:
-                              controller.commercial_rent_building_Name.text,
-                          hintText: 'Building / Project / Society',
-                        ),
+                        builder:
+                            (context) => CommonSearchField(
+                              onCitySelected: (city) {
+                                Navigator.pop(context, city);
+                              },
+                              isFromAddProperty: true,
+                              isSearchForBuilding: true,
+                              selectedCity: controller.cityController.text,
+                              initialSearchText:
+                                  controller.commercial_rent_building_Name.text,
+                              hintText: 'Building / Project / Society',
+                            ),
                       ),
                     );
 
@@ -1058,11 +1101,16 @@ class PostProperty extends StatelessWidget {
                         selectedCity.description ??
                         '';
 
-                    if (controller.commercial_rent_building_Name.text.isNotEmpty) {
+                    if (controller
+                        .commercial_rent_building_Name
+                        .text
+                        .isNotEmpty) {
                       controller.localityController.text =
-                          selectedCity.structuredFormatting?.secondaryText ?? '';
+                          selectedCity.structuredFormatting?.secondaryText ??
+                          '';
                       controller.sell_rent_Address.text =
-                          selectedCity.structuredFormatting?.secondaryText ?? '';
+                          selectedCity.structuredFormatting?.secondaryText ??
+                          '';
                     }
                   },
                   isEnable: false,
@@ -1092,7 +1140,8 @@ class PostProperty extends StatelessWidget {
                                 Navigator.pop(context, city);
                               },
                               isFromAddProperty: true,
-                              initialSearchText: controller.localityController.text,
+                              initialSearchText:
+                                  controller.localityController.text,
                               hintText: 'Locality',
                             ),
                       ),
@@ -1276,17 +1325,18 @@ class PostProperty extends StatelessWidget {
                     Prediction selectedCity = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CommonSearchField(
-                          onCitySelected: (city) {
-                            Navigator.pop(context, city);
-                          },
-                          isFromAddProperty: true,
-                          isSearchForBuilding: true,
-                          selectedCity: controller.cityController.text,
-                          initialSearchText:
-                              controller.commercial_rent_building_Name.text,
-                          hintText: 'Building / Project / Society',
-                        ),
+                        builder:
+                            (context) => CommonSearchField(
+                              onCitySelected: (city) {
+                                Navigator.pop(context, city);
+                              },
+                              isFromAddProperty: true,
+                              isSearchForBuilding: true,
+                              selectedCity: controller.cityController.text,
+                              initialSearchText:
+                                  controller.commercial_rent_building_Name.text,
+                              hintText: 'Building / Project / Society',
+                            ),
                       ),
                     );
 
@@ -1295,11 +1345,16 @@ class PostProperty extends StatelessWidget {
                         selectedCity.description ??
                         '';
 
-                    if (controller.commercial_rent_building_Name.text.isNotEmpty) {
+                    if (controller
+                        .commercial_rent_building_Name
+                        .text
+                        .isNotEmpty) {
                       controller.localityController.text =
-                          selectedCity.structuredFormatting?.secondaryText ?? '';
+                          selectedCity.structuredFormatting?.secondaryText ??
+                          '';
                       controller.sell_rent_Address.text =
-                          selectedCity.structuredFormatting?.secondaryText ?? '';
+                          selectedCity.structuredFormatting?.secondaryText ??
+                          '';
                     }
                   },
                   isEnable: false,
@@ -1312,6 +1367,7 @@ class PostProperty extends StatelessWidget {
                   'Locality',
                   Icons.location_on,
                   controller.localityController,
+
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter locality';
@@ -1330,7 +1386,8 @@ class PostProperty extends StatelessWidget {
                                 Navigator.pop(context, city);
                               },
                               isFromAddProperty: true,
-                              initialSearchText: controller.localityController.text,
+                              initialSearchText:
+                                  controller.localityController.text,
                               hintText: 'Locality',
                             ),
                       ),
@@ -1342,7 +1399,7 @@ class PostProperty extends StatelessWidget {
                         selectedCity.description ?? '';
                     print("city ${controller.localityController.text}");
                   },
-                  isEnable: false
+                  isEnable: false,
                 ),
                 SizedBox(height: 16),
                 const Text('Full Address'),
@@ -1361,29 +1418,116 @@ class PostProperty extends StatelessWidget {
                   minLines: 1,
                 ),
                 SizedBox(height: 16),
+                // buildSectionTitle('BHK'),
+                // SizedBox(height: 8),
+                // Obx(
+                //   () => Column(
+                //     children: [
+                //       SingleChildScrollView(
+                //         scrollDirection: Axis.horizontal,
+                //         child: Row(
+                //           spacing: 12,
+                //           children:
+                //               bhkTypes
+                //                   .map(
+                //                     (type) => buildChoice(
+                //                       title: type,
+                //                       selected:
+                //                           controller.bhkType.value == type,
+                //                       width: 80,
+                //                       onTap:
+                //                           () => controller.setValue(
+                //                             controller.bhkType,
+                //                             type,
+                //                           ),
+                //                     ),
+                //                   )
+                //                   .toList(),
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
                 buildSectionTitle('BHK'),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
+
                 Obx(
-                  () => SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      spacing: 12,
-                      children:
-                          bhkTypes
-                              .map(
-                                (type) => buildChoice(
+                  () => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            ...bhkTypes.map(
+                              (type) => Padding(
+                                padding: const EdgeInsets.only(right: 12),
+                                child: buildChoice(
                                   title: type,
-                                  selected: controller.bhkType.value == type,
                                   width: 80,
-                                  onTap:
-                                      () => controller.setValue(
-                                        controller.bhkType,
-                                        type,
-                                      ),
+                                  selected: controller.bhkType.value == type,
+                                  onTap: () {
+                                    controller.isCustomBhk.value = false;
+                                    controller.customBhkController.clear();
+                                    controller.setValue(
+                                      controller.bhkType,
+                                      type,
+                                    );
+                                  },
                                 ),
-                              )
-                              .toList(),
-                    ),
+                              ),
+                            ),
+
+                            buildChoice(
+                              title: "Custom",
+                              width: 90,
+                              selected:
+                                  controller.isCustomBhk.value &&
+                                  int.tryParse(
+                                        controller.customBhkController.text,
+                                      ) !=
+                                      null,
+                              onTap: () {
+                                controller.isCustomBhk.value = true;
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      if (controller.isCustomBhk.value) ...[
+                        const SizedBox(height: 12),
+
+                        buildTextField(
+                          'Enter BHK',
+                          Icons.apartment_outlined,
+
+                          onChanged: (value) {
+                            final number = int.tryParse(value);
+
+                            if (number == null || number <= 0) {
+                              controller.bhkType.value = "";
+                              return;
+                            }
+
+                            if (number <= 10) {
+                              // Auto select predefined option
+                              // controller.isCustomBhk.value = false;
+                              // controller.customBhkController.clear();
+                              controller.bhkType.value = "$number BHK";
+                              print("Auto selected BHK: ${controller.bhkType.value}");
+                            } else {
+                              // Keep custom value
+                              controller.bhkType.value = "$number BHK";
+                                print("amnu selected BHK: ${controller.bhkType.value}");
+                            }
+                          },
+                          inputType: TextInputType.number,
+                          isPhoneKey: true,
+                          controller.customBhkController,
+                        ),
+                      ],
+                    ],
                   ),
                 ),
                 Obx(
@@ -1548,6 +1692,19 @@ class PostProperty extends StatelessWidget {
                           Icons.square_foot_outlined,
                           controller.carpetAreaController,
                           isPhoneKey: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter Carpet Area';
+                            }
+                            final rent = int.parse(value);
+                            final buildArea =
+                                int.tryParse(controller.areaController.text) ??
+                                0;
+                            if (rent > buildArea) {
+                              return 'Carpet area should not be greater than Build up area';
+                            }
+                            return null;
+                          },
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -2303,7 +2460,7 @@ class PostProperty extends StatelessWidget {
                   icon: Icons.square_foot,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter building name';
+                      return 'Please enter Carpet Area';
                     }
                     final rent = int.parse(value);
                     final buildArea =
@@ -3226,7 +3383,7 @@ class PostProperty extends StatelessWidget {
                   icon: Icons.square_foot,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter building name';
+                      return 'Please enter Carpet Area';
                     }
                     final rent = int.parse(value);
                     final buildArea =

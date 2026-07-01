@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
 import 'package:nesticope_app/data/database/secure_storage_service.dart';
@@ -41,9 +42,40 @@ class TruecallerService {
   final RxBool isTruecallerLoading = false.obs;
 
   /// Initializes the Truecaller SDK
+  // Future<void> initialize() async {
+  //   try {
+  //     await ApiConfig.ensureTruecallerClientId();
+  //     if (ApiConfig.truecallerClientId.isNotEmpty) {
+  //       print(
+  //         "🔑 Truecaller ClientId (from server): ${ApiConfig.truecallerClientId}",
+  //       );
+  //     } else {
+  //       print(
+  //         "ℹ️ Truecaller ClientId not found in ThirdPartySettings; using manifest value",
+  //       );
+  //     }
+  //     await TcSdk.initializeSDK(
+  //       sdkOption: TcSdkOptions.OPTION_VERIFY_ONLY_TC_USERS,
+  //     );
+  //   } catch (e) {
+  //     print("Truecaller SDK Initialization Error: $e");
+  //     NesticoPeSnackBar.showAwesomeSnackbar(
+  //       title: 'Initialization Error',
+  //       message: 'Truecaller SDK failed to initialize',
+  //       contentType: ContentType.failure,
+  //     );
+  //   }
+  // }
   Future<void> initialize() async {
+    // Truecaller SDK is supported only on Android
+    if (!Platform.isAndroid) {
+      print("Truecaller initialization skipped on iOS");
+      return;
+    }
+
     try {
       await ApiConfig.ensureTruecallerClientId();
+
       if (ApiConfig.truecallerClientId.isNotEmpty) {
         print(
           "🔑 Truecaller ClientId (from server): ${ApiConfig.truecallerClientId}",
@@ -53,6 +85,7 @@ class TruecallerService {
           "ℹ️ Truecaller ClientId not found in ThirdPartySettings; using manifest value",
         );
       }
+
       await TcSdk.initializeSDK(
         sdkOption: TcSdkOptions.OPTION_VERIFY_ONLY_TC_USERS,
       );
@@ -71,12 +104,16 @@ class TruecallerService {
     try {
       return await TcSdk.isOAuthFlowUsable;
     } catch (e) {
-      return false;
+      return false; 
     }
   }
 
   /// Opens the Truecaller authorization screen and listens for response
   Future<TruecallerResponse?> login() async {
+    if (!Platform.isAndroid) {
+      print("Truecaller is not supported on iOS.");
+      return null;
+    }
     final usable = await isUsable();
     if (!usable) {
       print("Truecaller is not usable on this device.");
@@ -197,6 +234,10 @@ class TruecallerService {
   }
 
   Future<bool> loginWithTrueCaller() async {
+    if (!Platform.isAndroid) {
+      print("Truecaller login is only available on Android.");
+      return false;
+    }
     if (isTruecallerLoading.value) return false;
     try {
       isTruecallerLoading.value = true;

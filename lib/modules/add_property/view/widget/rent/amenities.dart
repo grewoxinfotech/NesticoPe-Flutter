@@ -102,7 +102,7 @@ class RentAmenities extends StatelessWidget {
                             },
 
                             child: Container(
-                              width: 95,
+                          width: MediaQuery.of(context).size.width * 0.27,
                               height: 120,
                               decoration: BoxDecoration(
                                 color:
@@ -211,7 +211,7 @@ class RentAmenities extends StatelessWidget {
                               controller.addOrUpdateAmenities(e.key);
                             },
                             child: Container(
-                              width: 95,
+                             width: MediaQuery.of(context).size.width * 0.27,
                               height: 120,
                               decoration: BoxDecoration(
                                 color:

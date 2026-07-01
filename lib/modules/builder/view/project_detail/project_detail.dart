@@ -506,7 +506,8 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                           _buildBrochuresSection(controller, project.value!),
                         // ],
                         // if (!UserHelper.isGuest && !UserHelper.isBuyer) ...[
-                        if ((project
+                       if(!UserHelper.isGuest && !UserHelper.isBuyer)...[
+                         if ((project
                                 ?.value
                                 ?.mediaGallery
                                 ?.documents
@@ -516,6 +517,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                             controller,
                             project.value!,
                           ),
+                       ],
                         // ],
 
                         // Other projects by the same builder (exclude current project)
