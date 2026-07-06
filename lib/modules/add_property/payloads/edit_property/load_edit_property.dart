@@ -17,7 +17,13 @@ class LoadEditPropertyPayload extends GetxController {
   Rxn<AddPropertyModel> property = Rxn<AddPropertyModel>(null);
 
   void onLoad(CreatePropertyController controller, AddPropertyModel property) {
-    AppLogger.structured("property Edit Payload for :  ", property.toJson());
+    print(
+      "Property Type: During Edit ${property.type}, Property BHK: ${property.propertyDetails?.financialInfo?.toJson()}, Property Title: ${property.title}",
+    );
+    AppLogger.structured(
+      "property Edit Payload for :",
+      property.propertyDetails?.toJson(),
+    );
     controller.sell_Rera_Id.text = property.reraId?.toString() ?? '';
     controller.propertyType.value =
         (property.type != null && property.type!.isNotEmpty)
@@ -115,7 +121,6 @@ class LoadEditPropertyPayload extends GetxController {
             : "";
     controller.isCustomBhk.value =
         (property.propertyDetails?.bhk != null &&
-                property.propertyDetails!.bhk! != 0 &&
                 property.propertyDetails!.bhk! > 10)
             ? true
             : false;
@@ -219,13 +224,13 @@ class LoadEditPropertyPayload extends GetxController {
             : 'sq.yd.';
 
     controller.rent_CoveredParking.value =
-        (property.propertyDetails?.parkingInfo?.coveredParking != null)
-            ? "1"
-            : '0';
+        property.propertyDetails?.parkingInfo?.coveredParking
+                ?.toString() ??
+            '0';
     controller.rent_OpenParking.value =
-        (property.propertyDetails?.parkingInfo?.openParking != null)
-            ? "1"
-            : '0';
+        property.propertyDetails?.parkingInfo?.openParking
+                ?.toString() ??
+            '0';
 
     controller.rent_facing.value =
         (property.propertyDetails?.propertyFacing != null &&
@@ -477,6 +482,8 @@ class LoadEditPropertyPayload extends GetxController {
     AddPropertyModel property,
   ) {
     /// commercial financial info
+    final financialInfo = property.propertyDetails?.financialInfo;
+    if (financialInfo == null) return;
 
     controller
         .commercial_rent_cost
@@ -494,6 +501,55 @@ class LoadEditPropertyPayload extends GetxController {
             ? property.propertyDetails!.financialInfo!.platformFees!
                 .toStringAsFixed(0)
             : '0';
+
+    controller.paintingChargesType.value =
+        (property.propertyDetails?.financialInfo?.paintingCharges != null &&
+                property
+                    .propertyDetails!
+                    .financialInfo!
+                    .paintingCharges!
+                    .isNotEmpty)
+            ? property.propertyDetails!.financialInfo!.paintingCharges!
+                .replaceAll('_', ' ')
+                .split(' ')
+                .map((word) => word.capitalizeFirst ?? '')
+                .join(' ')
+            : 'Included in rent';
+
+    print(
+      "Painting Charges During edt: ${controller.paintingChargesType.value}",
+    );
+
+    /// electricity charge
+    if ((property.propertyDetails?.financialInfo?.electricityChargesPerMonth !=
+            null &&
+        property.propertyDetails!.financialInfo!.electricityChargesPerMonth !=
+            0)) {
+      controller.electricityChargesType.value = 'Separate';
+
+      controller.electricityChargesTextFiled.text = property
+          .propertyDetails!
+          .financialInfo!
+          .electricityChargesPerMonth!
+          .toStringAsFixed(0);
+    } else if (property
+                .propertyDetails
+                ?.financialInfo
+                ?.electricityChargesUnit !=
+            null &&
+        property.propertyDetails!.financialInfo!.electricityChargesUnit != 0) {
+      controller.electricityChargesType.value = 'Based on Unit';
+      controller.electricityChargesPerUnitController.text = property
+          .propertyDetails!
+          .financialInfo!
+          .electricityChargesUnit!
+          .toStringAsFixed(0);
+      print(
+        "Electricity Charges During edt: ${controller.electricityChargesPerUnitController.text}  ====${controller.electricityChargesType.value}",
+      );
+    } else {
+      controller.electricityChargesType.value = 'Included in rent';
+    }
 
     controller.commercial_rent_security_deposite.text =
         (property.propertyDetails?.financialInfo?.propertySecurityDeposit !=
@@ -717,6 +773,7 @@ class LoadEditPropertyPayload extends GetxController {
                 property.propertyDetails!.financialInfo!.noticePeriod != 0)
             ? property.propertyDetails!.financialInfo!.noticePeriod!.toString()
             : '0';
+      print("Notice Period: ${controller.noticPeriodController.text}");      
 
     /// Locked in Period
     controller.lockPeriodController.text =
@@ -1023,177 +1080,136 @@ class LoadEditPropertyPayload extends GetxController {
     CreatePropertyController controller,
     AddPropertyModel property,
   ) {
-    print('Loading PG Info: ${property.propertyDetails?.pgInfo?.toJson()}');
+    final pgInfo = property.propertyDetails?.pgInfo;
+    if (pgInfo == null) return;
+
+    print('Loading PG Info: ${pgInfo.toJson()}');
 
     /// pg name
     controller.pgNameController.text =
-        (property.propertyDetails?.pgInfo?.pgName != null &&
-                property.propertyDetails!.pgInfo!.pgName!.isNotEmpty)
-            ? property.propertyDetails!.pgInfo!.pgName!
+        (pgInfo.pgName != null && pgInfo.pgName!.isNotEmpty)
+            ? pgInfo.pgName!
             : '';
 
     /// pg common area
     controller.commonAreasList.value =
-        (property.propertyDetails?.pgInfo?.pgCommonArea != null &&
-                property.propertyDetails!.pgInfo!.pgCommonArea!.isNotEmpty)
-            ? property.propertyDetails!.pgInfo!.pgCommonArea!
-                .split(',')
-                .map((e) => e.trim())
-                .toList()
-            : [];
+        _normalizePgCommonAreaList(
+          pgInfo.pgCommonArea
+                  ?.split(',')
+                  .map((e) => e.trim())
+                  .where((value) => value.isNotEmpty)
+                  .toList() ??
+              [],
+        );
 
     /// pg total bed
     controller.totalRoomsController.text =
-        (property.propertyDetails?.pgInfo?.totalBed != null &&
-                property.propertyDetails!.pgInfo!.totalBed != 0)
-            ? property.propertyDetails!.pgInfo!.totalBed!.toString()
+        (pgInfo.totalBed != null && pgInfo.totalBed != 0)
+            ? pgInfo.totalBed!.toString()
             : '0';
 
     /// Pg For
     controller.pgFor.value =
-        (property.propertyDetails?.pgInfo?.pgFor != null &&
-                property.propertyDetails!.pgInfo!.pgFor!.isNotEmpty)
-            ? property.propertyDetails!.pgInfo!.pgFor!
+        (pgInfo.pgFor != null && pgInfo.pgFor!.isNotEmpty)
+            ? pgInfo.pgFor!
             : '';
 
     /// pg best suited for
     controller.bestSuitedList.value =
-        (property.propertyDetails?.pgInfo?.pgSuitedFor != null &&
-                property.propertyDetails!.pgInfo!.pgSuitedFor!.isNotEmpty)
-            ? property.propertyDetails!.pgInfo!.pgSuitedFor!.split(',')
+        (pgInfo.pgSuitedFor != null && pgInfo.pgSuitedFor!.isNotEmpty)
+            ? pgInfo.pgSuitedFor!.split(',')
             : [];
 
     /// pg mea setails
     controller.mealAvailable.value =
-        (property.propertyDetails?.pgInfo?.pgMealOffered != null &&
-                property.propertyDetails!.pgInfo!.pgMealOffered!.isNotEmpty)
+        (pgInfo.pgMealOffered != null && pgInfo.pgMealOffered!.isNotEmpty)
             ? 'Yes'
             : 'No';
 
     controller.mealAvailableList.value =
-        (property.propertyDetails?.pgInfo?.pgMealOffered != null &&
-                property.propertyDetails!.pgInfo!.pgMealOffered!.isNotEmpty)
-            ? property.propertyDetails!.pgInfo!.pgMealOffered!
-                .split(',')
-                .map((e) => e.trim())
-                .toList()
+        (pgInfo.pgMealOffered != null && pgInfo.pgMealOffered!.isNotEmpty)
+            ? pgInfo.pgMealOffered!.split(',').map((e) => e.trim()).toList()
             : [];
 
-    if ((property.propertyDetails?.pgInfo?.mealChargesPerMonth != null &&
-        property.propertyDetails!.pgInfo!.mealChargesPerMonth != 0)) {
+    if ((pgInfo.mealChargesPerMonth != null && pgInfo.mealChargesPerMonth != 0)) {
       controller.mealCharges.value = 'Separate';
 
-      controller.mealChargesTextFiled.text = property
-          .propertyDetails!
-          .pgInfo!
-          .mealChargesPerMonth!
-          .toStringAsFixed(0);
+      controller.mealChargesTextFiled.text =
+          pgInfo.mealChargesPerMonth!.toStringAsFixed(0);
     } else {
       controller.mealCharges.value = 'Included in rent';
     }
 
     /// electricity charge
-    if ((property.propertyDetails?.pgInfo?.electricityChargesPerMonth != null &&
-        property.propertyDetails!.pgInfo!.electricityChargesPerMonth != 0)) {
+    if ((pgInfo.electricityChargesPerMonth != null &&
+        pgInfo.electricityChargesPerMonth != 0)) {
       controller.electricityChargesType.value = 'Separate';
 
-      controller.electricityChargesTextFiled.text = property
-          .propertyDetails!
-          .pgInfo!
-          .electricityChargesPerMonth!
-          .toStringAsFixed(0);
-    } else if (property.propertyDetails?.pgInfo?.electricityChargesUnit !=
-            null &&
-        property.propertyDetails!.pgInfo!.electricityChargesUnit != 0) {
+      controller.electricityChargesTextFiled.text =
+          pgInfo.electricityChargesPerMonth!.toStringAsFixed(0);
+    } else if (pgInfo.electricityChargesUnit != null &&
+        pgInfo.electricityChargesUnit != 0) {
       controller.electricityChargesType.value = 'Based on Unit';
-      controller.electricityChargesPerUnitController.text = property
-          .propertyDetails!
-          .pgInfo!
-          .electricityChargesUnit!
-          .toStringAsFixed(0);
+      controller.electricityChargesPerUnitController.text =
+          pgInfo.electricityChargesUnit!.toStringAsFixed(0);
     } else {
       controller.electricityChargesType.value = 'Included in rent';
     }
 
     /// PG Rules
     controller.pgRulesAvailable.value =
-        (property.propertyDetails?.pgInfo?.pgRules != null &&
-                (property.propertyDetails!.pgInfo!.pgRules!.visitorAllowed! ==
-                        true ||
-                    property.propertyDetails!.pgInfo!.pgRules!.petsAllowed! ==
-                        true ||
-                    property
-                            .propertyDetails!
-                            .pgInfo!
-                            .pgRules!
-                            .drinkingAllowed! ==
-                        true ||
-                    property
-                            .propertyDetails!
-                            .pgInfo!
-                            .pgRules!
-                            .smokingAllowed! ==
-                        true ||
-                    property.propertyDetails!.pgInfo!.pgRules!.nonVegAllowed! ==
-                        true ||
-                    property
-                            .propertyDetails!
-                            .pgInfo!
-                            .pgRules!
-                            .lateEntryAllowed! ==
-                        true))
+        (pgInfo.pgRules != null &&
+                (pgInfo.pgRules!.visitorAllowed! == true ||
+                    pgInfo.pgRules!.petsAllowed! == true ||
+                    pgInfo.pgRules!.drinkingAllowed! == true ||
+                    pgInfo.pgRules!.smokingAllowed! == true ||
+                    pgInfo.pgRules!.nonVegAllowed! == true ||
+                    pgInfo.pgRules!.lateEntryAllowed! == true))
             ? 'Yes'
             : 'No';
 
     controller.visitorsAllowed.value =
-        (property.propertyDetails?.pgInfo?.pgRules?.visitorAllowed != null &&
-                property.propertyDetails!.pgInfo!.pgRules!.visitorAllowed!)
+        (pgInfo.pgRules?.visitorAllowed != null && pgInfo.pgRules!.visitorAllowed!)
             ? 'Yes'
             : 'No';
     controller.petAllowed.value =
-        (property.propertyDetails?.pgInfo?.pgRules?.petsAllowed != null &&
-                property.propertyDetails!.pgInfo!.pgRules!.petsAllowed!)
+        (pgInfo.pgRules?.petsAllowed != null && pgInfo.pgRules!.petsAllowed!)
             ? 'Yes'
             : 'No';
     controller.drinkingAllowed.value =
-        (property.propertyDetails?.pgInfo?.pgRules?.drinkingAllowed != null &&
-                property.propertyDetails!.pgInfo!.pgRules!.drinkingAllowed!)
+        (pgInfo.pgRules?.drinkingAllowed != null &&
+                pgInfo.pgRules!.drinkingAllowed!)
             ? 'Yes'
             : 'No';
     controller.smokingAllowed.value =
-        (property.propertyDetails?.pgInfo?.pgRules?.smokingAllowed != null &&
-                property.propertyDetails!.pgInfo!.pgRules!.smokingAllowed!)
+        (pgInfo.pgRules?.smokingAllowed != null &&
+                pgInfo.pgRules!.smokingAllowed!)
             ? 'Yes'
             : 'No';
     controller.nonVegAllowed.value =
-        (property.propertyDetails?.pgInfo?.pgRules?.nonVegAllowed != null &&
-                property.propertyDetails!.pgInfo!.pgRules!.nonVegAllowed!)
+        (pgInfo.pgRules?.nonVegAllowed != null && pgInfo.pgRules!.nonVegAllowed!)
             ? 'Yes'
             : 'No';
     controller.letEntryAllowed.value =
-        (property.propertyDetails?.pgInfo?.pgRules?.lateEntryAllowed != null &&
-                property.propertyDetails!.pgInfo!.pgRules!.lateEntryAllowed!)
+        (pgInfo.pgRules?.lateEntryAllowed != null &&
+                pgInfo.pgRules!.lateEntryAllowed!)
             ? 'Yes'
             : 'No';
 
     /// Pg managed by
     controller.propertyManagedBy.value =
-        (property.propertyDetails?.pgInfo?.pgManageBy != null &&
-                property.propertyDetails!.pgInfo!.pgManageBy!.isNotEmpty)
-            ? property.propertyDetails!.pgInfo!.pgManageBy!.toLowerCase() ==
-                    "other"
+        (pgInfo.pgManageBy != null && pgInfo.pgManageBy!.isNotEmpty)
+            ? pgInfo.pgManageBy!.toLowerCase() == "other"
                 ? "Professional"
-                : property.propertyDetails!.pgInfo!.pgManageBy!.capitalize
-                    .toString()
+                : pgInfo.pgManageBy!.capitalize.toString()
             : '';
 
     controller.managerStaysAtProperty.value =
-        (property.propertyDetails?.pgInfo?.pgManageBy != null &&
-                property.propertyDetails!.pgInfo!.pgManageBy!.isNotEmpty)
+        (pgInfo.pgManageBy != null && pgInfo.pgManageBy!.isNotEmpty)
             ? 'Yes'
             : 'No';
 
-    final pgRooms = property.propertyDetails?.pgInfo?.pgRoomInfo;
+    final pgRooms = pgInfo.pgRoomInfo;
 
     controller.rooms.value =
         pgRooms?.map((e) {
@@ -1229,6 +1245,32 @@ class LoadEditPropertyPayload extends GetxController {
           );
         }).toList() ??
         [];
+  }
+
+  List<String> _normalizePgCommonAreaList(List<String> values) {
+
+    log('Normalizing PG Common Area List: $values');
+
+    const normalizedLabels = {
+      'living_room': 'Living Room',
+      'living rooms': 'Living Room',
+      'kitchen': 'Kitchen',
+      'dining_hall': 'Dining Hall',
+      'study_room': 'Study Room',
+      'study_hall': 'Study Hall',
+      'tv_room': 'TV Room',
+      'breakout_room': 'Breakout Room',
+    };
+
+    return values
+        .map((value) => value.trim())
+        .where((value) => value.isNotEmpty)
+        .map((value) {
+          final key = value.toLowerCase();
+          return normalizedLabels[key] ?? value;
+        })
+        .toSet()
+        .toList();
   }
 
   List<String> _mapPgAmenities(RoomFacilityInfo? info) {

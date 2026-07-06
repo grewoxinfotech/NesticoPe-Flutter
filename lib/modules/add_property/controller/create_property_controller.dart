@@ -150,6 +150,8 @@ class CreatePropertyController extends GetxController {
 
   final electricityChargesPerUnitController = TextEditingController();
 
+  var paintingChargesType = "".obs;
+
   //"electricity_charges_type": "separate",
   // "electricity_charges_per_month": 25000,
   //   "electricity_charges_type": "based_on_unit",
@@ -166,7 +168,7 @@ class CreatePropertyController extends GetxController {
   var mealCharges = "".obs;
   var mealChargesTextFiled = TextEditingController();
   var electricityChargesType = ''.obs;
-  var electricityChargesTextFiled = TextEditingController();
+  var electricityChargesTextFiled = TextEditingController();  
   var pgRulesAvailable = "".obs;
   var nonVegAllowed = "".obs;
   var smokingAllowed = "".obs;
@@ -3111,6 +3113,7 @@ class CreatePropertyController extends GetxController {
         bhk: int.tryParse(RegExp(r'^\d+').stringMatch(bhkType.value) ?? ''),
         bathroom: rent_Bathroom.value,
         availableFrom: formattedDate,
+
         tenantType: tenantType.value.toLowerCase(),
         saleDeedDocumentNumber:
             saleDeedDocumentNumber.text.trim().isNotEmpty
@@ -3171,11 +3174,9 @@ class CreatePropertyController extends GetxController {
                     rent_OpenParking.value.isNotEmpty)
                 ? ParkingInfo(
                   coveredParking:
-                      int.tryParse(rent_CoveredParking.value) != null &&
-                      int.tryParse(rent_CoveredParking.value)! > 0,
+                      int.tryParse(rent_CoveredParking.value.trim()),
                   openParking:
-                      int.tryParse(rent_OpenParking.value) != null &&
-                      int.tryParse(rent_OpenParking.value)! > 0,
+                      int.tryParse(rent_OpenParking.value.trim()),
                 )
                 : null,
         financialInfo:
@@ -3185,6 +3186,27 @@ class CreatePropertyController extends GetxController {
                   propertyRentPerMonth: double.tryParse(
                     rent_MonthilyRent.text.trim(),
                   ),
+                  electricityChargesType:
+                      electricityChargesType.value.isNotEmpty
+                            ? getElectricityChargeType()
+                          : null,
+                  electricityChargesPerMonth:
+                      electricityChargesType.value.toLowerCase() == 'separate'
+                          ? int.tryParse(
+                            electricityChargesTextFiled.text.trim(),
+                          )
+                          : null,
+                  electricityChargesUnit:
+                      electricityChargesType.value.toLowerCase().replaceAll(
+                                ' ',
+                                "_",
+                              ) ==
+                              'based_on_unit'
+                          ? int.tryParse(
+                            electricityChargesPerUnitController.text.trim(),
+                          )
+                          : null,
+
                   propertySecurityDeposit: double.tryParse(
                     rent_SecurityDeposit.text.trim(),
                   ),
@@ -3226,6 +3248,9 @@ class CreatePropertyController extends GetxController {
                       rent_Parking_Charges.value.toLowerCase() == "separate"
                           ? rent_Custom_Parking_Charges.text.trim()
                           : 'include',
+                  paintingCharges: paintingChargesType.value
+                      .toLowerCase()
+                      .replaceAll(" ", "_"),
                 )
                 : null,
         furnishInfo:
@@ -3304,6 +3329,23 @@ class CreatePropertyController extends GetxController {
           user != null ? "${user.user?.firstName} ${user.user?.firstName}" : "",
     );
   }
+
+
+  String? getElectricityChargeType() {
+  switch (electricityChargesType.value) {
+    case 'Included in Rent':
+      return 'included';
+
+    case 'Separate':
+      return 'separate';
+
+    case 'Based on Unit':
+      return 'based_on_unit';
+
+    default:
+      return null;
+  }
+}
 
   Future<AddPropertyModel> buildPropertyPayloadResidentialSell() async {
     final user = await SecureStorage.getUserData();
@@ -3420,11 +3462,9 @@ class CreatePropertyController extends GetxController {
                     rent_OpenParking.value.isNotEmpty)
                 ? ParkingInfo(
                   coveredParking:
-                      int.tryParse(rent_CoveredParking.value) != null &&
-                      int.tryParse(rent_CoveredParking.value)! > 0,
+                      int.tryParse(rent_CoveredParking.value.trim()),
                   openParking:
-                      int.tryParse(rent_OpenParking.value) != null &&
-                      int.tryParse(rent_OpenParking.value)! > 0,
+                      int.tryParse(rent_OpenParking.value.trim()),
                 )
                 : null,
         lifInfo: LiftInfo(
@@ -3684,11 +3724,9 @@ class CreatePropertyController extends GetxController {
                     rent_OpenParking.value.isNotEmpty)
                 ? ParkingInfo(
                   coveredParking:
-                      int.tryParse(rent_CoveredParking.value) != null &&
-                      int.tryParse(rent_CoveredParking.value)! > 0,
+                      int.tryParse(rent_CoveredParking.value.trim()),
                   openParking:
-                      int.tryParse(rent_OpenParking.value) != null &&
-                      int.tryParse(rent_OpenParking.value)! > 0,
+                      int.tryParse(rent_OpenParking.value.trim()),
                 )
                 : null,
         lifInfo: LiftInfo(
@@ -3943,10 +3981,7 @@ class CreatePropertyController extends GetxController {
                   : null,
           electricityChargesType:
               electricityChargesType.value.isNotEmpty
-                  ? electricityChargesType.value.toLowerCase().replaceAll(
-                    " ",
-                    "_",
-                  )
+                  ? getElectricityChargeType()
                   : null,
           electricityChargesPerMonth:
               electricityChargesType.value.toLowerCase() == 'separate'

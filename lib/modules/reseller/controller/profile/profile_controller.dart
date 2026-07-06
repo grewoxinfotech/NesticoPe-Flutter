@@ -156,9 +156,17 @@ class ProfileController extends GetxController {
 
   void loadProfile() {
     isLoading.value = true;
-    Future.delayed(const Duration(milliseconds: 500), () {
-      _populateControllers();
-      isLoading.value = false;
+    Future.delayed(const Duration(milliseconds: 500), () async {
+      try {
+        _populateControllers();
+      } catch (e, st) {
+        debugPrint('Error loading reseller profile: $e');
+        debugPrint('$st');
+      } finally {
+        if (!isClosed) {
+          isLoading.value = false;
+        }
+      }
     });
   }
 

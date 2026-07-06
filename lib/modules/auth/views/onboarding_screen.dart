@@ -6,6 +6,8 @@
 //
 // import '../../../data/database/secure_storage_service.dart';
 // import 'package:nesticope_app/app/services/truecaller_service.dart';
+import 'dart:io';
+
 import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 import 'package:nesticope_app/app/services/truecaller_service.dart';
 import 'package:nesticope_app/modules/auth/helpers/login_as_from_splash_partner_screen.dart';
@@ -334,7 +336,8 @@ class OnboardingController extends GetxController {
         //   await OneSignal.Notifications.requestPermission(true);
         // } catch (_) {}
         try {
-          await FCMNotificationService.instance.requestPermissionAndFetchToken();
+          await FCMNotificationService.instance
+              .requestPermissionAndFetchToken();
         } catch (_) {}
       }
 
@@ -572,12 +575,11 @@ class OnboardingController extends GetxController {
                     top: false,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
-                      // crossAxisAlignment: CrossAxisAlignment.start
 
+                      // crossAxisAlignment: CrossAxisAlignment.start
                       children: [
-                        
                         /// Drag Handle
-                    
+
                         ///
                         Stack(
                           alignment: Alignment.center,
@@ -605,16 +607,16 @@ class OnboardingController extends GetxController {
                             ),
 
                             /// 🔥 Center Drag Handle
-                           SizedBox(
-                             height: 52,
-                             width: 150,
-                             child: Image.asset(
-                               'assets/images/Nestico-Pe_Logo-svg.png',
-                               height: 52,
-                               width: 150,
-                               fit: BoxFit.cover,
-                             ),
-                           ),
+                            SizedBox(
+                              height: 52,
+                              width: 150,
+                              child: Image.asset(
+                                'assets/images/Nestico-Pe_Logo-svg.png',
+                                height: 52,
+                                width: 150,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ],
                         ),
 
@@ -810,13 +812,13 @@ class OnboardingController extends GetxController {
                           //   height: 48,
                           //   child: ElevatedButton(
                           //     style: ElevatedButton.styleFrom(
-                                
+
                           //       backgroundColor: ColorRes.primary,
                           //       // When disabled, keep it visible but clearly inactive.
                           //       disabledBackgroundColor:
                           //           ColorRes.primary,
                           //       elevation: 6,
-                              
+
                           //       shadowColor: ColorRes.primary.withOpacity(0.35),
                           //       shape: RoundedRectangleBorder(
                           //         borderRadius: BorderRadius.circular(12),
@@ -872,244 +874,204 @@ class OnboardingController extends GetxController {
                           //             ),
                           //   ),
                           // ),
-
-SizedBox(
-  width: double.infinity,
-  height: 48,
-  child: GestureDetector(
-    onTap: (!isPhoneValid || isSendingOtp)
-        ? null
-        : () async {
-            final trimmed = phone.trim();
-
-            setState(() {
-              isSendingOtp = true;
-            });
-
-            final ok = await AuthService().requestOtpLogin(trimmed);
-
-            setState(() {
-              isSendingOtp = false;
-            });
-
-            if (ok) {
-              NesticoPeSnackBar.showAwesomeSnackbar(
-                title: 'OTP Sent',
-                message: 'Please enter the OTP within 2 minutes',
-                contentType: ContentType.success,
-              );
-
-              stepOtp = true;
-              _startResendTimer(setState);
-            }
-
-            setState(() {});
-          },
-    child: Container(
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-    
-        /// 🔥 MAIN GRADIENT
-        gradient: LinearGradient(
-          colors: [
-            ColorRes.primary.withOpacity(0.9),
-            ColorRes.primary,
-            ColorRes.primary.withOpacity(0.85),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-    
-        /// ✨ BORDER
-        border: Border.all(
-          color: Colors.white.withOpacity(0.2),
-        ),
-    
-        /// 🌟 SHADOW (elevation feel)
-        boxShadow: [
-          BoxShadow(
-            color: ColorRes.primary.withOpacity(0.4),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-    
-      /// ✨ HIGHLIGHT OVERLAY (glass shine effect)
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          /// Top light highlight
-          // Positioned(
-          //   top: 0,
-          //   left: 0,
-          //   right: 0,
-          
-          //   child: Container(
-          //     height: 20,
-          //     decoration: BoxDecoration(
-          //       borderRadius: const BorderRadius.vertical(
-          //         top: Radius.circular(12),
-          //       ),
-          //       gradient: LinearGradient(
-          //         colors: [
-          //           Colors.white.withOpacity(0.25),
-          //           Colors.transparent,
-          //         ],
-          //         begin: Alignment.topCenter,
-          //         end: Alignment.bottomCenter,
-          //       ),
-          //     ),
-          //   ),
-          // ),
-    
-          /// Content
-          isSendingOtp
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Colors.white,
-                  ),
-                )
-              : const Text(
-                  "Get OTP",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-        ],
-      ),
-    ),
-  ),
-),
-                          const SizedBox(height: 16),
-
-                          /// OR Divider
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Divider(color: Colors.white),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                ),
-                                child: Text(
-                                  "OR",
-                                  style: TextStyle(
-                                    color: Colors.grey.shade600,
-                                    fontSize: AppFontSizes.small,
-                                    fontWeight: AppFontWeights.medium,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Divider(color: Colors.white),
-                              ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 16),
-
-                          /// Truecaller Button
                           SizedBox(
                             width: double.infinity,
                             height: 48,
-                            child: OutlinedButton(
-                              style: OutlinedButton.styleFrom(
-                                side: BorderSide(
-                                  // ✅ THIS controls border color
-                                  color: Colors.grey.shade300,
-                                  width: 1,
-                                ),
-                                backgroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(color: Colors.grey.shade300),
+                            child: GestureDetector(
+                              onTap:
+                                  (!isPhoneValid || isSendingOtp)
+                                      ? null
+                                      : () async {
+                                        final trimmed = phone.trim();
+
+                                        setState(() {
+                                          isSendingOtp = true;
+                                        });
+
+                                        final ok = await AuthService()
+                                            .requestOtpLogin(trimmed);
+
+                                        setState(() {
+                                          isSendingOtp = false;
+                                        });
+
+                                        if (ok) {
+                                          NesticoPeSnackBar.showAwesomeSnackbar(
+                                            title: 'OTP Sent',
+                                            message:
+                                                'Please enter the OTP within 2 minutes',
+                                            contentType: ContentType.success,
+                                          );
+
+                                          stepOtp = true;
+                                          _startResendTimer(setState);
+                                        }
+
+                                        setState(() {});
+                                      },
+                              child: Container(
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              onPressed: () async {
-                                final ok =
-                                    await truecallerService
-                                        .loginWithTrueCaller();
-                                if (ok) {
-                                  proceed = true;
-                                  Get.back();
-                                }
-                              },
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Image.asset(
-                                    'assets/images/truecaller_logo.jpg',
-                                    height: 40,
-                                    width: 40,
-                                    fit: BoxFit.cover,
+
+                                  /// 🔥 MAIN GRADIENT
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      ColorRes.primary.withOpacity(0.9),
+                                      ColorRes.primary,
+                                      ColorRes.primary.withOpacity(0.85),
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
                                   ),
 
-                                  Text(
-                                    "Continue with Truecaller",
-                                    style: TextStyle(
-                                      color: ColorRes.textPrimary,
-                                      fontSize: AppFontSizes.bodySmall,
-                                      fontWeight: AppFontWeights.medium,
-                                    ),
+                                  /// ✨ BORDER
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(0.2),
                                   ),
-                                ],
+
+                                  /// 🌟 SHADOW (elevation feel)
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: ColorRes.primary.withOpacity(0.4),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+
+                                /// ✨ HIGHLIGHT OVERLAY (glass shine effect)
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    /// Top light highlight
+                                    // Positioned(
+                                    //   top: 0,
+                                    //   left: 0,
+                                    //   right: 0,
+
+                                    //   child: Container(
+                                    //     height: 20,
+                                    //     decoration: BoxDecoration(
+                                    //       borderRadius: const BorderRadius.vertical(
+                                    //         top: Radius.circular(12),
+                                    //       ),
+                                    //       gradient: LinearGradient(
+                                    //         colors: [
+                                    //           Colors.white.withOpacity(0.25),
+                                    //           Colors.transparent,
+                                    //         ],
+                                    //         begin: Alignment.topCenter,
+                                    //         end: Alignment.bottomCenter,
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                    // ),
+
+                                    /// Content
+                                    isSendingOtp
+                                        ? const SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                        : const Text(
+                                          "Get OTP",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 16,
+                                            letterSpacing: 0.5,
+                                          ),
+                                        ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                          const SizedBox(height: 12),
-                          // SizedBox(
-                          //   width: double.infinity,
-                          //   height: 48,
-                          //   child: OutlinedButton(
-                          //     style: OutlinedButton.styleFrom(
-                          //       side: BorderSide(
-                          //         color: Colors.grey.shade300,
-                          //         width: 1,
-                          //       ),
-                          //       shape: RoundedRectangleBorder(
-                          //         side: BorderSide(color: Colors.grey.shade300),
-                          //         borderRadius: BorderRadius.circular(12),
-                          //       ),
-                          //     ),
-                          //     onPressed: () async {
-                          //       // Get.to(() => const LoginScreen());
-                          //       Get.to(() => const OtpLoginScreen(isPartner: true));
-                          //     },
-                          //     child: Row(
-                          //       mainAxisAlignment: MainAxisAlignment.center,
-                          //       mainAxisSize: MainAxisSize.min,
-                          //       children: [
-                          //         const Icon(
-                          //           Icons.person_outlined,
-                          //           color: ColorRes.primary,
-                          //         ),
-                          //         const SizedBox(width: 8),
-                          //         Text(
-                          //           "Login as Partner",
-                          //           style: TextStyle(
-                          //             color: ColorRes.textPrimary,
-                          //             fontSize: AppFontSizes.bodySmall,
-                          //             fontWeight: AppFontWeights.medium,
-                          //           ),
-                          //         ),
-                          //       ],
-                          //     ),
-                          //   ),
-                          // ),
-                        ]
-                        /// STEP 2: OTP UI
-                        else ...[
-                          /// OTP Boxes
+                          const SizedBox(height: 16),
+
+                          if (Platform.isAndroid) ...[
+                            /// OR Divider
+                            Row(
+                              children: [
+                                Expanded(child: Divider(color: Colors.white)),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                  ),
+                                  child: Text(
+                                    "OR",
+                                    style: TextStyle(
+                                      color: Colors.grey.shade600,
+                                      fontSize: AppFontSizes.small,
+                                      fontWeight: AppFontWeights.medium,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(child: Divider(color: Colors.white)),
+                              ],
+                            ),
+
+                            const SizedBox(height: 16),
+
+                            /// Truecaller Button
+                            SizedBox(
+                              width: double.infinity,
+                              height: 48,
+                              child: OutlinedButton(
+                                style: OutlinedButton.styleFrom(
+                                  side: BorderSide(
+                                    // ✅ THIS controls border color
+                                    color: Colors.grey.shade300,
+                                    width: 1,
+                                  ),
+                                  backgroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    side: BorderSide(
+                                      color: Colors.grey.shade300,
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                onPressed: () async {
+                                  final ok =
+                                      await truecallerService
+                                          .loginWithTrueCaller();
+                                  if (ok) {
+                                    proceed = true;
+                                    Get.back();
+                                  }
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Image.asset(
+                                      'assets/images/truecaller_logo.jpg',
+                                      height: 40,
+                                      width: 40,
+                                      fit: BoxFit.cover,
+                                    ),
+
+                                    Text(
+                                      "Continue with Truecaller",
+                                      style: TextStyle(
+                                        color: ColorRes.textPrimary,
+                                        fontSize: AppFontSizes.bodySmall,
+                                        fontWeight: AppFontWeights.medium,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                        ] else ...[
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: List.generate(4, (index) {
@@ -1132,7 +1094,7 @@ SizedBox(
                                   textAlign: TextAlign.center,
                                   keyboardType: TextInputType.number,
                                   maxLength: 1,
-                                  
+
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly,
                                   ],
@@ -1613,9 +1575,7 @@ class OnboardingScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-  height: MediaQuery.of(context).size.height * 0.20,
-),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.20),
                   // Heading
                   const Text(
                     'What are you\nlooking for?',

@@ -1282,6 +1282,38 @@ Widget buildChoice({
   );
 }
 
+Widget buildRoomChoice({
+  required String title,
+  required bool selected,
+  required VoidCallback onTap,
+  double? width = 155,
+}) {
+   
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
+      width: width,
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+      decoration: BoxDecoration(
+        color: selected ? ColorRes.primary.withOpacity(0.1) : ColorRes.white,
+        border: Border.all(
+          color: selected ? ColorRes.transparentColor : Colors.grey.shade300,
+          width: 1,
+        ),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        title,
+        style: TextStyle(
+          color: selected ? ColorRes.primary : ColorRes.textPrimary,
+          fontWeight: AppFontWeights.medium,
+          fontSize: AppFontSizes.small,
+        ),
+      ),
+    ),
+  );
+}
 Widget buildSectionTitle(String title) {
   return Text(
     title,

@@ -219,7 +219,16 @@ class PropertyDetailManager {
       if (pd.propertyCarpetArea != null) {
         details.add({"Carpet Area": "${pd.propertyCarpetArea} sq.ft."});
       }
+      // if (pd. != null) {
+      // details.add({"Plot Area": "${pd.propertyPlotArea} sq.ft."});
+      // }
 
+      if (pd.parkingInfo?.covered != null) {
+        details.add({"Covered Parking": "${pd.parkingInfo!.covered}"});
+      }
+      if (pd.parkingInfo?.open != null) {
+        details.add({"Open Parking": "${pd.parkingInfo!.open}"});
+      }
       // ----- LISTING TYPE -----
       switch (property.listingType?.toLowerCase()) {
         case 'rent':
@@ -234,6 +243,46 @@ class PropertyDetailManager {
                   "${Formatter.formatPrice(num.tryParse(pd.financialInfo!.monthlyRent.toString()) ?? 0)}/ month",
             });
           }
+          if (pd.financialInfo?.propertySecurityDeposit != null) {
+            details.add({
+              "Security Deposit":
+                  "${Formatter.formatPrice(pd.financialInfo!.propertySecurityDeposit)}",
+            });
+          }
+          if (pd.financialInfo?.electricityChargesType != null) {
+            details.add({
+              "Electricity Charges Type": pd
+                  .financialInfo!
+                  .electricityChargesType!
+                  .replaceAll('_', ' ')
+                  .split(' ')
+                  .map((word) => word.capitalizeFirst ?? '')
+                  .join(' '),
+            });
+          }
+          if (pd.financialInfo?.electricityChargesPerMonth != null &&
+              pd.financialInfo?.electricityChargesPerMonth != 0.0) {
+            details.add({
+              "Electricity Charges ":
+                  "${Formatter.formatPrice(pd.financialInfo!.electricityChargesPerMonth ?? 0)}/ month",
+            });
+          }
+          if (pd.financialInfo?.paintingCharges != null
+          // pd.financialInfo?.parkingCharges.isNotEmpty
+          ) {
+            details.add({
+              "Painting Charges":
+                  "${pd.financialInfo!.paintingCharges?.capitalize?.replaceAll('_', ' ')}",
+            });
+          }
+          if (pd.financialInfo?.electricityChargesUnit != null &&
+              pd.financialInfo?.electricityChargesUnit != 0.0) {
+            details.add({
+              "Electricity Charges Unit":
+                  "${Formatter.formatPrice(pd.financialInfo!.electricityChargesUnit ?? 0)}/ unit",
+            });
+          }
+
           break;
 
         case 'sell':
@@ -274,6 +323,7 @@ class PropertyDetailManager {
             if (pg.pgMealOffered != null) {
               details.add({"Meals Offered": pg.pgMealOffered!});
             }
+
             if (pg.pgCommonArea != null) {
               details.add({"Common Areas": pg.pgCommonArea!});
             }
@@ -295,13 +345,31 @@ class PropertyDetailManager {
             // --- Charges ---
             if (pg.mealChargesPerMonth != null) {
               details.add({
-                "Meal Charges": "${pg.mealChargesPerMonth} INR / month",
+                "Meal Charges":
+                    "${Formatter.formatPrice(pg.mealChargesPerMonth ?? 0.0)} per month",
               });
             }
-            if (pg.electricityChargesPerMonth != null) {
+            if (pg.electricityChargesPerMonth != null &&
+                pg.electricityChargesPerMonth != 0.0) {
               details.add({
                 "Electricity Charges":
-                    "${pg.electricityChargesPerMonth} INR / month",
+                    "${Formatter.formatPrice(pg.electricityChargesPerMonth ?? 0.0)} per month",
+              });
+            }
+            if (pg.electricityChargesUnit != null &&
+                pg.electricityChargesUnit != 0.0) {
+              details.add({
+                "Electricity Charges Unit":
+                    "${Formatter.formatPrice(pg.electricityChargesUnit ?? 0.0)} per unit",
+              });
+            }
+            if (pg.electricityChargesType != null) {
+              details.add({
+                "Electricity Charges Type": pg.electricityChargesType!
+                    .replaceAll('_', ' ')
+                    .split(' ')
+                    .map((word) => word.capitalizeFirst ?? '')
+                    .join(' '),
               });
             }
 
@@ -451,10 +519,10 @@ class PropertyDetailManager {
     // ----- COMMON DETAILS -----
     if (pd.parkingInfo != null) {
       final parking = pd.parkingInfo!;
-      if ((parking.covered ?? false) || (parking.open ?? false)) {
+      if ((parking.covered ?? 0) > 0 || (parking.open ?? 0) > 0) {
         details.add({
           "Parking":
-              "${(parking.covered ?? false) ? "1 Covered" : "0 Covered"}, ${(parking.open ?? false) ? "1 Open" : "0 Open"}",
+              "${(parking.covered ?? 0) > 0 ? "${parking.covered ?? 0} Covered" : "0 Covered"}, ${(parking.open ?? 0) > 0 ? "${parking.open ?? 0} Open" : "0 Open"}",
         });
       }
     }
@@ -573,6 +641,9 @@ IconData getpropertyIcon(String title) {
       return Icons.verified_user_outlined;
     case 'property type':
       return Icons.home_outlined;
+    case 'possession date':
+      return Icons.date_range_outlined;
+
     case 'common areas':
     case 'pg_common_areas':
       return Icons.weekend_outlined; // sofa/living area
@@ -592,6 +663,18 @@ IconData getpropertyIcon(String title) {
     case 'electricity charges':
     case 'electricity_charges_per_month':
       return Icons.bolt_outlined;
+    case 'electricity charges type':
+    case 'electricity_charges_type':
+      return Icons.bolt_outlined;
+    case 'electricity charges unit':
+    case 'electricity_charges_unit':
+      return Icons.bolt_outlined;
+    case 'parking charges':
+    case 'parking_charges':
+      return Icons.local_parking_outlined;
+    case 'painting charges':
+    case 'painting_charges':
+      return Icons.format_paint_outlined;
 
     case 'notice period':
     case 'notice_period':

@@ -97,11 +97,18 @@ class SellerProfileController extends GetxController {
     // Simulate API call
     Future.delayed(const Duration(milliseconds: 500), () async {
       if (isClosed) return;
-      await getUserProfileData();
-      if (isClosed) return;
-      _populateControllers();
-      if (isClosed) return;
-      isLoading.value = false;
+      try {
+        await getUserProfileData();
+        if (isClosed) return;
+        _populateControllers();
+      } catch (e, st) {
+        debugPrint('Error loading seller profile: $e');
+        debugPrint('$st');
+      } finally {
+        if (!isClosed) {
+          isLoading.value = false;
+        }
+      }
     });
   }
 

@@ -1077,22 +1077,37 @@ class FacilitiesInfo {
 }
 
 class ParkingInfo {
-  bool? covered;
-  bool? open;
+  int? covered;
+  int? open;
 
   ParkingInfo({this.covered, this.open});
 
   ParkingInfo.fromJson(Map<String, dynamic> json) {
-    covered = json['covered_parking'];
-    open = json['open_parking'];
+    covered = _parseParking(json['covered_parking']);
+    open = _parseParking(json['open_parking']);
+  }
+
+  static int? _parseParking(dynamic value) {
+    if (value == null) return null;
+
+    if (value is int) return value;
+
+    if (value is bool) {
+      return value ? 1 : 0;
+    }
+
+    if (value is String) {
+      return int.tryParse(value);
+    }
+
+    return null;
   }
 
   Map<String, dynamic> toJson() => {
-    'covered_parking': covered,
-    'open_parking': open,
-  };
+        'covered_parking': covered,
+        'open_parking': open,
+      };
 }
-
 class FinancialInfo {
   /// Sell price
   double price;
@@ -1124,6 +1139,10 @@ class FinancialInfo {
   /// PG-specific
   int? noticePeriod;
   int? lockInPeriod;
+  final int? electricityChargesPerMonth;
+  final String? electricityChargesType;
+  final int? electricityChargesUnit;
+  final String? paintingCharges;
 
   /// Sell or Rent flag
 
@@ -1148,10 +1167,13 @@ class FinancialInfo {
     this.negotiable = false,
     this.noticePeriod,
     this.lockInPeriod,
-
+    this.paintingCharges,
     this.isForSellOrRent = false,
     this.propertyPriceTrend = const [],
     this.brokerNegotiable,
+    this.electricityChargesPerMonth,
+    this.electricityChargesType,
+    this.electricityChargesUnit,
     this.is_for_sellorrent,
   });
 
@@ -1166,6 +1188,10 @@ class FinancialInfo {
       propertyRentPerMonth:
           TypeConverter.parseDouble(json['property_rent_per_month']) ?? 0,
       monthlyRent: TypeConverter.parseDouble(json['monthlyRent']),
+      paintingCharges: json['painting_charges']?.toString(),
+      electricityChargesType: json['electricity_charges_type'],
+      electricityChargesUnit: json['electricity_charges_per_unit'],
+      electricityChargesPerMonth: json['electricity_charges_per_month'],
       maintenance: TypeConverter.parseDouble(json['maintenance']),
       pricePerSqft: TypeConverter.parseDouble(json['price_per_sqft']) ?? 0,
       brokerCommission:
@@ -1209,6 +1235,13 @@ class FinancialInfo {
       "property_price_trend":
           propertyPriceTrend.map((e) => e.toJson()).toList(),
       if (is_for_sellorrent != null) 'is_for_sellorrent': is_for_sellorrent,
+      if (paintingCharges != null) 'painting_charges': paintingCharges,
+      if (electricityChargesType != null)
+        'electricity_charges_type': electricityChargesType,
+      if (electricityChargesUnit != null)
+        'electricity_charges_per_unit': electricityChargesUnit,
+      if (electricityChargesPerMonth != null)
+        'electricity_charges_per_month': electricityChargesPerMonth,
     };
   }
 }

@@ -168,9 +168,17 @@ class ContractorProfileController extends GetxController {
 
     // Simulate API call
     Future.delayed(const Duration(milliseconds: 500), () async {
-      await getUserProfileData();
-      _populateControllers();
-      isLoading.value = false;
+      try {
+        await getUserProfileData();
+        _populateControllers();
+      } catch (e, st) {
+        debugPrint('Error loading contractor profile: $e');
+        debugPrint('$st');
+      } finally {
+        if (!isClosed) {
+          isLoading.value = false;
+        }
+      }
     });
   }
 

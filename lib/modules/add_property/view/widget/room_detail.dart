@@ -156,13 +156,71 @@ class RoomDetail extends StatelessWidget {
                           // PG Details
                           buildSectionTitle("Monthly Rent"),
                           const SizedBox(height: 8),
-                          Obx(
-                            () => Wrap(
-                              spacing: 10,
-                              runSpacing: 10,
+                          // Obx(
+                          //   () => Wrap(
+                          //     spacing: 10,
+                          //     runSpacing: 10,
+                          //     children: [
+                          //       buildChoice(
+                          //         width: (MediaQuery.of(Get.context!).size.width - 50) / 2,
+                          //         title: 'Private Room',
+                          //         selected:
+                          //             controller.tempRoomType.value ==
+                          //             'private',
+                          //         onTap:
+                          //             () =>
+                          //                 controller.tempRoomType.value =
+                          //                     'private',
+                          //       ),
+                          //       buildChoice(
+                          //         width: (MediaQuery.of(Get.context!).size.width - 42) / 2,
+                          //         title: 'Double Sharing',
+                          //         selected:
+                          //             controller.tempRoomType.value == 'double',
+                          //         onTap:
+                          //             () =>
+                          //                 controller.tempRoomType.value =
+                          //                     'double',
+                          //       ),
+                          //       buildChoice(
+                          //         title: 'Triple Sharing',
+                          //         width: (MediaQuery.of(Get.context!).size.width - 42) / 2,
+                          //         selected:
+                          //             controller.tempRoomType.value == 'triple',
+                          //         onTap:
+                          //             () =>
+                          //                 controller.tempRoomType.value =
+                          //                     'triple',
+                          //       ),
+                          //       buildChoice(
+                          //         title: '3 + Sharing',
+                          //         width: (MediaQuery.of(Get.context!).size.width - 42) / 2,
+
+                          //         selected:
+                          //             controller.tempRoomType.value == 'multi',
+                          //         onTap:
+                          //             () =>
+                          //                 controller.tempRoomType.value =
+                          //                     'multi',
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
+                          Obx(() {
+                            final screenWidth =
+                                MediaQuery.of(Get.context!).size.width;
+                            const horizontalPadding =
+                                16.0; // Parent horizontal padding
+                            const spacing = 10.0;
+
+                            
+
+                            return Wrap(
+                              spacing: spacing,
+                              runSpacing: spacing,
                               children: [
-                                buildChoice(
-                                  width: 140,
+                                buildRoomChoice(
+                                  width: (MediaQuery.of(Get.context!).size.width - 40) / 2.5,
                                   title: 'Private Room',
                                   selected:
                                       controller.tempRoomType.value ==
@@ -172,8 +230,9 @@ class RoomDetail extends StatelessWidget {
                                           controller.tempRoomType.value =
                                               'private',
                                 ),
-                                buildChoice(
-                                  width: 140,
+                                buildRoomChoice(
+
+                                  width: (MediaQuery.of(Get.context!).size.width - 40) / 2.5,
                                   title: 'Double Sharing',
                                   selected:
                                       controller.tempRoomType.value == 'double',
@@ -182,9 +241,9 @@ class RoomDetail extends StatelessWidget {
                                           controller.tempRoomType.value =
                                               'double',
                                 ),
-                                buildChoice(
+                                buildRoomChoice(
+                                  width: (MediaQuery.of(Get.context!).size.width - 40) / 2.5,
                                   title: 'Triple Sharing',
-                                  width: 140,
                                   selected:
                                       controller.tempRoomType.value == 'triple',
                                   onTap:
@@ -192,9 +251,9 @@ class RoomDetail extends StatelessWidget {
                                           controller.tempRoomType.value =
                                               'triple',
                                 ),
-                                buildChoice(
+                                buildRoomChoice(
+                                  width: (MediaQuery.of(Get.context!).size.width - 40) / 2.5,
                                   title: '3 + Sharing',
-                                  width: 140,
                                   selected:
                                       controller.tempRoomType.value == 'multi',
                                   onTap:
@@ -203,8 +262,8 @@ class RoomDetail extends StatelessWidget {
                                               'multi',
                                 ),
                               ],
-                            ),
-                          ),
+                            );
+                          }),
                           const SizedBox(height: 16),
                           buildTextField(
                             'Enter monthly rent',

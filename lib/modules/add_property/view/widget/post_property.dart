@@ -41,6 +41,12 @@ class PostProperty extends StatelessWidget {
       'Power of attorney',
     ];
 
+    final List<String> paintingChargesList = [
+      'One Month Rent',
+      'Half Month Rent',
+      'As per Actuals',
+    ];
+
     final List<String> propertyType = [
       'Apartment',
       'Independent House',
@@ -78,10 +84,12 @@ class PostProperty extends StatelessWidget {
     final posession_Status = ["Ready to move", "Under Construction"];
 
     final List<String> commonArea = [
-      'Living Rooms',
-      'Kitchens',
+      'Living Room',
+      'Kitchen',
       'Dining Hall',
+     
       'Study Room',
+      
       'Breakout Room',
     ];
     final List<String> propertyManagedBy = [
@@ -106,6 +114,9 @@ class PostProperty extends StatelessWidget {
     return Obx(() {
       print(
         "Chrvloefjeri ${controller.lookingTo.value == 'Sell'} ${controller.propertyType.value == "Commercial"} ${(controller.lookingTo.value == 'Rent' && controller.propertyType.value == "Commercial")}",
+      );
+      print(
+        "Chrvloefjeri ${controller.isCustomBhk.value} ${controller.customBhkController.text} ${controller.bhkType.value}",
       );
       if (controller.lookingTo.value == 'PG/Co-Living') {
         return Form(
@@ -977,6 +988,9 @@ class PostProperty extends StatelessWidget {
       } else if ((controller.lookingTo.value == 'Rent' ||
               controller.lookingTo.value == 'Sell') &&
           controller.propertyType.value == 'Residential') {
+        print(
+          "Chrvloefxcvxcvxjeri ${controller.isCustomBhk.value} ${controller.customBhkController.text} ${controller.bhkType.value}",
+        );
         return Form(
           // autovalidateMode: AutovalidateMode.onUserInteraction,
           key: formKey,
@@ -1048,6 +1062,40 @@ class PostProperty extends StatelessWidget {
                           ),
                         ),
               ),
+
+              if (controller.lookingTo.value == 'Rent' &&
+                  controller.propertyType.value == 'Residential') ...[
+                SizedBox(height: 12),
+                buildSectionTitle("Painting Charges"),
+
+                SizedBox(height: 12),
+                Obx(
+                  () => SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      spacing: 12,
+                      children:
+                          paintingChargesList
+                              .map(
+                                (type) => buildChoice(
+                                  title: type,
+                                  selected:
+                                      controller.paintingChargesType.value ==
+                                      type,
+                                  onTap: () {
+                                    controller.setValue(
+                                      controller.paintingChargesType,
+                                      type,
+                                    );
+                                    // Hide error on selection
+                                  },
+                                ),
+                              )
+                              .toList(),
+                    ),
+                  ),
+                ),
+              ],
 
               if ((controller.rent_propertyType.value == "Plot") ||
                   (controller.rent_propertyType.value ==
@@ -1481,12 +1529,7 @@ class PostProperty extends StatelessWidget {
                             buildChoice(
                               title: "Custom",
                               width: 90,
-                              selected:
-                                  controller.isCustomBhk.value &&
-                                  int.tryParse(
-                                        controller.customBhkController.text,
-                                      ) !=
-                                      null,
+                              selected: controller.isCustomBhk.value,
                               onTap: () {
                                 controller.isCustomBhk.value = true;
                               },
@@ -1515,11 +1558,15 @@ class PostProperty extends StatelessWidget {
                               // controller.isCustomBhk.value = false;
                               // controller.customBhkController.clear();
                               controller.bhkType.value = "$number BHK";
-                              print("Auto selected BHK: ${controller.bhkType.value}");
+                              print(
+                                "Auto selected BHK: ${controller.bhkType.value}",
+                              );
                             } else {
                               // Keep custom value
                               controller.bhkType.value = "$number BHK";
-                                print("amnu selected BHK: ${controller.bhkType.value}");
+                              print(
+                                "amnu selected BHK: ${controller.bhkType.value}",
+                              );
                             }
                           },
                           inputType: TextInputType.number,
@@ -1611,9 +1658,10 @@ class PostProperty extends StatelessWidget {
                             return 'Please enter valid area';
                           }
 
-                          if (controller.bhkType.value.isEmpty) {
-                            return 'Please select BHK type first';
-                          }
+                          // if (controller.bhkType.value.isEmpty || controller.customBhkController.text.isEmpty) {
+
+                          //   return 'Please select BHK type first';
+                          // }
 
                           final entered = int.tryParse(value);
                           if (entered == null) {
@@ -2434,9 +2482,9 @@ class PostProperty extends StatelessWidget {
                       return 'Please enter a valid number';
                     }
 
-                    if (rent < 50 || rent > 3000000) {
-                      return 'Area should be between 50 to 3000000';
-                    }
+                    // if (rent < 50 || rent > 3000000) {
+                    //   return 'Area should be between 50 to 3000000';
+                    // }
 
                     return null;
                   },
@@ -3358,11 +3406,11 @@ class PostProperty extends StatelessWidget {
                       return 'Please enter building name';
                     }
                     final rent = int.tryParse(value);
-                    if (rent != null) {
-                      if (rent < 50 || rent > 3000000) {
-                        return 'Area should be between 50 to 3000000';
-                      }
-                    }
+                    // if (rent != null) {
+                    //   if (rent < 50 || rent > 3000000) {
+                    //     return 'Area should be between 50 to 3000000';
+                    //   }
+                    // }
                     return null;
                   },
                   // RxString

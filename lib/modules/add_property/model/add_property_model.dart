@@ -110,7 +110,6 @@ class PropertyDetails {
   final String? khataNumberPlot;
   final String? surveyNumber;
 
-
   final PlotInfo? plotInfo;
   final bool? petFriendly;
   final String? tenantType;
@@ -163,13 +162,16 @@ class PropertyDetails {
     if (bathroom != null) data['bathroom'] = bathroom;
     if (amenities != null) data['amenities'] = amenities;
     if (floorInfo != null) data['floor_info'] = floorInfo!.toJson();
-    if(subRegistrarOfficeName!=null) data['sub_registrar_office_name']=subRegistrarOfficeName;
-    if(saleDeedDocumentNumber!=null) data['sale_deed_document_number']=saleDeedDocumentNumber;
-    if(yearOfRegistration!=null) data['year_of_registration']=yearOfRegistration;
-    if(tenantType!=null) data['tenant_type']=tenantType;
-    if(availableFrom!=null) data['available_from']=availableFrom;
-    if(khataNumberPlot!=null) data['khata_number']=khataNumberPlot;
-    if(surveyNumber!=null) data['survey_number']=surveyNumber;
+    if (subRegistrarOfficeName != null)
+      data['sub_registrar_office_name'] = subRegistrarOfficeName;
+    if (saleDeedDocumentNumber != null)
+      data['sale_deed_document_number'] = saleDeedDocumentNumber;
+    if (yearOfRegistration != null)
+      data['year_of_registration'] = yearOfRegistration;
+    if (tenantType != null) data['tenant_type'] = tenantType;
+    if (availableFrom != null) data['available_from'] = availableFrom;
+    if (khataNumberPlot != null) data['khata_number'] = khataNumberPlot;
+    if (surveyNumber != null) data['survey_number'] = surveyNumber;
     if (furnishInfo != null)
       data['property_furnish_info'] = furnishInfo!.toJson();
     if (parkingInfo != null) data['parking_info'] = parkingInfo!.toJson();
@@ -189,7 +191,8 @@ class PropertyDetails {
       );
     if (plotInfo != null) data['plot_info'] = plotInfo;
     if (zoneType != null) data['zone_type'] = zoneType!.toLowerCase();
-    if (facilitiesInfo != null) data['facilities_info'] = facilitiesInfo!.toJson();
+    if (facilitiesInfo != null)
+      data['facilities_info'] = facilitiesInfo!.toJson();
     if (propertyCondition != null)
       data['property_condition'] = propertyCondition;
     if (petFriendly != null) data['pet_friendly'] = petFriendly;
@@ -467,8 +470,8 @@ class FurnishDetails {
 }
 
 class ParkingInfo {
-  final bool? coveredParking;
-  final bool? openParking;
+  final int? coveredParking;
+  final int? openParking;
 
   ParkingInfo({this.coveredParking, this.openParking});
 
@@ -487,11 +490,14 @@ class FinancialInfo {
   final double? pricePerSqft;
   final double? brokerCommission;
   final double? platformFees;
-
+  final String? paintingCharges; // <-- new field for painting charges
   final bool? brokerNegotiable;
   final bool? is_for_sellorrent;
   final double? propertySecurityDeposit;
   final int? lockInPeriod;
+  final int? electricityChargesPerMonth;
+  final String? electricityChargesType;
+  final int? electricityChargesUnit;
   final int? noticePeriod;
   final bool? negotiable;
   final double? maintenanceCharges;
@@ -503,7 +509,7 @@ class FinancialInfo {
   FinancialInfo({
     this.platformFees,
     this.is_for_sellorrent,
-
+this.paintingCharges,
     this.propertyPrice,
     this.propertyRentPerMonth,
     this.monthlyRent,
@@ -512,6 +518,9 @@ class FinancialInfo {
     this.brokerNegotiable,
     this.propertySecurityDeposit,
     this.lockInPeriod,
+    this.electricityChargesPerMonth,
+    this.electricityChargesType,
+    this.electricityChargesUnit,
     this.noticePeriod,
     this.negotiable,
     this.propertyPriceTrend,
@@ -527,6 +536,10 @@ class FinancialInfo {
       monthlyRent: (json['monthlyRent'] as num?)?.toDouble(),
       pricePerSqft: (json['price_per_sqft'] as num?)?.toDouble(),
       brokerCommission: (json['broker_commission'] as num?)?.toDouble(),
+      paintingCharges: json['painting_charges']?.toString(),
+            electricityChargesType: json['electricity_charges_type'],
+      electricityChargesUnit: json['electricity_charges_per_unit'],
+      electricityChargesPerMonth: json['electricity_charges_per_month'],
 
       is_for_sellorrent:
           json['is_for_sellorrent'] is bool
@@ -564,23 +577,40 @@ class FinancialInfo {
     if (propertyPrice != null && propertyPrice! > 0) {
       data['property_price'] = propertyPrice;
     }
+    if (paintingCharges != null && paintingCharges!.isNotEmpty) {
+      data['painting_charges'] = paintingCharges;
+    }
+    if (electricityChargesType != null && electricityChargesType!.isNotEmpty) {
+      data['electricity_charges_type'] = electricityChargesType;
+    }
+    if (electricityChargesUnit != null && electricityChargesUnit != 0) {
+      data['electricity_charges_per_unit'] = electricityChargesUnit;
+    }
+    if (electricityChargesPerMonth != null && electricityChargesPerMonth != 0) {
+      data['electricity_charges_per_month'] = electricityChargesPerMonth;
+    }
     if (propertyRentPerMonth != null && propertyRentPerMonth! > 0)
       data['property_rent_per_month'] = propertyRentPerMonth;
-    if (monthlyRent != null) data['monthlyRent'] = monthlyRent;
-    if (pricePerSqft != null) data['price_per_sqft'] = pricePerSqft;
-    if (brokerCommission != null && brokerCommission! > 0.0) data['broker_commission'] = brokerCommission;
-    if (platformFees != null) data['platform_fees'] = platformFees;
+    if (monthlyRent != null && monthlyRent != 0.0)
+      data['monthlyRent'] = monthlyRent;
+    if (pricePerSqft != null && pricePerSqft != 0.0)
+      data['price_per_sqft'] = pricePerSqft;
+    if (brokerCommission != null && brokerCommission! > 0.0)
+      data['broker_commission'] = brokerCommission;
+    if (platformFees != null && platformFees != 0.0)
+      data['platform_fees'] = platformFees;
     if (brokerNegotiable != null) data['broker_negotiable'] = brokerNegotiable;
     if (is_for_sellorrent != null)
       data['is_for_sellorrent'] = is_for_sellorrent;
-    if (propertySecurityDeposit != null)
+    if (propertySecurityDeposit != null && propertySecurityDeposit != 0.0)
       data['property_security_deposit'] = propertySecurityDeposit;
     if (lockInPeriod != null) data['lock_in_period'] = lockInPeriod;
     if (noticePeriod != null) data['notice_period'] = noticePeriod;
     if (negotiable != null) data['negotiable'] = negotiable;
-    if (maintenanceCharges != null)
+    if (maintenanceCharges != null && maintenanceCharges != 0.0)
       data['maintenance_charges'] = maintenanceCharges;
-    if (parkingCharges != null) data['parking_charges'] = parkingCharges;
+    if (parkingCharges != null && parkingCharges != 0.0)
+      data['parking_charges'] = parkingCharges;
 
     // --- 🔮 Future 5-Year Price Data ---
     if (propertyPriceTrend != null &&

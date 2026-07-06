@@ -13,7 +13,7 @@ extension ItemsMapper on Items.Items {
       updatedBy: updatedBy,
       title: title,
       type: type,
-      
+
       listingType: listingType,
       propertyType: propertyType,
       propertyDescription: propertyDescription,
@@ -29,7 +29,7 @@ extension ItemsMapper on Items.Items {
       reraId: reraId,
       buildingName: buildingName,
       propertyStatus: propertyStatus,
-    builderName: builderName,
+      builderName: builderName,
       projectName: projectName,
       ownerPhone: ownerPhone,
       ownerName: ownerName,
@@ -95,8 +95,7 @@ extension ItemsMapper on Items.Items {
   }
 
   AddPropertyModel.PgInfo _mapPgInfo(Items.PgInfo source) {
-
-print("Mapping PgInfo: ${source.toJson()}");
+    print("Mapping PgInfo: ${source.toJson()}");
 
     return AddPropertyModel.PgInfo(
       pgName: source.pgName,
@@ -210,11 +209,17 @@ print("Mapping PgInfo: ${source.toJson()}");
 
   AddPropertyModel.FinancialInfo _mapFinancialInfo(Items.FinancialInfo source) {
     AppLogger.structured("Financial Info in edit section ", source.toJson());
+    
     return AddPropertyModel.FinancialInfo(
       propertyPrice: source.price,
       propertyRentPerMonth: source.propertyRentPerMonth,
       monthlyRent: source.monthlyRent,
       parkingCharges: source.parkingCharges,
+      brokerNegotiable: source.brokerNegotiable,
+      electricityChargesPerMonth: source.electricityChargesPerMonth,
+      electricityChargesType: source.electricityChargesType,
+      electricityChargesUnit: source.electricityChargesUnit,
+      paintingCharges: source.paintingCharges,
       pricePerSqft: source.pricePerSqft,
 
       platformFees: source.plateFromFees,
@@ -261,7 +266,7 @@ print("Mapping PgInfo: ${source.toJson()}");
 
   AddPropertyModel.PlotInfo _mapPlotInfo(Items.PlotInfo source) {
     // AppLogger.structured("Plot from Api ", source.toJson());
-    final data= AddPropertyModel.PlotInfo(
+    final data = AddPropertyModel.PlotInfo(
       plotArea: source.plotArea,
       plotAreaUnit: source.plotAreaUnit,
       plotLength: source.plotLength,

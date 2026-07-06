@@ -2339,8 +2339,8 @@ class _PropertyOverviewSellerScreenState
 
   String _formatParking(ParkingInfo parkingInfo) {
     List<String> parking = [];
-    if (parkingInfo.open ?? false) parking.add('Open');
-    if (parkingInfo.covered ?? false) parking.add('Covered');
+    if ((parkingInfo.open ?? 0) > 0) parking.add('Open');
+    if ((parkingInfo.covered ?? 0) > 0) parking.add('Covered');
     return parking.isEmpty ? 'None' : parking.join(' & ');
   }
 }

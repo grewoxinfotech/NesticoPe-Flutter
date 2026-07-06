@@ -121,6 +121,7 @@ class RentAdvanceDetail extends StatelessWidget {
                   controller.rent_propertyType.value.toLowerCase() !=
                       "agricultural land") ...[
                 SizedBox(height: 16),
+
                 // buildSectionTitle("Bathrooms"),
                 // SizedBox(height: 8),
                 // Obx(() {
@@ -163,6 +164,101 @@ class RentAdvanceDetail extends StatelessWidget {
                 //     ],
                 //   );
                 // }),
+                if (controller.lookingTo.value == 'Rent' &&
+                    controller.propertyType.value == 'Residential') ...[
+                  Obx(() {
+                    print(
+                      "Electricity Charges Type: ${controller.electricityChargesType.value}",
+                    );
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 16),
+                        buildSectionTitle("Electricity Charges"),
+                        const SizedBox(height: 8),
+                        Obx(
+                          () => Wrap(
+                            spacing: 10,
+                            runSpacing: 10,
+                            children: [
+                              buildChoice(
+                                title: 'Included in Rent',
+                                selected:
+                                    controller.electricityChargesType.value ==
+                                    'Included in Rent',
+                                onTap:
+                                    () => controller.setValue(
+                                      controller.electricityChargesType,
+                                      'Included in Rent',
+                                    ),
+                              ),
+                              // const SizedBox(width: 10),
+                              buildChoice(
+                                title: 'Separate',
+                                selected:
+                                    controller.electricityChargesType.value ==
+                                    'Separate',
+                                onTap:
+                                    () => controller.setValue(
+                                      controller.electricityChargesType,
+                                      'Separate',
+                                    ),
+                              ),
+                              buildChoice(
+                                title: 'Based on Unit',
+                                selected:
+                                    controller.electricityChargesType.value ==
+                                    'Based on Unit',
+                                onTap:
+                                    () => controller.setValue(
+                                      controller.electricityChargesType,
+                                      'Based on Unit',
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (controller.electricityChargesType.value ==
+                            "Separate") ...[
+                          const SizedBox(height: 16),
+                          buildSectionTitle("Electricity Charges per Month"),
+                          const SizedBox(height: 12),
+                          buildTextField(
+                            "Enter electricity Charges",
+                            isPhoneKey: true,
+                            Icons.currency_rupee_outlined,
+                            controller.electricityChargesTextFiled,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter electricity charges';
+                              }
+                              return null;
+                            },
+                          ),
+                        ] else if (controller.electricityChargesType.value ==
+                            "Based on Unit") ...[
+                          const SizedBox(height: 16),
+                          buildSectionTitle("Electricity Charges per Unit"),
+                          const SizedBox(height: 12),
+                          buildTextField(
+                            "Enter electricity Charges per Unit",
+                            isPhoneKey: true,
+                            Icons.currency_rupee_outlined,
+
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter electricity charges per unit';
+                              }
+                              return null;
+                            },
+                            controller.electricityChargesPerUnitController,
+                          ),
+                        ],
+                      ],
+                    );
+                  }),
+                ],
+                 const SizedBox(height: 16),
                 buildSectionTitle("Bathrooms"),
                 const SizedBox(height: 8),
 
@@ -270,7 +366,7 @@ class RentAdvanceDetail extends StatelessWidget {
                         1;
                   }
                   final balconyOptions = List<int>.generate(
-                    bhkCount + 1,
+                    4,
                     (i) => i, // Generates [0, 1, ..., bhkCount]
                   );
                   return SingleChildScrollView(
@@ -304,7 +400,7 @@ class RentAdvanceDetail extends StatelessWidget {
                   buildSectionTitle("Covered Parking"),
                   SizedBox(height: 8),
                   Obx(() {
-                    final coverParkingOptions = ['0', '1', '2', '3', '3+'];
+                    final coverParkingOptions = ['0', '1', '2', '3', '4'];
                     return SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
@@ -332,7 +428,7 @@ class RentAdvanceDetail extends StatelessWidget {
                   buildSectionTitle("Open Parking"),
                   SizedBox(height: 8),
                   Obx(() {
-                    final openParkingOptions = ['0', '1', '2', '3', '3+'];
+                    final openParkingOptions = ['0', '1', '2', '3', '4'];
                     return SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
