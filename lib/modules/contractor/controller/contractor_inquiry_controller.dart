@@ -536,11 +536,10 @@ class ContractorInquiryController
           .fetchContractorInquiry(page: page, filters: filters, id: userId);
 
       print("Fetched items: ${response.items.length}");
-      final filteredItems =
-          response.items.where((item) => item.contractorId == userId).toList();
+      // final filteredItems =
+      //     response.items.where((item) => item.contractorId == userId).toList();
 
-      
-      print("Filtered items: ${filteredItems.length}");
+      print("Filtered items: ${response.items.length}");
       getFilterData();
       return response;
     } catch (e) {

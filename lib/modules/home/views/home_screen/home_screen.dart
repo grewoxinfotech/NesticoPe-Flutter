@@ -5388,88 +5388,83 @@ class StateSelectionWidget extends StatelessWidget {
 
           if (items.isEmpty) return const SizedBox();
 
-          return Container(
-            constraints: const BoxConstraints(maxHeight: 250),
-            margin: const EdgeInsets.only(top: 4),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 6,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: items.length > 3 ? 3 : items.length,
-              itemBuilder: (context, index) {
-                if (hasParsed) {
-                  // ✅ Cast item to Map<String, String?>
-                  final cityData = items[index] as Map<String, String?>;
+          return Material(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            elevation: 3,
+            shadowColor: Colors.black.withOpacity(0.2),
+            child: Container(
+              constraints: const BoxConstraints(maxHeight: 250),
+              margin: const EdgeInsets.only(top: 4),
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: items.length > 3 ? 3 : items.length,
+                itemBuilder: (context, index) {
+                  if (hasParsed) {
+                    // ✅ Cast item to Map<String, String?>
+                    final cityData = items[index] as Map<String, String?>;
 
-                  log("djhfudfhg ${cityData}");
+                    log("djhfudfhg ${cityData}");
 
-                  return ListTile(
-                    leading: const Icon(
-                      Icons.location_city_outlined,
-                      size: 20,
-                      color: ColorRes.primary,
-                    ),
-                    title: Text(
-                      cityData['city'] ?? '',
-                      style: TextStyle(
-                        fontSize: AppFontSizes.small,
-                        color: ColorRes.homeBlackFade,
+                    return ListTile(
+                      leading: const Icon(
+                        Icons.location_city_outlined,
+                        size: 20,
+                        color: ColorRes.primary,
                       ),
-                    ),
-                    subtitle: Text(
-                      '${cityData['state'] ?? ''}, ${cityData['country'] ?? ''}',
-                      style: TextStyle(
-                        fontSize: AppFontSizes.small,
-                        color: ColorRes.leadGreyColor[700],
+                      title: Text(
+                        cityData['city'] ?? '',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.small,
+                          color: ColorRes.homeBlackFade,
+                        ),
                       ),
-                    ),
-                    onTap: () {
-                      controller.text = cityData['city'] ?? '';
-                      googleMapController.predictions.clear();
-                      googleMapController.cityStateList.clear();
-                      FocusScope.of(context).unfocus();
-
-                      if (onCitySelected != null) {
-                        onCitySelected!(
-                          Prediction(description: cityData['state']),
-                        );
-                      }
-                    },
-                  );
-                } else {
-                  final city = items[index] as Prediction;
-                  return ListTile(
-                    leading: const Icon(
-                      Icons.location_city_outlined,
-                      size: 20,
-                      color: ColorRes.primary,
-                    ),
-                    title: Text(
-                      city.description ?? '',
-                      style: TextStyle(
-                        fontSize: AppFontSizes.small,
-                        color: ColorRes.homeBlackFade,
+                      subtitle: Text(
+                        '${cityData['state'] ?? ''}, ${cityData['country'] ?? ''}',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.small,
+                          color: ColorRes.leadGreyColor[700],
+                        ),
                       ),
-                    ),
-                    onTap: () {
-                      controller.text = city.description ?? '';
-                      googleMapController.predictions.clear();
-                      FocusScope.of(context).unfocus();
+                      onTap: () {
+                        controller.text = cityData['city'] ?? '';
+                        googleMapController.predictions.clear();
+                        googleMapController.cityStateList.clear();
+                        FocusScope.of(context).unfocus();
 
-                      if (onCitySelected != null) onCitySelected!(city);
-                    },
-                  );
-                }
-              },
+                        if (onCitySelected != null) {
+                          onCitySelected!(
+                            Prediction(description: cityData['state']),
+                          );
+                        }
+                      },
+                    );
+                  } else {
+                    final city = items[index] as Prediction;
+                    return ListTile(
+                      leading: const Icon(
+                        Icons.location_city_outlined,
+                        size: 20,
+                        color: ColorRes.primary,
+                      ),
+                      title: Text(
+                        city.description ?? '',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.small,
+                          color: ColorRes.homeBlackFade,
+                        ),
+                      ),
+                      onTap: () {
+                        controller.text = city.description ?? '';
+                        googleMapController.predictions.clear();
+                        FocusScope.of(context).unfocus();
+
+                        if (onCitySelected != null) onCitySelected!(city);
+                      },
+                    );
+                  }
+                },
+              ),
             ),
           );
         }),

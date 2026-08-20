@@ -210,7 +210,12 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
 
                           final item =
                               (currentPlanController?.items.isNotEmpty ?? false)
-                                  ? currentPlanController?.items.firstWhereOrNull((any) => any.status?.toLowerCase()=="active",)
+                                  ? currentPlanController?.items
+                                      .firstWhereOrNull(
+                                        (any) =>
+                                            any.status?.toLowerCase() ==
+                                            "active",
+                                      )
                                   : null;
 
                           if (item == null) {
@@ -248,16 +253,18 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                                   ? 0.0
                                   : (used / max).clamp(0.0, 1.0);
 
-                          log("Plan Usage $percent | Unlimited: $isUnlimited  ${plan?.toMap()}");
+                          log(
+                            "Plan Usage $percent | Unlimited: $isUnlimited  ${plan?.toMap()}",
+                          );
 
-                          return (plan?.isActive??false)? _buildCurrentPlanCard(
+                          return _buildCurrentPlanCard(
                             item: item,
                             plan: plan,
                             used: used,
                             max: max,
                             isUnlimited: isUnlimited,
                             percent: percent,
-                          ):SizedBox.shrink();
+                          );
                         }),
                       ],
                     ],
@@ -293,7 +300,9 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                       final planStatusByPlanId = <String, String>{};
                       final currentItem =
                           (currentPlanController?.items.isNotEmpty ?? false)
-                              ? currentPlanController?.items.firstWhereOrNull((element) => element.status=="active",)
+                              ? currentPlanController?.items.firstWhereOrNull(
+                                (element) => element.status == "active",
+                              )
                               : null;
                       if (currentItem != null) {
                         final planId = (currentItem.planId ?? '').trim();

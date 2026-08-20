@@ -697,8 +697,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       ],
                     ),
+                ] else if (_selectedRole == UserRole.contractor) ...[
+                  CommonRadioGroup<String>(
+                    title: "Contractor Type",
+                    options: const ["Company", "Worker"],
+                    groupValue: _contractorType == "Labour" ? "Worker" : _contractorType,
+                    labelBuilder: (v) => v,
+                    onChanged: (value) {
+                      setState(() {
+                        _contractorType = value == "Worker" ? "Labour" : value;
+                        print("Contractor choice ${_contractorType}");
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 10),
                 ] else ...[
-                  SizedBox.shrink(),
+                  const SizedBox.shrink(),
                 ],
 
                 // if (_selectedRole == UserRole.buyer ||
@@ -841,20 +855,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 //   ),
                 //   const SizedBox(height: 10),
                 // ],
-                if (_selectedRole == UserRole.contractor)
-                  CommonRadioGroup<String>(
-                    title: "Contractor Type",
-                    options: const ["Company", "Worker"],
-                    groupValue: _contractorType,
-                    labelBuilder: (v) => v,
-                    onChanged: (value) {
-                      setState(() {
-                        _contractorType = value=="Worker"?"Labour":value;
-                        
-                        print("Contractor choice ${_contractorType}");
-                      });
-                    },
-                  ),
+
 
                 // const SizedBox(height: 10),
                 if (_selectedRole == UserRole.contractor) ...[

@@ -354,13 +354,11 @@ class ContractorProfileController extends GetxController {
       context: context,
       backgroundColor: ColorRes.transparentColor,
       builder: (BuildContext context) {
-        return Container(
-          decoration: const BoxDecoration(
-            color: ColorRes.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
+        return Material(
+          color: ColorRes.white,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
           ),
           child: SafeArea(
             child: Column(

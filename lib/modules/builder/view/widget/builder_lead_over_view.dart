@@ -1047,25 +1047,15 @@ class BuilderLeadOverView extends StatelessWidget {
             final config = project.configuration[index];
             final expanded = controller.isConfigExpanded[index];
 
-            return Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              decoration: BoxDecoration(
-                color: ColorRes.white,
-                borderRadius: BorderRadius.circular(12),
-                // border: Border.all(
-                //   color: ColorRes.leadGreyColor.shade300,
-                //   width: 1,
-                // ),
-                boxShadow: [
-                  BoxShadow(
-                    color: ColorRes.black.withOpacity(0.08),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
+            return Material(
+              color: ColorRes.white,
+              borderRadius: BorderRadius.circular(12),
+              shadowColor: ColorRes.black.withOpacity(0.08),
+              elevation: 2,
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                child: Column(
+                  children: [
                   // Configuration Header
                   ListTile(
                     leading: Container(
@@ -1326,8 +1316,9 @@ class BuilderLeadOverView extends StatelessWidget {
                     ),
                 ],
               ),
-            );
-          }),
+            ),
+          );
+        }),
         ),
       ),
     );

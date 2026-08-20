@@ -36,6 +36,8 @@ class ContractorInquiryService {
     try {
       final queryParams = {
         'page': page.toString(),
+        'limit': '10000',
+        'contractorId': id,
         if (filters != null) ...filters,
       };
 
@@ -271,20 +273,24 @@ class ContractorInquiryService {
   Future<bool> getQuotation(String id) async {
     try {
       final uri = Uri.parse('$_baseUrlQutation/$id/download-pdf');
-      final response = await http.get(
-        uri,
-        headers: await headers(),
-      );
+      final response = await http.get(uri, headers: await headers());
 
-      debugPrint("Get Quotation Response: $uri - status:${response.statusCode}");
+      debugPrint(
+        "Get Quotation Response: $uri - status:${response.statusCode}",
+      );
 
       final bytes = response.bodyBytes;
       final contentType = response.headers['content-type'] ?? '';
 
       if (response.statusCode == 200) {
         // Check if the response is a PDF (content-type or PDF magic header)
-        final isPdf = contentType.contains('application/pdf') ||
-            (bytes.length >= 4 && bytes[0] == 0x25 && bytes[1] == 0x50 && bytes[2] == 0x44 && bytes[3] == 0x46);
+        final isPdf =
+            contentType.contains('application/pdf') ||
+            (bytes.length >= 4 &&
+                bytes[0] == 0x25 &&
+                bytes[1] == 0x50 &&
+                bytes[2] == 0x44 &&
+                bytes[3] == 0x46);
         if (isPdf) {
           final dir = await getTemporaryDirectory();
           final file = File('${dir.path}/quotation_$id.pdf');
@@ -295,7 +301,7 @@ class ContractorInquiryService {
           } catch (e) {
             print('Could not open PDF: $e');
           }
-          NesticoPeSnackBar.showAwesomeSnackbar(   
+          NesticoPeSnackBar.showAwesomeSnackbar(
             title: 'Success',
             message: 'PDF downloaded',
             contentType: ContentType.success,

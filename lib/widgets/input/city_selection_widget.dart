@@ -657,89 +657,84 @@ class CitySelectionWidget extends StatelessWidget {
 
           if (items.isEmpty) return const SizedBox();
 
-          return Container(
-            constraints: const BoxConstraints(maxHeight: 250),
-            margin: const EdgeInsets.only(top: 4),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 6,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: items.length > 3 ? 3 : items.length,
-              itemBuilder: (context, index) {
-                if (hasParsed) {
-                  final cityData = items[index] as Map<String, String?>;
+          return Material(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            elevation: 3,
+            shadowColor: Colors.black.withOpacity(0.2),
+            child: Container(
+              constraints: const BoxConstraints(maxHeight: 250),
+              margin: const EdgeInsets.only(top: 4),
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: items.length > 3 ? 3 : items.length,
+                itemBuilder: (context, index) {
+                  if (hasParsed) {
+                    final cityData = items[index] as Map<String, String?>;
 
-                  return ListTile(
-                    leading: const Icon(
-                      Icons.location_city_outlined,
-                      size: 20,
-                      color: ColorRes.primary,
-                    ),
-                    title: Text(
-                      cityData['city'] ?? '',
-                      style: TextStyle(
-                        fontSize: AppFontSizes.small,
-                        color: ColorRes.homeBlackFade,
+                    return ListTile(
+                      leading: const Icon(
+                        Icons.location_city_outlined,
+                        size: 20,
+                        color: ColorRes.primary,
                       ),
-                    ),
-                    subtitle: Text(
-                      '${cityData['state'] ?? ''}, ${cityData['country'] ?? ''}',
-                      style: TextStyle(
-                        fontSize: AppFontSizes.small,
-                        color: ColorRes.leadGreyColor[700],
+                      title: Text(
+                        cityData['city'] ?? '',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.small,
+                          color: ColorRes.homeBlackFade,
+                        ),
                       ),
-                    ),
-                    onTap: () {
-                      controller.text = cityData['city'] ?? '';
-                      googleMapController.predictions.clear();
-                      googleMapController.cityStateList.clear();
-                      FocusScope.of(context).unfocus();
+                      subtitle: Text(
+                        '${cityData['state'] ?? ''}, ${cityData['country'] ?? ''}',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.small,
+                          color: ColorRes.leadGreyColor[700],
+                        ),
+                      ),
+                      onTap: () {
+                        controller.text = cityData['city'] ?? '';
+                        googleMapController.predictions.clear();
+                        googleMapController.cityStateList.clear();
+                        FocusScope.of(context).unfocus();
 
-                      if (onCitySelected != null) {
-                        onCitySelected!(
-                          Prediction(
-                            description: cityData['city'],
-                            reference: cityData['state'],
-                          ),
-                        );
-                      }
-                    },
-                  );
-                } else {
-                  final city = items[index] as Prediction;
-                  return ListTile(
-                    leading: const Icon(
-                      Icons.location_city_outlined,
-                      size: 20,
-                      color: ColorRes.primary,
-                    ),
-                    title: Text(
-                      city.description ?? '',
-                      style: TextStyle(
-                        fontSize: AppFontSizes.small,
-                        color: ColorRes.homeBlackFade,
+                        if (onCitySelected != null) {
+                          onCitySelected!(
+                            Prediction(
+                              description: cityData['city'],
+                              reference: cityData['state'],
+                            ),
+                          );
+                        }
+                      },
+                    );
+                  } else {
+                    final city = items[index] as Prediction;
+                    return ListTile(
+                      leading: const Icon(
+                        Icons.location_city_outlined,
+                        size: 20,
+                        color: ColorRes.primary,
                       ),
-                    ),
-                    onTap: () {
-                      controller.text = city.description ?? '';
-                      googleMapController.predictions.clear();
-                      googleMapController.cityStateList.clear();
-                      FocusScope.of(context).unfocus();
+                      title: Text(
+                        city.description ?? '',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.small,
+                          color: ColorRes.homeBlackFade,
+                        ),
+                      ),
+                      onTap: () {
+                        controller.text = city.description ?? '';
+                        googleMapController.predictions.clear();
+                        googleMapController.cityStateList.clear();
+                        FocusScope.of(context).unfocus();
 
-                      if (onCitySelected != null) onCitySelected!(city);
-                    },
-                  );
-                }
-              },
+                        if (onCitySelected != null) onCitySelected!(city);
+                      },
+                    );
+                  }
+                },
+              ),
             ),
           );
         }),
@@ -860,77 +855,72 @@ class LocationSelectionWidget extends StatelessWidget {
 
           if (predictions.isEmpty) return const SizedBox();
 
-          return Container(
-            constraints: const BoxConstraints(maxHeight: 250),
-            margin: const EdgeInsets.only(top: 4),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 6,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: predictions.length > 5 ? 5 : predictions.length,
-              itemBuilder: (context, index) {
-                final prediction = predictions[index];
+          return Material(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            elevation: 3,
+            shadowColor: Colors.black.withOpacity(0.2),
+            child: Container(
+              constraints: const BoxConstraints(maxHeight: 250),
+              margin: const EdgeInsets.only(top: 4),
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: predictions.length > 5 ? 5 : predictions.length,
+                itemBuilder: (context, index) {
+                  final prediction = predictions[index];
 
-                // 🔹 Determine icon based on place type
-                IconData leadingIcon = Icons.place_outlined;
-                final desc = prediction.description?.toLowerCase() ?? '';
+                  // 🔹 Determine icon based on place type
+                  IconData leadingIcon = Icons.place_outlined;
+                  final desc = prediction.description?.toLowerCase() ?? '';
 
-                if (desc.contains('area') || desc.contains('sector')) {
-                  leadingIcon = Icons.map_outlined;
-                } else if (desc.contains('road') || desc.contains('street')) {
-                  leadingIcon = Icons.route_outlined;
-                } else if (desc.contains('landmark')) {
-                  leadingIcon = Icons.location_city_outlined;
-                }
+                  if (desc.contains('area') || desc.contains('sector')) {
+                    leadingIcon = Icons.map_outlined;
+                  } else if (desc.contains('road') || desc.contains('street')) {
+                    leadingIcon = Icons.route_outlined;
+                  } else if (desc.contains('landmark')) {
+                    leadingIcon = Icons.location_city_outlined;
+                  }
 
-                return ListTile(
-                  leading: Icon(leadingIcon, size: 20, color: ColorRes.primary),
-                  title: Text(
-                    prediction.structuredFormatting?.mainText ??
-                        prediction.description ??
-                        '',
-                    style: TextStyle(
-                      fontSize: AppFontSizes.small,
-                      color: ColorRes.homeBlackFade,
-                      fontWeight: AppFontWeights.medium,
+                  return ListTile(
+                    leading: Icon(leadingIcon, size: 20, color: ColorRes.primary),
+                    title: Text(
+                      prediction.structuredFormatting?.mainText ??
+                          prediction.description ??
+                          '',
+                      style: TextStyle(
+                        fontSize: AppFontSizes.small,
+                        color: ColorRes.homeBlackFade,
+                        fontWeight: AppFontWeights.medium,
+                      ),
                     ),
-                  ),
-                  subtitle:
-                      prediction.structuredFormatting?.secondaryText != null
-                          ? Text(
-                            prediction.structuredFormatting!.secondaryText!,
-                            style: TextStyle(
-                              fontSize: AppFontSizes.small,
-                              color: ColorRes.leadGreyColor[700],
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          )
-                          : null,
-                  onTap: () {
-                    controller.text =
-                        prediction.structuredFormatting?.mainText ??
-                        prediction.description ??
-                        "";
+                    subtitle:
+                        prediction.structuredFormatting?.secondaryText != null
+                            ? Text(
+                              prediction.structuredFormatting!.secondaryText!,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.small,
+                                color: ColorRes.leadGreyColor[700],
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            )
+                            : null,
+                    onTap: () {
+                      controller.text =
+                          prediction.structuredFormatting?.mainText ??
+                          prediction.description ??
+                          "";
 
-                    googleMapController.predictions.clear();
-                    FocusScope.of(context).unfocus();
+                      googleMapController.predictions.clear();
+                      FocusScope.of(context).unfocus();
 
-                    if (onLocationSelected != null) {
-                      onLocationSelected!(prediction);
-                    }
-                  },
-                );
-              },
+                      if (onLocationSelected != null) {
+                        onLocationSelected!(prediction);
+                      }
+                    },
+                  );
+                },
+              ),
             ),
           );
         }),

@@ -322,13 +322,11 @@ class BuyerProfileDataController extends GetxController {
     showModalBottomSheet(
       context: context,
       builder: (_) {
-        return Container(
-           decoration: const BoxDecoration(
-            color: ColorRes.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
+        return Material(
+          color: ColorRes.white,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
           ),
           child: SafeArea(
             child: Column(
