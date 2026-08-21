@@ -45,7 +45,6 @@
         "http",
         "http_parser",
         "image_picker",
-        "in_app_purchase",
         "internet_connection_checker_plus",
         "intl",
         "logger",
@@ -63,7 +62,6 @@
         "persistent_bottom_nav_bar",
         "printing",
         "provider",
-        "razorpay_flutter",
         "readmore",
         "salomon_bottom_bar",
         "share_plus",
@@ -173,24 +171,6 @@
       "name": "truecaller_sdk",
       "version": "1.2.0",
       "dependencies": [
-        "flutter"
-      ]
-    },
-    {
-      "name": "in_app_purchase",
-      "version": "3.3.0",
-      "dependencies": [
-        "flutter",
-        "in_app_purchase_android",
-        "in_app_purchase_platform_interface",
-        "in_app_purchase_storekit"
-      ]
-    },
-    {
-      "name": "razorpay_flutter",
-      "version": "1.4.5",
-      "dependencies": [
-        "eventify",
         "flutter"
       ]
     },
@@ -1288,39 +1268,6 @@
         "string_scanner",
         "term_glyph"
       ]
-    },
-    {
-      "name": "in_app_purchase_storekit",
-      "version": "0.4.10",
-      "dependencies": [
-        "collection",
-        "flutter",
-        "in_app_purchase_platform_interface",
-        "json_annotation"
-      ]
-    },
-    {
-      "name": "in_app_purchase_platform_interface",
-      "version": "1.4.1",
-      "dependencies": [
-        "flutter",
-        "plugin_platform_interface"
-      ]
-    },
-    {
-      "name": "in_app_purchase_android",
-      "version": "0.5.0",
-      "dependencies": [
-        "collection",
-        "flutter",
-        "in_app_purchase_platform_interface",
-        "meta"
-      ]
-    },
-    {
-      "name": "eventify",
-      "version": "1.0.1",
-      "dependencies": []
     },
     {
       "name": "dio_web_adapter",

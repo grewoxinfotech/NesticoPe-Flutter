@@ -27,7 +27,8 @@ class SubscriptionPlansCarousel extends StatefulWidget {
     this.autoScrollInterval = const Duration(seconds: 4),
   });
   @override
-  State<SubscriptionPlansCarousel> createState() => _SubscriptionPlansCarouselState();
+  State<SubscriptionPlansCarousel> createState() =>
+      _SubscriptionPlansCarouselState();
 }
 
 class _SubscriptionPlansCarouselState extends State<SubscriptionPlansCarousel> {
@@ -68,7 +69,8 @@ class _SubscriptionPlansCarouselState extends State<SubscriptionPlansCarousel> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (widget.controller.isLoading.value && widget.controller.items.isEmpty) {
+      if (widget.controller.isLoading.value &&
+          widget.controller.items.isEmpty) {
         return PlanListScreenShimmer();
       }
       final plans = widget.controller.items;
@@ -78,22 +80,18 @@ class _SubscriptionPlansCarouselState extends State<SubscriptionPlansCarousel> {
         child: Listener(
           onPointerDown: (_) => _userDragging = true,
           onPointerUp: (_) => _userDragging = false,
-          
+
           child: PageView.builder(
             controller: _pageController,
             itemCount: plans.length,
-             clipBehavior: Clip.none, // ✅
+            clipBehavior: Clip.none, // ✅
             padEnds: false,
             itemBuilder: (context, i) {
               return Padding(
-                padding: EdgeInsets.only(
-                  right: i == plans.length - 1 ? 0 : 12,
-                  
-                ),
+                padding: EdgeInsets.only(right: i == plans.length - 1 ? 0 : 12),
                 child: Align(
                   alignment: Alignment.topCenter,
                   child: SizedBox(
-                
                     height: widget.cardHeight,
                     child: _buildPlanCard(plans[i], i),
                   ),
@@ -105,6 +103,7 @@ class _SubscriptionPlansCarouselState extends State<SubscriptionPlansCarousel> {
       );
     });
   }
+
   Widget _buildPlanCard(SubscriptionPlan plan, int index) {
     return Obx(() {
       log("Plan is Active or Not  ${plan.isActive}");
@@ -120,21 +119,18 @@ class _SubscriptionPlansCarouselState extends State<SubscriptionPlansCarousel> {
           decoration: BoxDecoration(
             color: ColorRes.white,
             borderRadius: BorderRadius.circular(16),
-            border: isSelected?Border.all(
-              color:
-                   ColorRes.primary,
-                     
-              width: 2 
-            ,
-            ):null,
-             boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 2,
+            border:
+                isSelected
+                    ? Border.all(color: ColorRes.primary, width: 2)
+                    : null,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 2,
 
-              offset: const Offset(0, 3),
-            ),
-          ],
+                offset: const Offset(0, 3),
+              ),
+            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -255,44 +251,37 @@ class _SubscriptionPlansCarouselState extends State<SubscriptionPlansCarousel> {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           children:
-              plan.features
-                  .toFeatureList()
-                  .take(3)
-                  .map((f) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Row(
-                        children: [
-                          Icon(
-                            f.isIncluded ? Icons.check : Icons.close,
-                            size: 16,
+              plan.features.toFeatureList().take(3).map((f) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    children: [
+                      Icon(
+                        f.isIncluded ? Icons.check : Icons.close,
+                        size: 16,
+                        color: f.isIncluded ? ColorRes.primary : ColorRes.error,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          f.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: AppFontSizes.small,
+                            fontWeight: AppFontWeights.medium,
+
                             color:
                                 f.isIncluded
-                                    ? ColorRes.primary
-                                    : ColorRes.error,
+                                    ? ColorRes.textPrimary
+                                    : ColorRes.leadGreyColor,
                           ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              f.name,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: AppFontSizes.small,
-                                fontWeight: AppFontWeights.medium,
-
-                                color:
-                                    f.isIncluded
-                                        ? ColorRes.textPrimary
-                                        : ColorRes.leadGreyColor,
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                    );
-                  })
-                  .toList(),
+                    ],
+                  ),
+                );
+              }).toList(),
         ),
       ),
     );
@@ -332,71 +321,86 @@ class _SubscriptionPlansCarouselState extends State<SubscriptionPlansCarousel> {
       child: SizedBox(
         width: double.infinity,
         child: Obx(() {
-          final isProcessing =widget. controller.isProcessingPayment.value;
+          final isProcessing = widget.controller.isProcessingPayment.value;
 
           return ElevatedButton(
-            onPressed:
-                (isSelected && !isProcessing)
-                    ? () async {
-                      if (UserHelper.isSellerBuilder) {
-                        // For seller builders, show inquiry dialog
-                        log("Seller builder - showing inquiry dialog");
-                        selectedPlanIndex.value = index;
-                        try {
-                          final user = await SecureStorage.getUserData();
+            onPressed: () async {
+              if (isSelected) {
+                if (isProcessing) return;
+                log("Handling plan inquiry for plan: ${plan.id}");
+                try {
+                  final user = await SecureStorage.getUserData();
 
-                          if (user == null) {
-                            NesticoPeSnackBar.showAwesomeSnackbar(
-                              title: 'Error',
-                              message: 'No user data found. Please log in.',
-                              contentType: ContentType.failure,
-                            );
-                            return;
-                          }
+                  final fullName = user?.user?.fullName ?? '';
+                  final firstName = user?.user?.firstName ?? '';
+                  final username = user?.user?.username ?? '';
+                  final email = user?.user?.email ?? '';
+                  final phone = user?.user?.phone ?? '';
+                  final userId = user?.user?.id ?? '';
 
-                          final fullName = user.user?.fullName ?? '';
-                          final firstName = user.user?.firstName ?? '';
-                          final username = user.user?.username ?? '';
-                          final email = user.user?.email ?? '';
-                          final phone = user.user?.phone ?? '';
+                  final displayName =
+                      (firstName.isEmpty ? username : fullName).trim();
 
-                          final displayName =
-                              (firstName.isEmpty ? username : fullName).trim();
+                  if (user != null &&
+                      userId.isNotEmpty &&
+                      displayName.isNotEmpty &&
+                      email.isNotEmpty &&
+                      phone.isNotEmpty) {
+                    // All user details are present -> Submit API call directly
+                    widget.controller.isProcessingPayment.value = true;
+                    final success = await widget.controller.subscriptionPlanInquiry({
+                      "planId": plan.id,
+                      "name": displayName,
+                      "phone": phone,
+                      "email": email,
+                      "userId": userId,
+                      "status": "pending",
+                      "pageSource": "mobile-app",
+                    });
+                    widget.controller.isProcessingPayment.value = false;
 
-                          if (Get.context == null) {
-                            NesticoPeSnackBar.showAwesomeSnackbar(
-                              title: "Error",
-                              message: 'UI not ready to show dialog.',
-                              contentType: ContentType.failure,
-                            );
-                            return;
-                          }
-
-                          addInquiryForPlanBuy(
-                            displayName,
-                            email,
-                            phone,
-                            plan.id,
-                            user.user?.id ?? '',
-                            isPlanInquiry: true,
-                          );
-                        } catch (e, s) {
-                          debugPrint('❌ Error in Get Offer button: $e');
-                          debugPrint('$s');
-
-                          NesticoPeSnackBar.showAwesomeSnackbar(
-                            title: "Error",
-                            message: 'Something went wrong. Please try again.',
-                            contentType: ContentType.failure,
-                          );
-                        }
-                      } else {
-                        // For other users, open Razorpay checkout
-                        log("Opening Razorpay checkout for plan: ${plan.id}");
-                        await widget.controller.openRazorpayCheckout(plan.id);
-                      }
+                    if (success) {
+                      NesticoPeSnackBar.showAwesomeSnackbar(
+                        title: 'Success',
+                        message: 'Enquiry submitted successfully!',
+                        contentType: ContentType.success,
+                      );
+                      showEnquirySuccessDialog();
+                    } else {
+                      NesticoPeSnackBar.showAwesomeSnackbar(
+                        title: 'Error',
+                        message: 'Failed to submit enquiry. Please try again.',
+                        contentType: ContentType.failure,
+                      );
                     }
-                    : () => selectedPlanIndex.value = index,
+                  } else {
+                    // Some details are missing -> Open manual entry form dialog
+                    if (Get.context != null) {
+                      addInquiryForPlanBuy(
+                        displayName,
+                        email,
+                        phone,
+                        plan.id,
+                        userId,
+                        isPlanInquiry: true,
+                      );
+                    }
+                  }
+                } catch (e, s) {
+                  widget.controller.isProcessingPayment.value = false;
+                  debugPrint('❌ Error in handling enquiry: $e');
+                  debugPrint('$s');
+
+                  NesticoPeSnackBar.showAwesomeSnackbar(
+                    title: "Error",
+                    message: 'Something went wrong. Please try again.',
+                    contentType: ContentType.failure,
+                  );
+                }
+              } else {
+                selectedPlanIndex.value = index;
+              }
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor:
                   isSelected
@@ -423,9 +427,7 @@ class _SubscriptionPlansCarouselState extends State<SubscriptionPlansCarousel> {
                     )
                     : Text(
                       isSelected
-                          ? (UserHelper.isSellerBuilder
-                              ? "Get Offer"
-                              : "Buy Now")
+                          ? "Send Enquiry"
                           : "Select Plan",
                       style: const TextStyle(
                         fontWeight: AppFontWeights.semiBold,
@@ -454,9 +456,11 @@ class _SubscriptionPlansCarouselState extends State<SubscriptionPlansCarousel> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildHeader(plan),
-              if (plan.plansFor != "sellerBuilder") ...[_buildPriceSection(plan)],
+              if (plan.plansFor != "sellerBuilder") ...[
+                _buildPriceSection(plan),
+              ],
               const SizedBox(height: 12),
-      
+
               // Full feature list
               ...plan.features.toFeatureList().map((f) {
                 return Padding(
@@ -475,7 +479,7 @@ class _SubscriptionPlansCarouselState extends State<SubscriptionPlansCarousel> {
                           style: TextStyle(
                             fontSize: AppFontSizes.bodySmall,
                             fontWeight: AppFontWeights.medium,
-      
+
                             color:
                                 f.isIncluded
                                     ? ColorRes.textPrimary
@@ -494,6 +498,7 @@ class _SubscriptionPlansCarouselState extends State<SubscriptionPlansCarousel> {
     );
   }
 }
+
 void addInquiryForPlanBuy(
   String name,
   String email,
@@ -679,22 +684,19 @@ void addInquiryForPlanBuy(
                               "email": email,
                               "phone": phone,
                               "status": "pending",
+                              "pageSource": "mobile-app",
                             };
                             final success = await controller
                                 .subscriptionPlanInquiry(inquiry);
 
                             if (success) {
-                              // CustomSnackBar.show(
-                              //   Get.overlayContext!,
-                              //   message: "Inquiry submitted Successfully",
-                              //   type: SnackBarType.success,
-                              // );
                               NesticoPeSnackBar.showAwesomeSnackbar(
                                 title: 'Successfully',
                                 message: " Inquiry submitted Successfully",
                                 contentType: ContentType.success,
                               );
                               Get.back();
+                              showEnquirySuccessDialog();
                             }
                           }
                         },
@@ -733,5 +735,66 @@ void addInquiryForPlanBuy(
       ),
     ),
     barrierDismissible: true,
+  );
+}
+
+void showEnquirySuccessDialog() {
+  Get.dialog(
+    Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      backgroundColor: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.check_circle_rounded,
+              color: ColorRes.primary,
+              size: 72,
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Enquiry Submitted!',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: ColorRes.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'Your enquiry has been successfully submitted. Our team will contact you soon.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                color: ColorRes.leadGreyColor,
+              ),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              height: 44,
+              child: ElevatedButton(
+                onPressed: () => Get.back(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ColorRes.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: const Text(
+                  'Close',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
   );
 }

@@ -290,12 +290,6 @@
       "languageVersion": "2.12"
     },
     {
-      "name": "eventify",
-      "rootUri": "file:///C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/eventify-1.0.1",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    },
-    {
       "name": "excel",
       "rootUri": "file:///C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/excel-4.0.6",
       "packageUri": "lib/",
@@ -848,30 +842,6 @@
       "languageVersion": "3.6"
     },
     {
-      "name": "in_app_purchase",
-      "rootUri": "file:///C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/in_app_purchase-3.3.0",
-      "packageUri": "lib/",
-      "languageVersion": "3.10"
-    },
-    {
-      "name": "in_app_purchase_android",
-      "rootUri": "file:///C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/in_app_purchase_android-0.5.0",
-      "packageUri": "lib/",
-      "languageVersion": "3.10"
-    },
-    {
-      "name": "in_app_purchase_platform_interface",
-      "rootUri": "file:///C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/in_app_purchase_platform_interface-1.4.1",
-      "packageUri": "lib/",
-      "languageVersion": "3.10"
-    },
-    {
-      "name": "in_app_purchase_storekit",
-      "rootUri": "file:///C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/in_app_purchase_storekit-0.4.10",
-      "packageUri": "lib/",
-      "languageVersion": "3.10"
-    },
-    {
       "name": "internet_connection_checker_plus",
       "rootUri": "file:///C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/internet_connection_checker_plus-3.1.0",
       "packageUri": "lib/",
@@ -1212,12 +1182,6 @@
       "rootUri": "file:///C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/qr-3.0.2",
       "packageUri": "lib/",
       "languageVersion": "3.4"
-    },
-    {
-      "name": "razorpay_flutter",
-      "rootUri": "file:///C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/razorpay_flutter-1.4.5",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
     },
     {
       "name": "readmore",

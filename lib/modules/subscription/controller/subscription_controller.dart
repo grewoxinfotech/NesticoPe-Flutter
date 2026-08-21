@@ -137,7 +137,7 @@ import 'package:nesticope_app/modules/contractor/controller/contractor_dashboard
 import 'package:nesticope_app/modules/subscription/controller/google_play_billing_service.dart';
 import 'package:nesticope_app/modules/subscription/controller/user_subscription_controller.dart';
 import 'package:nesticope_app/widgets/messages/snack_bar.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
+// import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import '../../../app/care/pagination/controller/pagination_controller.dart';
 import '../../../app/care/pagination/models/pagination_models.dart';
@@ -147,11 +147,10 @@ import '../../../data/network/subscription/services/subscription_services.dart';
 
 class SubscriptionPlanController extends PaginatedController<SubscriptionPlan> {
   final SubscriptionPlanService _service = SubscriptionPlanService();
- final ContractorDashboardController dashboardController = Get.isRegistered<ContractorDashboardController>()
-            ? Get.find<ContractorDashboardController>()
-            : Get.put(ContractorDashboardController());
-
-  
+  final ContractorDashboardController dashboardController =
+      Get.isRegistered<ContractorDashboardController>()
+          ? Get.find<ContractorDashboardController>()
+          : Get.put(ContractorDashboardController());
 
   /// Role always comes from UI (seller, sellerBuilder, reseller, contractor)
   final String userRole;
@@ -160,7 +159,7 @@ class SubscriptionPlanController extends PaginatedController<SubscriptionPlan> {
   Map<String, String> filters = {};
 
   /// Razorpay instance
-  late Razorpay _razorpay;
+  // late Razorpay _razorpay;
 
   /// Google Play Billing service
   // late final GooglePlayBillingService googlePlayBillingService;
@@ -181,10 +180,10 @@ class SubscriptionPlanController extends PaginatedController<SubscriptionPlan> {
     filters["plansFor"] = _resolvePlansFor(userRole);
 
     /// Initialize Razorpay
-    _razorpay = Razorpay();
-    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
-    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    // _razorpay = Razorpay();
+    // _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    // _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    // _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
 
     // googlePlayBillingService = GooglePlayBillingService(
     //   onPurchaseVerified: _handleGooglePlayPurchaseVerified,
@@ -198,7 +197,7 @@ class SubscriptionPlanController extends PaginatedController<SubscriptionPlan> {
   @override
   void onClose() {
     // googlePlayBillingService.dispose();
-    _razorpay.clear();
+    // _razorpay.clear();
     super.onClose();
   }
 
@@ -319,7 +318,7 @@ class SubscriptionPlanController extends PaginatedController<SubscriptionPlan> {
         'theme': {'color': '#3399cc'},
       };
 
-      _razorpay.open(options);
+      // _razorpay.open(options);
     } catch (e) {
       debugPrint("Exception in openRazorpayCheckout: $e");
       isProcessingPayment.value = false;
@@ -343,10 +342,10 @@ class SubscriptionPlanController extends PaginatedController<SubscriptionPlan> {
       showDialogWhenMissing: false,
     );
 
-    final hasCurrentPlanController = Get.isRegistered<CurrentUserPlanController>();
-    final currentPlanCtrl = hasCurrentPlanController
-        ? Get.find<CurrentUserPlanController>()
-        : null;
+    final hasCurrentPlanController =
+        Get.isRegistered<CurrentUserPlanController>();
+    final currentPlanCtrl =
+        hasCurrentPlanController ? Get.find<CurrentUserPlanController>() : null;
 
     if (currentPlanCtrl != null) {
       const int attempts = 5;
@@ -387,83 +386,83 @@ class SubscriptionPlanController extends PaginatedController<SubscriptionPlan> {
   }
 
   /// Handle successful payment
-  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
-    log('Payment Success: ${response.paymentId}');
-    log('Order ID: ${response.orderId}');
-    log('Signature: ${response.signature}');
+  // void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+  //   log('Payment Success: ${response.paymentId}');
+  //   log('Order ID: ${response.orderId}');
+  //   log('Signature: ${response.signature}');
 
-    try {
-      // Verify payment with backend
-      final isVerified = await _service.verifyPayment(
-        razorpayOrderId: response.orderId ?? '',
-        razorpayPaymentId: response.paymentId ?? '',
-        razorpaySignature: response.signature ?? '',
-        autoRenew: _autoRenew,
-        userId: _userId,
-        planId: _planId,
-      );
+  //   try {
+  //     // Verify payment with backend
+  //     final isVerified = await _service.verifyPayment(
+  //       razorpayOrderId: response.orderId ?? '',
+  //       razorpayPaymentId: response.paymentId ?? '',
+  //       razorpaySignature: response.signature ?? '',
+  //       autoRenew: _autoRenew,
+  //       userId: _userId,
+  //       planId: _planId,
+  //     );
 
-      if (isVerified) {
-        await dashboardController.fetchActiveSubscription(
-          showDialogWhenMissing: false,
-        );
-        
-        /// Backend may take a moment to flip the subscription status
-        /// from `pending` -> `active`. Poll a few times so the UI updates
-        /// without requiring screen close/reopen.
-        final hasCurrentPlanController = Get.isRegistered<CurrentUserPlanController>();
-        final currentPlanCtrl = hasCurrentPlanController
-            ? Get.find<CurrentUserPlanController>()
-            : null;
+  //     if (isVerified) {
+  //       await dashboardController.fetchActiveSubscription(
+  //         showDialogWhenMissing: false,
+  //       );
 
-        if (currentPlanCtrl != null) {
-          const int attempts = 5;
-          for (int i = 0; i < attempts; i++) {
-            await currentPlanCtrl.refreshList();
-            final hasActive = currentPlanCtrl.items.any(
-              (e) => (e.status ?? '').toLowerCase() == 'active',
-            );
-            if (hasActive) break;
-            await Future.delayed(const Duration(seconds: 2));
-          }
-        }
-        
-        NesticoPeSnackBar.showAwesomeSnackbar(
-          title: 'Success',
-          message: 'Payment completed successfully!',
-          contentType: ContentType.success,
-        );
+  //       /// Backend may take a moment to flip the subscription status
+  //       /// from `pending` -> `active`. Poll a few times so the UI updates
+  //       /// without requiring screen close/reopen.
+  //       final hasCurrentPlanController = Get.isRegistered<CurrentUserPlanController>();
+  //       final currentPlanCtrl = hasCurrentPlanController
+  //           ? Get.find<CurrentUserPlanController>()
+  //           : null;
 
-        /// Extra refresh to ensure any derived UI is recomputed.
-        if (currentPlanCtrl != null) {
-          await currentPlanCtrl.refreshList();
-        }
-      }     
-    } catch (e) {
-      debugPrint("Error verifying payment: $e");
-    } finally {
-      isProcessingPayment.value = false;
-    }
-  }
+  //       if (currentPlanCtrl != null) {
+  //         const int attempts = 5;
+  //         for (int i = 0; i < attempts; i++) {
+  //           await currentPlanCtrl.refreshList();
+  //           final hasActive = currentPlanCtrl.items.any(
+  //             (e) => (e.status ?? '').toLowerCase() == 'active',
+  //           );
+  //           if (hasActive) break;
+  //           await Future.delayed(const Duration(seconds: 2));
+  //         }
+  //       }
+
+  //       NesticoPeSnackBar.showAwesomeSnackbar(
+  //         title: 'Success',
+  //         message: 'Payment completed successfully!',
+  //         contentType: ContentType.success,
+  //       );
+
+  //       /// Extra refresh to ensure any derived UI is recomputed.
+  //       if (currentPlanCtrl != null) {
+  //         await currentPlanCtrl.refreshList();
+  //       }
+  //     }
+  //   } catch (e) {
+  //     debugPrint("Error verifying payment: $e");
+  //   } finally {
+  //     isProcessingPayment.value = false;
+  //   }
+  // }
 
   /// Handle payment error
-  void _handlePaymentError(PaymentFailureResponse response) {
-    log('Payment Error: ${response.code} - ${response.message}');
+  // void _handlePaymentError(PaymentFailureResponse response) {
+  //   log('Payment Error: ${response.code} - ${response.message}');
 
-    NesticoPeSnackBar.showAwesomeSnackbar(
-      title: 'Payment Failed',
-      message: response.message ?? 'An error occurred during payment',
-      contentType: ContentType.failure,
-    );
+  //   NesticoPeSnackBar.showAwesomeSnackbar(
+  //     title: 'Payment Failed',
+  //     message: response.message ?? 'An error occurred during payment',
+  //     contentType: ContentType.failure,
+  //   );
 
-    isProcessingPayment.value = false;
-  }
+  //   isProcessingPayment.value = false;
+  // }
 
-  /// Handle external wallet
-  void _handleExternalWallet(ExternalWalletResponse response) {
-    log('External Wallet: ${response.walletName}');
-    isProcessingPayment.value = false;
-  }
+  // /// Handle external wallet
+  // void _handleExternalWallet(ExternalWalletResponse response) {
+  //   log('External Wallet: ${response.walletName}');
+  //   isProcessingPayment.value = false;
+  // }
 
   ///==================== Legacy method (kept for backward compatibility) ====================
   @Deprecated('Use openRazorpayCheckout instead')

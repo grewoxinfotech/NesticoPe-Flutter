@@ -36,11 +36,11 @@
             android:name="com.truecaller.android.sdk.ClientId"
             android:value="tjb9zwljvdj2kpntmvqr527wngjj9fqskh9nhh_gz7m"/>
 
-        <activity
+        <!-- <activity
             android:name="com.razorpay.CheckoutActivity"
             android:exported="false"
             android:theme="@style/CheckoutTheme"
-            tools:replace="android:exported,android:theme"/>
+            tools:replace="android:exported,android:theme"/> -->
 
         <activity
             android:name=".MainActivity"

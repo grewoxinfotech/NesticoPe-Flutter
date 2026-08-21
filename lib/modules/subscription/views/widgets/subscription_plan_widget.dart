@@ -1202,7 +1202,7 @@ class SubscriptionPlansWidget extends StatelessWidget {
           final buttonText =
               isActivePlan
                   ? 'Active Plan'
-                  : (isExpiredPlan ? 'Renew' : 'Buy Now');
+                  : (isExpiredPlan ? 'Renew' : 'Send Enquiry');
           final Color bg = rec ? ColorRes.black : ColorRes.white;
           final Color fg =
               rec ? Colors.black : Colors.white.withValues(alpha: 0.8);
@@ -1223,60 +1223,69 @@ class SubscriptionPlansWidget extends StatelessWidget {
                           () => ConvertToContractorConversionScreen(),
                         );
                         return;
-                      } else if (UserHelper.isContractor) {
-                        //  NesticoPeSnackBar.showAwesomeSnackbar(
-                        //     title: "Info",
-                        //     message: 'Payment Integration Pending',
-                        //     contentType: ContentType.help,
-                        //   );
-                        // log(
-                        //   "Contractor user - opening Google Play checkout for plan: ${plan.id}",
-                        // );
-                        // await controller.openGooglePlayCheckout(plan.id);
-                        return;
-                      } else if (UserHelper.isSellerBuilder) {
-                        // For seller builders, show inquiry dialog
-                        log("Seller builder - showing inquiry dialog");
+                      } else {
+                        log("Handling plan inquiry for plan: ${plan.id}");
                         try {
                           final user = await SecureStorage.getUserData();
 
-                          if (user == null) {
-                            NesticoPeSnackBar.showAwesomeSnackbar(
-                              title: 'Error',
-                              message: 'No user data found. Please log in.',
-                              contentType: ContentType.failure,
-                            );
-                            return;
-                          }
-
-                          final fullName = user.user?.fullName ?? '';
-                          final firstName = user.user?.firstName ?? '';
-                          final username = user.user?.username ?? '';
-                          final email = user.user?.email ?? '';
-                          final phone = user.user?.phone ?? '';
+                          final fullName = user?.user?.fullName ?? '';
+                          final firstName = user?.user?.firstName ?? '';
+                          final username = user?.user?.username ?? '';
+                          final email = user?.user?.email ?? '';
+                          final phone = user?.user?.phone ?? '';
+                          final userId = user?.user?.id ?? '';
 
                           final displayName =
                               (firstName.isEmpty ? username : fullName).trim();
 
-                          if (Get.context == null) {
-                            NesticoPeSnackBar.showAwesomeSnackbar(
-                              title: "Error",
-                              message: 'UI not ready to show dialog.',
-                              contentType: ContentType.failure,
-                            );
-                            return;
-                          }
+                          if (user != null &&
+                              userId.isNotEmpty &&
+                              displayName.isNotEmpty &&
+                              email.isNotEmpty &&
+                              phone.isNotEmpty) {
+                            // All user details are present -> Submit API call directly
+                            controller.isProcessingPayment.value = true;
+                            final success = await controller.subscriptionPlanInquiry({
+                              "planId": plan.id,
+                              "name": displayName,
+                              "phone": phone,
+                              "email": email,
+                              "userId": userId,
+                              "status": "pending",
+                              "pageSource": "mobile-app",
+                            });
+                            controller.isProcessingPayment.value = false;
 
-                          addInquiryForPlanBuy(
-                            displayName,
-                            email,
-                            phone,
-                            plan.id,
-                            user.user?.id ?? '',
-                            isPlanInquiry: true,
-                          );
+                            if (success) {
+                              NesticoPeSnackBar.showAwesomeSnackbar(
+                                title: 'Success',
+                                message: 'Enquiry submitted successfully!',
+                                contentType: ContentType.success,
+                              );
+                              showEnquirySuccessDialog();
+                            } else {
+                              NesticoPeSnackBar.showAwesomeSnackbar(
+                                title: 'Error',
+                                message: 'Failed to submit enquiry. Please try again.',
+                                contentType: ContentType.failure,
+                              );
+                            }
+                          } else {
+                            // Some details are missing -> Open manual entry form dialog
+                            if (Get.context != null) {
+                              addInquiryForPlanBuy(
+                                displayName,
+                                email,
+                                phone,
+                                plan.id,
+                                userId,
+                                isPlanInquiry: true,
+                              );
+                            }
+                          }
                         } catch (e, s) {
-                          debugPrint('❌ Error in Get Offer button: $e');
+                          controller.isProcessingPayment.value = false;
+                          debugPrint('❌ Error in handling enquiry: $e');
                           debugPrint('$s');
 
                           NesticoPeSnackBar.showAwesomeSnackbar(
@@ -1286,18 +1295,6 @@ class SubscriptionPlansWidget extends StatelessWidget {
                           );
                         }
                         return;
-                      } else {
-                        NesticoPeSnackBar.showAwesomeSnackbar(
-                          title: "Info",
-                          message: 'Payment Integration Pending',
-                          contentType: ContentType.help,
-                        );
-                        // For other users, open Google Play checkout
-                        // log("Opening Google Play checkout for plan: ${plan.id}");
-                        // await controller.openGooglePlayCheckout(plan.id);
-                        // await purchaseSubscription(planId: plan.id);
-
-                        // return;
                       }
                     }
                     : null,
@@ -1978,22 +1975,19 @@ void addInquiryForPlanBuy(
                               "email": email,
                               "phone": phone,
                               "status": "pending",
+                              "pageSource": "mobile-app",
                             };
                             final success = await controller
                                 .subscriptionPlanInquiry(inquiry);
 
                             if (success) {
-                              // CustomSnackBar.show(
-                              //   Get.overlayContext!,
-                              //   message: "Inquiry submitted Successfully",
-                              //   type: SnackBarType.success,
-                              // );
                               NesticoPeSnackBar.showAwesomeSnackbar(
                                 title: 'Successfully',
                                 message: "Inquiry submitted Successfully",
                                 contentType: ContentType.success,
                               );
                               Get.back();
+                              showEnquirySuccessDialog();
                             }
                           }
                         },
@@ -2032,5 +2026,66 @@ void addInquiryForPlanBuy(
       ),
     ),
     barrierDismissible: true,
+  );
+}
+
+void showEnquirySuccessDialog() {
+  Get.dialog(
+    Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      backgroundColor: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.check_circle_rounded,
+              color: ColorRes.primary,
+              size: 72,
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Enquiry Submitted!',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: ColorRes.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'Your enquiry has been successfully submitted. Our team will contact you soon.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                color: ColorRes.leadGreyColor,
+              ),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              height: 44,
+              child: ElevatedButton(
+                onPressed: () => Get.back(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ColorRes.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: const Text(
+                  'Close',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
   );
 }
