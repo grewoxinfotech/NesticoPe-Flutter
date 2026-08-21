@@ -6,6 +6,10 @@ import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 import '../../../../data/network/verification/aadhar_auth/service/aadhar_auth_service.dart';
 import '../screens/aadhar_verify_otp_screen.dart';
 
+import 'package:nesticope_app/modules/profile/controllers/seller_profile_controller.dart';
+import 'package:nesticope_app/modules/contractor/controller/contractor_profile_controller.dart';
+import 'package:nesticope_app/modules/reseller/controller/profile/profile_controller.dart';
+
 class AadharAuthController extends GetxController {
   final AadharAuthService _aadharAuthService = AadharAuthService();
 
@@ -27,10 +31,24 @@ class AadharAuthController extends GetxController {
       if (data['success']) {
         print('Aadhar verification initiated successfully');
 
-        // Extract request_id from the nested response structure
-        final responseData = data['data']['data'];
-        if (responseData['data']['otp_sent'] == true) {
-          requestId.value = responseData['request_id'].toString();
+        // Extract request_id/reference_id from the nested response structure
+        String? refId;
+        final level1 = data['data'];
+        if (level1 is Map) {
+          final level2 = level1['data'];
+          if (level2 is Map) {
+            final level3 = level2['data'];
+            if (level3 is Map) {
+              refId = (level3['reference_id'] ?? level3['ref_id'])?.toString();
+            }
+            refId ??= (level2['reference_id'] ?? level2['ref_id'] ?? level2['request_id'])?.toString();
+          }
+          refId ??= (level1['reference_id'] ?? level1['ref_id'] ?? level1['request_id'])?.toString();
+        }
+        refId ??= (data['reference_id'] ?? data['ref_id'] ?? data['request_id'])?.toString();
+
+        if (refId != null) {
+          requestId.value = refId;
           aadharNumber.value = aadharNum;
 
           // Navigate to OTP verification screen
@@ -42,7 +60,22 @@ class AadharAuthController extends GetxController {
             contentType: ContentType.success,
           );
         } else {
-          errorMessage.value = 'Failed to send OTP. Please try again.';
+          String? specificError;
+          final l1 = data['data'];
+          if (l1 is Map) {
+            final l2 = l1['data'];
+            if (l2 is Map) {
+              final l3 = l2['data'];
+              if (l3 is Map) {
+                specificError = l3['message']?.toString();
+              }
+              specificError ??= l2['message']?.toString();
+            }
+            specificError ??= l1['message']?.toString();
+          }
+          specificError ??= data['message']?.toString();
+
+          errorMessage.value = specificError ?? 'Failed to get verification reference ID. Please try again.';
           _showErrorSnackbar(errorMessage.value);
         }
       } else {
@@ -74,6 +107,7 @@ class AadharAuthController extends GetxController {
       if (data['success']) {
         print('Aadhar OTP verified successfully');
         UserHelper.setAadharVerified(true);
+        _refreshProfileControllers();
         return true;
       } else {
         errorMessage.value = data['message'] ?? 'Failed to verify Aadhar OTP';
@@ -87,6 +121,38 @@ class AadharAuthController extends GetxController {
       return false;
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  void _refreshProfileControllers() {
+    try {
+      // 1. Seller Profile
+      if (Get.isRegistered<SellerProfileController>()) {
+        Get.find<SellerProfileController>().refreshProfile();
+        print('AadharAuthController: Refreshed SellerProfileController');
+      }
+    } catch (e) {
+      print('AadharAuthController: Error refreshing SellerProfileController: $e');
+    }
+
+    try {
+      // 2. Contractor Profile
+      if (Get.isRegistered<ContractorProfileController>()) {
+        Get.find<ContractorProfileController>().refreshFollowUp();
+        print('AadharAuthController: Refreshed ContractorProfileController');
+      }
+    } catch (e) {
+      print('AadharAuthController: Error refreshing ContractorProfileController: $e');
+    }
+
+    try {
+      // 3. Reseller Profile (ProfileController)
+      if (Get.isRegistered<ProfileController>()) {
+        Get.find<ProfileController>().refreshReseller();
+        print('AadharAuthController: Refreshed Reseller ProfileController');
+      }
+    } catch (e) {
+      print('AadharAuthController: Error refreshing Reseller ProfileController: $e');
     }
   }
 

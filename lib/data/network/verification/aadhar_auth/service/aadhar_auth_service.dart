@@ -25,6 +25,8 @@ class AadharAuthService {
 
       final data = jsonDecode(response.body);
 
+      print("cbshdc${data}");
+
       if (response.statusCode == 200) {
         return data;
       } else {
@@ -47,7 +49,7 @@ class AadharAuthService {
       final response = await http.post(
         Uri.parse(aadharOtp),
         headers: await headers(),
-        body: jsonEncode({'request_id': requestId, 'otp': otp}),
+        body: jsonEncode({'reference_id': requestId, 'otp': otp}),
       );
       final data = jsonDecode(response.body);
 

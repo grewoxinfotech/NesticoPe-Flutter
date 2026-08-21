@@ -1224,14 +1224,14 @@ class SubscriptionPlansWidget extends StatelessWidget {
                         );
                         return;
                       } else if (UserHelper.isContractor) {
-                         NesticoPeSnackBar.showAwesomeSnackbar(
-                            title: "Info",
-                            message: 'Payment Integration Pending',
-                            contentType: ContentType.help,
-                          );
-                        log(
-                          "Contractor user - opening Google Play checkout for plan: ${plan.id}",
-                        );
+                        //  NesticoPeSnackBar.showAwesomeSnackbar(
+                        //     title: "Info",
+                        //     message: 'Payment Integration Pending',
+                        //     contentType: ContentType.help,
+                        //   );
+                        // log(
+                        //   "Contractor user - opening Google Play checkout for plan: ${plan.id}",
+                        // );
                         // await controller.openGooglePlayCheckout(plan.id);
                         return;
                       } else if (UserHelper.isSellerBuilder) {
@@ -1288,15 +1288,15 @@ class SubscriptionPlansWidget extends StatelessWidget {
                         return;
                       } else {
                         NesticoPeSnackBar.showAwesomeSnackbar(
-                            title: "Info",
-                            message: 'Payment Integration Pending',
-                            contentType: ContentType.help,
-                          );
+                          title: "Info",
+                          message: 'Payment Integration Pending',
+                          contentType: ContentType.help,
+                        );
                         // For other users, open Google Play checkout
                         // log("Opening Google Play checkout for plan: ${plan.id}");
                         // await controller.openGooglePlayCheckout(plan.id);
                         // await purchaseSubscription(planId: plan.id);
-                        
+
                         // return;
                       }
                     }

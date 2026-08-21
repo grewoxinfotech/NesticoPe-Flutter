@@ -30,6 +30,7 @@ import '../../../../profile/views/profile_screen.dart';
 import '../../../../reseller/view/property_reseller.dart';
 import '../../../../reseller/widget/graph/linear_graph.dart';
 import '../../../../verification/aadhar_auth/screens/aadhar_auth_screen.dart';
+import '../../../../verification/aadhar_auth/widgets/aadhar_verification_dialog.dart';
 import '../../../../verification/mou_verification/controllers/mou_verification_controller.dart';
 import '../../../../verification/mou_verification/screens/mou_verification_screen.dart';
 
@@ -1092,11 +1093,9 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
 
         onPressed: () async {
           /// 1️⃣ Check Aadhar
-          if (UserHelper.isAadharActive) {
-            if (!UserHelper.isAadharVerified) {
-              Get.to(() => AadharAuthScreen());
-              return;
-            }
+          if (UserHelper.isAadharActive && !UserHelper.isAadharVerified) {
+            final verified = await AadharVerificationDialog.show(context);
+            if (verified != true) return;
           }
 
           /// 2️⃣ Load signatures

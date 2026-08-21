@@ -1661,6 +1661,7 @@ import '../../../reseller/view/reseller_success_stories/reseller_success_stories
 import '../../controller/contractor_dashboard_controller.dart';
 import '../../controller/contractor_profile_controller.dart';
 import '../contractor_plan/contractor_plan_screen.dart';
+import 'package:nesticope_app/modules/verification/aadhar_auth/widgets/aadhar_verification_dialog.dart';
 import '../employee/contractor_employee_screen.dart';
 import '../project/contractor_service.dart';
 import '../widget/my_service_screen.dart';
@@ -2985,6 +2986,95 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
               ),
             ],
           ),
+          if (UserHelper.isAadharActive) ...[
+            SizedBox(height: 10),
+            Divider(height: 20, color: Colors.white.withOpacity(0.1)),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Expanded(
+                  child: Text(
+                    'Aadhaar Verification',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF9CA3AF),
+                      fontWeight: AppFontWeights.medium,
+                    ),
+                  ),
+                ),
+                Obx(() {
+                  final isAadharVerified = ((controller.profileData.value?.user?.isAadharVerified == true) || UserHelper.isAadharVerified);
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: isAadharVerified ? ColorRes.success : Colors.orange.shade400,
+                          ),
+                          color: const Color.fromARGB(255, 28, 28, 44),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          isAadharVerified ? 'Verified' : 'Pending / Not Verified',
+                          style: TextStyle(
+                            color: isAadharVerified ? ColorRes.success : Colors.orange.shade400,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                      if (!isAadharVerified) ...[
+                        const SizedBox(width: 8),
+                        SizedBox(
+                          height: 28,
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              if (dashboardController.activeSubscription.value == null) {
+                                NesticoPeSnackBar.showAwesomeSnackbar(
+                                  title: 'Subscription Required',
+                                  message: 'First active plan then verify',
+                                  contentType: ContentType.warning,
+                                );
+                                return;
+                              }
+                              final verified = await AadharVerificationDialog.show(context);
+                              if (verified == true) {
+                                controller.refreshFollowUp();
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: dashboardController.activeSubscription.value != null
+                                  ? ColorRes.primary
+                                  : Colors.grey.shade400,
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                            child: const Text(
+                              'Verify Now',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  );
+                }),
+              ],
+            ),
+          ],
         ],
       ),
     );

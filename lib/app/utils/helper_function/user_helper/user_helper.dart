@@ -27,6 +27,7 @@ class UserHelper {
       _cachedSellerType = _mapSellerStringToEnum(sellerTypeString);
 
       _cachedIsAadharVerified = user?.user?.isAadharVerified ?? false;
+      _cachedIsAadharActive = ApiConfig.isAdharActive;
 
       print(
         'User type initialized: ${userTypeString} (${sellerTypeStringValue})',

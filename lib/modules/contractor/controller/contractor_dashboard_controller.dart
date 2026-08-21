@@ -10,6 +10,7 @@ import 'package:nesticope_app/data/network/contractor/model/subscription/contrac
 import 'package:nesticope_app/data/network/contractor/service/subscription/contractor_subscription_service.dart';
 import 'package:nesticope_app/modules/subscription/views/suscription_plan_screen.dart';
 
+import '../../verification/aadhar_auth/widgets/aadhar_verification_dialog.dart';
 import '../../../data/database/secure_storage_service.dart';
 import '../../../data/network/contractor/service/dashboard/contractor_dashboard_service.dart';
 import '../../../widgets/messages/snack_bar.dart';
@@ -195,6 +196,12 @@ class ContractorDashboardController extends GetxController {
           buttonText: 'Upgrade Plan',
         );
         return;
+      }
+    }
+    if (UserHelper.isAadharActive && !UserHelper.isAadharVerified) {
+      if (Get.context != null) {
+        final verified = await AadharVerificationDialog.show(Get.context!);
+        if (verified != true) return;
       }
     }
     onAllowed();

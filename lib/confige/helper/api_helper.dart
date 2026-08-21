@@ -112,13 +112,14 @@ class ApiConfig {
           final name = (m['name'] ?? '').toString().toLowerCase();
           if (name.contains('aadhar verification')) {
            if(m['status']?.toString().toLowerCase() == 'active'){
-            final token = m['token']?.toString();
-            final apiKey = m['apiKey']?.toString();
-            final clientId =
-                (token != null && token.isNotEmpty) ? token : (apiKey ?? '');
-            if (clientId.isNotEmpty) {
-              truecallerClientId = clientId;
-            }
+             isAdharActive = true;
+             final token = m['token']?.toString();
+             final apiKey = m['apiKey']?.toString();
+             final clientId =
+                 (token != null && token.isNotEmpty) ? token : (apiKey ?? '');
+             if (clientId.isNotEmpty) {
+               aadharClientId = clientId;
+             }
            }
            else{
              isAdharActive = false;

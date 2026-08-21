@@ -646,6 +646,7 @@ import '../../seller/module/seller_home_screen/views/property_overview_screen.da
 import '../../seller/module/seller_home_screen/views/seller_home_screen.dart';
 import '../../seller/module/seller_home_screen/views/widget/property_distribution_pie_graph.dart';
 import '../../verification/aadhar_auth/screens/aadhar_auth_screen.dart';
+import '../../verification/aadhar_auth/widgets/aadhar_verification_dialog.dart';
 import '../../verification/mou_verification/controllers/mou_verification_controller.dart';
 import '../../verification/mou_verification/screens/mou_verification_screen.dart';
 import '../controller/builder_form_controller.dart';
@@ -728,11 +729,9 @@ class _BuilderDashboardState extends State<BuilderDashboard> {
       floatingButton: FloatingActionButton.extended(
         onPressed: () async {
           /// 1️⃣ Check Aadhar first
-          if (UserHelper.isAadharActive) {
-            if (!UserHelper.isAadharVerified) {
-              Get.to(() => AadharAuthScreen());
-              return;
-            }
+          if (UserHelper.isAadharActive && !UserHelper.isAadharVerified) {
+            final verified = await AadharVerificationDialog.show(context);
+            if (verified != true) return;
           }
 
           /// 2️⃣ Ensure signatures are loaded

@@ -193,7 +193,8 @@ Future<void> purchaseSubscription({required String planId}) async {
       },
       body: jsonEncode({
         "planId": planId,
-        'packageName':packageInfo.packageName, // Update with actual package name
+        'packageName':
+            packageInfo.packageName, // Update with actual package name
         'userId': user?.user?.id, // Current user's database ID
       }),
     );

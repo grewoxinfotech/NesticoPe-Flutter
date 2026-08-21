@@ -21,6 +21,7 @@ import 'package:nesticope_app/modules/review/views/widget/app_review_card.dart';
 import 'package:nesticope_app/modules/subscription/views/my_subscription_screen.dart';
 import 'package:nesticope_app/modules/support_ticket/controllers/chat_socket_controller.dart';
 import 'package:nesticope_app/modules/support_ticket/views/support_ticket_screen.dart';
+import 'package:nesticope_app/modules/verification/aadhar_auth/widgets/aadhar_verification_dialog.dart';
 import 'package:nesticope_app/widgets/button/button.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
@@ -28,6 +29,7 @@ import '../../../../utils/shimmer/reseller/profile_screen/reseller_profile_scree
 import '../../../../widgets/input/city_selection_widget.dart';
 import '../../../../widgets/messages/snack_bar.dart';
 import '../../../auth/views/delete_account.dart';
+
 import '../../../home/views/home_screen/home_screen.dart';
 import '../../../seller/module/lead_screen/controllers/lead_controller.dart';
 import '../../controller/fack_lead_controller/fack_lead_controller.dart';
@@ -65,7 +67,6 @@ class _ResellerProfileScreenState extends State<ResellerProfileScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F6FA),
       appBar: AppBar(
-        
         automaticallyImplyLeading: false,
         title: const Text(
           'Profile',
@@ -352,7 +353,7 @@ class _ResellerProfileScreenState extends State<ResellerProfileScreen> {
             (!profileController.isEditing.value)
                 ? SafeArea(
                   child: Container(
-                      decoration: BoxDecoration(
+                    decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -1033,6 +1034,99 @@ class _ResellerProfileScreenState extends State<ResellerProfileScreen> {
               ),
             ],
           ),
+          if (UserHelper.isAadharActive) ...[
+            SizedBox(height: 10),
+            Divider(height: 20, color: Colors.white.withOpacity(0.1)),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Expanded(
+                  child: Text(
+                    'Aadhaar Verification',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF9CA3AF),
+                      fontWeight: AppFontWeights.medium,
+                    ),
+                  ),
+                ),
+                Obx(() {
+                  final isAadharVerified =
+                      ((controller.profileData.value?.user?.isAadharVerified ==
+                              true) ||
+                          UserHelper.isAadharVerified);
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color:
+                                isAadharVerified
+                                    ? ColorRes.success
+                                    : Colors.orange.shade400,
+                          ),
+                          color: const Color.fromARGB(255, 28, 28, 44),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          isAadharVerified
+                              ? 'Verified'
+                              : 'Pending / Not Verified',
+                          style: TextStyle(
+                            color:
+                                isAadharVerified
+                                    ? ColorRes.success
+                                    : Colors.orange.shade400,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                      if (!isAadharVerified) ...[
+                        const SizedBox(width: 8),
+                        SizedBox(
+                          height: 28,
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              final verified =
+                                  await AadharVerificationDialog.show(context);
+                              if (verified == true) {
+                                controller.refreshReseller();
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: ColorRes.primary,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                            child: const Text(
+                              'Verify Now',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  );
+                }),
+              ],
+            ),
+          ],
         ],
       ),
     );
@@ -1520,7 +1614,7 @@ class _ResellerProfileScreenState extends State<ResellerProfileScreen> {
           // Username
           Obx(
             () => Text(
-               (controller.profileData.value?.user?.username ?? 'User Name')
+              (controller.profileData.value?.user?.username ?? 'User Name')
                       .capitalize
                       ?.replaceAll('_', ' ') ??
                   '',
