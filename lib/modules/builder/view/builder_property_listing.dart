@@ -200,6 +200,11 @@ class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
   void initState() {
     super.initState();
     controller = Get.put(BuilderProjectListController());
+    
+    // Force reload on entering this screen to ensure it fetches projects with active credentials
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.refreshProjects();
+    });
   }
 
   @override
@@ -297,6 +302,8 @@ class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
               child: Obx(() {
                 final state = controller.loadingState.value;
 
+                debugPrint("🎨 [UI Obx] BuilderPropertyListing: state = $state, itemsCount = ${controller.items.length}, filters = ${controller.filters}");
+
                 /// Initial loading (shimmer)
                 if (state == BuilderProjectLoadingState.initialLoading &&
                     controller.items.isEmpty) {
@@ -304,18 +311,54 @@ class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
                 }
 
                 /// Empty state
-                if (state == BuilderProjectLoadingState.normal &&
-                    controller.items.isEmpty) {
+                if (controller.items.isEmpty) {
                   return RefreshIndicator(
                     onRefresh: controller.refreshProjects,
-                    child: ListView(
-                      children: const [
-                        SizedBox(height: 120),
-                        Center(child: Text('No projects found')),
-                      ],
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const SizedBox(height: 120),
+                            const Icon(
+                              Icons.folder_off_outlined,
+                              size: 64,
+                              color: ColorRes.textSecondary,
+                            ),
+                            const SizedBox(height: 16),
+                            const Text(
+                              'No projects found',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: AppFontWeights.bold,
+                                color: ColorRes.textPrimary,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'State: $state\nFilters: ${controller.filters}',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: ColorRes.textSecondary,
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                debugPrint("🔄 Manual refresh clicked");
+                                controller.refreshProjects();
+                              },
+                              icon: const Icon(Icons.refresh),
+                              label: const Text("Refresh List"),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   );
-                  // return ProjectListScreenShimmer();
                 }
 
                 /// Main list with overlays

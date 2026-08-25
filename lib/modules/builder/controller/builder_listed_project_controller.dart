@@ -551,6 +551,7 @@ class BuilderProjectListController extends PaginatedController<ProjectItem> {
     final userId = userData?.user?.id;
     if (userId != null) {
       filters['created_by'] = userId;
+      filters.remove('createdBy'); // Explicitly remove any stale camelCase key
     }
   }
 
@@ -648,6 +649,7 @@ class BuilderProjectListController extends PaginatedController<ProjectItem> {
     totalPages.value = 1;
     hasMore.value = true;
     items.clear();
+    await applyBuilderFilter();
     await refreshList();
   }
 

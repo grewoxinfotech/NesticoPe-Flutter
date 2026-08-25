@@ -745,6 +745,7 @@ class ProjectVariant {
   double? platformFees;
   String? buildingName;
   double? brokerCommission;
+  double? bookingAmount;
 
   List<String> specifications;
   VariantMedia? mediaItems;
@@ -767,6 +768,7 @@ class ProjectVariant {
     this.mediaItems,
     this.threeDModel,
     this.variantId,
+    this.bookingAmount,
   });
 
   factory ProjectVariant.fromJson(Map<String, dynamic> json) {
@@ -792,6 +794,7 @@ class ProjectVariant {
           json['brokerCommission'] != null
               ? (json['brokerCommission']).toDouble()
               : null,
+      bookingAmount: (json['bookingAmount'] ?? json['booking_amount'] ?? json['booking'])?.toDouble(),
       // specifications: List<String>.from(json['specifications'] ?? []),
       specifications:
           (json['specifications'] as List<dynamic>? ?? []).map((e) {
@@ -822,6 +825,9 @@ class ProjectVariant {
 
     'threeDModel': threeDModel,
     'variantId': variantId,
+    'bookingAmount': bookingAmount,
+    'booking_amount': bookingAmount,
+    'booking': bookingAmount,
   };
   int get soldUnits => totalUnits - availableUnits;
 }
@@ -863,7 +869,7 @@ class VariantMedia {
 }
 
 class ProjectConfiguration {
-  int bhk;
+  num bhk;
   List<ProjectVariant> variants;
 
   ProjectConfiguration({required this.bhk, this.variants = const []});

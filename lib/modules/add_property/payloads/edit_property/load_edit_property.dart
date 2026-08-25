@@ -712,6 +712,14 @@ class LoadEditPropertyPayload extends GetxController {
                 .toStringAsFixed(0)
             : '0';
 
+    /// Booking Amount
+    controller.bookingAmount.text =
+        (property.propertyDetails?.financialInfo?.bookingAmount != null &&
+                property.propertyDetails!.financialInfo!.bookingAmount != 0)
+            ? property.propertyDetails!.financialInfo!.bookingAmount!
+                .toStringAsFixed(0)
+            : '';
+
     /// Other Charges
     // maintenance Charge
     controller.rent_maintenanceChargeType.value =

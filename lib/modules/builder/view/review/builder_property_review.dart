@@ -2108,6 +2108,23 @@ class StepReview extends GetView<ProjectWizardController> {
                                   ),
                                 ],
                               ),
+                              if (variant.bookingAmount != null && variant.bookingAmount! > 0) ...[
+                                const SizedBox(height: 14),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: _buildVariantInfoCard(
+                                        Icons.currency_rupee_outlined,
+                                        'Booking Amount',
+                                        '₹ ${_formatPrice(variant.bookingAmount!)}',
+                                        ColorRes.builderGridPurple,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    const Expanded(child: SizedBox.shrink()),
+                                  ],
+                                ),
+                              ],
 
                               // Specifications
                               if (variant.specifications.isNotEmpty) ...[

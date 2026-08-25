@@ -9,6 +9,7 @@ import 'package:video_player/video_player.dart';
 import '../../../data/database/secure_storage_service.dart';
 import '../../../data/network/user/service/notification_sync_service.dart';
 import '../../../services/notification_service.dart';
+import '../../../services/fcm_notification_service.dart';
 import '../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../dashboard/views/dashboard_screen.dart';
 import '../../dashboard/views/seller_dashboard_screen.dart';
@@ -253,20 +254,35 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   void _navigate() {
+    Widget targetPage;
+    bool shouldHandleNotification = false;
+
     if (UserHelper.isBuyer) {
-      _goTo(const DashboardScreen());
+      targetPage = const DashboardScreen();
+      shouldHandleNotification = true;
     } else if (UserHelper.isSellerOwner) {
-      _goTo(const SellerDashboardScreen());
+      targetPage = const SellerDashboardScreen();
+      shouldHandleNotification = true;
     } else if (UserHelper.isSellerBuilder) {
-      _goTo(const BuilderMainScreen());
+      targetPage = const BuilderMainScreen();
+      shouldHandleNotification = true;
     } else if (UserHelper.isReseller) {
-      _goTo(MainNavigationScreen());
+      targetPage = MainNavigationScreen();
+      shouldHandleNotification = true;
     } else if (UserHelper.isContractor) {
-      _goTo(const ContractorMainScreen());
+      targetPage = const ContractorMainScreen();
+      shouldHandleNotification = true;
     } else if (UserHelper.isGuest) {
-      _goTo(DashboardScreen());
+      targetPage = DashboardScreen();
+      shouldHandleNotification = true;
     } else {
-      _goTo(const OtpLoginScreen());
+      targetPage = const OtpLoginScreen();
+    }
+
+    _goTo(targetPage);
+
+    if (shouldHandleNotification) {
+      FCMNotificationService.instance.checkAndHandlePendingNotification();
     }
   }
 

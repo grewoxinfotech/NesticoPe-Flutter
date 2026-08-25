@@ -575,6 +575,12 @@ class PropertyDetailManager {
       details.add({"Lock-in Period": "${finCommon!.lockInPeriod} months"});
     }
 
+    if (finCommon?.bookingAmount != null && finCommon!.bookingAmount! > 0) {
+      details.add({
+        "Booking Amount": Formatter.formatPrice(finCommon.bookingAmount!),
+      });
+    }
+
     final age = pd.possessionInfo?.propertyAgeInYear;
 
     if (age != null &&
@@ -684,6 +690,10 @@ IconData getpropertyIcon(String title) {
     case 'lock-in period':
     case 'lock_in_period':
       return Icons.lock_clock_outlined;
+
+    case 'booking amount':
+    case 'booking_amount':
+      return Icons.payments_outlined;
 
     default:
       return Icons.info_outline;

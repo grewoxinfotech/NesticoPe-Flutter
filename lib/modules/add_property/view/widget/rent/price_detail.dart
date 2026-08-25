@@ -298,6 +298,16 @@ class RentPriceDetail extends StatelessWidget {
               ),
 
               const SizedBox(height: 16),
+              const Text("Booking Amount"),
+              const SizedBox(height: 8),
+              buildTextField(
+                "Enter booking amount",
+                Icons.currency_rupee_outlined,
+                controller.bookingAmount,
+                isPhoneKey: true,
+              ),
+
+              const SizedBox(height: 16),
               Text(
                 "Platform Fees (${getPlatformFeePercentage(platformFeeController).toStringAsFixed(0)}%)",
               ),
@@ -1185,6 +1195,15 @@ class RentPriceDetail extends StatelessWidget {
                   isPhoneKey: true,
                 ),
                 const SizedBox(height: 16),
+                const Text("Booking Amount"),
+                const SizedBox(height: 8),
+                buildTextField(
+                  "Enter booking amount",
+                  Icons.currency_rupee_outlined,
+                  controller.bookingAmount,
+                  isPhoneKey: true,
+                ),
+                const SizedBox(height: 16),
                 Text(
                   "Platform Fees (${getPlatformFeePercentage(platformFeeController).toStringAsFixed(0)}%)",
                 ),
@@ -1417,6 +1436,15 @@ class RentPriceDetail extends StatelessWidget {
 
                   controller.commercial_rent_cost,
 
+                  isPhoneKey: true,
+                ),
+                const SizedBox(height: 16),
+                const Text("Booking Amount"),
+                const SizedBox(height: 8),
+                buildTextField(
+                  "Enter booking amount",
+                  Icons.currency_rupee_outlined,
+                  controller.bookingAmount,
                   isPhoneKey: true,
                 ),
                 const SizedBox(height: 16),

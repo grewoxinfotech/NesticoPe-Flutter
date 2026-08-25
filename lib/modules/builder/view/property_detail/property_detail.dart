@@ -311,7 +311,7 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                         (v) => controller.project.update(
                                           (x) =>
                                               x!.configurations[ci].bhk =
-                                                  int.tryParse(v ?? '') ?? 1,
+                                                  num.tryParse(v ?? '') ?? 1,
                                         ),
                                   ),
 
@@ -823,18 +823,21 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                             },
                                           ),
                                         ),
-                                        // const SizedBox(width: 12),
-                                        /* Expanded(
+                                        const SizedBox(width: 12),
+                                        Expanded(
                                           child: CommonTextField(
-                                            hint: 'e.g 2.4 per sq.ft',
-                                            label: 'Price / Sq.Ft (optional)',
+                                            label: 'Booking Amount',
+                                            hint: 'e.g 1.0 L',
                                             prefixIcon: const Icon(
-                                              Icons.price_change_outlined,
+                                              Icons.currency_rupee_outlined,
                                               size: 16,
                                             ),
                                             initialValue:
-                                                v.pricePerSqFt?.toString() ??
-                                                '',
+                                                v.bookingAmount == null ||
+                                                        v.bookingAmount == 0
+                                                    ? ''
+                                                    : v.bookingAmount
+                                                        .toString(),
                                             keyboardType: TextInputType.number,
                                             onSaved:
                                                 (
@@ -844,13 +847,25 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                                       x!
                                                               .configurations[ci]
                                                               .variants[vi]
-                                                              .pricePerSqFt =
+                                                              .bookingAmount =
                                                           double.tryParse(
                                                             n ?? '',
                                                           ),
                                                 ),
+                                            onChanged: (n) {
+                                              controller.project.update(
+                                                (x) =>
+                                                    x!
+                                                            .configurations[ci]
+                                                            .variants[vi]
+                                                            .bookingAmount =
+                                                        double.tryParse(
+                                                          n ?? '',
+                                                        ),
+                                              );
+                                            },
                                           ),
-                                        ),*/
+                                        ),
                                       ],
                                     ),
                                     const SizedBox(height: 12),
@@ -1130,7 +1145,13 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                         fontsize: 12,
                                         fontWight: AppFontWeights.medium,
                                         darkText: true,
-                                        value: v.buildingName ?? '',
+                                        value:
+                                            (v.buildingName != null &&
+                                                    buildingList.contains(
+                                                      v.buildingName,
+                                                    ))
+                                                ? v.buildingName
+                                                : null,
                                         hintText: "Choose a building",
                                         prefixIcon: Icons.home_work_outlined,
                                         items:
@@ -2146,7 +2167,9 @@ class StepConfigurations extends GetView<ProjectWizardController> {
 //     );
 //   }
 // }
-double getPlatformFeeForProjectPercentage(PlatformFeeController platformFeeController) {
+double getPlatformFeeForProjectPercentage(
+  PlatformFeeController platformFeeController,
+) {
   try {
     final fee = platformFeeController.items.firstWhere(
       (e) => e.category == 'project' && e.isActive == true,

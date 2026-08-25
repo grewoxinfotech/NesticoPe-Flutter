@@ -237,6 +237,7 @@ extension ItemsMapper on Items.Items {
       noticePeriod: source.noticePeriod,
       negotiable: source.negotiable,
       maintenanceCharges: source.maintenanceCharges,
+      bookingAmount: source.bookingAmount,
       // parkingCharges: source.parkingCharges,
     );
   }

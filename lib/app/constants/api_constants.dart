@@ -12,7 +12,6 @@ class ApiConstants {
   // static const String url = "https://nesticopeapi.grewoxinfotech.com";
 
   static const String url = "https://api.nesticope.com";
-  
 
   // static const String url = "https://commentary-flush-reprints-prison.trycloudflare.com";
   static const String frontendBaseUrl = "https://nesticope.com";
@@ -78,7 +77,7 @@ class ApiConstants {
 
   static String get getSellerProfile => "$baseURL/insight/seller";
 
-  static String get getPlatformFeeSetting  => "$baseURL/platformFeeSetting";
+  static String get getPlatformFeeSetting => "$baseURL/platformFeeSetting";
 
   static String get getProfile => "$baseURL/user/profile";
 
@@ -108,7 +107,7 @@ class ApiConstants {
   static String get propertyRecommend =>
       "$baseURL/property/personalized-recommendations";
 
-  static String get builderProject => "$baseURL/builderproject";
+  static String get builderProject => "$baseURL/builderProject";
   static String get topBuilderProfile => "$baseURL/user/builders/top";
   static String get propertyReport => "$baseURL/propertyReport";
 
@@ -133,7 +132,7 @@ class ApiConstants {
   static String get topProperties => "$baseURL/property/top/properties";
   static String get banner => "$baseURL/banner";
 
-  static String get topProject => "$baseURL/builderproject/top/projects";
+  static String get topProject => "$baseURL/builderProject/top/projects";
 
   static String get interestForm => "$baseURL/interestForm";
 
@@ -148,7 +147,8 @@ class ApiConstants {
   static String get leadVisit => "$baseURL/visit";
   static String get leadNegotiablePrice => "$baseURL/propertyNegotiablePrice";
   static String get generalInquiry => "$baseURL/property/general-inquiry";
-  static String userInquiry(String userId) => "$baseURL/property/$userId/inquiry";
+  static String userInquiry(String userId) =>
+      "$baseURL/property/$userId/inquiry";
 
   static String get property => "$baseURL/property";
 

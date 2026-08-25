@@ -1639,6 +1639,12 @@ class _PropertyOverviewSellerScreenState
                     "Broker Commission",
                     priceManager.brokerCommission!,
                   ),
+
+                if (priceManager.bookingAmount != null)
+                  _buildInfoRow(
+                    "Booking Amount",
+                    priceManager.bookingAmount!,
+                  ),
               ],
             ),
           ),

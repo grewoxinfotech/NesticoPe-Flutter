@@ -1579,7 +1579,7 @@ class HorizontalPropertyCard extends StatelessWidget {
         for (final v in cfg.variants) {
           variantOptions.add(v);
           if (v.variantId != null) {
-            variantBhkMap[v.variantId!] = cfg.bhk;
+            variantBhkMap[v.variantId!] = cfg.bhk.toInt();
           }
         }
       }

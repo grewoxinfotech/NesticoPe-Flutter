@@ -1149,6 +1149,17 @@ class BuilderLeadOverView extends StatelessWidget {
                                   fontWeight: AppFontWeights.semiBold,
                                 ),
                               ),
+                              if (variant.bookingAmount != null && variant.bookingAmount! > 0) ...[
+                                const SizedBox(height: 4),
+                                Text(
+                                  "Booking Amount: ${Formatter.formatPrice(variant.bookingAmount!)}",
+                                  style: const TextStyle(
+                                    color: Colors.green,
+                                    fontSize: AppFontSizes.small,
+                                    fontWeight: AppFontWeights.medium,
+                                  ),
+                                ),
+                              ],
                               const SizedBox(height: 4),
 
                               // Units Information

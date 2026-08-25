@@ -243,6 +243,8 @@ class BuilderService {
       print("📡 Fetching Projects from: $uri");
 
       final response = await http.get(uri, headers: await headers());
+      print("📡 Fetch Projects Status Code: ${response.statusCode}");
+      print("📡 Fetch Projects Response Body: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -280,10 +282,11 @@ class BuilderService {
       print("📡 Fetching Projects from: $uri");
 
       final response = await http.get(uri, headers: await headers());
+      print("📡 Fetch Top Projects Status Code: ${response.statusCode}");
+      print("📡 Fetch Top Projects Response Body: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print("✅ Project API Response: $data");
 
         return PaginationResponse<ProjectItem>.fromJson(
           data,
@@ -303,14 +306,14 @@ class BuilderService {
   Future<ProjectItem> getProjectById(String projectId) async {
     try {
       final uri = Uri.parse("$baseUrl/$projectId");
-      print("📡 Fetching Projects from: $uri");
+      print("📡 Fetch Project By ID from: $uri");
 
       final response = await http.get(uri, headers: await headers());
+      print("📡 Get Project By ID Status Code: ${response.statusCode}");
+      print("📡 Get Project By ID Response Body: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print("✅ Project API Response: $data");
-        // AppLogger.structured("Project Api Calling from api",  data);
         return ProjectItem.fromJson(data['data']);
       } else {
         print("❌ Failed to load projects: ${response.statusCode}");
@@ -327,19 +330,17 @@ class BuilderService {
   Future<bool> deleteProject(String projectId) async {
     try {
       final uri = Uri.parse('$baseUrl/$projectId');
-      debugPrint('🗑️ Deleting project at: $uri');
+      print('🗑️ Deleting project at: $uri');
       final response = await http.delete(uri, headers: await headers());
+      print("🗑️ Delete Project Status Code: ${response.statusCode}");
+      print("🗑️ Delete Project Response Body: ${response.body}");
 
-      debugPrint('🗑️ Delete response: ${response.statusCode}');
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return true;
       }
-
-      // attempt to log body
-      debugPrint('🗑️ Delete failed body: ${response.body}');
       return false;
     } catch (e) {
-      debugPrint('⚠️ Exception while deleting project: $e');
+      print('⚠️ Exception while deleting project: $e');
       return false;
     }
   }
@@ -448,8 +449,8 @@ class BuilderService {
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
 
-      debugPrint("📩 Create Project Response: ${response.statusCode}");
-      debugPrint("📄 Response Body: ${_truncate(response.body)}");
+      print("📡 Create Project Status Code: ${response.statusCode}");
+      print("📡 Create Project Response Body: ${response.body}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
@@ -742,6 +743,9 @@ class BuilderService {
         final streamedResponse = await request.send();
         response = await http.Response.fromStream(streamedResponse);
       }
+
+      print("📡 Update Project Status Code: ${response.statusCode}");
+      print("📡 Update Project Response Body: ${response.body}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);

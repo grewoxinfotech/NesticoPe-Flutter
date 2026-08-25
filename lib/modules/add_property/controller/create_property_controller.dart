@@ -267,6 +267,7 @@ class CreatePropertyController extends GetxController {
   var sell_rent_Total_Floor = TextEditingController();
   var sell_AvailableFrom = TextEditingController();
   var sell_ExpectedPrice = TextEditingController();
+  var bookingAmount = TextEditingController();
   var commercial_rent_AvailableFrom = TextEditingController();
   var commercial_rent_AgeOfPropertInYear = TextEditingController();
   var sell_constructionStatus = "".obs;
@@ -1818,6 +1819,7 @@ class CreatePropertyController extends GetxController {
       sell_rent_Total_Floor.clear();
       sell_AvailableFrom.clear();
       sell_ExpectedPrice.clear();
+      bookingAmount.clear();
       sell_rent_Maintenance_Charges.clear();
       sell_Rera_Id.clear();
 
@@ -3182,7 +3184,7 @@ class CreatePropertyController extends GetxController {
         financialInfo:
             (rent_MonthilyRent.text.trim().isNotEmpty ||
                     rent_SecurityDeposit.text.trim().isNotEmpty)
-                ? FinancialInfo(
+                ? FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
                   propertyRentPerMonth: double.tryParse(
                     rent_MonthilyRent.text.trim(),
                   ),
@@ -3472,7 +3474,7 @@ class CreatePropertyController extends GetxController {
         ),
         financialInfo:
             (sell_ExpectedPrice.text.trim().isNotEmpty)
-                ? FinancialInfo(
+                ? FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
                   propertyPrice: double.tryParse(
                     sell_ExpectedPrice.text.trim(),
                   ),
@@ -3734,7 +3736,7 @@ class CreatePropertyController extends GetxController {
         ),
         financialInfo:
             (sell_ExpectedPrice.text.trim().isNotEmpty)
-                ? FinancialInfo(
+                ? FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
                   propertyPrice: double.tryParse(
                     sell_ExpectedPrice.text.trim(),
                   ),
@@ -4066,7 +4068,7 @@ class CreatePropertyController extends GetxController {
                   : null,
         ),
         amenities: selectedRoomAmenities.value,
-        financialInfo: FinancialInfo(
+        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
           lockInPeriod:
               lockPeriodController.text.isNotEmpty
                   ? int.tryParse(lockPeriodController.text.trim())
@@ -4216,7 +4218,7 @@ class CreatePropertyController extends GetxController {
                 ? surveyNumberPlotAndLand.text.trim()
                 : null,
 
-        financialInfo: FinancialInfo(
+        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
           monthlyRent:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
@@ -4360,7 +4362,7 @@ class CreatePropertyController extends GetxController {
                 ? commercial_ZoneType.value
                 : null,
 
-        financialInfo: FinancialInfo(
+        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
           brokerCommission: double.tryParse(brokerRageCommission.text.trim()),
           platformFees: double.tryParse(platformFees.text.trim()),
           is_for_sellorrent: isPredefinedCostEnabled.value,
@@ -4541,7 +4543,7 @@ class CreatePropertyController extends GetxController {
                 ? selectedCommercialAmenities.value
                 : null,
 
-        financialInfo: FinancialInfo(
+        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
           propertyRentPerMonth:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
@@ -4663,7 +4665,7 @@ class CreatePropertyController extends GetxController {
                 ? selectedCommercialAmenities.value
                 : null,
 
-        financialInfo: FinancialInfo(
+        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
           is_for_sellorrent: isPredefinedCostEnabled.value,
           propertyPrice:
               isPredefinedCostEnabled.value
@@ -4769,7 +4771,7 @@ class CreatePropertyController extends GetxController {
                 ? selectedCommercialAmenities.value
                 : null,
 
-        financialInfo: FinancialInfo(
+        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
           brokerCommission: double.tryParse(brokerRageCommission.text.trim()),
           platformFees: double.tryParse(platformFees.text.trim()),
           is_for_sellorrent: isPredefinedCostEnabled.value,
@@ -4891,7 +4893,7 @@ class CreatePropertyController extends GetxController {
                 ? selectedCommercialAmenities.value
                 : null,
 
-        financialInfo: FinancialInfo(
+        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
           brokerCommission: double.tryParse(brokerRageCommission.text.trim()),
           platformFees: double.tryParse(platformFees.text.trim()),
           is_for_sellorrent: isPredefinedCostEnabled.value,
@@ -4971,7 +4973,7 @@ class CreatePropertyController extends GetxController {
                 ? selectedCommercialAmenities.value
                 : null,
 
-        financialInfo: FinancialInfo(
+        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
           // propertyPricePast: getPastPriceData(),
           //
           // // 🔮 Future 5 Years Prices
@@ -5132,7 +5134,7 @@ class CreatePropertyController extends GetxController {
                   ? int.tryParse(commercial_your_floor.text.trim())
                   : null,
         ),
-        financialInfo: FinancialInfo(
+        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
           // propertyPricePast: getPastPriceData(),
           //
           // // 🔮 Future 5 Years Prices
@@ -5316,7 +5318,7 @@ class CreatePropertyController extends GetxController {
                 ? selectedCommercialAmenities.value
                 : null,
 
-        financialInfo: FinancialInfo(
+        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
           // propertyPricePast: getPastPriceData(),
           //
           // // 🔮 Future 5 Years Prices
@@ -5452,7 +5454,7 @@ class CreatePropertyController extends GetxController {
                 ? selectedCommercialAmenities.value
                 : null,
 
-        financialInfo: FinancialInfo(
+        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
           // propertyPricePast: getPastPriceData(),
           //
           // // 🔮 Future 5 Years Prices
@@ -5585,7 +5587,7 @@ class CreatePropertyController extends GetxController {
                 ? selectedCommercialAmenities.value
                 : null,
 
-        financialInfo: FinancialInfo(
+        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
           // propertyPricePast: getPastPriceData(),
           //
           // // 🔮 Future 5 Years Prices
@@ -5725,7 +5727,7 @@ class CreatePropertyController extends GetxController {
                 ? selectedCommercialAmenities.value
                 : null,
 
-        financialInfo: FinancialInfo(
+        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
           // propertyPricePast: getPastPriceData(),
           //
           // // 🔮 Future 5 Years Prices

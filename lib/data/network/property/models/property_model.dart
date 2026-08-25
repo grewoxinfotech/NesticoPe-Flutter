@@ -1152,6 +1152,7 @@ class FinancialInfo {
 
   final bool? is_for_sellorrent;
   final bool? isForSellOrRent;
+  double? bookingAmount;
 
   FinancialInfo({
     this.price = 0,
@@ -1175,6 +1176,7 @@ class FinancialInfo {
     this.electricityChargesType,
     this.electricityChargesUnit,
     this.is_for_sellorrent,
+    this.bookingAmount,
   });
 
   factory FinancialInfo.fromJson(Map<String, dynamic> json) {
@@ -1204,6 +1206,7 @@ class FinancialInfo {
       parkingCharges: json['parking_charges']?.toString(),
       noticePeriod: TypeConverter.parseInt(json['notice_period']),
       lockInPeriod: TypeConverter.parseInt(json['lock_in_period']),
+      bookingAmount: TypeConverter.parseDouble(json['booking_amount']),
 
       isForSellOrRent: json['is_for_sellorrent'] ?? false,
       propertyPriceTrend:
@@ -1229,6 +1232,7 @@ class FinancialInfo {
       "negotiable": negotiable,
       "notice_period": noticePeriod,
       "maintenance_charges": maintenanceCharges,
+      "booking_amount": bookingAmount,
 
       "lock_in_period": lockInPeriod,
       "is_for_sellorrent": isForSellOrRent,

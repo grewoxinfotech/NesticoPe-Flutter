@@ -10,6 +10,7 @@ enum PricingKey {
   electricityCharges,
   noticePeriod,
   lockInPeriod,
+  bookingAmount,
 }
 
 extension PricingKeyLabel on PricingKey {
@@ -37,6 +38,8 @@ extension PricingKeyLabel on PricingKey {
         return "Notice Period";
       case PricingKey.lockInPeriod:
         return "Lock-in Period";
+      case PricingKey.bookingAmount:
+        return "Booking Amount";
     }
   }
 }

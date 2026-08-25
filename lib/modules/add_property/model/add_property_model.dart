@@ -501,6 +501,7 @@ class FinancialInfo {
   final int? noticePeriod;
   final bool? negotiable;
   final double? maintenanceCharges;
+  final double? bookingAmount;
 
   final List<PropertyPriceYearly>? propertyPriceTrend;
 
@@ -526,6 +527,7 @@ this.paintingCharges,
     this.propertyPriceTrend,
     this.maintenanceCharges,
     this.parkingCharges,
+    this.bookingAmount,
   });
 
   factory FinancialInfo.fromJson(Map<String, dynamic> json) {
@@ -567,6 +569,7 @@ this.paintingCharges,
               : (json['negotiable']?.toString().toLowerCase() == 'true'),
       maintenanceCharges: (json['maintenance_charges'] as num?)?.toDouble(),
       parkingCharges: json['parking_charges'], // string or number
+      bookingAmount: (json['booking_amount'] as num?)?.toDouble(),
     );
   }
 
@@ -611,6 +614,8 @@ this.paintingCharges,
       data['maintenance_charges'] = maintenanceCharges;
     if (parkingCharges != null && parkingCharges != 0.0)
       data['parking_charges'] = parkingCharges;
+    if (bookingAmount != null && bookingAmount! > 0.0)
+      data['booking_amount'] = bookingAmount;
 
     // --- 🔮 Future 5-Year Price Data ---
     if (propertyPriceTrend != null &&

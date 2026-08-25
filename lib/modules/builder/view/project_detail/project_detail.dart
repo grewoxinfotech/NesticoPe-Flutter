@@ -2040,7 +2040,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
           // Horizontal Variants List
           SizedBox(
-            height: 420,
+            height: 460,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               padding: EdgeInsets.symmetric(horizontal: 16),
@@ -2395,6 +2395,15 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                               'Sold Units',
                               '${variant.soldUnits}',
                             ),
+                            if (variant.bookingAmount != null && variant.bookingAmount! > 0) ...[
+                              const SizedBox(height: 8),
+                              _buildDetailRow(
+                                'Booking Amount',
+                                controller.formatCurrency(
+                                  variant.bookingAmount!.toDouble(),
+                                ),
+                              ),
+                            ],
 
                           ],
                         ),

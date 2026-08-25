@@ -180,6 +180,12 @@ class PropertyPriceManager {
     return commission > 0 ? "₹${commission.toStringAsFixed(0)}" : null;
   }
 
+  String? get bookingAmount {
+    if (isPG) return null;
+    final ba = financialInfo?.bookingAmount ?? 0;
+    return ba > 0 ? Formatter.formatPrice(ba) : null;
+  }
+
   /// 🔹 Get PG type display name with icon/badge info
   String get pgTypeDisplay {
     if (!isPG || pgInfo == null) return "";
@@ -242,6 +248,9 @@ class PropertyPriceManager {
     if (maintenance != null) summary["Maintenance"] = maintenance;
     if (brokerCommission != null) {
       summary["Broker Commission"] = brokerCommission;
+    }
+    if (bookingAmount != null) {
+      summary["Booking Amount"] = bookingAmount;
     }
 
     return summary;
@@ -467,6 +476,9 @@ class PropertyPriceManager {
     }
     if (brokerCommission != null) {
       result[PricingKey.brokerCommission.label] = brokerCommission!;
+    }
+    if (bookingAmount != null) {
+      result[PricingKey.bookingAmount.label] = bookingAmount!;
     }
 
     return result;
