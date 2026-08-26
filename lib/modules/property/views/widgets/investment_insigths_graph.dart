@@ -3285,10 +3285,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
   Widget build(BuildContext context) {
     final financialInfo = widget.currentProperty.propertyDetails?.financialInfo;
 
-    AppLogger.structured(
-      'Financial Info Check Have data ',
-      widget.currentProperty.propertyDetails?.financialInfo,
-    );
+    
 
     // if (financialInfo == null || financialInfo.propertyPriceTrend.isEmpty) {
     //   return const Center(
@@ -4426,7 +4423,7 @@ class _InvestmentInsightChartState extends State<InvestmentInsightChart> {
                           }
                         }
                       } catch (e) {
-                        print('Error converting properties: $e');
+                        
 
                         NesticoPeSnackBar.showAwesomeSnackbar(
                           title: 'Error',
